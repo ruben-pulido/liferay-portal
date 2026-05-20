@@ -27,4 +27,7 @@ public class CookiesBannerWebKeys {
 
 	public static final String FLOATING_ICON_ENABLED = "FLOATING_ICON_ENABLED";
 
+	public static final String GLOBAL_PRIVACY_CONTROL_SIGNAL_ACTIVE =
+		"GLOBAL_PRIVACY_CONTROL_SIGNAL_ACTIVE";
+
 }

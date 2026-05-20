@@ -1,6 +1,5 @@
-create index IX_50E9112C on KaleoAction (companyId);
-create index IX_ED710674 on KaleoAction (kaleoClassName[$COLUMN_LENGTH:200$], kaleoClassPK, companyId, executionType[$COLUMN_LENGTH:20$]);
-create index IX_4B2545E8 on KaleoAction (kaleoClassName[$COLUMN_LENGTH:200$], kaleoClassPK, executionType[$COLUMN_LENGTH:20$]);
+create index IX_40EB8D2A on KaleoAction (companyId, kaleoClassName[$COLUMN_LENGTH:200$], kaleoClassPK);
+create index IX_170EFD7A on KaleoAction (kaleoClassName[$COLUMN_LENGTH:200$], kaleoClassPK);
 create index IX_F8808C50 on KaleoAction (kaleoDefinitionVersionId);
 
 create index IX_FEE46067 on KaleoCondition (companyId);
@@ -10,7 +9,7 @@ create index IX_86CBD4C on KaleoCondition (kaleoNodeId);
 create index IX_EEFC11D0 on KaleoDefinition (active_);
 create index IX_A99EF6D4 on KaleoDefinition (companyId, active_, groupId, scope[$COLUMN_LENGTH:75$]);
 create index IX_37ED1EF9 on KaleoDefinition (companyId, active_, name[$COLUMN_LENGTH:200$]);
-create unique index IX_9F17D510 on KaleoDefinition (companyId, ctCollectionId, externalReferenceCode[$COLUMN_LENGTH:75$]);
+create unique index IX_502BB18C on KaleoDefinition (companyId, externalReferenceCode[$COLUMN_LENGTH:75$], ctCollectionId);
 create index IX_72193B49 on KaleoDefinition (companyId, groupId, scope[$COLUMN_LENGTH:75$]);
 create index IX_EC14F81A on KaleoDefinition (companyId, name[$COLUMN_LENGTH:200$], version);
 create unique index IX_9A534D2D on KaleoDefinition (uuid_[$COLUMN_LENGTH:75$], groupId, ctCollectionId);
@@ -39,7 +38,7 @@ create index IX_F066921C on KaleoNode (kaleoDefinitionVersionId);
 create unique index IX_905A7776 on KaleoNodeSetting (kaleoNodeId, name[$COLUMN_LENGTH:75$], ctCollectionId);
 
 create index IX_38829497 on KaleoNotification (companyId);
-create index IX_F3362E93 on KaleoNotification (kaleoClassName[$COLUMN_LENGTH:200$], kaleoClassPK, executionType[$COLUMN_LENGTH:20$]);
+create index IX_902D342F on KaleoNotification (kaleoClassName[$COLUMN_LENGTH:200$], kaleoClassPK);
 create index IX_B8486585 on KaleoNotification (kaleoDefinitionVersionId);
 
 create index IX_2C8C4AF4 on KaleoNotificationRecipient (companyId);

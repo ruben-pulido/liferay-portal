@@ -63,6 +63,10 @@ class MockBroadcastChannel {
 
 (globalThis as any).Liferay = {
 	...(globalThis.Liferay || {}),
+	Browser: {
+		...(globalThis.Liferay.Browser || {}),
+		isMac: () => false,
+	},
 	Language: {
 		...(globalThis.Liferay.Language || {}),
 		direction: {en_US: 'rtl'},
@@ -82,4 +86,7 @@ class MockBroadcastChannel {
 		formatStorage: (size: number) => `${size / 1024} KB`,
 	},
 	authToken: 'mocked-auth-token',
+	detach: () => {},
+	fire: () => {},
+	on: () => {},
 };

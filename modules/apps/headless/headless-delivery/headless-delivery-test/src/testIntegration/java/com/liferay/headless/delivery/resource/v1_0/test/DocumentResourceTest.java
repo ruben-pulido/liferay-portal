@@ -269,6 +269,7 @@ public class DocumentResourceTest extends BaseDocumentResourceTestCase {
 	public void testPutDocument() throws Exception {
 		super.testPutDocument();
 
+		_testPutDocumentWithEmptyDocumentPartAndFileOnlyUpdate();
 		_testPutSiteDocumentByExternalReferenceCodeWithSameFolderId();
 		_testPutSiteDocumentWithFriendlyUrlPath();
 		_testPutSiteDocumentWithNoMultipartFiles();
@@ -324,7 +325,9 @@ public class DocumentResourceTest extends BaseDocumentResourceTestCase {
 
 		Assert.assertEquals(
 			new String(FileUtil.getBytes(multipartFiles.get("file"))),
-			_read("http://localhost:8080" + document.getContentUrl()));
+			_read(
+				"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+					document.getContentUrl()));
 	}
 
 	@Override
@@ -603,7 +606,8 @@ public class DocumentResourceTest extends BaseDocumentResourceTestCase {
 		).authentication(
 			user.getEmailAddress(), password
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -816,6 +820,27 @@ public class DocumentResourceTest extends BaseDocumentResourceTestCase {
 		Assert.assertEquals(StringPool.BLANK, postDocument.getContentUrl());
 		Assert.assertEquals(
 			0, GetterUtil.getLong(postDocument.getSizeInBytes()));
+	}
+
+	private void _testPutDocumentWithEmptyDocumentPartAndFileOnlyUpdate()
+		throws Exception {
+
+		Document postDocument = testPutDocument_addDocument();
+
+		Document putDocument = documentResource.putDocument(
+			postDocument.getId(), null,
+			HashMapBuilder.<String, File>put(
+				"file",
+				() -> FileUtil.createTempFile("updated-content".getBytes())
+			).build());
+
+		Assert.assertEquals(
+			postDocument.getDateExpired(), putDocument.getDateExpired());
+		Assert.assertEquals(
+			postDocument.getDatePublished(), putDocument.getDatePublished());
+		Assert.assertEquals(
+			postDocument.getDescription(), putDocument.getDescription());
+		Assert.assertEquals(postDocument.getTitle(), putDocument.getTitle());
 	}
 
 	private void _testPutSiteDocumentByExternalReferenceCodeWithSameFolderId()

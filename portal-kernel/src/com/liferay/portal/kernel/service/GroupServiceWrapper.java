@@ -173,6 +173,15 @@ public class GroupServiceWrapper
 		return _groupService.getGroup(companyId, groupKey);
 	}
 
+	@Override
+	public Group getGroupByExternalReferenceCode(
+			String externalReferenceCode, long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _groupService.getGroupByExternalReferenceCode(
+			externalReferenceCode, companyId);
+	}
+
 	/**
 	 * Returns the group's display URL.
 	 *
@@ -734,4 +743,4 @@ public class GroupServiceWrapper
 	private GroupService _groupService;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:599547405
+// LIFERAY-SERVICE-BUILDER-HASH:-370067583

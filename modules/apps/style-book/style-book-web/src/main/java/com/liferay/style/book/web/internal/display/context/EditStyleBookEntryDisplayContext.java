@@ -15,6 +15,7 @@ import com.liferay.fragment.util.comparator.FragmentCollectionContributorNameCom
 import com.liferay.fragment.util.comparator.FragmentCollectionCreateDateComparator;
 import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
+import com.liferay.frontend.token.definition.constants.FrontendTokenDefinitionConstants;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.layout.item.selector.LayoutItemSelectorCriterion;
 import com.liferay.layout.item.selector.LayoutItemSelectorReturnType;
@@ -71,6 +72,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Eudaldo Alonso
@@ -99,6 +101,9 @@ public class EditStyleBookEntryDisplayContext {
 
 	public Map<String, Object> getStyleBookEditorData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
+			"defaultTokenDefinitionPriority",
+			FrontendTokenDefinitionConstants.PRIORITY_LEGACY
+		).put(
 			"fragmentCollectionPreviewURL",
 			ResourceURLBuilder.createResourceURL(
 				_renderResponse
@@ -108,7 +113,8 @@ public class EditStyleBookEntryDisplayContext {
 				"/style_book/preview_fragment_collection"
 			).buildString()
 		).put(
-			"frontendTokenDefinition", _getFrontendTokenDefinitionJSONObject()
+			"frontendTokenDefinitions",
+			_getFrontendTokenDefinitionsJSONObjects()
 		).put(
 			"frontendTokensValues",
 			() -> {
@@ -169,6 +175,8 @@ public class EditStyleBookEntryDisplayContext {
 			"saveDraftURL", _getActionURL("/style_book/edit_style_book_entry")
 		).put(
 			"styleBookEntryId", _getStyleBookEntryId()
+		).put(
+			"themeFrontendTokenDefinitionId", _styleBookEntry.getThemeId()
 		).put(
 			"themeName",
 			StyleBookUtil.getThemeName(
@@ -310,19 +318,51 @@ public class EditStyleBookEntryDisplayContext {
 		return fragmentCollectionsCount + fragmentCollectionContributors.size();
 	}
 
-	private JSONObject _getFrontendTokenDefinitionJSONObject()
+	private List<JSONObject> _getFrontendTokenDefinitionsJSONObjects()
 		throws Exception {
 
-		FrontendTokenDefinition frontendTokenDefinition =
-			_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
-				_themeDisplay.getCompanyId(), _styleBookEntry.getThemeId());
+		List<FrontendTokenDefinition> frontendTokenDefinitions = ListUtil.sort(
+			ListUtil.filter(
+				_frontendTokenDefinitionRegistry.getFrontendTokenDefinitions(
+					_themeDisplay.getCompanyId()),
+				frontendTokenDefinition ->
+					Objects.equals(
+						frontendTokenDefinition.getThemeId(),
+						_styleBookEntry.getThemeId()) ||
+					Objects.equals(
+						frontendTokenDefinition.getThemeType(),
+						FrontendTokenDefinitionConstants.THEME_TYPE_GLOBAL)),
+			(frontendTokenDefinition1, frontendTokenDefinition2) ->
+				Integer.compare(
+					frontendTokenDefinition2.getPriority(),
+					frontendTokenDefinition1.getPriority()));
 
-		if (frontendTokenDefinition != null) {
-			return frontendTokenDefinition.getJSONObject(
-				_themeDisplay.getLocale());
-		}
+		return TransformUtil.transform(
+			frontendTokenDefinitions,
+			frontendTokenDefinition -> {
+				JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		return JSONFactoryUtil.createJSONObject();
+				JSONObject frontendTokenDefinitionJSONObject =
+					frontendTokenDefinition.getJSONObject(
+						_themeDisplay.getLocale());
+
+				for (String key : frontendTokenDefinitionJSONObject.keySet()) {
+					jsonObject.put(
+						key, frontendTokenDefinitionJSONObject.get(key));
+				}
+
+				jsonObject.put(
+					"id", frontendTokenDefinition.getThemeId()
+				).put(
+					"name",
+					frontendTokenDefinition.getThemeName(
+						_themeDisplay.getLocale())
+				).put(
+					"priority", frontendTokenDefinition.getPriority()
+				);
+
+				return jsonObject;
+			});
 	}
 
 	private JSONObject _getOptionJSONObject(int... layoutTypes) {
@@ -568,7 +608,13 @@ public class EditStyleBookEntryDisplayContext {
 
 		portletDisplay.setShowBackIcon(true);
 		portletDisplay.setURLBack(_getRedirect());
-		portletDisplay.setURLBackTitle(portletDisplay.getPortletDisplayName());
+
+		String backURLTitle = ParamUtil.getString(
+			_httpServletRequest, "backURLTitle");
+
+		portletDisplay.setURLBackTitle(
+			Validator.isNotNull(backURLTitle) ? backURLTitle :
+				portletDisplay.getPortletDisplayName());
 
 		_renderResponse.setTitle(_getStyleBookEntryTitle());
 	}

@@ -33,51 +33,10 @@ public interface VirtualHostPersistence
 	 */
 
 	/**
-	 * Returns all the virtual hosts where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching virtual hosts
-	 */
-	public java.util.List<VirtualHost> findByCompanyId(long companyId);
-
-	/**
-	 * Returns a range of all the virtual hosts where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of virtual hosts
-	 * @param end the upper bound of the range of virtual hosts (not inclusive)
-	 * @return the range of matching virtual hosts
-	 */
-	public java.util.List<VirtualHost> findByCompanyId(
-		long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the virtual hosts where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of virtual hosts
-	 * @param end the upper bound of the range of virtual hosts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching virtual hosts
-	 */
-	public java.util.List<VirtualHost> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<VirtualHost>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the virtual hosts where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -145,14 +104,6 @@ public interface VirtualHostPersistence
 		throws NoSuchVirtualHostException;
 
 	/**
-	 * Returns the virtual host where hostname = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param hostname the hostname
-	 * @return the matching virtual host, or <code>null</code> if a matching virtual host could not be found
-	 */
-	public VirtualHost fetchByHostname(String hostname);
-
-	/**
 	 * Returns the virtual host where hostname = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param hostname the hostname
@@ -179,55 +130,10 @@ public interface VirtualHostPersistence
 	public int countByHostname(String hostname);
 
 	/**
-	 * Returns all the virtual hosts where companyId = &#63; and layoutSetId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param layoutSetId the layout set ID
-	 * @return the matching virtual hosts
-	 */
-	public java.util.List<VirtualHost> findByC_L(
-		long companyId, long layoutSetId);
-
-	/**
-	 * Returns a range of all the virtual hosts where companyId = &#63; and layoutSetId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param layoutSetId the layout set ID
-	 * @param start the lower bound of the range of virtual hosts
-	 * @param end the upper bound of the range of virtual hosts (not inclusive)
-	 * @return the range of matching virtual hosts
-	 */
-	public java.util.List<VirtualHost> findByC_L(
-		long companyId, long layoutSetId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the virtual hosts where companyId = &#63; and layoutSetId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param layoutSetId the layout set ID
-	 * @param start the lower bound of the range of virtual hosts
-	 * @param end the upper bound of the range of virtual hosts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching virtual hosts
-	 */
-	public java.util.List<VirtualHost> findByC_L(
-		long companyId, long layoutSetId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<VirtualHost>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the virtual hosts where companyId = &#63; and layoutSetId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -303,7 +209,7 @@ public interface VirtualHostPersistence
 	 * Returns a range of all the virtual hosts where layoutSetId &ne; &#63; and hostname = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param layoutSetId the layout set ID
@@ -319,7 +225,7 @@ public interface VirtualHostPersistence
 	 * Returns an ordered range of all the virtual hosts where layoutSetId &ne; &#63; and hostname = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param layoutSetId the layout set ID
@@ -338,7 +244,7 @@ public interface VirtualHostPersistence
 	 * Returns an ordered range of all the virtual hosts where layoutSetId &ne; &#63; and hostname = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param layoutSetId the layout set ID
@@ -387,7 +293,7 @@ public interface VirtualHostPersistence
 	 * Returns all the virtual hosts where layoutSetId &ne; &#63; and hostname = any &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param layoutSetId the layout set ID
@@ -401,7 +307,7 @@ public interface VirtualHostPersistence
 	 * Returns a range of all the virtual hosts where layoutSetId &ne; &#63; and hostname = any &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param layoutSetId the layout set ID
@@ -417,7 +323,7 @@ public interface VirtualHostPersistence
 	 * Returns an ordered range of all the virtual hosts where layoutSetId &ne; &#63; and hostname = any &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param layoutSetId the layout set ID
@@ -436,7 +342,7 @@ public interface VirtualHostPersistence
 	 * Returns an ordered range of all the virtual hosts where layoutSetId &ne; &#63; and hostname = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
 	 * @param layoutSetId the layout set ID
@@ -480,20 +386,6 @@ public interface VirtualHostPersistence
 	public int countByNotL_H(long layoutSetId, String[] hostnames);
 
 	/**
-	 * Caches the virtual host in the entity cache if it is enabled.
-	 *
-	 * @param virtualHost the virtual host
-	 */
-	public void cacheResult(VirtualHost virtualHost);
-
-	/**
-	 * Caches the virtual hosts in the entity cache if it is enabled.
-	 *
-	 * @param virtualHosts the virtual hosts
-	 */
-	public void cacheResult(java.util.List<VirtualHost> virtualHosts);
-
-	/**
 	 * Creates a new virtual host with the primary key. Does not add the virtual host to the database.
 	 *
 	 * @param virtualHostId the primary key for the new virtual host
@@ -532,72 +424,123 @@ public interface VirtualHostPersistence
 	public VirtualHost fetchByPrimaryKey(long virtualHostId);
 
 	/**
-	 * Returns all the virtual hosts.
+	 * Returns the virtual host where hostname = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the virtual hosts
+	 * @param hostname the hostname
+	 * @return the matching virtual host, or <code>null</code> if a matching virtual host could not be found
 	 */
-	public java.util.List<VirtualHost> findAll();
+	public default VirtualHost fetchByHostname(String hostname) {
+		return fetchByHostname(hostname, true);
+	}
 
 	/**
-	 * Returns a range of all the virtual hosts.
+	 * Returns all the virtual hosts where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching virtual hosts
+	 */
+	public default java.util.List<VirtualHost> findByCompanyId(long companyId) {
+		return findByCompanyId(
+			companyId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the virtual hosts where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of virtual hosts
 	 * @param end the upper bound of the range of virtual hosts (not inclusive)
-	 * @return the range of virtual hosts
+	 * @return the range of matching virtual hosts
 	 */
-	public java.util.List<VirtualHost> findAll(int start, int end);
+	public default java.util.List<VirtualHost> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return findByCompanyId(companyId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the virtual hosts.
+	 * Returns an ordered range of all the virtual hosts where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of virtual hosts
 	 * @param end the upper bound of the range of virtual hosts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of virtual hosts
+	 * @return the ordered range of matching virtual hosts
 	 */
-	public java.util.List<VirtualHost> findAll(
-		int start, int end,
+	public default java.util.List<VirtualHost> findByCompanyId(
+		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<VirtualHost>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByCompanyId(companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the virtual hosts.
+	 * Returns all the virtual hosts where companyId = &#63; and layoutSetId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param layoutSetId the layout set ID
+	 * @return the matching virtual hosts
+	 */
+	public default java.util.List<VirtualHost> findByC_L(
+		long companyId, long layoutSetId) {
+
+		return findByC_L(
+			companyId, layoutSetId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the virtual hosts where companyId = &#63; and layoutSetId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VirtualHostModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param layoutSetId the layout set ID
+	 * @param start the lower bound of the range of virtual hosts
+	 * @param end the upper bound of the range of virtual hosts (not inclusive)
+	 * @return the range of matching virtual hosts
+	 */
+	public default java.util.List<VirtualHost> findByC_L(
+		long companyId, long layoutSetId, int start, int end) {
+
+		return findByC_L(companyId, layoutSetId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the virtual hosts where companyId = &#63; and layoutSetId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.VirtualHostModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param layoutSetId the layout set ID
 	 * @param start the lower bound of the range of virtual hosts
 	 * @param end the upper bound of the range of virtual hosts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of virtual hosts
+	 * @return the ordered range of matching virtual hosts
 	 */
-	public java.util.List<VirtualHost> findAll(
-		int start, int end,
+	public default java.util.List<VirtualHost> findByC_L(
+		long companyId, long layoutSetId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<VirtualHost>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
 
-	/**
-	 * Removes all the virtual hosts from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of virtual hosts.
-	 *
-	 * @return the number of virtual hosts
-	 */
-	public int countAll();
+		return findByC_L(
+			companyId, layoutSetId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1570706408
+// LIFERAY-SERVICE-BUILDER-HASH:1998625088

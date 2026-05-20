@@ -255,7 +255,8 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 		objectEntryFieldValues.addAll(
 			ObjectEntryInfoItemValuesProviderUtil.getInfoFieldValues(
-				_dlAppLocalService, _dlURLHelper, _friendlyURLEntryLocalService,
+				objectEntry.getDefaultLanguageId(), _dlAppLocalService,
+				_dlURLHelper, _friendlyURLEntryLocalService,
 				_listTypeEntryLocalService, _objectActionLocalService,
 				_objectDefinition, _objectDefinitionLocalService,
 				_objectEntryLocalService, _objectEntryManagerRegistry,
@@ -355,6 +356,10 @@ public class ObjectEntryInfoItemFieldValuesProvider
 				objectEntry.getExpirationDate()));
 		objectEntryFieldValues.add(
 			new InfoFieldValue<>(
+				ObjectEntryInfoItemFields.externalReferenceCodeInfoField,
+				objectEntry.getExternalReferenceCode()));
+		objectEntryFieldValues.add(
+			new InfoFieldValue<>(
 				ObjectEntryInfoItemFields.modifiedDateInfoField,
 				objectEntry.getDateModified()));
 		objectEntryFieldValues.add(
@@ -367,7 +372,8 @@ public class ObjectEntryInfoItemFieldValuesProvider
 				objectEntry.getReviewDate()));
 		objectEntryFieldValues.addAll(
 			ObjectEntryInfoItemValuesProviderUtil.getInfoFieldValues(
-				_dlAppLocalService, _dlURLHelper, _friendlyURLEntryLocalService,
+				objectEntry.getDefaultLanguageId(), _dlAppLocalService,
+				_dlURLHelper, _friendlyURLEntryLocalService,
 				_listTypeEntryLocalService, _objectActionLocalService,
 				_objectDefinition, _objectDefinitionLocalService,
 				_objectEntryLocalService, _objectEntryManagerRegistry,

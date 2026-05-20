@@ -46,6 +46,7 @@ export class EditUserPage {
 	readonly categoryGridCell: (categoryName: string) => Locator;
 	readonly categoryInput: (vocabularyName: string) => Locator;
 	readonly categoryOption: (categoryName: string) => Locator;
+	readonly passwordConfirmationFrameCancelButton: Locator;
 	readonly changeImageButton: Locator;
 	readonly clearImageButton: Locator;
 	readonly confirmButton: Locator;
@@ -128,6 +129,7 @@ export class EditUserPage {
 	readonly regularRoleCellButton: (name: string) => Locator;
 	readonly regularRolesTable: DataTablePage;
 	readonly removeMenuItem: Locator;
+	readonly requiredPasswordResetCheckbox: Locator;
 	readonly rolesLink: Locator;
 	readonly saveButton: Locator;
 	readonly screenNameError: Locator;
@@ -337,16 +339,17 @@ export class EditUserPage {
 		});
 		this.customField = async (fieldName: string) => {
 			await page
+				.locator(
+					'[id="_com_liferay_users_admin_web_portlet_UsersAdminPortlet_fm"]'
+				)
 				.getByText('Custom Fields', {exact: true})
 				.waitFor({timeout: 15 * 1000});
 
 			const customField = page.getByText(fieldName);
 
-			if (await customField.isVisible()) {
-				return customField;
-			}
+			await expect(customField).toBeVisible();
 
-			throw new Error(`Cannot locate Custom Field ${fieldName}`);
+			return customField;
 		};
 		this.displaySettingsLink = page.getByRole('link', {
 			exact: true,
@@ -554,6 +557,9 @@ export class EditUserPage {
 		this.regularRoleCell = (name) => page.getByRole('cell', {name});
 		this.regularRoleCellButton = (name) =>
 			this.regularRoleCell(name).locator('..').getByRole('button');
+		this.requiredPasswordResetCheckbox = page.locator(
+			'#_com_liferay_users_admin_web_portlet_UsersAdminPortlet_passwordReset'
+		);
 		this.regularRolesTable = new DataTablePage(
 			page,
 			page.locator(
@@ -816,6 +822,10 @@ export class EditUserPage {
 			'button',
 			{name: 'Confirm'}
 		);
+		this.passwordConfirmationFrameCancelButton =
+			this.passwordConfirmationFrame.getByRole('button', {
+				name: 'Cancel',
+			});
 		this.yourPasswordInput =
 			this.passwordConfirmationFrame.getByLabel('Your Password');
 	}

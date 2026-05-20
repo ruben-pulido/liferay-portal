@@ -36,6 +36,20 @@ public class LayoutPrototypeUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<LayoutPrototype> layoutPrototypes) {
+		getPersistence().cacheResult(layoutPrototypes);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(LayoutPrototype layoutPrototype) {
+		getPersistence().cacheResult(layoutPrototype);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,58 +125,10 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the layout prototypes where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout prototypes where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<LayoutPrototype> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout prototypes where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -211,38 +177,10 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes that the user has permission to view where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching layout prototypes that the user has permission to view
-	 */
-	public static List<LayoutPrototype> filterFindByUuid(String uuid) {
-		return getPersistence().filterFindByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the layout prototypes that the user has permission to view where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of matching layout prototypes that the user has permission to view
-	 */
-	public static List<LayoutPrototype> filterFindByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().filterFindByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout prototypes that the user has permissions to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -289,64 +227,10 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the layout prototypes where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout prototypes where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<LayoutPrototype> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout prototypes where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -402,42 +286,10 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching layout prototypes that the user has permission to view
-	 */
-	public static List<LayoutPrototype> filterFindByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the layout prototypes that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of matching layout prototypes that the user has permission to view
-	 */
-	public static List<LayoutPrototype> filterFindByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout prototypes that the user has permissions to view where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -488,59 +340,10 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the layout prototypes where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout prototypes where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<LayoutPrototype> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout prototypes where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -592,38 +395,10 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes that the user has permission to view where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching layout prototypes that the user has permission to view
-	 */
-	public static List<LayoutPrototype> filterFindByCompanyId(long companyId) {
-		return getPersistence().filterFindByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the layout prototypes that the user has permission to view where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of matching layout prototypes that the user has permission to view
-	 */
-	public static List<LayoutPrototype> filterFindByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().filterFindByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout prototypes that the user has permissions to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -670,64 +445,10 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes where companyId = &#63; and active = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @return the matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByC_A(
-		long companyId, boolean active) {
-
-		return getPersistence().findByC_A(companyId, active);
-	}
-
-	/**
-	 * Returns a range of all the layout prototypes where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByC_A(
-		long companyId, boolean active, int start, int end) {
-
-		return getPersistence().findByC_A(companyId, active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout prototypes where companyId = &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout prototypes
-	 */
-	public static List<LayoutPrototype> findByC_A(
-		long companyId, boolean active, int start, int end,
-		OrderByComparator<LayoutPrototype> orderByComparator) {
-
-		return getPersistence().findByC_A(
-			companyId, active, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout prototypes where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -783,42 +504,10 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes that the user has permission to view where companyId = &#63; and active = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @return the matching layout prototypes that the user has permission to view
-	 */
-	public static List<LayoutPrototype> filterFindByC_A(
-		long companyId, boolean active) {
-
-		return getPersistence().filterFindByC_A(companyId, active);
-	}
-
-	/**
-	 * Returns a range of all the layout prototypes that the user has permission to view where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of layout prototypes
-	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of matching layout prototypes that the user has permission to view
-	 */
-	public static List<LayoutPrototype> filterFindByC_A(
-		long companyId, boolean active, int start, int end) {
-
-		return getPersistence().filterFindByC_A(companyId, active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout prototypes that the user has permissions to view where companyId = &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -866,24 +555,6 @@ public class LayoutPrototypeUtil {
 	 */
 	public static int filterCountByC_A(long companyId, boolean active) {
 		return getPersistence().filterCountByC_A(companyId, active);
-	}
-
-	/**
-	 * Caches the layout prototype in the entity cache if it is enabled.
-	 *
-	 * @param layoutPrototype the layout prototype
-	 */
-	public static void cacheResult(LayoutPrototype layoutPrototype) {
-		getPersistence().cacheResult(layoutPrototype);
-	}
-
-	/**
-	 * Caches the layout prototypes in the entity cache if it is enabled.
-	 *
-	 * @param layoutPrototypes the layout prototypes
-	 */
-	public static void cacheResult(List<LayoutPrototype> layoutPrototypes) {
-		getPersistence().cacheResult(layoutPrototypes);
 	}
 
 	/**
@@ -939,84 +610,328 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * Returns all the layout prototypes.
+	 * Returns all the layout prototypes where uuid = &#63;.
 	 *
-	 * @return the layout prototypes
+	 * @param uuid the uuid
+	 * @return the matching layout prototypes
 	 */
-	public static List<LayoutPrototype> findAll() {
-		return getPersistence().findAll();
+	public static List<LayoutPrototype> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
 	}
 
 	/**
-	 * Returns a range of all the layout prototypes.
+	 * Returns a range of all the layout prototypes where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of layout prototypes
 	 * @param end the upper bound of the range of layout prototypes (not inclusive)
-	 * @return the range of layout prototypes
+	 * @return the range of matching layout prototypes
 	 */
-	public static List<LayoutPrototype> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<LayoutPrototype> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the layout prototypes.
+	 * Returns an ordered range of all the layout prototypes where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of layout prototypes
 	 * @param end the upper bound of the range of layout prototypes (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of layout prototypes
+	 * @return the ordered range of matching layout prototypes
 	 */
-	public static List<LayoutPrototype> findAll(
-		int start, int end,
+	public static List<LayoutPrototype> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<LayoutPrototype> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the layout prototypes.
+	 * Returns all the layout prototypes that the user has permission to view where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching layout prototypes that the user has permission to view
+	 */
+	public static List<LayoutPrototype> filterFindByUuid(String uuid) {
+		return getPersistence().filterFindByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the layout prototypes that the user has permission to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPrototypeModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @return the range of matching layout prototypes that the user has permission to view
+	 */
+	public static List<LayoutPrototype> filterFindByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().filterFindByUuid(uuid, start, end);
+	}
+
+	/**
+	 * Returns all the layout prototypes where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching layout prototypes
+	 */
+	public static List<LayoutPrototype> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the layout prototypes where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @return the range of matching layout prototypes
+	 */
+	public static List<LayoutPrototype> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout prototypes where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of layout prototypes
 	 * @param end the upper bound of the range of layout prototypes (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of layout prototypes
+	 * @return the ordered range of matching layout prototypes
 	 */
-	public static List<LayoutPrototype> findAll(
-		int start, int end,
-		OrderByComparator<LayoutPrototype> orderByComparator,
-		boolean useFinderCache) {
+	public static List<LayoutPrototype> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<LayoutPrototype> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the layout prototypes from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of layout prototypes.
+	 * Returns all the layout prototypes that the user has permission to view where uuid = &#63; and companyId = &#63;.
 	 *
-	 * @return the number of layout prototypes
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching layout prototypes that the user has permission to view
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<LayoutPrototype> filterFindByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the layout prototypes that the user has permission to view where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @return the range of matching layout prototypes that the user has permission to view
+	 */
+	public static List<LayoutPrototype> filterFindByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns all the layout prototypes where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching layout prototypes
+	 */
+	public static List<LayoutPrototype> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the layout prototypes where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @return the range of matching layout prototypes
+	 */
+	public static List<LayoutPrototype> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout prototypes where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching layout prototypes
+	 */
+	public static List<LayoutPrototype> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<LayoutPrototype> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the layout prototypes that the user has permission to view where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching layout prototypes that the user has permission to view
+	 */
+	public static List<LayoutPrototype> filterFindByCompanyId(long companyId) {
+		return getPersistence().filterFindByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the layout prototypes that the user has permission to view where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @return the range of matching layout prototypes that the user has permission to view
+	 */
+	public static List<LayoutPrototype> filterFindByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().filterFindByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns all the layout prototypes where companyId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @return the matching layout prototypes
+	 */
+	public static List<LayoutPrototype> findByC_A(
+		long companyId, boolean active) {
+
+		return getPersistence().findByC_A(companyId, active);
+	}
+
+	/**
+	 * Returns a range of all the layout prototypes where companyId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @return the range of matching layout prototypes
+	 */
+	public static List<LayoutPrototype> findByC_A(
+		long companyId, boolean active, int start, int end) {
+
+		return getPersistence().findByC_A(companyId, active, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout prototypes where companyId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching layout prototypes
+	 */
+	public static List<LayoutPrototype> findByC_A(
+		long companyId, boolean active, int start, int end,
+		OrderByComparator<LayoutPrototype> orderByComparator) {
+
+		return getPersistence().findByC_A(
+			companyId, active, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the layout prototypes that the user has permission to view where companyId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @return the matching layout prototypes that the user has permission to view
+	 */
+	public static List<LayoutPrototype> filterFindByC_A(
+		long companyId, boolean active) {
+
+		return getPersistence().filterFindByC_A(companyId, active);
+	}
+
+	/**
+	 * Returns a range of all the layout prototypes that the user has permission to view where companyId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.LayoutPrototypeModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param start the lower bound of the range of layout prototypes
+	 * @param end the upper bound of the range of layout prototypes (not inclusive)
+	 * @return the range of matching layout prototypes that the user has permission to view
+	 */
+	public static List<LayoutPrototype> filterFindByC_A(
+		long companyId, boolean active, int start, int end) {
+
+		return getPersistence().filterFindByC_A(companyId, active, start, end);
 	}
 
 	public static LayoutPrototypePersistence getPersistence() {
@@ -1030,4 +945,4 @@ public class LayoutPrototypeUtil {
 	private static volatile LayoutPrototypePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:164161974
+// LIFERAY-SERVICE-BUILDER-HASH:1859174782

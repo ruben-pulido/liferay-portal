@@ -5,22 +5,14 @@
 
 package com.liferay.portal.service.persistence.impl;
 
-import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchSystemEventException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.SystemEvent;
 import com.liferay.portal.kernel.model.SystemEventTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -28,12 +20,12 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.SystemEventPersistence;
 import com.liferay.portal.kernel.service.persistence.SystemEventUtil;
+import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelperUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.model.impl.SystemEventImpl;
@@ -49,7 +41,6 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,7 +56,8 @@ import java.util.Set;
  * @generated
  */
 public class SystemEventPersistenceImpl
-	extends BasePersistenceImpl<SystemEvent> implements SystemEventPersistence {
+	extends BasePersistenceImpl<SystemEvent, NoSuchSystemEventException>
+	implements SystemEventPersistence {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -81,68 +73,14 @@ public class SystemEventPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByGroupId;
-	private FinderPath _finderPathWithoutPaginationFindByGroupId;
-	private FinderPath _finderPathCountByGroupId;
-
-	/**
-	 * Returns all the system events where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByGroupId(long groupId) {
-		return findByGroupId(
-			groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the system events where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @return the range of matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByGroupId(long groupId, int start, int end) {
-		return findByGroupId(groupId, start, end, null);
-	}
+	private CollectionPersistenceFinder<SystemEvent>
+		_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the system events where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<SystemEvent> orderByComparator) {
-
-		return findByGroupId(groupId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the system events where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -158,100 +96,9 @@ public class SystemEventPersistenceImpl
 		OrderByComparator<SystemEvent> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByGroupId;
-					finderArgs = new Object[] {groupId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByGroupId;
-				finderArgs = new Object[] {
-					groupId, start, end, orderByComparator
-				};
-			}
-
-			List<SystemEvent> list = null;
-
-			if (useFinderCache) {
-				list = (List<SystemEvent>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SystemEvent systemEvent : list) {
-						if (groupId != systemEvent.getGroupId()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_SYSTEMEVENT_WHERE);
-
-				sb.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SystemEventModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					list = (List<SystemEvent>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByGroupId.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -274,16 +121,9 @@ public class SystemEventPersistenceImpl
 			return systemEvent;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchSystemEventException(sb.toString());
+		throw new NoSuchSystemEventException(
+			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
 	}
 
 	/**
@@ -297,14 +137,9 @@ public class SystemEventPersistenceImpl
 	public SystemEvent fetchByGroupId_First(
 		long groupId, OrderByComparator<SystemEvent> orderByComparator) {
 
-		List<SystemEvent> list = findByGroupId(
-			groupId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByGroupId.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -314,12 +149,8 @@ public class SystemEventPersistenceImpl
 	 */
 	@Override
 	public void removeByGroupId(long groupId) {
-		for (SystemEvent systemEvent :
-				findByGroupId(
-					groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(systemEvent);
-		}
+		_collectionPersistenceFinderByGroupId.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId});
 	}
 
 	/**
@@ -330,122 +161,18 @@ public class SystemEventPersistenceImpl
 	 */
 	@Override
 	public int countByGroupId(long groupId) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = _finderPathCountByGroupId;
-
-			Object[] finderArgs = new Object[] {groupId};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_SYSTEMEVENT_WHERE);
-
-				sb.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByGroupId.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId});
 	}
 
-	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 =
-		"systemEvent.groupId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByG_S;
-	private FinderPath _finderPathWithoutPaginationFindByG_S;
-	private FinderPath _finderPathCountByG_S;
-
-	/**
-	 * Returns all the system events where groupId = &#63; and systemEventSetKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param systemEventSetKey the system event set key
-	 * @return the matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_S(long groupId, long systemEventSetKey) {
-		return findByG_S(
-			groupId, systemEventSetKey, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-	}
-
-	/**
-	 * Returns a range of all the system events where groupId = &#63; and systemEventSetKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param systemEventSetKey the system event set key
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @return the range of matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_S(
-		long groupId, long systemEventSetKey, int start, int end) {
-
-		return findByG_S(groupId, systemEventSetKey, start, end, null);
-	}
+	private CollectionPersistenceFinder<SystemEvent>
+		_collectionPersistenceFinderByG_S;
 
 	/**
 	 * Returns an ordered range of all the system events where groupId = &#63; and systemEventSetKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param systemEventSetKey the system event set key
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_S(
-		long groupId, long systemEventSetKey, int start, int end,
-		OrderByComparator<SystemEvent> orderByComparator) {
-
-		return findByG_S(
-			groupId, systemEventSetKey, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the system events where groupId = &#63; and systemEventSetKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -462,107 +189,10 @@ public class SystemEventPersistenceImpl
 		OrderByComparator<SystemEvent> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByG_S;
-					finderArgs = new Object[] {groupId, systemEventSetKey};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByG_S;
-				finderArgs = new Object[] {
-					groupId, systemEventSetKey, start, end, orderByComparator
-				};
-			}
-
-			List<SystemEvent> list = null;
-
-			if (useFinderCache) {
-				list = (List<SystemEvent>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SystemEvent systemEvent : list) {
-						if ((groupId != systemEvent.getGroupId()) ||
-							(systemEventSetKey !=
-								systemEvent.getSystemEventSetKey())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_SYSTEMEVENT_WHERE);
-
-				sb.append(_FINDER_COLUMN_G_S_GROUPID_2);
-
-				sb.append(_FINDER_COLUMN_G_S_SYSTEMEVENTSETKEY_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SystemEventModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					queryPos.add(systemEventSetKey);
-
-					list = (List<SystemEvent>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByG_S.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, systemEventSetKey}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -587,19 +217,10 @@ public class SystemEventPersistenceImpl
 			return systemEvent;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", systemEventSetKey=");
-		sb.append(systemEventSetKey);
-
-		sb.append("}");
-
-		throw new NoSuchSystemEventException(sb.toString());
+		throw new NoSuchSystemEventException(
+			_collectionPersistenceFinderByG_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {groupId, systemEventSetKey}));
 	}
 
 	/**
@@ -615,14 +236,9 @@ public class SystemEventPersistenceImpl
 		long groupId, long systemEventSetKey,
 		OrderByComparator<SystemEvent> orderByComparator) {
 
-		List<SystemEvent> list = findByG_S(
-			groupId, systemEventSetKey, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByG_S.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, systemEventSetKey}, orderByComparator);
 	}
 
 	/**
@@ -633,13 +249,9 @@ public class SystemEventPersistenceImpl
 	 */
 	@Override
 	public void removeByG_S(long groupId, long systemEventSetKey) {
-		for (SystemEvent systemEvent :
-				findByG_S(
-					groupId, systemEventSetKey, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(systemEvent);
-		}
+		_collectionPersistenceFinderByG_S.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, systemEventSetKey});
 	}
 
 	/**
@@ -651,134 +263,19 @@ public class SystemEventPersistenceImpl
 	 */
 	@Override
 	public int countByG_S(long groupId, long systemEventSetKey) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = _finderPathCountByG_S;
-
-			Object[] finderArgs = new Object[] {groupId, systemEventSetKey};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_SYSTEMEVENT_WHERE);
-
-				sb.append(_FINDER_COLUMN_G_S_GROUPID_2);
-
-				sb.append(_FINDER_COLUMN_G_S_SYSTEMEVENTSETKEY_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					queryPos.add(systemEventSetKey);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByG_S.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, systemEventSetKey});
 	}
 
-	private static final String _FINDER_COLUMN_G_S_GROUPID_2 =
-		"systemEvent.groupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_G_S_SYSTEMEVENTSETKEY_2 =
-		"systemEvent.systemEventSetKey = ?";
-
-	private FinderPath _finderPathWithPaginationFindByG_C_C;
-	private FinderPath _finderPathWithoutPaginationFindByG_C_C;
-	private FinderPath _finderPathCountByG_C_C;
-
-	/**
-	 * Returns all the system events where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_C_C(
-		long groupId, long classNameId, long classPK) {
-
-		return findByG_C_C(
-			groupId, classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-	}
-
-	/**
-	 * Returns a range of all the system events where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @return the range of matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_C_C(
-		long groupId, long classNameId, long classPK, int start, int end) {
-
-		return findByG_C_C(groupId, classNameId, classPK, start, end, null);
-	}
+	private CollectionPersistenceFinder<SystemEvent>
+		_collectionPersistenceFinderByG_C_C;
 
 	/**
 	 * Returns an ordered range of all the system events where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_C_C(
-		long groupId, long classNameId, long classPK, int start, int end,
-		OrderByComparator<SystemEvent> orderByComparator) {
-
-		return findByG_C_C(
-			groupId, classNameId, classPK, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the system events where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -796,111 +293,10 @@ public class SystemEventPersistenceImpl
 		OrderByComparator<SystemEvent> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByG_C_C;
-					finderArgs = new Object[] {groupId, classNameId, classPK};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByG_C_C;
-				finderArgs = new Object[] {
-					groupId, classNameId, classPK, start, end, orderByComparator
-				};
-			}
-
-			List<SystemEvent> list = null;
-
-			if (useFinderCache) {
-				list = (List<SystemEvent>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SystemEvent systemEvent : list) {
-						if ((groupId != systemEvent.getGroupId()) ||
-							(classNameId != systemEvent.getClassNameId()) ||
-							(classPK != systemEvent.getClassPK())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						5 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(5);
-				}
-
-				sb.append(_SQL_SELECT_SYSTEMEVENT_WHERE);
-
-				sb.append(_FINDER_COLUMN_G_C_C_GROUPID_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_CLASSNAMEID_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_CLASSPK_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SystemEventModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					queryPos.add(classNameId);
-
-					queryPos.add(classPK);
-
-					list = (List<SystemEvent>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByG_C_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -926,22 +322,10 @@ public class SystemEventPersistenceImpl
 			return systemEvent;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append(", classPK=");
-		sb.append(classPK);
-
-		sb.append("}");
-
-		throw new NoSuchSystemEventException(sb.toString());
+		throw new NoSuchSystemEventException(
+			_collectionPersistenceFinderByG_C_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {groupId, classNameId, classPK}));
 	}
 
 	/**
@@ -958,14 +342,9 @@ public class SystemEventPersistenceImpl
 		long groupId, long classNameId, long classPK,
 		OrderByComparator<SystemEvent> orderByComparator) {
 
-		List<SystemEvent> list = findByG_C_C(
-			groupId, classNameId, classPK, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByG_C_C.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK}, orderByComparator);
 	}
 
 	/**
@@ -977,13 +356,9 @@ public class SystemEventPersistenceImpl
 	 */
 	@Override
 	public void removeByG_C_C(long groupId, long classNameId, long classPK) {
-		for (SystemEvent systemEvent :
-				findByG_C_C(
-					groupId, classNameId, classPK, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(systemEvent);
-		}
+		_collectionPersistenceFinderByG_C_C.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK});
 	}
 
 	/**
@@ -996,147 +371,19 @@ public class SystemEventPersistenceImpl
 	 */
 	@Override
 	public int countByG_C_C(long groupId, long classNameId, long classPK) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = _finderPathCountByG_C_C;
-
-			Object[] finderArgs = new Object[] {groupId, classNameId, classPK};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_COUNT_SYSTEMEVENT_WHERE);
-
-				sb.append(_FINDER_COLUMN_G_C_C_GROUPID_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_CLASSNAMEID_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_CLASSPK_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					queryPos.add(classNameId);
-
-					queryPos.add(classPK);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByG_C_C.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK});
 	}
 
-	private static final String _FINDER_COLUMN_G_C_C_GROUPID_2 =
-		"systemEvent.groupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_G_C_C_CLASSNAMEID_2 =
-		"systemEvent.classNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_G_C_C_CLASSPK_2 =
-		"systemEvent.classPK = ?";
-
-	private FinderPath _finderPathWithPaginationFindByG_C_C_T;
-	private FinderPath _finderPathWithoutPaginationFindByG_C_C_T;
-	private FinderPath _finderPathCountByG_C_C_T;
-
-	/**
-	 * Returns all the system events where groupId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @return the matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_C_C_T(
-		long groupId, long classNameId, long classPK, int type) {
-
-		return findByG_C_C_T(
-			groupId, classNameId, classPK, type, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the system events where groupId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @return the range of matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_C_C_T(
-		long groupId, long classNameId, long classPK, int type, int start,
-		int end) {
-
-		return findByG_C_C_T(
-			groupId, classNameId, classPK, type, start, end, null);
-	}
+	private CollectionPersistenceFinder<SystemEvent>
+		_collectionPersistenceFinderByG_C_C_T;
 
 	/**
 	 * Returns an ordered range of all the system events where groupId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching system events
-	 */
-	@Override
-	public List<SystemEvent> findByG_C_C_T(
-		long groupId, long classNameId, long classPK, int type, int start,
-		int end, OrderByComparator<SystemEvent> orderByComparator) {
-
-		return findByG_C_C_T(
-			groupId, classNameId, classPK, type, start, end, orderByComparator,
-			true);
-	}
-
-	/**
-	 * Returns an ordered range of all the system events where groupId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1155,119 +402,10 @@ public class SystemEventPersistenceImpl
 		int end, OrderByComparator<SystemEvent> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByG_C_C_T;
-					finderArgs = new Object[] {
-						groupId, classNameId, classPK, type
-					};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByG_C_C_T;
-				finderArgs = new Object[] {
-					groupId, classNameId, classPK, type, start, end,
-					orderByComparator
-				};
-			}
-
-			List<SystemEvent> list = null;
-
-			if (useFinderCache) {
-				list = (List<SystemEvent>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SystemEvent systemEvent : list) {
-						if ((groupId != systemEvent.getGroupId()) ||
-							(classNameId != systemEvent.getClassNameId()) ||
-							(classPK != systemEvent.getClassPK()) ||
-							(type != systemEvent.getType())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						6 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(6);
-				}
-
-				sb.append(_SQL_SELECT_SYSTEMEVENT_WHERE);
-
-				sb.append(_FINDER_COLUMN_G_C_C_T_GROUPID_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_T_CLASSNAMEID_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_T_CLASSPK_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_T_TYPE_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SystemEventModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					queryPos.add(classNameId);
-
-					queryPos.add(classPK);
-
-					queryPos.add(type);
-
-					list = (List<SystemEvent>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByG_C_C_T.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK, type}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1294,25 +432,10 @@ public class SystemEventPersistenceImpl
 			return systemEvent;
 		}
 
-		StringBundler sb = new StringBundler(10);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append(", classPK=");
-		sb.append(classPK);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchSystemEventException(sb.toString());
+		throw new NoSuchSystemEventException(
+			_collectionPersistenceFinderByG_C_C_T.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {groupId, classNameId, classPK, type}));
 	}
 
 	/**
@@ -1330,14 +453,10 @@ public class SystemEventPersistenceImpl
 		long groupId, long classNameId, long classPK, int type,
 		OrderByComparator<SystemEvent> orderByComparator) {
 
-		List<SystemEvent> list = findByG_C_C_T(
-			groupId, classNameId, classPK, type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByG_C_C_T.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK, type},
+			orderByComparator);
 	}
 
 	/**
@@ -1352,13 +471,9 @@ public class SystemEventPersistenceImpl
 	public void removeByG_C_C_T(
 		long groupId, long classNameId, long classPK, int type) {
 
-		for (SystemEvent systemEvent :
-				findByG_C_C_T(
-					groupId, classNameId, classPK, type, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(systemEvent);
-		}
+		_collectionPersistenceFinderByG_C_C_T.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK, type});
 	}
 
 	/**
@@ -1374,78 +489,10 @@ public class SystemEventPersistenceImpl
 	public int countByG_C_C_T(
 		long groupId, long classNameId, long classPK, int type) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = _finderPathCountByG_C_C_T;
-
-			Object[] finderArgs = new Object[] {
-				groupId, classNameId, classPK, type
-			};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(5);
-
-				sb.append(_SQL_COUNT_SYSTEMEVENT_WHERE);
-
-				sb.append(_FINDER_COLUMN_G_C_C_T_GROUPID_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_T_CLASSNAMEID_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_T_CLASSPK_2);
-
-				sb.append(_FINDER_COLUMN_G_C_C_T_TYPE_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					queryPos.add(classNameId);
-
-					queryPos.add(classPK);
-
-					queryPos.add(type);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByG_C_C_T.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK, type});
 	}
-
-	private static final String _FINDER_COLUMN_G_C_C_T_GROUPID_2 =
-		"systemEvent.groupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_G_C_C_T_CLASSNAMEID_2 =
-		"systemEvent.classNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_G_C_C_T_CLASSPK_2 =
-		"systemEvent.classPK = ? AND ";
-
-	private static final String _FINDER_COLUMN_G_C_C_T_TYPE_2 =
-		"systemEvent.type = ?";
 
 	public SystemEventPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -1460,96 +507,6 @@ public class SystemEventPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(SystemEventTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the system event in the entity cache if it is enabled.
-	 *
-	 * @param systemEvent the system event
-	 */
-	@Override
-	public void cacheResult(SystemEvent systemEvent) {
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					systemEvent.getCtCollectionId())) {
-
-			EntityCacheUtil.putResult(
-				SystemEventImpl.class, systemEvent.getPrimaryKey(),
-				systemEvent);
-		}
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the system events in the entity cache if it is enabled.
-	 *
-	 * @param systemEvents the system events
-	 */
-	@Override
-	public void cacheResult(List<SystemEvent> systemEvents) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (systemEvents.size() > _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (SystemEvent systemEvent : systemEvents) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-						systemEvent.getCtCollectionId())) {
-
-				if (EntityCacheUtil.getResult(
-						SystemEventImpl.class, systemEvent.getPrimaryKey()) ==
-							null) {
-
-					cacheResult(systemEvent);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all system events.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		EntityCacheUtil.clearCache(SystemEventImpl.class);
-
-		FinderCacheUtil.clearCache(SystemEventImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the system event.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(SystemEvent systemEvent) {
-		EntityCacheUtil.removeResult(SystemEventImpl.class, systemEvent);
-	}
-
-	@Override
-	public void clearCache(List<SystemEvent> systemEvents) {
-		for (SystemEvent systemEvent : systemEvents) {
-			EntityCacheUtil.removeResult(SystemEventImpl.class, systemEvent);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		FinderCacheUtil.clearCache(SystemEventImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			EntityCacheUtil.removeResult(SystemEventImpl.class, primaryKey);
-		}
 	}
 
 	/**
@@ -1582,47 +539,6 @@ public class SystemEventPersistenceImpl
 		throws NoSuchSystemEventException {
 
 		return remove((Serializable)systemEventId);
-	}
-
-	/**
-	 * Removes the system event with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the system event
-	 * @return the system event that was removed
-	 * @throws NoSuchSystemEventException if a system event with the primary key could not be found
-	 */
-	@Override
-	public SystemEvent remove(Serializable primaryKey)
-		throws NoSuchSystemEventException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SystemEvent systemEvent = (SystemEvent)session.get(
-				SystemEventImpl.class, primaryKey);
-
-			if (systemEvent == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchSystemEventException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(systemEvent);
-		}
-		catch (NoSuchSystemEventException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1718,39 +634,13 @@ public class SystemEventPersistenceImpl
 			closeSession(session);
 		}
 
-		EntityCacheUtil.putResult(
-			SystemEventImpl.class, systemEventModelImpl, false, true);
+		cacheUniqueFindersResult(systemEvent, false);
 
 		if (isNew) {
 			systemEvent.setNew(false);
 		}
 
 		systemEvent.resetOriginalValues();
-
-		return systemEvent;
-	}
-
-	/**
-	 * Returns the system event with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the system event
-	 * @return the system event
-	 * @throws NoSuchSystemEventException if a system event with the primary key could not be found
-	 */
-	@Override
-	public SystemEvent findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchSystemEventException {
-
-		SystemEvent systemEvent = fetchByPrimaryKey(primaryKey);
-
-		if (systemEvent == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchSystemEventException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return systemEvent;
 	}
@@ -1769,52 +659,9 @@ public class SystemEventPersistenceImpl
 		return findByPrimaryKey((Serializable)systemEventId);
 	}
 
-	/**
-	 * Returns the system event with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the system event
-	 * @return the system event, or <code>null</code> if a system event with the primary key could not be found
-	 */
 	@Override
-	public SystemEvent fetchByPrimaryKey(Serializable primaryKey) {
-		if (CTPersistenceHelperUtil.isProductionMode(
-				SystemEvent.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		SystemEvent systemEvent = (SystemEvent)EntityCacheUtil.getResult(
-			SystemEventImpl.class, primaryKey);
-
-		if (systemEvent != null) {
-			return systemEvent;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			systemEvent = (SystemEvent)session.get(
-				SystemEventImpl.class, primaryKey);
-
-			if (systemEvent != null) {
-				cacheResult(systemEvent);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return systemEvent;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return CTPersistenceHelperUtil.getCTPersistenceHelper();
 	}
 
 	/**
@@ -1826,319 +673,6 @@ public class SystemEventPersistenceImpl
 	@Override
 	public SystemEvent fetchByPrimaryKey(long systemEventId) {
 		return fetchByPrimaryKey((Serializable)systemEventId);
-	}
-
-	@Override
-	public Map<Serializable, SystemEvent> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (CTPersistenceHelperUtil.isProductionMode(SystemEvent.class)) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, SystemEvent> map =
-			new HashMap<Serializable, SystemEvent>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			SystemEvent systemEvent = fetchByPrimaryKey(primaryKey);
-
-			if (systemEvent != null) {
-				map.put(primaryKey, systemEvent);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-						SystemEvent.class, primaryKey)) {
-
-				SystemEvent systemEvent =
-					(SystemEvent)EntityCacheUtil.getResult(
-						SystemEventImpl.class, primaryKey);
-
-				if (systemEvent == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, systemEvent);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (SystemEvent systemEvent : (List<SystemEvent>)query.list()) {
-				map.put(systemEvent.getPrimaryKeyObj(), systemEvent);
-
-				cacheResult(systemEvent);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the system events.
-	 *
-	 * @return the system events
-	 */
-	@Override
-	public List<SystemEvent> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the system events.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @return the range of system events
-	 */
-	@Override
-	public List<SystemEvent> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the system events.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of system events
-	 */
-	@Override
-	public List<SystemEvent> findAll(
-		int start, int end, OrderByComparator<SystemEvent> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the system events.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SystemEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of system events
-	 * @param end the upper bound of the range of system events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of system events
-	 */
-	@Override
-	public List<SystemEvent> findAll(
-		int start, int end, OrderByComparator<SystemEvent> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<SystemEvent> list = null;
-
-			if (useFinderCache) {
-				list = (List<SystemEvent>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_SYSTEMEVENT);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_SYSTEMEVENT;
-
-					sql = sql.concat(SystemEventModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<SystemEvent>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the system events from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (SystemEvent systemEvent : findAll()) {
-			remove(systemEvent);
-		}
-	}
-
-	/**
-	 * Returns the number of system events.
-	 *
-	 * @return the number of system events
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SystemEvent.class)) {
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(_SQL_COUNT_SYSTEMEVENT);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -2232,106 +766,137 @@ public class SystemEventPersistenceImpl
 	 * Initializes the system event persistence.
 	 */
 	public void afterPropertiesSet() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByGroupId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"groupId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupId",
+					new String[] {Long.class.getName()},
+					new String[] {"groupId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByGroupId",
+					new String[] {Long.class.getName()},
+					new String[] {"groupId"}, false),
+				_SQL_SELECT_SYSTEMEVENT_WHERE, _SQL_COUNT_SYSTEMEVENT_WHERE,
+				SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"systemEvent.", "groupId", FinderColumn.Type.LONG, "=",
+					true, true, SystemEvent::getGroupId));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByG_S = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_S",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"groupId", "systemEventSetKey"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_S",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"groupId", "systemEventSetKey"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_S",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"groupId", "systemEventSetKey"}, false),
+			_SQL_SELECT_SYSTEMEVENT_WHERE, _SQL_COUNT_SYSTEMEVENT_WHERE,
+			SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"systemEvent.", "groupId", FinderColumn.Type.LONG, "=", true,
+				true, SystemEvent::getGroupId),
+			new FinderColumn<>(
+				"systemEvent.", "systemEventSetKey", FinderColumn.Type.LONG,
+				"=", true, true, SystemEvent::getSystemEventSetKey));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByG_C_C = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C_C",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"groupId", "classNameId", "classPK"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_C_C",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {"groupId", "classNameId", "classPK"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_C_C",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {"groupId", "classNameId", "classPK"}, false),
+			_SQL_SELECT_SYSTEMEVENT_WHERE, _SQL_COUNT_SYSTEMEVENT_WHERE,
+			SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"systemEvent.", "groupId", FinderColumn.Type.LONG, "=", true,
+				true, SystemEvent::getGroupId),
+			new FinderColumn<>(
+				"systemEvent.", "classNameId", FinderColumn.Type.LONG, "=",
+				true, true, SystemEvent::getClassNameId),
+			new FinderColumn<>(
+				"systemEvent.", "classPK", FinderColumn.Type.LONG, "=", true,
+				true, SystemEvent::getClassPK));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByGroupId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"groupId"}, true);
-
-		_finderPathWithoutPaginationFindByGroupId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupId",
-			new String[] {Long.class.getName()}, new String[] {"groupId"},
-			true);
-
-		_finderPathCountByGroupId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByGroupId",
-			new String[] {Long.class.getName()}, new String[] {"groupId"},
-			false);
-
-		_finderPathWithPaginationFindByG_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_S",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"groupId", "systemEventSetKey"}, true);
-
-		_finderPathWithoutPaginationFindByG_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_S",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"groupId", "systemEventSetKey"}, true);
-
-		_finderPathCountByG_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_S",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"groupId", "systemEventSetKey"}, false);
-
-		_finderPathWithPaginationFindByG_C_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C_C",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"groupId", "classNameId", "classPK"}, true);
-
-		_finderPathWithoutPaginationFindByG_C_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_C_C",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {"groupId", "classNameId", "classPK"}, true);
-
-		_finderPathCountByG_C_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_C_C",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {"groupId", "classNameId", "classPK"}, false);
-
-		_finderPathWithPaginationFindByG_C_C_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C_C_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"groupId", "classNameId", "classPK", "type_"}, true);
-
-		_finderPathWithoutPaginationFindByG_C_C_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_C_C_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Integer.class.getName()
-			},
-			new String[] {"groupId", "classNameId", "classPK", "type_"}, true);
-
-		_finderPathCountByG_C_C_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_C_C_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Integer.class.getName()
-			},
-			new String[] {"groupId", "classNameId", "classPK", "type_"}, false);
+		_collectionPersistenceFinderByG_C_C_T =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C_C_T",
+					new String[] {
+						Long.class.getName(), Long.class.getName(),
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"groupId", "classNameId", "classPK", "type_"},
+					true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_C_C_T",
+					new String[] {
+						Long.class.getName(), Long.class.getName(),
+						Long.class.getName(), Integer.class.getName()
+					},
+					new String[] {"groupId", "classNameId", "classPK", "type_"},
+					true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_C_C_T",
+					new String[] {
+						Long.class.getName(), Long.class.getName(),
+						Long.class.getName(), Integer.class.getName()
+					},
+					new String[] {"groupId", "classNameId", "classPK", "type_"},
+					false),
+				_SQL_SELECT_SYSTEMEVENT_WHERE, _SQL_COUNT_SYSTEMEVENT_WHERE,
+				SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"systemEvent.", "groupId", FinderColumn.Type.LONG, "=",
+					true, true, SystemEvent::getGroupId),
+				new FinderColumn<>(
+					"systemEvent.", "classNameId", FinderColumn.Type.LONG, "=",
+					true, true, SystemEvent::getClassNameId),
+				new FinderColumn<>(
+					"systemEvent.", "classPK", FinderColumn.Type.LONG, "=",
+					true, true, SystemEvent::getClassPK),
+				new FinderColumn<>(
+					"systemEvent.", "type", FinderColumn.Type.INTEGER, "=",
+					true, true, SystemEvent::getType));
 
 		SystemEventUtil.setPersistence(this);
 	}
@@ -2342,28 +907,20 @@ public class SystemEventPersistenceImpl
 		EntityCacheUtil.removeCache(SystemEventImpl.class.getName());
 	}
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		SystemEventModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_SYSTEMEVENT =
 		"SELECT systemEvent FROM SystemEvent systemEvent";
 
 	private static final String _SQL_SELECT_SYSTEMEVENT_WHERE =
 		"SELECT systemEvent FROM SystemEvent systemEvent WHERE ";
 
-	private static final String _SQL_COUNT_SYSTEMEVENT =
-		"SELECT COUNT(systemEvent) FROM SystemEvent systemEvent";
-
 	private static final String _SQL_COUNT_SYSTEMEVENT_WHERE =
 		"SELECT COUNT(systemEvent) FROM SystemEvent systemEvent WHERE ";
 
-	private static final String _ORDER_BY_ENTITY_ALIAS = "systemEvent.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No SystemEvent exists with the primary key ";
-
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No SystemEvent exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SystemEventPersistenceImpl.class);
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
@@ -2374,4 +931,4 @@ public class SystemEventPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-995291080
+// LIFERAY-SERVICE-BUILDER-HASH:-750519707

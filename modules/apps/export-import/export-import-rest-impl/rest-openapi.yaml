@@ -1,5 +1,103 @@
 components:
     schemas:
+        ExportPreview:
+            properties:
+                additionCount:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                deletionCount:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                previewPortletDataHandlerSections:
+                    items:
+                        $ref: "#/components/schemas/PreviewPortletDataHandlerSection"
+                    readOnly: true
+                    type: array
+            type: object
+        ExportProcess:
+            properties:
+                creator:
+                    $ref: ../../headless/headless-delivery/headless-delivery-impl/rest-openapi.yaml#Creator
+                    readOnly: true
+                dateCreated:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                name:
+                    readOnly: true
+                    type: string
+                status:
+                    $ref: "#/components/schemas/Status"
+                    readOnly: true
+            type: object
+        ExportRequest:
+            properties:
+                endDate:
+                    format: date-time
+                    type: string
+                fileName:
+                    type: string
+                last:
+                    format: int32
+                    type: integer
+                range:
+                    default: all
+                    enum: [all, dateRange, last]
+                    type: string
+                requestPortletDataHandlers:
+                    items:
+                        $ref: "#/components/schemas/RequestPortletDataHandler"
+                    type: array
+                startDate:
+                    format: date-time
+                    type: string
+            required:
+                -   fileName
+            type: object
+        ImportPreview:
+            properties:
+                additionCount:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                author:
+                    readOnly: true
+                    type: string
+                deletionCount:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                exportDate:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                fileEntryId:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                fileName:
+                    readOnly: true
+                    type: string
+                fileSize:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                previewPortletDataHandlerSections:
+                    items:
+                        $ref: "#/components/schemas/PreviewPortletDataHandlerSection"
+                    readOnly: true
+                    type: array
+            type: object
         ImportProcess:
             properties:
                 creator:
@@ -23,16 +121,16 @@ components:
                     format: int64
                     readOnly: true
                     type: integer
+                name:
+                    description:
+                        The import process's name.
+                    readOnly: true
+                    type: string
                 status:
                     $ref: "#/components/schemas/Status"
                     description:
                         The import process's end status.
                     readOnly: true
-                title:
-                    description:
-                        The import process's title.
-                    readOnly: true
-                    type: string
             type: object
         Origin:
             properties:
@@ -41,6 +139,138 @@ components:
                     type: integer
                 label:
                     type: string
+            type: object
+        PortletDataHandler:
+            properties:
+                name:
+                    description:
+                        The handler's portlet ID.
+                    type: string
+            type: object
+        PortletDataHandlerControl:
+            properties:
+                name:
+                    type: string
+            type: object
+        PreviewPortletDataHandler:
+            allOf:
+                -   $ref: "#/components/schemas/PortletDataHandler"
+                -   properties:
+                        additionCount:
+                            format: int64
+                            readOnly: true
+                            type: integer
+                        deletionCount:
+                            format: int64
+                            readOnly: true
+                            type: integer
+                        label:
+                            readOnly: true
+                            type: string
+                        previewPortletDataHandlerControls:
+                            items:
+                                $ref: "#/components/schemas/PreviewPortletDataHandlerControl"
+                            readOnly: true
+                            type: array
+            type: object
+        PreviewPortletDataHandlerBoolean:
+            allOf:
+                -   $ref: "#/components/schemas/PreviewPortletDataHandlerControl"
+                -   properties:
+                        additionCount:
+                            format: int64
+                            readOnly: true
+                            type: integer
+                        defaultState:
+                            readOnly: true
+                            type: boolean
+                        deletionCount:
+                            format: int64
+                            readOnly: true
+                            type: integer
+                        previewPortletDataHandlerControls:
+                            items:
+                                $ref: "#/components/schemas/PreviewPortletDataHandlerControl"
+                            readOnly: true
+                            type: array
+            type: object
+        PreviewPortletDataHandlerChoice:
+            allOf:
+                -   $ref: "#/components/schemas/PreviewPortletDataHandlerControl"
+                -   properties:
+                        choices:
+                            items:
+                                properties:
+                                    label:
+                                        readOnly: true
+                                        type: string
+                                    name:
+                                        readOnly: true
+                                        type: string
+                                type: object
+                            readOnly: true
+                            type: array
+                        defaultChoice:
+                            readOnly: true
+                            type: string
+            type: object
+        PreviewPortletDataHandlerControl:
+            allOf:
+                -   $ref: "#/components/schemas/PortletDataHandlerControl"
+                -   properties:
+                        disabled:
+                            readOnly: true
+                            type: boolean
+                        label:
+                            readOnly: true
+                            type: string
+                        type:
+                            enum: [Boolean, Choice, Setting]
+                            readOnly: true
+                            type: string
+            discriminator:
+                mapping:
+                    Boolean: "#/components/schemas/PreviewPortletDataHandlerBoolean"
+                    Choice: "#/components/schemas/PreviewPortletDataHandlerChoice"
+                    Setting: "#/components/schemas/PreviewPortletDataHandlerSetting"
+                propertyName: type
+            required:
+                -   type
+            type: object
+        PreviewPortletDataHandlerSection:
+            properties:
+                additionCount:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                deletionCount:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                label:
+                    readOnly: true
+                    type: string
+                name:
+                    readOnly: true
+                    type: string
+                previewPortletDataHandlers:
+                    items:
+                        $ref: "#/components/schemas/PreviewPortletDataHandler"
+                    readOnly: true
+                    type: array
+            type: object
+        PreviewPortletDataHandlerSetting:
+            allOf:
+                -   $ref: "#/components/schemas/PreviewPortletDataHandlerControl"
+                -   properties:
+                        defaultState:
+                            readOnly: true
+                            type: boolean
+                        previewPortletDataHandlerControls:
+                            items:
+                                $ref: "#/components/schemas/PreviewPortletDataHandlerControl"
+                            readOnly: true
+                            type: array
             type: object
         ReportEntry:
             properties:
@@ -125,6 +355,30 @@ components:
                         The report entry's type.
                     readOnly: true
             type: object
+        RequestPortletDataHandler:
+            allOf:
+                -   $ref: "#/components/schemas/PortletDataHandler"
+                -   properties:
+                        requestPortletDataHandlerControls:
+                            items:
+                                $ref: "#/components/schemas/RequestPortletDataHandlerControl"
+                            type: array
+            type: object
+        RequestPortletDataHandlerControl:
+            allOf:
+                -   $ref: "#/components/schemas/PortletDataHandlerControl"
+                -   properties:
+                        requestPortletDataHandlerControls:
+                            items:
+                                $ref: "#/components/schemas/RequestPortletDataHandlerControl"
+                            type: array
+                        value:
+                            type: string
+                        values:
+                            items:
+                                type: string
+                            type: array
+            type: object
         Status:
             properties:
                 code:
@@ -140,37 +394,11 @@ components:
                 label:
                     type: string
             type: object
-        ValidationRequest:
-            properties:
-                file:
-                    description:
-                        File to validate
-                    format: binary
-                    type: string
-            type: object
-        ValidationResponse:
-            properties:
-                errorMessages:
-                    description:
-                        List of error messages.
-                    items:
-                        type: string
-                    type: array
-                fileEntryId:
-                    description:
-                        Identifier of the temporary file entry created.
-                    format: int64
-                    type: integer
-                success:
-                    description:
-                        Shows if the file can be imported without critical errors.
-                    type: boolean
-            type: object
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
         'com.liferay.exportimport.report.rest', and version '1.0.0'.. A Java client JAR is available for use with the
-        group ID 'com.liferay', artifact ID 'com.liferay.exportimport.rest.client', and version '1.0.5'."
+        group ID 'com.liferay', artifact ID 'com.liferay.exportimport.rest.client', and version '1.0.6'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -178,6 +406,101 @@ info:
     version: v1.0
 openapi: 3.0.1
 paths:
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/export-preview":
+        get:
+            operationId: getAssetLibraryExportPreview
+            parameters:
+                -   in: path
+                    name: assetLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: endDate
+                    schema:
+                        format: date-time
+                        type: string
+                -   in: query
+                    name: last
+                    schema:
+                        format: int32
+                        type: integer
+                -   in: query
+                    name: range
+                    schema:
+                        default: all
+                        enum: [all, dateRange, last]
+                        type: string
+                -   in: query
+                    name: startDate
+                    schema:
+                        format: date-time
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ExportPreview"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ExportPreview"
+            tags: ["ExportPreview"]
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/export-processes":
+        post:
+            operationId: postAssetLibraryExportProcess
+            parameters:
+                -   in: path
+                    name: assetLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ExportRequest"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ExportRequest"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ExportProcess"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ExportProcess"
+            tags: ["ExportProcess"]
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/import-preview":
+        post:
+            operationId: postAssetLibraryImportPreview
+            parameters:
+                -   in: path
+                    name: assetLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            properties:
+                                file:
+                                    format: binary
+                                    type: string
+                            type: object
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ImportPreview"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ImportPreview"
+            tags: ["ImportPreview"]
     "/asset-libraries/{assetLibraryId}/import-processes":
         description:
             Retrieves the import process entries for the specified asset library.
@@ -241,6 +564,84 @@ paths:
                                     $ref: "#/components/schemas/ImportProcess"
                                 type: array
             tags: ["ImportProcess"]
+    "/export-preview":
+        get:
+            operationId: getExportPreview
+            parameters:
+                -   in: query
+                    name: endDate
+                    schema:
+                        format: date-time
+                        type: string
+                -   in: query
+                    name: last
+                    schema:
+                        format: int32
+                        type: integer
+                -   in: query
+                    name: range
+                    schema:
+                        default: all
+                        enum: [all, dateRange, last]
+                        type: string
+                -   in: query
+                    name: startDate
+                    schema:
+                        format: date-time
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ExportPreview"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ExportPreview"
+            tags: ["ExportPreview"]
+    "/export-processes":
+        post:
+            operationId: postExportProcess
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ExportRequest"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ExportRequest"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ExportProcess"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ExportProcess"
+            tags: ["ExportProcess"]
+    "/import-preview":
+        post:
+            operationId: postImportPreview
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            properties:
+                                file:
+                                    format: binary
+                                    type: string
+                            type: object
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ImportPreview"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ImportPreview"
+            tags: ["ImportPreview"]
     "/import-processes":
         description:
             Retrieves all the import process entries.
@@ -424,12 +825,79 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ReportEntry"
             tags: ["ReportEntry"]
-    "/scopes/{scopeKey}/validate":
-        post:
-            operationId: postScopeScopeKeyValidate
+    "/sites/{siteExternalReferenceCode}/export-preview":
+        get:
+            operationId: getSiteExportPreview
             parameters:
                 -   in: path
-                    name: scopeKey
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: endDate
+                    schema:
+                        format: date-time
+                        type: string
+                -   in: query
+                    name: last
+                    schema:
+                        format: int32
+                        type: integer
+                -   in: query
+                    name: range
+                    schema:
+                        default: all
+                        enum: [all, dateRange, last]
+                        type: string
+                -   in: query
+                    name: startDate
+                    schema:
+                        format: date-time
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ExportPreview"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ExportPreview"
+            tags: ["ExportPreview"]
+    "/sites/{siteExternalReferenceCode}/export-processes":
+        post:
+            operationId: postSiteExportProcess
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ExportRequest"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ExportRequest"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ExportProcess"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ExportProcess"
+            tags: ["ExportProcess"]
+    "/sites/{siteExternalReferenceCode}/import-preview":
+        post:
+            operationId: postSiteImportPreview
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
                     required: true
                     schema:
                         type: string
@@ -437,17 +905,21 @@ paths:
                 content:
                     multipart/form-data:
                         schema:
-                            $ref: "#/components/schemas/ValidationRequest"
+                            properties:
+                                file:
+                                    format: binary
+                                    type: string
+                            type: object
             responses:
                 200:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/ValidationResponse"
+                                $ref: "#/components/schemas/ImportPreview"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/ValidationResponse"
-            tags: ["ImportProcess"]
+                                $ref: "#/components/schemas/ImportPreview"
+            tags: ["ImportPreview"]
     "/sites/{siteId}/import-processes":
         description:
             Retrieves the import process entries for the specified site.
@@ -510,22 +982,4 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/ImportProcess"
                                 type: array
-            tags: ["ImportProcess"]
-    "/validate":
-        post:
-            operationId: postValidate
-            requestBody:
-                content:
-                    multipart/form-data:
-                        schema:
-                            $ref: "#/components/schemas/ValidationRequest"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ValidationResponse"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/ValidationResponse"
             tags: ["ImportProcess"]

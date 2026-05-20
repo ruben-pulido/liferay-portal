@@ -117,6 +117,10 @@ public interface ObjectFieldBusinessType {
 
 	public PropertyDefinition.PropertyType getPropertyType();
 
+	public default Map<String, Object> getRenderingProperties() {
+		return Collections.emptyMap();
+	}
+
 	public default Set<String> getRequiredObjectFieldSettingsNames(
 		ObjectField objectField) {
 
@@ -197,6 +201,13 @@ public interface ObjectFieldBusinessType {
 			ObjectField newObjectField, ObjectField oldObjectField,
 			List<ObjectFieldSetting> objectFieldSettings)
 		throws PortalException {
+	}
+
+	public default Serializable processValue(
+			ObjectField objectField, Serializable value)
+		throws PortalException {
+
+		return value;
 	}
 
 	public default void validateObjectFieldSettings(

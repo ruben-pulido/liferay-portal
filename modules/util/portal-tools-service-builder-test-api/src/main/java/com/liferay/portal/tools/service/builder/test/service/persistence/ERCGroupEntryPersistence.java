@@ -33,51 +33,10 @@ public interface ERCGroupEntryPersistence
 	 */
 
 	/**
-	 * Returns all the erc group entries where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching erc group entries
-	 */
-	public java.util.List<ERCGroupEntry> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the erc group entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of erc group entries
-	 * @param end the upper bound of the range of erc group entries (not inclusive)
-	 * @return the range of matching erc group entries
-	 */
-	public java.util.List<ERCGroupEntry> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the erc group entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of erc group entries
-	 * @param end the upper bound of the range of erc group entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching erc group entries
-	 */
-	public java.util.List<ERCGroupEntry> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<ERCGroupEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the erc group entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.ERCGroupEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -146,15 +105,6 @@ public interface ERCGroupEntryPersistence
 		throws NoSuchERCGroupEntryException;
 
 	/**
-	 * Returns the erc group entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching erc group entry, or <code>null</code> if a matching erc group entry could not be found
-	 */
-	public ERCGroupEntry fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the erc group entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -185,55 +135,10 @@ public interface ERCGroupEntryPersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the erc group entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching erc group entries
-	 */
-	public java.util.List<ERCGroupEntry> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the erc group entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of erc group entries
-	 * @param end the upper bound of the range of erc group entries (not inclusive)
-	 * @return the range of matching erc group entries
-	 */
-	public java.util.List<ERCGroupEntry> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the erc group entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of erc group entries
-	 * @param end the upper bound of the range of erc group entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching erc group entries
-	 */
-	public java.util.List<ERCGroupEntry> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<ERCGroupEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the erc group entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.ERCGroupEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -307,16 +212,6 @@ public interface ERCGroupEntryPersistence
 		throws NoSuchERCGroupEntryException;
 
 	/**
-	 * Returns the erc group entry where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @return the matching erc group entry, or <code>null</code> if a matching erc group entry could not be found
-	 */
-	public ERCGroupEntry fetchByERC_G(
-		String externalReferenceCode, long groupId);
-
-	/**
 	 * Returns the erc group entry where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -346,20 +241,6 @@ public interface ERCGroupEntryPersistence
 	 * @return the number of matching erc group entries
 	 */
 	public int countByERC_G(String externalReferenceCode, long groupId);
-
-	/**
-	 * Caches the erc group entry in the entity cache if it is enabled.
-	 *
-	 * @param ercGroupEntry the erc group entry
-	 */
-	public void cacheResult(ERCGroupEntry ercGroupEntry);
-
-	/**
-	 * Caches the erc group entries in the entity cache if it is enabled.
-	 *
-	 * @param ercGroupEntries the erc group entries
-	 */
-	public void cacheResult(java.util.List<ERCGroupEntry> ercGroupEntries);
 
 	/**
 	 * Creates a new erc group entry with the primary key. Does not add the erc group entry to the database.
@@ -400,72 +281,137 @@ public interface ERCGroupEntryPersistence
 	public ERCGroupEntry fetchByPrimaryKey(long ercGroupEntryId);
 
 	/**
-	 * Returns all the erc group entries.
+	 * Returns the erc group entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the erc group entries
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching erc group entry, or <code>null</code> if a matching erc group entry could not be found
 	 */
-	public java.util.List<ERCGroupEntry> findAll();
+	public default ERCGroupEntry fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the erc group entries.
+	 * Returns the erc group entry where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @return the matching erc group entry, or <code>null</code> if a matching erc group entry could not be found
+	 */
+	public default ERCGroupEntry fetchByERC_G(
+		String externalReferenceCode, long groupId) {
+
+		return fetchByERC_G(externalReferenceCode, groupId, true);
+	}
+
+	/**
+	 * Returns all the erc group entries where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching erc group entries
+	 */
+	public default java.util.List<ERCGroupEntry> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the erc group entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.ERCGroupEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of erc group entries
 	 * @param end the upper bound of the range of erc group entries (not inclusive)
-	 * @return the range of erc group entries
+	 * @return the range of matching erc group entries
 	 */
-	public java.util.List<ERCGroupEntry> findAll(int start, int end);
+	public default java.util.List<ERCGroupEntry> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the erc group entries.
+	 * Returns an ordered range of all the erc group entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.ERCGroupEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of erc group entries
 	 * @param end the upper bound of the range of erc group entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of erc group entries
+	 * @return the ordered range of matching erc group entries
 	 */
-	public java.util.List<ERCGroupEntry> findAll(
-		int start, int end,
+	public default java.util.List<ERCGroupEntry> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<ERCGroupEntry>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the erc group entries.
+	 * Returns all the erc group entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching erc group entries
+	 */
+	public default java.util.List<ERCGroupEntry> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the erc group entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCGroupEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.ERCGroupEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of erc group entries
+	 * @param end the upper bound of the range of erc group entries (not inclusive)
+	 * @return the range of matching erc group entries
+	 */
+	public default java.util.List<ERCGroupEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the erc group entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.ERCGroupEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of erc group entries
 	 * @param end the upper bound of the range of erc group entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of erc group entries
+	 * @return the ordered range of matching erc group entries
 	 */
-	public java.util.List<ERCGroupEntry> findAll(
-		int start, int end,
+	public default java.util.List<ERCGroupEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<ERCGroupEntry>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
 
-	/**
-	 * Removes all the erc group entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of erc group entries.
-	 *
-	 * @return the number of erc group entries
-	 */
-	public int countAll();
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-372968457
+// LIFERAY-SERVICE-BUILDER-HASH:1033657332

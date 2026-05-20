@@ -35,6 +35,7 @@ import com.liferay.headless.admin.site.resource.v1_0.test.util.PageElementsTestU
 import com.liferay.headless.admin.site.resource.v1_0.test.util.PageExperiencesTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.PageSpecificationsTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.SettingsTestUtil;
+import com.liferay.headless.admin.site.resource.v1_0.test.util.ThumbnailURLReferenceUtil;
 import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.info.item.ERCInfoItemIdentifier;
 import com.liferay.info.item.InfoItemClassDetails;
@@ -68,6 +69,7 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.model.User;
@@ -89,6 +91,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -174,15 +177,16 @@ public class DisplayPageTemplateResourceTest
 				postDisplayPageTemplate.getExternalReferenceCode()));
 
 		DisplayPageTemplate liveGroupDisplayPageTemplate =
-			testPostSiteDisplayPageTemplate_addDisplayPageTemplate(
+			testGetSiteDisplayPageTemplatesPage_addDisplayPageTemplate(
+				irrelevantGroup.getExternalReferenceCode(),
 				randomDisplayPageTemplate());
 
-		_enableLocalStaging();
+		_enableLocalStaging(irrelevantGroup);
 
 		_assertProblemException(
 			"BAD_REQUEST", null,
 			() -> displayPageTemplateResource.deleteSiteDisplayPageTemplate(
-				testGroup.getExternalReferenceCode(),
+				irrelevantGroup.getExternalReferenceCode(),
 				liveGroupDisplayPageTemplate.getExternalReferenceCode()));
 	}
 
@@ -357,12 +361,8 @@ public class DisplayPageTemplateResourceTest
 		FileEntry fileEntry = _addPortletFileEntry(repository.getDlFolderId());
 
 		expectedDisplayPageTemplate.setThumbnailURLReference(
-			new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry.getExternalReferenceCode());
-				}
-			});
+			ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry, null));
 
 		_testPatchSiteDisplayPageTemplate(
 			expectedDisplayPageTemplate,
@@ -719,10 +719,14 @@ public class DisplayPageTemplateResourceTest
 	}
 
 	private void _enableLocalStaging() throws Exception {
+		_enableLocalStaging(testGroup);
+	}
+
+	private void _enableLocalStaging(Group group) throws Exception {
 		_stagingLocalService.enableLocalStaging(
-			TestPropsValues.getUserId(), testGroup, true, false,
+			TestPropsValues.getUserId(), group, true, false,
 			ServiceContextTestUtil.getServiceContext(
-				testGroup, TestPropsValues.getUserId()));
+				group, TestPropsValues.getUserId()));
 	}
 
 	private ClassSubtypeReference _getClassSubtypeReference(String className) {
@@ -818,7 +822,8 @@ public class DisplayPageTemplateResourceTest
 		).authentication(
 			user.getEmailAddress(), PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).parameters(
@@ -1199,12 +1204,8 @@ public class DisplayPageTemplateResourceTest
 		FileEntry fileEntry = _addPortletFileEntry(repository.getDlFolderId());
 
 		randomDisplayPageTemplate.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry, null));
 
 		DisplayPageTemplate postDisplayPageTemplate =
 			testPostSiteDisplayPageTemplate_addDisplayPageTemplate(
@@ -1430,13 +1431,8 @@ public class DisplayPageTemplateResourceTest
 		FileEntry fileEntry = _addPortletFileEntry(repository.getDlFolderId());
 
 		displayPageTemplate1.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry.getExternalReferenceCode());
-					setUrl(RandomTestUtil.randomString());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry, RandomTestUtil.randomString()));
 
 		DisplayPageTemplateResource displayPageTemplateResource =
 			_getDisplayPageTemplateResource("thumbnail");
@@ -1456,13 +1452,8 @@ public class DisplayPageTemplateResourceTest
 			repository.getDlFolderId());
 
 		displayPageTemplate1.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						newFileEntry.getExternalReferenceCode());
-					setUrl(RandomTestUtil.randomString());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				newFileEntry, RandomTestUtil.randomString()));
 
 		displayPageTemplateResource.patchSiteDisplayPageTemplate(
 			testGroup.getExternalReferenceCode(),
@@ -1476,15 +1467,7 @@ public class DisplayPageTemplateResourceTest
 		DisplayPageTemplate displayPageTemplate2 = randomDisplayPageTemplate();
 
 		ThumbnailURLReference thumbnailURLReference =
-			new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(RandomTestUtil.randomString());
-					setUrl(
-						() ->
-							"http://localhost:8080/" +
-								RandomTestUtil.randomString());
-				}
-			};
+			ThumbnailURLReferenceUtil.getRandomThumbnailURLReference();
 
 		displayPageTemplate2.setThumbnailURLReference(thumbnailURLReference);
 
@@ -1811,12 +1794,8 @@ public class DisplayPageTemplateResourceTest
 		FileEntry fileEntry = _addPortletFileEntry(repository.getDlFolderId());
 
 		displayPageTemplate.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry, null));
 
 		DisplayPageTemplate postDisplayPageTemplate =
 			displayPageTemplateResource.postSiteDisplayPageTemplate(
@@ -1829,15 +1808,7 @@ public class DisplayPageTemplateResourceTest
 		displayPageTemplate = randomDisplayPageTemplate();
 
 		ThumbnailURLReference thumbnailURLReference =
-			new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(RandomTestUtil.randomString());
-					setUrl(
-						() ->
-							"http://localhost:8080/" +
-								RandomTestUtil.randomString());
-				}
-			};
+			ThumbnailURLReferenceUtil.getRandomThumbnailURLReference();
 
 		displayPageTemplate.setThumbnailURLReference(thumbnailURLReference);
 
@@ -2237,12 +2208,8 @@ public class DisplayPageTemplateResourceTest
 		FileEntry fileEntry1 = _addPortletFileEntry(repository.getDlFolderId());
 
 		displayPageTemplate.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry1.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry1, null));
 
 		DisplayPageTemplate putDisplayPageTemplate =
 			displayPageTemplateResource.putSiteDisplayPageTemplate(
@@ -2257,12 +2224,8 @@ public class DisplayPageTemplateResourceTest
 		FileEntry fileEntry2 = _addPortletFileEntry(repository.getDlFolderId());
 
 		putDisplayPageTemplate.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry2.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry2, null));
 
 		putDisplayPageTemplate =
 			displayPageTemplateResource.putSiteDisplayPageTemplate(
@@ -2288,15 +2251,7 @@ public class DisplayPageTemplateResourceTest
 		displayPageTemplate = randomDisplayPageTemplate();
 
 		ThumbnailURLReference thumbnailURLReference =
-			new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(RandomTestUtil.randomString());
-					setUrl(
-						() ->
-							"http://localhost:8080/" +
-								RandomTestUtil.randomString());
-				}
-			};
+			ThumbnailURLReferenceUtil.getRandomThumbnailURLReference();
 
 		displayPageTemplate.setThumbnailURLReference(thumbnailURLReference);
 

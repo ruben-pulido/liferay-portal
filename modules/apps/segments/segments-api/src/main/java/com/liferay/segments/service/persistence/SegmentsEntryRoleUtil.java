@@ -36,6 +36,20 @@ public class SegmentsEntryRoleUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<SegmentsEntryRole> segmentsEntryRoles) {
+		getPersistence().cacheResult(segmentsEntryRoles);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(SegmentsEntryRole segmentsEntryRole) {
+		getPersistence().cacheResult(segmentsEntryRole);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -113,62 +127,10 @@ public class SegmentsEntryRoleUtil {
 	}
 
 	/**
-	 * Returns all the segments entry roles where segmentsEntryId = &#63;.
-	 *
-	 * @param segmentsEntryId the segments entry ID
-	 * @return the matching segments entry roles
-	 */
-	public static List<SegmentsEntryRole> findBySegmentsEntryId(
-		long segmentsEntryId) {
-
-		return getPersistence().findBySegmentsEntryId(segmentsEntryId);
-	}
-
-	/**
-	 * Returns a range of all the segments entry roles where segmentsEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param segmentsEntryId the segments entry ID
-	 * @param start the lower bound of the range of segments entry roles
-	 * @param end the upper bound of the range of segments entry roles (not inclusive)
-	 * @return the range of matching segments entry roles
-	 */
-	public static List<SegmentsEntryRole> findBySegmentsEntryId(
-		long segmentsEntryId, int start, int end) {
-
-		return getPersistence().findBySegmentsEntryId(
-			segmentsEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the segments entry roles where segmentsEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param segmentsEntryId the segments entry ID
-	 * @param start the lower bound of the range of segments entry roles
-	 * @param end the upper bound of the range of segments entry roles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching segments entry roles
-	 */
-	public static List<SegmentsEntryRole> findBySegmentsEntryId(
-		long segmentsEntryId, int start, int end,
-		OrderByComparator<SegmentsEntryRole> orderByComparator) {
-
-		return getPersistence().findBySegmentsEntryId(
-			segmentsEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the segments entry roles where segmentsEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRoleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param segmentsEntryId the segments entry ID
@@ -239,59 +201,10 @@ public class SegmentsEntryRoleUtil {
 	}
 
 	/**
-	 * Returns all the segments entry roles where roleId = &#63;.
-	 *
-	 * @param roleId the role ID
-	 * @return the matching segments entry roles
-	 */
-	public static List<SegmentsEntryRole> findByRoleId(long roleId) {
-		return getPersistence().findByRoleId(roleId);
-	}
-
-	/**
-	 * Returns a range of all the segments entry roles where roleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param roleId the role ID
-	 * @param start the lower bound of the range of segments entry roles
-	 * @param end the upper bound of the range of segments entry roles (not inclusive)
-	 * @return the range of matching segments entry roles
-	 */
-	public static List<SegmentsEntryRole> findByRoleId(
-		long roleId, int start, int end) {
-
-		return getPersistence().findByRoleId(roleId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the segments entry roles where roleId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param roleId the role ID
-	 * @param start the lower bound of the range of segments entry roles
-	 * @param end the upper bound of the range of segments entry roles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching segments entry roles
-	 */
-	public static List<SegmentsEntryRole> findByRoleId(
-		long roleId, int start, int end,
-		OrderByComparator<SegmentsEntryRole> orderByComparator) {
-
-		return getPersistence().findByRoleId(
-			roleId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the segments entry roles where roleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRoleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param roleId the role ID
@@ -372,19 +285,6 @@ public class SegmentsEntryRoleUtil {
 	}
 
 	/**
-	 * Returns the segments entry role where segmentsEntryId = &#63; and roleId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param segmentsEntryId the segments entry ID
-	 * @param roleId the role ID
-	 * @return the matching segments entry role, or <code>null</code> if a matching segments entry role could not be found
-	 */
-	public static SegmentsEntryRole fetchByS_R(
-		long segmentsEntryId, long roleId) {
-
-		return getPersistence().fetchByS_R(segmentsEntryId, roleId);
-	}
-
-	/**
 	 * Returns the segments entry role where segmentsEntryId = &#63; and roleId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param segmentsEntryId the segments entry ID
@@ -422,24 +322,6 @@ public class SegmentsEntryRoleUtil {
 	 */
 	public static int countByS_R(long segmentsEntryId, long roleId) {
 		return getPersistence().countByS_R(segmentsEntryId, roleId);
-	}
-
-	/**
-	 * Caches the segments entry role in the entity cache if it is enabled.
-	 *
-	 * @param segmentsEntryRole the segments entry role
-	 */
-	public static void cacheResult(SegmentsEntryRole segmentsEntryRole) {
-		getPersistence().cacheResult(segmentsEntryRole);
-	}
-
-	/**
-	 * Caches the segments entry roles in the entity cache if it is enabled.
-	 *
-	 * @param segmentsEntryRoles the segments entry roles
-	 */
-	public static void cacheResult(List<SegmentsEntryRole> segmentsEntryRoles) {
-		getPersistence().cacheResult(segmentsEntryRoles);
 	}
 
 	/**
@@ -497,84 +379,117 @@ public class SegmentsEntryRoleUtil {
 	}
 
 	/**
-	 * Returns all the segments entry roles.
+	 * Returns the segments entry role where segmentsEntryId = &#63; and roleId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the segments entry roles
+	 * @param segmentsEntryId the segments entry ID
+	 * @param roleId the role ID
+	 * @return the matching segments entry role, or <code>null</code> if a matching segments entry role could not be found
 	 */
-	public static List<SegmentsEntryRole> findAll() {
-		return getPersistence().findAll();
+	public static SegmentsEntryRole fetchByS_R(
+		long segmentsEntryId, long roleId) {
+
+		return getPersistence().fetchByS_R(segmentsEntryId, roleId);
 	}
 
 	/**
-	 * Returns a range of all the segments entry roles.
+	 * Returns all the segments entry roles where segmentsEntryId = &#63;.
+	 *
+	 * @param segmentsEntryId the segments entry ID
+	 * @return the matching segments entry roles
+	 */
+	public static List<SegmentsEntryRole> findBySegmentsEntryId(
+		long segmentsEntryId) {
+
+		return getPersistence().findBySegmentsEntryId(segmentsEntryId);
+	}
+
+	/**
+	 * Returns a range of all the segments entry roles where segmentsEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRoleModelImpl</code>.
 	 * </p>
 	 *
+	 * @param segmentsEntryId the segments entry ID
 	 * @param start the lower bound of the range of segments entry roles
 	 * @param end the upper bound of the range of segments entry roles (not inclusive)
-	 * @return the range of segments entry roles
+	 * @return the range of matching segments entry roles
 	 */
-	public static List<SegmentsEntryRole> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<SegmentsEntryRole> findBySegmentsEntryId(
+		long segmentsEntryId, int start, int end) {
+
+		return getPersistence().findBySegmentsEntryId(
+			segmentsEntryId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the segments entry roles.
+	 * Returns an ordered range of all the segments entry roles where segmentsEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRoleModelImpl</code>.
 	 * </p>
 	 *
+	 * @param segmentsEntryId the segments entry ID
 	 * @param start the lower bound of the range of segments entry roles
 	 * @param end the upper bound of the range of segments entry roles (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of segments entry roles
+	 * @return the ordered range of matching segments entry roles
 	 */
-	public static List<SegmentsEntryRole> findAll(
-		int start, int end,
+	public static List<SegmentsEntryRole> findBySegmentsEntryId(
+		long segmentsEntryId, int start, int end,
 		OrderByComparator<SegmentsEntryRole> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findBySegmentsEntryId(
+			segmentsEntryId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the segments entry roles.
+	 * Returns all the segments entry roles where roleId = &#63;.
+	 *
+	 * @param roleId the role ID
+	 * @return the matching segments entry roles
+	 */
+	public static List<SegmentsEntryRole> findByRoleId(long roleId) {
+		return getPersistence().findByRoleId(roleId);
+	}
+
+	/**
+	 * Returns a range of all the segments entry roles where roleId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRoleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRoleModelImpl</code>.
 	 * </p>
 	 *
+	 * @param roleId the role ID
+	 * @param start the lower bound of the range of segments entry roles
+	 * @param end the upper bound of the range of segments entry roles (not inclusive)
+	 * @return the range of matching segments entry roles
+	 */
+	public static List<SegmentsEntryRole> findByRoleId(
+		long roleId, int start, int end) {
+
+		return getPersistence().findByRoleId(roleId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments entry roles where roleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRoleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param roleId the role ID
 	 * @param start the lower bound of the range of segments entry roles
 	 * @param end the upper bound of the range of segments entry roles (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of segments entry roles
+	 * @return the ordered range of matching segments entry roles
 	 */
-	public static List<SegmentsEntryRole> findAll(
-		int start, int end,
-		OrderByComparator<SegmentsEntryRole> orderByComparator,
-		boolean useFinderCache) {
+	public static List<SegmentsEntryRole> findByRoleId(
+		long roleId, int start, int end,
+		OrderByComparator<SegmentsEntryRole> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the segments entry roles from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of segments entry roles.
-	 *
-	 * @return the number of segments entry roles
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByRoleId(
+			roleId, start, end, orderByComparator);
 	}
 
 	public static SegmentsEntryRolePersistence getPersistence() {
@@ -590,4 +505,4 @@ public class SegmentsEntryRoleUtil {
 	private static volatile SegmentsEntryRolePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1484380035
+// LIFERAY-SERVICE-BUILDER-HASH:899587509

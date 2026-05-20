@@ -32,51 +32,10 @@ public interface MembershipRequestPersistence
 	 */
 
 	/**
-	 * Returns all the membership requests where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByGroupId(long groupId);
-
-	/**
-	 * Returns a range of all the membership requests where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @return the range of matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByGroupId(
-		long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the membership requests where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByGroupId(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the membership requests where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -134,51 +93,10 @@ public interface MembershipRequestPersistence
 	public int countByGroupId(long groupId);
 
 	/**
-	 * Returns all the membership requests where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByUserId(long userId);
-
-	/**
-	 * Returns a range of all the membership requests where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @return the range of matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByUserId(
-		long userId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the membership requests where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByUserId(
-		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the membership requests where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -236,55 +154,10 @@ public interface MembershipRequestPersistence
 	public int countByUserId(long userId);
 
 	/**
-	 * Returns all the membership requests where groupId = &#63; and statusId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param statusId the status ID
-	 * @return the matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByG_S(
-		long groupId, long statusId);
-
-	/**
-	 * Returns a range of all the membership requests where groupId = &#63; and statusId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param statusId the status ID
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @return the range of matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByG_S(
-		long groupId, long statusId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the membership requests where groupId = &#63; and statusId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param statusId the status ID
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByG_S(
-		long groupId, long statusId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the membership requests where groupId = &#63; and statusId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -347,58 +220,10 @@ public interface MembershipRequestPersistence
 	public int countByG_S(long groupId, long statusId);
 
 	/**
-	 * Returns all the membership requests where groupId = &#63; and userId = &#63; and statusId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param statusId the status ID
-	 * @return the matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByG_U_S(
-		long groupId, long userId, long statusId);
-
-	/**
-	 * Returns a range of all the membership requests where groupId = &#63; and userId = &#63; and statusId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param statusId the status ID
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @return the range of matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByG_U_S(
-		long groupId, long userId, long statusId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the membership requests where groupId = &#63; and userId = &#63; and statusId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param statusId the status ID
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching membership requests
-	 */
-	public java.util.List<MembershipRequest> findByG_U_S(
-		long groupId, long userId, long statusId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the membership requests where groupId = &#63; and userId = &#63; and statusId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -466,21 +291,6 @@ public interface MembershipRequestPersistence
 	public int countByG_U_S(long groupId, long userId, long statusId);
 
 	/**
-	 * Caches the membership request in the entity cache if it is enabled.
-	 *
-	 * @param membershipRequest the membership request
-	 */
-	public void cacheResult(MembershipRequest membershipRequest);
-
-	/**
-	 * Caches the membership requests in the entity cache if it is enabled.
-	 *
-	 * @param membershipRequests the membership requests
-	 */
-	public void cacheResult(
-		java.util.List<MembershipRequest> membershipRequests);
-
-	/**
 	 * Creates a new membership request with the primary key. Does not add the membership request to the database.
 	 *
 	 * @param membershipRequestId the primary key for the new membership request
@@ -519,72 +329,227 @@ public interface MembershipRequestPersistence
 	public MembershipRequest fetchByPrimaryKey(long membershipRequestId);
 
 	/**
-	 * Returns all the membership requests.
+	 * Returns all the membership requests where groupId = &#63;.
 	 *
-	 * @return the membership requests
+	 * @param groupId the group ID
+	 * @return the matching membership requests
 	 */
-	public java.util.List<MembershipRequest> findAll();
+	public default java.util.List<MembershipRequest> findByGroupId(
+		long groupId) {
+
+		return findByGroupId(
+			groupId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the membership requests.
+	 * Returns a range of all the membership requests where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of membership requests
 	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @return the range of membership requests
+	 * @return the range of matching membership requests
 	 */
-	public java.util.List<MembershipRequest> findAll(int start, int end);
+	public default java.util.List<MembershipRequest> findByGroupId(
+		long groupId, int start, int end) {
+
+		return findByGroupId(groupId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the membership requests.
+	 * Returns an ordered range of all the membership requests where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of membership requests
-	 * @param end the upper bound of the range of membership requests (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of membership requests
-	 */
-	public java.util.List<MembershipRequest> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the membership requests.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MembershipRequestModelImpl</code>.
-	 * </p>
-	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of membership requests
 	 * @param end the upper bound of the range of membership requests (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of membership requests
+	 * @return the ordered range of matching membership requests
 	 */
-	public java.util.List<MembershipRequest> findAll(
-		int start, int end,
+	public default java.util.List<MembershipRequest> findByGroupId(
+		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByGroupId(groupId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the membership requests from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of membership requests.
+	 * Returns all the membership requests where userId = &#63;.
 	 *
-	 * @return the number of membership requests
+	 * @param userId the user ID
+	 * @return the matching membership requests
 	 */
-	public int countAll();
+	public default java.util.List<MembershipRequest> findByUserId(long userId) {
+		return findByUserId(
+			userId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the membership requests where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of membership requests
+	 * @param end the upper bound of the range of membership requests (not inclusive)
+	 * @return the range of matching membership requests
+	 */
+	public default java.util.List<MembershipRequest> findByUserId(
+		long userId, int start, int end) {
+
+		return findByUserId(userId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the membership requests where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of membership requests
+	 * @param end the upper bound of the range of membership requests (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching membership requests
+	 */
+	public default java.util.List<MembershipRequest> findByUserId(
+		long userId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
+			orderByComparator) {
+
+		return findByUserId(userId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the membership requests where groupId = &#63; and statusId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param statusId the status ID
+	 * @return the matching membership requests
+	 */
+	public default java.util.List<MembershipRequest> findByG_S(
+		long groupId, long statusId) {
+
+		return findByG_S(
+			groupId, statusId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the membership requests where groupId = &#63; and statusId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param statusId the status ID
+	 * @param start the lower bound of the range of membership requests
+	 * @param end the upper bound of the range of membership requests (not inclusive)
+	 * @return the range of matching membership requests
+	 */
+	public default java.util.List<MembershipRequest> findByG_S(
+		long groupId, long statusId, int start, int end) {
+
+		return findByG_S(groupId, statusId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the membership requests where groupId = &#63; and statusId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param statusId the status ID
+	 * @param start the lower bound of the range of membership requests
+	 * @param end the upper bound of the range of membership requests (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching membership requests
+	 */
+	public default java.util.List<MembershipRequest> findByG_S(
+		long groupId, long statusId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
+			orderByComparator) {
+
+		return findByG_S(
+			groupId, statusId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the membership requests where groupId = &#63; and userId = &#63; and statusId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param statusId the status ID
+	 * @return the matching membership requests
+	 */
+	public default java.util.List<MembershipRequest> findByG_U_S(
+		long groupId, long userId, long statusId) {
+
+		return findByG_U_S(
+			groupId, userId, statusId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the membership requests where groupId = &#63; and userId = &#63; and statusId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param statusId the status ID
+	 * @param start the lower bound of the range of membership requests
+	 * @param end the upper bound of the range of membership requests (not inclusive)
+	 * @return the range of matching membership requests
+	 */
+	public default java.util.List<MembershipRequest> findByG_U_S(
+		long groupId, long userId, long statusId, int start, int end) {
+
+		return findByG_U_S(groupId, userId, statusId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the membership requests where groupId = &#63; and userId = &#63; and statusId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.MembershipRequestModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param statusId the status ID
+	 * @param start the lower bound of the range of membership requests
+	 * @param end the upper bound of the range of membership requests (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching membership requests
+	 */
+	public default java.util.List<MembershipRequest> findByG_U_S(
+		long groupId, long userId, long statusId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<MembershipRequest>
+			orderByComparator) {
+
+		return findByG_U_S(
+			groupId, userId, statusId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:230487059
+// LIFERAY-SERVICE-BUILDER-HASH:1776757244

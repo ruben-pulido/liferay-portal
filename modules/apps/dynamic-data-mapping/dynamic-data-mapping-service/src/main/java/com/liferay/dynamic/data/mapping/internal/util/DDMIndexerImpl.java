@@ -37,9 +37,8 @@ import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.FieldArray;
+import com.liferay.portal.kernel.search.NestedQuery;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.NestedQuery;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
@@ -491,7 +490,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 			locale = null;
 		}
 
-		BooleanQuery booleanQuery = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		if (isLegacyDDMIndexFieldsEnabled()) {
 			_addFieldValueRequiredTerm(
@@ -1223,7 +1222,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 			DDMForm ddmForm = ddmStructure.getFullHierarchyDDMForm(false);
 
 			List<DDMFormFieldValue> ddmFormFieldValues =
-				DDMFormValuesConverterUtil.getDDMFormFieldValues(
+				DDMFormValuesConverterUtil.addMissingDDMFormFieldValues(
 					ddmForm.getDDMFormFields(),
 					ddmFormValues.getDDMFormFieldValuesMap(true));
 

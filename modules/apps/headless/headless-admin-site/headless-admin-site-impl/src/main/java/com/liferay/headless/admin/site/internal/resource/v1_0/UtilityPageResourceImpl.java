@@ -6,6 +6,7 @@
 package com.liferay.headless.admin.site.internal.resource.v1_0;
 
 import com.liferay.client.extension.type.manager.CETManager;
+import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
@@ -16,11 +17,11 @@ import com.liferay.headless.admin.site.dto.v1_0.UtilityPageSettings;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.DTOConverterContextUtil;
 import com.liferay.headless.admin.site.internal.odata.entity.v1_0.UtilityPageEntityModel;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.FileEntryUtil;
-import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.ServiceContextUtil;
 import com.liferay.headless.admin.site.internal.util.EnabledUtil;
 import com.liferay.headless.admin.site.resource.v1_0.UtilityPageResource;
+import com.liferay.headless.common.spi.util.GroupUtil;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.utility.page.kernel.constants.LayoutUtilityPageEntryConstants;
@@ -127,6 +128,11 @@ public class UtilityPageResourceImpl
 			@Override
 			public Scope getScope() {
 				return Scope.SITE;
+			}
+
+			@Override
+			public String getSectionKey() {
+				return ExportImportConstants.SECTION_KEY_SITE_BUILDER;
 			}
 
 			@Override
@@ -288,6 +294,9 @@ public class UtilityPageResourceImpl
 				utilityPageSEOSettings.getDescription_i18n());
 		}
 
+		ServiceContext serviceContext = _getServiceContext(
+			groupId, utilityPage);
+
 		LayoutUtil.updateContentLayout(
 			_cetManager, _fragmentEntryProcessorRegistry,
 			_infoItemServiceRegistry, layout, layout.getNameMap(), titleMap,
@@ -295,8 +304,7 @@ public class UtilityPageResourceImpl
 			LocalizedMapUtil.getLocalizedMap(
 				utilityPage.getFriendlyUrlPath_i18n()),
 			layout.getTypeSettingsProperties(),
-			utilityPage.getPageSpecifications(),
-			_getServiceContext(groupId, utilityPage));
+			utilityPage.getPageSpecifications(), serviceContext);
 
 		if (GetterUtil.getBoolean(utilityPage.getMarkedAsDefault()) &&
 			!layoutUtilityPageEntry.isDefaultLayoutUtilityPageEntry()) {
@@ -315,8 +323,7 @@ public class UtilityPageResourceImpl
 		}
 
 		long previewFileEntryId = FileEntryUtil.getPreviewFileEntryId(
-			groupId, getResourceName(),
-			_getServiceContext(groupId, utilityPage),
+			groupId, getResourceName(), serviceContext,
 			utilityPage.getThumbnailURLReference());
 
 		if (previewFileEntryId !=
@@ -325,13 +332,13 @@ public class UtilityPageResourceImpl
 			layoutUtilityPageEntry =
 				_layoutUtilityPageEntryService.updateLayoutUtilityPageEntry(
 					layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
-					previewFileEntryId);
+					previewFileEntryId, serviceContext);
 		}
 
 		return _utilityPageDTOConverter.toDTO(
 			_layoutUtilityPageEntryService.updateLayoutUtilityPageEntry(
 				layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
-				utilityPage.getName()));
+				utilityPage.getName(), serviceContext));
 	}
 
 	@Override
@@ -388,8 +395,7 @@ public class UtilityPageResourceImpl
 				utilityPage.getExternalReferenceCode(), groupId,
 				_getLayoutPlid(groupId, utilityPage, serviceContext),
 				FileEntryUtil.getPreviewFileEntryId(
-					groupId, getResourceName(),
-					_getServiceContext(groupId, utilityPage),
+					groupId, getResourceName(), serviceContext,
 					utilityPage.getThumbnailURLReference()),
 				utilityPage.getMarkedAsDefault(), utilityPage.getName(),
 				_getType(utilityPage.getType()), null, serviceContext);

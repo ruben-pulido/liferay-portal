@@ -6,7 +6,6 @@
 package com.liferay.exportimport.rest.resource.v1_0;
 
 import com.liferay.exportimport.rest.dto.v1_0.ImportProcess;
-import com.liferay.exportimport.rest.dto.v1_0.ValidationResponse;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
@@ -17,7 +16,6 @@ import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineExportTaskResource;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResource;
-import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -81,17 +79,10 @@ public interface ImportProcessResource {
 			String contentType, String fieldNames)
 		throws Exception;
 
-	public ValidationResponse postScopeScopeKeyValidate(
-			String scopeKey, MultipartBody multipartBody)
-		throws Exception;
-
 	public Response postSiteImportProcessesPageExportBatch(
 			Long siteId, Long creatorId, String search, Integer status,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
-		throws Exception;
-
-	public ValidationResponse postValidate(MultipartBody multipartBody)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(
@@ -190,4 +181,4 @@ public interface ImportProcessResource {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:1966132523
+// LIFERAY-REST-BUILDER-HASH:-1878846972

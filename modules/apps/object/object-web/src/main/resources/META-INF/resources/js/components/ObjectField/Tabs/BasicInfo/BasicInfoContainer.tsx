@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {CountryInfo} from '@liferay/object-js-components-web';
 import classNames from 'classnames';
 import {
 	ILearnResourceContext,
@@ -17,11 +18,13 @@ import ObjectFieldFormBase, {
 import {AttachmentProperties} from './AttachmentProperties';
 import {AggregationFilters} from './BasicInfoTab';
 import {MaxLengthProperties} from './MaxLengthProperties';
+import {PhoneNumberProperties} from './PhoneNumberProperties';
 
 import '../../EditObjectFieldContent.scss';
 
 interface BasicInfoContainerProps {
 	baseResourceURL: string;
+	countries: CountryInfo[];
 	creationLanguageId2?: Liferay.Language.Locale;
 	dbObjectFieldRequired?: boolean;
 	errors: ObjectFieldErrors;
@@ -43,6 +46,7 @@ interface BasicInfoContainerProps {
 
 export function BasicInfoContainer({
 	baseResourceURL,
+	countries,
 	creationLanguageId2,
 	dbObjectFieldRequired,
 	errors,
@@ -154,6 +158,18 @@ export function BasicInfoContainer({
 					/>
 				)}
 			</ObjectFieldFormBase>
+
+			{values.businessType === 'PhoneNumber' && (
+				<PhoneNumberProperties
+					countries={countries}
+					objectFieldSettings={
+						values.objectFieldSettings as ObjectFieldSetting[]
+					}
+					onSubmit={onSubmit}
+					setValues={setValues}
+					values={values}
+				/>
+			)}
 		</div>
 	);
 }

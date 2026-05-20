@@ -38,6 +38,8 @@ export const PORTLET_URLS = {
 	cmsVocabularies: 'web/cms/categorization/view-vocabularies',
 	collections:
 		'/~/control_panel/manage?p_p_id=com_liferay_asset_list_web_portlet_AssetListPortlet',
+	commerceChannels:
+		'/group/guest/~/control_panel/manage?p_p_id=com_liferay_commerce_channel_web_internal_portlet_CommerceChannelsPortlet',
 	contentDashboard:
 		'/~/control_panel/manage?p_p_id=com_liferay_content_dashboard_web_portlet_ContentDashboardAdminPortlet',
 	depotAdmin:
@@ -76,6 +78,8 @@ export const PORTLET_URLS = {
 		'/~/control_panel/manage?p_p_id=com_liferay_portal_workflow_task_web_portlet_MyWorkflowTaskPortlet',
 	navigationMenus:
 		'/~/control_panel/manage?p_p_id=com_liferay_site_navigation_admin_web_portlet_SiteNavigationAdminPortlet',
+	notificationQueueEntries:
+		'/~/control_panel/manage?p_p_id=com_liferay_notification_web_internal_portlet_NotificationQueueEntriesPortlet',
 	notificationTemplates:
 		'/~/control_panel/manage?p_p_id=com_liferay_notification_web_internal_portlet_NotificationTemplatesPortlet',
 	notifications:

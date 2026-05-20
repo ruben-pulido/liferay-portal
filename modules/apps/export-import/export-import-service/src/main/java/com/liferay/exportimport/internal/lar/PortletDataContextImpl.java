@@ -13,6 +13,7 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.adapter.StagedExpandoColumn;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
+import com.liferay.expando.kernel.util.ExpandoUtil;
 import com.liferay.exportimport.internal.util.ExportImportPermissionUtil;
 import com.liferay.exportimport.internal.xstream.ConverterAdapter;
 import com.liferay.exportimport.internal.xstream.XStreamStagedModelTypeHierarchyPermission;
@@ -31,6 +32,7 @@ import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.exportimport.kernel.lar.UserIdStrategy;
 import com.liferay.exportimport.kernel.xstream.XStreamAlias;
 import com.liferay.exportimport.kernel.xstream.XStreamConverter;
+import com.liferay.exportimport.report.service.ExportImportReportEntryLocalServiceUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
@@ -1953,6 +1955,38 @@ public class PortletDataContextImpl implements PortletDataContext {
 					(Map<String, Serializable>)getZipEntryAsObject(expandoPath);
 
 				if (expandoBridgeAttributes != null) {
+					List<String> warningMessages =
+						ExpandoUtil.fillMissingDefaultLocaleValues(
+							expandoBridgeAttributes);
+
+					if (!warningMessages.isEmpty()) {
+						String externalReferenceCode = null;
+
+						if (classedModel instanceof
+								ExternalReferenceCodeModel) {
+
+							ExternalReferenceCodeModel
+								externalReferenceCodeModel =
+									(ExternalReferenceCodeModel)classedModel;
+
+							externalReferenceCode =
+								externalReferenceCodeModel.
+									getExternalReferenceCode();
+						}
+
+						ExportImportReportEntryLocalServiceUtil.
+							getOrAddErrorExportImportReportEntry(
+								getGroupId(), getCompanyId(),
+								externalReferenceCode,
+								ExportImportClassedModelUtil.getClassNameId(
+									classedModel),
+								ExportImportClassedModelUtil.getClassPK(
+									classedModel),
+								GetterUtil.getLong(getExportImportProcessId()),
+								StringUtil.merge(warningMessages, "\n"), null,
+								clazz.getName());
+					}
+
 					serviceContext.setExpandoBridgeAttributes(
 						expandoBridgeAttributes);
 				}

@@ -36,6 +36,22 @@ public class JournalContentSearchUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<JournalContentSearch> journalContentSearchs) {
+
+		getPersistence().cacheResult(journalContentSearchs);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(JournalContentSearch journalContentSearch) {
+		getPersistence().cacheResult(journalContentSearch);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -114,59 +130,10 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the journal content searches where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the journal content searches where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<JournalContentSearch> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -237,59 +204,10 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches where portletId = &#63;.
-	 *
-	 * @param portletId the portlet ID
-	 * @return the matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByPortletId(String portletId) {
-		return getPersistence().findByPortletId(portletId);
-	}
-
-	/**
-	 * Returns a range of all the journal content searches where portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByPortletId(
-		String portletId, int start, int end) {
-
-		return getPersistence().findByPortletId(portletId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the journal content searches where portletId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByPortletId(
-		String portletId, int start, int end,
-		OrderByComparator<JournalContentSearch> orderByComparator) {
-
-		return getPersistence().findByPortletId(
-			portletId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches where portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
 	 * @param portletId the portlet ID
@@ -360,59 +278,10 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches where articleId = &#63;.
-	 *
-	 * @param articleId the article ID
-	 * @return the matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByArticleId(String articleId) {
-		return getPersistence().findByArticleId(articleId);
-	}
-
-	/**
-	 * Returns a range of all the journal content searches where articleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param articleId the article ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByArticleId(
-		String articleId, int start, int end) {
-
-		return getPersistence().findByArticleId(articleId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the journal content searches where articleId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param articleId the article ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByArticleId(
-		String articleId, int start, int end,
-		OrderByComparator<JournalContentSearch> orderByComparator) {
-
-		return getPersistence().findByArticleId(
-			articleId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches where articleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
 	 * @param articleId the article ID
@@ -483,64 +352,10 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches where groupId = &#63; and privateLayout = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @return the matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P(
-		long groupId, boolean privateLayout) {
-
-		return getPersistence().findByG_P(groupId, privateLayout);
-	}
-
-	/**
-	 * Returns a range of all the journal content searches where groupId = &#63; and privateLayout = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P(
-		long groupId, boolean privateLayout, int start, int end) {
-
-		return getPersistence().findByG_P(groupId, privateLayout, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P(
-		long groupId, boolean privateLayout, int start, int end,
-		OrderByComparator<JournalContentSearch> orderByComparator) {
-
-		return getPersistence().findByG_P(
-			groupId, privateLayout, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -617,64 +432,10 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches where groupId = &#63; and articleId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param articleId the article ID
-	 * @return the matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_A(
-		long groupId, String articleId) {
-
-		return getPersistence().findByG_A(groupId, articleId);
-	}
-
-	/**
-	 * Returns a range of all the journal content searches where groupId = &#63; and articleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param articleId the article ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_A(
-		long groupId, String articleId, int start, int end) {
-
-		return getPersistence().findByG_A(groupId, articleId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and articleId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param articleId the article ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_A(
-		long groupId, String articleId, int start, int end,
-		OrderByComparator<JournalContentSearch> orderByComparator) {
-
-		return getPersistence().findByG_A(
-			groupId, articleId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches where groupId = &#63; and articleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -750,69 +511,10 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param layoutId the layout ID
-	 * @return the matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_L(
-		long groupId, boolean privateLayout, long layoutId) {
-
-		return getPersistence().findByG_P_L(groupId, privateLayout, layoutId);
-	}
-
-	/**
-	 * Returns a range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param layoutId the layout ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_L(
-		long groupId, boolean privateLayout, long layoutId, int start,
-		int end) {
-
-		return getPersistence().findByG_P_L(
-			groupId, privateLayout, layoutId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param layoutId the layout ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_L(
-		long groupId, boolean privateLayout, long layoutId, int start, int end,
-		OrderByComparator<JournalContentSearch> orderByComparator) {
-
-		return getPersistence().findByG_P_L(
-			groupId, privateLayout, layoutId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -898,69 +600,10 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches where groupId = &#63; and privateLayout = &#63; and articleId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param articleId the article ID
-	 * @return the matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_A(
-		long groupId, boolean privateLayout, String articleId) {
-
-		return getPersistence().findByG_P_A(groupId, privateLayout, articleId);
-	}
-
-	/**
-	 * Returns a range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and articleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param articleId the article ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_A(
-		long groupId, boolean privateLayout, String articleId, int start,
-		int end) {
-
-		return getPersistence().findByG_P_A(
-			groupId, privateLayout, articleId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and articleId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param articleId the article ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_A(
-		long groupId, boolean privateLayout, String articleId, int start,
-		int end, OrderByComparator<JournalContentSearch> orderByComparator) {
-
-		return getPersistence().findByG_P_A(
-			groupId, privateLayout, articleId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and articleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1046,75 +689,10 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param layoutId the layout ID
-	 * @param portletId the portlet ID
-	 * @return the matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_L_P(
-		long groupId, boolean privateLayout, long layoutId, String portletId) {
-
-		return getPersistence().findByG_P_L_P(
-			groupId, privateLayout, layoutId, portletId);
-	}
-
-	/**
-	 * Returns a range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param layoutId the layout ID
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_L_P(
-		long groupId, boolean privateLayout, long layoutId, String portletId,
-		int start, int end) {
-
-		return getPersistence().findByG_P_L_P(
-			groupId, privateLayout, layoutId, portletId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param layoutId the layout ID
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching journal content searches
-	 */
-	public static List<JournalContentSearch> findByG_P_L_P(
-		long groupId, boolean privateLayout, long layoutId, String portletId,
-		int start, int end,
-		OrderByComparator<JournalContentSearch> orderByComparator) {
-
-		return getPersistence().findByG_P_L_P(
-			groupId, privateLayout, layoutId, portletId, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1229,24 +807,6 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns the journal content search where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63; and articleId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param privateLayout the private layout
-	 * @param layoutId the layout ID
-	 * @param portletId the portlet ID
-	 * @param articleId the article ID
-	 * @return the matching journal content search, or <code>null</code> if a matching journal content search could not be found
-	 */
-	public static JournalContentSearch fetchByG_P_L_P_A(
-		long groupId, boolean privateLayout, long layoutId, String portletId,
-		String articleId) {
-
-		return getPersistence().fetchByG_P_L_P_A(
-			groupId, privateLayout, layoutId, portletId, articleId);
-	}
-
-	/**
 	 * Returns the journal content search where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63; and articleId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -1304,26 +864,6 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Caches the journal content search in the entity cache if it is enabled.
-	 *
-	 * @param journalContentSearch the journal content search
-	 */
-	public static void cacheResult(JournalContentSearch journalContentSearch) {
-		getPersistence().cacheResult(journalContentSearch);
-	}
-
-	/**
-	 * Caches the journal content searches in the entity cache if it is enabled.
-	 *
-	 * @param journalContentSearchs the journal content searches
-	 */
-	public static void cacheResult(
-		List<JournalContentSearch> journalContentSearchs) {
-
-		getPersistence().cacheResult(journalContentSearchs);
-	}
-
-	/**
 	 * Creates a new journal content search with the primary key. Does not add the journal content search to the database.
 	 *
 	 * @param contentSearchId the primary key for the new journal content search
@@ -1376,84 +916,459 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * Returns all the journal content searches.
+	 * Returns the journal content search where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63; and articleId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the journal content searches
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param layoutId the layout ID
+	 * @param portletId the portlet ID
+	 * @param articleId the article ID
+	 * @return the matching journal content search, or <code>null</code> if a matching journal content search could not be found
 	 */
-	public static List<JournalContentSearch> findAll() {
-		return getPersistence().findAll();
+	public static JournalContentSearch fetchByG_P_L_P_A(
+		long groupId, boolean privateLayout, long layoutId, String portletId,
+		String articleId) {
+
+		return getPersistence().fetchByG_P_L_P_A(
+			groupId, privateLayout, layoutId, portletId, articleId);
 	}
 
 	/**
-	 * Returns a range of all the journal content searches.
+	 * Returns all the journal content searches where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the journal content searches where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of journal content searches
 	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @return the range of journal content searches
+	 * @return the range of matching journal content searches
 	 */
-	public static List<JournalContentSearch> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<JournalContentSearch> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the journal content searches.
+	 * Returns an ordered range of all the journal content searches where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of journal content searches
 	 * @param end the upper bound of the range of journal content searches (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of journal content searches
+	 * @return the ordered range of matching journal content searches
 	 */
-	public static List<JournalContentSearch> findAll(
+	public static List<JournalContentSearch> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<JournalContentSearch> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the journal content searches where portletId = &#63;.
+	 *
+	 * @param portletId the portlet ID
+	 * @return the matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByPortletId(String portletId) {
+		return getPersistence().findByPortletId(portletId);
+	}
+
+	/**
+	 * Returns a range of all the journal content searches where portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @return the range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByPortletId(
+		String portletId, int start, int end) {
+
+		return getPersistence().findByPortletId(portletId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal content searches where portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByPortletId(
+		String portletId, int start, int end,
+		OrderByComparator<JournalContentSearch> orderByComparator) {
+
+		return getPersistence().findByPortletId(
+			portletId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the journal content searches where articleId = &#63;.
+	 *
+	 * @param articleId the article ID
+	 * @return the matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByArticleId(String articleId) {
+		return getPersistence().findByArticleId(articleId);
+	}
+
+	/**
+	 * Returns a range of all the journal content searches where articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @return the range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByArticleId(
+		String articleId, int start, int end) {
+
+		return getPersistence().findByArticleId(articleId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal content searches where articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByArticleId(
+		String articleId, int start, int end,
+		OrderByComparator<JournalContentSearch> orderByComparator) {
+
+		return getPersistence().findByArticleId(
+			articleId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the journal content searches where groupId = &#63; and privateLayout = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @return the matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P(
+		long groupId, boolean privateLayout) {
+
+		return getPersistence().findByG_P(groupId, privateLayout);
+	}
+
+	/**
+	 * Returns a range of all the journal content searches where groupId = &#63; and privateLayout = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @return the range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P(
+		long groupId, boolean privateLayout, int start, int end) {
+
+		return getPersistence().findByG_P(groupId, privateLayout, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P(
+		long groupId, boolean privateLayout, int start, int end,
+		OrderByComparator<JournalContentSearch> orderByComparator) {
+
+		return getPersistence().findByG_P(
+			groupId, privateLayout, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the journal content searches where groupId = &#63; and articleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param articleId the article ID
+	 * @return the matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_A(
+		long groupId, String articleId) {
+
+		return getPersistence().findByG_A(groupId, articleId);
+	}
+
+	/**
+	 * Returns a range of all the journal content searches where groupId = &#63; and articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @return the range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_A(
+		long groupId, String articleId, int start, int end) {
+
+		return getPersistence().findByG_A(groupId, articleId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal content searches where groupId = &#63; and articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_A(
+		long groupId, String articleId, int start, int end,
+		OrderByComparator<JournalContentSearch> orderByComparator) {
+
+		return getPersistence().findByG_A(
+			groupId, articleId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param layoutId the layout ID
+	 * @return the matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_L(
+		long groupId, boolean privateLayout, long layoutId) {
+
+		return getPersistence().findByG_P_L(groupId, privateLayout, layoutId);
+	}
+
+	/**
+	 * Returns a range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param layoutId the layout ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @return the range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_L(
+		long groupId, boolean privateLayout, long layoutId, int start,
+		int end) {
+
+		return getPersistence().findByG_P_L(
+			groupId, privateLayout, layoutId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param layoutId the layout ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_L(
+		long groupId, boolean privateLayout, long layoutId, int start, int end,
+		OrderByComparator<JournalContentSearch> orderByComparator) {
+
+		return getPersistence().findByG_P_L(
+			groupId, privateLayout, layoutId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the journal content searches where groupId = &#63; and privateLayout = &#63; and articleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param articleId the article ID
+	 * @return the matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_A(
+		long groupId, boolean privateLayout, String articleId) {
+
+		return getPersistence().findByG_P_A(groupId, privateLayout, articleId);
+	}
+
+	/**
+	 * Returns a range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @return the range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_A(
+		long groupId, boolean privateLayout, String articleId, int start,
+		int end) {
+
+		return getPersistence().findByG_P_A(
+			groupId, privateLayout, articleId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_A(
+		long groupId, boolean privateLayout, String articleId, int start,
+		int end, OrderByComparator<JournalContentSearch> orderByComparator) {
+
+		return getPersistence().findByG_P_A(
+			groupId, privateLayout, articleId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param layoutId the layout ID
+	 * @param portletId the portlet ID
+	 * @return the matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_L_P(
+		long groupId, boolean privateLayout, long layoutId, String portletId) {
+
+		return getPersistence().findByG_P_L_P(
+			groupId, privateLayout, layoutId, portletId);
+	}
+
+	/**
+	 * Returns a range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param layoutId the layout ID
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @return the range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_L_P(
+		long groupId, boolean privateLayout, long layoutId, String portletId,
+		int start, int end) {
+
+		return getPersistence().findByG_P_L_P(
+			groupId, privateLayout, layoutId, portletId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.journal.model.impl.JournalContentSearchModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param privateLayout the private layout
+	 * @param layoutId the layout ID
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of journal content searches
+	 * @param end the upper bound of the range of journal content searches (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal content searches
+	 */
+	public static List<JournalContentSearch> findByG_P_L_P(
+		long groupId, boolean privateLayout, long layoutId, String portletId,
 		int start, int end,
 		OrderByComparator<JournalContentSearch> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the journal content searches.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>JournalContentSearchModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of journal content searches
-	 * @param end the upper bound of the range of journal content searches (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of journal content searches
-	 */
-	public static List<JournalContentSearch> findAll(
-		int start, int end,
-		OrderByComparator<JournalContentSearch> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the journal content searches from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of journal content searches.
-	 *
-	 * @return the number of journal content searches
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByG_P_L_P(
+			groupId, privateLayout, layoutId, portletId, start, end,
+			orderByComparator);
 	}
 
 	public static JournalContentSearchPersistence getPersistence() {
@@ -1469,4 +1384,4 @@ public class JournalContentSearchUtil {
 	private static volatile JournalContentSearchPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1965536300
+// LIFERAY-SERVICE-BUILDER-HASH:2134966969

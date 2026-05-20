@@ -1,3 +1,4 @@
+import * as API from 'shared/api';
 import * as breadcrumbs from 'shared/util/breadcrumbs';
 import BasePage from 'shared/components/base-page';
 import ClayButton from '@clayui/button';
@@ -8,20 +9,22 @@ import React from 'react';
 import StatesRenderer from 'shared/components/states-renderer/StatesRenderer';
 import URLConstants from 'shared/util/url-constants';
 import {FeatureName, useLimitReached} from 'shared/hooks/useLimitReached';
-import {fetchFeatureUsages} from 'shared/api/projects';
 import {Routes, toRoute} from 'shared/util/router';
 import {useChannelContext} from 'shared/context/channel';
 import {useCurrentUser} from 'shared/hooks/useCurrentUser';
-import {useDataSource} from 'shared/hooks/useDataSource';
+import {useDataSources} from 'shared/context/dataSources';
 import {useParams} from 'react-router-dom';
 import {useRequest} from 'shared/hooks/useRequest';
 
 const List = () => {
 	const {selectedChannel} = useChannelContext();
-	const {channelId, groupId} = useParams();
+	const {channelId = '', groupId = ''} = useParams<{
+		channelId: string;
+		groupId: string;
+	}>();
 	const currentUser = useCurrentUser();
 
-	const {empty, error, loading} = useDataSource();
+	const {empty, error, loading} = useDataSources();
 
 	const {
 		data: usageData,
@@ -29,7 +32,7 @@ const List = () => {
 		loading: usageLoading,
 		refetch
 	} = useRequest({
-		dataSourceFn: fetchFeatureUsages,
+		dataSourceFn: API.projects.fetchFeatureUsages,
 		variables: {groupId}
 	});
 

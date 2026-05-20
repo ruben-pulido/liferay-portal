@@ -14,17 +14,11 @@ import com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl;
 import com.liferay.client.extension.service.persistence.ClientExtensionEntryRelPersistence;
 import com.liferay.client.extension.service.persistence.ClientExtensionEntryRelUtil;
 import com.liferay.client.extension.service.persistence.impl.constants.ClientExtensionPersistenceConstants;
-import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -39,11 +33,12 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -59,7 +54,6 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -84,7 +78,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = ClientExtensionEntryRelPersistence.class)
 public class ClientExtensionEntryRelPersistenceImpl
-	extends BasePersistenceImpl<ClientExtensionEntryRel>
+	extends BasePersistenceImpl
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
 	implements ClientExtensionEntryRelPersistence {
 
 	/*
@@ -101,69 +96,14 @@ public class ClientExtensionEntryRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the client extension entry rels where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the client extension entry rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByUuid(
-		String uuid, int start, int end) {
-
-		return findByUuid(uuid, start, end, null);
-	}
+	private CollectionPersistenceFinder<ClientExtensionEntryRel>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -179,113 +119,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUuid;
-					finderArgs = new Object[] {uuid};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUuid;
-				finderArgs = new Object[] {uuid, start, end, orderByComparator};
-			}
-
-			List<ClientExtensionEntryRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<ClientExtensionEntryRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (ClientExtensionEntryRel clientExtensionEntryRel :
-							list) {
-
-						if (!uuid.equals(clientExtensionEntryRel.getUuid())) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_UUID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					list = (List<ClientExtensionEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -309,16 +145,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			return clientExtensionEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchClientExtensionEntryRelException(sb.toString());
+		throw new NoSuchClientExtensionEntryRelException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -333,14 +162,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 		String uuid,
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
 
-		List<ClientExtensionEntryRel> list = findByUuid(
-			uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -350,11 +173,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (ClientExtensionEntryRel clientExtensionEntryRel :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(clientExtensionEntryRel);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -365,73 +185,12 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = _finderPathCountByUuid;
-
-			Object[] finderArgs = new Object[] {uuid};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_UUID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"clientExtensionEntryRel.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(clientExtensionEntryRel.uuid IS NULL OR clientExtensionEntryRel.uuid = '')";
-
-	private FinderPath _finderPathFetchByUUID_G;
+	private UniquePersistenceFinder<ClientExtensionEntryRel>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the client extension entry rel where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchClientExtensionEntryRelException</code> if it could not be found.
@@ -449,38 +208,18 @@ public class ClientExtensionEntryRelPersistenceImpl
 			uuid, groupId);
 
 		if (clientExtensionEntryRel == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("uuid=");
-			sb.append(uuid);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchClientExtensionEntryRelException(sb.toString());
+			throw new NoSuchClientExtensionEntryRelException(message);
 		}
 
 		return clientExtensionEntryRel;
-	}
-
-	/**
-	 * Returns the client extension entry rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching client extension entry rel, or <code>null</code> if a matching client extension entry rel could not be found
-	 */
-	@Override
-	public ClientExtensionEntryRel fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
 	}
 
 	/**
@@ -495,103 +234,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 	public ClientExtensionEntryRel fetchByUUID_G(
 		String uuid, long groupId, boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {uuid, groupId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByUUID_G, finderArgs, this);
-			}
-
-			if (result instanceof ClientExtensionEntryRel) {
-				ClientExtensionEntryRel clientExtensionEntryRel =
-					(ClientExtensionEntryRel)result;
-
-				if (!Objects.equals(uuid, clientExtensionEntryRel.getUuid()) ||
-					(groupId != clientExtensionEntryRel.getGroupId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(groupId);
-
-					List<ClientExtensionEntryRel> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByUUID_G, finderArgs, list);
-						}
-					}
-					else {
-						ClientExtensionEntryRel clientExtensionEntryRel =
-							list.get(0);
-
-						result = clientExtensionEntryRel;
-
-						cacheResult(clientExtensionEntryRel);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (ClientExtensionEntryRel)result;
-			}
-		}
+		return _uniquePersistenceFinderByUUID_G.fetch(
+			finderCache, new Object[] {uuid, groupId}, useFinderCache);
 	}
 
 	/**
@@ -620,92 +264,18 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByUUID_G(
-			uuid, groupId);
-
-		if (clientExtensionEntryRel == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByUUID_G.count(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
-		"clientExtensionEntryRel.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
-		"(clientExtensionEntryRel.uuid IS NULL OR clientExtensionEntryRel.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
-		"clientExtensionEntryRel.groupId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByUuid_C;
-	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
-	private FinderPath _finderPathCountByUuid_C;
-
-	/**
-	 * Returns all the client extension entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByUuid_C(
-		String uuid, long companyId) {
-
-		return findByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return findByUuid_C(uuid, companyId, start, end, null);
-	}
+	private CollectionPersistenceFinder<ClientExtensionEntryRel>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
-
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -722,122 +292,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUuid_C;
-					finderArgs = new Object[] {uuid, companyId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUuid_C;
-				finderArgs = new Object[] {
-					uuid, companyId, start, end, orderByComparator
-				};
-			}
-
-			List<ClientExtensionEntryRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<ClientExtensionEntryRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (ClientExtensionEntryRel clientExtensionEntryRel :
-							list) {
-
-						if (!uuid.equals(clientExtensionEntryRel.getUuid()) ||
-							(companyId !=
-								clientExtensionEntryRel.getCompanyId())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(companyId);
-
-					list = (List<ClientExtensionEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -862,19 +319,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			return clientExtensionEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchClientExtensionEntryRelException(sb.toString());
+		throw new NoSuchClientExtensionEntryRelException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -890,14 +337,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
 
-		List<ClientExtensionEntryRel> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -908,13 +349,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (ClientExtensionEntryRel clientExtensionEntryRel :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(clientExtensionEntryRel);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -926,139 +362,18 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = _finderPathCountByUuid_C;
-
-			Object[] finderArgs = new Object[] {uuid, companyId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(companyId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"clientExtensionEntryRel.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(clientExtensionEntryRel.uuid IS NULL OR clientExtensionEntryRel.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"clientExtensionEntryRel.companyId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByType;
-	private FinderPath _finderPathWithoutPaginationFindByType;
-	private FinderPath _finderPathCountByType;
-
-	/**
-	 * Returns all the client extension entry rels where type = &#63;.
-	 *
-	 * @param type the type
-	 * @return the matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByType(String type) {
-		return findByType(type, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the client extension entry rels where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByType(
-		String type, int start, int end) {
-
-		return findByType(type, start, end, null);
-	}
+	private CollectionPersistenceFinder<ClientExtensionEntryRel>
+		_collectionPersistenceFinderByType;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByType(
-		String type, int start, int end,
-		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
-
-		return findByType(type, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param type the type
@@ -1074,113 +389,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			type = Objects.toString(type, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByType;
-					finderArgs = new Object[] {type};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByType;
-				finderArgs = new Object[] {type, start, end, orderByComparator};
-			}
-
-			List<ClientExtensionEntryRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<ClientExtensionEntryRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (ClientExtensionEntryRel clientExtensionEntryRel :
-							list) {
-
-						if (!type.equals(clientExtensionEntryRel.getType())) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				boolean bindType = false;
-
-				if (type.isEmpty()) {
-					sb.append(_FINDER_COLUMN_TYPE_TYPE_3);
-				}
-				else {
-					bindType = true;
-
-					sb.append(_FINDER_COLUMN_TYPE_TYPE_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindType) {
-						queryPos.add(type);
-					}
-
-					list = (List<ClientExtensionEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByType.find(
+			finderCache, new Object[] {type}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -1204,16 +415,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			return clientExtensionEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchClientExtensionEntryRelException(sb.toString());
+		throw new NoSuchClientExtensionEntryRelException(
+			_collectionPersistenceFinderByType.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {type}));
 	}
 
 	/**
@@ -1228,14 +432,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 		String type,
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
 
-		List<ClientExtensionEntryRel> list = findByType(
-			type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByType.fetchFirst(
+			finderCache, new Object[] {type}, orderByComparator);
 	}
 
 	/**
@@ -1245,11 +443,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public void removeByType(String type) {
-		for (ClientExtensionEntryRel clientExtensionEntryRel :
-				findByType(type, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(clientExtensionEntryRel);
-		}
+		_collectionPersistenceFinderByType.remove(
+			finderCache, new Object[] {type});
 	}
 
 	/**
@@ -1260,142 +455,18 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByType(String type) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			type = Objects.toString(type, "");
-
-			FinderPath finderPath = _finderPathCountByType;
-
-			Object[] finderArgs = new Object[] {type};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				boolean bindType = false;
-
-				if (type.isEmpty()) {
-					sb.append(_FINDER_COLUMN_TYPE_TYPE_3);
-				}
-				else {
-					bindType = true;
-
-					sb.append(_FINDER_COLUMN_TYPE_TYPE_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindType) {
-						queryPos.add(type);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByType.count(
+			finderCache, new Object[] {type});
 	}
 
-	private static final String _FINDER_COLUMN_TYPE_TYPE_2 =
-		"clientExtensionEntryRel.type = ?";
-
-	private static final String _FINDER_COLUMN_TYPE_TYPE_3 =
-		"(clientExtensionEntryRel.type IS NULL OR clientExtensionEntryRel.type = '')";
-
-	private FinderPath _finderPathWithPaginationFindByC_CETERC;
-	private FinderPath _finderPathWithoutPaginationFindByC_CETERC;
-	private FinderPath _finderPathCountByC_CETERC;
-
-	/**
-	 * Returns all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param cetExternalReferenceCode the cet external reference code
-	 * @return the matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_CETERC(
-		long companyId, String cetExternalReferenceCode) {
-
-		return findByC_CETERC(
-			companyId, cetExternalReferenceCode, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param cetExternalReferenceCode the cet external reference code
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_CETERC(
-		long companyId, String cetExternalReferenceCode, int start, int end) {
-
-		return findByC_CETERC(
-			companyId, cetExternalReferenceCode, start, end, null);
-	}
+	private CollectionPersistenceFinder<ClientExtensionEntryRel>
+		_collectionPersistenceFinderByC_CETERC;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param cetExternalReferenceCode the cet external reference code
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_CETERC(
-		long companyId, String cetExternalReferenceCode, int start, int end,
-		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
-
-		return findByC_CETERC(
-			companyId, cetExternalReferenceCode, start, end, orderByComparator,
-			true);
-	}
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1412,130 +483,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			cetExternalReferenceCode = Objects.toString(
-				cetExternalReferenceCode, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByC_CETERC;
-					finderArgs = new Object[] {
-						companyId, cetExternalReferenceCode
-					};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByC_CETERC;
-				finderArgs = new Object[] {
-					companyId, cetExternalReferenceCode, start, end,
-					orderByComparator
-				};
-			}
-
-			List<ClientExtensionEntryRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<ClientExtensionEntryRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (ClientExtensionEntryRel clientExtensionEntryRel :
-							list) {
-
-						if ((companyId !=
-								clientExtensionEntryRel.getCompanyId()) ||
-							!cetExternalReferenceCode.equals(
-								clientExtensionEntryRel.
-									getCETExternalReferenceCode())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_CETERC_COMPANYID_2);
-
-				boolean bindCETExternalReferenceCode = false;
-
-				if (cetExternalReferenceCode.isEmpty()) {
-					sb.append(
-						_FINDER_COLUMN_C_CETERC_CETEXTERNALREFERENCECODE_3);
-				}
-				else {
-					bindCETExternalReferenceCode = true;
-
-					sb.append(
-						_FINDER_COLUMN_C_CETERC_CETEXTERNALREFERENCECODE_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					if (bindCETExternalReferenceCode) {
-						queryPos.add(cetExternalReferenceCode);
-					}
-
-					list = (List<ClientExtensionEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByC_CETERC.find(
+			finderCache, new Object[] {companyId, cetExternalReferenceCode},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1560,19 +510,10 @@ public class ClientExtensionEntryRelPersistenceImpl
 			return clientExtensionEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", cetExternalReferenceCode=");
-		sb.append(cetExternalReferenceCode);
-
-		sb.append("}");
-
-		throw new NoSuchClientExtensionEntryRelException(sb.toString());
+		throw new NoSuchClientExtensionEntryRelException(
+			_collectionPersistenceFinderByC_CETERC.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {companyId, cetExternalReferenceCode}));
 	}
 
 	/**
@@ -1588,14 +529,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		long companyId, String cetExternalReferenceCode,
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
 
-		List<ClientExtensionEntryRel> list = findByC_CETERC(
-			companyId, cetExternalReferenceCode, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_CETERC.fetchFirst(
+			finderCache, new Object[] {companyId, cetExternalReferenceCode},
+			orderByComparator);
 	}
 
 	/**
@@ -1608,13 +544,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 	public void removeByC_CETERC(
 		long companyId, String cetExternalReferenceCode) {
 
-		for (ClientExtensionEntryRel clientExtensionEntryRel :
-				findByC_CETERC(
-					companyId, cetExternalReferenceCode, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(clientExtensionEntryRel);
-		}
+		_collectionPersistenceFinderByC_CETERC.remove(
+			finderCache, new Object[] {companyId, cetExternalReferenceCode});
 	}
 
 	/**
@@ -1628,153 +559,18 @@ public class ClientExtensionEntryRelPersistenceImpl
 	public int countByC_CETERC(
 		long companyId, String cetExternalReferenceCode) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			cetExternalReferenceCode = Objects.toString(
-				cetExternalReferenceCode, "");
-
-			FinderPath finderPath = _finderPathCountByC_CETERC;
-
-			Object[] finderArgs = new Object[] {
-				companyId, cetExternalReferenceCode
-			};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_CETERC_COMPANYID_2);
-
-				boolean bindCETExternalReferenceCode = false;
-
-				if (cetExternalReferenceCode.isEmpty()) {
-					sb.append(
-						_FINDER_COLUMN_C_CETERC_CETEXTERNALREFERENCECODE_3);
-				}
-				else {
-					bindCETExternalReferenceCode = true;
-
-					sb.append(
-						_FINDER_COLUMN_C_CETERC_CETEXTERNALREFERENCECODE_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					if (bindCETExternalReferenceCode) {
-						queryPos.add(cetExternalReferenceCode);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByC_CETERC.count(
+			finderCache, new Object[] {companyId, cetExternalReferenceCode});
 	}
 
-	private static final String _FINDER_COLUMN_C_CETERC_COMPANYID_2 =
-		"clientExtensionEntryRel.companyId = ? AND ";
-
-	private static final String
-		_FINDER_COLUMN_C_CETERC_CETEXTERNALREFERENCECODE_2 =
-			"clientExtensionEntryRel.cetExternalReferenceCode = ?";
-
-	private static final String
-		_FINDER_COLUMN_C_CETERC_CETEXTERNALREFERENCECODE_3 =
-			"(clientExtensionEntryRel.cetExternalReferenceCode IS NULL OR clientExtensionEntryRel.cetExternalReferenceCode = '')";
-
-	private FinderPath _finderPathWithPaginationFindByC_C;
-	private FinderPath _finderPathWithoutPaginationFindByC_C;
-	private FinderPath _finderPathCountByC_C;
-
-	/**
-	 * Returns all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_C(
-		long classNameId, long classPK) {
-
-		return findByC_C(
-			classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_C(
-		long classNameId, long classPK, int start, int end) {
-
-		return findByC_C(classNameId, classPK, start, end, null);
-	}
+	private CollectionPersistenceFinder<ClientExtensionEntryRel>
+		_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_C(
-		long classNameId, long classPK, int start, int end,
-		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
-
-		return findByC_C(
-			classNameId, classPK, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -1791,109 +587,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByC_C;
-					finderArgs = new Object[] {classNameId, classPK};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByC_C;
-				finderArgs = new Object[] {
-					classNameId, classPK, start, end, orderByComparator
-				};
-			}
-
-			List<ClientExtensionEntryRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<ClientExtensionEntryRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (ClientExtensionEntryRel clientExtensionEntryRel :
-							list) {
-
-						if ((classNameId !=
-								clientExtensionEntryRel.getClassNameId()) ||
-							(classPK != clientExtensionEntryRel.getClassPK())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_C_CLASSNAMEID_2);
-
-				sb.append(_FINDER_COLUMN_C_C_CLASSPK_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(classNameId);
-
-					queryPos.add(classPK);
-
-					list = (List<ClientExtensionEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByC_C.find(
+			finderCache, new Object[] {classNameId, classPK}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1918,19 +614,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			return clientExtensionEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("classNameId=");
-		sb.append(classNameId);
-
-		sb.append(", classPK=");
-		sb.append(classPK);
-
-		sb.append("}");
-
-		throw new NoSuchClientExtensionEntryRelException(sb.toString());
+		throw new NoSuchClientExtensionEntryRelException(
+			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
 	}
 
 	/**
@@ -1946,14 +632,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		long classNameId, long classPK,
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
 
-		List<ClientExtensionEntryRel> list = findByC_C(
-			classNameId, classPK, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_C.fetchFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -1964,13 +645,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public void removeByC_C(long classNameId, long classPK) {
-		for (ClientExtensionEntryRel clientExtensionEntryRel :
-				findByC_C(
-					classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(clientExtensionEntryRel);
-		}
+		_collectionPersistenceFinderByC_C.remove(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -1982,134 +658,18 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByC_C(long classNameId, long classPK) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			FinderPath finderPath = _finderPathCountByC_C;
-
-			Object[] finderArgs = new Object[] {classNameId, classPK};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_C_CLASSNAMEID_2);
-
-				sb.append(_FINDER_COLUMN_C_C_CLASSPK_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(classNameId);
-
-					queryPos.add(classPK);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByC_C.count(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private static final String _FINDER_COLUMN_C_C_CLASSNAMEID_2 =
-		"clientExtensionEntryRel.classNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_C_CLASSPK_2 =
-		"clientExtensionEntryRel.classPK = ?";
-
-	private FinderPath _finderPathWithPaginationFindByC_C_T;
-	private FinderPath _finderPathWithoutPaginationFindByC_C_T;
-	private FinderPath _finderPathCountByC_C_T;
-
-	/**
-	 * Returns all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @return the matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_C_T(
-		long classNameId, long classPK, String type) {
-
-		return findByC_C_T(
-			classNameId, classPK, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-	}
-
-	/**
-	 * Returns a range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_C_T(
-		long classNameId, long classPK, String type, int start, int end) {
-
-		return findByC_C_T(classNameId, classPK, type, start, end, null);
-	}
+	private CollectionPersistenceFinder<ClientExtensionEntryRel>
+		_collectionPersistenceFinderByC_C_T;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findByC_C_T(
-		long classNameId, long classPK, String type, int start, int end,
-		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
-
-		return findByC_C_T(
-			classNameId, classPK, type, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -2127,127 +687,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			type = Objects.toString(type, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByC_C_T;
-					finderArgs = new Object[] {classNameId, classPK, type};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByC_C_T;
-				finderArgs = new Object[] {
-					classNameId, classPK, type, start, end, orderByComparator
-				};
-			}
-
-			List<ClientExtensionEntryRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<ClientExtensionEntryRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (ClientExtensionEntryRel clientExtensionEntryRel :
-							list) {
-
-						if ((classNameId !=
-								clientExtensionEntryRel.getClassNameId()) ||
-							(classPK != clientExtensionEntryRel.getClassPK()) ||
-							!type.equals(clientExtensionEntryRel.getType())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						5 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(5);
-				}
-
-				sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_C_T_CLASSNAMEID_2);
-
-				sb.append(_FINDER_COLUMN_C_C_T_CLASSPK_2);
-
-				boolean bindType = false;
-
-				if (type.isEmpty()) {
-					sb.append(_FINDER_COLUMN_C_C_T_TYPE_3);
-				}
-				else {
-					bindType = true;
-
-					sb.append(_FINDER_COLUMN_C_C_T_TYPE_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(classNameId);
-
-					queryPos.add(classPK);
-
-					if (bindType) {
-						queryPos.add(type);
-					}
-
-					list = (List<ClientExtensionEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByC_C_T.find(
+			finderCache, new Object[] {classNameId, classPK, type}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2273,22 +715,10 @@ public class ClientExtensionEntryRelPersistenceImpl
 			return clientExtensionEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("classNameId=");
-		sb.append(classNameId);
-
-		sb.append(", classPK=");
-		sb.append(classPK);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchClientExtensionEntryRelException(sb.toString());
+		throw new NoSuchClientExtensionEntryRelException(
+			_collectionPersistenceFinderByC_C_T.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {classNameId, classPK, type}));
 	}
 
 	/**
@@ -2305,14 +735,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		long classNameId, long classPK, String type,
 		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
 
-		List<ClientExtensionEntryRel> list = findByC_C_T(
-			classNameId, classPK, type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_C_T.fetchFirst(
+			finderCache, new Object[] {classNameId, classPK, type},
+			orderByComparator);
 	}
 
 	/**
@@ -2324,13 +749,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public void removeByC_C_T(long classNameId, long classPK, String type) {
-		for (ClientExtensionEntryRel clientExtensionEntryRel :
-				findByC_C_T(
-					classNameId, classPK, type, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(clientExtensionEntryRel);
-		}
+		_collectionPersistenceFinderByC_C_T.remove(
+			finderCache, new Object[] {classNameId, classPK, type});
 	}
 
 	/**
@@ -2343,87 +763,12 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByC_C_T(long classNameId, long classPK, String type) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			type = Objects.toString(type, "");
-
-			FinderPath finderPath = _finderPathCountByC_C_T;
-
-			Object[] finderArgs = new Object[] {classNameId, classPK, type};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_C_T_CLASSNAMEID_2);
-
-				sb.append(_FINDER_COLUMN_C_C_T_CLASSPK_2);
-
-				boolean bindType = false;
-
-				if (type.isEmpty()) {
-					sb.append(_FINDER_COLUMN_C_C_T_TYPE_3);
-				}
-				else {
-					bindType = true;
-
-					sb.append(_FINDER_COLUMN_C_C_T_TYPE_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(classNameId);
-
-					queryPos.add(classPK);
-
-					if (bindType) {
-						queryPos.add(type);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByC_C_T.count(
+			finderCache, new Object[] {classNameId, classPK, type});
 	}
 
-	private static final String _FINDER_COLUMN_C_C_T_CLASSNAMEID_2 =
-		"clientExtensionEntryRel.classNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_C_T_CLASSPK_2 =
-		"clientExtensionEntryRel.classPK = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_C_T_TYPE_2 =
-		"clientExtensionEntryRel.type = ?";
-
-	private static final String _FINDER_COLUMN_C_C_T_TYPE_3 =
-		"(clientExtensionEntryRel.type IS NULL OR clientExtensionEntryRel.type = '')";
-
-	private FinderPath _finderPathFetchByERC_G;
+	private UniquePersistenceFinder<ClientExtensionEntryRel>
+		_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the client extension entry rel where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchClientExtensionEntryRelException</code> if it could not be found.
@@ -2442,40 +787,19 @@ public class ClientExtensionEntryRelPersistenceImpl
 			externalReferenceCode, groupId);
 
 		if (clientExtensionEntryRel == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("externalReferenceCode=");
-			sb.append(externalReferenceCode);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {externalReferenceCode, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchClientExtensionEntryRelException(sb.toString());
+			throw new NoSuchClientExtensionEntryRelException(message);
 		}
 
 		return clientExtensionEntryRel;
-	}
-
-	/**
-	 * Returns the client extension entry rel where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @return the matching client extension entry rel, or <code>null</code> if a matching client extension entry rel could not be found
-	 */
-	@Override
-	public ClientExtensionEntryRel fetchByERC_G(
-		String externalReferenceCode, long groupId) {
-
-		return fetchByERC_G(externalReferenceCode, groupId, true);
 	}
 
 	/**
@@ -2490,105 +814,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 	public ClientExtensionEntryRel fetchByERC_G(
 		String externalReferenceCode, long groupId, boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {externalReferenceCode, groupId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByERC_G, finderArgs, this);
-			}
-
-			if (result instanceof ClientExtensionEntryRel) {
-				ClientExtensionEntryRel clientExtensionEntryRel =
-					(ClientExtensionEntryRel)result;
-
-				if (!Objects.equals(
-						externalReferenceCode,
-						clientExtensionEntryRel.getExternalReferenceCode()) ||
-					(groupId != clientExtensionEntryRel.getGroupId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE);
-
-				boolean bindExternalReferenceCode = false;
-
-				if (externalReferenceCode.isEmpty()) {
-					sb.append(_FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_3);
-				}
-				else {
-					bindExternalReferenceCode = true;
-
-					sb.append(_FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_2);
-				}
-
-				sb.append(_FINDER_COLUMN_ERC_G_GROUPID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindExternalReferenceCode) {
-						queryPos.add(externalReferenceCode);
-					}
-
-					queryPos.add(groupId);
-
-					List<ClientExtensionEntryRel> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByERC_G, finderArgs, list);
-						}
-					}
-					else {
-						ClientExtensionEntryRel clientExtensionEntryRel =
-							list.get(0);
-
-						result = clientExtensionEntryRel;
-
-						cacheResult(clientExtensionEntryRel);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (ClientExtensionEntryRel)result;
-			}
-		}
+		return _uniquePersistenceFinderByERC_G.fetch(
+			finderCache, new Object[] {externalReferenceCode, groupId},
+			useFinderCache);
 	}
 
 	/**
@@ -2618,24 +846,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByERC_G(String externalReferenceCode, long groupId) {
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (clientExtensionEntryRel == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByERC_G.count(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
-
-	private static final String _FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_2 =
-		"clientExtensionEntryRel.externalReferenceCode = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_3 =
-		"(clientExtensionEntryRel.externalReferenceCode IS NULL OR clientExtensionEntryRel.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_G_GROUPID_2 =
-		"clientExtensionEntryRel.groupId = ?";
 
 	public ClientExtensionEntryRelPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -2651,152 +864,6 @@ public class ClientExtensionEntryRelPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(ClientExtensionEntryRelTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the client extension entry rel in the entity cache if it is enabled.
-	 *
-	 * @param clientExtensionEntryRel the client extension entry rel
-	 */
-	@Override
-	public void cacheResult(ClientExtensionEntryRel clientExtensionEntryRel) {
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					clientExtensionEntryRel.getCtCollectionId())) {
-
-			entityCache.putResult(
-				ClientExtensionEntryRelImpl.class,
-				clientExtensionEntryRel.getPrimaryKey(),
-				clientExtensionEntryRel);
-
-			finderCache.putResult(
-				_finderPathFetchByUUID_G,
-				new Object[] {
-					clientExtensionEntryRel.getUuid(),
-					clientExtensionEntryRel.getGroupId()
-				},
-				clientExtensionEntryRel);
-
-			finderCache.putResult(
-				_finderPathFetchByERC_G,
-				new Object[] {
-					clientExtensionEntryRel.getExternalReferenceCode(),
-					clientExtensionEntryRel.getGroupId()
-				},
-				clientExtensionEntryRel);
-		}
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the client extension entry rels in the entity cache if it is enabled.
-	 *
-	 * @param clientExtensionEntryRels the client extension entry rels
-	 */
-	@Override
-	public void cacheResult(
-		List<ClientExtensionEntryRel> clientExtensionEntryRels) {
-
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (clientExtensionEntryRels.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (ClientExtensionEntryRel clientExtensionEntryRel :
-				clientExtensionEntryRels) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-						clientExtensionEntryRel.getCtCollectionId())) {
-
-				if (entityCache.getResult(
-						ClientExtensionEntryRelImpl.class,
-						clientExtensionEntryRel.getPrimaryKey()) == null) {
-
-					cacheResult(clientExtensionEntryRel);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all client extension entry rels.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(ClientExtensionEntryRelImpl.class);
-
-		finderCache.clearCache(ClientExtensionEntryRelImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the client extension entry rel.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(ClientExtensionEntryRel clientExtensionEntryRel) {
-		entityCache.removeResult(
-			ClientExtensionEntryRelImpl.class, clientExtensionEntryRel);
-	}
-
-	@Override
-	public void clearCache(
-		List<ClientExtensionEntryRel> clientExtensionEntryRels) {
-
-		for (ClientExtensionEntryRel clientExtensionEntryRel :
-				clientExtensionEntryRels) {
-
-			entityCache.removeResult(
-				ClientExtensionEntryRelImpl.class, clientExtensionEntryRel);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(ClientExtensionEntryRelImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				ClientExtensionEntryRelImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		ClientExtensionEntryRelModelImpl clientExtensionEntryRelModelImpl) {
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					clientExtensionEntryRelModelImpl.getCtCollectionId())) {
-
-			Object[] args = new Object[] {
-				clientExtensionEntryRelModelImpl.getUuid(),
-				clientExtensionEntryRelModelImpl.getGroupId()
-			};
-
-			finderCache.putResult(
-				_finderPathFetchByUUID_G, args,
-				clientExtensionEntryRelModelImpl);
-
-			args = new Object[] {
-				clientExtensionEntryRelModelImpl.getExternalReferenceCode(),
-				clientExtensionEntryRelModelImpl.getGroupId()
-			};
-
-			finderCache.putResult(
-				_finderPathFetchByERC_G, args,
-				clientExtensionEntryRelModelImpl);
-		}
 	}
 
 	/**
@@ -2834,48 +901,6 @@ public class ClientExtensionEntryRelPersistenceImpl
 		throws NoSuchClientExtensionEntryRelException {
 
 		return remove((Serializable)clientExtensionEntryRelId);
-	}
-
-	/**
-	 * Removes the client extension entry rel with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the client extension entry rel
-	 * @return the client extension entry rel that was removed
-	 * @throws NoSuchClientExtensionEntryRelException if a client extension entry rel with the primary key could not be found
-	 */
-	@Override
-	public ClientExtensionEntryRel remove(Serializable primaryKey)
-		throws NoSuchClientExtensionEntryRelException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			ClientExtensionEntryRel clientExtensionEntryRel =
-				(ClientExtensionEntryRel)session.get(
-					ClientExtensionEntryRelImpl.class, primaryKey);
-
-			if (clientExtensionEntryRel == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchClientExtensionEntryRelException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(clientExtensionEntryRel);
-		}
-		catch (NoSuchClientExtensionEntryRelException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -3070,43 +1095,13 @@ public class ClientExtensionEntryRelPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			ClientExtensionEntryRelImpl.class, clientExtensionEntryRelModelImpl,
-			false, true);
-
-		cacheUniqueFindersCache(clientExtensionEntryRelModelImpl);
+		cacheUniqueFindersResult(clientExtensionEntryRel, false);
 
 		if (isNew) {
 			clientExtensionEntryRel.setNew(false);
 		}
 
 		clientExtensionEntryRel.resetOriginalValues();
-
-		return clientExtensionEntryRel;
-	}
-
-	/**
-	 * Returns the client extension entry rel with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the client extension entry rel
-	 * @return the client extension entry rel
-	 * @throws NoSuchClientExtensionEntryRelException if a client extension entry rel with the primary key could not be found
-	 */
-	@Override
-	public ClientExtensionEntryRel findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchClientExtensionEntryRelException {
-
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByPrimaryKey(
-			primaryKey);
-
-		if (clientExtensionEntryRel == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchClientExtensionEntryRelException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return clientExtensionEntryRel;
 	}
@@ -3126,53 +1121,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 		return findByPrimaryKey((Serializable)clientExtensionEntryRelId);
 	}
 
-	/**
-	 * Returns the client extension entry rel with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the client extension entry rel
-	 * @return the client extension entry rel, or <code>null</code> if a client extension entry rel with the primary key could not be found
-	 */
 	@Override
-	public ClientExtensionEntryRel fetchByPrimaryKey(Serializable primaryKey) {
-		if (ctPersistenceHelper.isProductionMode(
-				ClientExtensionEntryRel.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		ClientExtensionEntryRel clientExtensionEntryRel =
-			(ClientExtensionEntryRel)entityCache.getResult(
-				ClientExtensionEntryRelImpl.class, primaryKey);
-
-		if (clientExtensionEntryRel != null) {
-			return clientExtensionEntryRel;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			clientExtensionEntryRel = (ClientExtensionEntryRel)session.get(
-				ClientExtensionEntryRelImpl.class, primaryKey);
-
-			if (clientExtensionEntryRel != null) {
-				cacheResult(clientExtensionEntryRel);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return clientExtensionEntryRel;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return ctPersistenceHelper;
 	}
 
 	/**
@@ -3186,330 +1137,6 @@ public class ClientExtensionEntryRelPersistenceImpl
 		long clientExtensionEntryRelId) {
 
 		return fetchByPrimaryKey((Serializable)clientExtensionEntryRelId);
-	}
-
-	@Override
-	public Map<Serializable, ClientExtensionEntryRel> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (ctPersistenceHelper.isProductionMode(
-				ClientExtensionEntryRel.class)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, ClientExtensionEntryRel> map =
-			new HashMap<Serializable, ClientExtensionEntryRel>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			ClientExtensionEntryRel clientExtensionEntryRel = fetchByPrimaryKey(
-				primaryKey);
-
-			if (clientExtensionEntryRel != null) {
-				map.put(primaryKey, clientExtensionEntryRel);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-						ClientExtensionEntryRel.class, primaryKey)) {
-
-				ClientExtensionEntryRel clientExtensionEntryRel =
-					(ClientExtensionEntryRel)entityCache.getResult(
-						ClientExtensionEntryRelImpl.class, primaryKey);
-
-				if (clientExtensionEntryRel == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, clientExtensionEntryRel);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (ClientExtensionEntryRel clientExtensionEntryRel :
-					(List<ClientExtensionEntryRel>)query.list()) {
-
-				map.put(
-					clientExtensionEntryRel.getPrimaryKeyObj(),
-					clientExtensionEntryRel);
-
-				cacheResult(clientExtensionEntryRel);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the client extension entry rels.
-	 *
-	 * @return the client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the client extension entry rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findAll(
-		int start, int end,
-		OrderByComparator<ClientExtensionEntryRel> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of client extension entry rels
-	 */
-	@Override
-	public List<ClientExtensionEntryRel> findAll(
-		int start, int end,
-		OrderByComparator<ClientExtensionEntryRel> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<ClientExtensionEntryRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<ClientExtensionEntryRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_CLIENTEXTENSIONENTRYREL);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_CLIENTEXTENSIONENTRYREL;
-
-					sql = sql.concat(
-						ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<ClientExtensionEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the client extension entry rels from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (ClientExtensionEntryRel clientExtensionEntryRel : findAll()) {
-			remove(clientExtensionEntryRel);
-		}
-	}
-
-	/**
-	 * Returns the number of client extension entry rels.
-	 *
-	 * @return the number of client extension entry rels
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					ClientExtensionEntryRel.class)) {
-
-			Long count = (Long)finderCache.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(
-						_SQL_COUNT_CLIENTEXTENSIONENTRYREL);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -3613,148 +1240,228 @@ public class ClientExtensionEntryRelPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"uuid_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, false, null),
+			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
+			_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
+			ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
+			_ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "uuid", FinderColumn.Type.STRING,
+				"=", true, true, ClientExtensionEntryRel::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"uuid_", "groupId"}, 0, 1, false,
+				convertNullFunction(ClientExtensionEntryRel::getUuid),
+				ClientExtensionEntryRel::getGroupId),
+			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE, "",
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "uuid", FinderColumn.Type.STRING,
+				"=", true, true, ClientExtensionEntryRel::getUuid),
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "groupId", FinderColumn.Type.LONG,
+				"=", true, true, ClientExtensionEntryRel::getGroupId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+					new String[] {
+						String.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_", "companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
+				_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
+				_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
+				ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"clientExtensionEntryRel.", "uuid",
+					FinderColumn.Type.STRING, "=", true, true,
+					ClientExtensionEntryRel::getUuid),
+				new FinderColumn<>(
+					"clientExtensionEntryRel.", "companyId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ClientExtensionEntryRel::getCompanyId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_collectionPersistenceFinderByType = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByType",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByType",
+				new String[] {String.class.getName()}, new String[] {"type_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByType",
+				new String[] {String.class.getName()}, new String[] {"type_"},
+				0, 1, false, null),
+			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
+			_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
+			ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
+			_ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "type", FinderColumn.Type.STRING,
+				"=", true, true, ClientExtensionEntryRel::getType));
 
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
+		_collectionPersistenceFinderByC_CETERC =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_CETERC",
+					new String[] {
+						Long.class.getName(), String.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"companyId", "cetExternalReferenceCode"},
+					true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_CETERC",
+					new String[] {Long.class.getName(), String.class.getName()},
+					new String[] {"companyId", "cetExternalReferenceCode"}, 0,
+					2, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByC_CETERC",
+					new String[] {Long.class.getName(), String.class.getName()},
+					new String[] {"companyId", "cetExternalReferenceCode"}, 0,
+					2, false, null),
+				_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
+				_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
+				ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"clientExtensionEntryRel.", "companyId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ClientExtensionEntryRel::getCompanyId),
+				new FinderColumn<>(
+					"clientExtensionEntryRel.", "cetExternalReferenceCode",
+					FinderColumn.Type.STRING, "=", true, true,
+					ClientExtensionEntryRel::getCETExternalReferenceCode));
 
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
+		_collectionPersistenceFinderByC_C = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_C",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"classNameId", "classPK"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_C",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"classNameId", "classPK"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_C",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"classNameId", "classPK"}, false),
+			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
+			_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
+			ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
+			_ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "classNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				ClientExtensionEntryRel::getClassNameId),
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "classPK", FinderColumn.Type.LONG,
+				"=", true, true, ClientExtensionEntryRel::getClassPK));
 
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
+		_collectionPersistenceFinderByC_C_T = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_C_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"classNameId", "classPK", "type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_C_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					String.class.getName()
+				},
+				new String[] {"classNameId", "classPK", "type_"}, 0, 4, true,
+				null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_C_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					String.class.getName()
+				},
+				new String[] {"classNameId", "classPK", "type_"}, 0, 4, false,
+				null),
+			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
+			_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
+			ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
+			_ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "classNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				ClientExtensionEntryRel::getClassNameId),
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "classPK", FinderColumn.Type.LONG,
+				"=", true, true, ClientExtensionEntryRel::getClassPK),
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "type", FinderColumn.Type.STRING,
+				"=", true, true, ClientExtensionEntryRel::getType));
 
-		_finderPathFetchByUUID_G = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "groupId"}, true);
-
-		_finderPathWithPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathCountByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, false);
-
-		_finderPathWithPaginationFindByType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByType",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"type_"}, true);
-
-		_finderPathWithoutPaginationFindByType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByType",
-			new String[] {String.class.getName()}, new String[] {"type_"},
-			true);
-
-		_finderPathCountByType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByType",
-			new String[] {String.class.getName()}, new String[] {"type_"},
-			false);
-
-		_finderPathWithPaginationFindByC_CETERC = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_CETERC",
-			new String[] {
-				Long.class.getName(), String.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"companyId", "cetExternalReferenceCode"}, true);
-
-		_finderPathWithoutPaginationFindByC_CETERC = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_CETERC",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"companyId", "cetExternalReferenceCode"}, true);
-
-		_finderPathCountByC_CETERC = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_CETERC",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"companyId", "cetExternalReferenceCode"}, false);
-
-		_finderPathWithPaginationFindByC_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_C",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"classNameId", "classPK"}, true);
-
-		_finderPathWithoutPaginationFindByC_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_C",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"classNameId", "classPK"}, true);
-
-		_finderPathCountByC_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_C",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"classNameId", "classPK"}, false);
-
-		_finderPathWithPaginationFindByC_C_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_C_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"classNameId", "classPK", "type_"}, true);
-
-		_finderPathWithoutPaginationFindByC_C_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_C_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				String.class.getName()
-			},
-			new String[] {"classNameId", "classPK", "type_"}, true);
-
-		_finderPathCountByC_C_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_C_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				String.class.getName()
-			},
-			new String[] {"classNameId", "classPK", "type_"}, false);
-
-		_finderPathFetchByERC_G = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByERC_G",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"externalReferenceCode", "groupId"}, true);
+		_uniquePersistenceFinderByERC_G = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByERC_G",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"externalReferenceCode", "groupId"}, 0, 1, false,
+				convertNullFunction(
+					ClientExtensionEntryRel::getExternalReferenceCode),
+				ClientExtensionEntryRel::getGroupId),
+			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE, "",
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "externalReferenceCode",
+				FinderColumn.Type.STRING, "=", true, true,
+				ClientExtensionEntryRel::getExternalReferenceCode),
+			new FinderColumn<>(
+				"clientExtensionEntryRel.", "groupId", FinderColumn.Type.LONG,
+				"=", true, true, ClientExtensionEntryRel::getGroupId));
 
 		ClientExtensionEntryRelUtil.setPersistence(this);
 	}
@@ -3801,23 +1508,17 @@ public class ClientExtensionEntryRelPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		ClientExtensionEntryRelModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_CLIENTEXTENSIONENTRYREL =
 		"SELECT clientExtensionEntryRel FROM ClientExtensionEntryRel clientExtensionEntryRel";
 
 	private static final String _SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE =
 		"SELECT clientExtensionEntryRel FROM ClientExtensionEntryRel clientExtensionEntryRel WHERE ";
 
-	private static final String _SQL_COUNT_CLIENTEXTENSIONENTRYREL =
-		"SELECT COUNT(clientExtensionEntryRel) FROM ClientExtensionEntryRel clientExtensionEntryRel";
-
 	private static final String _SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE =
 		"SELECT COUNT(clientExtensionEntryRel) FROM ClientExtensionEntryRel clientExtensionEntryRel WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"clientExtensionEntryRel.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No ClientExtensionEntryRel exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No ClientExtensionEntryRel exists with the key {";
@@ -3834,4 +1535,4 @@ public class ClientExtensionEntryRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1998888094
+// LIFERAY-SERVICE-BUILDER-HASH:2075713686

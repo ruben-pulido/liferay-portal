@@ -36,6 +36,22 @@ public class PortletPreferencesUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<PortletPreferences> portletPreferenceses) {
+
+		getPersistence().cacheResult(portletPreferenceses);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(PortletPreferences portletPreferences) {
+		getPersistence().cacheResult(portletPreferences);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -113,59 +129,10 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses where ownerId = &#63;.
-	 *
-	 * @param ownerId the owner ID
-	 * @return the matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByOwnerId(long ownerId) {
-		return getPersistence().findByOwnerId(ownerId);
-	}
-
-	/**
-	 * Returns a range of all the portlet preferenceses where ownerId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerId the owner ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByOwnerId(
-		long ownerId, int start, int end) {
-
-		return getPersistence().findByOwnerId(ownerId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerId the owner ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByOwnerId(
-		long ownerId, int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator) {
-
-		return getPersistence().findByOwnerId(
-			ownerId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ownerId the owner ID
@@ -235,58 +202,10 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses where plid = &#63;.
-	 *
-	 * @param plid the plid
-	 * @return the matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByPlid(long plid) {
-		return getPersistence().findByPlid(plid);
-	}
-
-	/**
-	 * Returns a range of all the portlet preferenceses where plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param plid the plid
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByPlid(
-		long plid, int start, int end) {
-
-		return getPersistence().findByPlid(plid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the portlet preferenceses where plid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param plid the plid
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByPlid(
-		long plid, int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator) {
-
-		return getPersistence().findByPlid(plid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the portlet preferenceses where plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param plid the plid
@@ -354,59 +273,10 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses where portletId = &#63;.
-	 *
-	 * @param portletId the portlet ID
-	 * @return the matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByPortletId(String portletId) {
-		return getPersistence().findByPortletId(portletId);
-	}
-
-	/**
-	 * Returns a range of all the portlet preferenceses where portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByPortletId(
-		String portletId, int start, int end) {
-
-		return getPersistence().findByPortletId(portletId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the portlet preferenceses where portletId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByPortletId(
-		String portletId, int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator) {
-
-		return getPersistence().findByPortletId(
-			portletId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the portlet preferenceses where portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param portletId the portlet ID
@@ -478,64 +348,10 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses where ownerType = &#63; and portletId = &#63;.
-	 *
-	 * @param ownerType the owner type
-	 * @param portletId the portlet ID
-	 * @return the matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_P(
-		int ownerType, String portletId) {
-
-		return getPersistence().findByO_P(ownerType, portletId);
-	}
-
-	/**
-	 * Returns a range of all the portlet preferenceses where ownerType = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerType the owner type
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_P(
-		int ownerType, String portletId, int start, int end) {
-
-		return getPersistence().findByO_P(ownerType, portletId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerType = &#63; and portletId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerType the owner type
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_P(
-		int ownerType, String portletId, int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator) {
-
-		return getPersistence().findByO_P(
-			ownerType, portletId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the portlet preferenceses where ownerType = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ownerType the owner type
@@ -613,64 +429,10 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses where plid = &#63; and portletId = &#63;.
-	 *
-	 * @param plid the plid
-	 * @param portletId the portlet ID
-	 * @return the matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByP_P(
-		long plid, String portletId) {
-
-		return getPersistence().findByP_P(plid, portletId);
-	}
-
-	/**
-	 * Returns a range of all the portlet preferenceses where plid = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param plid the plid
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByP_P(
-		long plid, String portletId, int start, int end) {
-
-		return getPersistence().findByP_P(plid, portletId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the portlet preferenceses where plid = &#63; and portletId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param plid the plid
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByP_P(
-		long plid, String portletId, int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator) {
-
-		return getPersistence().findByP_P(
-			plid, portletId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the portlet preferenceses where plid = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param plid the plid
@@ -747,68 +509,10 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
-	 *
-	 * @param ownerId the owner ID
-	 * @param ownerType the owner type
-	 * @param plid the plid
-	 * @return the matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_O_P(
-		long ownerId, int ownerType, long plid) {
-
-		return getPersistence().findByO_O_P(ownerId, ownerType, plid);
-	}
-
-	/**
-	 * Returns a range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerId the owner ID
-	 * @param ownerType the owner type
-	 * @param plid the plid
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_O_P(
-		long ownerId, int ownerType, long plid, int start, int end) {
-
-		return getPersistence().findByO_O_P(
-			ownerId, ownerType, plid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerId the owner ID
-	 * @param ownerType the owner type
-	 * @param plid the plid
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_O_P(
-		long ownerId, int ownerType, long plid, int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator) {
-
-		return getPersistence().findByO_O_P(
-			ownerId, ownerType, plid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ownerId the owner ID
@@ -891,68 +595,10 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
-	 *
-	 * @param ownerId the owner ID
-	 * @param ownerType the owner type
-	 * @param portletId the portlet ID
-	 * @return the matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_O_PI(
-		long ownerId, int ownerType, String portletId) {
-
-		return getPersistence().findByO_O_PI(ownerId, ownerType, portletId);
-	}
-
-	/**
-	 * Returns a range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerId the owner ID
-	 * @param ownerType the owner type
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_O_PI(
-		long ownerId, int ownerType, String portletId, int start, int end) {
-
-		return getPersistence().findByO_O_PI(
-			ownerId, ownerType, portletId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerId the owner ID
-	 * @param ownerType the owner type
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_O_PI(
-		long ownerId, int ownerType, String portletId, int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator) {
-
-		return getPersistence().findByO_O_PI(
-			ownerId, ownerType, portletId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ownerId the owner ID
@@ -1039,68 +685,10 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses where ownerType = &#63; and plid = &#63; and portletId = &#63;.
-	 *
-	 * @param ownerType the owner type
-	 * @param plid the plid
-	 * @param portletId the portlet ID
-	 * @return the matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_P_P(
-		int ownerType, long plid, String portletId) {
-
-		return getPersistence().findByO_P_P(ownerType, plid, portletId);
-	}
-
-	/**
-	 * Returns a range of all the portlet preferenceses where ownerType = &#63; and plid = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerType the owner type
-	 * @param plid the plid
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_P_P(
-		int ownerType, long plid, String portletId, int start, int end) {
-
-		return getPersistence().findByO_P_P(
-			ownerType, plid, portletId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerType = &#63; and plid = &#63; and portletId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ownerType the owner type
-	 * @param plid the plid
-	 * @param portletId the portlet ID
-	 * @param start the lower bound of the range of portlet preferenceses
-	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching portlet preferenceses
-	 */
-	public static List<PortletPreferences> findByO_P_P(
-		int ownerType, long plid, String portletId, int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator) {
-
-		return getPersistence().findByO_P_P(
-			ownerType, plid, portletId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the portlet preferenceses where ownerType = &#63; and plid = &#63; and portletId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ownerType the owner type
@@ -1204,7 +792,7 @@ public class PortletPreferencesUtil {
 	 * Returns a range of all the portlet preferenceses where companyId = &#63; and ownerId = &#63; and ownerType = &#63; and portletId LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1227,7 +815,7 @@ public class PortletPreferencesUtil {
 	 * Returns an ordered range of all the portlet preferenceses where companyId = &#63; and ownerId = &#63; and ownerType = &#63; and portletId LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1253,7 +841,7 @@ public class PortletPreferencesUtil {
 	 * Returns an ordered range of all the portlet preferenceses where companyId = &#63; and ownerId = &#63; and ownerType = &#63; and portletId LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1367,22 +955,6 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns the portlet preferences where ownerId = &#63; and ownerType = &#63; and plid = &#63; and portletId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param ownerId the owner ID
-	 * @param ownerType the owner type
-	 * @param plid the plid
-	 * @param portletId the portlet ID
-	 * @return the matching portlet preferences, or <code>null</code> if a matching portlet preferences could not be found
-	 */
-	public static PortletPreferences fetchByO_O_P_P(
-		long ownerId, int ownerType, long plid, String portletId) {
-
-		return getPersistence().fetchByO_O_P_P(
-			ownerId, ownerType, plid, portletId);
-	}
-
-	/**
 	 * Returns the portlet preferences where ownerId = &#63; and ownerType = &#63; and plid = &#63; and portletId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param ownerId the owner ID
@@ -1432,26 +1004,6 @@ public class PortletPreferencesUtil {
 
 		return getPersistence().countByO_O_P_P(
 			ownerId, ownerType, plid, portletId);
-	}
-
-	/**
-	 * Caches the portlet preferences in the entity cache if it is enabled.
-	 *
-	 * @param portletPreferences the portlet preferences
-	 */
-	public static void cacheResult(PortletPreferences portletPreferences) {
-		getPersistence().cacheResult(portletPreferences);
-	}
-
-	/**
-	 * Caches the portlet preferenceses in the entity cache if it is enabled.
-	 *
-	 * @param portletPreferenceses the portlet preferenceses
-	 */
-	public static void cacheResult(
-		List<PortletPreferences> portletPreferenceses) {
-
-		getPersistence().cacheResult(portletPreferenceses);
 	}
 
 	/**
@@ -1511,84 +1063,447 @@ public class PortletPreferencesUtil {
 	}
 
 	/**
-	 * Returns all the portlet preferenceses.
+	 * Returns the portlet preferences where ownerId = &#63; and ownerType = &#63; and plid = &#63; and portletId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the portlet preferenceses
+	 * @param ownerId the owner ID
+	 * @param ownerType the owner type
+	 * @param plid the plid
+	 * @param portletId the portlet ID
+	 * @return the matching portlet preferences, or <code>null</code> if a matching portlet preferences could not be found
 	 */
-	public static List<PortletPreferences> findAll() {
-		return getPersistence().findAll();
+	public static PortletPreferences fetchByO_O_P_P(
+		long ownerId, int ownerType, long plid, String portletId) {
+
+		return getPersistence().fetchByO_O_P_P(
+			ownerId, ownerType, plid, portletId);
 	}
 
 	/**
-	 * Returns a range of all the portlet preferenceses.
+	 * Returns all the portlet preferenceses where ownerId = &#63;.
+	 *
+	 * @param ownerId the owner ID
+	 * @return the matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByOwnerId(long ownerId) {
+		return getPersistence().findByOwnerId(ownerId);
+	}
+
+	/**
+	 * Returns a range of all the portlet preferenceses where ownerId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
+	 * @param ownerId the owner ID
 	 * @param start the lower bound of the range of portlet preferenceses
 	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
-	 * @return the range of portlet preferenceses
+	 * @return the range of matching portlet preferenceses
 	 */
-	public static List<PortletPreferences> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<PortletPreferences> findByOwnerId(
+		long ownerId, int start, int end) {
+
+		return getPersistence().findByOwnerId(ownerId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the portlet preferenceses.
+	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
+	 * @param ownerId the owner ID
 	 * @param start the lower bound of the range of portlet preferenceses
 	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of portlet preferenceses
+	 * @return the ordered range of matching portlet preferenceses
 	 */
-	public static List<PortletPreferences> findAll(
-		int start, int end,
+	public static List<PortletPreferences> findByOwnerId(
+		long ownerId, int start, int end,
 		OrderByComparator<PortletPreferences> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByOwnerId(
+			ownerId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the portlet preferenceses.
+	 * Returns all the portlet preferenceses where plid = &#63;.
+	 *
+	 * @param plid the plid
+	 * @return the matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByPlid(long plid) {
+		return getPersistence().findByPlid(plid);
+	}
+
+	/**
+	 * Returns a range of all the portlet preferenceses where plid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PortletPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
 	 * </p>
 	 *
+	 * @param plid the plid
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @return the range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByPlid(
+		long plid, int start, int end) {
+
+		return getPersistence().findByPlid(plid, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the portlet preferenceses where plid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param plid the plid
 	 * @param start the lower bound of the range of portlet preferenceses
 	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of portlet preferenceses
+	 * @return the ordered range of matching portlet preferenceses
 	 */
-	public static List<PortletPreferences> findAll(
-		int start, int end,
-		OrderByComparator<PortletPreferences> orderByComparator,
-		boolean useFinderCache) {
+	public static List<PortletPreferences> findByPlid(
+		long plid, int start, int end,
+		OrderByComparator<PortletPreferences> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByPlid(plid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the portlet preferenceses from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of portlet preferenceses.
+	 * Returns all the portlet preferenceses where portletId = &#63;.
 	 *
-	 * @return the number of portlet preferenceses
+	 * @param portletId the portlet ID
+	 * @return the matching portlet preferenceses
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<PortletPreferences> findByPortletId(String portletId) {
+		return getPersistence().findByPortletId(portletId);
+	}
+
+	/**
+	 * Returns a range of all the portlet preferenceses where portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @return the range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByPortletId(
+		String portletId, int start, int end) {
+
+		return getPersistence().findByPortletId(portletId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the portlet preferenceses where portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByPortletId(
+		String portletId, int start, int end,
+		OrderByComparator<PortletPreferences> orderByComparator) {
+
+		return getPersistence().findByPortletId(
+			portletId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the portlet preferenceses where ownerType = &#63; and portletId = &#63;.
+	 *
+	 * @param ownerType the owner type
+	 * @param portletId the portlet ID
+	 * @return the matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_P(
+		int ownerType, String portletId) {
+
+		return getPersistence().findByO_P(ownerType, portletId);
+	}
+
+	/**
+	 * Returns a range of all the portlet preferenceses where ownerType = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ownerType the owner type
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @return the range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_P(
+		int ownerType, String portletId, int start, int end) {
+
+		return getPersistence().findByO_P(ownerType, portletId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the portlet preferenceses where ownerType = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ownerType the owner type
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_P(
+		int ownerType, String portletId, int start, int end,
+		OrderByComparator<PortletPreferences> orderByComparator) {
+
+		return getPersistence().findByO_P(
+			ownerType, portletId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the portlet preferenceses where plid = &#63; and portletId = &#63;.
+	 *
+	 * @param plid the plid
+	 * @param portletId the portlet ID
+	 * @return the matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByP_P(
+		long plid, String portletId) {
+
+		return getPersistence().findByP_P(plid, portletId);
+	}
+
+	/**
+	 * Returns a range of all the portlet preferenceses where plid = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param plid the plid
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @return the range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByP_P(
+		long plid, String portletId, int start, int end) {
+
+		return getPersistence().findByP_P(plid, portletId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the portlet preferenceses where plid = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param plid the plid
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByP_P(
+		long plid, String portletId, int start, int end,
+		OrderByComparator<PortletPreferences> orderByComparator) {
+
+		return getPersistence().findByP_P(
+			plid, portletId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
+	 *
+	 * @param ownerId the owner ID
+	 * @param ownerType the owner type
+	 * @param plid the plid
+	 * @return the matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_O_P(
+		long ownerId, int ownerType, long plid) {
+
+		return getPersistence().findByO_O_P(ownerId, ownerType, plid);
+	}
+
+	/**
+	 * Returns a range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ownerId the owner ID
+	 * @param ownerType the owner type
+	 * @param plid the plid
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @return the range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_O_P(
+		long ownerId, int ownerType, long plid, int start, int end) {
+
+		return getPersistence().findByO_O_P(
+			ownerId, ownerType, plid, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ownerId the owner ID
+	 * @param ownerType the owner type
+	 * @param plid the plid
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_O_P(
+		long ownerId, int ownerType, long plid, int start, int end,
+		OrderByComparator<PortletPreferences> orderByComparator) {
+
+		return getPersistence().findByO_O_P(
+			ownerId, ownerType, plid, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
+	 *
+	 * @param ownerId the owner ID
+	 * @param ownerType the owner type
+	 * @param portletId the portlet ID
+	 * @return the matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_O_PI(
+		long ownerId, int ownerType, String portletId) {
+
+		return getPersistence().findByO_O_PI(ownerId, ownerType, portletId);
+	}
+
+	/**
+	 * Returns a range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ownerId the owner ID
+	 * @param ownerType the owner type
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @return the range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_O_PI(
+		long ownerId, int ownerType, String portletId, int start, int end) {
+
+		return getPersistence().findByO_O_PI(
+			ownerId, ownerType, portletId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ownerId the owner ID
+	 * @param ownerType the owner type
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_O_PI(
+		long ownerId, int ownerType, String portletId, int start, int end,
+		OrderByComparator<PortletPreferences> orderByComparator) {
+
+		return getPersistence().findByO_O_PI(
+			ownerId, ownerType, portletId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the portlet preferenceses where ownerType = &#63; and plid = &#63; and portletId = &#63;.
+	 *
+	 * @param ownerType the owner type
+	 * @param plid the plid
+	 * @param portletId the portlet ID
+	 * @return the matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_P_P(
+		int ownerType, long plid, String portletId) {
+
+		return getPersistence().findByO_P_P(ownerType, plid, portletId);
+	}
+
+	/**
+	 * Returns a range of all the portlet preferenceses where ownerType = &#63; and plid = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ownerType the owner type
+	 * @param plid the plid
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @return the range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_P_P(
+		int ownerType, long plid, String portletId, int start, int end) {
+
+		return getPersistence().findByO_P_P(
+			ownerType, plid, portletId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the portlet preferenceses where ownerType = &#63; and plid = &#63; and portletId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PortletPreferencesModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ownerType the owner type
+	 * @param plid the plid
+	 * @param portletId the portlet ID
+	 * @param start the lower bound of the range of portlet preferenceses
+	 * @param end the upper bound of the range of portlet preferenceses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching portlet preferenceses
+	 */
+	public static List<PortletPreferences> findByO_P_P(
+		int ownerType, long plid, String portletId, int start, int end,
+		OrderByComparator<PortletPreferences> orderByComparator) {
+
+		return getPersistence().findByO_P_P(
+			ownerType, plid, portletId, start, end, orderByComparator);
 	}
 
 	public static PortletPreferencesPersistence getPersistence() {
@@ -1604,4 +1519,4 @@ public class PortletPreferencesUtil {
 	private static volatile PortletPreferencesPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-916542036
+// LIFERAY-SERVICE-BUILDER-HASH:1672472984

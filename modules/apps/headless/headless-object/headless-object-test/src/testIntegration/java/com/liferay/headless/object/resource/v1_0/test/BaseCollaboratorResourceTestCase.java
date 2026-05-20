@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -107,7 +108,8 @@ public abstract class BaseCollaboratorResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -169,6 +171,7 @@ public abstract class BaseCollaboratorResourceTestCase {
 
 		Collaborator collaborator = randomCollaborator();
 
+		collaborator.setEmailAddress(regex);
 		collaborator.setExternalReferenceCode(regex);
 		collaborator.setName(regex);
 		collaborator.setPortrait(regex);
@@ -180,6 +183,7 @@ public abstract class BaseCollaboratorResourceTestCase {
 
 		collaborator = CollaboratorSerDes.toDTO(json);
 
+		Assert.assertEquals(regex, collaborator.getEmailAddress());
 		Assert.assertEquals(regex, collaborator.getExternalReferenceCode());
 		Assert.assertEquals(regex, collaborator.getName());
 		Assert.assertEquals(regex, collaborator.getPortrait());
@@ -237,6 +241,7 @@ public abstract class BaseCollaboratorResourceTestCase {
 
 		// No namespace
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		Collaborator collaborator1 =
 			testGraphQLDeleteObjectEntryFolderCollaboratorByTypeCollaborator_addCollaborator();
 
@@ -279,6 +284,7 @@ public abstract class BaseCollaboratorResourceTestCase {
 
 		// Using the namespace headlessObject_v1_0
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		Collaborator collaborator2 =
 			testGraphQLDeleteObjectEntryFolderCollaboratorByTypeCollaborator_addCollaborator();
 
@@ -409,6 +415,7 @@ public abstract class BaseCollaboratorResourceTestCase {
 
 		// No namespace
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		Collaborator collaborator1 =
 			testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCodeCollaboratorByTypeCollaborator_addCollaborator();
 
@@ -467,6 +474,7 @@ public abstract class BaseCollaboratorResourceTestCase {
 
 		// Using the namespace headlessObject_v1_0
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		Collaborator collaborator2 =
 			testGraphQLDeleteScopeScopeKeyObjectEntryFolderByExternalReferenceCodeCollaboratorByTypeCollaborator_addCollaborator();
 
@@ -1576,6 +1584,14 @@ public abstract class BaseCollaboratorResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("emailAddress", additionalAssertFieldName)) {
+				if (collaborator.getEmailAddress() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals(
 					"externalReferenceCode", additionalAssertFieldName)) {
 
@@ -1777,6 +1793,17 @@ public abstract class BaseCollaboratorResourceTestCase {
 				if (!Objects.deepEquals(
 						collaborator1.getDateExpired(),
 						collaborator2.getDateExpired())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("emailAddress", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						collaborator1.getEmailAddress(),
+						collaborator2.getEmailAddress())) {
 
 					return false;
 				}
@@ -1999,6 +2026,52 @@ public abstract class BaseCollaboratorResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("emailAddress")) {
+			Object object = collaborator.getEmailAddress();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("externalReferenceCode")) {
 			Object object = collaborator.getExternalReferenceCode();
 
@@ -2206,7 +2279,9 @@ public abstract class BaseCollaboratorResourceTestCase {
 			).toString(),
 			"application/json");
 		httpInvoker.httpMethod(HttpInvoker.HttpMethod.POST);
-		httpInvoker.path("http://localhost:8080/o/graphql");
+		httpInvoker.path(
+			"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/o/graphql");
 		httpInvoker.userNameAndPassword(
 			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
 
@@ -2239,6 +2314,9 @@ public abstract class BaseCollaboratorResourceTestCase {
 		return new Collaborator() {
 			{
 				dateExpired = RandomTestUtil.nextDate();
+				emailAddress =
+					StringUtil.toLowerCase(RandomTestUtil.randomString()) +
+						"@liferay.com";
 				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
@@ -2471,4 +2549,4 @@ public abstract class BaseCollaboratorResourceTestCase {
 		_collaboratorResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-878691901
+// LIFERAY-REST-BUILDER-HASH:-2027261415

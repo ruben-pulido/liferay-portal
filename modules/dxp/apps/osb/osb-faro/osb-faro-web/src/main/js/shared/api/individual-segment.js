@@ -58,17 +58,21 @@ export function fetchMembershipMetrics({groupId, individualSegmentId}) {
 export function create({
 	channelId = '',
 	criteriaString = '',
+	externalReferenceCode = '',
 	groupId,
 	includeAnonymousUsers = false,
 	name,
-	segmentType
+	segmentType,
+	sequential = false
 }) {
 	const data = {
 		channelId,
+		externalReferenceCode,
 		filter: criteriaString,
 		includeAnonymousUsers,
 		name,
-		segmentType
+		segmentType,
+		sequential
 	};
 
 	return sendRequest({
@@ -81,18 +85,22 @@ export function create({
 export function update({
 	channelId = '',
 	criteriaString = '',
+	externalReferenceCode = '',
 	groupId,
 	id,
 	includeAnonymousUsers = false,
 	name,
-	segmentType
+	segmentType,
+	sequential = false
 }) {
 	const data = {
 		channelId,
+		externalReferenceCode,
 		filter: criteriaString,
 		includeAnonymousUsers,
 		name,
-		segmentType
+		segmentType,
+		sequential
 	};
 
 	return sendRequest({
@@ -258,12 +266,8 @@ export function updateSegmentActivation({
 	segmentActivation,
 	segmentId
 }) {
-	const {
-		frequencyType,
-		scheduleEndDate,
-		scheduleStartDate,
-		scheduleType
-	} = segmentActivation;
+	const {frequencyType, scheduleEndDate, scheduleStartDate, scheduleType} =
+		segmentActivation;
 
 	const data = {
 		frequencyType,

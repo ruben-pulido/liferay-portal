@@ -85,10 +85,10 @@ definition {
 		DMDocumentSharing.viewSharingOption(dmDocumentTitle = "Document_1.doc");
 	}
 
-	@description = "This test ensures that depot sharing can be disabled at the instance level."
+	@description = "This test ensures that depot sharing can be disabled at the instance and system levels."
 	@priority = 4
 	@refactordone
-	test CanDisableDepotSharingAtInstanceScope {
+	test CanDisableDepotSharingAtInstanceAndSystemScope {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -101,14 +101,12 @@ definition {
 		DepotNavigator.openDepotSettingsGeneral(depotName = "Test Depot Name");
 
 		Depot.viewNoPanel(panelName = "Sharing");
-	}
 
-	@description = "This test ensures that depot sharing can be disabled at the system level."
-	@priority = 4
-	@refactordone
-	test CanDisableDepotSharingAtSystemScope {
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
+		DepotNavigator.openToConfigSharingInInstanceSettings();
+
+		FormFields.enableCheckbox(fieldName = "enabled");
+
+		SystemSettings.saveConfiguration();
 
 		DepotNavigator.openToConfigSharingInSystemSettings();
 

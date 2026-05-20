@@ -8,7 +8,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {apiHelpersTest} from '../../../../fixtures/apiHelpersTest';
 import {commercePagesTest} from '../../../../fixtures/commercePagesTest';
 import {dataApiHelpersTest} from '../../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../../fixtures/loginTest';
 import {clickAndExpectToBeVisible} from '../../../../utils/clickAndExpectToBeVisible';
 import {getRandomInt} from '../../../../utils/getRandomInt';
@@ -19,9 +18,6 @@ export const test = mergeTests(
 	apiHelpersTest,
 	commercePagesTest,
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	loginTest()
 );
 
@@ -29,11 +25,9 @@ test(
 	'Orders can be bulk deleted on admin orders page',
 	{tag: '@LPD-55981'},
 	async ({apiHelpers, commerceAdminOrdersPage, page}) => {
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const channel =
 			await apiHelpers.headlessCommerceAdminChannel.postChannel({

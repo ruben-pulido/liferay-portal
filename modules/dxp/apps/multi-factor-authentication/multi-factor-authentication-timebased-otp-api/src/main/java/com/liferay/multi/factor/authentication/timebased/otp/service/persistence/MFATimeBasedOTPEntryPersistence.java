@@ -43,14 +43,6 @@ public interface MFATimeBasedOTPEntryPersistence
 		throws NoSuchEntryException;
 
 	/**
-	 * Returns the mfa time based otp entry where userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @return the matching mfa time based otp entry, or <code>null</code> if a matching mfa time based otp entry could not be found
-	 */
-	public MFATimeBasedOTPEntry fetchByUserId(long userId);
-
-	/**
 	 * Returns the mfa time based otp entry where userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param userId the user ID
@@ -76,21 +68,6 @@ public interface MFATimeBasedOTPEntryPersistence
 	 * @return the number of matching mfa time based otp entries
 	 */
 	public int countByUserId(long userId);
-
-	/**
-	 * Caches the mfa time based otp entry in the entity cache if it is enabled.
-	 *
-	 * @param mfaTimeBasedOTPEntry the mfa time based otp entry
-	 */
-	public void cacheResult(MFATimeBasedOTPEntry mfaTimeBasedOTPEntry);
-
-	/**
-	 * Caches the mfa time based otp entries in the entity cache if it is enabled.
-	 *
-	 * @param mfaTimeBasedOTPEntries the mfa time based otp entries
-	 */
-	public void cacheResult(
-		java.util.List<MFATimeBasedOTPEntry> mfaTimeBasedOTPEntries);
 
 	/**
 	 * Creates a new mfa time based otp entry with the primary key. Does not add the mfa time based otp entry to the database.
@@ -132,72 +109,14 @@ public interface MFATimeBasedOTPEntryPersistence
 	public MFATimeBasedOTPEntry fetchByPrimaryKey(long mfaTimeBasedOTPEntryId);
 
 	/**
-	 * Returns all the mfa time based otp entries.
+	 * Returns the mfa time based otp entry where userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the mfa time based otp entries
+	 * @param userId the user ID
+	 * @return the matching mfa time based otp entry, or <code>null</code> if a matching mfa time based otp entry could not be found
 	 */
-	public java.util.List<MFATimeBasedOTPEntry> findAll();
-
-	/**
-	 * Returns a range of all the mfa time based otp entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MFATimeBasedOTPEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mfa time based otp entries
-	 * @param end the upper bound of the range of mfa time based otp entries (not inclusive)
-	 * @return the range of mfa time based otp entries
-	 */
-	public java.util.List<MFATimeBasedOTPEntry> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the mfa time based otp entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MFATimeBasedOTPEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mfa time based otp entries
-	 * @param end the upper bound of the range of mfa time based otp entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of mfa time based otp entries
-	 */
-	public java.util.List<MFATimeBasedOTPEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MFATimeBasedOTPEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the mfa time based otp entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MFATimeBasedOTPEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mfa time based otp entries
-	 * @param end the upper bound of the range of mfa time based otp entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of mfa time based otp entries
-	 */
-	public java.util.List<MFATimeBasedOTPEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MFATimeBasedOTPEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the mfa time based otp entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of mfa time based otp entries.
-	 *
-	 * @return the number of mfa time based otp entries
-	 */
-	public int countAll();
+	public default MFATimeBasedOTPEntry fetchByUserId(long userId) {
+		return fetchByUserId(userId, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2092053354
+// LIFERAY-SERVICE-BUILDER-HASH:1524702656

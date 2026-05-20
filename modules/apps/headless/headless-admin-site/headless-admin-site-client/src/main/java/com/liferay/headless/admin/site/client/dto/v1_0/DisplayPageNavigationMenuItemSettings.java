@@ -170,4 +170,4 @@ public class DisplayPageNavigationMenuItemSettings
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:2006692985
+// LIFERAY-REST-BUILDER-HASH:-534062605

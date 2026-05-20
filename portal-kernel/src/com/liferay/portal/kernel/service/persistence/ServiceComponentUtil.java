@@ -36,6 +36,20 @@ public class ServiceComponentUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<ServiceComponent> serviceComponents) {
+		getPersistence().cacheResult(serviceComponents);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(ServiceComponent serviceComponent) {
+		getPersistence().cacheResult(serviceComponent);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,62 +125,10 @@ public class ServiceComponentUtil {
 	}
 
 	/**
-	 * Returns all the service components where buildNamespace = &#63;.
-	 *
-	 * @param buildNamespace the build namespace
-	 * @return the matching service components
-	 */
-	public static List<ServiceComponent> findByBuildNamespace(
-		String buildNamespace) {
-
-		return getPersistence().findByBuildNamespace(buildNamespace);
-	}
-
-	/**
-	 * Returns a range of all the service components where buildNamespace = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ServiceComponentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param buildNamespace the build namespace
-	 * @param start the lower bound of the range of service components
-	 * @param end the upper bound of the range of service components (not inclusive)
-	 * @return the range of matching service components
-	 */
-	public static List<ServiceComponent> findByBuildNamespace(
-		String buildNamespace, int start, int end) {
-
-		return getPersistence().findByBuildNamespace(
-			buildNamespace, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the service components where buildNamespace = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ServiceComponentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param buildNamespace the build namespace
-	 * @param start the lower bound of the range of service components
-	 * @param end the upper bound of the range of service components (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching service components
-	 */
-	public static List<ServiceComponent> findByBuildNamespace(
-		String buildNamespace, int start, int end,
-		OrderByComparator<ServiceComponent> orderByComparator) {
-
-		return getPersistence().findByBuildNamespace(
-			buildNamespace, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the service components where buildNamespace = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ServiceComponentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.ServiceComponentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param buildNamespace the build namespace
@@ -254,19 +216,6 @@ public class ServiceComponentUtil {
 	}
 
 	/**
-	 * Returns the service component where buildNamespace = &#63; and buildNumber = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param buildNamespace the build namespace
-	 * @param buildNumber the build number
-	 * @return the matching service component, or <code>null</code> if a matching service component could not be found
-	 */
-	public static ServiceComponent fetchByBNS_BNU(
-		String buildNamespace, long buildNumber) {
-
-		return getPersistence().fetchByBNS_BNU(buildNamespace, buildNumber);
-	}
-
-	/**
 	 * Returns the service component where buildNamespace = &#63; and buildNumber = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param buildNamespace the build namespace
@@ -305,24 +254,6 @@ public class ServiceComponentUtil {
 	 */
 	public static int countByBNS_BNU(String buildNamespace, long buildNumber) {
 		return getPersistence().countByBNS_BNU(buildNamespace, buildNumber);
-	}
-
-	/**
-	 * Caches the service component in the entity cache if it is enabled.
-	 *
-	 * @param serviceComponent the service component
-	 */
-	public static void cacheResult(ServiceComponent serviceComponent) {
-		getPersistence().cacheResult(serviceComponent);
-	}
-
-	/**
-	 * Caches the service components in the entity cache if it is enabled.
-	 *
-	 * @param serviceComponents the service components
-	 */
-	public static void cacheResult(List<ServiceComponent> serviceComponents) {
-		getPersistence().cacheResult(serviceComponents);
 	}
 
 	/**
@@ -380,84 +311,68 @@ public class ServiceComponentUtil {
 	}
 
 	/**
-	 * Returns all the service components.
+	 * Returns the service component where buildNamespace = &#63; and buildNumber = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the service components
+	 * @param buildNamespace the build namespace
+	 * @param buildNumber the build number
+	 * @return the matching service component, or <code>null</code> if a matching service component could not be found
 	 */
-	public static List<ServiceComponent> findAll() {
-		return getPersistence().findAll();
+	public static ServiceComponent fetchByBNS_BNU(
+		String buildNamespace, long buildNumber) {
+
+		return getPersistence().fetchByBNS_BNU(buildNamespace, buildNumber);
 	}
 
 	/**
-	 * Returns a range of all the service components.
+	 * Returns all the service components where buildNamespace = &#63;.
+	 *
+	 * @param buildNamespace the build namespace
+	 * @return the matching service components
+	 */
+	public static List<ServiceComponent> findByBuildNamespace(
+		String buildNamespace) {
+
+		return getPersistence().findByBuildNamespace(buildNamespace);
+	}
+
+	/**
+	 * Returns a range of all the service components where buildNamespace = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ServiceComponentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.ServiceComponentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param buildNamespace the build namespace
 	 * @param start the lower bound of the range of service components
 	 * @param end the upper bound of the range of service components (not inclusive)
-	 * @return the range of service components
+	 * @return the range of matching service components
 	 */
-	public static List<ServiceComponent> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<ServiceComponent> findByBuildNamespace(
+		String buildNamespace, int start, int end) {
+
+		return getPersistence().findByBuildNamespace(
+			buildNamespace, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the service components.
+	 * Returns an ordered range of all the service components where buildNamespace = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ServiceComponentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.ServiceComponentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param buildNamespace the build namespace
 	 * @param start the lower bound of the range of service components
 	 * @param end the upper bound of the range of service components (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of service components
+	 * @return the ordered range of matching service components
 	 */
-	public static List<ServiceComponent> findAll(
-		int start, int end,
+	public static List<ServiceComponent> findByBuildNamespace(
+		String buildNamespace, int start, int end,
 		OrderByComparator<ServiceComponent> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the service components.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ServiceComponentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of service components
-	 * @param end the upper bound of the range of service components (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of service components
-	 */
-	public static List<ServiceComponent> findAll(
-		int start, int end,
-		OrderByComparator<ServiceComponent> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the service components from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of service components.
-	 *
-	 * @return the number of service components
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByBuildNamespace(
+			buildNamespace, start, end, orderByComparator);
 	}
 
 	public static ServiceComponentPersistence getPersistence() {
@@ -471,4 +386,4 @@ public class ServiceComponentUtil {
 	private static volatile ServiceComponentPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1798779011
+// LIFERAY-SERVICE-BUILDER-HASH:-684243029

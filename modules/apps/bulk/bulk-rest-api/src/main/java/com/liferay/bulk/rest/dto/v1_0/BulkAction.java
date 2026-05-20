@@ -77,6 +77,10 @@ import java.util.function.Supplier;
 			value = DueDateObjectBulkSelectionAction.class
 		),
 		@JsonSubTypes.Type(
+			name = "DuplicateObjectBulkSelectionAction",
+			value = DuplicateObjectBulkSelectionAction.class
+		),
+		@JsonSubTypes.Type(
 			name = "EditObjectCategoriesBulkSelectionAction",
 			value = EditObjectCategoriesBulkSelectionAction.class
 		),
@@ -99,6 +103,10 @@ import java.util.function.Supplier;
 		@JsonSubTypes.Type(
 			name = "ResetPermissionObjectBulkSelectionAction",
 			value = ResetPermissionObjectBulkSelectionAction.class
+		),
+		@JsonSubTypes.Type(
+			name = "RestoreObjectBulkSelectionAction",
+			value = RestoreObjectBulkSelectionAction.class
 		),
 		@JsonSubTypes.Type(
 			name = "StatusObjectBulkSelectionAction",
@@ -367,6 +375,8 @@ public abstract class BulkAction implements Serializable {
 			"DeleteObjectEntryBulkSelectionAction"),
 		DUE_DATE_OBJECT_BULK_SELECTION_ACTION(
 			"DueDateObjectBulkSelectionAction"),
+		DUPLICATE_OBJECT_BULK_SELECTION_ACTION(
+			"DuplicateObjectBulkSelectionAction"),
 		EXPIRE_OBJECT_BULK_SELECTION_ACTION("ExpireObjectBulkSelectionAction"),
 		EDIT_OBJECT_TAGS_BULK_SELECTION_ACTION(
 			"EditObjectTagsBulkSelectionAction"),
@@ -375,6 +385,8 @@ public abstract class BulkAction implements Serializable {
 			"PermissionObjectBulkSelectionAction"),
 		RESET_PERMISSION_OBJECT_BULK_SELECTION_ACTION(
 			"ResetPermissionObjectBulkSelectionAction"),
+		RESTORE_OBJECT_BULK_SELECTION_ACTION(
+			"RestoreObjectBulkSelectionAction"),
 		STATUS_OBJECT_BULK_SELECTION_ACTION("StatusObjectBulkSelectionAction"),
 		EDIT_OBJECT_CATEGORIES_BULK_SELECTION_ACTION(
 			"EditObjectCategoriesBulkSelectionAction"),
@@ -503,4 +515,4 @@ public abstract class BulkAction implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:1785034353
+// LIFERAY-REST-BUILDER-HASH:1141910965

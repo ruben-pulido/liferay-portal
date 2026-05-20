@@ -164,7 +164,7 @@ public class AssetUsageResourceTest extends BaseAssetUsageResourceTestCase {
 			() -> StringBundler.concat(
 				_themeDisplay.getPortalURL(), _portal.getPathMain(),
 				GroupConstants.CMS_FRIENDLY_URL,
-				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				"/edit_content_item?p_l_mode=read&p_p_state=",
 				LiferayWindowState.POP_UP, "&objectEntryId=",
 				objectEntry.getObjectEntryId()));
 
@@ -348,7 +348,7 @@ public class AssetUsageResourceTest extends BaseAssetUsageResourceTestCase {
 		themeDisplay.setPortalURL(
 			testCompany.getPortalURL(testGroup.getGroupId()));
 		themeDisplay.setServerName("localhost");
-		themeDisplay.setServerPort(8080);
+		themeDisplay.setServerPort(PortalUtil.getPortalServerPort(false));
 		themeDisplay.setSiteGroupId(testGroup.getGroupId());
 		themeDisplay.setUser(testCompany.getGuestUser());
 

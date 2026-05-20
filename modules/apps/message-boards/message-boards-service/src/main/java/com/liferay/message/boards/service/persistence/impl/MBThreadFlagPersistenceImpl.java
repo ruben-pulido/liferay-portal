@@ -13,17 +13,11 @@ import com.liferay.message.boards.model.impl.MBThreadFlagModelImpl;
 import com.liferay.message.boards.service.persistence.MBThreadFlagPersistence;
 import com.liferay.message.boards.service.persistence.MBThreadFlagUtil;
 import com.liferay.message.boards.service.persistence.impl.constants.MBPersistenceConstants;
-import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -33,10 +27,10 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -52,10 +46,8 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -77,7 +69,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = MBThreadFlagPersistence.class)
 public class MBThreadFlagPersistenceImpl
-	extends BasePersistenceImpl<MBThreadFlag>
+	extends BasePersistenceImpl<MBThreadFlag, NoSuchThreadFlagException>
 	implements MBThreadFlagPersistence {
 
 	/*
@@ -94,67 +86,14 @@ public class MBThreadFlagPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the message boards thread flags where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the message boards thread flags where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @return the range of matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUuid(String uuid, int start, int end) {
-		return findByUuid(uuid, start, end, null);
-	}
+	private CollectionPersistenceFinder<MBThreadFlag>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the message boards thread flags where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<MBThreadFlag> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the message boards thread flags where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -170,111 +109,9 @@ public class MBThreadFlagPersistenceImpl
 		OrderByComparator<MBThreadFlag> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUuid;
-					finderArgs = new Object[] {uuid};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUuid;
-				finderArgs = new Object[] {uuid, start, end, orderByComparator};
-			}
-
-			List<MBThreadFlag> list = null;
-
-			if (useFinderCache) {
-				list = (List<MBThreadFlag>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (MBThreadFlag mbThreadFlag : list) {
-						if (!uuid.equals(mbThreadFlag.getUuid())) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_MBTHREADFLAG_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_UUID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(MBThreadFlagModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					list = (List<MBThreadFlag>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -296,16 +133,9 @@ public class MBThreadFlagPersistenceImpl
 			return mbThreadFlag;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchThreadFlagException(sb.toString());
+		throw new NoSuchThreadFlagException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -319,13 +149,8 @@ public class MBThreadFlagPersistenceImpl
 	public MBThreadFlag fetchByUuid_First(
 		String uuid, OrderByComparator<MBThreadFlag> orderByComparator) {
 
-		List<MBThreadFlag> list = findByUuid(uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -335,11 +160,8 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (MBThreadFlag mbThreadFlag :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(mbThreadFlag);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -350,73 +172,12 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = _finderPathCountByUuid;
-
-			Object[] finderArgs = new Object[] {uuid};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_MBTHREADFLAG_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_UUID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"mbThreadFlag.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(mbThreadFlag.uuid IS NULL OR mbThreadFlag.uuid = '')";
-
-	private FinderPath _finderPathFetchByUUID_G;
+	private UniquePersistenceFinder<MBThreadFlag>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the message boards thread flag where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchThreadFlagException</code> if it could not be found.
@@ -433,38 +194,18 @@ public class MBThreadFlagPersistenceImpl
 		MBThreadFlag mbThreadFlag = fetchByUUID_G(uuid, groupId);
 
 		if (mbThreadFlag == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("uuid=");
-			sb.append(uuid);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchThreadFlagException(sb.toString());
+			throw new NoSuchThreadFlagException(message);
 		}
 
 		return mbThreadFlag;
-	}
-
-	/**
-	 * Returns the message boards thread flag where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
-	 */
-	@Override
-	public MBThreadFlag fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
 	}
 
 	/**
@@ -479,101 +220,8 @@ public class MBThreadFlagPersistenceImpl
 	public MBThreadFlag fetchByUUID_G(
 		String uuid, long groupId, boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {uuid, groupId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByUUID_G, finderArgs, this);
-			}
-
-			if (result instanceof MBThreadFlag) {
-				MBThreadFlag mbThreadFlag = (MBThreadFlag)result;
-
-				if (!Objects.equals(uuid, mbThreadFlag.getUuid()) ||
-					(groupId != mbThreadFlag.getGroupId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_MBTHREADFLAG_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(groupId);
-
-					List<MBThreadFlag> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByUUID_G, finderArgs, list);
-						}
-					}
-					else {
-						MBThreadFlag mbThreadFlag = list.get(0);
-
-						result = mbThreadFlag;
-
-						cacheResult(mbThreadFlag);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (MBThreadFlag)result;
-			}
-		}
+		return _uniquePersistenceFinderByUUID_G.fetch(
+			finderCache, new Object[] {uuid, groupId}, useFinderCache);
 	}
 
 	/**
@@ -601,89 +249,18 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		MBThreadFlag mbThreadFlag = fetchByUUID_G(uuid, groupId);
-
-		if (mbThreadFlag == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByUUID_G.count(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
-		"mbThreadFlag.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
-		"(mbThreadFlag.uuid IS NULL OR mbThreadFlag.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
-		"mbThreadFlag.groupId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByUuid_C;
-	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
-	private FinderPath _finderPathCountByUuid_C;
-
-	/**
-	 * Returns all the message boards thread flags where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUuid_C(String uuid, long companyId) {
-		return findByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the message boards thread flags where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @return the range of matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return findByUuid_C(uuid, companyId, start, end, null);
-	}
+	private CollectionPersistenceFinder<MBThreadFlag>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the message boards thread flags where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<MBThreadFlag> orderByComparator) {
-
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the message boards thread flags where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -700,119 +277,9 @@ public class MBThreadFlagPersistenceImpl
 		OrderByComparator<MBThreadFlag> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUuid_C;
-					finderArgs = new Object[] {uuid, companyId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUuid_C;
-				finderArgs = new Object[] {
-					uuid, companyId, start, end, orderByComparator
-				};
-			}
-
-			List<MBThreadFlag> list = null;
-
-			if (useFinderCache) {
-				list = (List<MBThreadFlag>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (MBThreadFlag mbThreadFlag : list) {
-						if (!uuid.equals(mbThreadFlag.getUuid()) ||
-							(companyId != mbThreadFlag.getCompanyId())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_MBTHREADFLAG_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(MBThreadFlagModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(companyId);
-
-					list = (List<MBThreadFlag>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -837,19 +304,9 @@ public class MBThreadFlagPersistenceImpl
 			return mbThreadFlag;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchThreadFlagException(sb.toString());
+		throw new NoSuchThreadFlagException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -865,14 +322,8 @@ public class MBThreadFlagPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<MBThreadFlag> orderByComparator) {
 
-		List<MBThreadFlag> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -883,13 +334,8 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (MBThreadFlag mbThreadFlag :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(mbThreadFlag);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -901,137 +347,18 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = _finderPathCountByUuid_C;
-
-			Object[] finderArgs = new Object[] {uuid, companyId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_MBTHREADFLAG_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(companyId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"mbThreadFlag.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(mbThreadFlag.uuid IS NULL OR mbThreadFlag.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"mbThreadFlag.companyId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByUserId;
-	private FinderPath _finderPathWithoutPaginationFindByUserId;
-	private FinderPath _finderPathCountByUserId;
-
-	/**
-	 * Returns all the message boards thread flags where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUserId(long userId) {
-		return findByUserId(userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the message boards thread flags where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @return the range of matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUserId(long userId, int start, int end) {
-		return findByUserId(userId, start, end, null);
-	}
+	private CollectionPersistenceFinder<MBThreadFlag>
+		_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns an ordered range of all the message boards thread flags where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByUserId(
-		long userId, int start, int end,
-		OrderByComparator<MBThreadFlag> orderByComparator) {
-
-		return findByUserId(userId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the message boards thread flags where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1047,100 +374,9 @@ public class MBThreadFlagPersistenceImpl
 		OrderByComparator<MBThreadFlag> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUserId;
-					finderArgs = new Object[] {userId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUserId;
-				finderArgs = new Object[] {
-					userId, start, end, orderByComparator
-				};
-			}
-
-			List<MBThreadFlag> list = null;
-
-			if (useFinderCache) {
-				list = (List<MBThreadFlag>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (MBThreadFlag mbThreadFlag : list) {
-						if (userId != mbThreadFlag.getUserId()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_MBTHREADFLAG_WHERE);
-
-				sb.append(_FINDER_COLUMN_USERID_USERID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(MBThreadFlagModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId);
-
-					list = (List<MBThreadFlag>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUserId.find(
+			finderCache, new Object[] {userId}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -1163,16 +399,9 @@ public class MBThreadFlagPersistenceImpl
 			return mbThreadFlag;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId=");
-		sb.append(userId);
-
-		sb.append("}");
-
-		throw new NoSuchThreadFlagException(sb.toString());
+		throw new NoSuchThreadFlagException(
+			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
 	}
 
 	/**
@@ -1186,13 +415,8 @@ public class MBThreadFlagPersistenceImpl
 	public MBThreadFlag fetchByUserId_First(
 		long userId, OrderByComparator<MBThreadFlag> orderByComparator) {
 
-		List<MBThreadFlag> list = findByUserId(userId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUserId.fetchFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -1202,12 +426,8 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public void removeByUserId(long userId) {
-		for (MBThreadFlag mbThreadFlag :
-				findByUserId(
-					userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(mbThreadFlag);
-		}
+		_collectionPersistenceFinderByUserId.remove(
+			finderCache, new Object[] {userId});
 	}
 
 	/**
@@ -1218,117 +438,18 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public int countByUserId(long userId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			FinderPath finderPath = _finderPathCountByUserId;
-
-			Object[] finderArgs = new Object[] {userId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_MBTHREADFLAG_WHERE);
-
-				sb.append(_FINDER_COLUMN_USERID_USERID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUserId.count(
+			finderCache, new Object[] {userId});
 	}
 
-	private static final String _FINDER_COLUMN_USERID_USERID_2 =
-		"mbThreadFlag.userId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByThreadId;
-	private FinderPath _finderPathWithoutPaginationFindByThreadId;
-	private FinderPath _finderPathCountByThreadId;
-
-	/**
-	 * Returns all the message boards thread flags where threadId = &#63;.
-	 *
-	 * @param threadId the thread ID
-	 * @return the matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByThreadId(long threadId) {
-		return findByThreadId(
-			threadId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the message boards thread flags where threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @return the range of matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByThreadId(
-		long threadId, int start, int end) {
-
-		return findByThreadId(threadId, start, end, null);
-	}
+	private CollectionPersistenceFinder<MBThreadFlag>
+		_collectionPersistenceFinderByThreadId;
 
 	/**
 	 * Returns an ordered range of all the message boards thread flags where threadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findByThreadId(
-		long threadId, int start, int end,
-		OrderByComparator<MBThreadFlag> orderByComparator) {
-
-		return findByThreadId(threadId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the message boards thread flags where threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -1344,100 +465,9 @@ public class MBThreadFlagPersistenceImpl
 		OrderByComparator<MBThreadFlag> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByThreadId;
-					finderArgs = new Object[] {threadId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByThreadId;
-				finderArgs = new Object[] {
-					threadId, start, end, orderByComparator
-				};
-			}
-
-			List<MBThreadFlag> list = null;
-
-			if (useFinderCache) {
-				list = (List<MBThreadFlag>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (MBThreadFlag mbThreadFlag : list) {
-						if (threadId != mbThreadFlag.getThreadId()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_MBTHREADFLAG_WHERE);
-
-				sb.append(_FINDER_COLUMN_THREADID_THREADID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(MBThreadFlagModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(threadId);
-
-					list = (List<MBThreadFlag>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByThreadId.find(
+			finderCache, new Object[] {threadId}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -1460,16 +490,9 @@ public class MBThreadFlagPersistenceImpl
 			return mbThreadFlag;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("threadId=");
-		sb.append(threadId);
-
-		sb.append("}");
-
-		throw new NoSuchThreadFlagException(sb.toString());
+		throw new NoSuchThreadFlagException(
+			_collectionPersistenceFinderByThreadId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {threadId}));
 	}
 
 	/**
@@ -1483,14 +506,8 @@ public class MBThreadFlagPersistenceImpl
 	public MBThreadFlag fetchByThreadId_First(
 		long threadId, OrderByComparator<MBThreadFlag> orderByComparator) {
 
-		List<MBThreadFlag> list = findByThreadId(
-			threadId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByThreadId.fetchFirst(
+			finderCache, new Object[] {threadId}, orderByComparator);
 	}
 
 	/**
@@ -1500,12 +517,8 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public void removeByThreadId(long threadId) {
-		for (MBThreadFlag mbThreadFlag :
-				findByThreadId(
-					threadId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(mbThreadFlag);
-		}
+		_collectionPersistenceFinderByThreadId.remove(
+			finderCache, new Object[] {threadId});
 	}
 
 	/**
@@ -1516,57 +529,11 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public int countByThreadId(long threadId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			FinderPath finderPath = _finderPathCountByThreadId;
-
-			Object[] finderArgs = new Object[] {threadId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_MBTHREADFLAG_WHERE);
-
-				sb.append(_FINDER_COLUMN_THREADID_THREADID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(threadId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByThreadId.count(
+			finderCache, new Object[] {threadId});
 	}
 
-	private static final String _FINDER_COLUMN_THREADID_THREADID_2 =
-		"mbThreadFlag.threadId = ?";
-
-	private FinderPath _finderPathFetchByU_T;
+	private UniquePersistenceFinder<MBThreadFlag> _uniquePersistenceFinderByU_T;
 
 	/**
 	 * Returns the message boards thread flag where userId = &#63; and threadId = &#63; or throws a <code>NoSuchThreadFlagException</code> if it could not be found.
@@ -1583,38 +550,18 @@ public class MBThreadFlagPersistenceImpl
 		MBThreadFlag mbThreadFlag = fetchByU_T(userId, threadId);
 
 		if (mbThreadFlag == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("userId=");
-			sb.append(userId);
-
-			sb.append(", threadId=");
-			sb.append(threadId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByU_T.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId, threadId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchThreadFlagException(sb.toString());
+			throw new NoSuchThreadFlagException(message);
 		}
 
 		return mbThreadFlag;
-	}
-
-	/**
-	 * Returns the message boards thread flag where userId = &#63; and threadId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param threadId the thread ID
-	 * @return the matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
-	 */
-	@Override
-	public MBThreadFlag fetchByU_T(long userId, long threadId) {
-		return fetchByU_T(userId, threadId, true);
 	}
 
 	/**
@@ -1629,88 +576,8 @@ public class MBThreadFlagPersistenceImpl
 	public MBThreadFlag fetchByU_T(
 		long userId, long threadId, boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {userId, threadId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByU_T, finderArgs, this);
-			}
-
-			if (result instanceof MBThreadFlag) {
-				MBThreadFlag mbThreadFlag = (MBThreadFlag)result;
-
-				if ((userId != mbThreadFlag.getUserId()) ||
-					(threadId != mbThreadFlag.getThreadId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_MBTHREADFLAG_WHERE);
-
-				sb.append(_FINDER_COLUMN_U_T_USERID_2);
-
-				sb.append(_FINDER_COLUMN_U_T_THREADID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId);
-
-					queryPos.add(threadId);
-
-					List<MBThreadFlag> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByU_T, finderArgs, list);
-						}
-					}
-					else {
-						MBThreadFlag mbThreadFlag = list.get(0);
-
-						result = mbThreadFlag;
-
-						cacheResult(mbThreadFlag);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (MBThreadFlag)result;
-			}
-		}
+		return _uniquePersistenceFinderByU_T.fetch(
+			finderCache, new Object[] {userId, threadId}, useFinderCache);
 	}
 
 	/**
@@ -1738,20 +605,9 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Override
 	public int countByU_T(long userId, long threadId) {
-		MBThreadFlag mbThreadFlag = fetchByU_T(userId, threadId);
-
-		if (mbThreadFlag == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByU_T.count(
+			finderCache, new Object[] {userId, threadId});
 	}
-
-	private static final String _FINDER_COLUMN_U_T_USERID_2 =
-		"mbThreadFlag.userId = ? AND ";
-
-	private static final String _FINDER_COLUMN_U_T_THREADID_2 =
-		"mbThreadFlag.threadId = ?";
 
 	public MBThreadFlagPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -1766,135 +622,6 @@ public class MBThreadFlagPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(MBThreadFlagTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the message boards thread flag in the entity cache if it is enabled.
-	 *
-	 * @param mbThreadFlag the message boards thread flag
-	 */
-	@Override
-	public void cacheResult(MBThreadFlag mbThreadFlag) {
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					mbThreadFlag.getCtCollectionId())) {
-
-			entityCache.putResult(
-				MBThreadFlagImpl.class, mbThreadFlag.getPrimaryKey(),
-				mbThreadFlag);
-
-			finderCache.putResult(
-				_finderPathFetchByUUID_G,
-				new Object[] {
-					mbThreadFlag.getUuid(), mbThreadFlag.getGroupId()
-				},
-				mbThreadFlag);
-
-			finderCache.putResult(
-				_finderPathFetchByU_T,
-				new Object[] {
-					mbThreadFlag.getUserId(), mbThreadFlag.getThreadId()
-				},
-				mbThreadFlag);
-		}
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the message boards thread flags in the entity cache if it is enabled.
-	 *
-	 * @param mbThreadFlags the message boards thread flags
-	 */
-	@Override
-	public void cacheResult(List<MBThreadFlag> mbThreadFlags) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (mbThreadFlags.size() > _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (MBThreadFlag mbThreadFlag : mbThreadFlags) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-						mbThreadFlag.getCtCollectionId())) {
-
-				if (entityCache.getResult(
-						MBThreadFlagImpl.class, mbThreadFlag.getPrimaryKey()) ==
-							null) {
-
-					cacheResult(mbThreadFlag);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all message boards thread flags.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(MBThreadFlagImpl.class);
-
-		finderCache.clearCache(MBThreadFlagImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the message boards thread flag.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(MBThreadFlag mbThreadFlag) {
-		entityCache.removeResult(MBThreadFlagImpl.class, mbThreadFlag);
-	}
-
-	@Override
-	public void clearCache(List<MBThreadFlag> mbThreadFlags) {
-		for (MBThreadFlag mbThreadFlag : mbThreadFlags) {
-			entityCache.removeResult(MBThreadFlagImpl.class, mbThreadFlag);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(MBThreadFlagImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(MBThreadFlagImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		MBThreadFlagModelImpl mbThreadFlagModelImpl) {
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					mbThreadFlagModelImpl.getCtCollectionId())) {
-
-			Object[] args = new Object[] {
-				mbThreadFlagModelImpl.getUuid(),
-				mbThreadFlagModelImpl.getGroupId()
-			};
-
-			finderCache.putResult(
-				_finderPathFetchByUUID_G, args, mbThreadFlagModelImpl);
-
-			args = new Object[] {
-				mbThreadFlagModelImpl.getUserId(),
-				mbThreadFlagModelImpl.getThreadId()
-			};
-
-			finderCache.putResult(
-				_finderPathFetchByU_T, args, mbThreadFlagModelImpl);
-		}
 	}
 
 	/**
@@ -1931,47 +658,6 @@ public class MBThreadFlagPersistenceImpl
 		throws NoSuchThreadFlagException {
 
 		return remove((Serializable)threadFlagId);
-	}
-
-	/**
-	 * Removes the message boards thread flag with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the message boards thread flag
-	 * @return the message boards thread flag that was removed
-	 * @throws NoSuchThreadFlagException if a message boards thread flag with the primary key could not be found
-	 */
-	@Override
-	public MBThreadFlag remove(Serializable primaryKey)
-		throws NoSuchThreadFlagException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			MBThreadFlag mbThreadFlag = (MBThreadFlag)session.get(
-				MBThreadFlagImpl.class, primaryKey);
-
-			if (mbThreadFlag == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchThreadFlagException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(mbThreadFlag);
-		}
-		catch (NoSuchThreadFlagException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -2085,41 +771,13 @@ public class MBThreadFlagPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			MBThreadFlagImpl.class, mbThreadFlagModelImpl, false, true);
-
-		cacheUniqueFindersCache(mbThreadFlagModelImpl);
+		cacheUniqueFindersResult(mbThreadFlag, false);
 
 		if (isNew) {
 			mbThreadFlag.setNew(false);
 		}
 
 		mbThreadFlag.resetOriginalValues();
-
-		return mbThreadFlag;
-	}
-
-	/**
-	 * Returns the message boards thread flag with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the message boards thread flag
-	 * @return the message boards thread flag
-	 * @throws NoSuchThreadFlagException if a message boards thread flag with the primary key could not be found
-	 */
-	@Override
-	public MBThreadFlag findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchThreadFlagException {
-
-		MBThreadFlag mbThreadFlag = fetchByPrimaryKey(primaryKey);
-
-		if (mbThreadFlag == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchThreadFlagException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return mbThreadFlag;
 	}
@@ -2138,52 +796,9 @@ public class MBThreadFlagPersistenceImpl
 		return findByPrimaryKey((Serializable)threadFlagId);
 	}
 
-	/**
-	 * Returns the message boards thread flag with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the message boards thread flag
-	 * @return the message boards thread flag, or <code>null</code> if a message boards thread flag with the primary key could not be found
-	 */
 	@Override
-	public MBThreadFlag fetchByPrimaryKey(Serializable primaryKey) {
-		if (ctPersistenceHelper.isProductionMode(
-				MBThreadFlag.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		MBThreadFlag mbThreadFlag = (MBThreadFlag)entityCache.getResult(
-			MBThreadFlagImpl.class, primaryKey);
-
-		if (mbThreadFlag != null) {
-			return mbThreadFlag;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			mbThreadFlag = (MBThreadFlag)session.get(
-				MBThreadFlagImpl.class, primaryKey);
-
-			if (mbThreadFlag != null) {
-				cacheResult(mbThreadFlag);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return mbThreadFlag;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return ctPersistenceHelper;
 	}
 
 	/**
@@ -2195,318 +810,6 @@ public class MBThreadFlagPersistenceImpl
 	@Override
 	public MBThreadFlag fetchByPrimaryKey(long threadFlagId) {
 		return fetchByPrimaryKey((Serializable)threadFlagId);
-	}
-
-	@Override
-	public Map<Serializable, MBThreadFlag> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (ctPersistenceHelper.isProductionMode(MBThreadFlag.class)) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, MBThreadFlag> map =
-			new HashMap<Serializable, MBThreadFlag>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			MBThreadFlag mbThreadFlag = fetchByPrimaryKey(primaryKey);
-
-			if (mbThreadFlag != null) {
-				map.put(primaryKey, mbThreadFlag);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-						MBThreadFlag.class, primaryKey)) {
-
-				MBThreadFlag mbThreadFlag = (MBThreadFlag)entityCache.getResult(
-					MBThreadFlagImpl.class, primaryKey);
-
-				if (mbThreadFlag == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, mbThreadFlag);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (MBThreadFlag mbThreadFlag : (List<MBThreadFlag>)query.list()) {
-				map.put(mbThreadFlag.getPrimaryKeyObj(), mbThreadFlag);
-
-				cacheResult(mbThreadFlag);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the message boards thread flags.
-	 *
-	 * @return the message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the message boards thread flags.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @return the range of message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the message boards thread flags.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findAll(
-		int start, int end, OrderByComparator<MBThreadFlag> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the message boards thread flags.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBThreadFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of message boards thread flags
-	 * @param end the upper bound of the range of message boards thread flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of message boards thread flags
-	 */
-	@Override
-	public List<MBThreadFlag> findAll(
-		int start, int end, OrderByComparator<MBThreadFlag> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<MBThreadFlag> list = null;
-
-			if (useFinderCache) {
-				list = (List<MBThreadFlag>)finderCache.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_MBTHREADFLAG);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_MBTHREADFLAG;
-
-					sql = sql.concat(MBThreadFlagModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<MBThreadFlag>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the message boards thread flags from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (MBThreadFlag mbThreadFlag : findAll()) {
-			remove(mbThreadFlag);
-		}
-	}
-
-	/**
-	 * Returns the number of message boards thread flags.
-	 *
-	 * @return the number of message boards thread flags
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					MBThreadFlag.class)) {
-
-			Long count = (Long)finderCache.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(_SQL_COUNT_MBTHREADFLAG);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -2603,102 +906,137 @@ public class MBThreadFlagPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"uuid_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, false, null),
+			_SQL_SELECT_MBTHREADFLAG_WHERE, _SQL_COUNT_MBTHREADFLAG_WHERE,
+			MBThreadFlagModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"mbThreadFlag.", "uuid", FinderColumn.Type.STRING, "=", true,
+				true, MBThreadFlag::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"uuid_", "groupId"}, 0, 1, false,
+				convertNullFunction(MBThreadFlag::getUuid),
+				MBThreadFlag::getGroupId),
+			_SQL_SELECT_MBTHREADFLAG_WHERE, "",
+			new FinderColumn<>(
+				"mbThreadFlag.", "uuid", FinderColumn.Type.STRING, "=", true,
+				true, MBThreadFlag::getUuid),
+			new FinderColumn<>(
+				"mbThreadFlag.", "groupId", FinderColumn.Type.LONG, "=", true,
+				true, MBThreadFlag::getGroupId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+					new String[] {
+						String.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_", "companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
+				_SQL_SELECT_MBTHREADFLAG_WHERE, _SQL_COUNT_MBTHREADFLAG_WHERE,
+				MBThreadFlagModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"mbThreadFlag.", "uuid", FinderColumn.Type.STRING, "=",
+					true, true, MBThreadFlag::getUuid),
+				new FinderColumn<>(
+					"mbThreadFlag.", "companyId", FinderColumn.Type.LONG, "=",
+					true, true, MBThreadFlag::getCompanyId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_collectionPersistenceFinderByUserId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"userId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId",
+					new String[] {Long.class.getName()},
+					new String[] {"userId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId",
+					new String[] {Long.class.getName()},
+					new String[] {"userId"}, false),
+				_SQL_SELECT_MBTHREADFLAG_WHERE, _SQL_COUNT_MBTHREADFLAG_WHERE,
+				MBThreadFlagModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"mbThreadFlag.", "userId", FinderColumn.Type.LONG, "=",
+					true, true, MBThreadFlag::getUserId));
 
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
+		_collectionPersistenceFinderByThreadId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByThreadId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"threadId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByThreadId",
+					new String[] {Long.class.getName()},
+					new String[] {"threadId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByThreadId", new String[] {Long.class.getName()},
+					new String[] {"threadId"}, false),
+				_SQL_SELECT_MBTHREADFLAG_WHERE, _SQL_COUNT_MBTHREADFLAG_WHERE,
+				MBThreadFlagModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"mbThreadFlag.", "threadId", FinderColumn.Type.LONG, "=",
+					true, true, MBThreadFlag::getThreadId));
 
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
-
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
-
-		_finderPathFetchByUUID_G = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "groupId"}, true);
-
-		_finderPathWithPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathCountByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, false);
-
-		_finderPathWithPaginationFindByUserId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"userId"}, true);
-
-		_finderPathWithoutPaginationFindByUserId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId",
-			new String[] {Long.class.getName()}, new String[] {"userId"}, true);
-
-		_finderPathCountByUserId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId",
-			new String[] {Long.class.getName()}, new String[] {"userId"},
-			false);
-
-		_finderPathWithPaginationFindByThreadId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByThreadId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"threadId"}, true);
-
-		_finderPathWithoutPaginationFindByThreadId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByThreadId",
-			new String[] {Long.class.getName()}, new String[] {"threadId"},
-			true);
-
-		_finderPathCountByThreadId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByThreadId",
-			new String[] {Long.class.getName()}, new String[] {"threadId"},
-			false);
-
-		_finderPathFetchByU_T = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByU_T",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"userId", "threadId"}, true);
+		_uniquePersistenceFinderByU_T = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByU_T",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"userId", "threadId"}, 0, 0, false,
+				MBThreadFlag::getUserId, MBThreadFlag::getThreadId),
+			_SQL_SELECT_MBTHREADFLAG_WHERE, "",
+			new FinderColumn<>(
+				"mbThreadFlag.", "userId", FinderColumn.Type.LONG, "=", true,
+				true, MBThreadFlag::getUserId),
+			new FinderColumn<>(
+				"mbThreadFlag.", "threadId", FinderColumn.Type.LONG, "=", true,
+				true, MBThreadFlag::getThreadId));
 
 		MBThreadFlagUtil.setPersistence(this);
 	}
@@ -2745,22 +1083,17 @@ public class MBThreadFlagPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		MBThreadFlagModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_MBTHREADFLAG =
 		"SELECT mbThreadFlag FROM MBThreadFlag mbThreadFlag";
 
 	private static final String _SQL_SELECT_MBTHREADFLAG_WHERE =
 		"SELECT mbThreadFlag FROM MBThreadFlag mbThreadFlag WHERE ";
 
-	private static final String _SQL_COUNT_MBTHREADFLAG =
-		"SELECT COUNT(mbThreadFlag) FROM MBThreadFlag mbThreadFlag";
-
 	private static final String _SQL_COUNT_MBTHREADFLAG_WHERE =
 		"SELECT COUNT(mbThreadFlag) FROM MBThreadFlag mbThreadFlag WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "mbThreadFlag.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No MBThreadFlag exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No MBThreadFlag exists with the key {";
@@ -2777,4 +1110,4 @@ public class MBThreadFlagPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:352859755
+// LIFERAY-SERVICE-BUILDER-HASH:125405493

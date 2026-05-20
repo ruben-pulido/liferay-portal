@@ -36,6 +36,24 @@ public class ObjectValidationRuleSettingUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<ObjectValidationRuleSetting> objectValidationRuleSettings) {
+
+		getPersistence().cacheResult(objectValidationRuleSettings);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		ObjectValidationRuleSetting objectValidationRuleSetting) {
+
+		getPersistence().cacheResult(objectValidationRuleSetting);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,58 +135,10 @@ public class ObjectValidationRuleSettingUtil {
 	}
 
 	/**
-	 * Returns all the object validation rule settings where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the object validation rule settings where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object validation rule settings
-	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @return the range of matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object validation rule settings where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object validation rule settings
-	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<ObjectValidationRuleSetting> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object validation rule settings where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -238,64 +208,10 @@ public class ObjectValidationRuleSettingUtil {
 	}
 
 	/**
-	 * Returns all the object validation rule settings where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the object validation rule settings where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object validation rule settings
-	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @return the range of matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object validation rule settings where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object validation rule settings
-	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<ObjectValidationRuleSetting> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object validation rule settings where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -372,65 +288,10 @@ public class ObjectValidationRuleSettingUtil {
 	}
 
 	/**
-	 * Returns all the object validation rule settings where objectValidationRuleId = &#63;.
-	 *
-	 * @param objectValidationRuleId the object validation rule ID
-	 * @return the matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting>
-		findByObjectValidationRuleId(long objectValidationRuleId) {
-
-		return getPersistence().findByObjectValidationRuleId(
-			objectValidationRuleId);
-	}
-
-	/**
-	 * Returns a range of all the object validation rule settings where objectValidationRuleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectValidationRuleId the object validation rule ID
-	 * @param start the lower bound of the range of object validation rule settings
-	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @return the range of matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting>
-		findByObjectValidationRuleId(
-			long objectValidationRuleId, int start, int end) {
-
-		return getPersistence().findByObjectValidationRuleId(
-			objectValidationRuleId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object validation rule settings where objectValidationRuleId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectValidationRuleId the object validation rule ID
-	 * @param start the lower bound of the range of object validation rule settings
-	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting>
-		findByObjectValidationRuleId(
-			long objectValidationRuleId, int start, int end,
-			OrderByComparator<ObjectValidationRuleSetting> orderByComparator) {
-
-		return getPersistence().findByObjectValidationRuleId(
-			objectValidationRuleId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object validation rule settings where objectValidationRuleId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
 	 * </p>
 	 *
 	 * @param objectValidationRuleId the object validation rule ID
@@ -512,65 +373,10 @@ public class ObjectValidationRuleSettingUtil {
 	}
 
 	/**
-	 * Returns all the object validation rule settings where objectValidationRuleId = &#63; and name = &#63;.
-	 *
-	 * @param objectValidationRuleId the object validation rule ID
-	 * @param name the name
-	 * @return the matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByOVRI_N(
-		long objectValidationRuleId, String name) {
-
-		return getPersistence().findByOVRI_N(objectValidationRuleId, name);
-	}
-
-	/**
-	 * Returns a range of all the object validation rule settings where objectValidationRuleId = &#63; and name = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectValidationRuleId the object validation rule ID
-	 * @param name the name
-	 * @param start the lower bound of the range of object validation rule settings
-	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @return the range of matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByOVRI_N(
-		long objectValidationRuleId, String name, int start, int end) {
-
-		return getPersistence().findByOVRI_N(
-			objectValidationRuleId, name, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object validation rule settings where objectValidationRuleId = &#63; and name = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectValidationRuleId the object validation rule ID
-	 * @param name the name
-	 * @param start the lower bound of the range of object validation rule settings
-	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object validation rule settings
-	 */
-	public static List<ObjectValidationRuleSetting> findByOVRI_N(
-		long objectValidationRuleId, String name, int start, int end,
-		OrderByComparator<ObjectValidationRuleSetting> orderByComparator) {
-
-		return getPersistence().findByOVRI_N(
-			objectValidationRuleId, name, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object validation rule settings where objectValidationRuleId = &#63; and name = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
 	 * </p>
 	 *
 	 * @param objectValidationRuleId the object validation rule ID
@@ -666,19 +472,6 @@ public class ObjectValidationRuleSettingUtil {
 	}
 
 	/**
-	 * Returns the object validation rule setting where name = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param name the name
-	 * @param value the value
-	 * @return the matching object validation rule setting, or <code>null</code> if a matching object validation rule setting could not be found
-	 */
-	public static ObjectValidationRuleSetting fetchByN_V(
-		String name, String value) {
-
-		return getPersistence().fetchByN_V(name, value);
-	}
-
-	/**
 	 * Returns the object validation rule setting where name = &#63; and value = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param name the name
@@ -737,21 +530,6 @@ public class ObjectValidationRuleSettingUtil {
 	}
 
 	/**
-	 * Returns the object validation rule setting where objectValidationRuleId = &#63; and name = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param objectValidationRuleId the object validation rule ID
-	 * @param name the name
-	 * @param value the value
-	 * @return the matching object validation rule setting, or <code>null</code> if a matching object validation rule setting could not be found
-	 */
-	public static ObjectValidationRuleSetting fetchByOVRI_N_V(
-		long objectValidationRuleId, String name, String value) {
-
-		return getPersistence().fetchByOVRI_N_V(
-			objectValidationRuleId, name, value);
-	}
-
-	/**
 	 * Returns the object validation rule setting where objectValidationRuleId = &#63; and name = &#63; and value = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param objectValidationRuleId the object validation rule ID
@@ -798,28 +576,6 @@ public class ObjectValidationRuleSettingUtil {
 
 		return getPersistence().countByOVRI_N_V(
 			objectValidationRuleId, name, value);
-	}
-
-	/**
-	 * Caches the object validation rule setting in the entity cache if it is enabled.
-	 *
-	 * @param objectValidationRuleSetting the object validation rule setting
-	 */
-	public static void cacheResult(
-		ObjectValidationRuleSetting objectValidationRuleSetting) {
-
-		getPersistence().cacheResult(objectValidationRuleSetting);
-	}
-
-	/**
-	 * Caches the object validation rule settings in the entity cache if it is enabled.
-	 *
-	 * @param objectValidationRuleSettings the object validation rule settings
-	 */
-	public static void cacheResult(
-		List<ObjectValidationRuleSetting> objectValidationRuleSettings) {
-
-		getPersistence().cacheResult(objectValidationRuleSettings);
 	}
 
 	/**
@@ -884,86 +640,243 @@ public class ObjectValidationRuleSettingUtil {
 	}
 
 	/**
-	 * Returns all the object validation rule settings.
+	 * Returns the object validation rule setting where name = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the object validation rule settings
+	 * @param name the name
+	 * @param value the value
+	 * @return the matching object validation rule setting, or <code>null</code> if a matching object validation rule setting could not be found
 	 */
-	public static List<ObjectValidationRuleSetting> findAll() {
-		return getPersistence().findAll();
+	public static ObjectValidationRuleSetting fetchByN_V(
+		String name, String value) {
+
+		return getPersistence().fetchByN_V(name, value);
 	}
 
 	/**
-	 * Returns a range of all the object validation rule settings.
+	 * Returns the object validation rule setting where objectValidationRuleId = &#63; and name = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param objectValidationRuleId the object validation rule ID
+	 * @param name the name
+	 * @param value the value
+	 * @return the matching object validation rule setting, or <code>null</code> if a matching object validation rule setting could not be found
+	 */
+	public static ObjectValidationRuleSetting fetchByOVRI_N_V(
+		long objectValidationRuleId, String name, String value) {
+
+		return getPersistence().fetchByOVRI_N_V(
+			objectValidationRuleId, name, value);
+	}
+
+	/**
+	 * Returns all the object validation rule settings where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching object validation rule settings
+	 */
+	public static List<ObjectValidationRuleSetting> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the object validation rule settings where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of object validation rule settings
 	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
-	 * @return the range of object validation rule settings
+	 * @return the range of matching object validation rule settings
 	 */
-	public static List<ObjectValidationRuleSetting> findAll(
-		int start, int end) {
+	public static List<ObjectValidationRuleSetting> findByUuid(
+		String uuid, int start, int end) {
 
-		return getPersistence().findAll(start, end);
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the object validation rule settings.
+	 * Returns an ordered range of all the object validation rule settings where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of object validation rule settings
 	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of object validation rule settings
+	 * @return the ordered range of matching object validation rule settings
 	 */
-	public static List<ObjectValidationRuleSetting> findAll(
-		int start, int end,
+	public static List<ObjectValidationRuleSetting> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<ObjectValidationRuleSetting> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the object validation rule settings.
+	 * Returns all the object validation rule settings where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching object validation rule settings
+	 */
+	public static List<ObjectValidationRuleSetting> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the object validation rule settings where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectValidationRuleSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of object validation rule settings
+	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
+	 * @return the range of matching object validation rule settings
+	 */
+	public static List<ObjectValidationRuleSetting> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object validation rule settings where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of object validation rule settings
 	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of object validation rule settings
+	 * @return the ordered range of matching object validation rule settings
 	 */
-	public static List<ObjectValidationRuleSetting> findAll(
-		int start, int end,
-		OrderByComparator<ObjectValidationRuleSetting> orderByComparator,
-		boolean useFinderCache) {
+	public static List<ObjectValidationRuleSetting> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<ObjectValidationRuleSetting> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the object validation rule settings from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of object validation rule settings.
+	 * Returns all the object validation rule settings where objectValidationRuleId = &#63;.
 	 *
-	 * @return the number of object validation rule settings
+	 * @param objectValidationRuleId the object validation rule ID
+	 * @return the matching object validation rule settings
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<ObjectValidationRuleSetting>
+		findByObjectValidationRuleId(long objectValidationRuleId) {
+
+		return getPersistence().findByObjectValidationRuleId(
+			objectValidationRuleId);
+	}
+
+	/**
+	 * Returns a range of all the object validation rule settings where objectValidationRuleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectValidationRuleId the object validation rule ID
+	 * @param start the lower bound of the range of object validation rule settings
+	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
+	 * @return the range of matching object validation rule settings
+	 */
+	public static List<ObjectValidationRuleSetting>
+		findByObjectValidationRuleId(
+			long objectValidationRuleId, int start, int end) {
+
+		return getPersistence().findByObjectValidationRuleId(
+			objectValidationRuleId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object validation rule settings where objectValidationRuleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectValidationRuleId the object validation rule ID
+	 * @param start the lower bound of the range of object validation rule settings
+	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object validation rule settings
+	 */
+	public static List<ObjectValidationRuleSetting>
+		findByObjectValidationRuleId(
+			long objectValidationRuleId, int start, int end,
+			OrderByComparator<ObjectValidationRuleSetting> orderByComparator) {
+
+		return getPersistence().findByObjectValidationRuleId(
+			objectValidationRuleId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object validation rule settings where objectValidationRuleId = &#63; and name = &#63;.
+	 *
+	 * @param objectValidationRuleId the object validation rule ID
+	 * @param name the name
+	 * @return the matching object validation rule settings
+	 */
+	public static List<ObjectValidationRuleSetting> findByOVRI_N(
+		long objectValidationRuleId, String name) {
+
+		return getPersistence().findByOVRI_N(objectValidationRuleId, name);
+	}
+
+	/**
+	 * Returns a range of all the object validation rule settings where objectValidationRuleId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectValidationRuleId the object validation rule ID
+	 * @param name the name
+	 * @param start the lower bound of the range of object validation rule settings
+	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
+	 * @return the range of matching object validation rule settings
+	 */
+	public static List<ObjectValidationRuleSetting> findByOVRI_N(
+		long objectValidationRuleId, String name, int start, int end) {
+
+		return getPersistence().findByOVRI_N(
+			objectValidationRuleId, name, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object validation rule settings where objectValidationRuleId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectValidationRuleSettingModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectValidationRuleId the object validation rule ID
+	 * @param name the name
+	 * @param start the lower bound of the range of object validation rule settings
+	 * @param end the upper bound of the range of object validation rule settings (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object validation rule settings
+	 */
+	public static List<ObjectValidationRuleSetting> findByOVRI_N(
+		long objectValidationRuleId, String name, int start, int end,
+		OrderByComparator<ObjectValidationRuleSetting> orderByComparator) {
+
+		return getPersistence().findByOVRI_N(
+			objectValidationRuleId, name, start, end, orderByComparator);
 	}
 
 	public static ObjectValidationRuleSettingPersistence getPersistence() {
@@ -979,4 +892,4 @@ public class ObjectValidationRuleSettingUtil {
 	private static volatile ObjectValidationRuleSettingPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1574747415
+// LIFERAY-SERVICE-BUILDER-HASH:-1570189033

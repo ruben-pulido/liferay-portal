@@ -32,51 +32,10 @@ public interface UserNotificationDeliveryPersistence
 	 */
 
 	/**
-	 * Returns all the user notification deliveries where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching user notification deliveries
-	 */
-	public java.util.List<UserNotificationDelivery> findByUserId(long userId);
-
-	/**
-	 * Returns a range of all the user notification deliveries where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationDeliveryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of user notification deliveries
-	 * @param end the upper bound of the range of user notification deliveries (not inclusive)
-	 * @return the range of matching user notification deliveries
-	 */
-	public java.util.List<UserNotificationDelivery> findByUserId(
-		long userId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification deliveries where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationDeliveryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of user notification deliveries
-	 * @param end the upper bound of the range of user notification deliveries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification deliveries
-	 */
-	public java.util.List<UserNotificationDelivery> findByUserId(
-		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<UserNotificationDelivery> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification deliveries where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationDeliveryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationDeliveryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -150,20 +109,6 @@ public interface UserNotificationDeliveryPersistence
 		throws NoSuchUserNotificationDeliveryException;
 
 	/**
-	 * Returns the user notification delivery where userId = &#63; and portletId = &#63; and classNameId = &#63; and notificationType = &#63; and deliveryType = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param portletId the portlet ID
-	 * @param classNameId the class name ID
-	 * @param notificationType the notification type
-	 * @param deliveryType the delivery type
-	 * @return the matching user notification delivery, or <code>null</code> if a matching user notification delivery could not be found
-	 */
-	public UserNotificationDelivery fetchByU_P_C_N_D(
-		long userId, String portletId, long classNameId, int notificationType,
-		int deliveryType);
-
-	/**
 	 * Returns the user notification delivery where userId = &#63; and portletId = &#63; and classNameId = &#63; and notificationType = &#63; and deliveryType = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param userId the user ID
@@ -208,21 +153,6 @@ public interface UserNotificationDeliveryPersistence
 		int deliveryType);
 
 	/**
-	 * Caches the user notification delivery in the entity cache if it is enabled.
-	 *
-	 * @param userNotificationDelivery the user notification delivery
-	 */
-	public void cacheResult(UserNotificationDelivery userNotificationDelivery);
-
-	/**
-	 * Caches the user notification deliveries in the entity cache if it is enabled.
-	 *
-	 * @param userNotificationDeliveries the user notification deliveries
-	 */
-	public void cacheResult(
-		java.util.List<UserNotificationDelivery> userNotificationDeliveries);
-
-	/**
 	 * Creates a new user notification delivery with the primary key. Does not add the user notification delivery to the database.
 	 *
 	 * @param userNotificationDeliveryId the primary key for the new user notification delivery
@@ -264,72 +194,76 @@ public interface UserNotificationDeliveryPersistence
 		long userNotificationDeliveryId);
 
 	/**
-	 * Returns all the user notification deliveries.
+	 * Returns the user notification delivery where userId = &#63; and portletId = &#63; and classNameId = &#63; and notificationType = &#63; and deliveryType = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the user notification deliveries
+	 * @param userId the user ID
+	 * @param portletId the portlet ID
+	 * @param classNameId the class name ID
+	 * @param notificationType the notification type
+	 * @param deliveryType the delivery type
+	 * @return the matching user notification delivery, or <code>null</code> if a matching user notification delivery could not be found
 	 */
-	public java.util.List<UserNotificationDelivery> findAll();
+	public default UserNotificationDelivery fetchByU_P_C_N_D(
+		long userId, String portletId, long classNameId, int notificationType,
+		int deliveryType) {
+
+		return fetchByU_P_C_N_D(
+			userId, portletId, classNameId, notificationType, deliveryType,
+			true);
+	}
 
 	/**
-	 * Returns a range of all the user notification deliveries.
+	 * Returns all the user notification deliveries where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching user notification deliveries
+	 */
+	public default java.util.List<UserNotificationDelivery> findByUserId(
+		long userId) {
+
+		return findByUserId(
+			userId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification deliveries where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationDeliveryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationDeliveryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of user notification deliveries
 	 * @param end the upper bound of the range of user notification deliveries (not inclusive)
-	 * @return the range of user notification deliveries
+	 * @return the range of matching user notification deliveries
 	 */
-	public java.util.List<UserNotificationDelivery> findAll(int start, int end);
+	public default java.util.List<UserNotificationDelivery> findByUserId(
+		long userId, int start, int end) {
+
+		return findByUserId(userId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the user notification deliveries.
+	 * Returns an ordered range of all the user notification deliveries where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationDeliveryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationDeliveryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of user notification deliveries
 	 * @param end the upper bound of the range of user notification deliveries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of user notification deliveries
+	 * @return the ordered range of matching user notification deliveries
 	 */
-	public java.util.List<UserNotificationDelivery> findAll(
-		int start, int end,
+	public default java.util.List<UserNotificationDelivery> findByUserId(
+		long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<UserNotificationDelivery> orderByComparator);
+			<UserNotificationDelivery> orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the user notification deliveries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationDeliveryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of user notification deliveries
-	 * @param end the upper bound of the range of user notification deliveries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of user notification deliveries
-	 */
-	public java.util.List<UserNotificationDelivery> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<UserNotificationDelivery> orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the user notification deliveries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of user notification deliveries.
-	 *
-	 * @return the number of user notification deliveries
-	 */
-	public int countAll();
+		return findByUserId(userId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:995572281
+// LIFERAY-SERVICE-BUILDER-HASH:-1384773770

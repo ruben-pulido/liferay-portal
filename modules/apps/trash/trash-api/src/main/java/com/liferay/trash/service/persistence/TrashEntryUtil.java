@@ -37,6 +37,20 @@ public class TrashEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<TrashEntry> trashEntries) {
+		getPersistence().cacheResult(trashEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(TrashEntry trashEntry) {
+		getPersistence().cacheResult(trashEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -112,59 +126,10 @@ public class TrashEntryUtil {
 	}
 
 	/**
-	 * Returns all the trash entries where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching trash entries
-	 */
-	public static List<TrashEntry> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the trash entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @return the range of matching trash entries
-	 */
-	public static List<TrashEntry> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the trash entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching trash entries
-	 */
-	public static List<TrashEntry> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<TrashEntry> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the trash entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -232,59 +197,10 @@ public class TrashEntryUtil {
 	}
 
 	/**
-	 * Returns all the trash entries where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching trash entries
-	 */
-	public static List<TrashEntry> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the trash entries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @return the range of matching trash entries
-	 */
-	public static List<TrashEntry> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the trash entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching trash entries
-	 */
-	public static List<TrashEntry> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<TrashEntry> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the trash entries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -367,7 +283,7 @@ public class TrashEntryUtil {
 	 * Returns a range of all the trash entries where groupId = &#63; and createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -386,7 +302,7 @@ public class TrashEntryUtil {
 	 * Returns an ordered range of all the trash entries where groupId = &#63; and createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -408,7 +324,7 @@ public class TrashEntryUtil {
 	 * Returns an ordered range of all the trash entries where groupId = &#63; and createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -484,62 +400,10 @@ public class TrashEntryUtil {
 	}
 
 	/**
-	 * Returns all the trash entries where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @return the matching trash entries
-	 */
-	public static List<TrashEntry> findByG_CN(long groupId, long classNameId) {
-		return getPersistence().findByG_CN(groupId, classNameId);
-	}
-
-	/**
-	 * Returns a range of all the trash entries where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @return the range of matching trash entries
-	 */
-	public static List<TrashEntry> findByG_CN(
-		long groupId, long classNameId, int start, int end) {
-
-		return getPersistence().findByG_CN(groupId, classNameId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the trash entries where groupId = &#63; and classNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching trash entries
-	 */
-	public static List<TrashEntry> findByG_CN(
-		long groupId, long classNameId, int start, int end,
-		OrderByComparator<TrashEntry> orderByComparator) {
-
-		return getPersistence().findByG_CN(
-			groupId, classNameId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the trash entries where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -616,64 +480,10 @@ public class TrashEntryUtil {
 	}
 
 	/**
-	 * Returns all the trash entries where companyId = &#63; and classNameId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @return the matching trash entries
-	 */
-	public static List<TrashEntry> findByC_CN(
-		long companyId, long classNameId) {
-
-		return getPersistence().findByC_CN(companyId, classNameId);
-	}
-
-	/**
-	 * Returns a range of all the trash entries where companyId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @return the range of matching trash entries
-	 */
-	public static List<TrashEntry> findByC_CN(
-		long companyId, long classNameId, int start, int end) {
-
-		return getPersistence().findByC_CN(companyId, classNameId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the trash entries where companyId = &#63; and classNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching trash entries
-	 */
-	public static List<TrashEntry> findByC_CN(
-		long companyId, long classNameId, int start, int end,
-		OrderByComparator<TrashEntry> orderByComparator) {
-
-		return getPersistence().findByC_CN(
-			companyId, classNameId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the trash entries where companyId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -764,17 +574,6 @@ public class TrashEntryUtil {
 	}
 
 	/**
-	 * Returns the trash entry where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching trash entry, or <code>null</code> if a matching trash entry could not be found
-	 */
-	public static TrashEntry fetchByCN_CPK(long classNameId, long classPK) {
-		return getPersistence().fetchByCN_CPK(classNameId, classPK);
-	}
-
-	/**
 	 * Returns the trash entry where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param classNameId the class name ID
@@ -811,24 +610,6 @@ public class TrashEntryUtil {
 	 */
 	public static int countByCN_CPK(long classNameId, long classPK) {
 		return getPersistence().countByCN_CPK(classNameId, classPK);
-	}
-
-	/**
-	 * Caches the trash entry in the entity cache if it is enabled.
-	 *
-	 * @param trashEntry the trash entry
-	 */
-	public static void cacheResult(TrashEntry trashEntry) {
-		getPersistence().cacheResult(trashEntry);
-	}
-
-	/**
-	 * Caches the trash entries in the entity cache if it is enabled.
-	 *
-	 * @param trashEntries the trash entries
-	 */
-	public static void cacheResult(List<TrashEntry> trashEntries) {
-		getPersistence().cacheResult(trashEntries);
 	}
 
 	/**
@@ -882,82 +663,218 @@ public class TrashEntryUtil {
 	}
 
 	/**
-	 * Returns all the trash entries.
+	 * Returns the trash entry where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the trash entries
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching trash entry, or <code>null</code> if a matching trash entry could not be found
 	 */
-	public static List<TrashEntry> findAll() {
-		return getPersistence().findAll();
+	public static TrashEntry fetchByCN_CPK(long classNameId, long classPK) {
+		return getPersistence().fetchByCN_CPK(classNameId, classPK);
 	}
 
 	/**
-	 * Returns a range of all the trash entries.
+	 * Returns all the trash entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching trash entries
+	 */
+	public static List<TrashEntry> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the trash entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of trash entries
 	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @return the range of trash entries
+	 * @return the range of matching trash entries
 	 */
-	public static List<TrashEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<TrashEntry> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the trash entries.
+	 * Returns an ordered range of all the trash entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of trash entries
 	 * @param end the upper bound of the range of trash entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of trash entries
+	 * @return the ordered range of matching trash entries
 	 */
-	public static List<TrashEntry> findAll(
-		int start, int end, OrderByComparator<TrashEntry> orderByComparator) {
+	public static List<TrashEntry> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<TrashEntry> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the trash entries.
+	 * Returns all the trash entries where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching trash entries
+	 */
+	public static List<TrashEntry> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the trash entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of trash entries
+	 * @param end the upper bound of the range of trash entries (not inclusive)
+	 * @return the range of matching trash entries
+	 */
+	public static List<TrashEntry> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the trash entries where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of trash entries
 	 * @param end the upper bound of the range of trash entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of trash entries
+	 * @return the ordered range of matching trash entries
 	 */
-	public static List<TrashEntry> findAll(
-		int start, int end, OrderByComparator<TrashEntry> orderByComparator,
-		boolean useFinderCache) {
+	public static List<TrashEntry> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<TrashEntry> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the trash entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of trash entries.
+	 * Returns all the trash entries where groupId = &#63; and classNameId = &#63;.
 	 *
-	 * @return the number of trash entries
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @return the matching trash entries
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<TrashEntry> findByG_CN(long groupId, long classNameId) {
+		return getPersistence().findByG_CN(groupId, classNameId);
+	}
+
+	/**
+	 * Returns a range of all the trash entries where groupId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of trash entries
+	 * @param end the upper bound of the range of trash entries (not inclusive)
+	 * @return the range of matching trash entries
+	 */
+	public static List<TrashEntry> findByG_CN(
+		long groupId, long classNameId, int start, int end) {
+
+		return getPersistence().findByG_CN(groupId, classNameId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the trash entries where groupId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of trash entries
+	 * @param end the upper bound of the range of trash entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching trash entries
+	 */
+	public static List<TrashEntry> findByG_CN(
+		long groupId, long classNameId, int start, int end,
+		OrderByComparator<TrashEntry> orderByComparator) {
+
+		return getPersistence().findByG_CN(
+			groupId, classNameId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the trash entries where companyId = &#63; and classNameId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @return the matching trash entries
+	 */
+	public static List<TrashEntry> findByC_CN(
+		long companyId, long classNameId) {
+
+		return getPersistence().findByC_CN(companyId, classNameId);
+	}
+
+	/**
+	 * Returns a range of all the trash entries where companyId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of trash entries
+	 * @param end the upper bound of the range of trash entries (not inclusive)
+	 * @return the range of matching trash entries
+	 */
+	public static List<TrashEntry> findByC_CN(
+		long companyId, long classNameId, int start, int end) {
+
+		return getPersistence().findByC_CN(companyId, classNameId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the trash entries where companyId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.trash.model.impl.TrashEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of trash entries
+	 * @param end the upper bound of the range of trash entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching trash entries
+	 */
+	public static List<TrashEntry> findByC_CN(
+		long companyId, long classNameId, int start, int end,
+		OrderByComparator<TrashEntry> orderByComparator) {
+
+		return getPersistence().findByC_CN(
+			companyId, classNameId, start, end, orderByComparator);
 	}
 
 	public static TrashEntryPersistence getPersistence() {
@@ -971,4 +888,4 @@ public class TrashEntryUtil {
 	private static volatile TrashEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:46348401
+// LIFERAY-SERVICE-BUILDER-HASH:1133517307

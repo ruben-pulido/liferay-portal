@@ -138,8 +138,10 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -414,7 +416,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	@TestInfo(
 		{
 			"LPD-72013", "LPD-74331", "LPD-75450", "LPD-77124", "LPD-77505",
-			"LPD-77576", "LPD-77852", "LPD-78667", "LPD-79415", "LPD-81793"
+			"LPD-77576", "LPD-77852", "LPD-78667", "LPD-79415", "LPD-80061",
+			"LPD-81793"
 		}
 	)
 	public void testPutSiteSitePage() throws Exception {
@@ -432,6 +435,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_testPutSiteSitePage(true, serviceContext, SitePage.Type.CONTENT_PAGE);
 		_testPutSiteSitePage(true, serviceContext, SitePage.Type.WIDGET_PAGE);
 
+		_testPutSiteSitePageWithDefaultAssetPublisher();
 		_testPutSiteSitePageWithEmptyLayout(serviceContext);
 		_testPutSiteSitePageWithExportedPageSetSitePageAsFirstPage(
 			serviceContext);
@@ -1826,7 +1830,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		).authentication(
 			user.getEmailAddress(), PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).parameters(
@@ -3001,6 +3006,39 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			putSitePage);
 
 		return putSitePage;
+	}
+
+	private void _testPutSiteSitePageWithDefaultAssetPublisher()
+		throws Exception {
+
+		Layout layout = LayoutTestUtil.addTypeContentLayout(irrelevantGroup);
+
+		String portletId = RandomTestUtil.randomString();
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			layout.getTypeSettingsProperties();
+
+		typeSettingsUnicodeProperties.setProperty(
+			LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID,
+			portletId);
+
+		layout = _layoutLocalService.updateTypeSettings(
+			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
+			layout.getTypeSettings());
+
+		SitePage sitePage = sitePageResource.getSiteSitePage(
+			irrelevantGroup.getExternalReferenceCode(),
+			layout.getExternalReferenceCode());
+
+		_testPutSiteSitePage(sitePage, testGroup, sitePage);
+
+		layout = _layoutLocalService.getLayoutByExternalReferenceCode(
+			sitePage.getExternalReferenceCode(), testGroup.getGroupId());
+
+		Assert.assertEquals(
+			portletId,
+			layout.getTypeSettingsProperty(
+				LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID));
 	}
 
 	private void _testPutSiteSitePageWithEmptyLayout(

@@ -6,12 +6,11 @@ locals {
 	db_active=local.is_active_data_blue ? module.postgres_blue[0] : module.postgres_green[0]
 	is_active_data_blue=var.data_active=="blue"
 	is_active_data_green=var.data_active=="green"
-	oidc_provider=replace(data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")
-	oidc_provider_arn="arn:${var.arn_partition}:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_provider}"
 	vpc_config=data.aws_eks_cluster.cluster.vpc_config[0]
 }
 module "postgres_blue" {
 	count=local.is_active_data_blue || var.is_restoring ? 1 : 0
+	arn_partition=var.arn_partition
 	db_subnet_group_name=aws_db_subnet_group.rds.name
 	identifier="${var.deployment_name}-postgres-db-blue"
 	password=random_password.postgres_password.result
@@ -25,6 +24,7 @@ module "postgres_blue" {
 }
 module "postgres_green" {
 	count=local.is_active_data_green || var.is_restoring ? 1 : 0
+	arn_partition=var.arn_partition
 	db_subnet_group_name=aws_db_subnet_group.rds.name
 	identifier="${var.deployment_name}-postgres-db-green"
 	password=random_password.postgres_password.result
@@ -67,11 +67,59 @@ module "s3_bucket_liferay_overlay" {
 			bucket_key_enabled=true
 		}
 	}
-	source="terraform-aws-modules/s3-bucket/aws"
-	version="~> 4.1.1"
+	source="git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=cd61253a03de4f99c77a8e45146bd65a55ab103e"
 	versioning={
 		enabled=true
 	}
+}
+resource "aws_cloudwatch_log_group" "opensearch_application" {
+	name="/aws/opensearch/${var.deployment_name}-os-d/application"
+	retention_in_days=365
+	tags={
+		Name="${var.deployment_name}-opensearch-application"
+	}
+}
+resource "aws_cloudwatch_log_group" "opensearch_audit" {
+	name="/aws/opensearch/${var.deployment_name}-os-d/audit"
+	retention_in_days=365
+	tags={
+		Name="${var.deployment_name}-opensearch-audit"
+	}
+}
+resource "aws_cloudwatch_log_group" "opensearch_index_slow" {
+	name="/aws/opensearch/${var.deployment_name}-os-d/index-slow"
+	retention_in_days=365
+	tags={
+		Name="${var.deployment_name}-opensearch-index-slow"
+	}
+}
+resource "aws_cloudwatch_log_group" "opensearch_search_slow" {
+	name="/aws/opensearch/${var.deployment_name}-os-d/search-slow"
+	retention_in_days=365
+	tags={
+		Name="${var.deployment_name}-opensearch-search-slow"
+	}
+}
+resource "aws_cloudwatch_log_resource_policy" "opensearch" {
+	policy_document=jsonencode(
+		{
+			Statement=[
+				{
+					Action=[
+						"logs:CreateLogStream",
+						"logs:PutLogEvents",
+						"logs:PutLogEventsBatch"
+					]
+					Effect="Allow"
+					Principal={
+						Service="es.amazonaws.com"
+					}
+					Resource="arn:${var.arn_partition}:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/opensearch/${var.deployment_name}-os-d/*"
+				}
+			]
+			Version="2012-10-17"
+		})
+	policy_name="${var.deployment_name}-opensearch-logs"
 }
 resource "aws_db_subnet_group" "rds" {
 	name="${var.deployment_name}-rds-sub-grp"
@@ -147,6 +195,47 @@ resource "aws_iam_user_policy_attachment" "ci_uploader_attachment" {
 	policy_arn=aws_iam_policy.ci_upload_only.arn
 	user=aws_iam_user.ci_uploader.name
 }
+resource "aws_kms_alias" "os_kms_alias" {
+	depends_on=[aws_kms_key.os]
+	name="alias/${var.deployment_name}-os-d_kms"
+	target_key_id=aws_kms_key.os.key_id
+}
+resource "aws_kms_key" "os" {
+	deletion_window_in_days=7
+	description="KMS key for OpenSearch domain encryption"
+	enable_key_rotation=true
+	policy=jsonencode(
+		{
+			Statement=[
+				{
+					Action="kms:*"
+					Effect="Allow"
+					Principal={
+						AWS="arn:${var.arn_partition}:iam::${data.aws_caller_identity.current.account_id}:root"
+					}
+					Resource="*"
+					Sid="EnableIAMUserPermissions"
+				},
+				{
+					Action=[
+						"kms:CreateGrant",
+						"kms:Decrypt",
+						"kms:DescribeKey",
+						"kms:Encrypt",
+						"kms:GenerateDataKey*",
+						"kms:ReEncrypt*",
+					]
+					Effect="Allow"
+					Principal={
+						Service="es.amazonaws.com"
+					}
+					Resource="*"
+					Sid="KMSAllowOpenSearch"
+				},
+			]
+			Version="2012-10-17"
+		})
+}
 resource "aws_opensearch_domain" "os" {
 	access_policies=<<POLICY
 {
@@ -194,8 +283,29 @@ POLICY
 	}
 	encrypt_at_rest {
 		enabled=true
+		kms_key_id=aws_kms_key.os.arn
 	}
 	engine_version="OpenSearch_2.17"
+	log_publishing_options {
+		cloudwatch_log_group_arn=aws_cloudwatch_log_group.opensearch_audit.arn
+		enabled=true
+		log_type="AUDIT_LOGS"
+	}
+	log_publishing_options {
+		cloudwatch_log_group_arn=aws_cloudwatch_log_group.opensearch_application.arn
+		enabled=true
+		log_type="ES_APPLICATION_LOGS"
+	}
+	log_publishing_options {
+		cloudwatch_log_group_arn=aws_cloudwatch_log_group.opensearch_index_slow.arn
+		enabled=true
+		log_type="INDEX_SLOW_LOGS"
+	}
+	log_publishing_options {
+		cloudwatch_log_group_arn=aws_cloudwatch_log_group.opensearch_search_slow.arn
+		enabled=true
+		log_type="SEARCH_SLOW_LOGS"
+	}
 	node_to_node_encryption {
 		enabled=true
 	}

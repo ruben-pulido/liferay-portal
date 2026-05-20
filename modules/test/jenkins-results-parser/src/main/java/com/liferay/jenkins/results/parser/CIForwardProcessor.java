@@ -83,6 +83,12 @@ public class CIForwardProcessor {
 				return;
 			}
 
+			if (_hasMergeConflict()) {
+				_pullRequest.addComment(_getMergeConflictCommentBody());
+
+				return;
+			}
+
 			_pullRequest.addComment(_getPassedCommentBody());
 
 			final String senderUsername;
@@ -132,6 +138,15 @@ public class CIForwardProcessor {
 
 						return pullRequestURL;
 					}
+					catch (PullRequest.ForwardPullRequestException
+								forwardPullRequestException) {
+
+						if (!forwardPullRequestException.isRetryable()) {
+							breakLoop();
+						}
+
+						throw new RuntimeException(forwardPullRequestException);
+					}
 					catch (Exception exception) {
 						if (exception instanceof RuntimeException) {
 							throw (RuntimeException)exception;
@@ -171,12 +186,22 @@ public class CIForwardProcessor {
 					"Unable to forward pull request", "Liferay CI");
 
 				throw new GitHubSecondaryRateLimitRuntimeException(
-					gitHubSecondaryRateLimitRuntimeException.getGitHubApiUrl(),
+					gitHubSecondaryRateLimitRuntimeException.getGitHubAPIURL(),
 					gitHubSecondaryRateLimitRuntimeException.
 						getRetryAfterSeconds(),
 					sb.toString(), gitHubSecondaryRateLimitRuntimeException);
 			}
 			catch (Exception exception) {
+				Throwable throwable = exception.getCause();
+
+				if (throwable instanceof
+						PullRequest.ForwardPullRequestException) {
+
+					_pullRequest.addComment(throwable.getMessage());
+
+					return;
+				}
+
 				exception.printStackTrace();
 
 				StringBuilder sb = new StringBuilder();
@@ -522,6 +547,19 @@ public class CIForwardProcessor {
 		return incompleteRequiredCompletedTestSuiteNames;
 	}
 
+	private String _getMergeConflictCommentBody() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Unable to forward to ");
+		sb.append(_recipientUsername);
+		sb.append(":");
+		sb.append(_pullRequest.getUpstreamRemoteGitBranchName());
+		sb.append(" because the new pull request would contain a merge ");
+		sb.append("conflict.");
+
+		return sb.toString();
+	}
+
 	private List<String> _getOpenForwardedPullRequestUrls() throws IOException {
 		List<String> openForwardedPullRequestUrls = new ArrayList<>();
 
@@ -711,6 +749,108 @@ public class CIForwardProcessor {
 		return sb.toString();
 	}
 
+	private boolean _hasMergeConflict() {
+		String upstreamBranchName =
+			_pullRequest.getUpstreamRemoteGitBranchName();
+
+		GitWorkingDirectory gitWorkingDirectory =
+			GitWorkingDirectoryFactory.newGitWorkingDirectory(
+				upstreamBranchName, _gitRepositoryDir.getAbsolutePath(),
+				_pullRequest.getGitRepositoryName());
+
+		String receiverRemoteURL = GitUtil.getUserRemoteURL(
+			_pullRequest.getGitRepositoryName(), _recipientUsername);
+
+		RemoteGitBranch senderRemoteGitBranch =
+			_pullRequest.getSenderRemoteGitBranch();
+
+		RemoteGitBranch receiverRemoteGitBranch =
+			gitWorkingDirectory.getRemoteGitBranch(
+				upstreamBranchName, receiverRemoteURL, true);
+
+		GitCommit mergeBaseCommit = receiverRemoteGitBranch.getMergeBaseCommit(
+			senderRemoteGitBranch);
+
+		if (mergeBaseCommit == null) {
+			return false;
+		}
+
+		String expectedMergeBaseSHA = mergeBaseCommit.getSHA();
+		String receiverSHA = receiverRemoteGitBranch.getSHA();
+		String senderSHA = _pullRequest.getSenderSHA();
+
+		Date mergeBaseCommitDate = mergeBaseCommit.getCommitDate();
+
+		gitWorkingDirectory.fetch(receiverRemoteGitBranch, mergeBaseCommitDate);
+		gitWorkingDirectory.fetch(senderRemoteGitBranch, mergeBaseCommitDate);
+
+		if (!_localMergeBaseMatches(
+				gitWorkingDirectory, senderSHA, receiverSHA,
+				expectedMergeBaseSHA)) {
+
+			Date deepenedSinceDate = new Date(
+				mergeBaseCommitDate.getTime() -
+					_BRANCH_DEEPENING_STEP_SIZE_MILLIS);
+
+			gitWorkingDirectory.fetch(
+				receiverRemoteGitBranch, deepenedSinceDate);
+			gitWorkingDirectory.fetch(senderRemoteGitBranch, deepenedSinceDate);
+
+			if (!_localMergeBaseMatches(
+					gitWorkingDirectory, senderSHA, receiverSHA,
+					expectedMergeBaseSHA)) {
+
+				System.out.println(
+					"WARNING: Unable to identify merge base SHA");
+
+				return false;
+			}
+		}
+
+		LocalGitBranch receiverLocalGitBranch =
+			gitWorkingDirectory.createLocalGitBranch(
+				JenkinsResultsParserUtil.combine(
+					_recipientUsername, "-", upstreamBranchName, "-precheck"),
+				true, receiverSHA);
+
+		LocalGitBranch senderLocalGitBranch =
+			gitWorkingDirectory.createLocalGitBranch(
+				_pullRequest.getLocalSenderBranchName() + "-precheck", true,
+				senderSHA);
+
+		try {
+			gitWorkingDirectory.rebase(
+				true, receiverLocalGitBranch, senderLocalGitBranch);
+
+			return false;
+		}
+		catch (GitWorkingDirectory.GitWorkingDirectoryRuntimeException
+					gitWorkingDirectoryRuntimeException) {
+
+			String message = gitWorkingDirectoryRuntimeException.getMessage();
+
+			if ((message != null) && message.contains("Unable to rebase ") &&
+				message.contains("CONFLICT (")) {
+
+				System.out.println(
+					JenkinsResultsParserUtil.combine(
+						"Detected merge conflict between ",
+						senderRemoteGitBranch.getUsername(), ":",
+						senderRemoteGitBranch.getName(), " and ",
+						_recipientUsername, ":", upstreamBranchName, "\n",
+						message));
+
+				return true;
+			}
+
+			System.out.println(
+				"WARNING: Unable to detect merge conflict marker but rebase " +
+					"failed\n" + String.valueOf(message));
+
+			return false;
+		}
+	}
+
 	private boolean _isForwardEligible() throws IOException {
 		List<String> incompleteRequiredCompletedTestSuiteNames =
 			_getIncompleteRequiredCompletedTestSuiteNames();
@@ -724,6 +864,31 @@ public class CIForwardProcessor {
 
 		return failedRequiredPassingTestSuiteNames.isEmpty();
 	}
+
+	private boolean _localMergeBaseMatches(
+		GitWorkingDirectory gitWorkingDirectory, String senderSHA,
+		String receiverSHA, String expectedMergeBaseSHA) {
+
+		try {
+			String localMergeBaseSHA =
+				gitWorkingDirectory.getMergeBaseCommitSHA(
+					senderSHA, receiverSHA);
+
+			if (localMergeBaseSHA != null) {
+				localMergeBaseSHA = localMergeBaseSHA.trim();
+			}
+
+			return expectedMergeBaseSHA.equals(localMergeBaseSHA);
+		}
+		catch (GitWorkingDirectory.GitWorkingDirectoryRuntimeException
+					gitWorkingDirectoryRuntimeException) {
+
+			return false;
+		}
+	}
+
+	private static final long _BRANCH_DEEPENING_STEP_SIZE_MILLIS =
+		1000L * 60L * 60L * 24L;
 
 	private static final long _RETRY_PERIOD = 1000L * 60L;
 

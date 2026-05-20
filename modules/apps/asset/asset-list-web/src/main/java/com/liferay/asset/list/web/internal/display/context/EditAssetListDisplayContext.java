@@ -26,10 +26,12 @@ import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
 import com.liferay.asset.list.service.AssetListEntrySegmentsEntryRelLocalServiceUtil;
 import com.liferay.asset.list.util.comparator.ClassNameModelResourceComparator;
 import com.liferay.asset.list.web.internal.constants.AssetListWebKeys;
+import com.liferay.asset.list.web.internal.portlet.action.GetTypePropertiesMVCResourceCommand;
 import com.liferay.asset.tags.item.selector.AssetTagsItemSelectorCriterion;
 import com.liferay.asset.tags.item.selector.AssetTagsItemSelectorReturnType;
 import com.liferay.asset.util.AssetRendererFactoryClassProvider;
 import com.liferay.asset.util.comparator.AssetRendererFactoryTypeNameComparator;
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
@@ -51,6 +53,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -60,8 +63,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
@@ -749,6 +754,43 @@ public class EditAssetListDisplayContext {
 		return _ddmStructureFieldValue;
 	}
 
+	public List<Map<String, Object>> getFilters() {
+		String filters = _unicodeProperties.getProperty("filters");
+
+		if (Validator.isNull(filters)) {
+			return Collections.emptyList();
+		}
+
+		try {
+			JSONArray filtersJSONArray = JSONFactoryUtil.createJSONArray(
+				filters);
+
+			List<Map<String, Object>> filtersList = new ArrayList<>(
+				filtersJSONArray.length());
+
+			for (int i = 0; i < filtersJSONArray.length(); i++) {
+				JSONObject filterJSONObject = filtersJSONArray.getJSONObject(i);
+
+				Map<String, Object> filterMap = new HashMap<>();
+
+				for (String key : filterJSONObject.keySet()) {
+					filterMap.put(key, filterJSONObject.get(key));
+				}
+
+				filtersList.add(filterMap);
+			}
+
+			return filtersList;
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+
+			return Collections.emptyList();
+		}
+	}
+
 	public String getGroupItemSelectorURL() {
 		ItemSelectorCriterion itemSelectorCriterion =
 			new GroupItemSelectorCriterion();
@@ -833,9 +875,29 @@ public class EditAssetListDisplayContext {
 			return _referencedModelsGroupIds;
 		}
 
+		long[] groupIds = getSelectedGroupIds();
+
+		if (FeatureFlagManagerUtil.isEnabled(
+				_themeDisplay.getCompanyId(), "LPD-17564")) {
+
+			for (Group group : getSelectedGroups()) {
+				int depotEntryType = GetterUtil.getInteger(
+					group.getTypeSettingsProperty("depotEntryType"));
+
+				if (depotEntryType == DepotConstants.TYPE_SPACE) {
+					Group cmsGroup = GroupLocalServiceUtil.getGroup(
+						_themeDisplay.getCompanyId(), GroupConstants.CMS);
+
+					groupIds = ArrayUtil.append(
+						groupIds, cmsGroup.getGroupId());
+
+					break;
+				}
+			}
+		}
+
 		_referencedModelsGroupIds =
-			PortalUtil.getCurrentAndAncestorSiteGroupIds(
-				getSelectedGroupIds(), true);
+			PortalUtil.getCurrentAndAncestorSiteGroupIds(groupIds, true);
 
 		return _referencedModelsGroupIds;
 	}
@@ -914,16 +976,24 @@ public class EditAssetListDisplayContext {
 	}
 
 	public List<Group> getSelectedGroups() throws PortalException {
+		if (_selectedGroups != null) {
+			return _selectedGroups;
+		}
+
 		long[] groupIds = GetterUtil.getLongValues(
 			StringUtil.split(
 				PropertiesParamUtil.getString(
 					_unicodeProperties, _httpServletRequest, "groupIds")));
 
 		if (ArrayUtil.isEmpty(groupIds)) {
-			return Collections.singletonList(_themeDisplay.getScopeGroup());
+			_selectedGroups = Collections.singletonList(
+				_themeDisplay.getScopeGroup());
+		}
+		else {
+			_selectedGroups = GroupLocalServiceUtil.getGroups(groupIds);
 		}
 
-		return GroupLocalServiceUtil.getGroups(groupIds);
+		return _selectedGroups;
 	}
 
 	public long[] getSelectedSegmentsEntryIds() {
@@ -999,6 +1069,43 @@ public class EditAssetListDisplayContext {
 				RequestBackedPortletURLFactoryUtil.create(_httpServletRequest),
 				_portletResponse.getNamespace() + "selectTag",
 				assetTagsItemSelectorCriterion));
+	}
+
+	public JSONArray getTypePropertiesJSONArray() {
+		long[] classNameIds = GetterUtil.getLongValues(
+			StringUtil.split(
+				_unicodeProperties.getProperty("classNameIds", null)));
+
+		List<Long> classTypeIdsList = new ArrayList<>();
+
+		for (String entryKey : _unicodeProperties.keySet()) {
+			if (!entryKey.startsWith("classTypeIds")) {
+				continue;
+			}
+
+			for (String classTypeId :
+					StringUtil.split(
+						_unicodeProperties.getProperty(entryKey))) {
+
+				classTypeIdsList.add(GetterUtil.getLong(classTypeId));
+			}
+		}
+
+		return GetTypePropertiesMVCResourceCommand.getTypePropertiesJSONArray(
+			classNameIds, ArrayUtil.toLongArray(classTypeIdsList));
+	}
+
+	public String getTypePropertiesURL() {
+		LiferayPortletResponse liferayPortletResponse =
+			PortalUtil.getLiferayPortletResponse(_portletResponse);
+
+		LiferayPortletURL getTypePropertiesURL =
+			(LiferayPortletURL)liferayPortletResponse.createResourceURL();
+
+		getTypePropertiesURL.setCopyCurrentRenderParameters(false);
+		getTypePropertiesURL.setResourceID("/asset_list/get_type_properties");
+
+		return getTypePropertiesURL.toString();
 	}
 
 	public UnicodeProperties getUnicodeProperties() {
@@ -1507,6 +1614,7 @@ public class EditAssetListDisplayContext {
 	private SearchContainer<AssetListEntryAssetEntryRel> _searchContainer;
 	private final SegmentsConfigurationProvider _segmentsConfigurationProvider;
 	private Long _segmentsEntryId;
+	private List<Group> _selectedGroups;
 	private long[] _selectedSegmentsEntryIds;
 	private String _selectSegmentsEntryURL;
 	private Boolean _subtypeFieldsFilterEnabled;

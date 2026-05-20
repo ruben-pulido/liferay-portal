@@ -11,6 +11,7 @@ import {
 	API,
 	FormError,
 	Input,
+	PREFIX_TYPE,
 	SingleSelect,
 	Toggle,
 } from '@liferay/object-js-components-web';
@@ -126,6 +127,15 @@ const fieldSettingsMap = new Map<string, ObjectFieldSetting[]>([
 			{
 				name: 'showCounter',
 				value: false,
+			},
+		],
+	],
+	[
+		'PhoneNumber',
+		[
+			{
+				name: 'prefixType',
+				value: PREFIX_TYPE.DEFINED_BY_USER,
 			},
 		],
 	],
@@ -803,7 +813,8 @@ export default function ObjectFieldFormBase({
 					</ClayForm.Group>
 				)}
 
-			{(values.businessType === 'Text' ||
+			{(values.businessType === 'PhoneNumber' ||
+				values.businessType === 'Text' ||
 				values.businessType === 'Integer') && (
 				<UniqueValues
 					disabled={disabled}

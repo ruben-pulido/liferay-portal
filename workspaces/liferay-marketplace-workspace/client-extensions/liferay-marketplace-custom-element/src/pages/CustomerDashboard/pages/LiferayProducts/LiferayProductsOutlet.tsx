@@ -6,7 +6,7 @@
 import ClayButton from '@clayui/button';
 
 import {NavbarProps} from '../../../../components/Navbar';
-import {OrderTypes} from '../../../../enums/Order';
+import {OrderTypes, orderTypeDocumentationURL} from '../../../../enums/Order';
 import useGetProductByOrderId from '../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
@@ -25,18 +25,24 @@ const getTabs = (data: ProductAndOrderPayload): NavbarProps['routes'] => {
 	}
 
 	const isCMP = orderTypeExternalReferenceCode === OrderTypes.CMP;
+	const isDSR = orderTypeExternalReferenceCode === OrderTypes.DSR;
 	const isDXP = orderTypeExternalReferenceCode === OrderTypes.DXP;
 
 	return [
 		{
 			name: i18n.translate('activation-keys'),
 			path: '',
-			visible: isCMP || isDXP,
+			visible: isCMP || isDSR || isDXP,
 		},
 		{
 			name: i18n.translate('bundles'),
 			path: 'bundles',
 			visible: isDXP,
+		},
+		{
+			name: i18n.translate('workspace'),
+			path: 'workspace',
+			visible: isDSR,
 		},
 	];
 };
@@ -49,7 +55,12 @@ const LiferayProductsOutlet = () => (
 					?.APP_BETA;
 
 			if (
-				[OrderTypes.AI_HUB, OrderTypes.CMP, OrderTypes.DXP].includes(
+				[
+					OrderTypes.AI_HUB,
+					OrderTypes.CMP,
+					OrderTypes.DSR,
+					OrderTypes.DXP,
+				].includes(
 					props?.placedOrder
 						?.orderTypeExternalReferenceCode as OrderTypes
 				)
@@ -72,8 +83,10 @@ const LiferayProductsOutlet = () => (
 							</ClayButton>
 						)}
 
-						{props?.placedOrder?.orderTypeExternalReferenceCode !==
-							OrderTypes.AI_HUB && (
+						{[OrderTypes.CMP, OrderTypes.DXP].includes(
+							props?.placedOrder
+								?.orderTypeExternalReferenceCode as OrderTypes
+						) && (
 							<ClayButton
 								displayType="primary"
 								onClick={() => {
@@ -94,7 +107,32 @@ const LiferayProductsOutlet = () => (
 		backTitle={i18n.translate('back-to-my-products')}
 		backURL="../../products"
 		description={(props) => {
-			return props?.product?.shortDescription;
+			const documentationURL =
+				orderTypeDocumentationURL[
+					props?.placedOrder
+						?.orderTypeExternalReferenceCode as OrderTypes
+				];
+
+			return (
+				<>
+					{props?.product?.shortDescription}
+
+					{documentationURL && (
+						<span className="d-block mt-2">
+							{i18n.translate('need-help-getting-started?')}
+
+							<a
+								className="font-weight-bold ml-1"
+								href={documentationURL}
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								{i18n.translate('view-the-documentation')}
+							</a>
+						</span>
+					)}
+				</>
+			);
 		}}
 		routes={getTabs}
 		showActions={false}

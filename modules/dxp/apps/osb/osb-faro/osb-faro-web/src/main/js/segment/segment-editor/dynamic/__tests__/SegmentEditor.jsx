@@ -18,6 +18,10 @@ import {SegmentStates} from 'shared/util/constants';
 
 jest.mock('segment/segment-editor/dynamic/criteria-sidebar/index');
 
+jest.mock('uuid', () => ({
+	v4: () => '00000000-0000-0000-0000-000000000000'
+}));
+
 jest.unmock('react-dom');
 
 describe('SegmentEditor', () => {
@@ -83,10 +87,10 @@ describe('SegmentEditor', () => {
 		);
 
 		expect(screen.getByText('Order')).toBeInTheDocument();
-		expect(screen.getByText('Enable Sequential')).toBeInTheDocument();
+		expect(screen.getByTestId('toggle-switch-input')).toBeInTheDocument();
 		expect(
 			screen.getByText(
-				'When this is enabled, event 2 must occur after event 1, with any number of events in between. When this is disabled, events can be completed in any order. Nested criteria are not supported.'
+				'When this is enabled, the second event must come after the first event, with any number of events in between. When this is disabled, events can be completed in any order.'
 			)
 		).toBeInTheDocument();
 
@@ -118,15 +122,15 @@ describe('SegmentEditor', () => {
 		);
 
 		expect(screen.getByText('Order')).toBeInTheDocument();
-		expect(screen.getByText('Enable Sequential')).toBeInTheDocument();
+		expect(screen.getByTestId('toggle-switch-input')).toBeInTheDocument();
 
 		expect(
 			screen.getByText(
-				'When this is enabled, event 2 must occur after event 1, with any number of events in between. When this is disabled, events can be completed in any order. Nested criteria are not supported.'
+				'When this is enabled, the second event must come after the first event, with any number of events in between. When this is disabled, events can be completed in any order.'
 			)
 		).toBeInTheDocument();
 
-		fireEvent.click(screen.getByText('Enable Sequential'));
+		fireEvent.click(screen.getByTestId('toggle-switch-input'));
 
 		await waitFor(() => {
 			expect(
@@ -141,6 +145,34 @@ describe('SegmentEditor', () => {
 				)
 			).not.toBeInTheDocument();
 		});
+	});
+
+	it('shows the Segment ERC popover with the description and the slug rule', () => {
+		render(
+			<Provider store={mockStore()}>
+				<BrowserRouter>
+					<DndProvider backend={HTML5Backend}>
+						<SegmentEditor
+							channelId='321'
+							groupId='23'
+							type='BATCH'
+						/>
+					</DndProvider>
+				</BrowserRouter>
+			</Provider>
+		);
+
+		expect(
+			screen.getByText(
+				'Unique key for referencing the segment definition.'
+			)
+		).toBeInTheDocument();
+
+		expect(
+			screen.getByText(
+				'ERC must contain only lowercase letters, numbers, hyphens, and underscores.'
+			)
+		).toBeInTheDocument();
 	});
 });
 

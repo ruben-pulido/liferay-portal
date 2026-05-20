@@ -48,6 +48,7 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.Document;
@@ -109,7 +110,7 @@ public class CommerceSitemapURLProviderTest {
 		_themeDisplay.setPortalDomain(_company.getVirtualHostname());
 		_themeDisplay.setPortalURL(_company.getPortalURL(_group.getGroupId()));
 		_themeDisplay.setScopeGroupId(_group.getGroupId());
-		_themeDisplay.setServerPort(8080);
+		_themeDisplay.setServerPort(PortalUtil.getPortalServerPort(false));
 		_themeDisplay.setSignedIn(true);
 		_themeDisplay.setSiteGroupId(_group.getGroupId());
 		_themeDisplay.setUser(_user);
@@ -298,9 +299,6 @@ public class CommerceSitemapURLProviderTest {
 		Assert.assertTrue(xml.contains(productFriendlyURL));
 	}
 
-	private static Company _company;
-	private static User _user;
-
 	@Inject
 	private AssetCategoryLocalService _assetCategoryLocalService;
 
@@ -314,6 +312,7 @@ public class CommerceSitemapURLProviderTest {
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 	private CommerceCurrency _commerceCurrency;
+	private Company _company;
 
 	@Inject(
 		filter = "component.name=com.liferay.commerce.product.internal.site.provider.CPDefinitionSitemapURLProvider",
@@ -350,5 +349,6 @@ public class CommerceSitemapURLProviderTest {
 
 	private ServiceContext _serviceContext;
 	private ThemeDisplay _themeDisplay;
+	private User _user;
 
 }

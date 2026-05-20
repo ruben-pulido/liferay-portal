@@ -35,12 +35,14 @@ components:
                     DeleteObjectBulkSelectionAction: "#/components/schemas/DeleteObjectBulkSelectionAction"
                     DeleteObjectEntryBulkSelectionAction: "#/components/schemas/DeleteObjectEntryBulkSelectionAction"
                     DueDateObjectBulkSelectionAction: "#/components/schemas/DueDateObjectBulkSelectionAction"
+                    DuplicateObjectBulkSelectionAction: "#/components/schemas/DuplicateObjectBulkSelectionAction"
                     EditObjectCategoriesBulkSelectionAction: "#/components/schemas/EditObjectCategoriesBulkSelectionAction"
                     EditObjectTagsBulkSelectionAction: "#/components/schemas/EditObjectTagsBulkSelectionAction"
                     ExpireObjectBulkSelectionAction: "#/components/schemas/ExpireObjectBulkSelectionAction"
                     MoveObjectBulkSelectionAction: "#/components/schemas/MoveObjectBulkSelectionAction"
                     PermissionObjectBulkSelectionAction: "#/components/schemas/PermissionObjectBulkSelectionAction"
                     ResetPermissionObjectBulkSelectionAction: "#/components/schemas/ResetPermissionObjectBulkSelectionAction"
+                    RestoreObjectBulkSelectionAction: "#/components/schemas/RestoreObjectBulkSelectionAction"
                     StatusObjectBulkSelectionAction: "#/components/schemas/StatusObjectBulkSelectionAction"
                     UpdateObjectValuesBulkSelectionAction: "#/components/schemas/UpdateObjectValuesBulkSelectionAction"
                 propertyName: type
@@ -61,11 +63,13 @@ components:
                         -   DeleteObjectBulkSelectionAction
                         -   DeleteObjectEntryBulkSelectionAction
                         -   DueDateObjectBulkSelectionAction
+                        -   DuplicateObjectBulkSelectionAction
                         -   ExpireObjectBulkSelectionAction
                         -   EditObjectTagsBulkSelectionAction
                         -   MoveObjectBulkSelectionAction
                         -   PermissionObjectBulkSelectionAction
                         -   ResetPermissionObjectBulkSelectionAction
+                        -   RestoreObjectBulkSelectionAction
                         -   StatusObjectBulkSelectionAction
                         -   EditObjectCategoriesBulkSelectionAction
                         -   UpdateObjectValuesBulkSelectionAction
@@ -167,6 +171,9 @@ components:
                         dueDate:
                             format: date-time
                             type: string
+        DuplicateObjectBulkSelectionAction:
+            allOf:
+                -   $ref: "#/components/schemas/BulkAction"
         EditObjectCategoriesBulkSelectionAction:
             allOf:
                 -   $ref: "#/components/schemas/BulkAction"
@@ -248,6 +255,9 @@ components:
         ResetPermissionObjectBulkSelectionAction:
             allOf:
                 -   $ref: "#/components/schemas/BulkAction"
+        RestoreObjectBulkSelectionAction:
+            allOf:
+                -   $ref: "#/components/schemas/BulkAction"
         Selection:
             properties:
                 size:
@@ -323,7 +333,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.bulk.rest.client', and version '3.0.40'."
+        'com.liferay.bulk.rest.client', and version '3.0.41'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

@@ -6,10 +6,12 @@
 import {
 	ObjectDefinition,
 	ObjectDefinitionAPI,
+	ObjectDefinitionSetting,
 	ObjectField,
 	ObjectFolder,
 	ObjectFolderAPI,
 } from '@liferay/object-admin-rest-client-js';
+import {expect} from '@playwright/test';
 
 import {getRandomInt} from '../utils/getRandomInt';
 import {ApiHelpers} from './ApiHelpers';
@@ -34,6 +36,14 @@ export class ObjectAdminApiHelper {
 		);
 	}
 
+	async getObjectDefinitionByName(name: string): Promise<ObjectDefinition> {
+		const {items} = await this.apiHelpers.get(
+			`${this.apiHelpers.baseUrl}${this.basePath}/object-definitions?filter=name eq '${name}'`
+		);
+
+		return items[0];
+	}
+
 	async postObjectDefinitionObjectFieldBatch(
 		objectDefinitionId: number,
 		objectFields: Partial<ObjectField>[]
@@ -48,6 +58,7 @@ export class ObjectAdminApiHelper {
 		className,
 		enableFriendlyURLCustomization,
 		objectDefinitionExternalReferenceCode = `ObjectDefinition${getRandomInt()}`,
+		objectDefinitionSettings,
 		objectFields,
 		objectFolderExternalReferenceCode,
 		panelCategoryKey,
@@ -58,10 +69,11 @@ export class ObjectAdminApiHelper {
 		className?: string;
 		enableFriendlyURLCustomization?: boolean;
 		objectDefinitionExternalReferenceCode?: string;
+		objectDefinitionSettings?: Partial<ObjectDefinitionSetting>[];
 		objectFields?: Partial<ObjectField>[];
 		objectFolderExternalReferenceCode?: string;
 		panelCategoryKey?: string;
-		scope?: 'site' | 'company';
+		scope?: 'company' | 'depot' | 'site';
 		status: {code: number};
 		titleObjectFieldName?: string;
 	}) {
@@ -74,6 +86,8 @@ export class ObjectAdminApiHelper {
 				en_US: objectDefinitionExternalReferenceCode,
 			},
 			name: objectDefinitionExternalReferenceCode,
+			objectDefinitionSettings:
+				objectDefinitionSettings as ObjectDefinitionSetting[],
 			objectFields: objectFields ?? [
 				{
 					DBType: 'String',
@@ -114,6 +128,21 @@ export class ObjectAdminApiHelper {
 		).body;
 	}
 
+	async postObjectDefinitionPublish({
+		objectDefinitionId,
+	}: {
+		objectDefinitionId: number;
+	}): Promise<ObjectDefinition> {
+		const objectDefinitionAPIClient =
+			await this.apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+		return (
+			await objectDefinitionAPIClient.postObjectDefinitionPublish(
+				objectDefinitionId
+			)
+		).body;
+	}
+
 	async postRandomObjectFolder(): Promise<ObjectFolder> {
 		const objectFolderExternalReferenceCode =
 			'objectFolder' + getRandomInt();
@@ -130,5 +159,28 @@ export class ObjectAdminApiHelper {
 				name: objectFolderExternalReferenceCode,
 			})
 		).body;
+	}
+
+	async waitForObjectDefinition(
+		name: string,
+		{
+			interval = 500,
+			timeout = 10_000,
+		}: {interval?: number; timeout?: number} = {}
+	): Promise<ObjectDefinition> {
+		let definition: ObjectDefinition | undefined;
+
+		await expect
+			.poll(
+				async () => {
+					definition = await this.getObjectDefinitionByName(name);
+
+					return Boolean(definition?.active);
+				},
+				{intervals: [interval], timeout}
+			)
+			.toBe(true);
+
+		return definition!;
 	}
 }

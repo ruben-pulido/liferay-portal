@@ -35,12 +35,15 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -68,6 +71,31 @@ public class AssetEntryInfoItemFieldValuesProviderTest {
 		_classNameId = _classNameLocalService.getClassNameId(
 			JournalArticle.class);
 		_group = GroupTestUtil.addGroup();
+	}
+
+	@Test
+	public void testGetInfoItemFieldValuesReturnsDateForDateFields()
+		throws Exception {
+
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			_group.getGroupId(),
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			_classNameId, journalArticle.getResourcePrimKey());
+
+		_setupServiceContext(_getThemeDisplay());
+
+		InfoItemFieldValues infoItemFieldValues =
+			_infoItemFieldValuesProvider.getInfoItemFieldValues(assetEntry);
+
+		_assertDateFieldValue(
+			assetEntry.getCreateDate(), infoItemFieldValues, "createDate");
+		_assertDateFieldValue(
+			assetEntry.getExpirationDate(), infoItemFieldValues,
+			"expirationDate");
+		_assertDateFieldValue(
+			assetEntry.getModifiedDate(), infoItemFieldValues, "modifiedDate");
 	}
 
 	@Test
@@ -112,6 +140,16 @@ public class AssetEntryInfoItemFieldValuesProviderTest {
 			journalArticle, JournalArticleConstants.CANONICAL_URL_SEPARATOR);
 	}
 
+	private void _assertDateFieldValue(
+		Date expectedDate, InfoItemFieldValues infoItemFieldValues,
+		String fieldName) {
+
+		InfoFieldValue<Object> infoFieldValue =
+			infoItemFieldValues.getInfoFieldValue(fieldName);
+
+		Assert.assertEquals(expectedDate, infoFieldValue.getValue());
+	}
+
 	private ThemeDisplay _getThemeDisplay() throws Exception {
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
@@ -134,10 +172,11 @@ public class AssetEntryInfoItemFieldValuesProviderTest {
 		themeDisplay.setRequest(httpServletRequest);
 
 		themeDisplay.setLocale(LocaleUtil.getSiteDefault());
-		themeDisplay.setPortalURL("http://localhost:8080");
+		themeDisplay.setPortalURL(
+			"http://localhost:" + PortalUtil.getPortalServerPort(false));
 		themeDisplay.setScopeGroupId(_group.getGroupId());
 		themeDisplay.setServerName("localhost");
-		themeDisplay.setServerPort(8080);
+		themeDisplay.setServerPort(PortalUtil.getPortalServerPort(false));
 		themeDisplay.setSiteGroupId(_group.getGroupId());
 
 		return themeDisplay;

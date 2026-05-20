@@ -34,15 +34,25 @@ export default function AddChildDropdown({
 	className,
 	displayType = 'secondary',
 	parentUuid,
+	triggerProps,
 }: {
 	className?: string;
 	displayType?: 'secondary' | 'unstyled';
 	parentUuid?: RepeatableGroup['uuid'];
+	triggerProps?: React.HTMLAttributes<HTMLButtonElement> & {
+		'data-canonical-name'?: string;
+	};
 }) {
 	const dispatch = useStateDispatch();
 	const structure = useSelector(selectStructure);
 
 	const {data: objectDefinitions, status} = useCache('object-definitions');
+
+	const fieldTypes = Liferay.FeatureFlags['LPD-70672']
+		? FIELD_TYPES
+		: FIELD_TYPES.filter(
+				(type) => type !== 'email' && type !== 'phone-number'
+			);
 
 	const addField = (type: Field['type']) =>
 		dispatch({
@@ -75,7 +85,7 @@ export default function AddChildDropdown({
 		<>
 			<ClayDropDownWithItems
 				items={[
-					...FIELD_TYPES.map(
+					...fieldTypes.map(
 						(type): Item => ({
 							label: FIELD_TYPE_LABEL[type],
 							onClick: () => addField(type),
@@ -115,6 +125,7 @@ export default function AddChildDropdown({
 						size="sm"
 						symbol="plus"
 						title={Liferay.Language.get('add-field')}
+						{...triggerProps}
 					/>
 				}
 			/>

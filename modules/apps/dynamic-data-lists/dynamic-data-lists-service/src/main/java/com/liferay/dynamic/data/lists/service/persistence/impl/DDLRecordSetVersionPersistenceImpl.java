@@ -13,17 +13,11 @@ import com.liferay.dynamic.data.lists.model.impl.DDLRecordSetVersionModelImpl;
 import com.liferay.dynamic.data.lists.service.persistence.DDLRecordSetVersionPersistence;
 import com.liferay.dynamic.data.lists.service.persistence.DDLRecordSetVersionUtil;
 import com.liferay.dynamic.data.lists.service.persistence.impl.constants.DDLPersistenceConstants;
-import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -33,10 +27,10 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 
@@ -50,10 +44,8 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -75,7 +67,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = DDLRecordSetVersionPersistence.class)
 public class DDLRecordSetVersionPersistenceImpl
-	extends BasePersistenceImpl<DDLRecordSetVersion>
+	extends BasePersistenceImpl
+		<DDLRecordSetVersion, NoSuchRecordSetVersionException>
 	implements DDLRecordSetVersionPersistence {
 
 	/*
@@ -92,71 +85,14 @@ public class DDLRecordSetVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByRecordSetId;
-	private FinderPath _finderPathWithoutPaginationFindByRecordSetId;
-	private FinderPath _finderPathCountByRecordSetId;
-
-	/**
-	 * Returns all the ddl record set versions where recordSetId = &#63;.
-	 *
-	 * @param recordSetId the record set ID
-	 * @return the matching ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findByRecordSetId(long recordSetId) {
-		return findByRecordSetId(
-			recordSetId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the ddl record set versions where recordSetId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param recordSetId the record set ID
-	 * @param start the lower bound of the range of ddl record set versions
-	 * @param end the upper bound of the range of ddl record set versions (not inclusive)
-	 * @return the range of matching ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findByRecordSetId(
-		long recordSetId, int start, int end) {
-
-		return findByRecordSetId(recordSetId, start, end, null);
-	}
+	private CollectionPersistenceFinder<DDLRecordSetVersion>
+		_collectionPersistenceFinderByRecordSetId;
 
 	/**
 	 * Returns an ordered range of all the ddl record set versions where recordSetId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param recordSetId the record set ID
-	 * @param start the lower bound of the range of ddl record set versions
-	 * @param end the upper bound of the range of ddl record set versions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findByRecordSetId(
-		long recordSetId, int start, int end,
-		OrderByComparator<DDLRecordSetVersion> orderByComparator) {
-
-		return findByRecordSetId(
-			recordSetId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the ddl record set versions where recordSetId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param recordSetId the record set ID
@@ -172,102 +108,9 @@ public class DDLRecordSetVersionPersistenceImpl
 		OrderByComparator<DDLRecordSetVersion> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					DDLRecordSetVersion.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByRecordSetId;
-					finderArgs = new Object[] {recordSetId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByRecordSetId;
-				finderArgs = new Object[] {
-					recordSetId, start, end, orderByComparator
-				};
-			}
-
-			List<DDLRecordSetVersion> list = null;
-
-			if (useFinderCache) {
-				list = (List<DDLRecordSetVersion>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (DDLRecordSetVersion ddlRecordSetVersion : list) {
-						if (recordSetId !=
-								ddlRecordSetVersion.getRecordSetId()) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_DDLRECORDSETVERSION_WHERE);
-
-				sb.append(_FINDER_COLUMN_RECORDSETID_RECORDSETID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(DDLRecordSetVersionModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(recordSetId);
-
-					list = (List<DDLRecordSetVersion>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByRecordSetId.find(
+			finderCache, new Object[] {recordSetId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -291,16 +134,9 @@ public class DDLRecordSetVersionPersistenceImpl
 			return ddlRecordSetVersion;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("recordSetId=");
-		sb.append(recordSetId);
-
-		sb.append("}");
-
-		throw new NoSuchRecordSetVersionException(sb.toString());
+		throw new NoSuchRecordSetVersionException(
+			_collectionPersistenceFinderByRecordSetId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {recordSetId}));
 	}
 
 	/**
@@ -315,14 +151,8 @@ public class DDLRecordSetVersionPersistenceImpl
 		long recordSetId,
 		OrderByComparator<DDLRecordSetVersion> orderByComparator) {
 
-		List<DDLRecordSetVersion> list = findByRecordSetId(
-			recordSetId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByRecordSetId.fetchFirst(
+			finderCache, new Object[] {recordSetId}, orderByComparator);
 	}
 
 	/**
@@ -332,12 +162,8 @@ public class DDLRecordSetVersionPersistenceImpl
 	 */
 	@Override
 	public void removeByRecordSetId(long recordSetId) {
-		for (DDLRecordSetVersion ddlRecordSetVersion :
-				findByRecordSetId(
-					recordSetId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(ddlRecordSetVersion);
-		}
+		_collectionPersistenceFinderByRecordSetId.remove(
+			finderCache, new Object[] {recordSetId});
 	}
 
 	/**
@@ -348,57 +174,12 @@ public class DDLRecordSetVersionPersistenceImpl
 	 */
 	@Override
 	public int countByRecordSetId(long recordSetId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					DDLRecordSetVersion.class)) {
-
-			FinderPath finderPath = _finderPathCountByRecordSetId;
-
-			Object[] finderArgs = new Object[] {recordSetId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_DDLRECORDSETVERSION_WHERE);
-
-				sb.append(_FINDER_COLUMN_RECORDSETID_RECORDSETID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(recordSetId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByRecordSetId.count(
+			finderCache, new Object[] {recordSetId});
 	}
 
-	private static final String _FINDER_COLUMN_RECORDSETID_RECORDSETID_2 =
-		"ddlRecordSetVersion.recordSetId = ?";
-
-	private FinderPath _finderPathFetchByRS_V;
+	private UniquePersistenceFinder<DDLRecordSetVersion>
+		_uniquePersistenceFinderByRS_V;
 
 	/**
 	 * Returns the ddl record set version where recordSetId = &#63; and version = &#63; or throws a <code>NoSuchRecordSetVersionException</code> if it could not be found.
@@ -416,38 +197,19 @@ public class DDLRecordSetVersionPersistenceImpl
 			recordSetId, version);
 
 		if (ddlRecordSetVersion == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("recordSetId=");
-			sb.append(recordSetId);
-
-			sb.append(", version=");
-			sb.append(version);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByRS_V.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {recordSetId, version});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchRecordSetVersionException(sb.toString());
+			throw new NoSuchRecordSetVersionException(message);
 		}
 
 		return ddlRecordSetVersion;
-	}
-
-	/**
-	 * Returns the ddl record set version where recordSetId = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param recordSetId the record set ID
-	 * @param version the version
-	 * @return the matching ddl record set version, or <code>null</code> if a matching ddl record set version could not be found
-	 */
-	@Override
-	public DDLRecordSetVersion fetchByRS_V(long recordSetId, String version) {
-		return fetchByRS_V(recordSetId, version, true);
 	}
 
 	/**
@@ -462,103 +224,8 @@ public class DDLRecordSetVersionPersistenceImpl
 	public DDLRecordSetVersion fetchByRS_V(
 		long recordSetId, String version, boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					DDLRecordSetVersion.class)) {
-
-			version = Objects.toString(version, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {recordSetId, version};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByRS_V, finderArgs, this);
-			}
-
-			if (result instanceof DDLRecordSetVersion) {
-				DDLRecordSetVersion ddlRecordSetVersion =
-					(DDLRecordSetVersion)result;
-
-				if ((recordSetId != ddlRecordSetVersion.getRecordSetId()) ||
-					!Objects.equals(
-						version, ddlRecordSetVersion.getVersion())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_DDLRECORDSETVERSION_WHERE);
-
-				sb.append(_FINDER_COLUMN_RS_V_RECORDSETID_2);
-
-				boolean bindVersion = false;
-
-				if (version.isEmpty()) {
-					sb.append(_FINDER_COLUMN_RS_V_VERSION_3);
-				}
-				else {
-					bindVersion = true;
-
-					sb.append(_FINDER_COLUMN_RS_V_VERSION_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(recordSetId);
-
-					if (bindVersion) {
-						queryPos.add(version);
-					}
-
-					List<DDLRecordSetVersion> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByRS_V, finderArgs, list);
-						}
-					}
-					else {
-						DDLRecordSetVersion ddlRecordSetVersion = list.get(0);
-
-						result = ddlRecordSetVersion;
-
-						cacheResult(ddlRecordSetVersion);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (DDLRecordSetVersion)result;
-			}
-		}
+		return _uniquePersistenceFinderByRS_V.fetch(
+			finderCache, new Object[] {recordSetId, version}, useFinderCache);
 	}
 
 	/**
@@ -587,90 +254,18 @@ public class DDLRecordSetVersionPersistenceImpl
 	 */
 	@Override
 	public int countByRS_V(long recordSetId, String version) {
-		DDLRecordSetVersion ddlRecordSetVersion = fetchByRS_V(
-			recordSetId, version);
-
-		if (ddlRecordSetVersion == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByRS_V.count(
+			finderCache, new Object[] {recordSetId, version});
 	}
 
-	private static final String _FINDER_COLUMN_RS_V_RECORDSETID_2 =
-		"ddlRecordSetVersion.recordSetId = ? AND ";
-
-	private static final String _FINDER_COLUMN_RS_V_VERSION_2 =
-		"ddlRecordSetVersion.version = ?";
-
-	private static final String _FINDER_COLUMN_RS_V_VERSION_3 =
-		"(ddlRecordSetVersion.version IS NULL OR ddlRecordSetVersion.version = '')";
-
-	private FinderPath _finderPathWithPaginationFindByRS_S;
-	private FinderPath _finderPathWithoutPaginationFindByRS_S;
-	private FinderPath _finderPathCountByRS_S;
-
-	/**
-	 * Returns all the ddl record set versions where recordSetId = &#63; and status = &#63;.
-	 *
-	 * @param recordSetId the record set ID
-	 * @param status the status
-	 * @return the matching ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findByRS_S(long recordSetId, int status) {
-		return findByRS_S(
-			recordSetId, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the ddl record set versions where recordSetId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param recordSetId the record set ID
-	 * @param status the status
-	 * @param start the lower bound of the range of ddl record set versions
-	 * @param end the upper bound of the range of ddl record set versions (not inclusive)
-	 * @return the range of matching ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findByRS_S(
-		long recordSetId, int status, int start, int end) {
-
-		return findByRS_S(recordSetId, status, start, end, null);
-	}
+	private CollectionPersistenceFinder<DDLRecordSetVersion>
+		_collectionPersistenceFinderByRS_S;
 
 	/**
 	 * Returns an ordered range of all the ddl record set versions where recordSetId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param recordSetId the record set ID
-	 * @param status the status
-	 * @param start the lower bound of the range of ddl record set versions
-	 * @param end the upper bound of the range of ddl record set versions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findByRS_S(
-		long recordSetId, int status, int start, int end,
-		OrderByComparator<DDLRecordSetVersion> orderByComparator) {
-
-		return findByRS_S(
-			recordSetId, status, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the ddl record set versions where recordSetId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param recordSetId the record set ID
@@ -687,107 +282,9 @@ public class DDLRecordSetVersionPersistenceImpl
 		OrderByComparator<DDLRecordSetVersion> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					DDLRecordSetVersion.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByRS_S;
-					finderArgs = new Object[] {recordSetId, status};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByRS_S;
-				finderArgs = new Object[] {
-					recordSetId, status, start, end, orderByComparator
-				};
-			}
-
-			List<DDLRecordSetVersion> list = null;
-
-			if (useFinderCache) {
-				list = (List<DDLRecordSetVersion>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (DDLRecordSetVersion ddlRecordSetVersion : list) {
-						if ((recordSetId !=
-								ddlRecordSetVersion.getRecordSetId()) ||
-							(status != ddlRecordSetVersion.getStatus())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_DDLRECORDSETVERSION_WHERE);
-
-				sb.append(_FINDER_COLUMN_RS_S_RECORDSETID_2);
-
-				sb.append(_FINDER_COLUMN_RS_S_STATUS_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(DDLRecordSetVersionModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(recordSetId);
-
-					queryPos.add(status);
-
-					list = (List<DDLRecordSetVersion>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByRS_S.find(
+			finderCache, new Object[] {recordSetId, status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -812,19 +309,9 @@ public class DDLRecordSetVersionPersistenceImpl
 			return ddlRecordSetVersion;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("recordSetId=");
-		sb.append(recordSetId);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchRecordSetVersionException(sb.toString());
+		throw new NoSuchRecordSetVersionException(
+			_collectionPersistenceFinderByRS_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {recordSetId, status}));
 	}
 
 	/**
@@ -840,14 +327,8 @@ public class DDLRecordSetVersionPersistenceImpl
 		long recordSetId, int status,
 		OrderByComparator<DDLRecordSetVersion> orderByComparator) {
 
-		List<DDLRecordSetVersion> list = findByRS_S(
-			recordSetId, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByRS_S.fetchFirst(
+			finderCache, new Object[] {recordSetId, status}, orderByComparator);
 	}
 
 	/**
@@ -858,13 +339,8 @@ public class DDLRecordSetVersionPersistenceImpl
 	 */
 	@Override
 	public void removeByRS_S(long recordSetId, int status) {
-		for (DDLRecordSetVersion ddlRecordSetVersion :
-				findByRS_S(
-					recordSetId, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(ddlRecordSetVersion);
-		}
+		_collectionPersistenceFinderByRS_S.remove(
+			finderCache, new Object[] {recordSetId, status});
 	}
 
 	/**
@@ -876,62 +352,9 @@ public class DDLRecordSetVersionPersistenceImpl
 	 */
 	@Override
 	public int countByRS_S(long recordSetId, int status) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					DDLRecordSetVersion.class)) {
-
-			FinderPath finderPath = _finderPathCountByRS_S;
-
-			Object[] finderArgs = new Object[] {recordSetId, status};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_DDLRECORDSETVERSION_WHERE);
-
-				sb.append(_FINDER_COLUMN_RS_S_RECORDSETID_2);
-
-				sb.append(_FINDER_COLUMN_RS_S_STATUS_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(recordSetId);
-
-					queryPos.add(status);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByRS_S.count(
+			finderCache, new Object[] {recordSetId, status});
 	}
-
-	private static final String _FINDER_COLUMN_RS_S_RECORDSETID_2 =
-		"ddlRecordSetVersion.recordSetId = ? AND ";
-
-	private static final String _FINDER_COLUMN_RS_S_STATUS_2 =
-		"ddlRecordSetVersion.status = ?";
 
 	public DDLRecordSetVersionPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -946,124 +369,6 @@ public class DDLRecordSetVersionPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(DDLRecordSetVersionTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the ddl record set version in the entity cache if it is enabled.
-	 *
-	 * @param ddlRecordSetVersion the ddl record set version
-	 */
-	@Override
-	public void cacheResult(DDLRecordSetVersion ddlRecordSetVersion) {
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					ddlRecordSetVersion.getCtCollectionId())) {
-
-			entityCache.putResult(
-				DDLRecordSetVersionImpl.class,
-				ddlRecordSetVersion.getPrimaryKey(), ddlRecordSetVersion);
-
-			finderCache.putResult(
-				_finderPathFetchByRS_V,
-				new Object[] {
-					ddlRecordSetVersion.getRecordSetId(),
-					ddlRecordSetVersion.getVersion()
-				},
-				ddlRecordSetVersion);
-		}
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the ddl record set versions in the entity cache if it is enabled.
-	 *
-	 * @param ddlRecordSetVersions the ddl record set versions
-	 */
-	@Override
-	public void cacheResult(List<DDLRecordSetVersion> ddlRecordSetVersions) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (ddlRecordSetVersions.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (DDLRecordSetVersion ddlRecordSetVersion : ddlRecordSetVersions) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-						ddlRecordSetVersion.getCtCollectionId())) {
-
-				if (entityCache.getResult(
-						DDLRecordSetVersionImpl.class,
-						ddlRecordSetVersion.getPrimaryKey()) == null) {
-
-					cacheResult(ddlRecordSetVersion);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all ddl record set versions.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(DDLRecordSetVersionImpl.class);
-
-		finderCache.clearCache(DDLRecordSetVersionImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the ddl record set version.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(DDLRecordSetVersion ddlRecordSetVersion) {
-		entityCache.removeResult(
-			DDLRecordSetVersionImpl.class, ddlRecordSetVersion);
-	}
-
-	@Override
-	public void clearCache(List<DDLRecordSetVersion> ddlRecordSetVersions) {
-		for (DDLRecordSetVersion ddlRecordSetVersion : ddlRecordSetVersions) {
-			entityCache.removeResult(
-				DDLRecordSetVersionImpl.class, ddlRecordSetVersion);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(DDLRecordSetVersionImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(DDLRecordSetVersionImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		DDLRecordSetVersionModelImpl ddlRecordSetVersionModelImpl) {
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					ddlRecordSetVersionModelImpl.getCtCollectionId())) {
-
-			Object[] args = new Object[] {
-				ddlRecordSetVersionModelImpl.getRecordSetId(),
-				ddlRecordSetVersionModelImpl.getVersion()
-			};
-
-			finderCache.putResult(
-				_finderPathFetchByRS_V, args, ddlRecordSetVersionModelImpl);
-		}
 	}
 
 	/**
@@ -1096,48 +401,6 @@ public class DDLRecordSetVersionPersistenceImpl
 		throws NoSuchRecordSetVersionException {
 
 		return remove((Serializable)recordSetVersionId);
-	}
-
-	/**
-	 * Removes the ddl record set version with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the ddl record set version
-	 * @return the ddl record set version that was removed
-	 * @throws NoSuchRecordSetVersionException if a ddl record set version with the primary key could not be found
-	 */
-	@Override
-	public DDLRecordSetVersion remove(Serializable primaryKey)
-		throws NoSuchRecordSetVersionException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			DDLRecordSetVersion ddlRecordSetVersion =
-				(DDLRecordSetVersion)session.get(
-					DDLRecordSetVersionImpl.class, primaryKey);
-
-			if (ddlRecordSetVersion == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchRecordSetVersionException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(ddlRecordSetVersion);
-		}
-		catch (NoSuchRecordSetVersionException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1242,42 +505,13 @@ public class DDLRecordSetVersionPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			DDLRecordSetVersionImpl.class, ddlRecordSetVersionModelImpl, false,
-			true);
-
-		cacheUniqueFindersCache(ddlRecordSetVersionModelImpl);
+		cacheUniqueFindersResult(ddlRecordSetVersion, false);
 
 		if (isNew) {
 			ddlRecordSetVersion.setNew(false);
 		}
 
 		ddlRecordSetVersion.resetOriginalValues();
-
-		return ddlRecordSetVersion;
-	}
-
-	/**
-	 * Returns the ddl record set version with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the ddl record set version
-	 * @return the ddl record set version
-	 * @throws NoSuchRecordSetVersionException if a ddl record set version with the primary key could not be found
-	 */
-	@Override
-	public DDLRecordSetVersion findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchRecordSetVersionException {
-
-		DDLRecordSetVersion ddlRecordSetVersion = fetchByPrimaryKey(primaryKey);
-
-		if (ddlRecordSetVersion == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchRecordSetVersionException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return ddlRecordSetVersion;
 	}
@@ -1296,53 +530,9 @@ public class DDLRecordSetVersionPersistenceImpl
 		return findByPrimaryKey((Serializable)recordSetVersionId);
 	}
 
-	/**
-	 * Returns the ddl record set version with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the ddl record set version
-	 * @return the ddl record set version, or <code>null</code> if a ddl record set version with the primary key could not be found
-	 */
 	@Override
-	public DDLRecordSetVersion fetchByPrimaryKey(Serializable primaryKey) {
-		if (ctPersistenceHelper.isProductionMode(
-				DDLRecordSetVersion.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		DDLRecordSetVersion ddlRecordSetVersion =
-			(DDLRecordSetVersion)entityCache.getResult(
-				DDLRecordSetVersionImpl.class, primaryKey);
-
-		if (ddlRecordSetVersion != null) {
-			return ddlRecordSetVersion;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			ddlRecordSetVersion = (DDLRecordSetVersion)session.get(
-				DDLRecordSetVersionImpl.class, primaryKey);
-
-			if (ddlRecordSetVersion != null) {
-				cacheResult(ddlRecordSetVersion);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return ddlRecordSetVersion;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return ctPersistenceHelper;
 	}
 
 	/**
@@ -1354,328 +544,6 @@ public class DDLRecordSetVersionPersistenceImpl
 	@Override
 	public DDLRecordSetVersion fetchByPrimaryKey(long recordSetVersionId) {
 		return fetchByPrimaryKey((Serializable)recordSetVersionId);
-	}
-
-	@Override
-	public Map<Serializable, DDLRecordSetVersion> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (ctPersistenceHelper.isProductionMode(DDLRecordSetVersion.class)) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, DDLRecordSetVersion> map =
-			new HashMap<Serializable, DDLRecordSetVersion>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			DDLRecordSetVersion ddlRecordSetVersion = fetchByPrimaryKey(
-				primaryKey);
-
-			if (ddlRecordSetVersion != null) {
-				map.put(primaryKey, ddlRecordSetVersion);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-						DDLRecordSetVersion.class, primaryKey)) {
-
-				DDLRecordSetVersion ddlRecordSetVersion =
-					(DDLRecordSetVersion)entityCache.getResult(
-						DDLRecordSetVersionImpl.class, primaryKey);
-
-				if (ddlRecordSetVersion == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, ddlRecordSetVersion);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (DDLRecordSetVersion ddlRecordSetVersion :
-					(List<DDLRecordSetVersion>)query.list()) {
-
-				map.put(
-					ddlRecordSetVersion.getPrimaryKeyObj(),
-					ddlRecordSetVersion);
-
-				cacheResult(ddlRecordSetVersion);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the ddl record set versions.
-	 *
-	 * @return the ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the ddl record set versions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of ddl record set versions
-	 * @param end the upper bound of the range of ddl record set versions (not inclusive)
-	 * @return the range of ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the ddl record set versions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of ddl record set versions
-	 * @param end the upper bound of the range of ddl record set versions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findAll(
-		int start, int end,
-		OrderByComparator<DDLRecordSetVersion> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the ddl record set versions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDLRecordSetVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of ddl record set versions
-	 * @param end the upper bound of the range of ddl record set versions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of ddl record set versions
-	 */
-	@Override
-	public List<DDLRecordSetVersion> findAll(
-		int start, int end,
-		OrderByComparator<DDLRecordSetVersion> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					DDLRecordSetVersion.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<DDLRecordSetVersion> list = null;
-
-			if (useFinderCache) {
-				list = (List<DDLRecordSetVersion>)finderCache.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_DDLRECORDSETVERSION);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_DDLRECORDSETVERSION;
-
-					sql = sql.concat(
-						DDLRecordSetVersionModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<DDLRecordSetVersion>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the ddl record set versions from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (DDLRecordSetVersion ddlRecordSetVersion : findAll()) {
-			remove(ddlRecordSetVersion);
-		}
-	}
-
-	/**
-	 * Returns the number of ddl record set versions.
-	 *
-	 * @return the number of ddl record set versions
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					DDLRecordSetVersion.class)) {
-
-			Long count = (Long)finderCache.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(
-						_SQL_COUNT_DDLRECORDSETVERSION);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -1774,62 +642,78 @@ public class DDLRecordSetVersionPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByRecordSetId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByRecordSetId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"recordSetId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByRecordSetId", new String[] {Long.class.getName()},
+					new String[] {"recordSetId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByRecordSetId", new String[] {Long.class.getName()},
+					new String[] {"recordSetId"}, false),
+				_SQL_SELECT_DDLRECORDSETVERSION_WHERE,
+				_SQL_COUNT_DDLRECORDSETVERSION_WHERE,
+				DDLRecordSetVersionModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"ddlRecordSetVersion.", "recordSetId",
+					FinderColumn.Type.LONG, "=", true, true,
+					DDLRecordSetVersion::getRecordSetId));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_uniquePersistenceFinderByRS_V = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByRS_V",
+				new String[] {Long.class.getName(), String.class.getName()},
+				new String[] {"recordSetId", "version"}, 0, 2, false,
+				DDLRecordSetVersion::getRecordSetId,
+				convertNullFunction(DDLRecordSetVersion::getVersion)),
+			_SQL_SELECT_DDLRECORDSETVERSION_WHERE, "",
+			new FinderColumn<>(
+				"ddlRecordSetVersion.", "recordSetId", FinderColumn.Type.LONG,
+				"=", true, true, DDLRecordSetVersion::getRecordSetId),
+			new FinderColumn<>(
+				"ddlRecordSetVersion.", "version", FinderColumn.Type.STRING,
+				"=", true, true, DDLRecordSetVersion::getVersion));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByRecordSetId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByRecordSetId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"recordSetId"}, true);
-
-		_finderPathWithoutPaginationFindByRecordSetId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByRecordSetId",
-			new String[] {Long.class.getName()}, new String[] {"recordSetId"},
-			true);
-
-		_finderPathCountByRecordSetId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByRecordSetId",
-			new String[] {Long.class.getName()}, new String[] {"recordSetId"},
-			false);
-
-		_finderPathFetchByRS_V = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByRS_V",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"recordSetId", "version"}, true);
-
-		_finderPathWithPaginationFindByRS_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByRS_S",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"recordSetId", "status"}, true);
-
-		_finderPathWithoutPaginationFindByRS_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByRS_S",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"recordSetId", "status"}, true);
-
-		_finderPathCountByRS_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByRS_S",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"recordSetId", "status"}, false);
+		_collectionPersistenceFinderByRS_S = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByRS_S",
+				new String[] {
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"recordSetId", "status"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByRS_S",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"recordSetId", "status"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByRS_S",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"recordSetId", "status"}, false),
+			_SQL_SELECT_DDLRECORDSETVERSION_WHERE,
+			_SQL_COUNT_DDLRECORDSETVERSION_WHERE,
+			DDLRecordSetVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			"",
+			new FinderColumn<>(
+				"ddlRecordSetVersion.", "recordSetId", FinderColumn.Type.LONG,
+				"=", true, true, DDLRecordSetVersion::getRecordSetId),
+			new FinderColumn<>(
+				"ddlRecordSetVersion.", "status", FinderColumn.Type.INTEGER,
+				"=", true, true, DDLRecordSetVersion::getStatus));
 
 		DDLRecordSetVersionUtil.setPersistence(this);
 	}
@@ -1876,22 +760,17 @@ public class DDLRecordSetVersionPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		DDLRecordSetVersionModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_DDLRECORDSETVERSION =
 		"SELECT ddlRecordSetVersion FROM DDLRecordSetVersion ddlRecordSetVersion";
 
 	private static final String _SQL_SELECT_DDLRECORDSETVERSION_WHERE =
 		"SELECT ddlRecordSetVersion FROM DDLRecordSetVersion ddlRecordSetVersion WHERE ";
 
-	private static final String _SQL_COUNT_DDLRECORDSETVERSION =
-		"SELECT COUNT(ddlRecordSetVersion) FROM DDLRecordSetVersion ddlRecordSetVersion";
-
 	private static final String _SQL_COUNT_DDLRECORDSETVERSION_WHERE =
 		"SELECT COUNT(ddlRecordSetVersion) FROM DDLRecordSetVersion ddlRecordSetVersion WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "ddlRecordSetVersion.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No DDLRecordSetVersion exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No DDLRecordSetVersion exists with the key {";
@@ -1908,4 +787,4 @@ public class DDLRecordSetVersionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:906944512
+// LIFERAY-SERVICE-BUILDER-HASH:-907350941

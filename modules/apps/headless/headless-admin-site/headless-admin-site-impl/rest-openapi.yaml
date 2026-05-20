@@ -92,7 +92,7 @@ components:
                     type: string
         BasicFragmentInstancePageElementDefinition:
             allOf:
-                -   $ref: "#/components/schemas/PageElementDefinition"                               
+                -   $ref: "#/components/schemas/PageElementDefinition"
                 -   properties:
                         fragmentInstance:
                             $ref: "#/components/schemas/FragmentInstance"
@@ -102,7 +102,7 @@ components:
             # @review
             description:
                 The page element definition of a basic fragment instance.
-            type: object  
+            type: object
         BasicLayout:
             properties:
                 align:
@@ -503,6 +503,11 @@ components:
                             items:
                                 $ref: "#/components/schemas/CustomMetaTag"
                             type: array
+                        defaultAssetPublisherPortletId:
+                            # @review
+                            description:
+                                The portlet ID of the asset publisher configured as the default for this page, if any.
+                            type: string
                         openGraphSettings:
                             $ref: "#/components/schemas/OpenGraphSettings"
                             # @review
@@ -590,6 +595,24 @@ components:
                     description:
                         The localized custom meta tag's values.
                     type: object
+            type: object
+        DateFragmentEditableElementValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentEditableElementValue"
+                -   properties:
+                        date:
+                            $ref: "#/components/schemas/FragmentMappedValue"
+                            # @review
+                            description:
+                                The mapped date value of the date fragment editable element.
+                        dateFormat:
+                            $ref: "#/components/schemas/FragmentInlineValue"
+                            # @review
+                            description:
+                                The localized date format patterns. When absent, the Default format is used.
+            # @review
+            description:
+                A fragment editable element value of type date.
             type: object
         DefaultFragmentReference:
             allOf:
@@ -1074,7 +1097,7 @@ components:
                     $ref: "#/components/schemas/SuccessFormContainerSubmissionResult"
                     description:
                         The definition of the result when a form container submission is successful.
-            type: object            
+            type: object
         FormContainerContextReference:
             # @review
             allOf:
@@ -1147,13 +1170,13 @@ components:
             type: object
         FormFragmentInstancePageElementDefinition:
             allOf:
-                -   $ref: "#/components/schemas/PageElementDefinition"                                  
+                -   $ref: "#/components/schemas/PageElementDefinition"
                 -   properties:
                         fieldKey:
                             # @review
                             description:
                                 The mapped field key.
-                            type: string                     
+                            type: string
                         fragmentInstance:
                             $ref: "#/components/schemas/FragmentInstance"
                             # @review
@@ -1165,38 +1188,38 @@ components:
                             # @review
                             description:
                                 The localized help texts of the form fragment.
-                            type: object                                
+                            type: object
                         label_i18n:
                             additionalProperties:
                                 type: string
                             # @review
                             description:
                                 The localized labels of the form fragment.
-                            type: object                   
+                            type: object
                         markAsRequired:
                             # @review
                             description:
                                 Whether to mark as required.
-                            type: boolean              
+                            type: boolean
                         readOnlyField:
                             # @review
                             description:
                                 Whether to render as read-only field.
-                            type: boolean                        
+                            type: boolean
                         showHelpText:
                             # @review
                             description:
                                 Whether to show the help text.
-                            type: boolean                        
+                            type: boolean
                         showLabel:
                             # @review
                             description:
                                 Whether to show the label.
-                            type: boolean   
+                            type: boolean
             # @review
             description:
                 The page element definition of a form fragment instance.
-            type: object          
+            type: object
         FormStepContainerPageElementDefinition:
             allOf:
                 -   $ref: "#/components/schemas/PageElementDefinition"
@@ -1246,6 +1269,7 @@ components:
                     Length: "#/components/schemas/LengthFragmentConfigurationFieldValue"
                     NavigationMenu: "#/components/schemas/NavigationMenuFragmentConfigurationFieldValue"
                     Select: "#/components/schemas/SelectFragmentConfigurationFieldValue"
+                    TargetCollectionDisplay: "#/components/schemas/TargetCollectionDisplayFragmentConfigurationFieldValue"
                     Text: "#/components/schemas/TextFragmentConfigurationFieldValue"
                     URL: "#/components/schemas/URLFragmentConfigurationFieldValue"
                     Video: "#/components/schemas/VideoFragmentConfigurationFieldValue"
@@ -1255,8 +1279,8 @@ components:
                     # @review
                     description:
                         The configuration field's type (category, checkbox, collection, colorPalette, colorPicker, item,
-                        length, navigationMenu, select, text, URL, video).
-                    enum: [Category, Checkbox, Collection, ColorPalette, ColorPicker, Item, Length, NavigationMenu, Select, Text, URL, Video]
+                        length, navigationMenu, select, targetCollectionDisplay, text, URL, video).
+                    enum: [Category, Checkbox, Collection, ColorPalette, ColorPicker, Item, Length, NavigationMenu, Select, TargetCollectionDisplay, Text, URL, Video]
                     type: string
             required:
                 -   type
@@ -1295,6 +1319,7 @@ components:
                 mapping:
                     Action: "#/components/schemas/ActionFragmentEditableElementValue"
                     BackgroundImage: "#/components/schemas/BackgroundImageFragmentEditableElementValue"
+                    Date: "#/components/schemas/DateFragmentEditableElementValue"
                     HTML: "#/components/schemas/HTMLFragmentEditableElementValue"
                     Image: "#/components/schemas/ImageFragmentEditableElementValue"
                     Link: "#/components/schemas/LinkFragmentEditableElementValue"
@@ -1309,6 +1334,7 @@ components:
                     enum:
                         -   Action
                         -   BackgroundImage
+                        -   Date
                         -   HTML
                         -   Image
                         -   Link
@@ -3649,6 +3675,58 @@ components:
                         parentSitePageExternalReferenceCode:
                             type: string
                     type: object
+        SiteTemplate:
+            # @review
+            description:
+                Represents a site template.
+            properties:
+                active:
+                    description:
+                        Allow site administrators to create sites from this site template.
+                    type: boolean
+                defaultLanguageId:
+                    example: en_US
+                    type: string
+                description:
+                    description:
+                        The site template's description.
+                    type: string
+                description_i18n:
+                    additionalProperties:
+                        type: string
+                    description:
+                        The localized descriptions of the site template.
+                    type: object
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                name:
+                    description:
+                        The site template's name.
+                    type: string
+                name_i18n:
+                    additionalProperties:
+                        type: string
+                    description:
+                        The localized names of the site template.
+                    type: object
+                pagesUpdateable:
+                    description:
+                        Allow site administrators to add, remove, or configure applications and change page properties.
+                    type: boolean
+                permissions:
+                    items:
+                        type: permission
+                    type: array
+                siteExternalReferenceCode:
+                    description:
+                        The external reference code of the site associated with the site template.
+                    readOnly: true
+                    type: string
+            required:
+                -   name
+            type: object
         SitemapSettings:
             # @review
             description:
@@ -3776,6 +3854,30 @@ components:
                         The localized success notification message.
                 showNotification:
                     type: boolean
+            type: object
+        TargetCollectionDisplayFragmentConfigurationFieldValue:
+            allOf:
+                -   $ref: "#/components/schemas/FragmentConfigurationFieldValue"
+                -   properties:
+                        value:
+                            # @review
+                            description:
+                                The page element external reference codes of the target collection displays.
+                            items:
+                                type: string
+                            type: array
+                        value_i18n:
+                            additionalProperties:
+                                items:
+                                    type: string
+                                type: array
+                            # @review
+                            description:
+                                The localized page element external reference codes of the target collection displays.
+                            type: object
+            # @review
+            description:
+                The value of a fragment configuration field of type target collection display.
             type: object
         TaxonomyCategoryBrief:
             # @review
@@ -4632,6 +4734,11 @@ components:
                             items:
                                 type: string
                             type: array
+                        defaultAssetPublisherPortletId:
+                            # @review
+                            description:
+                                The portlet ID of the asset publisher configured as the default for this page, if any.
+                            type: string
                         inheritChanges:
                             # @review
                             description:
@@ -4784,7 +4891,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.site.client', and version '1.0.28'."
+        'com.liferay.headless.admin.site.client', and version '1.0.30'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -9304,6 +9411,40 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["UtilityPage"]
+    /site-templates:
+        get:
+            description:
+                Retrieves the site templates. Results can be paginated.
+            operationId: getSiteTemplatesPage
+            parameters:
+                -   in: query
+                    name: active
+                    schema:
+                        type: boolean
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/SiteTemplate"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/SiteTemplate"
+                                type: array
+                    description:
+                        default response
+            tags: ["SiteTemplate"]
     /sites:
         get:
             description:

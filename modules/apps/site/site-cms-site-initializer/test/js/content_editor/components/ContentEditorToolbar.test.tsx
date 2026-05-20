@@ -19,6 +19,8 @@ jest.mock('frontend-js-web', () => {
 			TYPES: {
 				NECESSARY: 'NECESSARY',
 			},
+			getItem: jest.fn(),
+			removeItem: jest.fn(),
 			setItem: jest.fn(),
 		},
 		sub: jest.fn((key, ...args) => {
@@ -38,9 +40,12 @@ const renderComponent = () => {
 		<>
 			<ContentEditorToolbar
 				backURL=""
+				defaultLanguageId="en_US"
 				displayDate="2025-10-31T13:00"
+				getPreviewDataURL="getPreviewDataURL"
 				hasWorkflow={false}
-				headerTitle="New Content"
+				headerTitle="New Content edit"
+				title="New Content"
 				type="Basic Web Content"
 			/>
 
@@ -80,6 +85,9 @@ describe('ContentEditorToolbar', () => {
 					return key;
 				}),
 			},
+			ThemeDisplay: {
+				getDefaultLanguageId: jest.fn(() => 'en_US'),
+			},
 			Util: {
 				sub: jest.fn((key, ...args) => {
 					let result = key;
@@ -91,6 +99,9 @@ describe('ContentEditorToolbar', () => {
 					return result;
 				}),
 			},
+			detach: jest.fn(),
+			fire: jest.fn(),
+			on: jest.fn(),
 		};
 	});
 

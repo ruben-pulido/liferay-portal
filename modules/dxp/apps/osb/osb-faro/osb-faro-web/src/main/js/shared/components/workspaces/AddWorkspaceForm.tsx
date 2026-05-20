@@ -16,8 +16,7 @@ import TimeZonePicker from '../form/TimeZonePicker';
 import URLConstants from 'shared/util/url-constants';
 import {BasePageContext} from './BasePage';
 import {close, open} from 'shared/actions/modals';
-import {connect} from 'react-redux';
-import {Formik} from 'formik';
+import {connect, ConnectedProps} from 'react-redux';
 import {Modal} from 'shared/types';
 import {Project, TimeZone} from 'shared/util/records';
 import {sequence} from 'shared/util/promise';
@@ -66,13 +65,17 @@ const getDefaultServerLocation = () => {
 	}
 };
 
-interface IAddWorkspaceFormProps extends React.HTMLAttributes<HTMLElement> {
-	close: Modal.close;
+const connector = connect(null, {close, open});
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface IAddWorkspaceFormProps
+	extends React.HTMLAttributes<HTMLElement>,
+		PropsFromRedux {
 	disabled: boolean;
 	editing: boolean;
 	emailAddressDomains: string[];
-	onSubmit: (values) => Promise<any>;
-	open: Modal.open;
+	onSubmit: (values: Record<string, any>) => Promise<any>;
 	project?: Project;
 }
 
@@ -88,17 +91,23 @@ const AddWorkspaceForm: React.FC<IAddWorkspaceFormProps> = ({
 }) => {
 	const {currentUser} = useContext(BasePageContext);
 
-	const formRef = useRef<Formik>();
+	const formRef = useRef<any>(null);
 
-	const [inputListValue, setInputListValue] = useState();
-	const [
-		emailAddressesInputValues,
-		setEmailAddressesInputValues
-	] = useState();
+	const [inputListValue, setInputListValue] = useState<string>('');
+	const [emailAddressesInputValues, setEmailAddressesInputValues] =
+		useState<string>('');
 
 	const handleSubmit = (
-		values,
-		{resetForm, setFieldError, setSubmitting}
+		values: Record<string, any>,
+		{
+			resetForm,
+			setFieldError,
+			setSubmitting
+		}: {
+			resetForm: (args: {values: Record<string, any>}) => void;
+			setFieldError: (field: string, message: string) => void;
+			setSubmitting: (submitting: boolean) => void;
+		}
 	) => {
 		const {initialValues} = formRef.current;
 		const {friendlyURL: initialFriendlyURL} = initialValues;
@@ -115,7 +124,7 @@ const AddWorkspaceForm: React.FC<IAddWorkspaceFormProps> = ({
 					setSubmitting(false);
 
 					if (initialFriendlyURL === newFriendlyURL) {
-						resetForm(values);
+						resetForm({values});
 					}
 				})
 				.catch(({field, message}) => {
@@ -184,8 +193,8 @@ const AddWorkspaceForm: React.FC<IAddWorkspaceFormProps> = ({
 							project?.getIn(['timeZone', 'timeZoneId']) ||
 							DEFAULT_TIME_ZONE
 					}}
+					innerRef={formRef as any}
 					onSubmit={handleSubmit}
-					ref={formRef}
 				>
 					{({
 						dirty,
@@ -259,24 +268,6 @@ const AddWorkspaceForm: React.FC<IAddWorkspaceFormProps> = ({
 											)
 										)}
 									</Form.Select>
-
-									{/* <p class="extra-instruction text-secondary">
-											{sub(
-												Liferay.Language.get(
-													'cannot-find-the-right-server?-send-us-a-x'
-												),
-												[
-													// TODO: This should in the future direct to a
-													// suggestion form in the app
-													<ClayLink href="#1" key="suggestion">
-														{Liferay.Language.get(
-															'suggestion-fragment'
-														)}
-													</ClayLink>
-												],
-												false
-											)}
-									</p> */}
 								</Sheet.Section>
 
 								<Sheet.Section>
@@ -413,7 +404,7 @@ const AddWorkspaceForm: React.FC<IAddWorkspaceFormProps> = ({
 											content: '@',
 											position: 'prepend'
 										}}
-										validate={items =>
+										validate={(items: string[]) =>
 											validateEmailDomainArr(
 												items,
 												inputListValue
@@ -449,20 +440,20 @@ const AddWorkspaceForm: React.FC<IAddWorkspaceFormProps> = ({
 													<ul>
 														<li>
 															{Liferay.Language.get(
-																'service-interruptions-fragment'
-															)}
+																'service-interruptions'
+															).toLowerCase()}
 														</li>
 
 														<li>
 															{Liferay.Language.get(
-																'security-incidents-fragment'
-															)}
+																'security-incidents'
+															).toLowerCase()}
 														</li>
 
 														<li>
 															{Liferay.Language.get(
-																'other-urgent-service-updates-that-require-action-fragment'
-															)}
+																'other-urgent-service-updates-that-require-action'
+															).toLowerCase()}
 														</li>
 													</ul>
 												</div>
@@ -576,7 +567,9 @@ const AddWorkspaceForm: React.FC<IAddWorkspaceFormProps> = ({
 											disabled={disabled || !dirty}
 											displayType='secondary'
 											onClick={() =>
-												resetForm(initialValues)
+												resetForm({
+													values: initialValues
+												})
 											}
 										>
 											{Liferay.Language.get('cancel')}
@@ -592,4 +585,4 @@ const AddWorkspaceForm: React.FC<IAddWorkspaceFormProps> = ({
 	);
 };
 
-export default connect(null, {close, open})(AddWorkspaceForm);
+export default connector(AddWorkspaceForm);

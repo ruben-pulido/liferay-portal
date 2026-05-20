@@ -5,32 +5,61 @@
 
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
-import React from 'react';
+import React, {useState} from 'react';
 
 import {Wizard, WizardStep} from '../../components/Wizard';
+import {ImportPreview} from '../../types/exportImportPreview';
 import DataSelectionStep from './steps/DataSelectionStep';
 import FileSelectionStep from './steps/FileSelectionStep';
-import SettingsStep from './steps/SettingsStep';
+import SettingsStep, {SETTINGS_STEP_INITIAL_VALUES} from './steps/SettingsStep';
 
-export function NewImport({backURL}: {backURL: string}) {
+export function NewImport({
+	backURL,
+	importPreviewAPIURL,
+}: {
+	backURL: string;
+	importPreviewAPIURL: string;
+}) {
+	const [importPreview, setImportPreview] = useState<
+		ImportPreview | undefined
+	>();
+
 	return (
 		<Wizard backURL={backURL}>
 			<WizardStep
 				description={Liferay.Language.get(
 					'name-your-import-process-and-upload-your-file'
 				)}
+				initialValues={{
+					fileSelector: undefined,
+					name: '',
+				}}
+				isStepValid={(values) =>
+					values.fileSelector instanceof File &&
+					!!values.name.trim() &&
+					!!importPreview
+				}
 				title={Liferay.Language.get('setup')}
 			>
-				<FileSelectionStep />
+				<FileSelectionStep
+					importPreviewAPIURL={importPreviewAPIURL}
+					setImportPreview={setImportPreview}
+				/>
 			</WizardStep>
 
 			<WizardStep
 				description={Liferay.Language.get(
 					'select-the-data-from-your-file-that-you-would-like-to-import'
 				)}
+				initialValues={{
+					contentSelection: undefined,
+					deletions: false,
+					importPermissions: false,
+				}}
+				isStepValid={(values) => !!values.contentSelection}
 				title={Liferay.Language.get('data-selection')}
 			>
-				<DataSelectionStep />
+				<DataSelectionStep importPreview={importPreview} />
 			</WizardStep>
 
 			<WizardStep
@@ -46,6 +75,7 @@ export function NewImport({backURL}: {backURL: string}) {
 				description={Liferay.Language.get(
 					'set-up-your-import-configuration'
 				)}
+				initialValues={SETTINGS_STEP_INITIAL_VALUES}
 				onSubmit={async () => {
 					alert('Import started!');
 				}}

@@ -30,25 +30,6 @@ public class CommerceShipmentLocalServiceWrapper
 	}
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #addDeliverySubscriptionCommerceShipment(long, long)}
-	 */
-	@Deprecated
-	@Override
-	public com.liferay.commerce.model.CommerceShipment
-			addCommerceDeliverySubscriptionShipment(
-				long userId, long commerceOrderId, String name,
-				String description, String street1, String street2,
-				String street3, String city, String zip, long regionId,
-				long countryId, String phoneNumber)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _commerceShipmentLocalService.
-			addCommerceDeliverySubscriptionShipment(
-				userId, commerceOrderId, name, description, street1, street2,
-				street3, city, zip, regionId, countryId, phoneNumber);
-	}
-
-	/**
 	 * Adds the commerce shipment to the database. Also notifies the appropriate model listeners.
 	 *
 	 * <p>
@@ -136,10 +117,12 @@ public class CommerceShipmentLocalServiceWrapper
 	 *
 	 * @param commerceShipment the commerce shipment
 	 * @return the commerce shipment that was removed
+	 * @throws PortalException
 	 */
 	@Override
 	public com.liferay.commerce.model.CommerceShipment deleteCommerceShipment(
-		com.liferay.commerce.model.CommerceShipment commerceShipment) {
+			com.liferay.commerce.model.CommerceShipment commerceShipment)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _commerceShipmentLocalService.deleteCommerceShipment(
 			commerceShipment);
@@ -758,4 +741,4 @@ public class CommerceShipmentLocalServiceWrapper
 	private CommerceShipmentLocalService _commerceShipmentLocalService;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-704850071
+// LIFERAY-SERVICE-BUILDER-HASH:-485336981

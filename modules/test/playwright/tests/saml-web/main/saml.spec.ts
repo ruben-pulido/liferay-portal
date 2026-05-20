@@ -5,7 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {globalMenuPagesTest} from '../../../fixtures/globalMenuPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {searchAdminPageTest} from '../../../fixtures/searchAdminPageTest';
@@ -93,9 +92,6 @@ import {
 } from './utils/samlVirtualInstanceUtil';
 
 export const test = mergeTests(
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	globalMenuPagesTest,
 	loginTest(),
 	searchAdminPageTest,
@@ -135,7 +131,7 @@ test.afterEach(async ({browser}) => {
 	const defaultBaseUrl = liferayConfig.environment.baseUrl;
 
 	for (const instanceName of resetAfterTestGeneralPage) {
-		liferayConfig.environment.baseUrl = `http://${instanceName}:8080`;
+		liferayConfig.environment.baseUrl = `http://${instanceName}:${liferayConfig.environment.port}`;
 
 		// Reset general tab
 
@@ -157,7 +153,7 @@ test.afterEach(async ({browser}) => {
 	}
 
 	for (const instanceName of deleteAfterTestProviderConnections) {
-		liferayConfig.environment.baseUrl = `http://${instanceName}:8080`;
+		liferayConfig.environment.baseUrl = `http://${instanceName}:${liferayConfig.environment.port}`;
 
 		// Reset general tab
 
@@ -612,7 +608,7 @@ test('Create two virtual instances, one IdP and one SP, and verify Custom User A
 	const idpConnection: TIdpConnection = {
 		attributeMappings,
 		entityId: DEFAULT_IDP_NAME,
-		idpDomain: `http://${DEFAULT_IDP_NAME}:8080`,
+		idpDomain: `http://${DEFAULT_IDP_NAME}:${liferayConfig.environment.port}`,
 		idpName: DEFAULT_IDP_NAME,
 		spName: DEFAULT_SP_NAME,
 		...DEFAULT_IDP_CONNECTION_VALUES,
@@ -625,7 +621,7 @@ test('Create two virtual instances, one IdP and one SP, and verify Custom User A
 	const spConnection: TSpConnection = {
 		entityId: DEFAULT_SP_NAME,
 		idpName: DEFAULT_IDP_NAME,
-		spDomain: `http://${DEFAULT_SP_NAME}:8080`,
+		spDomain: `http://${DEFAULT_SP_NAME}:${liferayConfig.environment.port}`,
 		spName: DEFAULT_SP_NAME,
 		...DEFAULT_SP_CONNECTION_VALUES,
 	};
@@ -1033,7 +1029,7 @@ test('LPD-32208 AC1 TC4: Verify SP initiated SSO with RelayState redirects user 
 	const idpConnection: TIdpConnection = {
 		attributeMappings,
 		entityId: DEFAULT_IDP_NAME,
-		idpDomain: `http://${DEFAULT_IDP_NAME}:8080`,
+		idpDomain: `http://${DEFAULT_IDP_NAME}:${liferayConfig.environment.port}`,
 		idpName: DEFAULT_IDP_NAME,
 		spName: DEFAULT_SP_NAME,
 		userResolution: 'attribute',
@@ -1753,7 +1749,7 @@ test('LPD-57886: Verify SP initiated SSO redirects to the IdP from a staged site
 
 	liferayConfig.environment.baseUrl = defaultBaseUrl;
 
-	const site = await apiHelpers.headlessSite.createSite({
+	const site = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 		templateKey: 'com.liferay.site.initializer.welcome',
 		templateType: 'site-initializer',
@@ -1832,7 +1828,7 @@ test('LPD-56043 and LPD-56046: Verify User and User Group Provisioning source is
 	const spConnection: TSpConnection = {
 		entityId: DEFAULT_SP_NAME,
 		idpName: DEFAULT_IDP_NAME,
-		spDomain: `http://${DEFAULT_SP_NAME}:8080`,
+		spDomain: `http://${DEFAULT_SP_NAME}:${liferayConfig.environment.port}`,
 		spName: DEFAULT_SP_NAME,
 		...DEFAULT_SP_CONNECTION_VALUES,
 	};
@@ -1991,7 +1987,7 @@ test('LPD-56047: Verify User Group membership deletions from the IdP only apply 
 	const spConnection: TSpConnection = {
 		entityId: DEFAULT_SP_NAME,
 		idpName: DEFAULT_IDP_NAME,
-		spDomain: `http://${DEFAULT_SP_NAME}:8080`,
+		spDomain: `http://${DEFAULT_SP_NAME}:${liferayConfig.environment.port}`,
 		spName: DEFAULT_SP_NAME,
 		...DEFAULT_SP_CONNECTION_VALUES,
 	};
@@ -2280,7 +2276,7 @@ test('SAML connection cannot be saved if a custom field value is used more than 
 	const idpConnection: TIdpConnection = {
 		attributeMappings,
 		entityId: DEFAULT_IDP_NAME,
-		idpDomain: `http://${DEFAULT_IDP_NAME}:8080`,
+		idpDomain: `http://${DEFAULT_IDP_NAME}:${liferayConfig.environment.port}`,
 		idpName: DEFAULT_IDP_NAME,
 		spName: DEFAULT_SP_NAME,
 		...DEFAULT_IDP_CONNECTION_VALUES,
@@ -2523,7 +2519,7 @@ test('Verify Custom Fields can be used for user matching in SAML, see LPS-128600
 	const idpConnection: TIdpConnection = {
 		attributeMappings,
 		entityId: DEFAULT_IDP_NAME,
-		idpDomain: `http://${DEFAULT_IDP_NAME}:8080`,
+		idpDomain: `http://${DEFAULT_IDP_NAME}:${liferayConfig.environment.port}`,
 		idpName: DEFAULT_IDP_NAME,
 		spName: DEFAULT_SP_NAME,
 		userResolution: 'attribute',
@@ -2564,7 +2560,7 @@ test('Verify Custom Fields can be used for user matching in SAML, see LPS-128600
 	const spConnection: TSpConnection = {
 		entityId: DEFAULT_SP_NAME,
 		idpName: DEFAULT_IDP_NAME,
-		spDomain: `http://${DEFAULT_SP_NAME}:8080`,
+		spDomain: `http://${DEFAULT_SP_NAME}:${liferayConfig.environment.port}`,
 		spName: DEFAULT_SP_NAME,
 		...DEFAULT_SP_CONNECTION_VALUES,
 	};
@@ -2989,13 +2985,13 @@ test('Verify SSO login and logout mechanism works the same when having multiple 
 
 	liferayConfig.environment.baseUrl = defaultBaseUrl;
 
-	const site1 = await apiHelpers.headlessSite.createSite({
+	const site1 = await apiHelpers.headlessAdminSite.postSite({
 		name: site1Name,
 		templateKey: 'com.liferay.site.initializer.welcome',
 		templateType: 'site-initializer',
 	});
 
-	const site2 = await apiHelpers.headlessSite.createSite({
+	const site2 = await apiHelpers.headlessAdminSite.postSite({
 		name: site2Name,
 		templateKey: 'com.liferay.site.initializer.welcome',
 		templateType: 'site-initializer',
@@ -3066,7 +3062,9 @@ test('Verify SSO login and logout mechanism works the same when having multiple 
 
 	// Verify clicking sign-in button and selecting IdP1 works from SP2 site1
 
-	await idp1SpPages.goto(`http://${site1VirtualHostName}:8080`);
+	await idp1SpPages.goto(
+		`http://${site1VirtualHostName}:${liferayConfig.environment.port}`
+	);
 
 	await clickSignInButton(idp1SpPages, DEFAULT_IDP_NAME);
 
@@ -3090,7 +3088,9 @@ test('Verify SSO login and logout mechanism works the same when having multiple 
 
 	// Verify clicking sign-in button and selecting IdP2 works from SP2 site2
 
-	await idp2SpPages.goto(`http://${site2VirtualHostName}:8080`);
+	await idp2SpPages.goto(
+		`http://${site2VirtualHostName}:${liferayConfig.environment.port}`
+	);
 
 	await clickSignInButton(idp2SpPages, SECONDARY_IDP_NAME);
 
@@ -3132,7 +3132,9 @@ test('Verify SSO login and logout mechanism works the same when having multiple 
 		}
 	);
 
-	await idp1SpPages.goto(`http://${site1VirtualHostName}:8080`);
+	await idp1SpPages.goto(
+		`http://${site1VirtualHostName}:${liferayConfig.environment.port}`
+	);
 
 	await idp1SpPages.waitForTimeout(1000);
 
@@ -3287,7 +3289,7 @@ test('Verify the SAML configuration is not applied to the sites when ACS is disa
 
 	liferayConfig.environment.baseUrl = defaultBaseUrl;
 
-	const site = await apiHelpers.headlessSite.createSite({
+	const site = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 		templateKey: 'com.liferay.site.initializer.welcome',
 		templateType: 'site-initializer',
@@ -3344,7 +3346,7 @@ test('Verify the SAML configuration is not applied to the sites when ACS is disa
 	spInstancePage = await performSpInitiatedSSO(
 		browser,
 		userAccount.emailAddress,
-		`http://${siteVirtualHostName}:8080`,
+		`http://${siteVirtualHostName}:${liferayConfig.environment.port}`,
 		false
 	);
 
@@ -3354,7 +3356,7 @@ test('Verify the SAML configuration is not applied to the sites when ACS is disa
 
 	// Remove site from SP instance
 
-	await apiHelpers.headlessSite.deleteSite(String(site.id));
+	await apiHelpers.headlessAdminSite.deleteSite(site.externalReferenceCode);
 });
 
 test('LPD-37323 AC1 TC1: Liferay as both IdP and SP handles the SSO flow by triggering an SP-initiated SSO to the correct external IdP', async ({

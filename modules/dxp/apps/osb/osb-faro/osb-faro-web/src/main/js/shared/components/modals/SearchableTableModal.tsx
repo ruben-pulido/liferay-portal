@@ -15,7 +15,7 @@ import {useRequest} from 'shared/hooks/useRequest';
 import {useStatefulPagination} from 'shared/hooks/useStatefulPagination';
 
 interface ISearchableTableModalProps {
-	checkDisabled: (item: {[key: string]: any}) => boolean;
+	checkDisabled: (item?: object) => boolean;
 	className: string;
 	columns: Column[];
 	dataSourceFn: (params: {[key: string]: any}) => Promise<any>;
@@ -75,7 +75,7 @@ const SearchableTableModal: React.FC<ISearchableTableModalProps> = ({
 		orderIOMap,
 		page,
 		query
-	} = useStatefulPagination(null, {
+	} = useStatefulPagination(undefined, {
 		initialDelta,
 		initialFilterBy,
 		initialOrderIOMap,
@@ -84,8 +84,9 @@ const SearchableTableModal: React.FC<ISearchableTableModalProps> = ({
 	});
 
 	useEffect(() => {
-		if (initialSelectedItems) {
-			selectionDispatch({
+		if (initialSelectedItems?.length) {
+			selectionDispatch?.({type: ActionTypes.ClearAll});
+			selectionDispatch?.({
 				payload: {items: initialSelectedItems},
 				type: ActionTypes.Add
 			});

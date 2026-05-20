@@ -36,6 +36,20 @@ public class ImageUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<Image> images) {
+		getPersistence().cacheResult(images);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(Image image) {
+		getPersistence().cacheResult(image);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -120,7 +134,7 @@ public class ImageUtil {
 	 * Returns a range of all the images where size &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ImageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.ImageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param size the size
@@ -136,7 +150,7 @@ public class ImageUtil {
 	 * Returns an ordered range of all the images where size &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ImageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.ImageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param size the size
@@ -157,7 +171,7 @@ public class ImageUtil {
 	 * Returns an ordered range of all the images where size &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ImageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.ImageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param size the size
@@ -223,24 +237,6 @@ public class ImageUtil {
 	}
 
 	/**
-	 * Caches the image in the entity cache if it is enabled.
-	 *
-	 * @param image the image
-	 */
-	public static void cacheResult(Image image) {
-		getPersistence().cacheResult(image);
-	}
-
-	/**
-	 * Caches the images in the entity cache if it is enabled.
-	 *
-	 * @param images the images
-	 */
-	public static void cacheResult(List<Image> images) {
-		getPersistence().cacheResult(images);
-	}
-
-	/**
 	 * Creates a new image with the primary key. Does not add the image to the database.
 	 *
 	 * @param imageId the primary key for the new image
@@ -290,85 +286,6 @@ public class ImageUtil {
 		return getPersistence().fetchByPrimaryKey(imageId);
 	}
 
-	/**
-	 * Returns all the images.
-	 *
-	 * @return the images
-	 */
-	public static List<Image> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the images.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ImageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of images
-	 * @param end the upper bound of the range of images (not inclusive)
-	 * @return the range of images
-	 */
-	public static List<Image> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the images.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ImageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of images
-	 * @param end the upper bound of the range of images (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of images
-	 */
-	public static List<Image> findAll(
-		int start, int end, OrderByComparator<Image> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the images.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ImageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of images
-	 * @param end the upper bound of the range of images (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of images
-	 */
-	public static List<Image> findAll(
-		int start, int end, OrderByComparator<Image> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the images from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of images.
-	 *
-	 * @return the number of images
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
-	}
-
 	public static ImagePersistence getPersistence() {
 		return _persistence;
 	}
@@ -380,4 +297,4 @@ public class ImageUtil {
 	private static volatile ImagePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2041362136
+// LIFERAY-SERVICE-BUILDER-HASH:-1133751890

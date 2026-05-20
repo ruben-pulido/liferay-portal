@@ -55,6 +55,7 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -164,6 +165,7 @@ public class PatcherBuildUtil {
 		patcherBuild.setType(PatcherBuildConstants.TYPE_FIX_PACK);
 		patcherBuild.setQaStatus(WorkflowConstants.STATUS_PENDING);
 		patcherBuild.setStatus(status);
+		patcherBuild.setStatusDate(new Date());
 
 		workflowParentPatcherBuild(user, patcherBuild);
 
@@ -932,17 +934,17 @@ public class PatcherBuildUtil {
 		rollbackFor = Exception.class
 	)
 	public static void processOSBPatcherBuildCompileJenkinsStatus(
-			User user, long patcherBuildId, String jenkinsStatusJSONString)
+			User user, long patcherBuildId, String jenkinsStatusJSON)
 		throws Exception {
 
 		PatcherBuild patcherBuild =
 			PatcherBuildLocalServiceUtil.fetchPatcherBuild(patcherBuildId);
 
 		validateOSBPatcherBuildCompileJenkinsStatus(
-			patcherBuild, jenkinsStatusJSONString);
+			patcherBuild, jenkinsStatusJSON);
 
 		JSONObject jenkinsStatusJSONObject = JSONFactoryUtil.createJSONObject(
-			jenkinsStatusJSONString);
+			jenkinsStatusJSON);
 
 		if (!jenkinsStatusJSONObject.has("exitValue") &&
 			jenkinsStatusJSONObject.has("statusURL")) {
@@ -982,14 +984,14 @@ public class PatcherBuildUtil {
 		rollbackFor = Exception.class
 	)
 	public static void processOSBPatcherBuildMergeJenkinsStatus(
-			User user, long patcherFixId, String jenkinsStatusJSONString)
+			User user, long patcherFixId, String jenkinsStatusJSON)
 		throws Exception {
 
 		validateOSBPatcherBuildMergeJenkinsStatus(
-			patcherFixId, jenkinsStatusJSONString);
+			patcherFixId, jenkinsStatusJSON);
 
 		JSONObject jenkinsStatusJSONObject = JSONFactoryUtil.createJSONObject(
-			jenkinsStatusJSONString);
+			jenkinsStatusJSON);
 
 		if (jenkinsStatusJSONObject.has("statusURL")) {
 			List<PatcherBuild> patcherBuilds =
@@ -1036,17 +1038,17 @@ public class PatcherBuildUtil {
 		rollbackFor = Exception.class
 	)
 	public static void processOSBPatcherBuildTestJenkinsStatus(
-			User user, long patcherBuildId, String jenkinsStatusJSONString)
+			User user, long patcherBuildId, String jenkinsStatusJSON)
 		throws Exception {
 
 		PatcherBuild patcherBuild =
 			PatcherBuildLocalServiceUtil.getPatcherBuild(patcherBuildId);
 
 		validateOSBPatcherBuildTestJenkinsStatus(
-			patcherBuild, jenkinsStatusJSONString);
+			patcherBuild, jenkinsStatusJSON);
 
 		JSONObject jenkinsStatusJSONObject = JSONFactoryUtil.createJSONObject(
-			jenkinsStatusJSONString);
+			jenkinsStatusJSON);
 
 		JSONArray resultsJSONArray = jenkinsStatusJSONObject.getJSONArray(
 			"results");
@@ -2162,7 +2164,7 @@ public class PatcherBuildUtil {
 	}
 
 	protected static void validateOSBPatcherBuildCompileJenkinsStatus(
-			PatcherBuild patcherBuild, String jenkinsStatusJSONString)
+			PatcherBuild patcherBuild, String jenkinsStatusJSON)
 		throws Exception {
 
 		if (patcherBuild == null) {
@@ -2170,12 +2172,11 @@ public class PatcherBuildUtil {
 		}
 
 		JenkinsUtil.validateJenkinsRequestKey(
-			patcherBuild, jenkinsStatusJSONString,
-			patcherBuild.getRequestKey());
+			patcherBuild, jenkinsStatusJSON, patcherBuild.getRequestKey());
 	}
 
 	protected static void validateOSBPatcherBuildMergeJenkinsStatus(
-			long patcherFixId, String jenkinsStatusJSONString)
+			long patcherFixId, String jenkinsStatusJSON)
 		throws Exception {
 
 		PatcherFix patcherFix = PatcherFixLocalServiceUtil.getPatcherFix(
@@ -2186,11 +2187,11 @@ public class PatcherBuildUtil {
 		}
 
 		JenkinsUtil.validateJenkinsRequestKey(
-			patcherFix, jenkinsStatusJSONString, patcherFix.getRequestKey());
+			patcherFix, jenkinsStatusJSON, patcherFix.getRequestKey());
 	}
 
 	protected static void validateOSBPatcherBuildTestJenkinsStatus(
-			PatcherBuild patcherBuild, String jenkinsStatusJSONString)
+			PatcherBuild patcherBuild, String jenkinsStatusJSON)
 		throws Exception {
 
 		if (patcherBuild == null) {
@@ -2198,11 +2199,10 @@ public class PatcherBuildUtil {
 		}
 
 		JenkinsUtil.validateJenkinsRequestKey(
-			patcherBuild, jenkinsStatusJSONString,
-			patcherBuild.getRequestKey());
+			patcherBuild, jenkinsStatusJSON, patcherBuild.getRequestKey());
 
 		JSONObject jenkinsStatusJSONObject = JSONFactoryUtil.createJSONObject(
-			jenkinsStatusJSONString);
+			jenkinsStatusJSON);
 
 		JSONArray resultsJSONArray = jenkinsStatusJSONObject.getJSONArray(
 			"results");

@@ -36,6 +36,20 @@ public class CommerceShipmentUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<CommerceShipment> commerceShipments) {
+		getPersistence().cacheResult(commerceShipments);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(CommerceShipment commerceShipment) {
+		getPersistence().cacheResult(commerceShipment);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,58 +125,10 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce shipments where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -243,17 +209,6 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns the commerce shipment where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching commerce shipment, or <code>null</code> if a matching commerce shipment could not be found
-	 */
-	public static CommerceShipment fetchByUUID_G(String uuid, long groupId) {
-		return getPersistence().fetchByUUID_G(uuid, groupId);
-	}
-
-	/**
 	 * Returns the commerce shipment where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -292,64 +247,10 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce shipments where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -425,59 +326,10 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -526,55 +378,44 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = any &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permissions to view where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupIds the group IDs
-	 * @return the matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByGroupId(long[] groupIds) {
-		return getPersistence().findByGroupId(groupIds);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where groupId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByGroupId(
-		long[] groupIds, int start, int end) {
+	public static List<CommerceShipment> filterFindByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return getPersistence().findByGroupId(groupIds, start, end);
+		return getPersistence().filterFindByGroupId(
+			groupId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = any &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permission to view where groupId = any &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByGroupId(
+	public static List<CommerceShipment> filterFindByGroupId(
 		long[] groupIds, int start, int end,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return getPersistence().findByGroupId(
+		return getPersistence().filterFindByGroupId(
 			groupIds, start, end, orderByComparator);
 	}
 
@@ -582,7 +423,7 @@ public class CommerceShipmentUtil {
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -631,65 +472,30 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param commerceAddressId the commerce address ID
-	 * @return the matching commerce shipments
+	 * @return the number of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByG_C(
-		long groupId, long commerceAddressId) {
-
-		return getPersistence().findByG_C(groupId, commerceAddressId);
+	public static int filterCountByGroupId(long groupId) {
+		return getPersistence().filterCountByGroupId(groupId);
 	}
 
 	/**
-	 * Returns a range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = any &#63;.
 	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param commerceAddressId the commerce address ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param groupIds the group IDs
+	 * @return the number of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByG_C(
-		long groupId, long commerceAddressId, int start, int end) {
-
-		return getPersistence().findByG_C(
-			groupId, commerceAddressId, start, end);
+	public static int filterCountByGroupId(long[] groupIds) {
+		return getPersistence().filterCountByGroupId(groupIds);
 	}
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param commerceAddressId the commerce address ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByG_C(
-		long groupId, long commerceAddressId, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return getPersistence().findByG_C(
-			groupId, commerceAddressId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -745,47 +551,32 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permissions to view where groupId = &#63; and commerceAddressId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupIds the group IDs
-	 * @param commerceAddressId the commerce address ID
-	 * @return the matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByG_C(
-		long[] groupIds, long commerceAddressId) {
-
-		return getPersistence().findByG_C(groupIds, commerceAddressId);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
+	 * @param groupId the group ID
 	 * @param commerceAddressId the commerce address ID
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByG_C(
-		long[] groupIds, long commerceAddressId, int start, int end) {
+	public static List<CommerceShipment> filterFindByG_C(
+		long groupId, long commerceAddressId, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return getPersistence().findByG_C(
-			groupIds, commerceAddressId, start, end);
+		return getPersistence().filterFindByG_C(
+			groupId, commerceAddressId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permission to view where groupId = any &#63; and commerceAddressId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -793,13 +584,13 @@ public class CommerceShipmentUtil {
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByG_C(
+	public static List<CommerceShipment> filterFindByG_C(
 		long[] groupIds, long commerceAddressId, int start, int end,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return getPersistence().findByG_C(
+		return getPersistence().filterFindByG_C(
 			groupIds, commerceAddressId, start, end, orderByComparator);
 	}
 
@@ -807,7 +598,7 @@ public class CommerceShipmentUtil {
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -861,62 +652,34 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = &#63; and status = &#63;.
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = &#63; and commerceAddressId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching commerce shipments
+	 * @param commerceAddressId the commerce address ID
+	 * @return the number of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByG_S(long groupId, int status) {
-		return getPersistence().findByG_S(groupId, status);
+	public static int filterCountByG_C(long groupId, long commerceAddressId) {
+		return getPersistence().filterCountByG_C(groupId, commerceAddressId);
 	}
 
 	/**
-	 * Returns a range of all the commerce shipments where groupId = &#63; and status = &#63;.
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = any &#63; and commerceAddressId = &#63;.
 	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param groupIds the group IDs
+	 * @param commerceAddressId the commerce address ID
+	 * @return the number of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByG_S(
-		long groupId, int status, int start, int end) {
+	public static int filterCountByG_C(
+		long[] groupIds, long commerceAddressId) {
 
-		return getPersistence().findByG_S(groupId, status, start, end);
+		return getPersistence().filterCountByG_C(groupIds, commerceAddressId);
 	}
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByG_S(
-		long groupId, int status, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return getPersistence().findByG_S(
-			groupId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -971,46 +734,32 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = any &#63; and status = &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permissions to view where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupIds the group IDs
-	 * @param status the status
-	 * @return the matching commerce shipments
-	 */
-	public static List<CommerceShipment> findByG_S(
-		long[] groupIds, int status) {
-
-		return getPersistence().findByG_S(groupIds, status);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where groupId = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
+	 * @param groupId the group ID
 	 * @param status the status
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByG_S(
-		long[] groupIds, int status, int start, int end) {
+	public static List<CommerceShipment> filterFindByG_S(
+		long groupId, int status, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return getPersistence().findByG_S(groupIds, status, start, end);
+		return getPersistence().filterFindByG_S(
+			groupId, status, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = any &#63; and status = &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permission to view where groupId = any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -1018,13 +767,13 @@ public class CommerceShipmentUtil {
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
-	public static List<CommerceShipment> findByG_S(
+	public static List<CommerceShipment> filterFindByG_S(
 		long[] groupIds, int status, int start, int end,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return getPersistence().findByG_S(
+		return getPersistence().filterFindByG_S(
 			groupIds, status, start, end, orderByComparator);
 	}
 
@@ -1032,7 +781,7 @@ public class CommerceShipmentUtil {
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -1085,6 +834,28 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the number of matching commerce shipments that the user has permission to view
+	 */
+	public static int filterCountByG_S(long groupId, int status) {
+		return getPersistence().filterCountByG_S(groupId, status);
+	}
+
+	/**
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = any &#63; and status = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param status the status
+	 * @return the number of matching commerce shipments that the user has permission to view
+	 */
+	public static int filterCountByG_S(long[] groupIds, int status) {
+		return getPersistence().filterCountByG_S(groupIds, status);
+	}
+
+	/**
 	 * Returns the commerce shipment where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchShipmentException</code> if it could not be found.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -1097,19 +868,6 @@ public class CommerceShipmentUtil {
 		throws com.liferay.commerce.exception.NoSuchShipmentException {
 
 		return getPersistence().findByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
-	 * Returns the commerce shipment where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching commerce shipment, or <code>null</code> if a matching commerce shipment could not be found
-	 */
-	public static CommerceShipment fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
 	}
 
 	/**
@@ -1152,24 +910,6 @@ public class CommerceShipmentUtil {
 		String externalReferenceCode, long companyId) {
 
 		return getPersistence().countByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
-	 * Caches the commerce shipment in the entity cache if it is enabled.
-	 *
-	 * @param commerceShipment the commerce shipment
-	 */
-	public static void cacheResult(CommerceShipment commerceShipment) {
-		getPersistence().cacheResult(commerceShipment);
-	}
-
-	/**
-	 * Caches the commerce shipments in the entity cache if it is enabled.
-	 *
-	 * @param commerceShipments the commerce shipments
-	 */
-	public static void cacheResult(List<CommerceShipment> commerceShipments) {
-		getPersistence().cacheResult(commerceShipments);
 	}
 
 	/**
@@ -1225,84 +965,629 @@ public class CommerceShipmentUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipments.
+	 * Returns the commerce shipment where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the commerce shipments
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching commerce shipment, or <code>null</code> if a matching commerce shipment could not be found
 	 */
-	public static List<CommerceShipment> findAll() {
-		return getPersistence().findAll();
+	public static CommerceShipment fetchByUUID_G(String uuid, long groupId) {
+		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
-	 * Returns a range of all the commerce shipments.
+	 * Returns the commerce shipment where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching commerce shipment, or <code>null</code> if a matching commerce shipment could not be found
+	 */
+	public static CommerceShipment fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
+	}
+
+	/**
+	 * Returns all the commerce shipments where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of commerce shipments
+	 * @return the range of matching commerce shipments
 	 */
-	public static List<CommerceShipment> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CommerceShipment> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipments.
+	 * Returns an ordered range of all the commerce shipments where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce shipments
+	 * @return the ordered range of matching commerce shipments
 	 */
-	public static List<CommerceShipment> findAll(
-		int start, int end,
+	public static List<CommerceShipment> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipments.
+	 * Returns all the commerce shipments where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce shipments where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce shipments
+	 * @return the ordered range of matching commerce shipments
 	 */
-	public static List<CommerceShipment> findAll(
-		int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator,
-		boolean useFinderCache) {
+	public static List<CommerceShipment> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the commerce shipments from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of commerce shipments.
+	 * Returns all the commerce shipments where groupId = &#63;.
 	 *
-	 * @return the number of commerce shipments
+	 * @param groupId the group ID
+	 * @return the matching commerce shipments
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<CommerceShipment> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce shipments where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
+
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the commerce shipments where groupId = any &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @return the matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByGroupId(long[] groupIds) {
+		return getPersistence().findByGroupId(groupIds);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments where groupId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByGroupId(
+		long[] groupIds, int start, int end) {
+
+		return getPersistence().findByGroupId(groupIds, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce shipments where groupId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByGroupId(
+		long[] groupIds, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
+
+		return getPersistence().findByGroupId(
+			groupIds, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the commerce shipments that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByGroupId(long groupId) {
+		return getPersistence().filterFindByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments that the user has permission to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().filterFindByGroupId(groupId, start, end);
+	}
+
+	/**
+	 * Returns all the commerce shipments that the user has permission to view where groupId = any &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @return the matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByGroupId(long[] groupIds) {
+		return getPersistence().filterFindByGroupId(groupIds);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments that the user has permission to view where groupId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByGroupId(
+		long[] groupIds, int start, int end) {
+
+		return getPersistence().filterFindByGroupId(groupIds, start, end);
+	}
+
+	/**
+	 * Returns all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param commerceAddressId the commerce address ID
+	 * @return the matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_C(
+		long groupId, long commerceAddressId) {
+
+		return getPersistence().findByG_C(groupId, commerceAddressId);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param commerceAddressId the commerce address ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_C(
+		long groupId, long commerceAddressId, int start, int end) {
+
+		return getPersistence().findByG_C(
+			groupId, commerceAddressId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param commerceAddressId the commerce address ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_C(
+		long groupId, long commerceAddressId, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
+
+		return getPersistence().findByG_C(
+			groupId, commerceAddressId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param commerceAddressId the commerce address ID
+	 * @return the matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_C(
+		long[] groupIds, long commerceAddressId) {
+
+		return getPersistence().findByG_C(groupIds, commerceAddressId);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param commerceAddressId the commerce address ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_C(
+		long[] groupIds, long commerceAddressId, int start, int end) {
+
+		return getPersistence().findByG_C(
+			groupIds, commerceAddressId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param commerceAddressId the commerce address ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_C(
+		long[] groupIds, long commerceAddressId, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
+
+		return getPersistence().findByG_C(
+			groupIds, commerceAddressId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the commerce shipments that the user has permission to view where groupId = &#63; and commerceAddressId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param commerceAddressId the commerce address ID
+	 * @return the matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByG_C(
+		long groupId, long commerceAddressId) {
+
+		return getPersistence().filterFindByG_C(groupId, commerceAddressId);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments that the user has permission to view where groupId = &#63; and commerceAddressId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param commerceAddressId the commerce address ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByG_C(
+		long groupId, long commerceAddressId, int start, int end) {
+
+		return getPersistence().filterFindByG_C(
+			groupId, commerceAddressId, start, end);
+	}
+
+	/**
+	 * Returns all the commerce shipments that the user has permission to view where groupId = any &#63; and commerceAddressId = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param commerceAddressId the commerce address ID
+	 * @return the matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByG_C(
+		long[] groupIds, long commerceAddressId) {
+
+		return getPersistence().filterFindByG_C(groupIds, commerceAddressId);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments that the user has permission to view where groupId = any &#63; and commerceAddressId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param commerceAddressId the commerce address ID
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByG_C(
+		long[] groupIds, long commerceAddressId, int start, int end) {
+
+		return getPersistence().filterFindByG_C(
+			groupIds, commerceAddressId, start, end);
+	}
+
+	/**
+	 * Returns all the commerce shipments where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_S(long groupId, int status) {
+		return getPersistence().findByG_S(groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_S(
+		long groupId, int status, int start, int end) {
+
+		return getPersistence().findByG_S(groupId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_S(
+		long groupId, int status, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
+
+		return getPersistence().findByG_S(
+			groupId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the commerce shipments where groupId = any &#63; and status = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param status the status
+	 * @return the matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_S(
+		long[] groupIds, int status) {
+
+		return getPersistence().findByG_S(groupIds, status);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments where groupId = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param status the status
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_S(
+		long[] groupIds, int status, int start, int end) {
+
+		return getPersistence().findByG_S(groupIds, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce shipments where groupId = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param status the status
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments
+	 */
+	public static List<CommerceShipment> findByG_S(
+		long[] groupIds, int status, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
+
+		return getPersistence().findByG_S(
+			groupIds, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the commerce shipments that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByG_S(
+		long groupId, int status) {
+
+		return getPersistence().filterFindByG_S(groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByG_S(
+		long groupId, int status, int start, int end) {
+
+		return getPersistence().filterFindByG_S(groupId, status, start, end);
+	}
+
+	/**
+	 * Returns all the commerce shipments that the user has permission to view where groupId = any &#63; and status = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param status the status
+	 * @return the matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByG_S(
+		long[] groupIds, int status) {
+
+		return getPersistence().filterFindByG_S(groupIds, status);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipments that the user has permission to view where groupId = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShipmentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param status the status
+	 * @param start the lower bound of the range of commerce shipments
+	 * @param end the upper bound of the range of commerce shipments (not inclusive)
+	 * @return the range of matching commerce shipments that the user has permission to view
+	 */
+	public static List<CommerceShipment> filterFindByG_S(
+		long[] groupIds, int status, int start, int end) {
+
+		return getPersistence().filterFindByG_S(groupIds, status, start, end);
 	}
 
 	public static CommerceShipmentPersistence getPersistence() {
@@ -1316,4 +1601,4 @@ public class CommerceShipmentUtil {
 	private static volatile CommerceShipmentPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1005588006
+// LIFERAY-SERVICE-BUILDER-HASH:-66821836

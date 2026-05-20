@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -139,7 +140,8 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -149,7 +151,8 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -279,6 +282,7 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 
 		// No namespace
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		ScopedTestEntity scopedTestEntity1 =
 			testGraphQLDeleteAssetLibraryScopedTestEntityByExternalReferenceCode_addScopedTestEntity();
 
@@ -329,6 +333,7 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 
 		// Using the namespace test_v1_0
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		ScopedTestEntity scopedTestEntity2 =
 			testGraphQLDeleteAssetLibraryScopedTestEntityByExternalReferenceCode_addScopedTestEntity();
 
@@ -439,6 +444,7 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 
 		// No namespace
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		ScopedTestEntity scopedTestEntity1 =
 			testGraphQLDeleteSiteScopedTestEntityByExternalReferenceCode_addScopedTestEntity();
 
@@ -486,6 +492,7 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 
 		// Using the namespace test_v1_0
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		ScopedTestEntity scopedTestEntity2 =
 			testGraphQLDeleteSiteScopedTestEntityByExternalReferenceCode_addScopedTestEntity();
 
@@ -613,8 +620,10 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 		createBatchAction.put("method", "POST");
 		createBatchAction.put(
 			"href",
-			"http://localhost:8080/o/test/v1.0/asset-libraries/{assetLibraryId}/scoped-test-entities/batch".
-				replace("{assetLibraryId}", String.valueOf(assetLibraryId)));
+			("http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/o/test/v1.0/asset-libraries/{assetLibraryId}/scoped-test-entities/batch").
+					replace(
+						"{assetLibraryId}", String.valueOf(assetLibraryId)));
 
 		expectedActions.put("createBatch", createBatchAction);
 
@@ -958,8 +967,9 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 		createBatchAction.put("method", "POST");
 		createBatchAction.put(
 			"href",
-			"http://localhost:8080/o/test/v1.0/sites/{siteId}/scoped-test-entities/batch".
-				replace("{siteId}", String.valueOf(siteId)));
+			("http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/o/test/v1.0/sites/{siteId}/scoped-test-entities/batch").
+					replace("{siteId}", String.valueOf(siteId)));
 
 		expectedActions.put("createBatch", createBatchAction);
 
@@ -1546,7 +1556,8 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).parameters(
 			parameters
 		).build();
@@ -1682,16 +1693,22 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 		else if (value instanceof Boolean || value instanceof Number) {
 			return value.toString();
 		}
-		else if (value instanceof Date date) {
+		else if (value instanceof Date) {
+			Date date = (Date)value;
+
 			return "\"" +
 				DateUtil.getDate(
 					date, "yyyy-MM-dd'T'HH:mm:ss'Z'", LocaleUtil.getDefault(),
 					TimeZone.getTimeZone("UTC")) + "\"";
 		}
-		else if (value instanceof Enum<?> enm) {
+		else if (value instanceof Enum) {
+			Enum<?> enm = (Enum<?>)value;
+
 			return enm.name();
 		}
-		else if (value instanceof Map<?, ?> map) {
+		else if (value instanceof Map) {
+			Map<?, ?> map = (Map<?, ?>)value;
+
 			List<String> entries = new ArrayList<>();
 
 			for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -1704,7 +1721,9 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 
 			return "{" + String.join(", ", entries) + "}";
 		}
-		else if (value instanceof Object[] array) {
+		else if (value instanceof Object[]) {
+			Object[] array = (Object[])value;
+
 			List<String> entries = new ArrayList<>();
 
 			for (Object entry : array) {
@@ -2406,7 +2425,9 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 			).toString(),
 			"application/json");
 		httpInvoker.httpMethod(HttpInvoker.HttpMethod.POST);
-		httpInvoker.path("http://localhost:8080/o/graphql");
+		httpInvoker.path(
+			"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/o/graphql");
 		httpInvoker.userNameAndPassword(
 			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
 
@@ -2708,4 +2729,4 @@ public abstract class BaseScopedTestEntityResourceTestCase {
 		ScopedTestEntityResource _scopedTestEntityResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:1478433795
+// LIFERAY-REST-BUILDER-HASH:-1230778735

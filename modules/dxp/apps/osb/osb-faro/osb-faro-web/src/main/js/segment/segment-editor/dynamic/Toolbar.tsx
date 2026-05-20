@@ -57,7 +57,7 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 		);
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate(prevProps: IToolbarProps) {
 		if (
 			hasChanges(
 				prevProps,
@@ -80,7 +80,7 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
 	@autoCancel
 	@autobind
-	fetchMembers(params) {
+	fetchMembers(params: Record<string, any>) {
 		const {channelId, criteriaString, groupId} = this.props;
 
 		return API.individuals.search({
@@ -188,26 +188,28 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 						</div>
 
 						<div className='form-header-section-right'>
-							<div className='btn-group'>
-								<div className='btn-group-item'>
-									<Form.ToggleSwitch
-										className='include-anonymous'
-										label={Liferay.Language.get(
-											'include-anonymous'
-										)}
-										name='includeAnonymousUsers'
-									/>
-								</div>
+							{isBatch && (
+								<div className='btn-group'>
+									<div className='btn-group-item'>
+										<Form.ToggleSwitch
+											className='include-anonymous'
+											label={Liferay.Language.get(
+												'include-anonymous'
+											)}
+											name='includeAnonymousUsers'
+										/>
+									</div>
 
-								<div className='btn-group-item'>
-									<InfoPopover
-										className='include-anon-help-icon'
-										content={Liferay.Language.get(
-											'criteria-containing-individual-or-account-attributes-excludes-anonymous-individuals'
-										)}
-									/>
+									<div className='btn-group-item'>
+										<InfoPopover
+											className='include-anon-help-icon'
+											content={Liferay.Language.get(
+												'criteria-containing-individual-or-account-attributes-excludes-anonymous-individuals'
+											)}
+										/>
+									</div>
 								</div>
-							</div>
+							)}
 
 							<div className='btn-group'>
 								{isBatch && (

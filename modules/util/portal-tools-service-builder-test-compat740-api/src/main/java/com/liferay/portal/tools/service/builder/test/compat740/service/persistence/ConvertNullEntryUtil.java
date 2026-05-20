@@ -36,6 +36,20 @@ public class ConvertNullEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<ConvertNullEntry> convertNullEntries) {
+		getPersistence().cacheResult(convertNullEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(ConvertNullEntry convertNullEntry) {
+		getPersistence().cacheResult(convertNullEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -125,16 +139,6 @@ public class ConvertNullEntryUtil {
 	}
 
 	/**
-	 * Returns the convert null entry where name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param name the name
-	 * @return the matching convert null entry, or <code>null</code> if a matching convert null entry could not be found
-	 */
-	public static ConvertNullEntry fetchByName(String name) {
-		return getPersistence().fetchByName(name);
-	}
-
-	/**
 	 * Returns the convert null entry where name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param name the name
@@ -168,24 +172,6 @@ public class ConvertNullEntryUtil {
 	 */
 	public static int countByName(String name) {
 		return getPersistence().countByName(name);
-	}
-
-	/**
-	 * Caches the convert null entry in the entity cache if it is enabled.
-	 *
-	 * @param convertNullEntry the convert null entry
-	 */
-	public static void cacheResult(ConvertNullEntry convertNullEntry) {
-		getPersistence().cacheResult(convertNullEntry);
-	}
-
-	/**
-	 * Caches the convert null entries in the entity cache if it is enabled.
-	 *
-	 * @param convertNullEntries the convert null entries
-	 */
-	public static void cacheResult(List<ConvertNullEntry> convertNullEntries) {
-		getPersistence().cacheResult(convertNullEntries);
 	}
 
 	/**
@@ -243,84 +229,13 @@ public class ConvertNullEntryUtil {
 	}
 
 	/**
-	 * Returns all the convert null entries.
+	 * Returns the convert null entry where name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the convert null entries
+	 * @param name the name
+	 * @return the matching convert null entry, or <code>null</code> if a matching convert null entry could not be found
 	 */
-	public static List<ConvertNullEntry> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the convert null entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ConvertNullEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of convert null entries
-	 * @param end the upper bound of the range of convert null entries (not inclusive)
-	 * @return the range of convert null entries
-	 */
-	public static List<ConvertNullEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the convert null entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ConvertNullEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of convert null entries
-	 * @param end the upper bound of the range of convert null entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of convert null entries
-	 */
-	public static List<ConvertNullEntry> findAll(
-		int start, int end,
-		OrderByComparator<ConvertNullEntry> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the convert null entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ConvertNullEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of convert null entries
-	 * @param end the upper bound of the range of convert null entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of convert null entries
-	 */
-	public static List<ConvertNullEntry> findAll(
-		int start, int end,
-		OrderByComparator<ConvertNullEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the convert null entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of convert null entries.
-	 *
-	 * @return the number of convert null entries
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static ConvertNullEntry fetchByName(String name) {
+		return getPersistence().fetchByName(name);
 	}
 
 	public static ConvertNullEntryPersistence getPersistence() {
@@ -334,4 +249,4 @@ public class ConvertNullEntryUtil {
 	private static volatile ConvertNullEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-704768737
+// LIFERAY-SERVICE-BUILDER-HASH:-1047172749

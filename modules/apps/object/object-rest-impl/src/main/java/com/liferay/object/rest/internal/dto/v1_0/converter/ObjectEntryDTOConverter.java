@@ -32,6 +32,7 @@ import com.liferay.object.related.models.ObjectRelatedModelsProvider;
 import com.liferay.object.related.models.ObjectRelatedModelsProviderRegistry;
 import com.liferay.object.rest.dto.v1_0.AuditEvent;
 import com.liferay.object.rest.dto.v1_0.AuditFieldChange;
+import com.liferay.object.rest.dto.v1_0.CollaboratorBrief;
 import com.liferay.object.rest.dto.v1_0.ObjectDefinitionBrief;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.dto.v1_0.Status;
@@ -103,6 +104,9 @@ import com.liferay.portal.vulcan.jaxrs.extension.ExtendedEntity;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.permission.PermissionUtil;
 import com.liferay.portal.vulcan.scope.Scope;
+import com.liferay.sharing.model.SharingEntry;
+import com.liferay.sharing.security.permission.SharingEntryAction;
+import com.liferay.sharing.service.SharingEntryLocalService;
 import com.liferay.trash.model.TrashEntry;
 import com.liferay.trash.service.TrashEntryLocalService;
 
@@ -413,12 +417,16 @@ public class ObjectEntryDTOConverter
 					return _toSystemProperties(
 						serviceBuilderObjectEntry.getGroupId(),
 						dtoConverterContext.getLocale(), objectDefinition,
+						serviceBuilderObjectEntry.getObjectEntryId(),
+						dtoConverterContext.getUserId(),
 						objectEntryVersion.getVersion());
 				}
 
 				return _toSystemProperties(
 					serviceBuilderObjectEntry.getGroupId(),
 					dtoConverterContext.getLocale(), objectDefinition,
+					serviceBuilderObjectEntry.getObjectEntryId(),
+					dtoConverterContext.getUserId(),
 					serviceBuilderObjectEntry.getVersion());
 			});
 		objectEntry.setTaxonomyCategoryBriefs(
@@ -960,6 +968,20 @@ public class ObjectEntryDTOConverter
 			AuditFieldChange.class);
 	}
 
+	private CollaboratorBrief _toCollaboratorBrief(SharingEntry sharingEntry) {
+		return new CollaboratorBrief() {
+			{
+				setActionIds(
+					() -> TransformUtil.transformToArray(
+						SharingEntryAction.getSharingEntryActions(
+							sharingEntry.getActionIds()),
+						SharingEntryAction::getActionId, String.class));
+				setDateExpired(sharingEntry::getExpirationDate);
+				setShare(sharingEntry::isShareable);
+			}
+		};
+	}
+
 	private Comment[] _toComments(
 			ObjectDefinition objectDefinition,
 			com.liferay.object.model.ObjectEntry objectEntry)
@@ -968,8 +990,11 @@ public class ObjectEntryDTOConverter
 		return NestedFieldsSupplier.supply(
 			"comments",
 			nestedFieldNames -> {
-				if (!FeatureFlagManagerUtil.isEnabled(
-						objectDefinition.getCompanyId(), "LPD-43996") ||
+				if ((!Objects.equals(
+						objectDefinition.getScope(),
+						ObjectDefinitionConstants.SCOPE_SITE) &&
+					 !FeatureFlagManagerUtil.isEnabled(
+						 objectDefinition.getCompanyId(), "LPD-43996")) ||
 					!objectDefinition.isEnableComments() ||
 					!_discussionPermission.hasViewPermission(
 						PermissionThreadLocal.getPermissionChecker(),
@@ -1246,10 +1271,18 @@ public class ObjectEntryDTOConverter
 
 	private SystemProperties _toSystemProperties(
 			long groupId, Locale locale, ObjectDefinition objectDefinition,
-			int versionInt)
+			long objectEntryId, long userId, int versionInt)
 		throws Exception {
 
 		Group group = _groupLocalService.fetchGroup(groupId);
+
+		SharingEntry nestedSharingEntry = NestedFieldsSupplier.supply(
+			"systemProperties.collaboratorBrief",
+			nestedField -> _sharingEntryLocalService.fetchSharingEntry(
+				userId,
+				_classNameLocalService.getClassNameId(
+					objectDefinition.getClassName()),
+				objectEntryId));
 
 		ObjectDefinitionBrief nestedObjectDefinitionBrief =
 			NestedFieldsSupplier.supply(
@@ -1258,13 +1291,22 @@ public class ObjectEntryDTOConverter
 					locale, objectDefinition));
 
 		if (!objectDefinition.isEnableObjectEntryVersioning() &&
-			(group == null) && (nestedObjectDefinitionBrief == null)) {
+			(group == null) && (nestedObjectDefinitionBrief == null) &&
+			(nestedSharingEntry == null)) {
 
 			return null;
 		}
 
 		return new SystemProperties() {
 			{
+				setCollaboratorBrief(
+					() -> {
+						if (nestedSharingEntry == null) {
+							return null;
+						}
+
+						return _toCollaboratorBrief(nestedSharingEntry);
+					});
 				setObjectDefinitionBrief(() -> nestedObjectDefinitionBrief);
 				setScope(
 					() -> {
@@ -1361,6 +1403,9 @@ public class ObjectEntryDTOConverter
 
 	@Reference
 	private ResourceActionLocalService _resourceActionLocalService;
+
+	@Reference
+	private SharingEntryLocalService _sharingEntryLocalService;
 
 	@Reference
 	private SystemObjectDefinitionManagerRegistry

@@ -158,8 +158,24 @@ public class EntityFinder {
 		return false;
 	}
 
+	public boolean isCollectionPersistenceFinderEnabled() {
+		if (isFinderDelegationEnabled() && isCollection()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isDBIndex() {
 		return _dbIndex;
+	}
+
+	public boolean isFinderDelegationEnabled() {
+		if (!_serviceBuilder.isVersionGTE_7_4_0() || hasArrayablePagination()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public boolean isPretouch() {
@@ -168,6 +184,14 @@ public class EntityFinder {
 
 	public boolean isUnique() {
 		return _unique;
+	}
+
+	public boolean isUniquePersistenceFinderEnabled() {
+		if (isFinderDelegationEnabled() && (!isCollection() || isUnique())) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private final List<EntityColumn> _arrayableColumns = new ArrayList<>();

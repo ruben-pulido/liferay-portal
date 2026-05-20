@@ -45,14 +45,6 @@ public interface SamlIdpSsoSessionPersistence
 		throws NoSuchIdpSsoSessionException;
 
 	/**
-	 * Returns the saml idp sso session where userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @return the matching saml idp sso session, or <code>null</code> if a matching saml idp sso session could not be found
-	 */
-	public SamlIdpSsoSession fetchByUserId(long userId);
-
-	/**
 	 * Returns the saml idp sso session where userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param userId the user ID
@@ -91,7 +83,7 @@ public interface SamlIdpSsoSessionPersistence
 	 * Returns a range of all the saml idp sso sessions where createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIdpSsoSessionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.saml.persistence.model.impl.SamlIdpSsoSessionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param createDate the create date
@@ -106,7 +98,7 @@ public interface SamlIdpSsoSessionPersistence
 	 * Returns an ordered range of all the saml idp sso sessions where createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIdpSsoSessionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.saml.persistence.model.impl.SamlIdpSsoSessionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param createDate the create date
@@ -124,7 +116,7 @@ public interface SamlIdpSsoSessionPersistence
 	 * Returns an ordered range of all the saml idp sso sessions where createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIdpSsoSessionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.saml.persistence.model.impl.SamlIdpSsoSessionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param createDate the create date
@@ -193,15 +185,6 @@ public interface SamlIdpSsoSessionPersistence
 		throws NoSuchIdpSsoSessionException;
 
 	/**
-	 * Returns the saml idp sso session where samlIdpSsoSessionKey = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param samlIdpSsoSessionKey the saml idp sso session key
-	 * @return the matching saml idp sso session, or <code>null</code> if a matching saml idp sso session could not be found
-	 */
-	public SamlIdpSsoSession fetchBySamlIdpSsoSessionKey(
-		String samlIdpSsoSessionKey);
-
-	/**
 	 * Returns the saml idp sso session where samlIdpSsoSessionKey = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param samlIdpSsoSessionKey the saml idp sso session key
@@ -228,21 +211,6 @@ public interface SamlIdpSsoSessionPersistence
 	 * @return the number of matching saml idp sso sessions
 	 */
 	public int countBySamlIdpSsoSessionKey(String samlIdpSsoSessionKey);
-
-	/**
-	 * Caches the saml idp sso session in the entity cache if it is enabled.
-	 *
-	 * @param samlIdpSsoSession the saml idp sso session
-	 */
-	public void cacheResult(SamlIdpSsoSession samlIdpSsoSession);
-
-	/**
-	 * Caches the saml idp sso sessions in the entity cache if it is enabled.
-	 *
-	 * @param samlIdpSsoSessions the saml idp sso sessions
-	 */
-	public void cacheResult(
-		java.util.List<SamlIdpSsoSession> samlIdpSsoSessions);
 
 	/**
 	 * Creates a new saml idp sso session with the primary key. Does not add the saml idp sso session to the database.
@@ -283,72 +251,26 @@ public interface SamlIdpSsoSessionPersistence
 	public SamlIdpSsoSession fetchByPrimaryKey(long samlIdpSsoSessionId);
 
 	/**
-	 * Returns all the saml idp sso sessions.
+	 * Returns the saml idp sso session where userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the saml idp sso sessions
+	 * @param userId the user ID
+	 * @return the matching saml idp sso session, or <code>null</code> if a matching saml idp sso session could not be found
 	 */
-	public java.util.List<SamlIdpSsoSession> findAll();
+	public default SamlIdpSsoSession fetchByUserId(long userId) {
+		return fetchByUserId(userId, true);
+	}
 
 	/**
-	 * Returns a range of all the saml idp sso sessions.
+	 * Returns the saml idp sso session where samlIdpSsoSessionKey = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIdpSsoSessionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of saml idp sso sessions
-	 * @param end the upper bound of the range of saml idp sso sessions (not inclusive)
-	 * @return the range of saml idp sso sessions
+	 * @param samlIdpSsoSessionKey the saml idp sso session key
+	 * @return the matching saml idp sso session, or <code>null</code> if a matching saml idp sso session could not be found
 	 */
-	public java.util.List<SamlIdpSsoSession> findAll(int start, int end);
+	public default SamlIdpSsoSession fetchBySamlIdpSsoSessionKey(
+		String samlIdpSsoSessionKey) {
 
-	/**
-	 * Returns an ordered range of all the saml idp sso sessions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIdpSsoSessionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of saml idp sso sessions
-	 * @param end the upper bound of the range of saml idp sso sessions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of saml idp sso sessions
-	 */
-	public java.util.List<SamlIdpSsoSession> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SamlIdpSsoSession>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the saml idp sso sessions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIdpSsoSessionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of saml idp sso sessions
-	 * @param end the upper bound of the range of saml idp sso sessions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of saml idp sso sessions
-	 */
-	public java.util.List<SamlIdpSsoSession> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SamlIdpSsoSession>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the saml idp sso sessions from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of saml idp sso sessions.
-	 *
-	 * @return the number of saml idp sso sessions
-	 */
-	public int countAll();
+		return fetchBySamlIdpSsoSessionKey(samlIdpSsoSessionKey, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1436645538
+// LIFERAY-SERVICE-BUILDER-HASH:1722716701

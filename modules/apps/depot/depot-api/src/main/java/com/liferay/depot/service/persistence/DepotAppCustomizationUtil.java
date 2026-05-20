@@ -36,6 +36,24 @@ public class DepotAppCustomizationUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<DepotAppCustomization> depotAppCustomizations) {
+
+		getPersistence().cacheResult(depotAppCustomizations);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		DepotAppCustomization depotAppCustomization) {
+
+		getPersistence().cacheResult(depotAppCustomization);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -114,61 +132,10 @@ public class DepotAppCustomizationUtil {
 	}
 
 	/**
-	 * Returns all the depot app customizations where depotEntryId = &#63;.
-	 *
-	 * @param depotEntryId the depot entry ID
-	 * @return the matching depot app customizations
-	 */
-	public static List<DepotAppCustomization> findByDepotEntryId(
-		long depotEntryId) {
-
-		return getPersistence().findByDepotEntryId(depotEntryId);
-	}
-
-	/**
-	 * Returns a range of all the depot app customizations where depotEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DepotAppCustomizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param depotEntryId the depot entry ID
-	 * @param start the lower bound of the range of depot app customizations
-	 * @param end the upper bound of the range of depot app customizations (not inclusive)
-	 * @return the range of matching depot app customizations
-	 */
-	public static List<DepotAppCustomization> findByDepotEntryId(
-		long depotEntryId, int start, int end) {
-
-		return getPersistence().findByDepotEntryId(depotEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the depot app customizations where depotEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DepotAppCustomizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param depotEntryId the depot entry ID
-	 * @param start the lower bound of the range of depot app customizations
-	 * @param end the upper bound of the range of depot app customizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching depot app customizations
-	 */
-	public static List<DepotAppCustomization> findByDepotEntryId(
-		long depotEntryId, int start, int end,
-		OrderByComparator<DepotAppCustomization> orderByComparator) {
-
-		return getPersistence().findByDepotEntryId(
-			depotEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the depot app customizations where depotEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DepotAppCustomizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.depot.model.impl.DepotAppCustomizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param depotEntryId the depot entry ID
@@ -254,19 +221,6 @@ public class DepotAppCustomizationUtil {
 	}
 
 	/**
-	 * Returns the depot app customization where depotEntryId = &#63; and enabled = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param depotEntryId the depot entry ID
-	 * @param enabled the enabled
-	 * @return the matching depot app customization, or <code>null</code> if a matching depot app customization could not be found
-	 */
-	public static DepotAppCustomization fetchByD_E(
-		long depotEntryId, boolean enabled) {
-
-		return getPersistence().fetchByD_E(depotEntryId, enabled);
-	}
-
-	/**
 	 * Returns the depot app customization where depotEntryId = &#63; and enabled = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param depotEntryId the depot entry ID
@@ -322,19 +276,6 @@ public class DepotAppCustomizationUtil {
 	}
 
 	/**
-	 * Returns the depot app customization where depotEntryId = &#63; and portletId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param depotEntryId the depot entry ID
-	 * @param portletId the portlet ID
-	 * @return the matching depot app customization, or <code>null</code> if a matching depot app customization could not be found
-	 */
-	public static DepotAppCustomization fetchByD_P(
-		long depotEntryId, String portletId) {
-
-		return getPersistence().fetchByD_P(depotEntryId, portletId);
-	}
-
-	/**
 	 * Returns the depot app customization where depotEntryId = &#63; and portletId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param depotEntryId the depot entry ID
@@ -372,28 +313,6 @@ public class DepotAppCustomizationUtil {
 	 */
 	public static int countByD_P(long depotEntryId, String portletId) {
 		return getPersistence().countByD_P(depotEntryId, portletId);
-	}
-
-	/**
-	 * Caches the depot app customization in the entity cache if it is enabled.
-	 *
-	 * @param depotAppCustomization the depot app customization
-	 */
-	public static void cacheResult(
-		DepotAppCustomization depotAppCustomization) {
-
-		getPersistence().cacheResult(depotAppCustomization);
-	}
-
-	/**
-	 * Caches the depot app customizations in the entity cache if it is enabled.
-	 *
-	 * @param depotAppCustomizations the depot app customizations
-	 */
-	public static void cacheResult(
-		List<DepotAppCustomization> depotAppCustomizations) {
-
-		getPersistence().cacheResult(depotAppCustomizations);
 	}
 
 	/**
@@ -452,84 +371,80 @@ public class DepotAppCustomizationUtil {
 	}
 
 	/**
-	 * Returns all the depot app customizations.
+	 * Returns the depot app customization where depotEntryId = &#63; and enabled = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the depot app customizations
+	 * @param depotEntryId the depot entry ID
+	 * @param enabled the enabled
+	 * @return the matching depot app customization, or <code>null</code> if a matching depot app customization could not be found
 	 */
-	public static List<DepotAppCustomization> findAll() {
-		return getPersistence().findAll();
+	public static DepotAppCustomization fetchByD_E(
+		long depotEntryId, boolean enabled) {
+
+		return getPersistence().fetchByD_E(depotEntryId, enabled);
 	}
 
 	/**
-	 * Returns a range of all the depot app customizations.
+	 * Returns the depot app customization where depotEntryId = &#63; and portletId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param depotEntryId the depot entry ID
+	 * @param portletId the portlet ID
+	 * @return the matching depot app customization, or <code>null</code> if a matching depot app customization could not be found
+	 */
+	public static DepotAppCustomization fetchByD_P(
+		long depotEntryId, String portletId) {
+
+		return getPersistence().fetchByD_P(depotEntryId, portletId);
+	}
+
+	/**
+	 * Returns all the depot app customizations where depotEntryId = &#63;.
+	 *
+	 * @param depotEntryId the depot entry ID
+	 * @return the matching depot app customizations
+	 */
+	public static List<DepotAppCustomization> findByDepotEntryId(
+		long depotEntryId) {
+
+		return getPersistence().findByDepotEntryId(depotEntryId);
+	}
+
+	/**
+	 * Returns a range of all the depot app customizations where depotEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DepotAppCustomizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.depot.model.impl.DepotAppCustomizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param depotEntryId the depot entry ID
 	 * @param start the lower bound of the range of depot app customizations
 	 * @param end the upper bound of the range of depot app customizations (not inclusive)
-	 * @return the range of depot app customizations
+	 * @return the range of matching depot app customizations
 	 */
-	public static List<DepotAppCustomization> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<DepotAppCustomization> findByDepotEntryId(
+		long depotEntryId, int start, int end) {
+
+		return getPersistence().findByDepotEntryId(depotEntryId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the depot app customizations.
+	 * Returns an ordered range of all the depot app customizations where depotEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DepotAppCustomizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.depot.model.impl.DepotAppCustomizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param depotEntryId the depot entry ID
 	 * @param start the lower bound of the range of depot app customizations
 	 * @param end the upper bound of the range of depot app customizations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of depot app customizations
+	 * @return the ordered range of matching depot app customizations
 	 */
-	public static List<DepotAppCustomization> findAll(
-		int start, int end,
+	public static List<DepotAppCustomization> findByDepotEntryId(
+		long depotEntryId, int start, int end,
 		OrderByComparator<DepotAppCustomization> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the depot app customizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DepotAppCustomizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of depot app customizations
-	 * @param end the upper bound of the range of depot app customizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of depot app customizations
-	 */
-	public static List<DepotAppCustomization> findAll(
-		int start, int end,
-		OrderByComparator<DepotAppCustomization> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the depot app customizations from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of depot app customizations.
-	 *
-	 * @return the number of depot app customizations
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByDepotEntryId(
+			depotEntryId, start, end, orderByComparator);
 	}
 
 	public static DepotAppCustomizationPersistence getPersistence() {
@@ -545,4 +460,4 @@ public class DepotAppCustomizationUtil {
 	private static volatile DepotAppCustomizationPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-267580083
+// LIFERAY-SERVICE-BUILDER-HASH:1216473131

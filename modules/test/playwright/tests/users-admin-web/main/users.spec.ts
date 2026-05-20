@@ -36,7 +36,6 @@ export const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	isolatedSiteTest,
@@ -900,11 +899,9 @@ test(
 	{tag: '@LPD-62301'},
 	async ({apiHelpers, editUserPage, page, usersAndOrganizationsPage}) => {
 		const name = '<img src=x onerror=alert(origin)>';
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name,
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const user = await apiHelpers.headlessAdminUser.postUserAccount();
 

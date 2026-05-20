@@ -7,7 +7,6 @@ import {expect, mergeTests} from '@playwright/test';
 
 import {commercePagesTest} from '../../../../fixtures/commercePagesTest';
 import {dataApiHelpersTest} from '../../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
 import {globalMenuPagesTest} from '../../../../fixtures/globalMenuPagesTest';
 import {isolatedSiteTest} from '../../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../../fixtures/loginTest';
@@ -23,9 +22,6 @@ import {miniumSetUp} from '../../utils/commerce';
 export const test = mergeTests(
 	commercePagesTest,
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	globalMenuPagesTest,
 	isolatedSiteTest,
 	loginTest()
@@ -36,11 +32,9 @@ test('LPD-44010 Check no delete dropdown in order admin page without delete perm
 	commerceAdminOrdersPage,
 	page,
 }) => {
-	const site = await apiHelpers.headlessSite.createSite({
+	const site = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 	});
-
-	apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 	const channel = await apiHelpers.headlessCommerceAdminChannel.postChannel({
 		siteGroupId: site.id,
@@ -210,7 +204,7 @@ test('LPD-45268 Notes tab should not be visible if user does not have required p
 	commerceAdminOrdersPage,
 	page,
 }) => {
-	const site = await apiHelpers.headlessSite.createSite({
+	const site = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 	});
 

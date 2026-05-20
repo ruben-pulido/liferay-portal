@@ -23,8 +23,10 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.TestInfo;
@@ -85,12 +87,15 @@ public class DeleteLayoutUtilityPageEntryPreviewMVCActionCommandTest {
 	public void testDoProcessAction() throws Exception {
 		String name = RandomTestUtil.randomString();
 
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
 		LayoutUtilityPageEntry layoutUtilityPageEntry =
 			_layoutUtilityPageEntryLocalService.addLayoutUtilityPageEntry(
 				null, TestPropsValues.getUserId(), _group.getGroupId(), 0,
 				_fileEntry.getFileEntryId(), false, name,
 				LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND, null,
-				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+				serviceContext);
 
 		long groupId = _group.getGroupId();
 
@@ -108,7 +113,7 @@ public class DeleteLayoutUtilityPageEntryPreviewMVCActionCommandTest {
 		layoutUtilityPageEntry =
 			_layoutUtilityPageEntryLocalService.updateLayoutUtilityPageEntry(
 				layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
-				fileEntry.getFileEntryId());
+				fileEntry.getFileEntryId(), serviceContext);
 
 		ReflectionTestUtil.invoke(
 			_deleteLayoutUtilityPageEntryPreviewMVCActionCommand,
@@ -173,6 +178,8 @@ public class DeleteLayoutUtilityPageEntryPreviewMVCActionCommandTest {
 
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
+		themeDisplay.setCompany(
+			_companyLocalService.getCompany(_group.getCompanyId()));
 		themeDisplay.setPermissionChecker(
 			PermissionCheckerFactoryUtil.create(user));
 		themeDisplay.setScopeGroupId(_group.getGroupId());
@@ -189,6 +196,9 @@ public class DeleteLayoutUtilityPageEntryPreviewMVCActionCommandTest {
 
 		return mockLiferayPortletActionRequest;
 	}
+
+	@Inject
+	private CompanyLocalService _companyLocalService;
 
 	@Inject(
 		filter = "mvc.command.name=/layout_admin/delete_layout_utility_page_entry_preview"

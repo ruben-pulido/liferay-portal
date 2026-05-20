@@ -25,6 +25,7 @@ import {uiElementsPageTest} from '../../../fixtures/uiElementsTest';
 import {usersAndOrganizationsPagesTest} from '../../../fixtures/usersAndOrganizationsPagesTest';
 import {wikiPagesTest} from '../../../fixtures/wikiPagesTest';
 import {DataApiHelpers} from '../../../helpers/ApiHelpers';
+import {liferayConfig} from '../../../liferay.config';
 import {HomePage} from '../../../pages/portal-web/HomePage';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
@@ -50,7 +51,6 @@ export const test = mergeTests(
 		'LPD-17564': {enabled: true},
 		'LPD-35013': {enabled: true},
 		'LPD-35443': {enabled: false},
-		'LPD-36105': {enabled: true},
 		'LPD-44307': {enabled: true},
 		'LPD-44771': {enabled: true},
 		'LPD-45276': {enabled: true},
@@ -74,7 +74,6 @@ const testWithDeprecationFFDisabled = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: false},
-		'LPD-36105': {enabled: true},
 		'LPD-44307': {enabled: false},
 		'LPD-44771': {enabled: false},
 	}),
@@ -87,7 +86,6 @@ const testWithDeprecationFF = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: false},
-		'LPD-36105': {enabled: true},
 		'LPD-44307': {enabled: true},
 		'LPD-44771': {enabled: true},
 	}),
@@ -739,30 +737,32 @@ testWithDeprecationFF(
 		});
 
 		await performLoginViaApi({
-			loginUrl: 'http://www.able.com:8080',
+			loginUrl: `http://www.able.com:${liferayConfig.environment.port}`,
 			page,
 			screenName: 'test',
 		});
 
 		const virtualInstanceApiHelpers = new DataApiHelpers(
 			page,
-			'http://www.able.com:8080'
+			`http://www.able.com:${liferayConfig.environment.port}`
 		);
 
 		for (const featureFlag of featureFlags) {
 			await virtualInstanceApiHelpers.featureFlag.updateFeatureFlag(
 				featureFlag.key,
 				featureFlag.enabled,
-				'http://www.able.com:8080'
+				`http://www.able.com:${liferayConfig.environment.port}`
 			);
 		}
 
-		const site = await virtualInstanceApiHelpers.headlessSite.createSite({
-			name: getRandomString(),
-		});
+		const site = await virtualInstanceApiHelpers.headlessAdminSite.postSite(
+			{
+				name: getRandomString(),
+			}
+		);
 
 		await page.goto(
-			`http://www.able.com:8080/group${site.friendlyUrlPath}${PORTLET_URLS.import}`
+			`http://www.able.com:${liferayConfig.environment.port}/group${site.friendlyUrlPath}${PORTLET_URLS.import}`
 		);
 		await exportImportPage.importByDefault(exportFilePath);
 		await exportImportPage.importByDefault(exportFilePath);

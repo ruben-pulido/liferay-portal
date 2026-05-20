@@ -1,4 +1,5 @@
 import Dashboard from '../index';
+import DataSourcesProvider from 'shared/context/dataSources';
 import mockStore from 'test/mock-store';
 import React from 'react';
 import {BrowserRouter} from 'react-router-dom';
@@ -12,6 +13,7 @@ jest.unmock('react-dom');
 jest.mock('react-router-dom', () => ({
 	...jest.requireActual('react-router-dom'),
 	useParams: () => ({
+		channelId: '456',
 		groupId: '123'
 	})
 }));
@@ -24,7 +26,9 @@ describe('Individuals Dashboard', () => {
 			<Provider store={mockStore()}>
 				<BrowserRouter>
 					<ChannelContext.Provider value={mockChannelContext()}>
-						<Dashboard />
+						<DataSourcesProvider groupId='123'>
+							<Dashboard />
+						</DataSourcesProvider>
 					</ChannelContext.Provider>
 				</BrowserRouter>
 			</Provider>

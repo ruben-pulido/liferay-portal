@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -126,15 +127,8 @@ public class BackgroundTaskLocalServiceImpl
 			long userId, long backgroundTaskId, String fileName, File file)
 		throws PortalException {
 
-		BackgroundTask backgroundTask = getBackgroundTask(backgroundTaskId);
-
-		Folder folder = backgroundTask.addAttachmentsFolder();
-
-		_portletFileRepository.addPortletFileEntry(
-			null, backgroundTask.getGroupId(), userId,
-			BackgroundTask.class.getName(), backgroundTask.getPrimaryKey(),
-			PortletKeys.BACKGROUND_TASK, folder.getFolderId(), file, fileName,
-			ContentTypes.APPLICATION_ZIP, false);
+		addBackgroundTaskAttachment(
+			userId, backgroundTaskId, fileName, fileName, file);
 	}
 
 	@Override
@@ -152,6 +146,23 @@ public class BackgroundTaskLocalServiceImpl
 			BackgroundTask.class.getName(), backgroundTask.getPrimaryKey(),
 			PortletKeys.BACKGROUND_TASK, folder.getFolderId(), inputStream,
 			fileName, ContentTypes.APPLICATION_ZIP, false);
+	}
+
+	@Override
+	public void addBackgroundTaskAttachment(
+			long userId, long backgroundTaskId, String sourceFileName,
+			String title, File file)
+		throws PortalException {
+
+		BackgroundTask backgroundTask = getBackgroundTask(backgroundTaskId);
+
+		Folder folder = backgroundTask.addAttachmentsFolder();
+
+		_portletFileRepository.addPortletFileEntry(
+			null, backgroundTask.getGroupId(), userId,
+			BackgroundTask.class.getName(), backgroundTask.getPrimaryKey(),
+			PortletKeys.BACKGROUND_TASK, folder.getFolderId(), file,
+			sourceFileName, title, ContentTypes.APPLICATION_ZIP, false);
 	}
 
 	@Override
@@ -238,6 +249,8 @@ public class BackgroundTaskLocalServiceImpl
 	@Clusterable(onMaster = true)
 	@Override
 	public void cleanUpBackgroundTasks() {
+		List<BackgroundTask> staleBackgroundTasks = new ArrayList<>();
+
 		List<BackgroundTask> backgroundTasks =
 			backgroundTaskPersistence.findByCompleted(false);
 
@@ -247,12 +260,24 @@ public class BackgroundTaskLocalServiceImpl
 				!BackgroundTaskInExecutionUtil.isInExecution(
 					backgroundTask.getBackgroundTaskId())) {
 
-				backgroundTask.setCompleted(true);
-				backgroundTask.setStatus(BackgroundTaskConstants.STATUS_FAILED);
-
-				backgroundTask = backgroundTaskPersistence.update(
-					backgroundTask);
+				staleBackgroundTasks.add(backgroundTask);
 			}
+			else if ((backgroundTask.getStatus() ==
+						BackgroundTaskConstants.STATUS_QUEUED) &&
+					 !_backgroundTaskLockHelper.isLockedBackgroundTask(
+						 new BackgroundTaskImpl(backgroundTask))) {
+
+				cleanUpBackgroundTask(
+					backgroundTask.getBackgroundTaskId(),
+					backgroundTask.getStatus());
+			}
+		}
+
+		for (BackgroundTask backgroundTask : staleBackgroundTasks) {
+			backgroundTask.setCompleted(true);
+			backgroundTask.setStatus(BackgroundTaskConstants.STATUS_FAILED);
+
+			backgroundTask = backgroundTaskPersistence.update(backgroundTask);
 
 			cleanUpBackgroundTask(
 				backgroundTask.getBackgroundTaskId(),

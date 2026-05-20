@@ -11,7 +11,14 @@ import userEvent from '@testing-library/user-event';
 import {fetch, loadClientExtensions, sub} from 'frontend-js-web';
 import React from 'react';
 
-import {ItemSelectorModal} from '../src/main/resources/META-INF/resources';
+import {
+	FilesUploaderComponent,
+	ItemSelectorModal,
+} from '../src/main/resources/META-INF/resources';
+
+const MockFilesUploaderComponent: FilesUploaderComponent = () => (
+	<div data-testid="mockFilesUploader" />
+);
 
 type TestItem = {
 	itemId: number;
@@ -61,13 +68,13 @@ const mockedLoadClientExtensions = loadClientExtensions as jest.Mock;
 const mockedSub = sub as jest.Mock;
 
 const ItemSelectorModalWrapper = ({
-	createItemURL,
 	defaultOpen,
+	filesUploaderComponent,
 	onItemsChange,
 	selectedItems,
 }: {
-	createItemURL?: string;
 	defaultOpen: boolean;
+	filesUploaderComponent?: FilesUploaderComponent;
 	onItemsChange: (items: TestItem[]) => void;
 	selectedItems: TestItem[];
 }) => {
@@ -79,7 +86,6 @@ const ItemSelectorModalWrapper = ({
 
 			<ItemSelectorModal<TestItem>
 				apiURL={`${location.origin}/o/headless-delivery/v1.0/test-api-url`}
-				createItemURL={createItemURL}
 				fdsProps={{
 					id: `itemSelectorModal-test-0001`,
 					pagination: {
@@ -99,6 +105,7 @@ const ItemSelectorModalWrapper = ({
 						} as IView,
 					],
 				}}
+				filesUploaderComponent={filesUploaderComponent}
 				itemTypeLabel="Space"
 				items={selectedItems}
 				locator={{
@@ -166,29 +173,6 @@ describe('ItemSelectorModal component', () => {
 		expect(select).toBeInTheDocument();
 
 		expect(select).toBeDisabled();
-	});
-
-	it('renders an item selector modal with a create new item link that opens in a new tab', async () => {
-		const createItemURL = 'www.example.com';
-
-		const {findByRole} = render(
-			<ItemSelectorModalWrapper
-				createItemURL={createItemURL}
-				defaultOpen={true}
-				onItemsChange={jest.fn()}
-				selectedItems={[]}
-			/>
-		);
-
-		const modal = await findByRole('dialog');
-
-		const newItemLink = await within(modal).findByText('new');
-
-		expect(newItemLink).toBeInTheDocument();
-
-		expect(newItemLink.getAttribute('href')).toEqual(createItemURL);
-
-		expect(newItemLink.getAttribute('target')).toEqual('_blank');
 	});
 
 	it('renders items with radio for single selection type', async () => {
@@ -524,5 +508,30 @@ describe('ItemSelectorModal component', () => {
 			Liferay.Language.get('x-selected'),
 			mockFirstItem.name
 		);
+	});
+
+	it('renders Upload Files button if drag and drop is allowed', async () => {
+		const user = userEvent.setup();
+
+		const {findByRole, findByTestId} = render(
+			<ItemSelectorModalWrapper
+				defaultOpen={true}
+				filesUploaderComponent={MockFilesUploaderComponent}
+				onItemsChange={jest.fn}
+				selectedItems={[]}
+			/>
+		);
+
+		const modal = await findByRole('dialog');
+
+		const uploadFilesButton = await within(modal).findByRole('button', {
+			name: 'upload-files',
+		});
+
+		expect(uploadFilesButton).toBeInTheDocument();
+
+		user.click(uploadFilesButton);
+
+		expect(await findByTestId('mockFilesUploader')).toBeInTheDocument();
 	});
 });

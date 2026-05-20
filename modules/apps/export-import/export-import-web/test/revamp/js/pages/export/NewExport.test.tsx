@@ -5,60 +5,69 @@
 
 // eslint-disable-next-line @liferay/portal/no-cross-module-deep-import
 import {checkAccessibility} from '@liferay/layout-js-components-web/test/__lib__/index';
-import {render, screen, waitFor} from '@testing-library/react';
+import {render, screen, waitFor, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import fetch from 'jest-fetch-mock';
 import React from 'react';
 
 import {NewExport} from '../../../../../src/main/resources/META-INF/resources/revamp/js/pages/export/NewExport';
+import {mockExportPreview} from '../../mocks/mockExportPreview';
 
 const renderComponent = () => {
-	return render(<NewExport backURL="/some/back/url" />);
+	return render(
+		<NewExport
+			backURL="/some/back/url"
+			exportPreviewAPIURL="/o/export-import/v1.0/export-preview"
+			exportProcessAPIURL="/o/export-import/v1.0/export-processes"
+			pageTreeModalConfiguration={{
+				liveGroupId: 20121,
+				pageSize: 20,
+				privateLayoutsEnabled: false,
+			}}
+		/>
+	);
 };
 
 describe('NewExport', () => {
-	beforeAll(() => {
-		global.Liferay = {
-			...global?.Liferay,
-			Language: {
-				...global.Liferay?.Language,
-				get: (key: string) => key,
-			},
-			ThemeDisplay: {
-				...global.Liferay?.ThemeDisplay,
-				getBCP47LanguageId: () => 'en-US',
-				getTimeZone: () => 'UTC',
-			},
-		};
+	beforeEach(() => {
+		fetch.resetMocks();
+		fetch.mockResponse(JSON.stringify(mockExportPreview));
 	});
 
-	it('renders the SetupStep', async () => {
+	it('renders the export form', async () => {
 		const {container} = renderComponent();
 
-		const fileNameInput = screen.getByRole('textbox', {
+		const fileNameInput = await screen.findByRole('textbox', {
 			name: /file-name/,
 		});
 		expect(fileNameInput).toBeInTheDocument();
 
-		const designCheckbox = screen.getByRole('checkbox', {
-			name: /Design/,
-		});
-		expect(designCheckbox).toBeInTheDocument();
+		expect(screen.getByText('filter-content-by')).toBeInTheDocument();
 
-		const continueButton = screen.getByRole('button', {name: /continue/i});
-		await waitFor(() => {
-			expect(continueButton).toBeDisabled();
-		});
+		await screen.findByText('loaded');
 
-		await checkAccessibility({context: container});
+		await checkAccessibility({
+			context: {
+
+				// TODO Drop exclude once content_selector checkboxes expose labels
+
+				exclude: ['[data-testid="data-selection-section"]'],
+				include: [container],
+			},
+		});
 	});
 
-	it('enables the continue button when the SetupStep is valid', async () => {
+	it('renders the error alert when the API fails', async () => {
+		fetch.resetMocks();
+		fetch.mockResponseOnce(JSON.stringify({title: 'boom'}), {status: 500});
+
 		renderComponent();
 
-		const continueButton = screen.getByRole('button', {name: /continue/i});
-		await waitFor(() => {
-			expect(continueButton).toBeDisabled();
-		});
+		expect(await screen.findByText('boom')).toBeInTheDocument();
+	});
+
+	it('shows a required error on filename when blurred empty', async () => {
+		renderComponent();
 
 		const fileNameInput = await screen.findByRole('textbox', {
 			name: /file-name/,
@@ -68,28 +77,81 @@ describe('NewExport', () => {
 		fileNameInput.blur();
 
 		await screen.findByText('this-field-is-required');
+	});
 
-		await userEvent.type(fileNameInput, 'test-file');
+	it('keeps the export button disabled while the form is invalid', async () => {
+		renderComponent();
 
-		await waitFor(() => {
-			expect(
-				screen.queryByText('this-field-is-required')
-			).not.toBeInTheDocument();
+		const exportButton = await screen.findByRole('button', {
+			name: /^export$/i,
 		});
 
-		const designCheckbox = await screen.findByRole('checkbox', {
-			name: /Design/,
-		});
-
-		await userEvent.click(designCheckbox);
-
 		await waitFor(() => {
-			expect(continueButton).toBeEnabled();
+			expect(exportButton).toBeDisabled();
 		});
 	});
 
-	it('renders the DataSelectionStep (Step 2) and checks accessibility', async () => {
-		const {container} = renderComponent();
+	it('shows and clears the selection error as contentSelection toggles', async () => {
+		renderComponent();
+
+		const fileNameInput = await screen.findByRole('textbox', {
+			name: /file-name/,
+		});
+		await userEvent.type(fileNameInput, 'test-file');
+
+		const dataSelectionGroup = screen.getByRole('group', {
+			name: 'data-selection',
+		});
+		const checkbox = within(dataSelectionGroup).getAllByRole('checkbox')[0];
+
+		await userEvent.click(checkbox);
+		await userEvent.click(checkbox);
+
+		await screen.findByText(
+			'please-select-at-least-one-entity-type-to-continue'
+		);
+		expect(dataSelectionGroup).toHaveAttribute('aria-invalid', 'true');
+
+		await userEvent.click(checkbox);
+
+		await waitFor(() => {
+			expect(
+				screen.queryByText(
+					'please-select-at-least-one-entity-type-to-continue'
+				)
+			).not.toBeInTheDocument();
+		});
+		expect(dataSelectionGroup).not.toHaveAttribute('aria-invalid');
+	});
+
+	it('keeps form values after applying a filter', async () => {
+		renderComponent();
+
+		const fileNameInput = await screen.findByRole('textbox', {
+			name: /file-name/,
+		});
+		await userEvent.type(fileNameInput, 'test-file');
+
+		const filterSelect = screen.getByRole('combobox', {
+			name: 'filter-content-by',
+		});
+		await userEvent.selectOptions(filterSelect, 'last');
+
+		await userEvent.click(
+			screen.getByRole('button', {name: /show-results/i})
+		);
+
+		await waitFor(() => {
+			expect(fetch).toHaveBeenCalledTimes(2);
+		});
+
+		expect(screen.getByRole('textbox', {name: /file-name/})).toHaveValue(
+			'test-file'
+		);
+	});
+
+	it('enables the export button once filename and contentSelection are set', async () => {
+		renderComponent();
 
 		const fileNameInput = await screen.findByRole('textbox', {
 			name: /file-name/,
@@ -97,22 +159,54 @@ describe('NewExport', () => {
 
 		await userEvent.type(fileNameInput, 'test-file');
 
-		const designCheckbox = await screen.findByRole('checkbox', {
-			name: /Design/,
+		const dataSelectionGroup = screen.getByRole('group', {
+			name: 'data-selection',
 		});
 
-		await userEvent.click(designCheckbox);
+		await userEvent.click(
+			within(dataSelectionGroup).getAllByRole('checkbox')[0]
+		);
 
-		const continueButton = screen.getByRole('button', {name: /continue/i});
+		const exportButton = screen.getByRole('button', {name: /^export$/i});
 
 		await waitFor(() => {
-			expect(continueButton).toBeEnabled();
+			expect(exportButton).toBeEnabled();
 		});
+	});
 
-		await userEvent.click(continueButton);
+	it('hides the deletions checkbox when the preview has no deletions', async () => {
+		fetch.resetMocks();
+		fetch.mockResponse(
+			JSON.stringify({
+				...mockExportPreview,
+				deletionCount: 0,
+			})
+		);
 
-		expect(screen.getByText('filter-content-by')).toBeInTheDocument();
+		renderComponent();
 
-		await checkAccessibility({context: container});
+		await screen.findByText('loaded');
+
+		expect(
+			screen.queryByLabelText('export-individual-deletions')
+		).not.toBeInTheDocument();
+	});
+
+	it('shows the deletions checkbox unchecked and toggles it when the preview has deletions', async () => {
+		renderComponent();
+
+		const deletionsCheckbox = await screen.findByLabelText(
+			'export-individual-deletions'
+		);
+
+		expect(deletionsCheckbox).not.toBeChecked();
+
+		await userEvent.click(deletionsCheckbox);
+
+		expect(deletionsCheckbox).toBeChecked();
+
+		await userEvent.click(deletionsCheckbox);
+
+		expect(deletionsCheckbox).not.toBeChecked();
 	});
 });

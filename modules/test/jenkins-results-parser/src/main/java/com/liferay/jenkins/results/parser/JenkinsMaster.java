@@ -538,6 +538,29 @@ public class JenkinsMaster implements JenkinsNode<JenkinsMaster> {
 		return queuedBuildURLs;
 	}
 
+	public QueueItem getQueueItem(long queueId) {
+		try {
+			JSONObject queueItemJSONObject =
+				JenkinsResultsParserUtil.toJSONObject(
+					JenkinsResultsParserUtil.combine(
+						getURL(), "/queue/item/", String.valueOf(queueId),
+						"/api/json?tree=actions[parameters[name,value]],",
+						"id,inQueueSince,task[name,url],url,why"),
+					false, 5000);
+
+			if ((queueItemJSONObject == null) ||
+				!queueItemJSONObject.has("id")) {
+
+				return null;
+			}
+
+			return new QueueItem(this, queueItemJSONObject);
+		}
+		catch (IOException ioException) {
+			return null;
+		}
+	}
+
 	public List<JSONObject> getQueueItemJSONObjects() {
 		List<JSONObject> queueItemJSONObjects = new ArrayList<>();
 
@@ -906,13 +929,11 @@ public class JenkinsMaster implements JenkinsNode<JenkinsMaster> {
 			_assignedLabels.clear();
 			_buildURLs.clear();
 			_jenkinsSlavesMap.clear();
-			_labelBatchSizes.clear();
 
 			return;
 		}
 
 		_assignedLabels.clear();
-		_labelBatchSizes.clear();
 
 		JSONObject computerAPIJSONObject = null;
 
@@ -929,7 +950,6 @@ public class JenkinsMaster implements JenkinsNode<JenkinsMaster> {
 			_assignedLabels.clear();
 			_buildURLs.clear();
 			_jenkinsSlavesMap.clear();
-			_labelBatchSizes.clear();
 			_labelExpressionLabels.clear();
 
 			System.out.println("Unable to read " + _masterURL);

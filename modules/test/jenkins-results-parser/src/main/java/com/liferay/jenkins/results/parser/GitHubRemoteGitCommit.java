@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -142,7 +142,7 @@ public class GitHubRemoteGitCommit extends BaseGitCommit {
 	}
 
 	protected String getGitHubStatusURL() {
-		return JenkinsResultsParserUtil.getGitHubApiUrl(
+		return JenkinsResultsParserUtil.getGitHubAPIURL(
 			getGitRepositoryName(), _gitHubUsername, "statuses/" + getSHA());
 	}
 

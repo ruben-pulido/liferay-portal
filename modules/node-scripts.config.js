@@ -10,7 +10,7 @@
  */
 
 module.exports = {
-	hash: '911f1d07ad602dac672fe0b368a344fb5801a75744c9d4bbac863ec2677567a6',
+	hash: '5fa062d41a6b1b034a7f3c4311b7f4bc285eebba4fd95a0dbd33736a920d78b1',
 	imports: {
 		'@liferay/accessibility-menu-web': [],
 		'@liferay/accessibility-settings-state-web': [],
@@ -61,6 +61,7 @@ module.exports = {
 		'@liferay/configuration-admin-web': [],
 		'@liferay/content-dashboard-document-library-impl': [],
 		'@liferay/content-dashboard-web': [],
+		'@liferay/content-site-generator-web': [],
 		'@liferay/cookies-banner-web': [],
 		'@liferay/cookies-sample-web': [],
 		'@liferay/design-library-web': [],
@@ -151,7 +152,6 @@ module.exports = {
 			'cropperjs/dist/cropper.css',
 			'graphql-hooks-memcache',
 			'graphql-hooks',
-			'graphql',
 			'highlight.js/styles/monokai-sublime.css',
 			'qrcode',
 			'react-dropzone',
@@ -159,8 +159,6 @@ module.exports = {
 			'uuid',
 			'react-flow-renderer',
 			'react-helmet',
-			'graphiql',
-			'graphiql/style.css',
 			'axe-core',
 			'clipboard',
 			'cropperjs',
@@ -172,6 +170,7 @@ module.exports = {
 			'highlight.js/lib/languages/java',
 			'highlight.js/lib/languages/javascript',
 			'highlight.js/lib/languages/plaintext',
+			'libphonenumber-js',
 			'liferay-ckeditor',
 			'moment',
 			'moment/min/moment-with-locales',
@@ -259,6 +258,7 @@ module.exports = {
 		'@liferay/saved-content-web': [],
 		'@liferay/scim-configuration-web': [],
 		'@liferay/search-experiences-web': [],
+		'@liferay/seo-studio-web': [],
 		'@liferay/site-cmp-site-initializer': [],
 		'@liferay/site-cms-site-initializer': [],
 		'@liferay/site-dsr-site-initializer': [],
@@ -529,6 +529,7 @@ module.exports = {
 			'OverlayMask',
 			'Picker',
 			'Provider',
+			'ResizeHandle',
 			'Row',
 			'SidePanel',
 			'SidePanelWithDrilldown',

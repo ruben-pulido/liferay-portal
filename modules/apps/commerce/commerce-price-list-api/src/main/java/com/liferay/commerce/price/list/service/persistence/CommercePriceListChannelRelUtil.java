@@ -36,6 +36,24 @@ public class CommercePriceListChannelRelUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<CommercePriceListChannelRel> commercePriceListChannelRels) {
+
+		getPersistence().cacheResult(commercePriceListChannelRels);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		CommercePriceListChannelRel commercePriceListChannelRel) {
+
+		getPersistence().cacheResult(commercePriceListChannelRel);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,58 +135,10 @@ public class CommercePriceListChannelRelUtil {
 	}
 
 	/**
-	 * Returns all the commerce price list channel rels where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the commerce price list channel rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of commerce price list channel rels
-	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
-	 * @return the range of matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce price list channel rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of commerce price list channel rels
-	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<CommercePriceListChannelRel> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce price list channel rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -238,64 +208,10 @@ public class CommercePriceListChannelRelUtil {
 	}
 
 	/**
-	 * Returns all the commerce price list channel rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the commerce price list channel rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce price list channel rels
-	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
-	 * @return the range of matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce price list channel rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce price list channel rels
-	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<CommercePriceListChannelRel> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce price list channel rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -372,62 +288,10 @@ public class CommercePriceListChannelRelUtil {
 	}
 
 	/**
-	 * Returns all the commerce price list channel rels where commercePriceListId = &#63;.
-	 *
-	 * @param commercePriceListId the commerce price list ID
-	 * @return the matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByCommercePriceListId(
-		long commercePriceListId) {
-
-		return getPersistence().findByCommercePriceListId(commercePriceListId);
-	}
-
-	/**
-	 * Returns a range of all the commerce price list channel rels where commercePriceListId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commercePriceListId the commerce price list ID
-	 * @param start the lower bound of the range of commerce price list channel rels
-	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
-	 * @return the range of matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByCommercePriceListId(
-		long commercePriceListId, int start, int end) {
-
-		return getPersistence().findByCommercePriceListId(
-			commercePriceListId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce price list channel rels where commercePriceListId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commercePriceListId the commerce price list ID
-	 * @param start the lower bound of the range of commerce price list channel rels
-	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce price list channel rels
-	 */
-	public static List<CommercePriceListChannelRel> findByCommercePriceListId(
-		long commercePriceListId, int start, int end,
-		OrderByComparator<CommercePriceListChannelRel> orderByComparator) {
-
-		return getPersistence().findByCommercePriceListId(
-			commercePriceListId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce price list channel rels where commercePriceListId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param commercePriceListId the commerce price list ID
@@ -516,20 +380,6 @@ public class CommercePriceListChannelRelUtil {
 	}
 
 	/**
-	 * Returns the commerce price list channel rel where commerceChannelId = &#63; and commercePriceListId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param commerceChannelId the commerce channel ID
-	 * @param commercePriceListId the commerce price list ID
-	 * @return the matching commerce price list channel rel, or <code>null</code> if a matching commerce price list channel rel could not be found
-	 */
-	public static CommercePriceListChannelRel fetchByCCI_CPI(
-		long commerceChannelId, long commercePriceListId) {
-
-		return getPersistence().fetchByCCI_CPI(
-			commerceChannelId, commercePriceListId);
-	}
-
-	/**
 	 * Returns the commerce price list channel rel where commerceChannelId = &#63; and commercePriceListId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param commerceChannelId the commerce channel ID
@@ -573,28 +423,6 @@ public class CommercePriceListChannelRelUtil {
 
 		return getPersistence().countByCCI_CPI(
 			commerceChannelId, commercePriceListId);
-	}
-
-	/**
-	 * Caches the commerce price list channel rel in the entity cache if it is enabled.
-	 *
-	 * @param commercePriceListChannelRel the commerce price list channel rel
-	 */
-	public static void cacheResult(
-		CommercePriceListChannelRel commercePriceListChannelRel) {
-
-		getPersistence().cacheResult(commercePriceListChannelRel);
-	}
-
-	/**
-	 * Caches the commerce price list channel rels in the entity cache if it is enabled.
-	 *
-	 * @param commercePriceListChannelRels the commerce price list channel rels
-	 */
-	public static void cacheResult(
-		List<CommercePriceListChannelRel> commercePriceListChannelRels) {
-
-		getPersistence().cacheResult(commercePriceListChannelRels);
 	}
 
 	/**
@@ -659,86 +487,171 @@ public class CommercePriceListChannelRelUtil {
 	}
 
 	/**
-	 * Returns all the commerce price list channel rels.
+	 * Returns the commerce price list channel rel where commerceChannelId = &#63; and commercePriceListId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the commerce price list channel rels
+	 * @param commerceChannelId the commerce channel ID
+	 * @param commercePriceListId the commerce price list ID
+	 * @return the matching commerce price list channel rel, or <code>null</code> if a matching commerce price list channel rel could not be found
 	 */
-	public static List<CommercePriceListChannelRel> findAll() {
-		return getPersistence().findAll();
+	public static CommercePriceListChannelRel fetchByCCI_CPI(
+		long commerceChannelId, long commercePriceListId) {
+
+		return getPersistence().fetchByCCI_CPI(
+			commerceChannelId, commercePriceListId);
 	}
 
 	/**
-	 * Returns a range of all the commerce price list channel rels.
+	 * Returns all the commerce price list channel rels where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching commerce price list channel rels
+	 */
+	public static List<CommercePriceListChannelRel> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the commerce price list channel rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of commerce price list channel rels
 	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
-	 * @return the range of commerce price list channel rels
+	 * @return the range of matching commerce price list channel rels
 	 */
-	public static List<CommercePriceListChannelRel> findAll(
-		int start, int end) {
+	public static List<CommercePriceListChannelRel> findByUuid(
+		String uuid, int start, int end) {
 
-		return getPersistence().findAll(start, end);
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce price list channel rels.
+	 * Returns an ordered range of all the commerce price list channel rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of commerce price list channel rels
 	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce price list channel rels
+	 * @return the ordered range of matching commerce price list channel rels
 	 */
-	public static List<CommercePriceListChannelRel> findAll(
-		int start, int end,
+	public static List<CommercePriceListChannelRel> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<CommercePriceListChannelRel> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce price list channel rels.
+	 * Returns all the commerce price list channel rels where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching commerce price list channel rels
+	 */
+	public static List<CommercePriceListChannelRel> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the commerce price list channel rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceListChannelRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of commerce price list channel rels
+	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
+	 * @return the range of matching commerce price list channel rels
+	 */
+	public static List<CommercePriceListChannelRel> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce price list channel rels where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of commerce price list channel rels
 	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce price list channel rels
+	 * @return the ordered range of matching commerce price list channel rels
 	 */
-	public static List<CommercePriceListChannelRel> findAll(
-		int start, int end,
-		OrderByComparator<CommercePriceListChannelRel> orderByComparator,
-		boolean useFinderCache) {
+	public static List<CommercePriceListChannelRel> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<CommercePriceListChannelRel> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the commerce price list channel rels from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of commerce price list channel rels.
+	 * Returns all the commerce price list channel rels where commercePriceListId = &#63;.
 	 *
-	 * @return the number of commerce price list channel rels
+	 * @param commercePriceListId the commerce price list ID
+	 * @return the matching commerce price list channel rels
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<CommercePriceListChannelRel> findByCommercePriceListId(
+		long commercePriceListId) {
+
+		return getPersistence().findByCommercePriceListId(commercePriceListId);
+	}
+
+	/**
+	 * Returns a range of all the commerce price list channel rels where commercePriceListId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param commercePriceListId the commerce price list ID
+	 * @param start the lower bound of the range of commerce price list channel rels
+	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
+	 * @return the range of matching commerce price list channel rels
+	 */
+	public static List<CommercePriceListChannelRel> findByCommercePriceListId(
+		long commercePriceListId, int start, int end) {
+
+		return getPersistence().findByCommercePriceListId(
+			commercePriceListId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce price list channel rels where commercePriceListId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.price.list.model.impl.CommercePriceListChannelRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param commercePriceListId the commerce price list ID
+	 * @param start the lower bound of the range of commerce price list channel rels
+	 * @param end the upper bound of the range of commerce price list channel rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce price list channel rels
+	 */
+	public static List<CommercePriceListChannelRel> findByCommercePriceListId(
+		long commercePriceListId, int start, int end,
+		OrderByComparator<CommercePriceListChannelRel> orderByComparator) {
+
+		return getPersistence().findByCommercePriceListId(
+			commercePriceListId, start, end, orderByComparator);
 	}
 
 	public static CommercePriceListChannelRelPersistence getPersistence() {
@@ -754,4 +667,4 @@ public class CommercePriceListChannelRelUtil {
 	private static volatile CommercePriceListChannelRelPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1506818574
+// LIFERAY-SERVICE-BUILDER-HASH:498330904

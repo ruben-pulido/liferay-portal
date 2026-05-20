@@ -6,11 +6,10 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
-import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
+import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginAnalyticsCloudTest} from '../../../fixtures/loginAnalyticsCloudTest';
 import {loginTest} from '../../../fixtures/loginTest';
-import {liferayConfig} from '../../../liferay.config';
 import getRandomString from '../../../utils/getRandomString';
 import {syncAnalyticsCloud} from '../../analytics-settings-web/main/utils/analytics-settings';
 import {switchChannel} from './utils/channel';
@@ -24,51 +23,37 @@ import {addBreakdownByIndividualAttribute} from './utils/utils';
 
 export const test = mergeTests(
 	apiHelpersTest,
-	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPS-178052': {enabled: true},
 	}),
+	isolatedSiteTest,
 	loginAnalyticsCloudTest(),
 	loginTest()
 );
 
-const randomString = getRandomString();
-
-const channelName = 'My Property ' + randomString;
-const siteName = 'My Site ' + randomString;
+const channelName = 'My Property ' + getRandomString();
 
 let channel;
 let project;
-let site;
 
-test.beforeEach(async ({apiHelpers, page}) => {
-	site = await apiHelpers.headlessSite.createSite({
-		name: siteName,
-	});
-
+test.beforeEach(async ({apiHelpers, page, site}) => {
 	const result = await syncAnalyticsCloud({
 		apiHelpers,
 		channelName,
 		page,
-		siteName,
+		siteName: site.name,
 	});
 
 	channel = result.channel;
 	project = result.project;
 });
 
-test.afterEach(async ({apiHelpers, page}) => {
+test.afterEach(async ({apiHelpers}) => {
 	await test.step('Delete channel', async () => {
 		await apiHelpers.jsonWebServicesOSBFaro.deleteChannel(
 			`[${channel.id}]`,
 			project.groupId
 		);
-	});
-
-	await test.step('Delete site on DXP side', async () => {
-		await page.goto(liferayConfig.environment.baseUrl);
-
-		await apiHelpers.headlessSite.deleteSite(String(site.id));
 	});
 });
 

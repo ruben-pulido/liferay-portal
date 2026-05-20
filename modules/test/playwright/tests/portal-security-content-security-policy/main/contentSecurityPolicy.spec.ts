@@ -23,7 +23,6 @@ export const test = mergeTests(
 	apiHelpersTest,
 	contentSecurityPolicyPagesTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	isolatedSiteTest,
@@ -157,7 +156,7 @@ test('CSP connect-src allows connections to specific domain', async ({
 	site,
 }) => {
 	await contentSecurityPolicyPage.gotoAndConfigurePolicy(
-		`connect-src 'self' http://www.able.com:8080/ wss://www.able.com:8080/;`
+		`connect-src 'self' http://www.able.com:${liferayConfig.environment.port}/ wss://www.able.com:${liferayConfig.environment.port}/;`
 	);
 
 	const layout = await apiHelpers.headlessDelivery.createSitePage({
@@ -176,20 +175,20 @@ test('CSP connect-src allows connections to specific domain', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<a  ping="http://www.able.com:8080" href="http://localhost:8080" target="_blank">
+		value: `<a  ping="http://www.able.com:${liferayConfig.environment.port}" href="http://localhost:${liferayConfig.environment.port}" target="_blank">
 		 			Test CSP
 					<script>
-						const response = fetch("http://www.able.com:8080");
+						const response = fetch("http://www.able.com:${liferayConfig.environment.port}");
 
 						const xmlHttpRequest = new XMLHttpRequest();
-						xmlHttpRequest.open("GET", "http://www.able.com:8080");
+						xmlHttpRequest.open("GET", "http://www.able.com:${liferayConfig.environment.port}");
 						xmlHttpRequest.send();
 
-						const webSocket = new WebSocket("wss://www.able.com:8080/");
+						const webSocket = new WebSocket("wss://www.able.com:${liferayConfig.environment.port}/");
 
-						const eventSource = new EventSource("http://www.able.com:8080");
+						const eventSource = new EventSource("http://www.able.com:${liferayConfig.environment.port}");
 
-						navigator.sendBeacon("http://www.able.com:8080", {
+						navigator.sendBeacon("http://www.able.com:${liferayConfig.environment.port}", {
 						/* … */
 						});
 					</script>
@@ -259,20 +258,20 @@ test('CSP connect-src blocks connections', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<a  ping="http://www.able.com:8080" href="http://localhost:8080" target="_blank">
+		value: `<a  ping="http://www.able.com:${liferayConfig.environment.port}" href="http://localhost:${liferayConfig.environment.port}" target="_blank">
 		 			Test CSP
 					<script>
-						const response = fetch("http://www.able.com:8080");
+						const response = fetch("http://www.able.com:${liferayConfig.environment.port}");
 
 						const xmlHttpRequest = new XMLHttpRequest();
-						xmlHttpRequest.open("GET", "http://www.able.com:8080");
+						xmlHttpRequest.open("GET", "http://www.able.com:${liferayConfig.environment.port}");
 						xmlHttpRequest.send();
 
-						const webSocket = new WebSocket("wss://www.able.com:8080/");
+						const webSocket = new WebSocket("wss://www.able.com:${liferayConfig.environment.port}/");
 
-						const eventSource = new EventSource("http://www.able.com:8080");
+						const eventSource = new EventSource("http://www.able.com:${liferayConfig.environment.port}");
 
-						navigator.sendBeacon("http://www.able.com:8080", {
+						navigator.sendBeacon("http://www.able.com:${liferayConfig.environment.port}", {
 						/* … */
 						});
 					</script>
@@ -343,20 +342,20 @@ test('CSP-Report-Only connect-src alerts connections', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<a  ping="http://www.able.com:8080" href="http://localhost:8080" target="_blank">
+		value: `<a  ping="http://www.able.com:${liferayConfig.environment.port}" href="http://localhost:${liferayConfig.environment.port}" target="_blank">
 		 			Test CSP
 					<script>
-						const response = fetch("http://www.able.com:8080");
+						const response = fetch("http://www.able.com:${liferayConfig.environment.port}");
 
 						const xmlHttpRequest = new XMLHttpRequest();
-						xmlHttpRequest.open("GET", "http://www.able.com:8080");
+						xmlHttpRequest.open("GET", "http://www.able.com:${liferayConfig.environment.port}");
 						xmlHttpRequest.send();
 
-						const webSocket = new WebSocket("wss://www.able.com:8080/");
+						const webSocket = new WebSocket("wss://www.able.com:${liferayConfig.environment.port}/");
 
-						const eventSource = new EventSource("http://www.able.com:8080");
+						const eventSource = new EventSource("http://www.able.com:${liferayConfig.environment.port}");
 
-						navigator.sendBeacon("http://www.able.com:8080", {
+						navigator.sendBeacon("http://www.able.com:${liferayConfig.environment.port}", {
 						/* … */
 						});
 					</script>
@@ -429,14 +428,14 @@ test('CSP frame-ancestors allows framing from specific domain', async ({
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
 		value: `<object
 					type="text/html"
-					data="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080"
+					data="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}"
 					width="300"
 					height="200">
 				</object>
 
 				<embed
 					type="text/html"
-					src="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080"
+					src="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}"
 					width="300"
 					height="200" />
 
@@ -445,7 +444,7 @@ test('CSP frame-ancestors allows framing from specific domain', async ({
 					title="Inline Frame Example"
 					width="300"
 					height="200"
-					src="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080">
+					src="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}">
 				</iframe>`,
 	});
 
@@ -457,10 +456,10 @@ test('CSP frame-ancestors allows framing from specific domain', async ({
 
 	hasVirtualInstance = true;
 
-	liferayConfig.environment.baseUrl = `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`;
+	liferayConfig.environment.baseUrl = `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`;
 
 	const newInstancePage = await browser.newPage({
-		baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`,
+		baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`,
 	});
 
 	await performLoginViaApi({
@@ -528,14 +527,14 @@ test('CSP frame-ancestors blocks framing from specific domain', async ({
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
 		value: `<object
 					type="text/html"
-					data="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080"
+					data="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}"
 					width="300"
 					height="200">
 				</object>
 
 				<embed
 					type="text/html"
-					src="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080"
+					src="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}"
 					width="300"
 					height="200" />
 
@@ -544,7 +543,7 @@ test('CSP frame-ancestors blocks framing from specific domain', async ({
 					title="Inline Frame Example"
 					width="300"
 					height="200"
-					src="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080">
+					src="http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}">
 				</iframe>`,
 	});
 
@@ -556,10 +555,10 @@ test('CSP frame-ancestors blocks framing from specific domain', async ({
 
 	hasVirtualInstance = true;
 
-	liferayConfig.environment.baseUrl = `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`;
+	liferayConfig.environment.baseUrl = `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`;
 
 	const newInstancePage = await browser.newPage({
-		baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`,
+		baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`,
 	});
 
 	await performLoginViaApi({
@@ -753,7 +752,7 @@ test('CSP frame-src allows frames from specific domains', async ({
 	site,
 }) => {
 	await contentSecurityPolicyPage.gotoAndConfigurePolicy(
-		"frame-src 'self' http://www.able.com:8080;"
+		`frame-src 'self' http://www.able.com:${liferayConfig.environment.port};`
 	);
 
 	const layout = await apiHelpers.headlessDelivery.createSitePage({
@@ -772,7 +771,7 @@ test('CSP frame-src allows frames from specific domains', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<iframe src="http://www.able.com:8080/" />`,
+		value: `<iframe src="http://www.able.com:${liferayConfig.environment.port}/" />`,
 	});
 
 	await pageEditorPage.publishPage();
@@ -782,7 +781,11 @@ test('CSP frame-src allows frames from specific domains', async ({
 	page.on('console', (message) => {
 		if (message.type() === 'error') {
 			const text = message.text();
-			if (text.includes("Refused to frame 'http://www.able.com:8080/'")) {
+			if (
+				text.includes(
+					`Refused to frame 'http://www.able.com:${liferayConfig.environment.port}/'`
+				)
+			) {
 				errors.push(text);
 			}
 		}
@@ -818,7 +821,7 @@ test('CSP frame-src blocks frames', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<iframe src="http://www.able.com:8080/" />`,
+		value: `<iframe src="http://www.able.com:${liferayConfig.environment.port}/" />`,
 	});
 
 	await pageEditorPage.publishPage();
@@ -828,7 +831,11 @@ test('CSP frame-src blocks frames', async ({
 	page.on('console', (message) => {
 		if (message.type() === 'error') {
 			const text = message.text();
-			if (text.includes('http://www.able.com:8080/')) {
+			if (
+				text.includes(
+					`http://www.able.com:${liferayConfig.environment.port}/`
+				)
+			) {
 				errors.push(text);
 			}
 		}
@@ -867,7 +874,7 @@ test('CSP-Report-Only frame-src allerts frames', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<iframe src="http://www.able.com:8080/" />`,
+		value: `<iframe src="http://www.able.com:${liferayConfig.environment.port}/" />`,
 	});
 
 	await pageEditorPage.publishPage();
@@ -878,7 +885,9 @@ test('CSP-Report-Only frame-src allerts frames', async ({
 		if (message.type() === 'error') {
 			const text = message.text();
 			if (
-				text.includes('http://www.able.com:8080/') &&
+				text.includes(
+					`http://www.able.com:${liferayConfig.environment.port}/`
+				) &&
 				text.includes('[Report Only] Refused to frame')
 			) {
 				logs.push(text);
@@ -889,7 +898,9 @@ test('CSP-Report-Only frame-src allerts frames', async ({
 	await page.goto(`/web/${site.name}/${layout.friendlyUrlPath}`);
 
 	await expect(
-		page.locator('iframe[src="http://www.able.com:8080/"]')
+		page.locator(
+			`iframe[src="http://www.able.com:${liferayConfig.environment.port}/"]`
+		)
 	).toBeVisible();
 
 	expect(logs.length).toBeGreaterThanOrEqual(6);
@@ -955,7 +966,7 @@ test('CSP img-src allows images from specific domains', async ({
 	site,
 }) => {
 	await contentSecurityPolicyPage.gotoAndConfigurePolicy(
-		"img-src 'self' http://www.able.com:8080;"
+		`img-src 'self' http://www.able.com:${liferayConfig.environment.port};`
 	);
 
 	const layout = await apiHelpers.headlessDelivery.createSitePage({
@@ -974,7 +985,7 @@ test('CSP img-src allows images from specific domains', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<img src="http://www.able.com:8080/html/icons/default.png" alt="example picture" />`,
+		value: `<img src="http://www.able.com:${liferayConfig.environment.port}/html/icons/default.png" alt="example picture" />`,
 	});
 
 	await pageEditorPage.publishPage();
@@ -986,7 +997,7 @@ test('CSP img-src allows images from specific domains', async ({
 			const text = message.text();
 			if (
 				text.includes(
-					"Refused to load the image 'http://www.able.com:8080/html/icons/default.png'"
+					`Refused to load the image 'http://www.able.com:${liferayConfig.environment.port}/html/icons/default.png'`
 				)
 			) {
 				errors.push(text);
@@ -1024,7 +1035,7 @@ test('CSP img-src blocks images', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<img src="http://www.able.com:8080/html/icons/default.png" alt="example picture" />`,
+		value: `<img src="http://www.able.com:${liferayConfig.environment.port}/html/icons/default.png" alt="example picture" />`,
 	});
 
 	await pageEditorPage.publishPage();
@@ -1035,7 +1046,9 @@ test('CSP img-src blocks images', async ({
 		if (message.type() === 'error') {
 			const text = message.text();
 			if (
-				text.includes('http://www.able.com:8080/html/icons/default.png')
+				text.includes(
+					`http://www.able.com:${liferayConfig.environment.port}/html/icons/default.png`
+				)
 			) {
 				errors.push(text);
 			}
@@ -1075,7 +1088,7 @@ test('CSP-Report-Only img-src alerts images', async ({
 	await pageEditorPage.editHTMLEditable({
 		editableId: 'element-html',
 		fragmentId: await pageEditorPage.getFragmentId('HTML'),
-		value: `<img src="http://www.able.com:8080/html/icons/default.png" alt="example picture" />`,
+		value: `<img src="http://www.able.com:${liferayConfig.environment.port}/html/icons/default.png" alt="example picture" />`,
 	});
 
 	await pageEditorPage.publishPage();
@@ -1087,7 +1100,7 @@ test('CSP-Report-Only img-src alerts images', async ({
 			const text = message.text();
 			if (
 				text.includes(
-					'http://www.able.com:8080/html/icons/default.png'
+					`http://www.able.com:${liferayConfig.environment.port}/html/icons/default.png`
 				) &&
 				text.includes('[Report Only] Refused to load the image')
 			) {
@@ -1102,7 +1115,7 @@ test('CSP-Report-Only img-src alerts images', async ({
 
 	await expect(
 		page.locator(
-			'img[src="http://www.able.com:8080/html/icons/default.png"]'
+			`img[src="http://www.able.com:${liferayConfig.environment.port}/html/icons/default.png"]`
 		)
 	).toBeVisible();
 });

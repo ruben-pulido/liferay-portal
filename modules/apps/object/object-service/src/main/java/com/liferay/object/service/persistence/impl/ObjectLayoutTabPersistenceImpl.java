@@ -13,26 +13,19 @@ import com.liferay.object.model.impl.ObjectLayoutTabModelImpl;
 import com.liferay.object.service.persistence.ObjectLayoutTabPersistence;
 import com.liferay.object.service.persistence.ObjectLayoutTabUtil;
 import com.liferay.object.service.persistence.impl.constants.ObjectPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -46,7 +39,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -68,7 +60,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = ObjectLayoutTabPersistence.class)
 public class ObjectLayoutTabPersistenceImpl
-	extends BasePersistenceImpl<ObjectLayoutTab>
+	extends BasePersistenceImpl<ObjectLayoutTab, NoSuchObjectLayoutTabException>
 	implements ObjectLayoutTabPersistence {
 
 	/*
@@ -85,67 +77,14 @@ public class ObjectLayoutTabPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the object layout tabs where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the object layout tabs where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @return the range of matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByUuid(String uuid, int start, int end) {
-		return findByUuid(uuid, start, end, null);
-	}
+	private CollectionPersistenceFinder<ObjectLayoutTab>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the object layout tabs where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<ObjectLayoutTab> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the object layout tabs where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -161,106 +100,9 @@ public class ObjectLayoutTabPersistenceImpl
 		OrderByComparator<ObjectLayoutTab> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<ObjectLayoutTab> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutTab>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectLayoutTab objectLayoutTab : list) {
-					if (!uuid.equals(objectLayoutTab.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTLAYOUTTAB_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectLayoutTabModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<ObjectLayoutTab>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -283,16 +125,9 @@ public class ObjectLayoutTabPersistenceImpl
 			return objectLayoutTab;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchObjectLayoutTabException(sb.toString());
+		throw new NoSuchObjectLayoutTabException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -306,13 +141,8 @@ public class ObjectLayoutTabPersistenceImpl
 	public ObjectLayoutTab fetchByUuid_First(
 		String uuid, OrderByComparator<ObjectLayoutTab> orderByComparator) {
 
-		List<ObjectLayoutTab> list = findByUuid(uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -322,11 +152,8 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (ObjectLayoutTab objectLayoutTab :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(objectLayoutTab);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -337,131 +164,18 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTLAYOUTTAB_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"objectLayoutTab.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(objectLayoutTab.uuid IS NULL OR objectLayoutTab.uuid = '')";
-
-	private FinderPath _finderPathWithPaginationFindByUuid_C;
-	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
-	private FinderPath _finderPathCountByUuid_C;
-
-	/**
-	 * Returns all the object layout tabs where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByUuid_C(String uuid, long companyId) {
-		return findByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the object layout tabs where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @return the range of matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return findByUuid_C(uuid, companyId, start, end, null);
-	}
+	private CollectionPersistenceFinder<ObjectLayoutTab>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the object layout tabs where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<ObjectLayoutTab> orderByComparator) {
-
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the object layout tabs where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -478,114 +192,9 @@ public class ObjectLayoutTabPersistenceImpl
 		OrderByComparator<ObjectLayoutTab> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectLayoutTab> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutTab>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectLayoutTab objectLayoutTab : list) {
-					if (!uuid.equals(objectLayoutTab.getUuid()) ||
-						(companyId != objectLayoutTab.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTLAYOUTTAB_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectLayoutTabModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<ObjectLayoutTab>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -610,19 +219,9 @@ public class ObjectLayoutTabPersistenceImpl
 			return objectLayoutTab;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectLayoutTabException(sb.toString());
+		throw new NoSuchObjectLayoutTabException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -638,14 +237,8 @@ public class ObjectLayoutTabPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<ObjectLayoutTab> orderByComparator) {
 
-		List<ObjectLayoutTab> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -656,13 +249,8 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (ObjectLayoutTab objectLayoutTab :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectLayoutTab);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -674,135 +262,18 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_OBJECTLAYOUTTAB_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"objectLayoutTab.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(objectLayoutTab.uuid IS NULL OR objectLayoutTab.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"objectLayoutTab.companyId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByObjectLayoutId;
-	private FinderPath _finderPathWithoutPaginationFindByObjectLayoutId;
-	private FinderPath _finderPathCountByObjectLayoutId;
-
-	/**
-	 * Returns all the object layout tabs where objectLayoutId = &#63;.
-	 *
-	 * @param objectLayoutId the object layout ID
-	 * @return the matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByObjectLayoutId(long objectLayoutId) {
-		return findByObjectLayoutId(
-			objectLayoutId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the object layout tabs where objectLayoutId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectLayoutId the object layout ID
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @return the range of matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByObjectLayoutId(
-		long objectLayoutId, int start, int end) {
-
-		return findByObjectLayoutId(objectLayoutId, start, end, null);
-	}
+	private CollectionPersistenceFinder<ObjectLayoutTab>
+		_collectionPersistenceFinderByObjectLayoutId;
 
 	/**
 	 * Returns an ordered range of all the object layout tabs where objectLayoutId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectLayoutId the object layout ID
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByObjectLayoutId(
-		long objectLayoutId, int start, int end,
-		OrderByComparator<ObjectLayoutTab> orderByComparator) {
-
-		return findByObjectLayoutId(
-			objectLayoutId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the object layout tabs where objectLayoutId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
 	 * </p>
 	 *
 	 * @param objectLayoutId the object layout ID
@@ -818,95 +289,9 @@ public class ObjectLayoutTabPersistenceImpl
 		OrderByComparator<ObjectLayoutTab> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByObjectLayoutId;
-				finderArgs = new Object[] {objectLayoutId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByObjectLayoutId;
-			finderArgs = new Object[] {
-				objectLayoutId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectLayoutTab> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutTab>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectLayoutTab objectLayoutTab : list) {
-					if (objectLayoutId != objectLayoutTab.getObjectLayoutId()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTLAYOUTTAB_WHERE);
-
-			sb.append(_FINDER_COLUMN_OBJECTLAYOUTID_OBJECTLAYOUTID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectLayoutTabModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectLayoutId);
-
-				list = (List<ObjectLayoutTab>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByObjectLayoutId.find(
+			finderCache, new Object[] {objectLayoutId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -930,16 +315,9 @@ public class ObjectLayoutTabPersistenceImpl
 			return objectLayoutTab;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("objectLayoutId=");
-		sb.append(objectLayoutId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectLayoutTabException(sb.toString());
+		throw new NoSuchObjectLayoutTabException(
+			_collectionPersistenceFinderByObjectLayoutId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {objectLayoutId}));
 	}
 
 	/**
@@ -954,14 +332,8 @@ public class ObjectLayoutTabPersistenceImpl
 		long objectLayoutId,
 		OrderByComparator<ObjectLayoutTab> orderByComparator) {
 
-		List<ObjectLayoutTab> list = findByObjectLayoutId(
-			objectLayoutId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByObjectLayoutId.fetchFirst(
+			finderCache, new Object[] {objectLayoutId}, orderByComparator);
 	}
 
 	/**
@@ -971,13 +343,8 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Override
 	public void removeByObjectLayoutId(long objectLayoutId) {
-		for (ObjectLayoutTab objectLayoutTab :
-				findByObjectLayoutId(
-					objectLayoutId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectLayoutTab);
-		}
+		_collectionPersistenceFinderByObjectLayoutId.remove(
+			finderCache, new Object[] {objectLayoutId});
 	}
 
 	/**
@@ -988,115 +355,18 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Override
 	public int countByObjectLayoutId(long objectLayoutId) {
-		FinderPath finderPath = _finderPathCountByObjectLayoutId;
-
-		Object[] finderArgs = new Object[] {objectLayoutId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTLAYOUTTAB_WHERE);
-
-			sb.append(_FINDER_COLUMN_OBJECTLAYOUTID_OBJECTLAYOUTID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectLayoutId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByObjectLayoutId.count(
+			finderCache, new Object[] {objectLayoutId});
 	}
 
-	private static final String _FINDER_COLUMN_OBJECTLAYOUTID_OBJECTLAYOUTID_2 =
-		"objectLayoutTab.objectLayoutId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByObjectRelationshipId;
-	private FinderPath _finderPathWithoutPaginationFindByObjectRelationshipId;
-	private FinderPath _finderPathCountByObjectRelationshipId;
-
-	/**
-	 * Returns all the object layout tabs where objectRelationshipId = &#63;.
-	 *
-	 * @param objectRelationshipId the object relationship ID
-	 * @return the matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByObjectRelationshipId(
-		long objectRelationshipId) {
-
-		return findByObjectRelationshipId(
-			objectRelationshipId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the object layout tabs where objectRelationshipId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectRelationshipId the object relationship ID
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @return the range of matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByObjectRelationshipId(
-		long objectRelationshipId, int start, int end) {
-
-		return findByObjectRelationshipId(
-			objectRelationshipId, start, end, null);
-	}
+	private CollectionPersistenceFinder<ObjectLayoutTab>
+		_collectionPersistenceFinderByObjectRelationshipId;
 
 	/**
 	 * Returns an ordered range of all the object layout tabs where objectRelationshipId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectRelationshipId the object relationship ID
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findByObjectRelationshipId(
-		long objectRelationshipId, int start, int end,
-		OrderByComparator<ObjectLayoutTab> orderByComparator) {
-
-		return findByObjectRelationshipId(
-			objectRelationshipId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the object layout tabs where objectRelationshipId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
 	 * </p>
 	 *
 	 * @param objectRelationshipId the object relationship ID
@@ -1112,99 +382,9 @@ public class ObjectLayoutTabPersistenceImpl
 		OrderByComparator<ObjectLayoutTab> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByObjectRelationshipId;
-				finderArgs = new Object[] {objectRelationshipId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByObjectRelationshipId;
-			finderArgs = new Object[] {
-				objectRelationshipId, start, end, orderByComparator
-			};
-		}
-
-		List<ObjectLayoutTab> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutTab>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ObjectLayoutTab objectLayoutTab : list) {
-					if (objectRelationshipId !=
-							objectLayoutTab.getObjectRelationshipId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_OBJECTLAYOUTTAB_WHERE);
-
-			sb.append(
-				_FINDER_COLUMN_OBJECTRELATIONSHIPID_OBJECTRELATIONSHIPID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ObjectLayoutTabModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectRelationshipId);
-
-				list = (List<ObjectLayoutTab>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByObjectRelationshipId.find(
+			finderCache, new Object[] {objectRelationshipId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1228,16 +408,11 @@ public class ObjectLayoutTabPersistenceImpl
 			return objectLayoutTab;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("objectRelationshipId=");
-		sb.append(objectRelationshipId);
-
-		sb.append("}");
-
-		throw new NoSuchObjectLayoutTabException(sb.toString());
+		throw new NoSuchObjectLayoutTabException(
+			_collectionPersistenceFinderByObjectRelationshipId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {objectRelationshipId}));
 	}
 
 	/**
@@ -1252,14 +427,9 @@ public class ObjectLayoutTabPersistenceImpl
 		long objectRelationshipId,
 		OrderByComparator<ObjectLayoutTab> orderByComparator) {
 
-		List<ObjectLayoutTab> list = findByObjectRelationshipId(
-			objectRelationshipId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByObjectRelationshipId.fetchFirst(
+			finderCache, new Object[] {objectRelationshipId},
+			orderByComparator);
 	}
 
 	/**
@@ -1269,13 +439,8 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Override
 	public void removeByObjectRelationshipId(long objectRelationshipId) {
-		for (ObjectLayoutTab objectLayoutTab :
-				findByObjectRelationshipId(
-					objectRelationshipId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(objectLayoutTab);
-		}
+		_collectionPersistenceFinderByObjectRelationshipId.remove(
+			finderCache, new Object[] {objectRelationshipId});
 	}
 
 	/**
@@ -1286,51 +451,9 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Override
 	public int countByObjectRelationshipId(long objectRelationshipId) {
-		FinderPath finderPath = _finderPathCountByObjectRelationshipId;
-
-		Object[] finderArgs = new Object[] {objectRelationshipId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_OBJECTLAYOUTTAB_WHERE);
-
-			sb.append(
-				_FINDER_COLUMN_OBJECTRELATIONSHIPID_OBJECTRELATIONSHIPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(objectRelationshipId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByObjectRelationshipId.count(
+			finderCache, new Object[] {objectRelationshipId});
 	}
-
-	private static final String
-		_FINDER_COLUMN_OBJECTRELATIONSHIPID_OBJECTRELATIONSHIPID_2 =
-			"objectLayoutTab.objectRelationshipId = ?";
 
 	public ObjectLayoutTabPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -1345,88 +468,6 @@ public class ObjectLayoutTabPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(ObjectLayoutTabTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the object layout tab in the entity cache if it is enabled.
-	 *
-	 * @param objectLayoutTab the object layout tab
-	 */
-	@Override
-	public void cacheResult(ObjectLayoutTab objectLayoutTab) {
-		entityCache.putResult(
-			ObjectLayoutTabImpl.class, objectLayoutTab.getPrimaryKey(),
-			objectLayoutTab);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the object layout tabs in the entity cache if it is enabled.
-	 *
-	 * @param objectLayoutTabs the object layout tabs
-	 */
-	@Override
-	public void cacheResult(List<ObjectLayoutTab> objectLayoutTabs) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (objectLayoutTabs.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (ObjectLayoutTab objectLayoutTab : objectLayoutTabs) {
-			if (entityCache.getResult(
-					ObjectLayoutTabImpl.class,
-					objectLayoutTab.getPrimaryKey()) == null) {
-
-				cacheResult(objectLayoutTab);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all object layout tabs.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(ObjectLayoutTabImpl.class);
-
-		finderCache.clearCache(ObjectLayoutTabImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the object layout tab.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(ObjectLayoutTab objectLayoutTab) {
-		entityCache.removeResult(ObjectLayoutTabImpl.class, objectLayoutTab);
-	}
-
-	@Override
-	public void clearCache(List<ObjectLayoutTab> objectLayoutTabs) {
-		for (ObjectLayoutTab objectLayoutTab : objectLayoutTabs) {
-			entityCache.removeResult(
-				ObjectLayoutTabImpl.class, objectLayoutTab);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(ObjectLayoutTabImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(ObjectLayoutTabImpl.class, primaryKey);
-		}
 	}
 
 	/**
@@ -1463,47 +504,6 @@ public class ObjectLayoutTabPersistenceImpl
 		throws NoSuchObjectLayoutTabException {
 
 		return remove((Serializable)objectLayoutTabId);
-	}
-
-	/**
-	 * Removes the object layout tab with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the object layout tab
-	 * @return the object layout tab that was removed
-	 * @throws NoSuchObjectLayoutTabException if a object layout tab with the primary key could not be found
-	 */
-	@Override
-	public ObjectLayoutTab remove(Serializable primaryKey)
-		throws NoSuchObjectLayoutTabException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			ObjectLayoutTab objectLayoutTab = (ObjectLayoutTab)session.get(
-				ObjectLayoutTabImpl.class, primaryKey);
-
-			if (objectLayoutTab == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchObjectLayoutTabException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(objectLayoutTab);
-		}
-		catch (NoSuchObjectLayoutTabException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1612,39 +612,13 @@ public class ObjectLayoutTabPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			ObjectLayoutTabImpl.class, objectLayoutTabModelImpl, false, true);
+		cacheUniqueFindersResult(objectLayoutTab, false);
 
 		if (isNew) {
 			objectLayoutTab.setNew(false);
 		}
 
 		objectLayoutTab.resetOriginalValues();
-
-		return objectLayoutTab;
-	}
-
-	/**
-	 * Returns the object layout tab with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the object layout tab
-	 * @return the object layout tab
-	 * @throws NoSuchObjectLayoutTabException if a object layout tab with the primary key could not be found
-	 */
-	@Override
-	public ObjectLayoutTab findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchObjectLayoutTabException {
-
-		ObjectLayoutTab objectLayoutTab = fetchByPrimaryKey(primaryKey);
-
-		if (objectLayoutTab == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchObjectLayoutTabException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return objectLayoutTab;
 	}
@@ -1672,187 +646,6 @@ public class ObjectLayoutTabPersistenceImpl
 	@Override
 	public ObjectLayoutTab fetchByPrimaryKey(long objectLayoutTabId) {
 		return fetchByPrimaryKey((Serializable)objectLayoutTabId);
-	}
-
-	/**
-	 * Returns all the object layout tabs.
-	 *
-	 * @return the object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the object layout tabs.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @return the range of object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the object layout tabs.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findAll(
-		int start, int end,
-		OrderByComparator<ObjectLayoutTab> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the object layout tabs.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectLayoutTabModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of object layout tabs
-	 * @param end the upper bound of the range of object layout tabs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of object layout tabs
-	 */
-	@Override
-	public List<ObjectLayoutTab> findAll(
-		int start, int end,
-		OrderByComparator<ObjectLayoutTab> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<ObjectLayoutTab> list = null;
-
-		if (useFinderCache) {
-			list = (List<ObjectLayoutTab>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_OBJECTLAYOUTTAB);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_OBJECTLAYOUTTAB;
-
-				sql = sql.concat(ObjectLayoutTabModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<ObjectLayoutTab>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the object layout tabs from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (ObjectLayoutTab objectLayoutTab : findAll()) {
-			remove(objectLayoutTab);
-		}
-	}
-
-	/**
-	 * Returns the number of object layout tabs.
-	 *
-	 * @return the number of object layout tabs
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_OBJECTLAYOUTTAB);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -1885,94 +678,119 @@ public class ObjectLayoutTabPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"uuid_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, false, null),
+			_SQL_SELECT_OBJECTLAYOUTTAB_WHERE, _SQL_COUNT_OBJECTLAYOUTTAB_WHERE,
+			ObjectLayoutTabModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"objectLayoutTab.", "uuid", FinderColumn.Type.STRING, "=", true,
+				true, ObjectLayoutTab::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+					new String[] {
+						String.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_", "companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
+				_SQL_SELECT_OBJECTLAYOUTTAB_WHERE,
+				_SQL_COUNT_OBJECTLAYOUTTAB_WHERE,
+				ObjectLayoutTabModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				"",
+				new FinderColumn<>(
+					"objectLayoutTab.", "uuid", FinderColumn.Type.STRING, "=",
+					true, true, ObjectLayoutTab::getUuid),
+				new FinderColumn<>(
+					"objectLayoutTab.", "companyId", FinderColumn.Type.LONG,
+					"=", true, true, ObjectLayoutTab::getCompanyId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByObjectLayoutId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByObjectLayoutId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"objectLayoutId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByObjectLayoutId", new String[] {Long.class.getName()},
+					new String[] {"objectLayoutId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByObjectLayoutId",
+					new String[] {Long.class.getName()},
+					new String[] {"objectLayoutId"}, false),
+				_SQL_SELECT_OBJECTLAYOUTTAB_WHERE,
+				_SQL_COUNT_OBJECTLAYOUTTAB_WHERE,
+				ObjectLayoutTabModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				"",
+				new FinderColumn<>(
+					"objectLayoutTab.", "objectLayoutId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ObjectLayoutTab::getObjectLayoutId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
-
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
-
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
-
-		_finderPathWithPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathCountByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, false);
-
-		_finderPathWithPaginationFindByObjectLayoutId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByObjectLayoutId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"objectLayoutId"}, true);
-
-		_finderPathWithoutPaginationFindByObjectLayoutId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByObjectLayoutId",
-			new String[] {Long.class.getName()},
-			new String[] {"objectLayoutId"}, true);
-
-		_finderPathCountByObjectLayoutId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByObjectLayoutId",
-			new String[] {Long.class.getName()},
-			new String[] {"objectLayoutId"}, false);
-
-		_finderPathWithPaginationFindByObjectRelationshipId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByObjectRelationshipId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"objectRelationshipId"}, true);
-
-		_finderPathWithoutPaginationFindByObjectRelationshipId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByObjectRelationshipId", new String[] {Long.class.getName()},
-			new String[] {"objectRelationshipId"}, true);
-
-		_finderPathCountByObjectRelationshipId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByObjectRelationshipId", new String[] {Long.class.getName()},
-			new String[] {"objectRelationshipId"}, false);
+		_collectionPersistenceFinderByObjectRelationshipId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByObjectRelationshipId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"objectRelationshipId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByObjectRelationshipId",
+					new String[] {Long.class.getName()},
+					new String[] {"objectRelationshipId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByObjectRelationshipId",
+					new String[] {Long.class.getName()},
+					new String[] {"objectRelationshipId"}, false),
+				_SQL_SELECT_OBJECTLAYOUTTAB_WHERE,
+				_SQL_COUNT_OBJECTLAYOUTTAB_WHERE,
+				ObjectLayoutTabModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				"",
+				new FinderColumn<>(
+					"objectLayoutTab.", "objectRelationshipId",
+					FinderColumn.Type.LONG, "=", true, true,
+					ObjectLayoutTab::getObjectRelationshipId));
 
 		ObjectLayoutTabUtil.setPersistence(this);
 	}
@@ -2016,28 +834,20 @@ public class ObjectLayoutTabPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		ObjectLayoutTabModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_OBJECTLAYOUTTAB =
 		"SELECT objectLayoutTab FROM ObjectLayoutTab objectLayoutTab";
 
 	private static final String _SQL_SELECT_OBJECTLAYOUTTAB_WHERE =
 		"SELECT objectLayoutTab FROM ObjectLayoutTab objectLayoutTab WHERE ";
 
-	private static final String _SQL_COUNT_OBJECTLAYOUTTAB =
-		"SELECT COUNT(objectLayoutTab) FROM ObjectLayoutTab objectLayoutTab";
-
 	private static final String _SQL_COUNT_OBJECTLAYOUTTAB_WHERE =
 		"SELECT COUNT(objectLayoutTab) FROM ObjectLayoutTab objectLayoutTab WHERE ";
 
-	private static final String _ORDER_BY_ENTITY_ALIAS = "objectLayoutTab.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No ObjectLayoutTab exists with the primary key ";
-
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No ObjectLayoutTab exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ObjectLayoutTabPersistenceImpl.class);
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
@@ -2048,4 +858,4 @@ public class ObjectLayoutTabPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1254250712
+// LIFERAY-SERVICE-BUILDER-HASH:-1799075438

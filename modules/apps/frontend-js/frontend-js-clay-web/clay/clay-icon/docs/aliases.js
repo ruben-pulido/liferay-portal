@@ -477,6 +477,10 @@ export const iconsData = [
 		name: 'arrow-xor',
 	},
 	{
+		aliases: ['key', 'keyboard', 'navigation'],
+		name: 'arrows-all',
+	},
+	{
 		aliases: ['*', 'mandatory', 'required'],
 		name: 'asterisk',
 	},

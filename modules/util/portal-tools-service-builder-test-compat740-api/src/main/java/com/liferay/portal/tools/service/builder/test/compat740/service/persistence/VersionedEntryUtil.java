@@ -36,6 +36,20 @@ public class VersionedEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<VersionedEntry> versionedEntries) {
+		getPersistence().cacheResult(versionedEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(VersionedEntry versionedEntry) {
+		getPersistence().cacheResult(versionedEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,59 +125,10 @@ public class VersionedEntryUtil {
 	}
 
 	/**
-	 * Returns all the versioned entries where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching versioned entries
-	 */
-	public static List<VersionedEntry> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the versioned entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of versioned entries
-	 * @param end the upper bound of the range of versioned entries (not inclusive)
-	 * @return the range of matching versioned entries
-	 */
-	public static List<VersionedEntry> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the versioned entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of versioned entries
-	 * @param end the upper bound of the range of versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching versioned entries
-	 */
-	public static List<VersionedEntry> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<VersionedEntry> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the versioned entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.VersionedEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -232,64 +197,10 @@ public class VersionedEntryUtil {
 	}
 
 	/**
-	 * Returns all the versioned entries where groupId = &#63; and head = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @return the matching versioned entries
-	 */
-	public static List<VersionedEntry> findByGroupId_Head(
-		long groupId, boolean head) {
-
-		return getPersistence().findByGroupId_Head(groupId, head);
-	}
-
-	/**
-	 * Returns a range of all the versioned entries where groupId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @param start the lower bound of the range of versioned entries
-	 * @param end the upper bound of the range of versioned entries (not inclusive)
-	 * @return the range of matching versioned entries
-	 */
-	public static List<VersionedEntry> findByGroupId_Head(
-		long groupId, boolean head, int start, int end) {
-
-		return getPersistence().findByGroupId_Head(groupId, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the versioned entries where groupId = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @param start the lower bound of the range of versioned entries
-	 * @param end the upper bound of the range of versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching versioned entries
-	 */
-	public static List<VersionedEntry> findByGroupId_Head(
-		long groupId, boolean head, int start, int end,
-		OrderByComparator<VersionedEntry> orderByComparator) {
-
-		return getPersistence().findByGroupId_Head(
-			groupId, head, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the versioned entries where groupId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.VersionedEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -380,16 +291,6 @@ public class VersionedEntryUtil {
 	}
 
 	/**
-	 * Returns the versioned entry where headId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param headId the head ID
-	 * @return the matching versioned entry, or <code>null</code> if a matching versioned entry could not be found
-	 */
-	public static VersionedEntry fetchByHeadId(long headId) {
-		return getPersistence().fetchByHeadId(headId);
-	}
-
-	/**
 	 * Returns the versioned entry where headId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param headId the head ID
@@ -423,24 +324,6 @@ public class VersionedEntryUtil {
 	 */
 	public static int countByHeadId(long headId) {
 		return getPersistence().countByHeadId(headId);
-	}
-
-	/**
-	 * Caches the versioned entry in the entity cache if it is enabled.
-	 *
-	 * @param versionedEntry the versioned entry
-	 */
-	public static void cacheResult(VersionedEntry versionedEntry) {
-		getPersistence().cacheResult(versionedEntry);
-	}
-
-	/**
-	 * Caches the versioned entries in the entity cache if it is enabled.
-	 *
-	 * @param versionedEntries the versioned entries
-	 */
-	public static void cacheResult(List<VersionedEntry> versionedEntries) {
-		getPersistence().cacheResult(versionedEntries);
 	}
 
 	/**
@@ -496,83 +379,116 @@ public class VersionedEntryUtil {
 	}
 
 	/**
-	 * Returns all the versioned entries.
+	 * Returns the versioned entry where headId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the versioned entries
+	 * @param headId the head ID
+	 * @return the matching versioned entry, or <code>null</code> if a matching versioned entry could not be found
 	 */
-	public static List<VersionedEntry> findAll() {
-		return getPersistence().findAll();
+	public static VersionedEntry fetchByHeadId(long headId) {
+		return getPersistence().fetchByHeadId(headId);
 	}
 
 	/**
-	 * Returns a range of all the versioned entries.
+	 * Returns all the versioned entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching versioned entries
+	 */
+	public static List<VersionedEntry> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the versioned entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.VersionedEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of versioned entries
 	 * @param end the upper bound of the range of versioned entries (not inclusive)
-	 * @return the range of versioned entries
+	 * @return the range of matching versioned entries
 	 */
-	public static List<VersionedEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<VersionedEntry> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the versioned entries.
+	 * Returns an ordered range of all the versioned entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.VersionedEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of versioned entries
 	 * @param end the upper bound of the range of versioned entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of versioned entries
+	 * @return the ordered range of matching versioned entries
 	 */
-	public static List<VersionedEntry> findAll(
-		int start, int end,
+	public static List<VersionedEntry> findByGroupId(
+		long groupId, int start, int end,
 		OrderByComparator<VersionedEntry> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the versioned entries.
+	 * Returns all the versioned entries where groupId = &#63; and head = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @return the matching versioned entries
+	 */
+	public static List<VersionedEntry> findByGroupId_Head(
+		long groupId, boolean head) {
+
+		return getPersistence().findByGroupId_Head(groupId, head);
+	}
+
+	/**
+	 * Returns a range of all the versioned entries where groupId = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>VersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.VersionedEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @param start the lower bound of the range of versioned entries
+	 * @param end the upper bound of the range of versioned entries (not inclusive)
+	 * @return the range of matching versioned entries
+	 */
+	public static List<VersionedEntry> findByGroupId_Head(
+		long groupId, boolean head, int start, int end) {
+
+		return getPersistence().findByGroupId_Head(groupId, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the versioned entries where groupId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.VersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param head the head
 	 * @param start the lower bound of the range of versioned entries
 	 * @param end the upper bound of the range of versioned entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of versioned entries
+	 * @return the ordered range of matching versioned entries
 	 */
-	public static List<VersionedEntry> findAll(
-		int start, int end, OrderByComparator<VersionedEntry> orderByComparator,
-		boolean useFinderCache) {
+	public static List<VersionedEntry> findByGroupId_Head(
+		long groupId, boolean head, int start, int end,
+		OrderByComparator<VersionedEntry> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the versioned entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of versioned entries.
-	 *
-	 * @return the number of versioned entries
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByGroupId_Head(
+			groupId, head, start, end, orderByComparator);
 	}
 
 	public static VersionedEntryPersistence getPersistence() {
@@ -586,4 +502,4 @@ public class VersionedEntryUtil {
 	private static volatile VersionedEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-386353520
+// LIFERAY-SERVICE-BUILDER-HASH:249012806

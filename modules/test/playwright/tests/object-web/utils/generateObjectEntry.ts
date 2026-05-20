@@ -86,6 +86,8 @@ function generateObjectEntryValue({
 			return {
 				key: listTypeEntriesName[listTypeEntriesRandomLength1],
 			};
+		case 'PhoneNumber':
+			return String(Math.floor(1000000000 + Math.random() * 9000000000));
 		case 'PrecisionDecimal':
 			return parseFloat(Math.random().toFixed(15)).toString();
 		case 'RichText':
@@ -97,21 +99,27 @@ function generateObjectEntryValue({
 	}
 }
 
-type UnsupportedBusinessTypes =
-	| 'Aggregation'
-	| 'Attachment'
-	| 'AutoIncrement'
-	| 'Formula'
-	| 'Relationship';
+const UNSUPPORTED_BUSINESS_TYPES = [
+	'Aggregation',
+	'AutoIncrement',
+	'Formula',
+	'Relationship',
+] as const;
+
+type UnsupportedBusinessTypes = (typeof UNSUPPORTED_BUSINESS_TYPES)[number];
 
 export type SupportedBusinessType = Exclude<
 	ObjectField['businessType'],
 	UnsupportedBusinessTypes
 >;
 
-export type SupportedObjectField = Partial<ObjectField> & {
-	businessType: SupportedBusinessType;
-};
+export function isFillableBusinessType(
+	businessType: ObjectField['businessType']
+): businessType is SupportedBusinessType {
+	return !UNSUPPORTED_BUSINESS_TYPES.includes(
+		businessType as UnsupportedBusinessTypes
+	);
+}
 
 export async function generateObjectEntryValues({
 	listTypeEntries,

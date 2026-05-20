@@ -1,8 +1,8 @@
 {
 	"dependencies": {
-		"@clayui/empty-state": "^3.159.0",
-		"@clayui/form": "^3.159.0",
-		"@clayui/list": "^3.159.0",
+		"@clayui/empty-state": "^3.163.0",
+		"@clayui/form": "^3.163.0",
+		"@clayui/list": "^3.163.0",
 		"frontend-js-web": "*",
 		"react": "18.2.0"
 	},
@@ -14,5 +14,5 @@
 		"checkFormat": "node-scripts format --check",
 		"format": "node-scripts format"
 	},
-	"version": "1.0.66"
+	"version": "1.0.67"
 }

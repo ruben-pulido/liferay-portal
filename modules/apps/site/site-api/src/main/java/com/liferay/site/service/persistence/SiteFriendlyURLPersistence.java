@@ -33,51 +33,10 @@ public interface SiteFriendlyURLPersistence
 	 */
 
 	/**
-	 * Returns all the site friendly urls where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the site friendly urls where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of site friendly urls
-	 * @param end the upper bound of the range of site friendly urls (not inclusive)
-	 * @return the range of matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the site friendly urls where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of site friendly urls
-	 * @param end the upper bound of the range of site friendly urls (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SiteFriendlyURL>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the site friendly urls where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -146,15 +105,6 @@ public interface SiteFriendlyURLPersistence
 		throws NoSuchFriendlyURLException;
 
 	/**
-	 * Returns the site friendly url where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching site friendly url, or <code>null</code> if a matching site friendly url could not be found
-	 */
-	public SiteFriendlyURL fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the site friendly url where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -185,55 +135,10 @@ public interface SiteFriendlyURLPersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the site friendly urls where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the site friendly urls where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of site friendly urls
-	 * @param end the upper bound of the range of site friendly urls (not inclusive)
-	 * @return the range of matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the site friendly urls where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of site friendly urls
-	 * @param end the upper bound of the range of site friendly urls (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SiteFriendlyURL>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the site friendly urls where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -296,55 +201,10 @@ public interface SiteFriendlyURLPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the site friendly urls where groupId = &#63; and companyId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @return the matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByG_C(
-		long groupId, long companyId);
-
-	/**
-	 * Returns a range of all the site friendly urls where groupId = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of site friendly urls
-	 * @param end the upper bound of the range of site friendly urls (not inclusive)
-	 * @return the range of matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByG_C(
-		long groupId, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the site friendly urls where groupId = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of site friendly urls
-	 * @param end the upper bound of the range of site friendly urls (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching site friendly urls
-	 */
-	public java.util.List<SiteFriendlyURL> findByG_C(
-		long groupId, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SiteFriendlyURL>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the site friendly urls where groupId = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -418,15 +278,6 @@ public interface SiteFriendlyURLPersistence
 		throws NoSuchFriendlyURLException;
 
 	/**
-	 * Returns the site friendly url where companyId = &#63; and friendlyURL = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param friendlyURL the friendly url
-	 * @return the matching site friendly url, or <code>null</code> if a matching site friendly url could not be found
-	 */
-	public SiteFriendlyURL fetchByC_F(long companyId, String friendlyURL);
-
-	/**
 	 * Returns the site friendly url where companyId = &#63; and friendlyURL = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -468,17 +319,6 @@ public interface SiteFriendlyURLPersistence
 	public SiteFriendlyURL findByG_C_L(
 			long groupId, long companyId, String languageId)
 		throws NoSuchFriendlyURLException;
-
-	/**
-	 * Returns the site friendly url where groupId = &#63; and companyId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param languageId the language ID
-	 * @return the matching site friendly url, or <code>null</code> if a matching site friendly url could not be found
-	 */
-	public SiteFriendlyURL fetchByG_C_L(
-		long groupId, long companyId, String languageId);
 
 	/**
 	 * Returns the site friendly url where groupId = &#63; and companyId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -529,17 +369,6 @@ public interface SiteFriendlyURLPersistence
 		throws NoSuchFriendlyURLException;
 
 	/**
-	 * Returns the site friendly url where companyId = &#63; and friendlyURL = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param friendlyURL the friendly url
-	 * @param languageId the language ID
-	 * @return the matching site friendly url, or <code>null</code> if a matching site friendly url could not be found
-	 */
-	public SiteFriendlyURL fetchByC_F_L(
-		long companyId, String friendlyURL, String languageId);
-
-	/**
 	 * Returns the site friendly url where companyId = &#63; and friendlyURL = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -574,20 +403,6 @@ public interface SiteFriendlyURLPersistence
 	 */
 	public int countByC_F_L(
 		long companyId, String friendlyURL, String languageId);
-
-	/**
-	 * Caches the site friendly url in the entity cache if it is enabled.
-	 *
-	 * @param siteFriendlyURL the site friendly url
-	 */
-	public void cacheResult(SiteFriendlyURL siteFriendlyURL);
-
-	/**
-	 * Caches the site friendly urls in the entity cache if it is enabled.
-	 *
-	 * @param siteFriendlyURLs the site friendly urls
-	 */
-	public void cacheResult(java.util.List<SiteFriendlyURL> siteFriendlyURLs);
 
 	/**
 	 * Creates a new site friendly url with the primary key. Does not add the site friendly url to the database.
@@ -628,72 +443,223 @@ public interface SiteFriendlyURLPersistence
 	public SiteFriendlyURL fetchByPrimaryKey(long siteFriendlyURLId);
 
 	/**
-	 * Returns all the site friendly urls.
+	 * Returns the site friendly url where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the site friendly urls
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching site friendly url, or <code>null</code> if a matching site friendly url could not be found
 	 */
-	public java.util.List<SiteFriendlyURL> findAll();
+	public default SiteFriendlyURL fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the site friendly urls.
+	 * Returns the site friendly url where companyId = &#63; and friendlyURL = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param friendlyURL the friendly url
+	 * @return the matching site friendly url, or <code>null</code> if a matching site friendly url could not be found
+	 */
+	public default SiteFriendlyURL fetchByC_F(
+		long companyId, String friendlyURL) {
+
+		return fetchByC_F(companyId, friendlyURL, true);
+	}
+
+	/**
+	 * Returns the site friendly url where groupId = &#63; and companyId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param languageId the language ID
+	 * @return the matching site friendly url, or <code>null</code> if a matching site friendly url could not be found
+	 */
+	public default SiteFriendlyURL fetchByG_C_L(
+		long groupId, long companyId, String languageId) {
+
+		return fetchByG_C_L(groupId, companyId, languageId, true);
+	}
+
+	/**
+	 * Returns the site friendly url where companyId = &#63; and friendlyURL = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param friendlyURL the friendly url
+	 * @param languageId the language ID
+	 * @return the matching site friendly url, or <code>null</code> if a matching site friendly url could not be found
+	 */
+	public default SiteFriendlyURL fetchByC_F_L(
+		long companyId, String friendlyURL, String languageId) {
+
+		return fetchByC_F_L(companyId, friendlyURL, languageId, true);
+	}
+
+	/**
+	 * Returns all the site friendly urls where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching site friendly urls
+	 */
+	public default java.util.List<SiteFriendlyURL> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the site friendly urls where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of site friendly urls
 	 * @param end the upper bound of the range of site friendly urls (not inclusive)
-	 * @return the range of site friendly urls
+	 * @return the range of matching site friendly urls
 	 */
-	public java.util.List<SiteFriendlyURL> findAll(int start, int end);
+	public default java.util.List<SiteFriendlyURL> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the site friendly urls.
+	 * Returns an ordered range of all the site friendly urls where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of site friendly urls
 	 * @param end the upper bound of the range of site friendly urls (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of site friendly urls
+	 * @return the ordered range of matching site friendly urls
 	 */
-	public java.util.List<SiteFriendlyURL> findAll(
-		int start, int end,
+	public default java.util.List<SiteFriendlyURL> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<SiteFriendlyURL>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the site friendly urls.
+	 * Returns all the site friendly urls where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching site friendly urls
+	 */
+	public default java.util.List<SiteFriendlyURL> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the site friendly urls where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteFriendlyURLModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of site friendly urls
+	 * @param end the upper bound of the range of site friendly urls (not inclusive)
+	 * @return the range of matching site friendly urls
+	 */
+	public default java.util.List<SiteFriendlyURL> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the site friendly urls where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of site friendly urls
 	 * @param end the upper bound of the range of site friendly urls (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of site friendly urls
+	 * @return the ordered range of matching site friendly urls
 	 */
-	public java.util.List<SiteFriendlyURL> findAll(
-		int start, int end,
+	public default java.util.List<SiteFriendlyURL> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<SiteFriendlyURL>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the site friendly urls from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of site friendly urls.
+	 * Returns all the site friendly urls where groupId = &#63; and companyId = &#63;.
 	 *
-	 * @return the number of site friendly urls
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @return the matching site friendly urls
 	 */
-	public int countAll();
+	public default java.util.List<SiteFriendlyURL> findByG_C(
+		long groupId, long companyId) {
+
+		return findByG_C(
+			groupId, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the site friendly urls where groupId = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of site friendly urls
+	 * @param end the upper bound of the range of site friendly urls (not inclusive)
+	 * @return the range of matching site friendly urls
+	 */
+	public default java.util.List<SiteFriendlyURL> findByG_C(
+		long groupId, long companyId, int start, int end) {
+
+		return findByG_C(groupId, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the site friendly urls where groupId = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.site.model.impl.SiteFriendlyURLModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of site friendly urls
+	 * @param end the upper bound of the range of site friendly urls (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching site friendly urls
+	 */
+	public default java.util.List<SiteFriendlyURL> findByG_C(
+		long groupId, long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<SiteFriendlyURL>
+			orderByComparator) {
+
+		return findByG_C(
+			groupId, companyId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:498834359
+// LIFERAY-SERVICE-BUILDER-HASH:1729841938

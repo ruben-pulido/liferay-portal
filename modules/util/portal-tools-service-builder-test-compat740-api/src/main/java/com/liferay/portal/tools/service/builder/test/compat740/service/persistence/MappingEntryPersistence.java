@@ -32,20 +32,6 @@ public interface MappingEntryPersistence extends BasePersistence<MappingEntry> {
 	 */
 
 	/**
-	 * Caches the mapping entry in the entity cache if it is enabled.
-	 *
-	 * @param mappingEntry the mapping entry
-	 */
-	public void cacheResult(MappingEntry mappingEntry);
-
-	/**
-	 * Caches the mapping entries in the entity cache if it is enabled.
-	 *
-	 * @param mappingEntries the mapping entries
-	 */
-	public void cacheResult(java.util.List<MappingEntry> mappingEntries);
-
-	/**
 	 * Creates a new mapping entry with the primary key. Does not add the mapping entry to the database.
 	 *
 	 * @param mappingEntryId the primary key for the new mapping entry
@@ -84,74 +70,6 @@ public interface MappingEntryPersistence extends BasePersistence<MappingEntry> {
 	public MappingEntry fetchByPrimaryKey(long mappingEntryId);
 
 	/**
-	 * Returns all the mapping entries.
-	 *
-	 * @return the mapping entries
-	 */
-	public java.util.List<MappingEntry> findAll();
-
-	/**
-	 * Returns a range of all the mapping entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MappingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mapping entries
-	 * @param end the upper bound of the range of mapping entries (not inclusive)
-	 * @return the range of mapping entries
-	 */
-	public java.util.List<MappingEntry> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the mapping entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MappingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mapping entries
-	 * @param end the upper bound of the range of mapping entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of mapping entries
-	 */
-	public java.util.List<MappingEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MappingEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the mapping entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MappingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mapping entries
-	 * @param end the upper bound of the range of mapping entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of mapping entries
-	 */
-	public java.util.List<MappingEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MappingEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the mapping entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of mapping entries.
-	 *
-	 * @return the number of mapping entries
-	 */
-	public int countAll();
-
-	/**
 	 * Returns the primaryKeys of basic entries associated with the mapping entry.
 	 *
 	 * @param pk the primary key of the mapping entry
@@ -171,7 +89,7 @@ public interface MappingEntryPersistence extends BasePersistence<MappingEntry> {
 	 * Returns all the mapping entry associated with the basic entry.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MappingEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.MappingEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the basic entry
@@ -186,7 +104,7 @@ public interface MappingEntryPersistence extends BasePersistence<MappingEntry> {
 	 * Returns all the mapping entry associated with the basic entry.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MappingEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.MappingEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the basic entry
@@ -335,4 +253,4 @@ public interface MappingEntryPersistence extends BasePersistence<MappingEntry> {
 				BasicEntry> basicEntries);
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1459484404
+// LIFERAY-SERVICE-BUILDER-HASH:-799696792

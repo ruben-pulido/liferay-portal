@@ -37,52 +37,10 @@ public interface AnalyticsDeleteMessagePersistence
 	 */
 
 	/**
-	 * Returns all the analytics delete messages where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching analytics delete messages
-	 */
-	public java.util.List<AnalyticsDeleteMessage> findByCompanyId(
-		long companyId);
-
-	/**
-	 * Returns a range of all the analytics delete messages where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of analytics delete messages
-	 * @param end the upper bound of the range of analytics delete messages (not inclusive)
-	 * @return the range of matching analytics delete messages
-	 */
-	public java.util.List<AnalyticsDeleteMessage> findByCompanyId(
-		long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the analytics delete messages where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of analytics delete messages
-	 * @param end the upper bound of the range of analytics delete messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching analytics delete messages
-	 */
-	public java.util.List<AnalyticsDeleteMessage> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<AnalyticsDeleteMessage>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the analytics delete messages where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -153,7 +111,7 @@ public interface AnalyticsDeleteMessagePersistence
 	 * Returns a range of all the analytics delete messages where companyId = &#63; and modifiedDate &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -169,7 +127,7 @@ public interface AnalyticsDeleteMessagePersistence
 	 * Returns an ordered range of all the analytics delete messages where companyId = &#63; and modifiedDate &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -188,7 +146,7 @@ public interface AnalyticsDeleteMessagePersistence
 	 * Returns an ordered range of all the analytics delete messages where companyId = &#63; and modifiedDate &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -264,7 +222,7 @@ public interface AnalyticsDeleteMessagePersistence
 	 * Returns a range of all the analytics delete messages where companyId = &#63; and modifiedDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -280,7 +238,7 @@ public interface AnalyticsDeleteMessagePersistence
 	 * Returns an ordered range of all the analytics delete messages where companyId = &#63; and modifiedDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -299,7 +257,7 @@ public interface AnalyticsDeleteMessagePersistence
 	 * Returns an ordered range of all the analytics delete messages where companyId = &#63; and modifiedDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -362,21 +320,6 @@ public interface AnalyticsDeleteMessagePersistence
 	public int countByC_LtM(long companyId, Date modifiedDate);
 
 	/**
-	 * Caches the analytics delete message in the entity cache if it is enabled.
-	 *
-	 * @param analyticsDeleteMessage the analytics delete message
-	 */
-	public void cacheResult(AnalyticsDeleteMessage analyticsDeleteMessage);
-
-	/**
-	 * Caches the analytics delete messages in the entity cache if it is enabled.
-	 *
-	 * @param analyticsDeleteMessages the analytics delete messages
-	 */
-	public void cacheResult(
-		java.util.List<AnalyticsDeleteMessage> analyticsDeleteMessages);
-
-	/**
 	 * Creates a new analytics delete message with the primary key. Does not add the analytics delete message to the database.
 	 *
 	 * @param analyticsDeleteMessageId the primary key for the new analytics delete message
@@ -418,72 +361,57 @@ public interface AnalyticsDeleteMessagePersistence
 		long analyticsDeleteMessageId);
 
 	/**
-	 * Returns all the analytics delete messages.
+	 * Returns all the analytics delete messages where companyId = &#63;.
 	 *
-	 * @return the analytics delete messages
+	 * @param companyId the company ID
+	 * @return the matching analytics delete messages
 	 */
-	public java.util.List<AnalyticsDeleteMessage> findAll();
+	public default java.util.List<AnalyticsDeleteMessage> findByCompanyId(
+		long companyId) {
+
+		return findByCompanyId(
+			companyId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the analytics delete messages.
+	 * Returns a range of all the analytics delete messages where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of analytics delete messages
 	 * @param end the upper bound of the range of analytics delete messages (not inclusive)
-	 * @return the range of analytics delete messages
+	 * @return the range of matching analytics delete messages
 	 */
-	public java.util.List<AnalyticsDeleteMessage> findAll(int start, int end);
+	public default java.util.List<AnalyticsDeleteMessage> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return findByCompanyId(companyId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the analytics delete messages.
+	 * Returns an ordered range of all the analytics delete messages where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.analytics.message.storage.model.impl.AnalyticsDeleteMessageModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of analytics delete messages
-	 * @param end the upper bound of the range of analytics delete messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of analytics delete messages
-	 */
-	public java.util.List<AnalyticsDeleteMessage> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<AnalyticsDeleteMessage>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the analytics delete messages.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnalyticsDeleteMessageModelImpl</code>.
-	 * </p>
-	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of analytics delete messages
 	 * @param end the upper bound of the range of analytics delete messages (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of analytics delete messages
+	 * @return the ordered range of matching analytics delete messages
 	 */
-	public java.util.List<AnalyticsDeleteMessage> findAll(
-		int start, int end,
+	public default java.util.List<AnalyticsDeleteMessage> findByCompanyId(
+		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<AnalyticsDeleteMessage>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
 
-	/**
-	 * Removes all the analytics delete messages from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of analytics delete messages.
-	 *
-	 * @return the number of analytics delete messages
-	 */
-	public int countAll();
+		return findByCompanyId(companyId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-3993228
+// LIFERAY-SERVICE-BUILDER-HASH:-22692222

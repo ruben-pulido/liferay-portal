@@ -7,16 +7,27 @@ package com.liferay.headless.object.util.v1_0;
 
 import com.liferay.headless.object.dto.v1_0.Collaborator;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.model.Ticket;
+import com.liferay.portal.kernel.model.TicketConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserGroup;
+import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.TicketLocalService;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.permission.UserPermissionUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -24,19 +35,25 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.GroupUtil;
+import com.liferay.sharing.exception.DuplicateSharingEntryException;
 import com.liferay.sharing.model.SharingEntry;
 import com.liferay.sharing.security.permission.SharingEntryAction;
 import com.liferay.sharing.service.SharingEntryLocalService;
 import com.liferay.sharing.service.SharingEntryService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import jakarta.ws.rs.core.UriInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Mikel Lorza
@@ -44,32 +61,115 @@ import java.util.Objects;
 public class CollaboratorUtil {
 
 	public static Collaborator addOrUpdateCollaborator(
-			AcceptLanguage acceptLanguage, long classNameId, long classPK,
-			Collaborator collaborator, long collaboratorId,
+			AcceptLanguage acceptLanguage, String className, long classNameId,
+			long classPK, Collaborator collaborator, long collaboratorId,
+			long companyId,
 			DTOConverter<SharingEntry, Collaborator> dtoConverter,
 			DTOConverterRegistry dtoConverterRegistry, long groupId,
-			SharingEntryService sharingEntryService, String type,
-			UserGroupLocalService userGroupLocalService, UriInfo uriInfo,
-			User user, UserLocalService userLocalService)
+			HttpServletRequest httpServletRequest,
+			SharingEntryService sharingEntryService,
+			TicketLocalService ticketLocalService, String type, UriInfo uriInfo,
+			User user, UserGroupLocalService userGroupLocalService,
+			UserLocalService userLocalService)
 		throws Exception {
 
-		_validateType(type);
+		_validateType(companyId, type);
+
+		if (StringUtil.equals("Email", type)) {
+			return addOrUpdateCollaboratorByEmailAddress(
+				acceptLanguage, className, classNameId, classPK, collaborator,
+				companyId, dtoConverter, dtoConverterRegistry,
+				collaborator.getEmailAddress(), groupId, httpServletRequest,
+				sharingEntryService, ticketLocalService, uriInfo, user,
+				userGroupLocalService, userLocalService);
+		}
 
 		return toCollaborator(
 			acceptLanguage, dtoConverter, dtoConverterRegistry,
 			_addOrUpdateSharingEntry(
 				classNameId, classPK, collaborator, collaboratorId, groupId,
-				sharingEntryService, type, userGroupLocalService,
-				userLocalService),
+				httpServletRequest, sharingEntryService, type,
+				userGroupLocalService, userLocalService),
+			uriInfo, user);
+	}
+
+	public static Collaborator addOrUpdateCollaboratorByEmailAddress(
+			AcceptLanguage acceptLanguage, String className, long classNameId,
+			long classPK, Collaborator collaborator, long companyId,
+			DTOConverter<SharingEntry, Collaborator> dtoConverter,
+			DTOConverterRegistry dtoConverterRegistry, String emailAddress,
+			long groupId, HttpServletRequest httpServletRequest,
+			SharingEntryService sharingEntryService,
+			TicketLocalService ticketLocalService, UriInfo uriInfo, User user,
+			UserGroupLocalService userGroupLocalService,
+			UserLocalService userLocalService)
+		throws Exception {
+
+		_validateType(companyId, "Email");
+		_validateEmailAddress(emailAddress);
+		_validateEmailActionIds(collaborator.getActionIds());
+
+		emailAddress = _normalizeEmailAddress(emailAddress);
+
+		User existingUser = userLocalService.fetchUserByEmailAddress(
+			companyId, emailAddress);
+
+		if (existingUser != null) {
+			_validateSharingEntry(
+				classNameId, classPK, emailAddress, sharingEntryService, user,
+				existingUser.getUserId());
+
+			SharingEntry sharingEntry = _addOrUpdateSharingEntry(
+				classNameId, classPK, collaborator, existingUser.getUserId(),
+				groupId, httpServletRequest, sharingEntryService, "User",
+				userGroupLocalService, userLocalService);
+
+			Ticket ticket = _fetchTicketByEmailAddress(
+				className, classPK, companyId, emailAddress,
+				ticketLocalService);
+
+			if (ticket != null) {
+				SharingEntry existingSharingEntry =
+					sharingEntryService.fetchSharingEntry(
+						ticket.getTicketId(), 0, 0, classNameId, classPK);
+
+				if (existingSharingEntry != null) {
+					sharingEntryService.deleteSharingEntry(
+						existingSharingEntry);
+				}
+
+				ticketLocalService.deleteTicket(ticket.getTicketId());
+			}
+
+			return toCollaborator(
+				acceptLanguage, dtoConverter, dtoConverterRegistry,
+				sharingEntry, uriInfo, user);
+		}
+
+		Ticket ticket = _addOrUpdateTicket(
+			className, classPK, collaborator, companyId, emailAddress,
+			_fetchTicketByEmailAddress(
+				className, classPK, companyId, emailAddress,
+				ticketLocalService),
+			ticketLocalService);
+
+		return toCollaborator(
+			acceptLanguage, dtoConverter, dtoConverterRegistry,
+			_addOrUpdateSharingEntry(
+				classNameId, classPK, collaborator, ticket.getTicketId(),
+				groupId, httpServletRequest, sharingEntryService, "Email",
+				userGroupLocalService, userLocalService),
 			uriInfo, user);
 	}
 
 	public static Page<Collaborator> addOrUpdateCollaborators(
-			AcceptLanguage acceptLanguage, long classNameId, long classPK,
-			Collaborator[] collaborators,
+			AcceptLanguage acceptLanguage, String className, long classNameId,
+			long classPK, Collaborator[] collaborators, long companyId,
 			DTOConverter<SharingEntry, Collaborator> dtoConverter,
 			DTOConverterRegistry dtoConverterRegistry, long groupId,
-			SharingEntryService sharingEntryService, UriInfo uriInfo, User user,
+			HttpServletRequest httpServletRequest,
+			SharingEntryService sharingEntryService,
+			TicketLocalService ticketLocalService, UriInfo uriInfo, User user,
 			UserGroupLocalService userGroupLocalService,
 			UserLocalService userLocalService)
 		throws Exception {
@@ -80,21 +180,78 @@ public class CollaboratorUtil {
 				QueryUtil.ALL_POS, null);
 
 		List<SharingEntry> newSharingEntries = new ArrayList<>();
-
-		List<Long> sharingEntriesIds = new ArrayList<>();
+		Set<Long> sharingEntryIds = new HashSet<>();
+		Set<Long> ticketIds = new HashSet<>();
 
 		for (Collaborator collaborator : collaborators) {
-			SharingEntry sharingEntry = _addOrUpdateSharingEntry(
-				classNameId, classPK, collaborator, collaborator.getId(),
-				groupId, sharingEntryService, collaborator.getType(),
-				userGroupLocalService, userLocalService);
+			_validateType(companyId, collaborator.getType());
+
+			SharingEntry sharingEntry = null;
+
+			if (StringUtil.equals("Email", collaborator.getType())) {
+				_validateEmailAddress(collaborator.getEmailAddress());
+				_validateEmailActionIds(collaborator.getActionIds());
+
+				String emailAddress = _normalizeEmailAddress(
+					collaborator.getEmailAddress());
+
+				User existingUser = userLocalService.fetchUserByEmailAddress(
+					companyId, emailAddress);
+
+				if (existingUser != null) {
+					_validateSharingEntry(
+						classNameId, classPK, emailAddress, sharingEntryService,
+						user, existingUser.getUserId());
+
+					sharingEntry = _addOrUpdateSharingEntry(
+						classNameId, classPK, collaborator,
+						existingUser.getUserId(), groupId, httpServletRequest,
+						sharingEntryService, "User", userGroupLocalService,
+						userLocalService);
+				}
+				else {
+					Ticket ticket = _addOrUpdateTicket(
+						className, classPK, collaborator, companyId,
+						emailAddress,
+						_fetchTicketByEmailAddress(
+							className, classPK, companyId, emailAddress,
+							ticketLocalService),
+						ticketLocalService);
+
+					sharingEntry = _addOrUpdateSharingEntry(
+						classNameId, classPK, collaborator,
+						ticket.getTicketId(), groupId, httpServletRequest,
+						sharingEntryService, collaborator.getType(),
+						userGroupLocalService, userLocalService);
+
+					ticketIds.add(ticket.getTicketId());
+				}
+			}
+			else {
+				sharingEntry = _addOrUpdateSharingEntry(
+					classNameId, classPK, collaborator,
+					GetterUtil.getLong(collaborator.getId()), groupId,
+					httpServletRequest, sharingEntryService,
+					collaborator.getType(), userGroupLocalService,
+					userLocalService);
+			}
 
 			newSharingEntries.add(sharingEntry);
-			sharingEntriesIds.add(sharingEntry.getSharingEntryId());
+			sharingEntryIds.add(sharingEntry.getSharingEntryId());
+		}
+
+		List<Ticket> tickets = ticketLocalService.getTickets(
+			companyId, className, classPK,
+			TicketConstants.TYPE_INVITE_COLLABORATOR);
+
+		for (Ticket ticket : tickets) {
+			if (!ticketIds.contains(ticket.getTicketId())) {
+				ticketLocalService.deleteTicket(ticket.getTicketId());
+			}
 		}
 
 		for (SharingEntry sharingEntry : oldSharingEntries) {
-			if (!sharingEntriesIds.contains(sharingEntry.getSharingEntryId())) {
+			if (!sharingEntryIds.contains(sharingEntry.getSharingEntryId())) {
 				sharingEntryService.deleteSharingEntry(sharingEntry);
 			}
 		}
@@ -116,45 +273,150 @@ public class CollaboratorUtil {
 	}
 
 	public static void deleteCollaborator(
-			long classNameId, long classPK, Long collaboratorId,
+			long classNameId, long classPK, Long collaboratorId, long companyId,
 			SharingEntryService sharingEntryService, String type)
 		throws Exception {
 
-		_validateType(type);
+		_validateType(companyId, type);
+
+		if (StringUtil.equals("Email", type)) {
+			throw new IllegalArgumentException(
+				"Use deleteCollaboratorByEmailAddress to delete a " +
+					"collaborator of type \"Email\"");
+		}
 
 		if (StringUtil.equals("User", type)) {
 			sharingEntryService.deleteSharingEntry(
-				0, collaboratorId, classNameId, classPK);
+				0, 0, collaboratorId, classNameId, classPK);
 		}
-		else {
+		else if (StringUtil.equals("UserGroup", type)) {
 			sharingEntryService.deleteSharingEntry(
-				collaboratorId, 0, classNameId, classPK);
+				0, collaboratorId, 0, classNameId, classPK);
 		}
+	}
+
+	public static void deleteCollaboratorByEmailAddress(
+			String className, long classNameId, long classPK, long companyId,
+			String emailAddress, SharingEntryService sharingEntryService,
+			TicketLocalService ticketLocalService, User user,
+			UserLocalService userLocalService)
+		throws Exception {
+
+		_validateEmailAddress(emailAddress);
+
+		User toUser = userLocalService.fetchUserByEmailAddress(
+			companyId, _normalizeEmailAddress(emailAddress));
+
+		if (toUser != null) {
+			SharingEntry sharingEntry = sharingEntryService.fetchSharingEntry(
+				0, 0, toUser.getUserId(), classNameId, classPK);
+
+			if (sharingEntry != null) {
+				if ((sharingEntry.getUserId() != user.getUserId()) &&
+					!_hasViewPermission(toUser)) {
+
+					throw new NoSuchModelException();
+				}
+
+				sharingEntryService.deleteSharingEntry(sharingEntry);
+			}
+		}
+
+		Ticket ticket = _fetchTicketByEmailAddress(
+			className, classPK, companyId, emailAddress, ticketLocalService);
+
+		if (ticket == null) {
+			return;
+		}
+
+		SharingEntry sharingEntry = sharingEntryService.fetchSharingEntry(
+			ticket.getTicketId(), 0, 0, classNameId, classPK);
+
+		if (sharingEntry != null) {
+			sharingEntryService.deleteSharingEntry(sharingEntry);
+		}
+
+		ticketLocalService.deleteTicket(ticket.getTicketId());
 	}
 
 	public static Collaborator getCollaborator(
 			AcceptLanguage acceptLanguage, long classNameId, long classPK,
-			Long collaboratorId,
+			Long collaboratorId, long companyId,
 			DTOConverter<SharingEntry, Collaborator> dtoConverter,
 			DTOConverterRegistry dtoConverterRegistry,
 			SharingEntryService sharingEntryService, String type,
 			UriInfo uriInfo, User user)
 		throws Exception {
 
-		_validateType(type);
+		_validateType(companyId, type);
+
+		if (StringUtil.equals("Email", type)) {
+			throw new IllegalArgumentException(
+				"Use getCollaboratorByEmailAddress to get a collaborator of " +
+					"type \"Email\"");
+		}
 
 		if (StringUtil.equals("User", type)) {
 			return toCollaborator(
 				acceptLanguage, dtoConverter, dtoConverterRegistry,
 				sharingEntryService.getSharingEntry(
-					0, collaboratorId, classNameId, classPK),
+					0, 0, collaboratorId, classNameId, classPK),
 				uriInfo, user);
 		}
 
 		return toCollaborator(
 			acceptLanguage, dtoConverter, dtoConverterRegistry,
 			sharingEntryService.getSharingEntry(
-				collaboratorId, 0, classNameId, classPK),
+				0, collaboratorId, 0, classNameId, classPK),
+			uriInfo, user);
+	}
+
+	public static Collaborator getCollaboratorByEmailAddress(
+			AcceptLanguage acceptLanguage, String className, long classNameId,
+			long classPK, long companyId,
+			DTOConverter<SharingEntry, Collaborator> dtoConverter,
+			DTOConverterRegistry dtoConverterRegistry, String emailAddress,
+			SharingEntryService sharingEntryService,
+			TicketLocalService ticketLocalService, UriInfo uriInfo, User user,
+			UserLocalService userLocalService)
+		throws Exception {
+
+		_validateEmailAddress(emailAddress);
+
+		emailAddress = _normalizeEmailAddress(emailAddress);
+
+		User existingUser = userLocalService.fetchUserByEmailAddress(
+			companyId, emailAddress);
+
+		if (existingUser != null) {
+			SharingEntry sharingEntry = sharingEntryService.fetchSharingEntry(
+				0, 0, existingUser.getUserId(), classNameId, classPK);
+
+			if (sharingEntry != null) {
+				return toCollaborator(
+					acceptLanguage, dtoConverter, dtoConverterRegistry,
+					sharingEntry, uriInfo, user);
+			}
+
+			throw new NoSuchModelException();
+		}
+
+		Ticket ticket = _fetchTicketByEmailAddress(
+			className, classPK, companyId, emailAddress, ticketLocalService);
+
+		if (ticket == null) {
+			throw new NoSuchModelException();
+		}
+
+		SharingEntry sharingEntry = sharingEntryService.fetchSharingEntry(
+			ticket.getTicketId(), 0, 0, classNameId, classPK);
+
+		if (sharingEntry == null) {
+			throw new NoSuchModelException();
+		}
+
+		return toCollaborator(
+			acceptLanguage, dtoConverter, dtoConverterRegistry, sharingEntry,
 			uriInfo, user);
 	}
 
@@ -195,7 +457,7 @@ public class CollaboratorUtil {
 			return groupId;
 		}
 
-		if (Objects.equals(scopeKey, "0")) {
+		if (StringUtil.equals("0", scopeKey)) {
 			return 0;
 		}
 
@@ -220,23 +482,26 @@ public class CollaboratorUtil {
 	private static SharingEntry _addOrUpdateSharingEntry(
 			long classNameId, long classPK, Collaborator collaborator,
 			long collaboratorId, long groupId,
+			HttpServletRequest httpServletRequest,
 			SharingEntryService sharingEntryService, String type,
 			UserGroupLocalService userGroupLocalService,
 			UserLocalService userLocalService)
 		throws Exception {
 
-		_validateType(type);
-
+		long toTicketId = 0;
 		long toUserGroupId = 0;
 		long toUserId = 0;
 
-		if (StringUtil.equals("UserGroup", type)) {
+		if (StringUtil.equals("Email", type)) {
+			toTicketId = collaboratorId;
+		}
+		else if (StringUtil.equals("UserGroup", type)) {
 			UserGroup userGroup = userGroupLocalService.getUserGroup(
 				collaboratorId);
 
 			toUserGroupId = userGroup.getUserGroupId();
 		}
-		else {
+		else if (StringUtil.equals("User", type)) {
 			User user = userLocalService.getUser(collaboratorId);
 
 			toUserId = user.getUserId();
@@ -248,16 +513,136 @@ public class CollaboratorUtil {
 			shareable = collaborator.getShare();
 		}
 
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setRequest(httpServletRequest);
+
 		return sharingEntryService.addOrUpdateSharingEntry(
-			null, toUserGroupId, toUserId, classNameId, classPK, groupId,
-			shareable,
+			null, toTicketId, toUserGroupId, toUserId, classNameId, classPK,
+			groupId, shareable,
 			TransformUtil.transformToList(
 				collaborator.getActionIds(),
 				SharingEntryAction::parseFromActionId),
-			collaborator.getDateExpired(), new ServiceContext());
+			collaborator.getDateExpired(), serviceContext);
 	}
 
-	private static void _validateType(String type) {
+	private static Ticket _addOrUpdateTicket(
+		String className, long classPK, Collaborator collaborator,
+		long companyId, String emailAddress, Ticket ticket,
+		TicketLocalService ticketLocalService) {
+
+		if (ticket == null) {
+			return ticketLocalService.addTicket(
+				companyId, className, classPK,
+				TicketConstants.TYPE_INVITE_COLLABORATOR, emailAddress,
+				GetterUtil.getObject(
+					collaborator.getDateExpired(),
+					() -> new Date(
+						System.currentTimeMillis() +
+							TimeUnit.HOURS.toMillis(
+								_DEFAULT_INVITATION_EXPIRATION_HOURS))),
+				null);
+		}
+
+		if (collaborator.getDateExpired() != null) {
+			ticket.setExpirationDate(collaborator.getDateExpired());
+		}
+
+		ticket.setExtraInfo(emailAddress);
+
+		return ticketLocalService.updateTicket(ticket);
+	}
+
+	private static Ticket _fetchTicketByEmailAddress(
+		String className, long classPK, long companyId, String emailAddress,
+		TicketLocalService ticketLocalService) {
+
+		List<Ticket> tickets = ticketLocalService.getTickets(
+			companyId, className, classPK,
+			TicketConstants.TYPE_INVITE_COLLABORATOR);
+
+		for (Ticket ticket : tickets) {
+			if (StringUtil.equals(emailAddress, ticket.getExtraInfo())) {
+				return ticket;
+			}
+		}
+
+		return null;
+	}
+
+	private static boolean _hasViewPermission(User user) throws Exception {
+		return UserPermissionUtil.contains(
+			GuestOrUserUtil.getPermissionChecker(), user.getUserId(),
+			ActionKeys.VIEW);
+	}
+
+	private static String _normalizeEmailAddress(String emailAddress) {
+		return StringUtil.toLowerCase(StringUtil.trim(emailAddress));
+	}
+
+	private static void _validateEmailActionIds(String[] actionIds) {
+		if (actionIds == null) {
+			throw new IllegalArgumentException(
+				"Collaborators of type \"Email\" can only be granted the " +
+					"VIEW action");
+		}
+
+		for (String actionId : actionIds) {
+			if (!StringUtil.equals(
+					SharingEntryAction.VIEW.getActionId(), actionId)) {
+
+				throw new IllegalArgumentException(
+					"Collaborators of type \"Email\" can only be granted the " +
+						"VIEW action");
+			}
+		}
+	}
+
+	private static void _validateEmailAddress(String emailAddress) {
+		if (Validator.isNull(emailAddress)) {
+			throw new IllegalArgumentException(
+				"Collaborator type \"Email\" must have an email address");
+		}
+
+		if (!Validator.isEmailAddress(emailAddress)) {
+			throw new IllegalArgumentException(
+				"Invalid email address: " + emailAddress);
+		}
+	}
+
+	private static void _validateSharingEntry(
+			long classNameId, long classPK, String emailAddress,
+			SharingEntryService sharingEntryService, User user, long userId)
+		throws Exception {
+
+		SharingEntry sharingEntry = sharingEntryService.fetchSharingEntry(
+			0, 0, userId, classNameId, classPK);
+
+		if ((sharingEntry != null) &&
+			(sharingEntry.getUserId() != user.getUserId())) {
+
+			throw new DuplicateSharingEntryException(
+				StringBundler.concat(
+					"A sharing entry already exists for ", emailAddress,
+					" with class name ID ", classNameId,
+					" and class primary key ", classPK));
+		}
+	}
+
+	private static void _validateType(long companyId, String type) {
+		if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-52006")) {
+			if (!StringUtil.equals("Email", type) &&
+				!StringUtil.equals("User", type) &&
+				!StringUtil.equals("UserGroup", type)) {
+
+				throw new IllegalArgumentException(
+					"Collaborator type must be \"Email\", \"User\", or " +
+						"\"UserGroup\"");
+			}
+
+			return;
+		}
+
 		if (!StringUtil.equals("User", type) &&
 			!StringUtil.equals("UserGroup", type)) {
 
@@ -265,5 +650,7 @@ public class CollaboratorUtil {
 				"Collaborator type must be \"User\" or \"UserGroup\"");
 		}
 	}
+
+	private static final int _DEFAULT_INVITATION_EXPIRATION_HOURS = 48;
 
 }

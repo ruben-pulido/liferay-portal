@@ -134,7 +134,7 @@ exports[`LiferayOverview should render 1`] = `
               </a>
             </li>
             <li
-              class="item"
+              class="item active"
             >
               <a
                 class="button-root"
@@ -307,7 +307,7 @@ exports[`LiferayOverview should render 1`] = `
               <span
                 class="breadcrumb-text-truncate"
               >
-                Salesforce{seed}
+                Liferay1
               </span>
             </li>
           </ol>
@@ -316,12 +316,12 @@ exports[`LiferayOverview should render 1`] = `
               class="mb-5"
             >
               <span
-                class="label mb-2 label-success"
+                class="label mb-2 label-info"
               >
                 <span
                   class="label-item label-item-expand"
                 >
-                  Connected
+                  Authenticated
                 </span>
               </span>
               <div
@@ -333,7 +333,7 @@ exports[`LiferayOverview should render 1`] = `
                   <span
                     class="text-8 font-weight-bold"
                   >
-                    Salesforce{seed}
+                    Liferay1
                   </span>
                   <button
                     aria-label="Edit"
@@ -371,14 +371,18 @@ exports[`LiferayOverview should render 1`] = `
                 <div
                   class="mb-4"
                 >
-                  <span
-                    class="text-3 text-secondary font-weight-semi-bold"
+                  <div
+                    class="mb-4"
                   >
-                    CONNECTION STATUS
-                  </span>
-                  <hr
-                    class="my-2"
-                  />
+                    <span
+                      class="text-3 text-secondary font-weight-semi-bold"
+                    >
+                      CONNECTION STATUS
+                    </span>
+                    <hr
+                      class="my-2"
+                    />
+                  </div>
                   <div
                     class="alert alert-success"
                   >
@@ -421,14 +425,18 @@ exports[`LiferayOverview should render 1`] = `
                 <div
                   class="mb-4"
                 >
-                  <span
-                    class="text-3 text-secondary font-weight-semi-bold"
+                  <div
+                    class="mb-4"
                   >
-                    DATA SOURCE DETAILS
-                  </span>
-                  <hr
-                    class="my-2"
-                  />
+                    <span
+                      class="text-3 text-secondary font-weight-semi-bold"
+                    >
+                      DATA SOURCE DETAILS
+                    </span>
+                    <hr
+                      class="my-2"
+                    />
+                  </div>
                   <div
                     class="input-group d-flex mt-3"
                   >
@@ -544,6 +552,11 @@ exports[`LiferayOverview should render 1`] = `
                       >
                         Used to aggregate data on your users, sites and DXP commerce channels.
                       </p>
+                      <p
+                        class="list-group-text"
+                      >
+                        5 properties are connected to this data source.
+                      </p>
                     </div>
                     <div
                       class="justify-content-center autofit-col"
@@ -594,6 +607,11 @@ exports[`LiferayOverview should render 1`] = `
                         class="list-group-text"
                       >
                         Represents the sites synced from Liferay Portal, under DXP Instance Settings &gt; Analytics Cloud.
+                      </p>
+                      <p
+                        class="list-group-text"
+                      >
+                        10 Items Synced
                       </p>
                     </div>
                     <div
@@ -646,6 +664,11 @@ exports[`LiferayOverview should render 1`] = `
                       >
                         Represents the fields synced from the Contact object within Liferay Portal, under DXP Instance Settings &gt; Analytics Cloud.
                       </p>
+                      <p
+                        class="list-group-text"
+                      >
+                        100 Items Synced
+                      </p>
                     </div>
                     <div
                       class="justify-content-center autofit-col"
@@ -687,14 +710,18 @@ exports[`LiferayOverview should render 1`] = `
                   >
                     Properties allow you to aggregate data on your users and DXP sites and channels. The data source data will be available in any property they are assigned to.
                   </p>
-                  <span
-                    class="text-3 text-secondary font-weight-semi-bold"
+                  <div
+                    class="mb-4"
                   >
-                    DATA AVAILABILITY
-                  </span>
-                  <hr
-                    class="my-2"
-                  />
+                    <span
+                      class="text-3 text-secondary font-weight-semi-bold"
+                    >
+                      DATA AVAILABILITY
+                    </span>
+                    <hr
+                      class="my-2"
+                    />
+                  </div>
                   <p
                     class="text-4 text-secondary"
                   >
@@ -769,7 +796,6 @@ exports[`LiferayOverview should render 1`] = `
                             class="dropdown dropdown-root"
                           >
                             <button
-                              aria-controls="clay-dropdown-menu-1"
                               aria-expanded="false"
                               aria-haspopup="true"
                               class="dropdown-toggle btn btn-outline-borderless btn-sm btn-outline-secondary"

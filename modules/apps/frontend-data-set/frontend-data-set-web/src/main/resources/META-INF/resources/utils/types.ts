@@ -9,7 +9,7 @@ import React from 'react';
 
 import {IInlineNotificationComponent} from '../inline_notification/InlineNotification';
 import {EEntityFieldType} from '../management_bar/controls/filters/utils/types';
-import {ISnapshot} from '../views/ViewsContext';
+import {ISnapshots} from '../views/ViewsContext';
 
 export declare function FrontendDataSet({
 	actionParameterName,
@@ -108,11 +108,28 @@ export interface IBaseActions {
 	itemId: number | string;
 }
 
-interface IBulkActionItem {
+export interface IBulkActionItem {
+	data?: {
+		highlighted?: boolean;
+		id?: string;
+		size?: string;
+	};
 	href?: string;
 	icon?: string;
+	isVisible?: ({
+		activeFilters,
+		activeSearch,
+		allItemsSelectedActive,
+		selectedItems,
+	}: {
+		activeFilters?: Array<IBaseFilterState>;
+		activeSearch?: ISearch;
+		allItemsSelectedActive?: boolean;
+		selectedItems?: Array<any>;
+	}) => boolean;
 	label?: string;
 	method?: string;
+	slug?: string;
 	target?: 'modal' | 'sidePanel';
 }
 export interface ICreationActionItem {
@@ -373,7 +390,7 @@ export interface IFrontendDataSetProps {
 	showSearch?: boolean;
 	showSelectAll?: boolean;
 	sidePanelId?: string;
-	snapshots?: Array<ISnapshot>;
+	snapshots?: Array<ISnapshots>;
 	snapshotsEnabled?: boolean;
 	sorts?: TSort[];
 	style?: 'default' | 'fluid' | 'stacked';
@@ -387,7 +404,7 @@ export interface IInfoPanelComponent {
 }
 
 export interface IManagementBarProps {
-	bulkActions?: Array<IBulkActionItem>;
+	bulkActions: Array<IBulkActionItem>;
 	creationMenu?: {
 		primaryItems: Array<ICreationActionItem>;
 		secondaryItems?: any[];
@@ -509,7 +526,7 @@ export type VisibleFieldNames = {
 	[fieldName: string]: boolean;
 };
 
-interface ISearch {
+export interface ISearch {
 	query: string;
 }
 
@@ -520,6 +537,7 @@ export interface IBaseFilterState {
 	id: string;
 	label: string;
 	moduleURL?: string;
+	multiple?: boolean;
 	odataFilterString?: string;
 	preloadedData: Record<string, unknown>;
 	selectedData?: Record<string, unknown>;

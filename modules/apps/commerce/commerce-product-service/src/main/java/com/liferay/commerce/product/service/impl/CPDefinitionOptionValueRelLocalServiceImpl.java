@@ -40,6 +40,7 @@ import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.info.pagination.Pagination;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
@@ -89,6 +90,7 @@ import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -178,7 +180,6 @@ public class CPDefinitionOptionValueRelLocalServiceImpl
 			cpDefinitionOptionRelId);
 		cpDefinitionOptionValueRel.setKey(key);
 		cpDefinitionOptionValueRel.setNameMap(nameMap);
-		cpDefinitionOptionValueRel.setExpandoBridgeAttributes(serviceContext);
 
 		if (cpDefinitionOptionRel.isPriceTypeStatic()) {
 			cpDefinitionOptionValueRel.setPrice(
@@ -189,6 +190,7 @@ public class CPDefinitionOptionValueRelLocalServiceImpl
 		cpDefinitionOptionValueRel.setQuantity(
 			BigDecimalUtil.get(quantity, BigDecimal.ONE));
 		cpDefinitionOptionValueRel.setUnitOfMeasureKey(unitOfMeasureKey);
+		cpDefinitionOptionValueRel.setExpandoBridgeAttributes(serviceContext);
 
 		_validateLinkedCPDefinitionOptionValueRel(cpDefinitionOptionValueRel);
 
@@ -270,7 +272,6 @@ public class CPDefinitionOptionValueRelLocalServiceImpl
 			cpDefinitionOptionRelId);
 		cpDefinitionOptionValueRel.setKey(key);
 		cpDefinitionOptionValueRel.setNameMap(nameMap);
-		cpDefinitionOptionValueRel.setExpandoBridgeAttributes(serviceContext);
 
 		if (cpDefinitionOptionRel.isPriceTypeStatic()) {
 			cpDefinitionOptionValueRel.setPrice(BigDecimal.ZERO);
@@ -278,6 +279,7 @@ public class CPDefinitionOptionValueRelLocalServiceImpl
 
 		cpDefinitionOptionValueRel.setPriority(priority);
 		cpDefinitionOptionValueRel.setQuantity(BigDecimal.ZERO);
+		cpDefinitionOptionValueRel.setExpandoBridgeAttributes(serviceContext);
 
 		_validateLinkedCPDefinitionOptionValueRel(cpDefinitionOptionValueRel);
 		_validatePriceableCPDefinitionOptionValue(
@@ -468,6 +470,45 @@ public class CPDefinitionOptionValueRelLocalServiceImpl
 
 				return null;
 			});
+	}
+
+	@Override
+	public List<CPDefinitionOptionValueRel>
+		getApprovedCPInstanceCPDefinitionOptionValueRels(
+			long cpDefinitionOptionRelId) {
+
+		return cpDefinitionOptionValueRelPersistence.dslQuery(
+			DSLQueryFactoryUtil.selectDistinct(
+				CPDefinitionOptionValueRelTable.INSTANCE
+			).from(
+				CPDefinitionOptionValueRelTable.INSTANCE
+			).innerJoinON(
+				CPInstanceOptionValueRelTable.INSTANCE,
+				CPInstanceOptionValueRelTable.INSTANCE.
+					CPDefinitionOptionValueRelId.eq(
+						CPDefinitionOptionValueRelTable.INSTANCE.
+							CPDefinitionOptionValueRelId)
+			).innerJoinON(
+				CPInstanceTable.INSTANCE,
+				CPInstanceTable.INSTANCE.CPInstanceId.eq(
+					CPInstanceOptionValueRelTable.INSTANCE.CPInstanceId)
+			).where(
+				CPDefinitionOptionValueRelTable.INSTANCE.
+					CPDefinitionOptionRelId.eq(
+						cpDefinitionOptionRelId
+					).and(
+						CPInstanceTable.INSTANCE.status.eq(
+							WorkflowConstants.STATUS_APPROVED)
+					).and(
+						Predicate.or(
+							CPInstanceTable.INSTANCE.expirationDate.isNull(),
+							CPInstanceTable.INSTANCE.expirationDate.gt(
+								new Date()))
+					)
+			).orderBy(
+				CPDefinitionOptionValueRelTable.INSTANCE.priority.ascending(),
+				CPDefinitionOptionValueRelTable.INSTANCE.createDate.ascending()
+			));
 	}
 
 	@Override
@@ -808,7 +849,6 @@ public class CPDefinitionOptionValueRelLocalServiceImpl
 		cpDefinitionOptionValueRel.setKey(key);
 		cpDefinitionOptionValueRel.setNameMap(nameMap);
 		cpDefinitionOptionValueRel.setPriority(priority);
-		cpDefinitionOptionValueRel.setExpandoBridgeAttributes(serviceContext);
 
 		if (cpDefinitionOptionRel.isPriceTypeStatic()) {
 			cpDefinitionOptionValueRel.setPrice(price);
@@ -816,6 +856,7 @@ public class CPDefinitionOptionValueRelLocalServiceImpl
 
 		cpDefinitionOptionValueRel.setQuantity(quantity);
 		cpDefinitionOptionValueRel.setUnitOfMeasureKey(unitOfMeasureKey);
+		cpDefinitionOptionValueRel.setExpandoBridgeAttributes(serviceContext);
 
 		_validateLinkedCPDefinitionOptionValueRel(cpDefinitionOptionValueRel);
 		_validatePriceableCPDefinitionOptionValue(

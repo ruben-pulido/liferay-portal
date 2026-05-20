@@ -23,16 +23,15 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.MatchQuery;
+import com.liferay.portal.kernel.search.NestedQuery;
 import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.TermQuery;
+import com.liferay.portal.kernel.search.TermRangeQuery;
+import com.liferay.portal.kernel.search.WildcardQuery;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.MatchQuery;
-import com.liferay.portal.kernel.search.generic.NestedQuery;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
-import com.liferay.portal.kernel.search.generic.TermRangeQueryImpl;
-import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -148,19 +147,13 @@ public class ObjectEntryKeywordQueryContributor
 		else {
 			for (String token : _tokenizeKeywords(keywords)) {
 				if (addObjectEntryTitle.get() && !Validator.isBlank(token)) {
-					try {
-						booleanQuery.add(
-							new TermQueryImpl(Field.ENTRY_CLASS_PK, token),
-							BooleanClauseOccur.SHOULD);
+					booleanQuery.add(
+						new TermQuery(Field.ENTRY_CLASS_PK, token),
+						BooleanClauseOccur.SHOULD);
 
-						booleanQuery.add(
-							new WildcardQueryImpl(
-								titleField, token + StringPool.STAR),
-							BooleanClauseOccur.SHOULD);
-					}
-					catch (ParseException parseException) {
-						throw new SystemException(parseException);
-					}
+					booleanQuery.add(
+						new WildcardQuery(titleField, token + StringPool.STAR),
+						BooleanClauseOccur.SHOULD);
 				}
 
 				for (ObjectField objectField : objectFields) {
@@ -186,7 +179,7 @@ public class ObjectEntryKeywordQueryContributor
 
 		if (!addedRangeQuery && _isValidInput(token, objectField.getDBType())) {
 			nestedBooleanQuery.add(
-				new TermQueryImpl(fieldName, token), BooleanClauseOccur.MUST);
+				new TermQuery(fieldName, token), BooleanClauseOccur.MUST);
 		}
 	}
 
@@ -209,7 +202,7 @@ public class ObjectEntryKeywordQueryContributor
 		}
 
 		booleanQuery.add(
-			new TermRangeQueryImpl(fieldName, lowerTerm, upperTerm, true, true),
+			new TermRangeQuery(fieldName, lowerTerm, upperTerm, true, true),
 			BooleanClauseOccur.MUST);
 
 		return true;
@@ -237,7 +230,7 @@ public class ObjectEntryKeywordQueryContributor
 					objectField.getName()));
 		}
 
-		BooleanQuery nestedBooleanQuery = new BooleanQueryImpl();
+		BooleanQuery nestedBooleanQuery = new BooleanQuery();
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
 		if (objectField.isIndexedAsKeyword()) {
@@ -245,14 +238,37 @@ public class ObjectEntryKeywordQueryContributor
 			String lowerCaseToken = StringUtil.toLowerCase(token);
 
 			nestedBooleanQuery.add(
-				new WildcardQueryImpl(
-					fieldName, lowerCaseToken + StringPool.STAR),
+				new WildcardQuery(fieldName, lowerCaseToken + StringPool.STAR),
 				BooleanClauseOccur.MUST);
 			nestedBooleanQuery.add(
-				new TermQueryImpl(fieldName, lowerCaseToken),
+				new TermQuery(fieldName, lowerCaseToken),
 				BooleanClauseOccur.SHOULD);
 
 			queryConfig.addHighlightFieldNames(fieldName);
+		}
+		else if (Objects.equals(
+					objectField.getBusinessType(),
+					ObjectFieldConstants.BUSINESS_TYPE_ASSIGNEE)) {
+
+			BooleanQuery assigneeBooleanQuery = new BooleanQuery();
+
+			String keywordFieldName =
+				"nestedFieldArray.value_keyword_lowercase";
+
+			assigneeBooleanQuery.add(
+				new TermQuery(keywordFieldName, StringUtil.toLowerCase(token)),
+				BooleanClauseOccur.SHOULD);
+
+			String textFieldName = "nestedFieldArray.value_text";
+
+			assigneeBooleanQuery.add(
+				new MatchQuery(textFieldName, token),
+				BooleanClauseOccur.SHOULD);
+
+			nestedBooleanQuery.add(
+				assigneeBooleanQuery, BooleanClauseOccur.MUST);
+
+			queryConfig.addHighlightFieldNames(keywordFieldName, textFieldName);
 		}
 		else if (Objects.equals(
 					objectField.getBusinessType(),
@@ -271,8 +287,7 @@ public class ObjectEntryKeywordQueryContributor
 					_searchLocalizationHelper.getLocalizedFieldNames(
 						new String[] {"nestedFieldArray.value"}, searchContext);
 
-				BooleanQuery localizedNestedBooleanQuery =
-					new BooleanQueryImpl();
+				BooleanQuery localizedNestedBooleanQuery = new BooleanQuery();
 
 				for (String localizedFieldName : localizedFieldNames) {
 					localizedNestedBooleanQuery.add(
@@ -334,7 +349,7 @@ public class ObjectEntryKeywordQueryContributor
 
 			if (fieldName != null) {
 				nestedBooleanQuery.add(
-					new TermQueryImpl(fieldName, StringUtil.toLowerCase(token)),
+					new TermQuery(fieldName, StringUtil.toLowerCase(token)),
 					BooleanClauseOccur.MUST);
 
 				queryConfig.addHighlightFieldNames(fieldName);
@@ -385,7 +400,7 @@ public class ObjectEntryKeywordQueryContributor
 				booleanClauseOccur);
 
 			nestedBooleanQuery.add(
-				new TermQueryImpl(
+				new TermQuery(
 					"nestedFieldArray.fieldName", objectField.getName()),
 				BooleanClauseOccur.MUST);
 		}

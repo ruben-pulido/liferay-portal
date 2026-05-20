@@ -36,6 +36,24 @@ public class DLOpenerFileEntryReferenceUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<DLOpenerFileEntryReference> dlOpenerFileEntryReferences) {
+
+		getPersistence().cacheResult(dlOpenerFileEntryReferences);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		DLOpenerFileEntryReference dlOpenerFileEntryReference) {
+
+		getPersistence().cacheResult(dlOpenerFileEntryReference);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -131,18 +149,6 @@ public class DLOpenerFileEntryReferenceUtil {
 	}
 
 	/**
-	 * Returns the dl opener file entry reference where fileEntryId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param fileEntryId the file entry ID
-	 * @return the matching dl opener file entry reference, or <code>null</code> if a matching dl opener file entry reference could not be found
-	 */
-	public static DLOpenerFileEntryReference fetchByFileEntryId(
-		long fileEntryId) {
-
-		return getPersistence().fetchByFileEntryId(fileEntryId);
-	}
-
-	/**
 	 * Returns the dl opener file entry reference where fileEntryId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param fileEntryId the file entry ID
@@ -196,19 +202,6 @@ public class DLOpenerFileEntryReferenceUtil {
 	}
 
 	/**
-	 * Returns the dl opener file entry reference where referenceType = &#63; and fileEntryId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param referenceType the reference type
-	 * @param fileEntryId the file entry ID
-	 * @return the matching dl opener file entry reference, or <code>null</code> if a matching dl opener file entry reference could not be found
-	 */
-	public static DLOpenerFileEntryReference fetchByR_F(
-		String referenceType, long fileEntryId) {
-
-		return getPersistence().fetchByR_F(referenceType, fileEntryId);
-	}
-
-	/**
 	 * Returns the dl opener file entry reference where referenceType = &#63; and fileEntryId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param referenceType the reference type
@@ -247,28 +240,6 @@ public class DLOpenerFileEntryReferenceUtil {
 	 */
 	public static int countByR_F(String referenceType, long fileEntryId) {
 		return getPersistence().countByR_F(referenceType, fileEntryId);
-	}
-
-	/**
-	 * Caches the dl opener file entry reference in the entity cache if it is enabled.
-	 *
-	 * @param dlOpenerFileEntryReference the dl opener file entry reference
-	 */
-	public static void cacheResult(
-		DLOpenerFileEntryReference dlOpenerFileEntryReference) {
-
-		getPersistence().cacheResult(dlOpenerFileEntryReference);
-	}
-
-	/**
-	 * Caches the dl opener file entry references in the entity cache if it is enabled.
-	 *
-	 * @param dlOpenerFileEntryReferences the dl opener file entry references
-	 */
-	public static void cacheResult(
-		List<DLOpenerFileEntryReference> dlOpenerFileEntryReferences) {
-
-		getPersistence().cacheResult(dlOpenerFileEntryReferences);
 	}
 
 	/**
@@ -332,84 +303,28 @@ public class DLOpenerFileEntryReferenceUtil {
 	}
 
 	/**
-	 * Returns all the dl opener file entry references.
+	 * Returns the dl opener file entry reference where fileEntryId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the dl opener file entry references
+	 * @param fileEntryId the file entry ID
+	 * @return the matching dl opener file entry reference, or <code>null</code> if a matching dl opener file entry reference could not be found
 	 */
-	public static List<DLOpenerFileEntryReference> findAll() {
-		return getPersistence().findAll();
+	public static DLOpenerFileEntryReference fetchByFileEntryId(
+		long fileEntryId) {
+
+		return getPersistence().fetchByFileEntryId(fileEntryId);
 	}
 
 	/**
-	 * Returns a range of all the dl opener file entry references.
+	 * Returns the dl opener file entry reference where referenceType = &#63; and fileEntryId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLOpenerFileEntryReferenceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dl opener file entry references
-	 * @param end the upper bound of the range of dl opener file entry references (not inclusive)
-	 * @return the range of dl opener file entry references
+	 * @param referenceType the reference type
+	 * @param fileEntryId the file entry ID
+	 * @return the matching dl opener file entry reference, or <code>null</code> if a matching dl opener file entry reference could not be found
 	 */
-	public static List<DLOpenerFileEntryReference> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
+	public static DLOpenerFileEntryReference fetchByR_F(
+		String referenceType, long fileEntryId) {
 
-	/**
-	 * Returns an ordered range of all the dl opener file entry references.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLOpenerFileEntryReferenceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dl opener file entry references
-	 * @param end the upper bound of the range of dl opener file entry references (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of dl opener file entry references
-	 */
-	public static List<DLOpenerFileEntryReference> findAll(
-		int start, int end,
-		OrderByComparator<DLOpenerFileEntryReference> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dl opener file entry references.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLOpenerFileEntryReferenceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dl opener file entry references
-	 * @param end the upper bound of the range of dl opener file entry references (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of dl opener file entry references
-	 */
-	public static List<DLOpenerFileEntryReference> findAll(
-		int start, int end,
-		OrderByComparator<DLOpenerFileEntryReference> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the dl opener file entry references from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of dl opener file entry references.
-	 *
-	 * @return the number of dl opener file entry references
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().fetchByR_F(referenceType, fileEntryId);
 	}
 
 	public static DLOpenerFileEntryReferencePersistence getPersistence() {
@@ -425,4 +340,4 @@ public class DLOpenerFileEntryReferenceUtil {
 	private static volatile DLOpenerFileEntryReferencePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1124411878
+// LIFERAY-SERVICE-BUILDER-HASH:2105915504

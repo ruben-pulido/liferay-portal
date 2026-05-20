@@ -6,6 +6,7 @@
 package com.liferay.object.admin.rest.internal.resource.v1_0;
 
 import com.liferay.account.model.AccountEntry;
+import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
@@ -36,6 +37,7 @@ import com.liferay.object.constants.ObjectActionNameConstants;
 import com.liferay.object.constants.ObjectConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.constants.ObjectPortletKeys;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.definition.util.ObjectDefinitionUtil;
@@ -69,6 +71,7 @@ import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.mass.delete.MassDeleteCacheThreadLocal;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
@@ -202,8 +205,24 @@ public class ObjectDefinitionResourceImpl
 			public Map<String, Serializable> getParameters(
 				PortletDataContext portletDataContext) {
 
+				String filterString = "modifiable eq true";
+
+				Group group = _groupLocalService.fetchGroup(
+					portletDataContext.getScopeGroupId());
+
+				if ((group != null) && group.isCMS()) {
+					filterString += StringBundler.concat(
+						" and (objectFolderExternalReferenceCode eq '",
+						ObjectFolderConstants.
+							EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES,
+						"' or objectFolderExternalReferenceCode eq '",
+						ObjectFolderConstants.
+							EXTERNAL_REFERENCE_CODE_FILE_TYPES,
+						"')");
+				}
+
 				return HashMapBuilder.<String, Serializable>put(
-					"filter", "modifiable eq true"
+					"filter", filterString
 				).build();
 			}
 
@@ -220,6 +239,11 @@ public class ObjectDefinitionResourceImpl
 			@Override
 			public Scope getScope() {
 				return Scope.COMPANY;
+			}
+
+			@Override
+			public String getSectionKey() {
+				return ExportImportConstants.SECTION_KEY_OBJECTS;
 			}
 
 		};

@@ -23,7 +23,6 @@ import getWidgetDefinition from '../../layout-content-page-editor-web/main/utils
 export const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	isolatedSiteTest,
@@ -50,11 +49,9 @@ test('LPD-28406 Access to My Account is allowed after disabling access to it thr
 	);
 
 	try {
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const layout = await apiHelpers.headlessDelivery.createSitePage({
 			pageDefinition: getPageDefinition([

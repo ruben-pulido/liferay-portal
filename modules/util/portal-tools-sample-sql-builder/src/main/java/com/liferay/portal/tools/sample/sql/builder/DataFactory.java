@@ -312,7 +312,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.ReleaseInfo;
@@ -320,6 +319,7 @@ import com.liferay.portal.kernel.util.ScopeUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.Time;
+import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
@@ -452,6 +452,7 @@ public class DataFactory {
 				JournalArticle.class.getName());
 		models.add(JournalArticleDisplay.class.getName());
 		models.add(Layout.class.getName());
+		models.add(Layout.class.getName() + "-false");
 		models.add(NavItem.class.getName());
 		models.add(PortletDisplayTemplate.class.getName());
 		models.add(UserPersonalSite.class.getName());
@@ -781,6 +782,26 @@ public class DataFactory {
 		}
 
 		return sb.toString();
+	}
+
+	public List<String> getLayoutNames() {
+		return Arrays.asList(
+			"404", "500", "Cookie Policy", "Create Account", "Forgot Password",
+			"Sign In");
+	}
+
+	public String getLayoutTemplateFileName(List<LayoutModel> layoutModels) {
+		String externalReferenceCode = StringPool.BLANK;
+
+		for (LayoutModel layoutModel : layoutModels) {
+			externalReferenceCode = layoutModel.getExternalReferenceCode();
+
+			if (!externalReferenceCode.endsWith("-draft")) {
+				break;
+			}
+		}
+
+		return "utility_page_" + externalReferenceCode + "_definition.json";
 	}
 
 	public int getMaxAccountEntryCommerceOrderCount() {
@@ -1196,6 +1217,14 @@ public class DataFactory {
 			null, dlFolderModel.getName());
 	}
 
+	public AssetEntryModel newAssetEntryModel(LayoutModel layoutModel) {
+		return newAssetEntryModel(
+			layoutModel.getGroupId(), layoutModel.getCreateDate(),
+			layoutModel.getModifiedDate(), getClassNameId(Layout.class),
+			layoutModel.getPlid(), layoutModel.getUuid(), 0, true, false,
+			"text/html", layoutModel.getTitle());
+	}
+
 	public AssetEntryModel newAssetEntryModel(MBMessageModel mbMessageModel) {
 		long classNameId = 0;
 		boolean visible = false;
@@ -1241,13 +1270,11 @@ public class DataFactory {
 			String.valueOf(objectEntryModel.getObjectEntryId()));
 	}
 
-	public AssetEntryModel newAssetEntryModel(
-		ObjectValuePair<JournalArticleModel, JournalArticleLocalizationModel>
-			objectValuePair) {
-
-		JournalArticleModel journalArticleModel = objectValuePair.getKey();
+	public AssetEntryModel newAssetEntryModel(Tuple tuple) {
+		JournalArticleModel journalArticleModel =
+			(JournalArticleModel)tuple.getObject(0);
 		JournalArticleLocalizationModel journalArticleLocalizationModel =
-			objectValuePair.getValue();
+			(JournalArticleLocalizationModel)tuple.getObject(1);
 
 		long resourcePrimKey = journalArticleModel.getResourcePrimKey();
 
@@ -1386,7 +1413,7 @@ public class DataFactory {
 				assetPublisherQueryName = "assetTags";
 			}
 
-			ObjectValuePair<String[], Integer> objectValuePair = null;
+			Tuple tuple = null;
 
 			Integer startIndex = _assetPublisherQueryStartIndexes.get(groupId);
 
@@ -1402,7 +1429,7 @@ public class DataFactory {
 					assetCategoryModelsMap.get(
 						getNextAssetClassNameId(groupId));
 
-				objectValuePair = getAssetPublisherAssetCategoriesQueryValues(
+				tuple = getAssetPublisherAssetCategoriesTuple(
 					assetCategoryModels, startIndex);
 			}
 			else {
@@ -1412,11 +1439,11 @@ public class DataFactory {
 				List<AssetTagModel> assetTagModels = assetTagModelsMap.get(
 					getNextAssetClassNameId(groupId));
 
-				objectValuePair = getAssetPublisherAssetTagsQueryValues(
+				tuple = getAssetPublisherAssetTagsTuple(
 					assetTagModels, startIndex);
 			}
 
-			String[] assetPublisherQueryValues = objectValuePair.getKey();
+			String[] assetPublisherQueryValues = (String[])tuple.getObject(0);
 
 			map.put("queryAndOperator0", Boolean.FALSE.toString());
 			map.put("queryAndOperator1", Boolean.FALSE.toString());
@@ -1991,11 +2018,11 @@ public class DataFactory {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
 			LayoutModel layoutModel = newLayoutModel(
-				groupId, jsonObject.getString("layoutTemplateId"),
+				groupId, jsonObject.getBoolean("privateLayout"),
 				StringUtil.replace(
 					StringUtil.toLowerCase(jsonObject.getString("name")),
 					CharPool.SPACE, CharPool.DASH),
-				jsonObject.getBoolean("privateLayout"),
+				jsonObject.getString("layoutTemplateId"),
 				getPortletNames(jsonObject.getJSONArray("portlets")));
 
 			layoutModels.add(layoutModel);
@@ -2012,14 +2039,15 @@ public class DataFactory {
 
 					layoutModels.add(
 						newLayoutModel(
-							groupId, sublayoutJSONObject.getBoolean("hidden"),
-							sublayoutJSONObject.getString("layoutTemplateId"),
+							groupId,
+							sublayoutJSONObject.getBoolean("privateLayout"),
+							layoutModel.getLayoutId(),
 							StringUtil.replace(
 								StringUtil.toLowerCase(
 									sublayoutJSONObject.getString("name")),
 								CharPool.SPACE, CharPool.DASH),
-							sublayoutJSONObject.getBoolean("privateLayout"),
-							layoutModel.getLayoutId(),
+							sublayoutJSONObject.getString("layoutTemplateId"),
+							sublayoutJSONObject.getBoolean("hidden"),
 							getPortletNames(
 								sublayoutJSONObject.getJSONArray("portlets"))));
 				}
@@ -4412,7 +4440,8 @@ public class DataFactory {
 							"/fragment_component_paragraph_title_editValue." +
 								"json"),
 					paragraphRenderNamespace, 0,
-					_FRAGMENT_COMPONENT_RENDER_KEY_PARAGRAPH));
+					_FRAGMENT_COMPONENT_RENDER_KEY_PARAGRAPH,
+					FragmentConstants.TYPE_COMPONENT));
 			hiddenFragmentEntryLinkModels.add(
 				newFragmentEntryLinkModel(
 					layoutModel, null, segmentsExperienceId,
@@ -4428,7 +4457,8 @@ public class DataFactory {
 							"/fragment_component_paragraph_content_editValue." +
 								"json"),
 					paragraphRenderNamespace, 0,
-					_FRAGMENT_COMPONENT_RENDER_KEY_PARAGRAPH));
+					_FRAGMENT_COMPONENT_RENDER_KEY_PARAGRAPH,
+					FragmentConstants.TYPE_COMPONENT));
 			hiddenFragmentEntryLinkModels.add(
 				newFragmentEntryLinkModel(
 					layoutModel, null, segmentsExperienceId, "",
@@ -4443,7 +4473,8 @@ public class DataFactory {
 						"fragment_component" +
 							"/fragment_component_image_editValue.json"),
 					imageRenderNamespace, 0,
-					_FRAGMENT_COMPONENT_RENDER_KEY_IMAGE));
+					_FRAGMENT_COMPONENT_RENDER_KEY_IMAGE,
+					FragmentConstants.TYPE_COMPONENT));
 		}
 
 		List<FragmentEntryLinkModel> fragmentEntryLinkModels = new ArrayList<>(
@@ -4466,7 +4497,8 @@ public class DataFactory {
 					hiddenFragmentEntryLinkModel.getEditableValues(),
 					hiddenFragmentEntryLinkModel.getNamespace(),
 					hiddenFragmentEntryLinkModel.getPosition(),
-					hiddenFragmentEntryLinkModel.getRendererKey()));
+					hiddenFragmentEntryLinkModel.getRendererKey(),
+					hiddenFragmentEntryLinkModel.getType()));
 		}
 
 		return fragmentEntryLinkModels;
@@ -4575,6 +4607,14 @@ public class DataFactory {
 			friendlyURLEntryModel.getFriendlyURLEntryId());
 
 		return friendlyURLEntryMappingModel;
+	}
+
+	public FriendlyURLEntryModel newFriendlyURLEntryModel(
+		long groupId, long classPK) {
+
+		return newFriendlyURLEntryModel(
+			groupId, getClassNameId(Layout.class.getName() + "-false"),
+			classPK);
 	}
 
 	public FriendlyURLEntryModel newFriendlyURLEntryModel(
@@ -4968,7 +5008,7 @@ public class DataFactory {
 		long groupId, String name, String column1, String column2) {
 
 		return newLayoutModel(
-			groupId, "2_columns_ii", name, false, column1, column2);
+			groupId, false, name, "2_columns_ii", column1, column2);
 	}
 
 	public List<LayoutModel> newLayoutModels(
@@ -4976,9 +5016,9 @@ public class DataFactory {
 
 		return ListUtil.fromArray(
 			newLayoutModel(
-				groupId, "2_columns_ii", name, false, column1, column2),
+				groupId, false, name, "2_columns_ii", column1, column2),
 			newLayoutModel(
-				groupId, "2_columns_ii", name, true, column1, column2));
+				groupId, true, name, "2_columns_ii", column1, column2));
 	}
 
 	public LayoutPageTemplateStructureModel newLayoutPageTemplateStructureModel(
@@ -5126,7 +5166,7 @@ public class DataFactory {
 				LayoutPageTemplateStructureModel
 					layoutPageTemplateStructureModel,
 				List<FragmentEntryLinkModel> fragmentEntryLinkModels,
-				String templateFileName)
+				String layoutTemplateFileName)
 		throws Exception {
 
 		List<FragmentEntryLinkModel> targetFragmentEntryLinkModels =
@@ -5173,7 +5213,8 @@ public class DataFactory {
 			fragmentEntryLinkModel.getSegmentsExperienceId());
 
 		layoutPageTemplateStructureRelModel.setData(
-			_generateData(targetFragmentEntryLinkModels, templateFileName));
+			_generateData(
+				targetFragmentEntryLinkModels, layoutTemplateFileName));
 		layoutPageTemplateStructureRelModel.setStatusByUserId(_sampleUserId);
 		layoutPageTemplateStructureRelModel.setStatusByUserName(
 			_SAMPLE_USER_NAME);
@@ -5659,12 +5700,12 @@ public class DataFactory {
 
 			if (layoutModel.getPlid() == fragmentEntryLinkModel.getPlid()) {
 				correspondingFragmentEntryLinkModel = fragmentEntryLinkModel;
-			}
 
-			data = StringUtil.replaceFirst(
-				data, "${fragmentEntryLinkId}",
-				String.valueOf(
-					fragmentEntryLinkModel.getFragmentEntryLinkId()));
+				data = StringUtil.replaceFirst(
+					data, "${fragmentEntryLinkId}",
+					String.valueOf(
+						fragmentEntryLinkModel.getFragmentEntryLinkId()));
+			}
 		}
 
 		layoutPageTemplateStructureRelModel.setSegmentsExperienceId(
@@ -5959,7 +6000,7 @@ public class DataFactory {
 		throws Exception {
 
 		boolean addSubmitFragmentEntryLink = false;
-		List<FragmentEntryLinkModel> nonhiddenFragmentEntryLinkModels =
+		List<FragmentEntryLinkModel> originalFragmentEntryLinkModels =
 			new ArrayList<>();
 		String paragraphRenderNamespace = StringUtil.randomId();
 		long segmentsExperienceId = 0;
@@ -5969,11 +6010,13 @@ public class DataFactory {
 				continue;
 			}
 
+			String configuration = StringPool.BLANK;
 			String css = null;
 			String editValueJSON = null;
 			String html = null;
 			String js = null;
 			String renderKey = null;
+			int type = FragmentConstants.TYPE_COMPONENT;
 
 			if (StringUtil.equals(
 					layoutDataItemType,
@@ -6044,20 +6087,25 @@ public class DataFactory {
 				js = _readFile(
 					_getFragmentComponentInputStream(
 						"inputs", fragmentName, "js"));
+
+				type = FragmentConstants.TYPE_INPUT;
+
+				configuration = _getFragmentComponentConfiguration(renderKey);
 			}
 
 			segmentsExperienceId = _getSegmentsExperienceId(
 				layoutModels.get(1), segmentsExperienceModels);
 
-			nonhiddenFragmentEntryLinkModels.add(
+			originalFragmentEntryLinkModels.add(
 				newFragmentEntryLinkModel(
 					layoutModels.get(1), null, segmentsExperienceId,
-					_escape(css), _escape(html), _escape(js), StringPool.BLANK,
-					editValueJSON, paragraphRenderNamespace, 0, renderKey));
+					_escape(css), _escape(html), _escape(js), configuration,
+					editValueJSON, paragraphRenderNamespace, 0, renderKey,
+					type));
 		}
 
 		if (addSubmitFragmentEntryLink) {
-			nonhiddenFragmentEntryLinkModels.add(
+			originalFragmentEntryLinkModels.add(
 				newFragmentEntryLinkModel(
 					layoutModels.get(1), null, segmentsExperienceId,
 					StringPool.BLANK,
@@ -6069,21 +6117,24 @@ public class DataFactory {
 						_readFile(
 							_getFragmentComponentInputStream(
 								"inputs", "submit-button", "js"))),
-					StringPool.BLANK,
+					_readFile(
+						"fragment_component/fragment_component_input_submit_" +
+							"configuration.json"),
 					_readFile(
 						"fragment_component" +
 							"/fragment_component_input_submit_editValue.json"),
-					paragraphRenderNamespace, 0, "INPUTS-submit-button"));
+					paragraphRenderNamespace, 0, "INPUTS-submit-button",
+					FragmentConstants.TYPE_INPUT));
 		}
 
 		List<FragmentEntryLinkModel> fragmentEntryLinkModels = new ArrayList<>(
-			nonhiddenFragmentEntryLinkModels);
+			originalFragmentEntryLinkModels);
 
 		segmentsExperienceId = _getSegmentsExperienceId(
 			layoutModels.get(0), segmentsExperienceModels);
 
 		for (FragmentEntryLinkModel originalFragmentEntryLinkModel :
-				nonhiddenFragmentEntryLinkModels) {
+				originalFragmentEntryLinkModels) {
 
 			fragmentEntryLinkModels.add(
 				newFragmentEntryLinkModel(
@@ -6097,7 +6148,8 @@ public class DataFactory {
 					originalFragmentEntryLinkModel.getEditableValues(),
 					originalFragmentEntryLinkModel.getNamespace(),
 					originalFragmentEntryLinkModel.getPosition(),
-					originalFragmentEntryLinkModel.getRendererKey()));
+					originalFragmentEntryLinkModel.getRendererKey(),
+					originalFragmentEntryLinkModel.getType()));
 		}
 
 		return fragmentEntryLinkModels;
@@ -6209,10 +6261,6 @@ public class DataFactory {
 		return objectStateTransitionModels;
 	}
 
-	public <K, V> ObjectValuePair<K, V> newObjectValuePair(K key, V value) {
-		return new ObjectValuePair<>(key, value);
-	}
-
 	public PortalPreferencesModel newPortalPreferencesModel(long ownerId) {
 		PortalPreferencesModel portalPreferencesModel =
 			new PortalPreferencesModelImpl();
@@ -6271,7 +6319,7 @@ public class DataFactory {
 			assetPublisherQueryName = "assetTags";
 		}
 
-		ObjectValuePair<String[], Integer> objectValuePair = null;
+		Tuple tuple = null;
 
 		Integer startIndex = _assetPublisherQueryStartIndexes.get(groupId);
 
@@ -6290,7 +6338,7 @@ public class DataFactory {
 				return newPortletPreferencesModel(plid, portletId);
 			}
 
-			objectValuePair = getAssetPublisherAssetCategoriesQueryValues(
+			tuple = getAssetPublisherAssetCategoriesTuple(
 				assetCategoryModels, startIndex);
 		}
 		else {
@@ -6304,12 +6352,11 @@ public class DataFactory {
 				return newPortletPreferencesModel(plid, portletId);
 			}
 
-			objectValuePair = getAssetPublisherAssetTagsQueryValues(
-				assetTagModels, startIndex);
+			tuple = getAssetPublisherAssetTagsTuple(assetTagModels, startIndex);
 		}
 
 		_assetPublisherQueryStartIndexes.put(
-			groupId, objectValuePair.getValue());
+			groupId, (Integer)tuple.getObject(1));
 
 		return newPortletPreferencesModel(plid, portletId);
 	}
@@ -6764,14 +6811,14 @@ public class DataFactory {
 		long groupId, LayoutModel layoutModel) {
 
 		return newLayoutModel(
-			"layout", groupId, false, layoutModel.getName(),
-			layoutModel.isPrivateLayout(), layoutModel.getParentLayoutId(),
-			layoutModel.getTypeSettings());
+			groupId, layoutModel.isPrivateLayout(),
+			layoutModel.getParentLayoutId(), layoutModel.getName(),
+			layoutModel.getTypeSettings(), false, "layout");
 	}
 
 	public LayoutModel newSearchLayoutModel(long groupId, boolean hidden) {
 		return newLayoutModel(
-			groupId, hidden, "1_2_columns_i", "search", false, 0,
+			groupId, false, 0, "search", "1_2_columns_i", hidden,
 			new String[] {
 				StringBundler.concat(
 					SearchBarPortletKeys.SEARCH_BAR, StringPool.COMMA,
@@ -6871,12 +6918,14 @@ public class DataFactory {
 
 		Long index = _segmentsExperienceCounter.get();
 
+		String uuid = SequentialUUID.generate();
+
 		return newSegmentsExperienceModel(
 			groupId, segmentsEntryModel.getExternalReferenceCode(),
 			ScopeUtil.getItemScopeExternalReferenceCode(
 				segmentsEntryModel.getGroupId(), groupId),
 			_counter.getString(), plid, "SampleExperience" + index,
-			index.intValue());
+			index.intValue(), uuid, uuid);
 	}
 
 	public List<SegmentsExperienceModel> newSegmentsExperienceModels(
@@ -6889,7 +6938,9 @@ public class DataFactory {
 			segmentsExperienceModels.add(
 				newSegmentsExperienceModel(
 					layoutModel.getGroupId(), "DEFAULT", null, "DEFAULT",
-					layoutModel.getPlid(), "Default", 0));
+					layoutModel.getPlid(), "Default", 0,
+					SequentialUUID.generate(),
+					layoutModel.getExternalReferenceCode() + "-default"));
 		}
 
 		return segmentsExperienceModels;
@@ -6972,6 +7023,10 @@ public class DataFactory {
 			getClassNameId(MBThread.class), mBThreadModel.getThreadId());
 	}
 
+	public Tuple newTuple(Object... objects) {
+		return new Tuple(objects);
+	}
+
 	public List<UserModel> newUserModels() {
 		List<UserModel> userModels = new ArrayList<>(
 			BenchmarksPropsValues.MAX_COMPANY_USER_COUNT);
@@ -6993,6 +7048,126 @@ public class DataFactory {
 		return newGroupModel(
 			getClassNameId(UserPersonalSite.class), _guestUserId,
 			_counter.get(), GroupConstants.USER_PERSONAL_SITE, false);
+	}
+
+	public List<LayoutModel> newUtilityPageLayoutModels(
+		long groupId, String name) {
+
+		List<LayoutModel> layoutModels = new ArrayList<>();
+
+		String externalReferenceCodeSuffix = StringUtil.replace(
+			StringUtil.toUpperCase(name.trim()), CharPool.SPACE, CharPool.DASH);
+
+		String friendlyURL = StringUtil.toLowerCase(
+			externalReferenceCodeSuffix);
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			UnicodePropertiesBuilder.create(
+				true
+			).build();
+
+		if (Validator.isNumber(name)) {
+			externalReferenceCodeSuffix = name + "-ERROR";
+
+			friendlyURL = name + "-1";
+
+			typeSettingsUnicodeProperties.setProperty(
+				"lfr-theme:regular:show-footer", "false");
+			typeSettingsUnicodeProperties.setProperty(
+				"lfr-theme:regular:show-header", "false");
+		}
+		else if (name.equals("Sign In")) {
+			externalReferenceCodeSuffix = "LOGIN";
+		}
+
+		String externalReferenceCode =
+			"LFR-" + externalReferenceCodeSuffix + "-layout";
+
+		LayoutModel publicLayoutModel = newUtilityPageLayoutModel(
+			groupId, 0, 0, name, typeSettingsUnicodeProperties.toString(),
+			friendlyURL, externalReferenceCode);
+
+		layoutModels.add(publicLayoutModel);
+
+		typeSettingsUnicodeProperties.setProperty("published", "true");
+
+		layoutModels.add(
+			newUtilityPageLayoutModel(
+				publicLayoutModel.getGroupId(), getClassNameId(Layout.class),
+				publicLayoutModel.getPlid(), publicLayoutModel.getName(),
+				typeSettingsUnicodeProperties.toString(),
+				String.valueOf(
+					new UUID(
+						SecureRandomUtil.nextLong(),
+						SecureRandomUtil.nextLong())),
+				externalReferenceCode + "-draft"));
+
+		return layoutModels;
+	}
+
+	public List<FragmentEntryLinkModel>
+			newUtilityPageLayoutsFragmentEntryLinkModels(
+				List<LayoutModel> layoutModels,
+				List<SegmentsExperienceModel> segmentsExperienceModels)
+		throws Exception {
+
+		LayoutModel nondraftLayoutModel = null;
+
+		List<FragmentEntryLinkModel> originalFragmentEntryLinkModels =
+			new ArrayList<>();
+
+		for (LayoutModel layoutModel : layoutModels) {
+			String externalReferenceCode =
+				layoutModel.getExternalReferenceCode();
+
+			if (!externalReferenceCode.endsWith("-draft")) {
+				nondraftLayoutModel = layoutModel;
+
+				continue;
+			}
+
+			String renderNamespace = StringUtil.randomId();
+
+			long segmentsExperienceId = _getSegmentsExperienceId(
+				layoutModel, segmentsExperienceModels);
+
+			List<Tuple> utilityPageFragmentEntryLinkTuples =
+				_utilityPageFragmentEntryLinkTuplesMap.get(
+					externalReferenceCode);
+
+			originalFragmentEntryLinkModels.addAll(
+				newUtilityPageFragmentEntryLinkModels(
+					layoutModel, segmentsExperienceId,
+					utilityPageFragmentEntryLinkTuples, externalReferenceCode,
+					renderNamespace));
+		}
+
+		List<FragmentEntryLinkModel> fragmentEntryLinkModels = new ArrayList<>(
+			originalFragmentEntryLinkModels);
+
+		long segmentsExperienceId = _getSegmentsExperienceId(
+			nondraftLayoutModel, segmentsExperienceModels);
+
+		for (FragmentEntryLinkModel originalFragmentEntryLinkModel :
+				originalFragmentEntryLinkModels) {
+
+			fragmentEntryLinkModels.add(
+				newFragmentEntryLinkModel(
+					nondraftLayoutModel,
+					originalFragmentEntryLinkModel.getExternalReferenceCode(),
+					segmentsExperienceId,
+					originalFragmentEntryLinkModel.getCss(),
+					originalFragmentEntryLinkModel.getHtml(),
+					originalFragmentEntryLinkModel.getJs(),
+					originalFragmentEntryLinkModel.getConfiguration(),
+					originalFragmentEntryLinkModel.getEditableValues(),
+					originalFragmentEntryLinkModel.getNamespace(),
+					originalFragmentEntryLinkModel.getPosition(),
+					originalFragmentEntryLinkModel.getRendererKey(),
+					originalFragmentEntryLinkModel.getType()));
+		}
+
+		return fragmentEntryLinkModels;
 	}
 
 	public VirtualHostModel newVirtualHostModel() {
@@ -7084,9 +7259,8 @@ public class DataFactory {
 			leftPrimaryKey, ", ", rightPrimaryKey, ", 0, null);");
 	}
 
-	protected ObjectValuePair<String[], Integer>
-		getAssetPublisherAssetCategoriesQueryValues(
-			List<AssetCategoryModel> assetCategoryModels, int index) {
+	protected Tuple getAssetPublisherAssetCategoriesTuple(
+		List<AssetCategoryModel> assetCategoryModels, int index) {
 
 		String[] categoryIds = new String[4];
 
@@ -7103,15 +7277,14 @@ public class DataFactory {
 			categoryIds[i] = String.valueOf(assetCategoryModel.getCategoryId());
 		}
 
-		return new ObjectValuePair<>(
+		return new Tuple(
 			categoryIds,
 			index +
 				BenchmarksPropsValues.MAX_ASSET_ENTRY_TO_ASSET_CATEGORY_COUNT);
 	}
 
-	protected ObjectValuePair<String[], Integer>
-		getAssetPublisherAssetTagsQueryValues(
-			List<AssetTagModel> assetTagModels, int index) {
+	protected Tuple getAssetPublisherAssetTagsTuple(
+		List<AssetTagModel> assetTagModels, int index) {
 
 		String[] assetTagNames = new String[4];
 
@@ -7127,7 +7300,7 @@ public class DataFactory {
 			assetTagNames[i] = String.valueOf(assetTagModel.getName());
 		}
 
-		return new ObjectValuePair<>(
+		return new Tuple(
 			assetTagNames,
 			index + BenchmarksPropsValues.MAX_ASSET_ENTRY_TO_ASSET_TAG_COUNT);
 	}
@@ -7810,6 +7983,7 @@ public class DataFactory {
 		fragmentEntryLinkModel.setPosition(0);
 		fragmentEntryLinkModel.setRendererKey(
 			_FRAGMENT_COMPONENT_RENDER_KEY_HEADING);
+		fragmentEntryLinkModel.setType(FragmentConstants.TYPE_COMPONENT);
 
 		// Autogenerated fields
 
@@ -7825,7 +7999,7 @@ public class DataFactory {
 		LayoutModel layoutModel, String originalFragmentEntryLinkERC,
 		long segmentsExperienceId, String css, String html, String js,
 		String configuration, String editValue, String nameSpace, int position,
-		String renderKey) {
+		String renderKey, int type) {
 
 		FragmentEntryLinkModel fragmentEntryLinkModel =
 			new FragmentEntryLinkModelImpl();
@@ -7864,6 +8038,7 @@ public class DataFactory {
 		fragmentEntryLinkModel.setNamespace(nameSpace);
 		fragmentEntryLinkModel.setPosition(position);
 		fragmentEntryLinkModel.setRendererKey(renderKey);
+		fragmentEntryLinkModel.setType(type);
 
 		// Autogenerated fields
 
@@ -7938,47 +8113,10 @@ public class DataFactory {
 	}
 
 	protected LayoutModel newLayoutModel(
-		long groupId, boolean hidden, String layoutTemplateId, String name,
-		boolean privateLayout, long parentLayoutId, String... columns) {
-
-		UnicodeProperties typeSettingsUnicodeProperties =
-			UnicodePropertiesBuilder.create(
-				true
-			).put(
-				LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID, layoutTemplateId
-			).build();
-
-		for (int i = 0; i < columns.length; i++) {
-			if (!columns[i].equals("")) {
-				typeSettingsUnicodeProperties.setProperty(
-					"column-" + (i + 1), columns[i]);
-			}
-		}
-
-		if (name.equals("search")) {
-			typeSettingsUnicodeProperties.setProperty("privateLayout", "true");
-		}
-		else {
-			typeSettingsUnicodeProperties.setProperty(
-				"privateLayout", String.valueOf(privateLayout));
-		}
-
-		return newLayoutModel(
-			name, groupId, hidden, name, privateLayout, parentLayoutId,
-			typeSettingsUnicodeProperties.toString());
-	}
-
-	protected LayoutModel newLayoutModel(
-		long groupId, String layoutTemplateId, String name,
-		boolean privateLayout, String... columns) {
-
-		return newLayoutModel(
-			groupId, false, layoutTemplateId, name, privateLayout, 0, columns);
-	}
-
-	protected LayoutModel newLayoutModel(
-		String friendlyURL, long groupId, boolean hidden, String name,
-		boolean privateLayout, long parentLayoutId, String typeSettings) {
+		long groupId, boolean privateLayout, long parentLayoutId,
+		long classNameId, long classPK, String name, String type,
+		String typeSettings, boolean hidden, boolean system, String friendlyURL,
+		String themeId, String uuid, String externalReferenceCode) {
 
 		SimpleCounter simpleCounter = _layoutIdCounters.computeIfAbsent(
 			LayoutLocalServiceImpl.getCounterName(groupId, privateLayout),
@@ -8004,18 +8142,27 @@ public class DataFactory {
 
 		// Other fields
 
+		layoutModel.setParentPlid(0);
+		layoutModel.setPrivateLayout(privateLayout);
 		layoutModel.setLayoutId(simpleCounter.get());
 		layoutModel.setParentLayoutId(parentLayoutId);
-		layoutModel.setPrivateLayout(privateLayout);
+		layoutModel.setClassNameId(classNameId);
+		layoutModel.setClassPK(classPK);
 		layoutModel.setName(
 			"<?xml version=\"1.0\"?><root><name>" + name + "</name></root>");
-		layoutModel.setType(LayoutConstants.TYPE_PORTLET);
-		layoutModel.setHidden(hidden);
-
+		layoutModel.setTitle(
+			"<?xml version=\"1.0\"?><root><name>" + name + "</name></root>");
+		layoutModel.setType(type);
 		layoutModel.setTypeSettings(
 			StringUtil.replace(typeSettings, '\n', "\\n"));
-
+		layoutModel.setHidden(hidden);
+		layoutModel.setSystem(system);
 		layoutModel.setFriendlyURL(StringPool.FORWARD_SLASH + friendlyURL);
+
+		if (themeId != null) {
+			layoutModel.setThemeId(themeId);
+			layoutModel.setPriority(2147483647);
+		}
 
 		if (name.equals("search")) {
 			layoutModel.setPriority(1);
@@ -8025,12 +8172,41 @@ public class DataFactory {
 
 		// Autogenerated fields
 
-		String uuid = SequentialUUID.generate();
-
 		layoutModel.setUuid(uuid);
-		layoutModel.setExternalReferenceCode(uuid);
+		layoutModel.setExternalReferenceCode(externalReferenceCode);
 
 		return layoutModel;
+	}
+
+	protected LayoutModel newLayoutModel(
+		long groupId, boolean privateLayout, long parentLayoutId, String name,
+		String typeSettings, boolean hidden, String friendlyURL) {
+
+		String uuid = SequentialUUID.generate();
+
+		return newLayoutModel(
+			groupId, privateLayout, parentLayoutId, 0, 0, name,
+			LayoutConstants.TYPE_PORTLET, typeSettings, hidden, false,
+			friendlyURL, null, uuid, uuid);
+	}
+
+	protected LayoutModel newLayoutModel(
+		long groupId, boolean privateLayout, long parentLayoutId, String name,
+		String layoutTemplateId, boolean hidden, String... columns) {
+
+		return newLayoutModel(
+			groupId, privateLayout, parentLayoutId, name,
+			_generateTypeSettings(
+				layoutTemplateId, name, privateLayout, columns),
+			hidden, name);
+	}
+
+	protected LayoutModel newLayoutModel(
+		long groupId, boolean privateLayout, String name,
+		String layoutTemplateId, String... columns) {
+
+		return newLayoutModel(
+			groupId, privateLayout, 0, name, layoutTemplateId, false, columns);
 	}
 
 	protected LayoutSetModel newLayoutSetModel(
@@ -8650,7 +8826,8 @@ public class DataFactory {
 
 	protected SegmentsExperienceModel newSegmentsExperienceModel(
 		long groupId, String segmentsEntryERC, String segmentsEntryScopeERC,
-		String segmentsExperienceKey, long plid, String name, int priority) {
+		String segmentsExperienceKey, long plid, String name, int priority,
+		String uuid, String externalReferenceCode) {
 
 		SegmentsExperienceModel segmentsExperienceModel =
 			new SegmentsExperienceModelImpl();
@@ -8687,10 +8864,8 @@ public class DataFactory {
 
 		// Autogenerated fields
 
-		String uuid = SequentialUUID.generate();
-
 		segmentsExperienceModel.setUuid(uuid);
-		segmentsExperienceModel.setExternalReferenceCode(uuid);
+		segmentsExperienceModel.setExternalReferenceCode(externalReferenceCode);
 
 		return segmentsExperienceModel;
 	}
@@ -8803,6 +8978,99 @@ public class DataFactory {
 		userModel.setExternalReferenceCode(uuid);
 
 		return userModel;
+	}
+
+	protected List<FragmentEntryLinkModel>
+			newUtilityPageFragmentEntryLinkModels(
+				LayoutModel layoutModel, long segmentsExperienceId,
+				List<Tuple> utilityPageFragmentEntryLinkTuples,
+				String externalReferenceCode, String renderNamespace)
+		throws Exception {
+
+		String configuration = StringPool.BLANK;
+		String css = StringPool.BLANK;
+		String editValue = StringPool.BLANK;
+		String html = StringPool.BLANK;
+		int type = FragmentConstants.TYPE_COMPONENT;
+		String rendererKey = StringPool.BLANK;
+		int position = 0;
+
+		int utilityPageFragmentEntryLinkItemCount =
+			utilityPageFragmentEntryLinkTuples.size();
+
+		if (utilityPageFragmentEntryLinkItemCount == 1) {
+			type = FragmentConstants.TYPE_PORTLET;
+
+			editValue = StringUtil.replace(
+				_readFile(
+					"fragment_component/fragment_" +
+						"component_portlet_editValue_utility_page.json"),
+				"${portletId}",
+				_utilityPagePortletIds.get(externalReferenceCode));
+
+			return Collections.singletonList(
+				newFragmentEntryLinkModel(
+					layoutModel, null, segmentsExperienceId, css, html,
+					StringPool.BLANK, configuration, editValue, renderNamespace,
+					position, rendererKey, type));
+		}
+
+		List<FragmentEntryLinkModel> fragmentEntryLinkModels =
+			new ArrayList<>();
+
+		for (int i = 0; i < utilityPageFragmentEntryLinkItemCount; i++) {
+			Tuple utilityPageFragmentEntryLinkTuple =
+				utilityPageFragmentEntryLinkTuples.get(i);
+
+			rendererKey = (String)utilityPageFragmentEntryLinkTuple.getObject(
+				0);
+			position = (Integer)utilityPageFragmentEntryLinkTuple.getObject(1);
+
+			String editValueFileName = StringPool.BLANK;
+
+			if (rendererKey != StringPool.BLANK) {
+				String fragmentName = StringUtil.toLowerCase(
+					StringUtil.split(rendererKey, CharPool.DASH)[1]);
+
+				css = _readFile(
+					_getFragmentComponentInputStream(
+						"basic/component", fragmentName, "css"));
+				html = _readFile(
+					_getFragmentComponentInputStream(
+						"basic/component", fragmentName, "html"));
+
+				editValueFileName = StringBundler.concat(
+					externalReferenceCode, StringPool.UNDERLINE, rendererKey,
+					"_editValue_utility_page_", i, ".json");
+			}
+			else {
+				editValueFileName = StringBundler.concat(
+					externalReferenceCode, "_Portlet_editValue_utility_page_",
+					i, ".json");
+			}
+
+			editValue = _readFile(
+				"fragment_component/utility_pages/" + editValueFileName);
+
+			fragmentEntryLinkModels.add(
+				newFragmentEntryLinkModel(
+					layoutModel, null, segmentsExperienceId, css, html,
+					StringPool.BLANK, configuration, editValue, renderNamespace,
+					position, rendererKey, type));
+		}
+
+		return fragmentEntryLinkModels;
+	}
+
+	protected LayoutModel newUtilityPageLayoutModel(
+		long groupId, long classNameId, long classPK, String name,
+		String typeSettings, String friendlyURL, String externalReferenceCode) {
+
+		return newLayoutModel(
+			groupId, false, 0, classNameId, classPK, name,
+			LayoutConstants.TYPE_UTILITY, typeSettings, true, true, friendlyURL,
+			"classic_WAR_classictheme", SequentialUUID.generate(),
+			externalReferenceCode);
 	}
 
 	protected String nextDDLCustomFieldName(
@@ -9103,10 +9371,26 @@ public class DataFactory {
 
 	private String _generateData(
 			List<FragmentEntryLinkModel> fragmentEntryLinkModels,
-			String templateFileName)
+			String layoutTemplateFileName)
 		throws Exception {
 
-		String data = _readFile("home_page_template/" + templateFileName);
+		if (layoutTemplateFileName.startsWith("utility_page")) {
+			String data = _readFile(
+				"utility_page_templates/" + layoutTemplateFileName);
+
+			for (FragmentEntryLinkModel fragmentEntryLinkModel :
+					fragmentEntryLinkModels) {
+
+				data = StringUtil.replaceFirst(
+					data, "${fragmentEntryLinkId}",
+					String.valueOf(
+						fragmentEntryLinkModel.getFragmentEntryLinkId()));
+			}
+
+			return data;
+		}
+
+		String data = _readFile("home_page_template/" + layoutTemplateFileName);
 
 		for (FragmentEntryLinkModel fragmentEntryLinkModel :
 				fragmentEntryLinkModels) {
@@ -9139,6 +9423,59 @@ public class DataFactory {
 		}
 
 		return data;
+	}
+
+	private String _generateTypeSettings(
+		String layoutTemplateId, String name, boolean privateLayout,
+		String... columns) {
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			UnicodePropertiesBuilder.create(
+				true
+			).put(
+				LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID, layoutTemplateId
+			).build();
+
+		for (int i = 0; i < columns.length; i++) {
+			if (!columns[i].equals("")) {
+				typeSettingsUnicodeProperties.setProperty(
+					"column-" + (i + 1), columns[i]);
+			}
+		}
+
+		if (name.equals("search")) {
+			typeSettingsUnicodeProperties.setProperty("privateLayout", "true");
+		}
+		else {
+			typeSettingsUnicodeProperties.setProperty(
+				"privateLayout", String.valueOf(privateLayout));
+		}
+
+		return typeSettingsUnicodeProperties.toString();
+	}
+
+	private String _getFragmentComponentConfiguration(String renderKey)
+		throws Exception {
+
+		if (renderKey.equals("INPUTS-file-upload")) {
+			renderKey = "file_upload";
+		}
+
+		if (renderKey.equals("INPUTS-rich-text-input")) {
+			renderKey = "rich_text";
+		}
+
+		if (renderKey.equals("INPUTS-select-from-list")) {
+			return StringPool.BLANK;
+		}
+
+		if (renderKey.equals("INPUTS-text-input")) {
+			renderKey = "text";
+		}
+
+		return _readFile(
+			"fragment_component/fragment_component_input_" + renderKey +
+				"_configuration.json");
 	}
 
 	private InputStream _getFragmentComponentInputStream(
@@ -9411,6 +9748,58 @@ public class DataFactory {
 			).build();
 	private static final PortletPreferencesFactory _portletPreferencesFactory =
 		new PortletPreferencesFactoryImpl();
+	private static final Map<String, List<Tuple>>
+		_utilityPageFragmentEntryLinkTuplesMap =
+			HashMapBuilder.<String, List<Tuple>>put(
+				"LFR-404-ERROR-layout-draft",
+				Arrays.asList(
+					new Tuple("BASIC_COMPONENT-heading", 0),
+					new Tuple("BASIC_COMPONENT-paragraph", 1),
+					new Tuple("BASIC_COMPONENT-button", 2))
+			).put(
+				"LFR-500-ERROR-layout-draft",
+				Arrays.asList(
+					new Tuple("BASIC_COMPONENT-heading", 0),
+					new Tuple("BASIC_COMPONENT-paragraph", 1))
+			).put(
+				"LFR-COOKIE-POLICY-layout-draft",
+				Arrays.asList(
+					new Tuple(StringPool.BLANK, 0),
+					new Tuple("BASIC_COMPONENT-heading", 0),
+					new Tuple(StringPool.BLANK, 0),
+					new Tuple("BASIC_COMPONENT-paragraph", 1),
+					new Tuple("BASIC_COMPONENT-heading", 0),
+					new Tuple("BASIC_COMPONENT-paragraph", 1),
+					new Tuple("BASIC_COMPONENT-paragraph", 0),
+					new Tuple(StringPool.BLANK, 0),
+					new Tuple("BASIC_COMPONENT-heading", 0),
+					new Tuple("BASIC_COMPONENT-button", 1),
+					new Tuple("BASIC_COMPONENT-heading", 0),
+					new Tuple("BASIC_COMPONENT-paragraph", 1),
+					new Tuple("BASIC_COMPONENT-paragraph", 1),
+					new Tuple("BASIC_COMPONENT-heading", 0),
+					new Tuple(StringPool.BLANK, 0))
+			).put(
+				"LFR-CREATE-ACCOUNT-layout-draft",
+				Arrays.asList(new Tuple(StringPool.BLANK, 0))
+			).put(
+				"LFR-FORGOT-PASSWORD-layout-draft",
+				Arrays.asList(new Tuple(StringPool.BLANK, 0))
+			).put(
+				"LFR-LOGIN-layout-draft",
+				Arrays.asList(new Tuple(StringPool.BLANK, 0))
+			).build();
+	private static final Map<String, String> _utilityPagePortletIds =
+		HashMapBuilder.put(
+			"LFR-CREATE-ACCOUNT-layout-draft",
+			"com_liferay_login_web_portlet_CreateAccountPortlet"
+		).put(
+			"LFR-FORGOT-PASSWORD-layout-draft",
+			"com_liferay_login_web_portlet_ForgotPasswordPortlet"
+		).put(
+			"LFR-LOGIN-layout-draft",
+			"com_liferay_login_web_portlet_LoginPortlet"
+		).build();
 
 	private RoleModel _administratorRoleModel;
 	private Map<Long, SimpleCounter>[] _assetCategoryCounters;

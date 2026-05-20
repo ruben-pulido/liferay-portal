@@ -49,7 +49,8 @@ describe('IndividualsOverviewCDP', () => {
 	});
 
 	it('should render Individuals Metrics Cards', async () => {
-		jest.doMock('@apollo/react-hooks', () => ({
+		jest.doMock('@apollo/client', () => ({
+			...jest.requireActual('@apollo/client'),
 			useQuery: jest.fn(() => ({
 				data: mockedIndividualMetrics.data,
 				loading: false
@@ -67,8 +68,8 @@ describe('IndividualsOverviewCDP', () => {
 			useCurrentUser: jest.fn(() => ({isAdmin: () => true}))
 		}));
 
-		jest.doMock('shared/hooks/useDataSource', () => ({
-			useDataSource: jest.fn(() => ({empty: false}))
+		jest.doMock('shared/context/dataSources', () => ({
+			useDataSources: jest.fn(() => ({empty: false}))
 		}));
 
 		jest.doMock('react-router-dom', () => ({
@@ -83,7 +84,7 @@ describe('IndividualsOverviewCDP', () => {
 			'../IndividualsOverviewCDP'
 		);
 
-		const {container} = render(
+		const {getByText} = render(
 			<Provider store={mockStore()}>
 				<BrowserRouter>
 					<IndividualsOverviewCDP />
@@ -91,6 +92,8 @@ describe('IndividualsOverviewCDP', () => {
 			</Provider>
 		);
 
-		expect(container).toMatchSnapshot();
+		expect(getByText('TOTAL INDIVIDUALS')).toBeInTheDocument();
+		expect(getByText('KNOWN INDIVIDUALS')).toBeInTheDocument();
+		expect(getByText('ANONYMOUS INDIVIDUALS')).toBeInTheDocument();
 	});
 });

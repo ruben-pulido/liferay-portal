@@ -36,6 +36,20 @@ public class DSLQueryEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<DSLQueryEntry> dslQueryEntries) {
+		getPersistence().cacheResult(dslQueryEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(DSLQueryEntry dslQueryEntry) {
+		getPersistence().cacheResult(dslQueryEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,24 +125,6 @@ public class DSLQueryEntryUtil {
 	}
 
 	/**
-	 * Caches the dsl query entry in the entity cache if it is enabled.
-	 *
-	 * @param dslQueryEntry the dsl query entry
-	 */
-	public static void cacheResult(DSLQueryEntry dslQueryEntry) {
-		getPersistence().cacheResult(dslQueryEntry);
-	}
-
-	/**
-	 * Caches the dsl query entries in the entity cache if it is enabled.
-	 *
-	 * @param dslQueryEntries the dsl query entries
-	 */
-	public static void cacheResult(List<DSLQueryEntry> dslQueryEntries) {
-		getPersistence().cacheResult(dslQueryEntries);
-	}
-
-	/**
 	 * Creates a new dsl query entry with the primary key. Does not add the dsl query entry to the database.
 	 *
 	 * @param dslQueryEntryId the primary key for the new dsl query entry
@@ -180,86 +176,6 @@ public class DSLQueryEntryUtil {
 		return getPersistence().fetchByPrimaryKey(dslQueryEntryId);
 	}
 
-	/**
-	 * Returns all the dsl query entries.
-	 *
-	 * @return the dsl query entries
-	 */
-	public static List<DSLQueryEntry> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the dsl query entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DSLQueryEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dsl query entries
-	 * @param end the upper bound of the range of dsl query entries (not inclusive)
-	 * @return the range of dsl query entries
-	 */
-	public static List<DSLQueryEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the dsl query entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DSLQueryEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dsl query entries
-	 * @param end the upper bound of the range of dsl query entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of dsl query entries
-	 */
-	public static List<DSLQueryEntry> findAll(
-		int start, int end,
-		OrderByComparator<DSLQueryEntry> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dsl query entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DSLQueryEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dsl query entries
-	 * @param end the upper bound of the range of dsl query entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of dsl query entries
-	 */
-	public static List<DSLQueryEntry> findAll(
-		int start, int end, OrderByComparator<DSLQueryEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the dsl query entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of dsl query entries.
-	 *
-	 * @return the number of dsl query entries
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
-	}
-
 	public static DSLQueryEntryPersistence getPersistence() {
 		return _persistence;
 	}
@@ -271,4 +187,4 @@ public class DSLQueryEntryUtil {
 	private static volatile DSLQueryEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2001043378
+// LIFERAY-SERVICE-BUILDER-HASH:-1435575532

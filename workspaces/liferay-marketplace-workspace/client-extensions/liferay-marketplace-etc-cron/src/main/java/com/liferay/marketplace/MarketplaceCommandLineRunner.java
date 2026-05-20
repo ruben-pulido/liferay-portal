@@ -31,6 +31,7 @@ import com.liferay.headless.commerce.admin.order.client.resource.v1_0.OrderResou
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.net.URL;
@@ -77,6 +78,8 @@ public class MarketplaceCommandLineRunner
 		_invoke(this::_processOnHoldTrials, "On Hold Trials");
 
 		_invoke(this::_processPendingOrders, "Pending Orders");
+
+		_invoke(this::_processMostPurchasedProducts, "Most Purchased Products");
 
 		_invoke(
 			this::_processProjectsUsingMarketplaceApps,
@@ -483,18 +486,6 @@ public class MarketplaceCommandLineRunner
 			).toUri());
 	}
 
-	private void _patchReport(String data, String externalReferenceCode) {
-		patch(
-			_liferayOAuth2AccessTokenManager.getAuthorization(
-				_liferayOAuthApplicationExternalReferenceCodes),
-			data,
-			UriComponentsBuilder.fromPath(
-				"/o/c/reports/by-external-reference-code/" +
-					externalReferenceCode
-			).build(
-			).toUri());
-	}
-
 	private void _postRequestProductFeedback(long orderId) throws Exception {
 		post(
 			_liferayOAuth2AccessTokenManager.getAuthorization(
@@ -646,6 +637,72 @@ public class MarketplaceCommandLineRunner
 		}
 	}
 
+	private void _processMostPurchasedProducts() throws Exception {
+		ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+
+		if ((zonedDateTime.getHour() / _WINDOW_SIZE_HOURS) != 0) {
+			return;
+		}
+
+		Map<String, JSONObject> productPurchases = new HashMap<>();
+
+		String filterString = StringBundler.concat(
+			"orderStatus/any(x:(x eq ", _ORDER_STATUS_COMPLETED,
+			")) or orderTypeExternalReferenceCode eq 'AI_HUB'");
+
+		_forEachOrder(
+			filterString,
+			order -> {
+				OrderItem[] orderItems = order.getOrderItems();
+
+				if (ArrayUtil.isEmpty(orderItems)) {
+					return;
+				}
+
+				OrderItem orderItem = orderItems[0];
+
+				String productName = orderItem.getName(
+				).get(
+					"en_US"
+				);
+
+				JSONObject productJSONObject = productPurchases.get(
+					productName);
+
+				if (productJSONObject == null) {
+					productJSONObject = new JSONObject(
+					).put(
+						"orderTypeExternalReferenceCode",
+						order.getOrderTypeExternalReferenceCode()
+					).put(
+						"productId", orderItem.getProductId()
+					).put(
+						"total", 1
+					);
+
+					productPurchases.put(productName, productJSONObject);
+				}
+				else {
+					productJSONObject.put(
+						"total", productJSONObject.getInt("total") + 1);
+				}
+			});
+
+		_putReportByExternalReferenceCode(
+			new JSONObject(
+			).put(
+				"value",
+				new JSONArray(
+					productPurchases.values()
+				).toString()
+			).toString(),
+			"PRODUCT-PURCHASES-COUNT");
+
+		if (_log.isInfoEnabled()) {
+			_log.info("Processed most purchased products");
+		}
+	}
+
 	private void _processOnHoldTrials() throws Exception {
 		Page<Order> page = _getOrdersPage(
 			"orderStatus/any(x:(x eq " + _ORDER_STATUS_ON_HOLD +
@@ -740,9 +797,12 @@ public class MarketplaceCommandLineRunner
 
 		_forEachOrder(
 			StringBundler.concat(
-				"createDate gt ",
+				"createDate ge ",
 				LocalDate.of(
-					2025, 1, 1
+					ZonedDateTime.now(
+						ZoneOffset.UTC
+					).getYear(),
+					1, 1
 				).atStartOfDay(
 					ZoneOffset.UTC
 				),
@@ -818,15 +878,27 @@ public class MarketplaceCommandLineRunner
 				);
 			});
 
-		_patchReport(
-			new JSONObject(
-			).put(
-				"value",
-				new JSONObject(
-					projectsUsingMarketplace
-				).toString()
-			).toString(),
-			"PROJECTS-USING-MARKETPLACE");
+		for (Map.Entry<String, JSONObject> entry :
+				projectsUsingMarketplace.entrySet()) {
+
+			String name = "KORONEIKI-PROJECT-" + entry.getKey();
+
+			try {
+				_putReportByExternalReferenceCode(
+					new JSONObject(
+					).put(
+						"name", name
+					).put(
+						"value",
+						entry.getValue(
+						).toString()
+					).toString(),
+					name);
+			}
+			catch (Exception exception) {
+				_log.error("Unable to put report " + name, exception);
+			}
+		}
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
@@ -950,6 +1022,20 @@ public class MarketplaceCommandLineRunner
 					exception);
 			}
 		}
+	}
+
+	private void _putReportByExternalReferenceCode(
+		String body, String externalReferenceCode) {
+
+		put(
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				_liferayOAuthApplicationExternalReferenceCodes),
+			body,
+			UriComponentsBuilder.fromPath(
+				"/o/c/reports/by-external-reference-code/" +
+					externalReferenceCode
+			).build(
+			).toUri());
 	}
 
 	private void _updateOrder(long orderId, int orderStatus) throws Exception {

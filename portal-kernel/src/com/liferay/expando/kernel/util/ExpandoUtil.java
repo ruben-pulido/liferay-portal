@@ -8,15 +8,20 @@ package com.liferay.expando.kernel.util;
 import com.liferay.expando.kernel.exception.ValueDataException;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.Validator;
 
 import jakarta.portlet.PortletRequest;
 
@@ -26,16 +31,86 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 /**
  * @author Lily Chi
  */
 public class ExpandoUtil {
+
+	public static List<String> fillMissingDefaultLocaleValues(
+		Map<String, Serializable> expandoBridgeAttributes) {
+
+		List<String> warningMessages = new ArrayList<>();
+
+		if (expandoBridgeAttributes == null) {
+			return warningMessages;
+		}
+
+		Locale siteDefaultLocale = LocaleUtil.getSiteDefault();
+
+		String siteDefaultLanguageId = LocaleUtil.toLanguageId(
+			siteDefaultLocale);
+
+		for (Map.Entry<String, Serializable> entry :
+				expandoBridgeAttributes.entrySet()) {
+
+			if (!(entry.getValue() instanceof Map) ||
+				!_isLocalizedExpandoBridgeAttributeValue(
+					(Map<?, ?>)entry.getValue())) {
+
+				continue;
+			}
+
+			Map<Locale, Object> localizedMap =
+				(Map<Locale, Object>)entry.getValue();
+
+			if (_hasLocalizedExpandoValue(
+					localizedMap.get(siteDefaultLocale))) {
+
+				continue;
+			}
+
+			List<Map.Entry<Locale, Object>> sortedEntries = new ArrayList<>(
+				localizedMap.entrySet());
+
+			sortedEntries.sort(
+				Comparator.comparing(
+					localeEntry -> LocaleUtil.toLanguageId(
+						localeEntry.getKey())));
+
+			for (Map.Entry<Locale, Object> localeEntry : sortedEntries) {
+				if (_hasLocalizedExpandoValue(localeEntry.getValue())) {
+					localizedMap.put(siteDefaultLocale, localeEntry.getValue());
+
+					String warningMessage = StringBundler.concat(
+						"Using value from locale ",
+						LocaleUtil.toLanguageId(localeEntry.getKey()),
+						" for expando attribute \"", entry.getKey(),
+						"\" because default locale ", siteDefaultLanguageId,
+						" has no value");
+
+					warningMessages.add(warningMessage);
+
+					if (_log.isWarnEnabled()) {
+						_log.warn(warningMessage);
+					}
+
+					break;
+				}
+			}
+		}
+
+		return warningMessages;
+	}
 
 	public static Map<String, Serializable> getExpandoBridgeAttributes(
 			ExpandoBridge expandoBridge, HttpServletRequest httpServletRequest)
@@ -243,5 +318,35 @@ public class ExpandoUtil {
 
 		return value;
 	}
+
+	private static boolean _hasLocalizedExpandoValue(Object value) {
+		if (value instanceof String) {
+			return Validator.isNotNull((String)value);
+		}
+
+		if (value instanceof String[]) {
+			return ArrayUtil.isNotEmpty((String[])value);
+		}
+
+		return false;
+	}
+
+	private static boolean _isLocalizedExpandoBridgeAttributeValue(
+		Map<?, ?> value) {
+
+		Set<? extends Map.Entry<?, ?>> set = value.entrySet();
+
+		Iterator<? extends Map.Entry<?, ?>> iterator = set.iterator();
+
+		if (!iterator.hasNext()) {
+			return false;
+		}
+
+		Map.Entry<?, ?> entry = iterator.next();
+
+		return entry.getKey() instanceof Locale;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(ExpandoUtil.class);
 
 }

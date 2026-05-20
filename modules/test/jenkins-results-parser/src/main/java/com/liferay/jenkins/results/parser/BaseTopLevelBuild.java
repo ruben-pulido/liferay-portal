@@ -23,6 +23,7 @@ import com.liferay.jenkins.results.parser.failure.message.generator.PoshiTestFai
 import com.liferay.jenkins.results.parser.failure.message.generator.PoshiValidationFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.RebaseFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.RelevantRuleValidationFailureMessageGenerator;
+import com.liferay.jenkins.results.parser.persistent.resource.PersistentResourceFactory;
 import com.liferay.jenkins.results.parser.testray.TestrayBuild;
 
 import java.io.File;
@@ -49,7 +50,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -933,6 +934,18 @@ public abstract class BaseTopLevelBuild
 				}
 
 			});
+		archiveCallables.add(
+			new Callable<Object>() {
+
+				@Override
+				public Object call() {
+					PersistentResourceFactory.touchUsedPersistentResources(
+						getExecutorService());
+
+					return null;
+				}
+
+			});
 
 		return archiveCallables;
 	}
@@ -1469,7 +1482,7 @@ public abstract class BaseTopLevelBuild
 			Dom4JUtil.getNewElement(
 				"p", null,
 				Dom4JUtil.getNewAnchorElement(
-					_URL_CI_SYSTEM_STATUS, "CI System Status")),
+					_getCISystemStatusURL(), "CI System Status")),
 			Dom4JUtil.getNewElement(
 				"p", null, "Start Time: ",
 				toJenkinsReportDateString(
@@ -2362,6 +2375,28 @@ public abstract class BaseTopLevelBuild
 		return cachedDownstreamBuilds;
 	}
 
+	private String _getCISystemStatusURL() {
+		try {
+			String masterHostname = JenkinsResultsParserUtil.getBuildProperty(
+				"jenkins.remote.url[test-1-0]");
+
+			if (!JenkinsResultsParserUtil.isNullOrEmpty(masterHostname)) {
+				if (!masterHostname.endsWith("/")) {
+					masterHostname += "/";
+				}
+
+				return JenkinsResultsParserUtil.combine(
+					masterHostname,
+					"userContent/reports/ci-system-status/index.html");
+			}
+		}
+		catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+
+		return _URL_CI_SYSTEM_STATUS;
+	}
+
 	private Map<Map<String, String>, Integer> _getSlaveUsageByLabels() {
 		Map<Map<String, String>, Integer> slaveUsages = new HashMap<>();
 
@@ -2461,7 +2496,7 @@ public abstract class BaseTopLevelBuild
 		"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js";
 
 	private static final String _URL_CI_SYSTEM_STATUS =
-		"http://test-1-0.liferay.com/userContent/reports/ci-system-status" +
+		"https://test-1-0.liferay.com/userContent/reports/ci-system-status" +
 			"/index.html";
 
 	private static final Pattern _downstreamBuildURLPattern = Pattern.compile(

@@ -31,8 +31,13 @@ export default function HomeRecentAssetsFDSPropsTransformer({
 	itemsActions?: any[];
 	otherProps: any;
 }) {
+	const {additionalAPIURLParameters, ...remainingAdditionalProps} =
+		additionalProps || {};
+
 	return {
 		...otherProps,
+		additionalAPIURLParameters,
+		additionalProps: remainingAdditionalProps,
 		customRenderers: {
 			tableCell: [
 				{
@@ -225,7 +230,7 @@ export default function HomeRecentAssetsFDSPropsTransformer({
 							closeModal,
 							defaultSourceLanguageId:
 								itemData.embedded?.defaultLanguageId,
-							itemId: itemData.embedded.id,
+							translationsAPIURL: `${itemData.actions.get.href}/translations`,
 						}),
 				});
 			}

@@ -133,7 +133,7 @@ public class ViewSharedWithMeSectionDisplayContext {
 			StringBundler.concat(
 				_themeDisplay.getPortalURL(), _themeDisplay.getPathMain(),
 				GroupConstants.CMS_FRIENDLY_URL,
-				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				"/edit_content_item?p_l_mode=read&p_p_state=",
 				LiferayWindowState.POP_UP, "&redirect=",
 				_themeDisplay.getURLCurrent(), "&objectEntryId={embedded.id}")
 		).build();
@@ -142,7 +142,7 @@ public class ViewSharedWithMeSectionDisplayContext {
 	public String getAPIURL() {
 		return "/o/headless-admin-user/v1.0/my-user-account/shared-assets" +
 			"/shared-with-me?filter=(spaceDepotEntry eq true)" +
-				"&nestedFields=file";
+				"&nestedFields=file&sort=dateModified:desc";
 	}
 
 	public Map<String, Object> getBreadcrumbProps() throws PortalException {
@@ -198,7 +198,7 @@ public class ViewSharedWithMeSectionDisplayContext {
 				StringBundler.concat(
 					_themeDisplay.getPortalURL(), _themeDisplay.getPathMain(),
 					GroupConstants.CMS_FRIENDLY_URL,
-					"/edit_content_item?&p_l_mode=read&p_p_state=",
+					"/edit_content_item?p_l_mode=read&p_p_state=",
 					LiferayWindowState.POP_UP, "&redirect=",
 					_themeDisplay.getURLCurrent(), "&objectEntryId={classPK}"),
 				"view", "view-content",

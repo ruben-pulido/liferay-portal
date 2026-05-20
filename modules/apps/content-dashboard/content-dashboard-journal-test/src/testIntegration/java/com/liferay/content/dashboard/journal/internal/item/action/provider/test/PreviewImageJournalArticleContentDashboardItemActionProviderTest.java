@@ -71,9 +71,6 @@ public class PreviewImageJournalArticleContentDashboardItemActionProviderTest {
 
 	@Test
 	public void testGetContentDashboardItemAction() throws Exception {
-		ServiceContext originalServiceContext =
-			ServiceContextThreadLocal.getServiceContext();
-
 		ThemeDisplay themeDisplay = _getThemeDisplay();
 
 		ServiceContextThreadLocal.pushServiceContext(
@@ -125,8 +122,7 @@ public class PreviewImageJournalArticleContentDashboardItemActionProviderTest {
 				contentDashboardItemAction.getURL());
 		}
 		finally {
-			ServiceContextThreadLocal.pushServiceContext(
-				originalServiceContext);
+			ServiceContextThreadLocal.popServiceContext();
 		}
 	}
 
@@ -145,9 +141,6 @@ public class PreviewImageJournalArticleContentDashboardItemActionProviderTest {
 
 	@Test
 	public void testIsShow() throws Exception {
-		ServiceContext originalServiceContext =
-			ServiceContextThreadLocal.getServiceContext();
-
 		ServiceContextThreadLocal.pushServiceContext(
 			_getServiceContext(_getThemeDisplay()));
 
@@ -192,8 +185,7 @@ public class PreviewImageJournalArticleContentDashboardItemActionProviderTest {
 					journalArticle, new MockHttpServletRequest()));
 		}
 		finally {
-			ServiceContextThreadLocal.pushServiceContext(
-				originalServiceContext);
+			ServiceContextThreadLocal.popServiceContext();
 		}
 	}
 
@@ -282,7 +274,9 @@ public class PreviewImageJournalArticleContentDashboardItemActionProviderTest {
 
 		themeDisplay.setScopeGroupId(_group.getGroupId());
 		themeDisplay.setSiteGroupId(_group.getGroupId());
-		themeDisplay.setURLCurrent("http://localhost:8080/currentURL");
+		themeDisplay.setURLCurrent(
+			"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/currentURL");
 
 		return themeDisplay;
 	}

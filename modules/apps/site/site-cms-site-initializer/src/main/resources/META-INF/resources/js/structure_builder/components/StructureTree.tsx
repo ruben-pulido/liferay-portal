@@ -17,11 +17,13 @@ import getLocalizedValue from '../../common/utils/getLocalizedValue';
 import {useCache} from '../contexts/CacheContext';
 import {
 	Action,
+	Clipboard,
 	State,
 	useSelector,
 	useStateDispatch,
 } from '../contexts/StateContext';
 import useIsBeingRenamed from '../hooks/useIsBeingRenamed';
+import selectClipboard from '../selectors/selectClipboard';
 import selectHistory from '../selectors/selectHistory';
 import selectInvalids from '../selectors/selectInvalids';
 import selectPublishedChildren from '../selectors/selectPublishedChildren';
@@ -42,7 +44,9 @@ import {FIELD_TYPE_ICON, FieldType} from '../utils/field';
 import handleAddRepeatableGroup from '../utils/handleAddRepeatableGroup';
 import handleDeleteChildren from '../utils/handleDeleteChildren';
 import handleMoveChildren from '../utils/handleMoveChildren';
+import handlePaste from '../utils/handlePaste';
 import handleUngroupRepeatableGroup from '../utils/handleUngroupRepeatableGroup';
+import isCopyable from '../utils/isCopyable';
 import isField from '../utils/isField';
 import isLocked from '../utils/isLocked';
 import isReferenced from '../utils/isReferenced';
@@ -51,6 +55,7 @@ import AddChildDropdown from './AddChildDropdown';
 
 type TreeItem = {
 	actions?: Array<{
+		disabled?: boolean;
 		href?: string;
 		label?: string;
 		onClick?: () => void;
@@ -75,12 +80,15 @@ type TreeItem = {
 		| RepeatableGroup['type'];
 };
 
+export type SelectionMode = 'multiple' | 'range' | 'single';
+
 export default function StructureTree({search}: {search: string}) {
 	const dispatch = useStateDispatch();
 
 	const isBeingRenamed = useIsBeingRenamed();
 
 	const children = useSelector(selectStructureChildren);
+	const clipboard = useSelector(selectClipboard);
 	const history = useSelector(selectHistory);
 	const invalids = useSelector(selectInvalids);
 	const publishedChildren = useSelector(selectPublishedChildren);
@@ -111,8 +119,14 @@ export default function StructureTree({search}: {search: string}) {
 
 		return [
 			{
+				actions: getRootActions({
+					clipboard,
+					dispatch,
+					structure,
+				}),
 				children: buildItems({
 					children,
+					clipboard,
 					dispatch,
 					invalids,
 					publishedChildren,
@@ -128,6 +142,7 @@ export default function StructureTree({search}: {search: string}) {
 		];
 	}, [
 		children,
+		clipboard,
 		dispatch,
 		hasReferencedStructure,
 		invalids,
@@ -152,6 +167,17 @@ export default function StructureTree({search}: {search: string}) {
 
 		else if (mode === 'single') {
 			nextSelection = [item.id];
+		}
+
+		// Selecting with range selection
+
+		else if (mode === 'range') {
+			nextSelection = getRangeItems({
+				items,
+				rootId: structureUuid,
+				selection,
+				targetId: item.id,
+			});
 		}
 
 		// Selecting with multiple selection
@@ -195,13 +221,65 @@ export default function StructureTree({search}: {search: string}) {
 		objectDefinitionsStatus,
 	]);
 
-	useEffect(() => {
-		for (const uuid of selection) {
-			if (!selectedKeys.has(uuid)) {
-				setSelectedKeys(new Set(selection));
+	useEventListener(
+		'keydown',
+		(event) => {
+			const {key, shiftKey, target} = event as KeyboardEvent;
 
-				setExpandedKeys((current) => new Set([...current, uuid]));
+			if (!shiftKey || (key !== 'ArrowDown' && key !== 'ArrowUp')) {
+				return;
 			}
+
+			const fromId = (target as HTMLElement | null)
+				?.getAttribute('data-id')
+				?.split(',')[1] as Uuid | undefined;
+
+			const toId = (document.activeElement as HTMLElement | null)
+				?.getAttribute('data-id')
+				?.split(',')[1] as Uuid | undefined;
+
+			if (!toId || toId === structureUuid || toId === fromId) {
+				return;
+			}
+
+			dispatch({
+				selection: selection.includes(toId)
+					? selection.filter((uuid) => uuid !== fromId)
+					: [...selection, toId],
+				type: 'set-selection',
+			});
+		},
+		false,
+
+		// @ts-ignore
+
+		window
+	);
+
+	useEventListener(
+		'keydown',
+		(event) => {
+			if ((event as KeyboardEvent).key === 'Escape') {
+				dispatch({
+					selection: [],
+					type: 'set-selection',
+				});
+			}
+		},
+		false,
+
+		// @ts-ignore
+
+		window
+	);
+
+	useEffect(() => {
+		const added = selection.filter((uuid) => !selectedKeys.has(uuid));
+
+		setSelectedKeys(new Set(selection));
+
+		if (added.length) {
+			setExpandedKeys((current) => new Set([...current, ...added]));
 		}
 
 		// eslint-disable-next-line
@@ -264,11 +342,30 @@ export default function StructureTree({search}: {search: string}) {
 			onSelect={onSelect}
 			onSelectionChange={setSelectedKeys}
 			selectedKeys={selectedKeys}
-			selectionMode={mode}
+			selectionMode={mode === 'single' ? 'single' : 'multiple'}
 			showExpanderOnHover={false}
 		>
 			{(item, selectedKeys) => (
-				<ClayTreeView.Item>
+				<ClayTreeView.Item
+					actions={
+						item.actions?.length ? (
+							<ClayDropDownWithItems
+								items={item.actions}
+								trigger={
+									<ClayButtonWithIcon
+										aria-label={Liferay.Language.get(
+											'options'
+										)}
+										borderless
+										displayType="unstyled"
+										size="sm"
+										symbol="ellipsis-v"
+									/>
+								}
+							/>
+						) : undefined
+					}
+				>
 					<ClayTreeView.ItemStack
 						className={classNames({
 							active: selectedKeys.has(item.id),
@@ -312,6 +409,18 @@ export default function StructureTree({search}: {search: string}) {
 											{childItem.actions?.length ? (
 												<ClayDropDownWithItems
 													items={childItem.actions}
+													menuElementAttrs={{
+														onKeyDown: (event) => {
+															if (
+																event.key ===
+																	'Enter' ||
+																event.key ===
+																	' '
+															) {
+																event.stopPropagation();
+															}
+														},
+													}}
 													trigger={
 														<ClayButtonWithIcon
 															aria-label={Liferay.Language.get(
@@ -493,8 +602,8 @@ function ItemStatus({item: {invalid, locked}}: {item: TreeItem}) {
 	return <span className="sr-only">{messages.join(' ')}</span>;
 }
 
-function useSelectionMode() {
-	const [multiple, setMultiple] = useState(false);
+function useSelectionMode(): SelectionMode {
+	const [mode, setMode] = useState<SelectionMode>('single');
 
 	const isMultiSelectKey = (key: string) => {
 		if (Liferay.Browser.isMac()) {
@@ -509,8 +618,11 @@ function useSelectionMode() {
 		(event) => {
 			const {key} = event as KeyboardEvent;
 
-			if (isMultiSelectKey(key) && !multiple) {
-				setMultiple(true);
+			if (key === 'Shift') {
+				setMode('range');
+			}
+			else if (isMultiSelectKey(key)) {
+				setMode('multiple');
 			}
 		},
 		false,
@@ -525,8 +637,8 @@ function useSelectionMode() {
 		(event) => {
 			const {key} = event as KeyboardEvent;
 
-			if (isMultiSelectKey(key) && multiple) {
-				setMultiple(false);
+			if (key === 'Shift' || isMultiSelectKey(key)) {
+				setMode('single');
 			}
 		},
 		false,
@@ -538,7 +650,7 @@ function useSelectionMode() {
 
 	useEventListener(
 		'blur',
-		() => setMultiple(false),
+		() => setMode('single'),
 		false,
 
 		// @ts-ignore
@@ -546,11 +658,58 @@ function useSelectionMode() {
 		window
 	);
 
-	return multiple ? 'multiple' : 'single';
+	return mode;
+}
+
+export function flatItemIds(
+	items: Array<{children?: any[]; id: Uuid}>
+): Uuid[] {
+	return items.reduce((ids: Uuid[], item) => {
+		ids.push(item.id);
+
+		if (item.children?.length) {
+			ids.push(...flatItemIds(item.children));
+		}
+
+		return ids;
+	}, []);
+}
+
+export function getRangeItems({
+	items,
+	rootId,
+	selection,
+	targetId,
+}: {
+	items: Array<{children?: any[]; id: Uuid}>;
+	rootId: Uuid;
+	selection: State['selection'];
+	targetId: Uuid;
+}): State['selection'] {
+	const ids = flatItemIds(items).filter((id) => id !== rootId);
+
+	if (!ids.includes(targetId)) {
+		return [targetId];
+	}
+
+	const anchorId = selection.at(-1);
+
+	if (!anchorId || anchorId === rootId) {
+		return [targetId];
+	}
+
+	const anchorIndex = ids.indexOf(anchorId);
+	const targetIndex = ids.indexOf(targetId);
+
+	const start = Math.min(anchorIndex, targetIndex);
+	const end = Math.max(anchorIndex, targetIndex);
+
+	return ids.slice(start, end + 1);
 }
 
 function buildItems({
 	children,
+	clipboard,
 	dispatch,
 	invalids,
 	publishedChildren,
@@ -558,6 +717,7 @@ function buildItems({
 	structure,
 }: {
 	children: (ReferencedStructure | RepeatableGroup | Structure)['children'];
+	clipboard: Clipboard | null;
 	dispatch: React.Dispatch<Action>;
 	invalids: State['invalids'];
 	publishedChildren: State['publishedChildren'];
@@ -572,6 +732,7 @@ function buildItems({
 				if (match(label, search)) {
 					items.push({
 						actions: getItemActions({
+							clipboard,
 							dispatch,
 							item: child,
 							publishedChildren,
@@ -593,6 +754,7 @@ function buildItems({
 
 				const item: TreeItem = {
 					actions: getItemActions({
+						clipboard,
 						dispatch,
 						item: child,
 						publishedChildren,
@@ -600,6 +762,7 @@ function buildItems({
 					}),
 					children: buildItems({
 						children: child.children,
+						clipboard,
 						dispatch,
 						invalids,
 						publishedChildren,
@@ -629,6 +792,7 @@ function buildItems({
 				if (match(label, search)) {
 					items.push({
 						actions: getItemActions({
+							clipboard,
 							dispatch,
 							item: child,
 							publishedChildren,
@@ -659,21 +823,26 @@ function match(value: string, keyword: string) {
 }
 
 function getItemActions({
+	clipboard,
 	dispatch,
 	item,
 	publishedChildren,
 	structure,
 }: {
+	clipboard: Clipboard | null;
 	dispatch: React.Dispatch<Action>;
 	item: StructureChild;
 	publishedChildren: State['publishedChildren'];
 	structure: Structure;
 }) {
-	if (isLocked(item)) {
+	if (
+		isLocked({root: structure, uuid: item.uuid}) ||
+		isReferenced({root: structure, uuid: item.uuid})
+	) {
 		return [];
 	}
 
-	const actions = [];
+	const actions: TreeItem['actions'] = [];
 
 	if (item.type === 'referenced-structure' && item.erc) {
 		actions.push({
@@ -685,7 +854,7 @@ function getItemActions({
 		});
 	}
 
-	if (!isReferenced({root: structure, uuid: item.uuid}) && isField(item)) {
+	if (isField(item)) {
 		actions.push({
 			label: Liferay.Language.get('create-repeatable-group'),
 			onClick: () =>
@@ -697,52 +866,93 @@ function getItemActions({
 				}),
 			symbolLeft: 'repeat',
 		});
-	}
-
-	if (actions.length) {
-		actions.push({type: 'divider' as const});
-	}
-
-	if (!isReferenced({root: structure, uuid: item.uuid})) {
-		if (item.type === 'repeatable-group') {
-			actions.push({
-				label: Liferay.Language.get('ungroup'),
-				onClick: () =>
-					handleUngroupRepeatableGroup({
-						dispatch,
-						publishedChildren,
-						uuid: item.uuid,
-					}),
-			});
-		}
-
-		actions.push({
-			label: Liferay.Language.get('duplicate'),
-			onClick: async () => {
-				dispatch({
-					type: 'duplicate-child',
-					uuid: item.uuid,
-				});
-			},
-			symbolLeft: 'copy',
-		});
 
 		actions.push({type: 'divider' as const});
+	}
 
+	if (item.type === 'repeatable-group') {
 		actions.push({
-			label: Liferay.Language.get('delete-field'),
-			onClick: async () =>
-				handleDeleteChildren({
+			label: Liferay.Language.get('ungroup'),
+			onClick: () =>
+				handleUngroupRepeatableGroup({
 					dispatch,
 					publishedChildren,
-					structure,
-					uuids: [item.uuid],
+					uuid: item.uuid,
 				}),
-			symbolLeft: 'trash',
 		});
 	}
 
+	if (isCopyable({root: structure, uuid: item.uuid})) {
+		actions.push({
+			label: Liferay.Language.get('copy'),
+			onClick: () =>
+				dispatch({type: 'copy-children', uuids: [item.uuid]}),
+			symbolLeft: 'copy',
+		});
+	}
+
+	actions.push({
+		label: Liferay.Language.get('duplicate'),
+		onClick: () =>
+			dispatch({type: 'duplicate-children', uuids: [item.uuid]}),
+		symbolLeft: 'copy',
+	});
+
+	if (item.type === 'repeatable-group') {
+		actions.push({
+			disabled: !clipboard?.items.length,
+			label: Liferay.Language.get('paste'),
+			onClick: () =>
+				handlePaste({
+					clipboard,
+					dispatch,
+					structure,
+					targetUuid: item.uuid,
+				}),
+			symbolLeft: 'paste',
+		});
+	}
+
+	actions.push({type: 'divider' as const});
+
+	actions.push({
+		label: Liferay.Language.get('delete-field'),
+		onClick: () =>
+			handleDeleteChildren({
+				dispatch,
+				publishedChildren,
+				structure,
+				uuids: [item.uuid],
+			}),
+		symbolLeft: 'trash',
+	});
+
 	return actions;
+}
+
+function getRootActions({
+	clipboard,
+	dispatch,
+	structure,
+}: {
+	clipboard: Clipboard | null;
+	dispatch: React.Dispatch<Action>;
+	structure: Structure;
+}): TreeItem['actions'] {
+	return [
+		{
+			disabled: !clipboard?.items.length,
+			label: Liferay.Language.get('paste'),
+			onClick: () =>
+				handlePaste({
+					clipboard,
+					dispatch,
+					structure,
+					targetUuid: structure.uuid,
+				}),
+			symbolLeft: 'paste',
+		},
+	];
 }
 
 function hasReferencedStructureChild(

@@ -16,6 +16,7 @@ import CategorizationPermissionService from '../../../common/services/Categoriza
 import VocabularyService from '../../../common/services/VocabularyService';
 import {IVocabulary} from '../../../common/types/IVocabulary';
 import {
+	displayErrorToast,
 	displayNameInUseErrorToast,
 	displaySystemErrorToast,
 } from '../../../common/utils/toastUtil';
@@ -34,6 +35,7 @@ export default function EditVocabulary({
 	backURL,
 	cmsGroupId,
 	defaultLanguageId,
+	externalReferenceCodeMaxLength,
 	locales,
 	spritemap,
 	vocabularyId,
@@ -43,6 +45,7 @@ export default function EditVocabulary({
 	backURL: string;
 	cmsGroupId: number;
 	defaultLanguageId: string;
+	externalReferenceCodeMaxLength: number;
 	locales: any[];
 	spritemap: string;
 	vocabularyId: number;
@@ -57,6 +60,10 @@ export default function EditVocabulary({
 	const [assetTypes, setAssetTypes] = useState<AssetType[]>([]);
 	const [assetTypeChange, setAssetTypeChange] = useState(false);
 	const [assetTypeInputError, setAssetTypeInputError] = useState<string>('');
+	const [
+		externalReferenceCodeInputError,
+		setExternalReferenceCodeInputError,
+	] = useState<string>('');
 	const [nameInputError, setNameInputError] = useState<string>('');
 	const {observer, onOpenChange, open} = useModal();
 	const [spaceChange, setSpaceChange] = useState(false);
@@ -75,6 +82,7 @@ export default function EditVocabulary({
 		description_i18n: {
 			[defaultLanguageId]: '',
 		},
+		externalReferenceCode: '',
 		multiValued: true,
 		name: '',
 		name_i18n: {
@@ -141,6 +149,38 @@ export default function EditVocabulary({
 		return true;
 	};
 
+	const _handleSaveError = (error: string, status?: string | null): never => {
+		if (status === 'CONFLICT') {
+			if (
+				error ===
+				'A taxonomy vocabulary with the same external reference code already exists'
+			) {
+				const ercErrorMessage = Liferay.Language.get(
+					'please-enter-a-unique-external-reference-code'
+				);
+
+				setExternalReferenceCodeInputError(ercErrorMessage);
+				setActiveVerticalNavKey('general');
+
+				displayErrorToast(ercErrorMessage);
+			}
+			else {
+				setNameInputError(
+					Liferay.Language.get(
+						'please-enter-a-unique-name.-this-one-is-already-in-use'
+					)
+				);
+
+				displayNameInUseErrorToast();
+			}
+		}
+		else {
+			displaySystemErrorToast();
+		}
+
+		throw new Error(error);
+	};
+
 	const _handleSave = async () => {
 		if (!_handleValidateInputs()) {
 			return;
@@ -154,20 +194,7 @@ export default function EditVocabulary({
 				);
 
 			if (error) {
-				if (status === 'CONFLICT') {
-					setNameInputError(
-						Liferay.Language.get(
-							'please-enter-a-unique-name.-this-one-is-already-in-use'
-						)
-					);
-
-					displayNameInUseErrorToast();
-				}
-				else {
-					displaySystemErrorToast();
-				}
-
-				throw new Error(error);
+				_handleSaveError(error, status);
 			}
 			else {
 				const vocabularyId: number = data?.id || 0;
@@ -191,13 +218,11 @@ export default function EditVocabulary({
 			}
 		}
 		else {
-			const {error} =
+			const {error, status} =
 				await VocabularyService.updateVocabulary(vocabulary);
 
 			if (error) {
-				displaySystemErrorToast();
-
-				throw new Error(error);
+				_handleSaveError(error, status);
 			}
 		}
 
@@ -229,6 +254,7 @@ export default function EditVocabulary({
 
 	const shouldDisableSaveBtn =
 		!vocabulary.name.trim().length ||
+		!!externalReferenceCodeInputError ||
 		!!spaceInputError ||
 		!!assetTypeInputError;
 
@@ -247,6 +273,7 @@ export default function EditVocabulary({
 						<ClayButton
 							aria-label={Liferay.Language.get('back')}
 							borderless
+							data-canonical-name={Liferay.Language.get('cancel')}
 							displayType="secondary"
 							onClick={() => navigate(backURL)}
 							outline
@@ -257,6 +284,7 @@ export default function EditVocabulary({
 
 						<ClayButton
 							className="inline-item-after"
+							data-canonical-name={Liferay.Language.get('save')}
 							disabled={shouldDisableSaveBtn}
 							displayType="primary"
 							onClick={() => {
@@ -318,10 +346,19 @@ export default function EditVocabulary({
 								<EditGeneralInfo
 									assetLibraries={assetLibraries}
 									defaultLanguageId={defaultLanguageId}
+									externalReferenceCodeInputError={
+										externalReferenceCodeInputError
+									}
+									externalReferenceCodeMaxLength={
+										externalReferenceCodeMaxLength
+									}
 									isNew={isNew}
 									locales={locales}
 									nameInputError={nameInputError}
 									onChangeVocabulary={setVocabulary}
+									setExternalReferenceCodeInputError={
+										setExternalReferenceCodeInputError
+									}
 									setNameInputError={setNameInputError}
 									setSpaceChange={setSpaceChange}
 									setSpaceInputError={setSpaceInputError}

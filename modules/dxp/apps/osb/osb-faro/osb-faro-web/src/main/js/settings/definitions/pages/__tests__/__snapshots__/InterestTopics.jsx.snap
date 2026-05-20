@@ -557,7 +557,7 @@ exports[`InterestTopics should render 1`] = `
                           <div
                             class="h4 table-title text-truncate"
                           >
-                            bar-0
+                            bar-1
                           </div>
                         </td>
                         <td>
@@ -598,7 +598,6 @@ exports[`InterestTopics should render 1`] = `
                     class="dropdown dropdown-root pagination-items-per-page"
                   >
                     <button
-                      aria-controls="clay-dropdown-menu-1"
                       aria-expanded="false"
                       aria-haspopup="true"
                       class="dropdown-toggle button-root btn btn-sm btn-secondary"
@@ -681,7 +680,7 @@ exports[`InterestTopics should render 1`] = `
 </div>
 `;
 
-exports[`InterestTopics should render page not found puts a invalid page 1`] = `
+exports[`InterestTopics should render page not found if an invalid page is provided 1`] = `
 <div
   class="no-results-root flex-grow-1"
 >

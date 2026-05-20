@@ -34,51 +34,10 @@ public interface CalendarResourcePersistence
 	 */
 
 	/**
-	 * Returns all the calendar resources where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the calendar resources where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar resources where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -147,15 +106,6 @@ public interface CalendarResourcePersistence
 		throws NoSuchResourceException;
 
 	/**
-	 * Returns the calendar resource where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching calendar resource, or <code>null</code> if a matching calendar resource could not be found
-	 */
-	public CalendarResource fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the calendar resource where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -186,55 +136,10 @@ public interface CalendarResourcePersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the calendar resources where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the calendar resources where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar resources where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -297,51 +202,10 @@ public interface CalendarResourcePersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the calendar resources where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByGroupId(long groupId);
-
-	/**
-	 * Returns a range of all the calendar resources where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByGroupId(
-		long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByGroupId(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar resources where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -384,33 +248,10 @@ public interface CalendarResourcePersistence
 			orderByComparator);
 
 	/**
-	 * Returns all the calendar resources that the user has permission to view where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching calendar resources that the user has permission to view
-	 */
-	public java.util.List<CalendarResource> filterFindByGroupId(long groupId);
-
-	/**
-	 * Returns a range of all the calendar resources that the user has permission to view where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources that the user has permission to view
-	 */
-	public java.util.List<CalendarResource> filterFindByGroupId(
-		long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources that the user has permissions to view where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -448,51 +289,10 @@ public interface CalendarResourcePersistence
 	public int filterCountByGroupId(long groupId);
 
 	/**
-	 * Returns all the calendar resources where active = &#63;.
-	 *
-	 * @param active the active
-	 * @return the matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByActive(boolean active);
-
-	/**
-	 * Returns a range of all the calendar resources where active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByActive(
-		boolean active, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources where active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByActive(
-		boolean active, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar resources where active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -550,55 +350,10 @@ public interface CalendarResourcePersistence
 	public int countByActive(boolean active);
 
 	/**
-	 * Returns all the calendar resources where groupId = &#63; and code = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param code the code
-	 * @return the matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_C(
-		long groupId, String code);
-
-	/**
-	 * Returns a range of all the calendar resources where groupId = &#63; and code = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param code the code
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_C(
-		long groupId, String code, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources where groupId = &#63; and code = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param code the code
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_C(
-		long groupId, String code, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar resources where groupId = &#63; and code = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -644,36 +399,10 @@ public interface CalendarResourcePersistence
 			orderByComparator);
 
 	/**
-	 * Returns all the calendar resources that the user has permission to view where groupId = &#63; and code = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param code the code
-	 * @return the matching calendar resources that the user has permission to view
-	 */
-	public java.util.List<CalendarResource> filterFindByG_C(
-		long groupId, String code);
-
-	/**
-	 * Returns a range of all the calendar resources that the user has permission to view where groupId = &#63; and code = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param code the code
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources that the user has permission to view
-	 */
-	public java.util.List<CalendarResource> filterFindByG_C(
-		long groupId, String code, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources that the user has permissions to view where groupId = &#63; and code = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -689,36 +418,10 @@ public interface CalendarResourcePersistence
 			orderByComparator);
 
 	/**
-	 * Returns all the calendar resources that the user has permission to view where groupId = any &#63; and code = &#63;.
-	 *
-	 * @param groupIds the group IDs
-	 * @param code the code
-	 * @return the matching calendar resources that the user has permission to view
-	 */
-	public java.util.List<CalendarResource> filterFindByG_C(
-		long[] groupIds, String code);
-
-	/**
-	 * Returns a range of all the calendar resources that the user has permission to view where groupId = any &#63; and code = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param code the code
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources that the user has permission to view
-	 */
-	public java.util.List<CalendarResource> filterFindByG_C(
-		long[] groupIds, String code, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources that the user has permission to view where groupId = any &#63; and code = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -734,59 +437,10 @@ public interface CalendarResourcePersistence
 			orderByComparator);
 
 	/**
-	 * Returns all the calendar resources where groupId = any &#63; and code = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param code the code
-	 * @return the matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_C(
-		long[] groupIds, String code);
-
-	/**
-	 * Returns a range of all the calendar resources where groupId = any &#63; and code = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param code the code
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_C(
-		long[] groupIds, String code, int start, int end);
-
-	/**
-	 * Returns an ordered range of all the calendar resources where groupId = any &#63; and code = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param code the code
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_C(
-		long[] groupIds, String code, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator);
-
-	/**
 	 * Returns an ordered range of all the calendar resources where groupId = &#63; and code = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -848,55 +502,10 @@ public interface CalendarResourcePersistence
 	public int filterCountByG_C(long[] groupIds, String code);
 
 	/**
-	 * Returns all the calendar resources where groupId = &#63; and active = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param active the active
-	 * @return the matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_A(
-		long groupId, boolean active);
-
-	/**
-	 * Returns a range of all the calendar resources where groupId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param active the active
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_A(
-		long groupId, boolean active, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources where groupId = &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param active the active
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar resources
-	 */
-	public java.util.List<CalendarResource> findByG_A(
-		long groupId, boolean active, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar resources where groupId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -942,36 +551,10 @@ public interface CalendarResourcePersistence
 			orderByComparator);
 
 	/**
-	 * Returns all the calendar resources that the user has permission to view where groupId = &#63; and active = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param active the active
-	 * @return the matching calendar resources that the user has permission to view
-	 */
-	public java.util.List<CalendarResource> filterFindByG_A(
-		long groupId, boolean active);
-
-	/**
-	 * Returns a range of all the calendar resources that the user has permission to view where groupId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param active the active
-	 * @param start the lower bound of the range of calendar resources
-	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of matching calendar resources that the user has permission to view
-	 */
-	public java.util.List<CalendarResource> filterFindByG_A(
-		long groupId, boolean active, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar resources that the user has permissions to view where groupId = &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1024,15 +607,6 @@ public interface CalendarResourcePersistence
 		throws NoSuchResourceException;
 
 	/**
-	 * Returns the calendar resource where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching calendar resource, or <code>null</code> if a matching calendar resource could not be found
-	 */
-	public CalendarResource fetchByC_C(long classNameId, long classPK);
-
-	/**
 	 * Returns the calendar resource where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param classNameId the class name ID
@@ -1077,7 +651,7 @@ public interface CalendarResourcePersistence
 	 * Returns a range of all the calendar resources where companyId = &#63; and code LIKE &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1094,7 +668,7 @@ public interface CalendarResourcePersistence
 	 * Returns an ordered range of all the calendar resources where companyId = &#63; and code LIKE &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1114,7 +688,7 @@ public interface CalendarResourcePersistence
 	 * Returns an ordered range of all the calendar resources where companyId = &#63; and code LIKE &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1182,20 +756,6 @@ public interface CalendarResourcePersistence
 	public int countByC_LikeC_A(long companyId, String code, boolean active);
 
 	/**
-	 * Caches the calendar resource in the entity cache if it is enabled.
-	 *
-	 * @param calendarResource the calendar resource
-	 */
-	public void cacheResult(CalendarResource calendarResource);
-
-	/**
-	 * Caches the calendar resources in the entity cache if it is enabled.
-	 *
-	 * @param calendarResources the calendar resources
-	 */
-	public void cacheResult(java.util.List<CalendarResource> calendarResources);
-
-	/**
 	 * Creates a new calendar resource with the primary key. Does not add the calendar resource to the database.
 	 *
 	 * @param calendarResourceId the primary key for the new calendar resource
@@ -1234,72 +794,545 @@ public interface CalendarResourcePersistence
 	public CalendarResource fetchByPrimaryKey(long calendarResourceId);
 
 	/**
-	 * Returns all the calendar resources.
+	 * Returns the calendar resource where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the calendar resources
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching calendar resource, or <code>null</code> if a matching calendar resource could not be found
 	 */
-	public java.util.List<CalendarResource> findAll();
+	public default CalendarResource fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the calendar resources.
+	 * Returns the calendar resource where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching calendar resource, or <code>null</code> if a matching calendar resource could not be found
+	 */
+	public default CalendarResource fetchByC_C(long classNameId, long classPK) {
+		return fetchByC_C(classNameId, classPK, true);
+	}
+
+	/**
+	 * Returns all the calendar resources where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of calendar resources
 	 * @param end the upper bound of the range of calendar resources (not inclusive)
-	 * @return the range of calendar resources
+	 * @return the range of matching calendar resources
 	 */
-	public java.util.List<CalendarResource> findAll(int start, int end);
+	public default java.util.List<CalendarResource> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the calendar resources.
+	 * Returns an ordered range of all the calendar resources where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of calendar resources
 	 * @param end the upper bound of the range of calendar resources (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of calendar resources
+	 * @return the ordered range of matching calendar resources
 	 */
-	public java.util.List<CalendarResource> findAll(
-		int start, int end,
+	public default java.util.List<CalendarResource> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the calendar resources.
+	 * Returns all the calendar resources where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarResourceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the calendar resources where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of calendar resources
 	 * @param end the upper bound of the range of calendar resources (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of calendar resources
+	 * @return the ordered range of matching calendar resources
 	 */
-	public java.util.List<CalendarResource> findAll(
-		int start, int end,
+	public default java.util.List<CalendarResource> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the calendar resources from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of calendar resources.
+	 * Returns all the calendar resources where groupId = &#63;.
 	 *
-	 * @return the number of calendar resources
+	 * @param groupId the group ID
+	 * @return the matching calendar resources
 	 */
-	public int countAll();
+	public default java.util.List<CalendarResource> findByGroupId(
+		long groupId) {
+
+		return findByGroupId(
+			groupId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByGroupId(
+		long groupId, int start, int end) {
+
+		return findByGroupId(groupId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the calendar resources where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByGroupId(
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
+			orderByComparator) {
+
+		return findByGroupId(groupId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the calendar resources that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching calendar resources that the user has permission to view
+	 */
+	public default java.util.List<CalendarResource> filterFindByGroupId(
+		long groupId) {
+
+		return filterFindByGroupId(
+			groupId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources that the user has permission to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources that the user has permission to view
+	 */
+	public default java.util.List<CalendarResource> filterFindByGroupId(
+		long groupId, int start, int end) {
+
+		return filterFindByGroupId(groupId, start, end, null);
+	}
+
+	/**
+	 * Returns all the calendar resources where active = &#63;.
+	 *
+	 * @param active the active
+	 * @return the matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByActive(
+		boolean active) {
+
+		return findByActive(
+			active, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources where active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByActive(
+		boolean active, int start, int end) {
+
+		return findByActive(active, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the calendar resources where active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByActive(
+		boolean active, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
+			orderByComparator) {
+
+		return findByActive(active, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the calendar resources where groupId = &#63; and code = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param code the code
+	 * @return the matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_C(
+		long groupId, String code) {
+
+		return findByG_C(
+			groupId, code, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources where groupId = &#63; and code = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param code the code
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_C(
+		long groupId, String code, int start, int end) {
+
+		return findByG_C(groupId, code, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the calendar resources where groupId = &#63; and code = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param code the code
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_C(
+		long groupId, String code, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
+			orderByComparator) {
+
+		return findByG_C(groupId, code, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the calendar resources where groupId = any &#63; and code = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param code the code
+	 * @return the matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_C(
+		long[] groupIds, String code) {
+
+		return findByG_C(
+			groupIds, code, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources where groupId = any &#63; and code = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param code the code
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_C(
+		long[] groupIds, String code, int start, int end) {
+
+		return findByG_C(groupIds, code, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the calendar resources where groupId = any &#63; and code = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param code the code
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_C(
+		long[] groupIds, String code, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
+			orderByComparator) {
+
+		return findByG_C(groupIds, code, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the calendar resources that the user has permission to view where groupId = &#63; and code = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param code the code
+	 * @return the matching calendar resources that the user has permission to view
+	 */
+	public default java.util.List<CalendarResource> filterFindByG_C(
+		long groupId, String code) {
+
+		return filterFindByG_C(
+			groupId, code, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources that the user has permission to view where groupId = &#63; and code = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param code the code
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources that the user has permission to view
+	 */
+	public default java.util.List<CalendarResource> filterFindByG_C(
+		long groupId, String code, int start, int end) {
+
+		return filterFindByG_C(groupId, code, start, end, null);
+	}
+
+	/**
+	 * Returns all the calendar resources that the user has permission to view where groupId = any &#63; and code = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param code the code
+	 * @return the matching calendar resources that the user has permission to view
+	 */
+	public default java.util.List<CalendarResource> filterFindByG_C(
+		long[] groupIds, String code) {
+
+		return filterFindByG_C(
+			groupIds, code, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources that the user has permission to view where groupId = any &#63; and code = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param code the code
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources that the user has permission to view
+	 */
+	public default java.util.List<CalendarResource> filterFindByG_C(
+		long[] groupIds, String code, int start, int end) {
+
+		return filterFindByG_C(groupIds, code, start, end, null);
+	}
+
+	/**
+	 * Returns all the calendar resources where groupId = &#63; and active = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @return the matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_A(
+		long groupId, boolean active) {
+
+		return findByG_A(
+			groupId, active,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources where groupId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_A(
+		long groupId, boolean active, int start, int end) {
+
+		return findByG_A(groupId, active, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the calendar resources where groupId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching calendar resources
+	 */
+	public default java.util.List<CalendarResource> findByG_A(
+		long groupId, boolean active, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<CalendarResource>
+			orderByComparator) {
+
+		return findByG_A(groupId, active, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the calendar resources that the user has permission to view where groupId = &#63; and active = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @return the matching calendar resources that the user has permission to view
+	 */
+	public default java.util.List<CalendarResource> filterFindByG_A(
+		long groupId, boolean active) {
+
+		return filterFindByG_A(
+			groupId, active,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the calendar resources that the user has permission to view where groupId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarResourceModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param start the lower bound of the range of calendar resources
+	 * @param end the upper bound of the range of calendar resources (not inclusive)
+	 * @return the range of matching calendar resources that the user has permission to view
+	 */
+	public default java.util.List<CalendarResource> filterFindByG_A(
+		long groupId, boolean active, int start, int end) {
+
+		return filterFindByG_A(groupId, active, start, end, null);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1457256438
+// LIFERAY-SERVICE-BUILDER-HASH:-109602378

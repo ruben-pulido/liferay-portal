@@ -36,6 +36,24 @@ public class RedirectNotFoundEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<RedirectNotFoundEntry> redirectNotFoundEntries) {
+
+		getPersistence().cacheResult(redirectNotFoundEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		RedirectNotFoundEntry redirectNotFoundEntry) {
+
+		getPersistence().cacheResult(redirectNotFoundEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -114,59 +132,10 @@ public class RedirectNotFoundEntryUtil {
 	}
 
 	/**
-	 * Returns all the redirect not found entries where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching redirect not found entries
-	 */
-	public static List<RedirectNotFoundEntry> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the redirect not found entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedirectNotFoundEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of redirect not found entries
-	 * @param end the upper bound of the range of redirect not found entries (not inclusive)
-	 * @return the range of matching redirect not found entries
-	 */
-	public static List<RedirectNotFoundEntry> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the redirect not found entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedirectNotFoundEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of redirect not found entries
-	 * @param end the upper bound of the range of redirect not found entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching redirect not found entries
-	 */
-	public static List<RedirectNotFoundEntry> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<RedirectNotFoundEntry> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the redirect not found entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedirectNotFoundEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.redirect.model.impl.RedirectNotFoundEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -250,17 +219,6 @@ public class RedirectNotFoundEntryUtil {
 	}
 
 	/**
-	 * Returns the redirect not found entry where groupId = &#63; and url = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param url the url
-	 * @return the matching redirect not found entry, or <code>null</code> if a matching redirect not found entry could not be found
-	 */
-	public static RedirectNotFoundEntry fetchByG_U(long groupId, String url) {
-		return getPersistence().fetchByG_U(groupId, url);
-	}
-
-	/**
 	 * Returns the redirect not found entry where groupId = &#63; and url = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -296,28 +254,6 @@ public class RedirectNotFoundEntryUtil {
 	 */
 	public static int countByG_U(long groupId, String url) {
 		return getPersistence().countByG_U(groupId, url);
-	}
-
-	/**
-	 * Caches the redirect not found entry in the entity cache if it is enabled.
-	 *
-	 * @param redirectNotFoundEntry the redirect not found entry
-	 */
-	public static void cacheResult(
-		RedirectNotFoundEntry redirectNotFoundEntry) {
-
-		getPersistence().cacheResult(redirectNotFoundEntry);
-	}
-
-	/**
-	 * Caches the redirect not found entries in the entity cache if it is enabled.
-	 *
-	 * @param redirectNotFoundEntries the redirect not found entries
-	 */
-	public static void cacheResult(
-		List<RedirectNotFoundEntry> redirectNotFoundEntries) {
-
-		getPersistence().cacheResult(redirectNotFoundEntries);
 	}
 
 	/**
@@ -376,84 +312,63 @@ public class RedirectNotFoundEntryUtil {
 	}
 
 	/**
-	 * Returns all the redirect not found entries.
+	 * Returns the redirect not found entry where groupId = &#63; and url = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the redirect not found entries
+	 * @param groupId the group ID
+	 * @param url the url
+	 * @return the matching redirect not found entry, or <code>null</code> if a matching redirect not found entry could not be found
 	 */
-	public static List<RedirectNotFoundEntry> findAll() {
-		return getPersistence().findAll();
+	public static RedirectNotFoundEntry fetchByG_U(long groupId, String url) {
+		return getPersistence().fetchByG_U(groupId, url);
 	}
 
 	/**
-	 * Returns a range of all the redirect not found entries.
+	 * Returns all the redirect not found entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching redirect not found entries
+	 */
+	public static List<RedirectNotFoundEntry> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the redirect not found entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedirectNotFoundEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.redirect.model.impl.RedirectNotFoundEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of redirect not found entries
 	 * @param end the upper bound of the range of redirect not found entries (not inclusive)
-	 * @return the range of redirect not found entries
+	 * @return the range of matching redirect not found entries
 	 */
-	public static List<RedirectNotFoundEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<RedirectNotFoundEntry> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the redirect not found entries.
+	 * Returns an ordered range of all the redirect not found entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedirectNotFoundEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.redirect.model.impl.RedirectNotFoundEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of redirect not found entries
 	 * @param end the upper bound of the range of redirect not found entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of redirect not found entries
+	 * @return the ordered range of matching redirect not found entries
 	 */
-	public static List<RedirectNotFoundEntry> findAll(
-		int start, int end,
+	public static List<RedirectNotFoundEntry> findByGroupId(
+		long groupId, int start, int end,
 		OrderByComparator<RedirectNotFoundEntry> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the redirect not found entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedirectNotFoundEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of redirect not found entries
-	 * @param end the upper bound of the range of redirect not found entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of redirect not found entries
-	 */
-	public static List<RedirectNotFoundEntry> findAll(
-		int start, int end,
-		OrderByComparator<RedirectNotFoundEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the redirect not found entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of redirect not found entries.
-	 *
-	 * @return the number of redirect not found entries
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
 	}
 
 	public static RedirectNotFoundEntryPersistence getPersistence() {
@@ -469,4 +384,4 @@ public class RedirectNotFoundEntryUtil {
 	private static volatile RedirectNotFoundEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2096987176
+// LIFERAY-SERVICE-BUILDER-HASH:-1494800786

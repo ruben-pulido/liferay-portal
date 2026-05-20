@@ -6,7 +6,6 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {rolesPagesTest} from '../../../fixtures/rolesPagesTest';
 import {usersAndOrganizationsPagesTest} from '../../../fixtures/usersAndOrganizationsPagesTest';
@@ -14,9 +13,6 @@ import getRandomString from '../../../utils/getRandomString';
 
 export const test = mergeTests(
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	loginTest(),
 	rolesPagesTest,
 	usersAndOrganizationsPagesTest
@@ -28,11 +24,9 @@ test('LPD-35066 Site role search should not persist after selecting an option', 
 	page,
 	usersAndOrganizationsPage,
 }) => {
-	const site1 = await apiHelpers.headlessSite.createSite({
+	const site1 = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 	});
-
-	apiHelpers.data.push({id: site1.externalReferenceCode, type: 'site'});
 
 	const user = await apiHelpers.headlessAdminUser.postUserAccount();
 
@@ -45,11 +39,9 @@ test('LPD-35066 Site role search should not persist after selecting an option', 
 		user.id
 	);
 
-	const site2 = await apiHelpers.headlessSite.createSite({
+	const site2 = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 	});
-
-	apiHelpers.data.push({id: site2.externalReferenceCode, type: 'site'});
 
 	await apiHelpers.headlessAdminUser.assignUserToSite(
 		role.id,

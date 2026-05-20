@@ -37,6 +37,20 @@ public class PatcherFixUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<PatcherFix> patcherFixes) {
+		getPersistence().cacheResult(patcherFixes);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(PatcherFix patcherFix) {
+		getPersistence().cacheResult(patcherFix);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -112,63 +126,10 @@ public class PatcherFixUtil {
 	}
 
 	/**
-	 * Returns all the patcher fixes where patcherProjectVersionId = &#63;.
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @return the matching patcher fixes
-	 */
-	public static List<PatcherFix> findByPatcherProjectVersionId(
-		long patcherProjectVersionId) {
-
-		return getPersistence().findByPatcherProjectVersionId(
-			patcherProjectVersionId);
-	}
-
-	/**
-	 * Returns a range of all the patcher fixes where patcherProjectVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @return the range of matching patcher fixes
-	 */
-	public static List<PatcherFix> findByPatcherProjectVersionId(
-		long patcherProjectVersionId, int start, int end) {
-
-		return getPersistence().findByPatcherProjectVersionId(
-			patcherProjectVersionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher fixes
-	 */
-	public static List<PatcherFix> findByPatcherProjectVersionId(
-		long patcherProjectVersionId, int start, int end,
-		OrderByComparator<PatcherFix> orderByComparator) {
-
-		return getPersistence().findByPatcherProjectVersionId(
-			patcherProjectVersionId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -221,42 +182,10 @@ public class PatcherFixUtil {
 	}
 
 	/**
-	 * Returns all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63;.
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @return the matching patcher fixes that the user has permission to view
-	 */
-	public static List<PatcherFix> filterFindByPatcherProjectVersionId(
-		long patcherProjectVersionId) {
-
-		return getPersistence().filterFindByPatcherProjectVersionId(
-			patcherProjectVersionId);
-	}
-
-	/**
-	 * Returns a range of all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @return the range of matching patcher fixes that the user has permission to view
-	 */
-	public static List<PatcherFix> filterFindByPatcherProjectVersionId(
-		long patcherProjectVersionId, int start, int end) {
-
-		return getPersistence().filterFindByPatcherProjectVersionId(
-			patcherProjectVersionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where patcherProjectVersionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -312,71 +241,10 @@ public class PatcherFixUtil {
 	}
 
 	/**
-	 * Returns all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param latestFix the latest fix
-	 * @param type the type
-	 * @return the matching patcher fixes
-	 */
-	public static List<PatcherFix> findByP_L_T(
-		long patcherProjectVersionId, boolean latestFix, int type) {
-
-		return getPersistence().findByP_L_T(
-			patcherProjectVersionId, latestFix, type);
-	}
-
-	/**
-	 * Returns a range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param latestFix the latest fix
-	 * @param type the type
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @return the range of matching patcher fixes
-	 */
-	public static List<PatcherFix> findByP_L_T(
-		long patcherProjectVersionId, boolean latestFix, int type, int start,
-		int end) {
-
-		return getPersistence().findByP_L_T(
-			patcherProjectVersionId, latestFix, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param latestFix the latest fix
-	 * @param type the type
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher fixes
-	 */
-	public static List<PatcherFix> findByP_L_T(
-		long patcherProjectVersionId, boolean latestFix, int type, int start,
-		int end, OrderByComparator<PatcherFix> orderByComparator) {
-
-		return getPersistence().findByP_L_T(
-			patcherProjectVersionId, latestFix, type, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -435,47 +303,10 @@ public class PatcherFixUtil {
 	}
 
 	/**
-	 * Returns all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param latestFix the latest fix
-	 * @param type the type
-	 * @return the matching patcher fixes that the user has permission to view
-	 */
-	public static List<PatcherFix> filterFindByP_L_T(
-		long patcherProjectVersionId, boolean latestFix, int type) {
-
-		return getPersistence().filterFindByP_L_T(
-			patcherProjectVersionId, latestFix, type);
-	}
-
-	/**
-	 * Returns a range of all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param latestFix the latest fix
-	 * @param type the type
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @return the range of matching patcher fixes that the user has permission to view
-	 */
-	public static List<PatcherFix> filterFindByP_L_T(
-		long patcherProjectVersionId, boolean latestFix, int type, int start,
-		int end) {
-
-		return getPersistence().filterFindByP_L_T(
-			patcherProjectVersionId, latestFix, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -558,7 +389,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -580,7 +411,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -604,7 +435,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -681,7 +512,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -703,7 +534,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -785,7 +616,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes where key = &#63; and keyVersion &gt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -806,7 +637,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where key = &#63; and keyVersion &gt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -829,7 +660,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where key = &#63; and keyVersion &gt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -905,7 +736,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes that the user has permission to view where key = &#63; and keyVersion &gt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -926,7 +757,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where key = &#63; and keyVersion &gt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1004,7 +835,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes where key = &#63; and keyVersion &lt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1025,7 +856,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where key = &#63; and keyVersion &lt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1048,7 +879,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where key = &#63; and keyVersion &lt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1124,7 +955,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes that the user has permission to view where key = &#63; and keyVersion &lt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1145,7 +976,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where key = &#63; and keyVersion &lt; &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1223,7 +1054,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes where key = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1244,7 +1075,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where key = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1267,7 +1098,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where key = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1343,7 +1174,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes that the user has permission to view where key = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1364,7 +1195,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where key = &#63; and latestFix = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param key the key
@@ -1442,7 +1273,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes where modifiedDate &lt; &#63; and notified = &#63; and type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1465,7 +1296,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where modifiedDate &lt; &#63; and notified = &#63; and type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1490,7 +1321,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where modifiedDate &lt; &#63; and notified = &#63; and type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1571,7 +1402,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes that the user has permission to view where modifiedDate &lt; &#63; and notified = &#63; and type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1594,7 +1425,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where modifiedDate &lt; &#63; and notified = &#63; and type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1635,7 +1466,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes that the user has permission to view where modifiedDate &lt; &#63; and notified = &#63; and type = any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1658,7 +1489,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes that the user has permission to view where modifiedDate &lt; &#63; and notified = &#63; and type = any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1683,7 +1514,7 @@ public class PatcherFixUtil {
 	 * Returns all the patcher fixes where modifiedDate &lt; &#63; and notified = &#63; and type = any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1703,7 +1534,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes where modifiedDate &lt; &#63; and notified = &#63; and type = any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1726,7 +1557,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where modifiedDate &lt; &#63; and notified = &#63; and type = any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1751,7 +1582,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where modifiedDate &lt; &#63; and notified = &#63; and type = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param modifiedDate the modified date
@@ -1874,7 +1705,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and name = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -1897,7 +1728,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and name = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -1922,7 +1753,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and name = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -2004,7 +1835,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63; and latestFix = &#63; and name = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -2027,7 +1858,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where patcherProjectVersionId = &#63; and latestFix = &#63; and name = &#63; and type &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -2118,7 +1949,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -2141,7 +1972,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -2166,7 +1997,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -2249,7 +2080,7 @@ public class PatcherFixUtil {
 	 * Returns a range of all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -2272,7 +2103,7 @@ public class PatcherFixUtil {
 	 * Returns an ordered range of all the patcher fixes that the user has permissions to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type &ne; &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -2341,24 +2172,6 @@ public class PatcherFixUtil {
 	}
 
 	/**
-	 * Caches the patcher fix in the entity cache if it is enabled.
-	 *
-	 * @param patcherFix the patcher fix
-	 */
-	public static void cacheResult(PatcherFix patcherFix) {
-		getPersistence().cacheResult(patcherFix);
-	}
-
-	/**
-	 * Caches the patcher fixes in the entity cache if it is enabled.
-	 *
-	 * @param patcherFixes the patcher fixes
-	 */
-	public static void cacheResult(List<PatcherFix> patcherFixes) {
-		getPersistence().cacheResult(patcherFixes);
-	}
-
-	/**
 	 * Creates a new patcher fix with the primary key. Does not add the patcher fix to the database.
 	 *
 	 * @param patcherFixId the primary key for the new patcher fix
@@ -2409,85 +2222,6 @@ public class PatcherFixUtil {
 	}
 
 	/**
-	 * Returns all the patcher fixes.
-	 *
-	 * @return the patcher fixes
-	 */
-	public static List<PatcherFix> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the patcher fixes.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @return the range of patcher fixes
-	 */
-	public static List<PatcherFix> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fixes.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of patcher fixes
-	 */
-	public static List<PatcherFix> findAll(
-		int start, int end, OrderByComparator<PatcherFix> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fixes.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher fixes
-	 * @param end the upper bound of the range of patcher fixes (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of patcher fixes
-	 */
-	public static List<PatcherFix> findAll(
-		int start, int end, OrderByComparator<PatcherFix> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the patcher fixes from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of patcher fixes.
-	 *
-	 * @return the number of patcher fixes
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
-	}
-
-	/**
 	 * Returns the primaryKeys of patcher builds associated with the patcher fix.
 	 *
 	 * @param pk the primary key of the patcher fix
@@ -2511,7 +2245,7 @@ public class PatcherFixUtil {
 	 * Returns all the patcher fix associated with the patcher build.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the patcher build
@@ -2529,7 +2263,7 @@ public class PatcherFixUtil {
 	 * Returns all the patcher fix associated with the patcher build.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the patcher build
@@ -2727,7 +2461,7 @@ public class PatcherFixUtil {
 	 * Returns all the patcher fix associated with the patcher fix pack.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the patcher fix pack
@@ -2745,7 +2479,7 @@ public class PatcherFixUtil {
 	 * Returns all the patcher fix associated with the patcher fix pack.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the patcher fix pack
@@ -2925,6 +2659,189 @@ public class PatcherFixUtil {
 		getPersistence().setPatcherFixPacks(pk, patcherFixPacks);
 	}
 
+	/**
+	 * Returns all the patcher fixes where patcherProjectVersionId = &#63;.
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @return the matching patcher fixes
+	 */
+	public static List<PatcherFix> findByPatcherProjectVersionId(
+		long patcherProjectVersionId) {
+
+		return getPersistence().findByPatcherProjectVersionId(
+			patcherProjectVersionId);
+	}
+
+	/**
+	 * Returns a range of all the patcher fixes where patcherProjectVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param start the lower bound of the range of patcher fixes
+	 * @param end the upper bound of the range of patcher fixes (not inclusive)
+	 * @return the range of matching patcher fixes
+	 */
+	public static List<PatcherFix> findByPatcherProjectVersionId(
+		long patcherProjectVersionId, int start, int end) {
+
+		return getPersistence().findByPatcherProjectVersionId(
+			patcherProjectVersionId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param start the lower bound of the range of patcher fixes
+	 * @param end the upper bound of the range of patcher fixes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching patcher fixes
+	 */
+	public static List<PatcherFix> findByPatcherProjectVersionId(
+		long patcherProjectVersionId, int start, int end,
+		OrderByComparator<PatcherFix> orderByComparator) {
+
+		return getPersistence().findByPatcherProjectVersionId(
+			patcherProjectVersionId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63;.
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @return the matching patcher fixes that the user has permission to view
+	 */
+	public static List<PatcherFix> filterFindByPatcherProjectVersionId(
+		long patcherProjectVersionId) {
+
+		return getPersistence().filterFindByPatcherProjectVersionId(
+			patcherProjectVersionId);
+	}
+
+	/**
+	 * Returns a range of all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param start the lower bound of the range of patcher fixes
+	 * @param end the upper bound of the range of patcher fixes (not inclusive)
+	 * @return the range of matching patcher fixes that the user has permission to view
+	 */
+	public static List<PatcherFix> filterFindByPatcherProjectVersionId(
+		long patcherProjectVersionId, int start, int end) {
+
+		return getPersistence().filterFindByPatcherProjectVersionId(
+			patcherProjectVersionId, start, end);
+	}
+
+	/**
+	 * Returns all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param latestFix the latest fix
+	 * @param type the type
+	 * @return the matching patcher fixes
+	 */
+	public static List<PatcherFix> findByP_L_T(
+		long patcherProjectVersionId, boolean latestFix, int type) {
+
+		return getPersistence().findByP_L_T(
+			patcherProjectVersionId, latestFix, type);
+	}
+
+	/**
+	 * Returns a range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param latestFix the latest fix
+	 * @param type the type
+	 * @param start the lower bound of the range of patcher fixes
+	 * @param end the upper bound of the range of patcher fixes (not inclusive)
+	 * @return the range of matching patcher fixes
+	 */
+	public static List<PatcherFix> findByP_L_T(
+		long patcherProjectVersionId, boolean latestFix, int type, int start,
+		int end) {
+
+		return getPersistence().findByP_L_T(
+			patcherProjectVersionId, latestFix, type, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the patcher fixes where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param latestFix the latest fix
+	 * @param type the type
+	 * @param start the lower bound of the range of patcher fixes
+	 * @param end the upper bound of the range of patcher fixes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching patcher fixes
+	 */
+	public static List<PatcherFix> findByP_L_T(
+		long patcherProjectVersionId, boolean latestFix, int type, int start,
+		int end, OrderByComparator<PatcherFix> orderByComparator) {
+
+		return getPersistence().findByP_L_T(
+			patcherProjectVersionId, latestFix, type, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param latestFix the latest fix
+	 * @param type the type
+	 * @return the matching patcher fixes that the user has permission to view
+	 */
+	public static List<PatcherFix> filterFindByP_L_T(
+		long patcherProjectVersionId, boolean latestFix, int type) {
+
+		return getPersistence().filterFindByP_L_T(
+			patcherProjectVersionId, latestFix, type);
+	}
+
+	/**
+	 * Returns a range of all the patcher fixes that the user has permission to view where patcherProjectVersionId = &#63; and latestFix = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param latestFix the latest fix
+	 * @param type the type
+	 * @param start the lower bound of the range of patcher fixes
+	 * @param end the upper bound of the range of patcher fixes (not inclusive)
+	 * @return the range of matching patcher fixes that the user has permission to view
+	 */
+	public static List<PatcherFix> filterFindByP_L_T(
+		long patcherProjectVersionId, boolean latestFix, int type, int start,
+		int end) {
+
+		return getPersistence().filterFindByP_L_T(
+			patcherProjectVersionId, latestFix, type, start, end);
+	}
+
 	public static PatcherFixPersistence getPersistence() {
 		return _persistence;
 	}
@@ -2936,4 +2853,4 @@ public class PatcherFixUtil {
 	private static volatile PatcherFixPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-108265575
+// LIFERAY-SERVICE-BUILDER-HASH:-1871981706

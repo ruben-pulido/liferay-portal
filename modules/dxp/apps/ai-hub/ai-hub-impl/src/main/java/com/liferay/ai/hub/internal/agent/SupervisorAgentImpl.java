@@ -7,8 +7,9 @@ package com.liferay.ai.hub.internal.agent;
 
 import com.liferay.ai.hub.agent.AgentContext;
 import com.liferay.ai.hub.agent.SupervisorAgent;
-import com.liferay.ai.hub.internal.configuration.VertexAIConfiguration;
 import com.liferay.ai.hub.internal.memory.ChatMemoryProviderUtil;
+import com.liferay.ai.hub.internal.model.VertexAiGeminiUtil;
+import com.liferay.ai.hub.internal.quota.QuotaUtil;
 import com.liferay.ai.hub.rest.resource.v1_0.util.SseUtil;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
@@ -16,7 +17,8 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.petra.concurrent.NoticeableExecutorService;
 import com.liferay.petra.executor.PortalExecutorManager;
 import com.liferay.petra.function.transform.TransformUtil;
-import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyInheritableThreadLocalCallable;
@@ -27,6 +29,7 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowInstanceManager;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.fields.NestedFieldsContext;
 import com.liferay.portal.vulcan.fields.NestedFieldsContextThreadLocal;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -38,6 +41,8 @@ import dev.langchain4j.agentic.internal.InternalAgent;
 import dev.langchain4j.agentic.supervisor.SupervisorContextStrategy;
 import dev.langchain4j.agentic.supervisor.SupervisorResponseStrategy;
 import dev.langchain4j.model.vertexai.gemini.VertexAiGeminiChatModel;
+
+import java.lang.reflect.InvocationTargetException;
 
 import java.util.List;
 
@@ -66,20 +71,9 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 					PermissionChecker originalPermissionChecker =
 						PermissionThreadLocal.getPermissionChecker();
 
-					VertexAIConfiguration vertexAIConfiguration =
-						_configurationProvider.getCompanyConfiguration(
-							VertexAIConfiguration.class,
-							agentContext.getCompanyId());
-
 					try (VertexAiGeminiChatModel vertexAiGeminiChatModel =
-							VertexAiGeminiChatModel.builder(
-							).location(
-								vertexAIConfiguration.location()
-							).modelName(
-								vertexAIConfiguration.modelName()
-							).project(
-								vertexAIConfiguration.projectId()
-							).build()) {
+							VertexAiGeminiUtil.createVertexAiGeminiChatModel(
+								agentContext.getCompanyId())) {
 
 						PermissionThreadLocal.setPermissionChecker(
 							permissionChecker);
@@ -89,12 +83,7 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 							vertexAiGeminiChatModel);
 					}
 					catch (Exception exception) {
-						_log.error(exception);
-
-						SseUtil.send(
-							"I cannot fulfill this request.",
-							"Chat Message Sent", null,
-							agentContext.getSseEventSinkKey());
+						_handleException(agentContext, exception);
 					}
 					finally {
 						PermissionThreadLocal.setPermissionChecker(
@@ -187,9 +176,56 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 		}
 	}
 
+	private void _handleException(
+		AgentContext agentContext, Exception exception) {
+
+		_log.error(exception);
+
+		DTOConverterContext dtoConverterContext =
+			agentContext.getDTOConverterContext();
+
+		if (exception instanceof UnsupportedOperationException) {
+			SseUtil.send(
+				_language.get(
+					dtoConverterContext.getLocale(),
+					"you-have-exceeded-your-token-quota"),
+				"Chat Message Sent", null, agentContext.getSseEventSinkKey());
+
+			return;
+		}
+
+		if (!(exception.getCause() instanceof
+				InvocationTargetException invocationTargetException)) {
+
+			SseUtil.send(
+				_language.get(
+					dtoConverterContext.getLocale(),
+					"i-cannot-fulfill-this-request"),
+				"Chat Message Sent", null, agentContext.getSseEventSinkKey());
+
+			return;
+		}
+
+		if (invocationTargetException.getCause() instanceof
+				UnsupportedOperationException) {
+
+			SseUtil.send(
+				_language.get(
+					dtoConverterContext.getLocale(),
+					"you-have-exceeded-your-token-quota"),
+				"Chat Message Sent", null, agentContext.getSseEventSinkKey());
+		}
+	}
+
 	private void _invoke(
-		AgentContext agentContext, InternalAgent[] internalAgents,
-		VertexAiGeminiChatModel vertexAiGeminiChatModel) {
+			AgentContext agentContext, InternalAgent[] internalAgents,
+			VertexAiGeminiChatModel vertexAiGeminiChatModel)
+		throws PortalException {
+
+		String message = MapUtil.getString(agentContext.getInput(), "message");
+
+		QuotaUtil.checkUsage(
+			agentContext.getCompanyId(), message, agentContext.getUserId());
 
 		dev.langchain4j.agentic.supervisor.SupervisorAgent supervisorAgent =
 			AgenticServices.supervisorBuilder(
@@ -205,20 +241,19 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 			).subAgents(
 				(Object[])internalAgents
 			).responseStrategy(
-				SupervisorResponseStrategy.SUMMARY
+				SupervisorResponseStrategy.SCORED
 			).build();
 
 		SseUtil.send(
-			supervisorAgent.invoke(
-				MapUtil.getString(agentContext.getInput(), "message")),
-			"Chat Message Sent", null, agentContext.getSseEventSinkKey());
+			supervisorAgent.invoke(message), "Chat Message Sent", null,
+			agentContext.getSseEventSinkKey());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SupervisorAgentImpl.class);
 
 	@Reference
-	private ConfigurationProvider _configurationProvider;
+	private Language _language;
 
 	private NoticeableExecutorService _noticeableExecutorService;
 

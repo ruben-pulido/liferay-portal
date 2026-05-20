@@ -5,6 +5,7 @@
 
 import {Page, expect} from '@playwright/test';
 
+import {clickAndExpectToBeVisible} from '../../../../utils/clickAndExpectToBeVisible';
 import {PORTLET_URLS} from '../../../../utils/portletUrls';
 import {DataSetPage} from './DataSetPage';
 
@@ -34,7 +35,13 @@ export class StructuresPage {
 		filter,
 		timeout,
 	}: {
-		action: 'Delete' | 'Edit' | 'View Usages';
+		action:
+			| 'Delete'
+			| 'Edit'
+			| 'Export as JSON'
+			| 'Import and Override'
+			| 'Permissions'
+			| 'View Usages';
 		filter: string;
 		timeout?: number;
 	}) {
@@ -42,6 +49,19 @@ export class StructuresPage {
 			action,
 			filter,
 			timeout,
+		});
+	}
+
+	async openMenuItem(action: 'Export' | 'Import') {
+		await this.goto();
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {
+				exact: true,
+				name: action,
+			}),
+			trigger: this.page.getByRole('button', {name: 'More Actions'}),
 		});
 	}
 }

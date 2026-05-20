@@ -8,7 +8,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {changeTrackingPagesTest} from '../../../fixtures/changeTrackingPagesTest';
 import {documentLibraryPagesTest} from '../../../fixtures/documentLibraryPages.fixtures';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {workflowPagesTest} from '../../../fixtures/workflowPagesTest';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
@@ -28,9 +27,6 @@ export const test = mergeTests(
 	blogsPagesTest,
 	changeTrackingPagesTest,
 	documentLibraryPagesTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	isolatedSiteTest,
 	journalPagesTest,
 	workflowPagesTest
@@ -572,11 +568,12 @@ test('LPD-39412 Assert publication timeline history is enabled for templates', a
 		.getByPlaceholder('Untitled Template')
 		.pressSequentially(title2, {delay: 50});
 
-	await page
-		.getByRole('button', {exact: true, name: 'Save and Continue'})
-		.click();
-
-	await page.waitForTimeout(500);
+	await Promise.all([
+		page.waitForLoadState('load'),
+		page
+			.getByRole('button', {exact: true, name: 'Save and Continue'})
+			.click(),
+	]);
 
 	const timelineButton = page.getByLabel('timeline-button');
 	await timelineButton.waitFor();
@@ -588,8 +585,6 @@ test('LPD-39412 Assert publication timeline history is enabled for templates', a
 	await expect(timelineActionsButton).toBeVisible();
 
 	await journalEditTemplatePage.goto(site.friendlyUrlPath);
-
-	await page.waitForTimeout(500);
 
 	await timelineButton.waitFor();
 	await timelineButton.click();

@@ -6,10 +6,7 @@
 package com.liferay.marketplace.service;
 
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
-import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.petra.string.StringBundler;
 
 import java.util.Base64;
 
@@ -25,6 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Caleb Hall
@@ -41,87 +40,86 @@ public class AnalyticsService extends BaseService {
 		return "Basic " + encoder.encodeToString(authorization.getBytes());
 	}
 
-	public void provision(JSONObject jsonObject, long orderId)
-		throws Exception {
-
-		if (_log.isInfoEnabled()) {
-			_log.info("Provisioning order " + orderId);
+	public String getCorpProjectUuid(String corpProjectUuid) {
+		try {
+			return get(
+				getAuthorization(),
+				UriComponentsBuilder.fromUriString(
+					_analyticsAuthUrl
+				).path(
+					"/o/faro/main/project/corpProjectUuid/" + corpProjectUuid
+				).build(
+				).toUri());
 		}
+		catch (WebClientResponseException webClientResponseException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					StringBundler.concat(
+						"Unable to get Analytics Cloud project: ",
+						corpProjectUuid, " \n",
+						webClientResponseException.getResponseBodyAsString()));
+			}
 
-		String response = WebClient.builder(
-		).baseUrl(
-			_analyticsAuthUrl
-		).defaultHeader(
-			HttpHeaders.AUTHORIZATION, getAuthorization()
-		).build(
-		).post(
-		).uri(
-			"/o/faro/main/project/unprovisioned"
-		).contentType(
-			MediaType.APPLICATION_FORM_URLENCODED
-		).body(
-			BodyInserters.fromFormData(
-				"corpProjectName", jsonObject.getString("corpProjectName")
-			).with(
-				"corpProjectUuid", jsonObject.getString("corpProjectUuid")
-			).with(
-				"incidentReportEmailAddresses",
-				jsonObject.getJSONArray(
-					"incidentReportEmailAddresses"
-				).toString()
-			).with(
-				"name", jsonObject.getString("name")
-			).with(
-				"serverLocation",
-				_getServerLocation(jsonObject.getString("serverLocation"))
-			).with(
-				"sharedCluster", "false"
-			).with(
-				"trial", "true"
-			).with(
-				"ownerEmailAddress", jsonObject.getString("ownerEmailAddress")
-			)
-		).retrieve(
-		).bodyToMono(
-			String.class
-		).block();
-
-		if (response == null) {
-			return;
+			return null;
 		}
-
-		if (_log.isInfoEnabled()) {
-			_log.info("Analytics project created for order " + orderId);
-		}
-
-		Order order = _marketplaceService.getOrder(orderId);
-
-		_marketplaceService.updateOrder(
-			HashMapBuilder.put(
-				"order-metadata",
-				new JSONObject(
-					GetterUtil.get(
-						order.getCustomFields(
-						).get(
-							"order-metadata"
-						),
-						"{}")
-				).put(
-					"analyticsProject", new JSONObject(response)
-				).toString()
-			).build(),
-			orderId, order.getOrderStatus());
 	}
 
-	private String _getServerLocation(String serverLocation) {
-		if (Validator.isBlank(serverLocation)) {
-			return _SERVER_LOCATION;
+	public String provision(JSONObject jsonObject) throws Exception {
+		try {
+			String response = WebClient.builder(
+			).baseUrl(
+				_analyticsAuthUrl
+			).defaultHeader(
+				HttpHeaders.AUTHORIZATION, getAuthorization()
+			).build(
+			).post(
+			).uri(
+				"/o/faro/main/project/provisioned"
+			).contentType(
+				MediaType.APPLICATION_FORM_URLENCODED
+			).body(
+				BodyInserters.fromFormData(
+					"corpProjectName", jsonObject.optString("corpProjectName")
+				).with(
+					"corpProjectUuid", jsonObject.optString("corpProjectUuid")
+				).with(
+					"incidentReportEmailAddresses",
+					jsonObject.getJSONArray(
+						"incidentReportEmailAddresses"
+					).toString()
+				).with(
+					"name", jsonObject.getString("name")
+				).with(
+					"serverLocation", jsonObject.getString("serverLocation")
+				).with(
+					"sharedCluster", "false"
+				).with(
+					"trial", "false"
+				).with(
+					"ownerEmailAddress",
+					jsonObject.getString("ownerEmailAddress")
+				)
+			).retrieve(
+			).bodyToMono(
+				String.class
+			).block();
+
+			if (_log.isInfoEnabled()) {
+				_log.info("Analytics project created " + response);
+			}
+
+			return response;
 		}
+		catch (WebClientResponseException webClientResponseException) {
+			_log.error(
+				StringBundler.concat(
+					"Unable to provision Analytics Cloud project: ", jsonObject,
+					"\n",
+					webClientResponseException.getResponseBodyAsString()));
 
-		return serverLocation;
+			throw webClientResponseException;
+		}
 	}
-
-	private static final String _SERVER_LOCATION = "us-west1-ac-uat-c1";
 
 	private static final Log _log = LogFactory.getLog(AnalyticsService.class);
 

@@ -13,14 +13,10 @@ import com.liferay.commerce.product.type.virtual.model.impl.CPDefinitionVirtualS
 import com.liferay.commerce.product.type.virtual.service.persistence.CPDefinitionVirtualSettingPersistence;
 import com.liferay.commerce.product.type.virtual.service.persistence.CPDefinitionVirtualSettingUtil;
 import com.liferay.commerce.product.type.virtual.service.persistence.impl.constants.CommercePersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -29,10 +25,10 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -46,7 +42,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -68,7 +63,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CPDefinitionVirtualSettingPersistence.class)
 public class CPDefinitionVirtualSettingPersistenceImpl
-	extends BasePersistenceImpl<CPDefinitionVirtualSetting>
+	extends BasePersistenceImpl
+		<CPDefinitionVirtualSetting, NoSuchCPDefinitionVirtualSettingException>
 	implements CPDefinitionVirtualSettingPersistence {
 
 	/*
@@ -85,69 +81,14 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the cp definition virtual settings where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cp definition virtual settings where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cp definition virtual settings
-	 * @param end the upper bound of the range of cp definition virtual settings (not inclusive)
-	 * @return the range of matching cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findByUuid(
-		String uuid, int start, int end) {
-
-		return findByUuid(uuid, start, end, null);
-	}
+	private CollectionPersistenceFinder<CPDefinitionVirtualSetting>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp definition virtual settings where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cp definition virtual settings
-	 * @param end the upper bound of the range of cp definition virtual settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<CPDefinitionVirtualSetting> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp definition virtual settings where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -163,108 +104,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 		OrderByComparator<CPDefinitionVirtualSetting> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<CPDefinitionVirtualSetting> list = null;
-
-		if (useFinderCache) {
-			list = (List<CPDefinitionVirtualSetting>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CPDefinitionVirtualSetting cpDefinitionVirtualSetting :
-						list) {
-
-					if (!uuid.equals(cpDefinitionVirtualSetting.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CPDefinitionVirtualSettingModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<CPDefinitionVirtualSetting>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -288,16 +130,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			return cpDefinitionVirtualSetting;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchCPDefinitionVirtualSettingException(sb.toString());
+		throw new NoSuchCPDefinitionVirtualSettingException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -312,14 +147,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 		String uuid,
 		OrderByComparator<CPDefinitionVirtualSetting> orderByComparator) {
 
-		List<CPDefinitionVirtualSetting> list = findByUuid(
-			uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -329,11 +158,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (CPDefinitionVirtualSetting cpDefinitionVirtualSetting :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(cpDefinitionVirtualSetting);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -344,67 +170,12 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_CPDEFINITIONVIRTUALSETTING_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"cpDefinitionVirtualSetting.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(cpDefinitionVirtualSetting.uuid IS NULL OR cpDefinitionVirtualSetting.uuid = '')";
-
-	private FinderPath _finderPathFetchByUUID_G;
+	private UniquePersistenceFinder<CPDefinitionVirtualSetting>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the cp definition virtual setting where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCPDefinitionVirtualSettingException</code> if it could not be found.
@@ -422,38 +193,18 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			uuid, groupId);
 
 		if (cpDefinitionVirtualSetting == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("uuid=");
-			sb.append(uuid);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCPDefinitionVirtualSettingException(sb.toString());
+			throw new NoSuchCPDefinitionVirtualSettingException(message);
 		}
 
 		return cpDefinitionVirtualSetting;
-	}
-
-	/**
-	 * Returns the cp definition virtual setting where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching cp definition virtual setting, or <code>null</code> if a matching cp definition virtual setting could not be found
-	 */
-	@Override
-	public CPDefinitionVirtualSetting fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
 	}
 
 	/**
@@ -468,98 +219,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	public CPDefinitionVirtualSetting fetchByUUID_G(
 		String uuid, long groupId, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {uuid, groupId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
-		}
-
-		if (result instanceof CPDefinitionVirtualSetting) {
-			CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
-				(CPDefinitionVirtualSetting)result;
-
-			if (!Objects.equals(uuid, cpDefinitionVirtualSetting.getUuid()) ||
-				(groupId != cpDefinitionVirtualSetting.getGroupId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(groupId);
-
-				List<CPDefinitionVirtualSetting> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByUUID_G, finderArgs, list);
-					}
-				}
-				else {
-					CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
-						list.get(0);
-
-					result = cpDefinitionVirtualSetting;
-
-					cacheResult(cpDefinitionVirtualSetting);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (CPDefinitionVirtualSetting)result;
-		}
+		return _uniquePersistenceFinderByUUID_G.fetch(
+			finderCache, new Object[] {uuid, groupId}, useFinderCache);
 	}
 
 	/**
@@ -588,92 +249,18 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting = fetchByUUID_G(
-			uuid, groupId);
-
-		if (cpDefinitionVirtualSetting == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByUUID_G.count(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
-		"cpDefinitionVirtualSetting.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
-		"(cpDefinitionVirtualSetting.uuid IS NULL OR cpDefinitionVirtualSetting.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
-		"cpDefinitionVirtualSetting.groupId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByUuid_C;
-	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
-	private FinderPath _finderPathCountByUuid_C;
-
-	/**
-	 * Returns all the cp definition virtual settings where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findByUuid_C(
-		String uuid, long companyId) {
-
-		return findByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cp definition virtual settings where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp definition virtual settings
-	 * @param end the upper bound of the range of cp definition virtual settings (not inclusive)
-	 * @return the range of matching cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return findByUuid_C(uuid, companyId, start, end, null);
-	}
+	private CollectionPersistenceFinder<CPDefinitionVirtualSetting>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp definition virtual settings where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp definition virtual settings
-	 * @param end the upper bound of the range of cp definition virtual settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<CPDefinitionVirtualSetting> orderByComparator) {
-
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp definition virtual settings where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -690,117 +277,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 		OrderByComparator<CPDefinitionVirtualSetting> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<CPDefinitionVirtualSetting> list = null;
-
-		if (useFinderCache) {
-			list = (List<CPDefinitionVirtualSetting>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CPDefinitionVirtualSetting cpDefinitionVirtualSetting :
-						list) {
-
-					if (!uuid.equals(cpDefinitionVirtualSetting.getUuid()) ||
-						(companyId !=
-							cpDefinitionVirtualSetting.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CPDefinitionVirtualSettingModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<CPDefinitionVirtualSetting>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -825,19 +304,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			return cpDefinitionVirtualSetting;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchCPDefinitionVirtualSettingException(sb.toString());
+		throw new NoSuchCPDefinitionVirtualSettingException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -853,14 +322,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<CPDefinitionVirtualSetting> orderByComparator) {
 
-		List<CPDefinitionVirtualSetting> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -871,13 +334,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (CPDefinitionVirtualSetting cpDefinitionVirtualSetting :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(cpDefinitionVirtualSetting);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -889,74 +347,12 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_CPDEFINITIONVIRTUALSETTING_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"cpDefinitionVirtualSetting.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(cpDefinitionVirtualSetting.uuid IS NULL OR cpDefinitionVirtualSetting.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"cpDefinitionVirtualSetting.companyId = ?";
-
-	private FinderPath _finderPathFetchByC_C;
+	private UniquePersistenceFinder<CPDefinitionVirtualSetting>
+		_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the cp definition virtual setting where classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchCPDefinitionVirtualSettingException</code> if it could not be found.
@@ -974,40 +370,19 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			classNameId, classPK);
 
 		if (cpDefinitionVirtualSetting == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("classNameId=");
-			sb.append(classNameId);
-
-			sb.append(", classPK=");
-			sb.append(classPK);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {classNameId, classPK});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCPDefinitionVirtualSettingException(sb.toString());
+			throw new NoSuchCPDefinitionVirtualSettingException(message);
 		}
 
 		return cpDefinitionVirtualSetting;
-	}
-
-	/**
-	 * Returns the cp definition virtual setting where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching cp definition virtual setting, or <code>null</code> if a matching cp definition virtual setting could not be found
-	 */
-	@Override
-	public CPDefinitionVirtualSetting fetchByC_C(
-		long classNameId, long classPK) {
-
-		return fetchByC_C(classNameId, classPK, true);
 	}
 
 	/**
@@ -1022,85 +397,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	public CPDefinitionVirtualSetting fetchByC_C(
 		long classNameId, long classPK, boolean useFinderCache) {
 
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {classNameId, classPK};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByC_C, finderArgs, this);
-		}
-
-		if (result instanceof CPDefinitionVirtualSetting) {
-			CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
-				(CPDefinitionVirtualSetting)result;
-
-			if ((classNameId != cpDefinitionVirtualSetting.getClassNameId()) ||
-				(classPK != cpDefinitionVirtualSetting.getClassPK())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_C_CLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_C_C_CLASSPK_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(classNameId);
-
-				queryPos.add(classPK);
-
-				List<CPDefinitionVirtualSetting> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByC_C, finderArgs, list);
-					}
-				}
-				else {
-					CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
-						list.get(0);
-
-					result = cpDefinitionVirtualSetting;
-
-					cacheResult(cpDefinitionVirtualSetting);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (CPDefinitionVirtualSetting)result;
-		}
+		return _uniquePersistenceFinderByC_C.fetch(
+			finderCache, new Object[] {classNameId, classPK}, useFinderCache);
 	}
 
 	/**
@@ -1130,21 +428,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	 */
 	@Override
 	public int countByC_C(long classNameId, long classPK) {
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting = fetchByC_C(
-			classNameId, classPK);
-
-		if (cpDefinitionVirtualSetting == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByC_C.count(
+			finderCache, new Object[] {classNameId, classPK});
 	}
-
-	private static final String _FINDER_COLUMN_C_C_CLASSNAMEID_2 =
-		"cpDefinitionVirtualSetting.classNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_C_CLASSPK_2 =
-		"cpDefinitionVirtualSetting.classPK = ?";
 
 	public CPDefinitionVirtualSettingPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -1162,142 +448,6 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(CPDefinitionVirtualSettingTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the cp definition virtual setting in the entity cache if it is enabled.
-	 *
-	 * @param cpDefinitionVirtualSetting the cp definition virtual setting
-	 */
-	@Override
-	public void cacheResult(
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting) {
-
-		entityCache.putResult(
-			CPDefinitionVirtualSettingImpl.class,
-			cpDefinitionVirtualSetting.getPrimaryKey(),
-			cpDefinitionVirtualSetting);
-
-		finderCache.putResult(
-			_finderPathFetchByUUID_G,
-			new Object[] {
-				cpDefinitionVirtualSetting.getUuid(),
-				cpDefinitionVirtualSetting.getGroupId()
-			},
-			cpDefinitionVirtualSetting);
-
-		finderCache.putResult(
-			_finderPathFetchByC_C,
-			new Object[] {
-				cpDefinitionVirtualSetting.getClassNameId(),
-				cpDefinitionVirtualSetting.getClassPK()
-			},
-			cpDefinitionVirtualSetting);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the cp definition virtual settings in the entity cache if it is enabled.
-	 *
-	 * @param cpDefinitionVirtualSettings the cp definition virtual settings
-	 */
-	@Override
-	public void cacheResult(
-		List<CPDefinitionVirtualSetting> cpDefinitionVirtualSettings) {
-
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (cpDefinitionVirtualSettings.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (CPDefinitionVirtualSetting cpDefinitionVirtualSetting :
-				cpDefinitionVirtualSettings) {
-
-			if (entityCache.getResult(
-					CPDefinitionVirtualSettingImpl.class,
-					cpDefinitionVirtualSetting.getPrimaryKey()) == null) {
-
-				cacheResult(cpDefinitionVirtualSetting);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all cp definition virtual settings.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(CPDefinitionVirtualSettingImpl.class);
-
-		finderCache.clearCache(CPDefinitionVirtualSettingImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the cp definition virtual setting.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting) {
-
-		entityCache.removeResult(
-			CPDefinitionVirtualSettingImpl.class, cpDefinitionVirtualSetting);
-	}
-
-	@Override
-	public void clearCache(
-		List<CPDefinitionVirtualSetting> cpDefinitionVirtualSettings) {
-
-		for (CPDefinitionVirtualSetting cpDefinitionVirtualSetting :
-				cpDefinitionVirtualSettings) {
-
-			entityCache.removeResult(
-				CPDefinitionVirtualSettingImpl.class,
-				cpDefinitionVirtualSetting);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(CPDefinitionVirtualSettingImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				CPDefinitionVirtualSettingImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		CPDefinitionVirtualSettingModelImpl
-			cpDefinitionVirtualSettingModelImpl) {
-
-		Object[] args = new Object[] {
-			cpDefinitionVirtualSettingModelImpl.getUuid(),
-			cpDefinitionVirtualSettingModelImpl.getGroupId()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByUUID_G, args,
-			cpDefinitionVirtualSettingModelImpl);
-
-		args = new Object[] {
-			cpDefinitionVirtualSettingModelImpl.getClassNameId(),
-			cpDefinitionVirtualSettingModelImpl.getClassPK()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByC_C, args, cpDefinitionVirtualSettingModelImpl);
 	}
 
 	/**
@@ -1338,50 +488,6 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 		throws NoSuchCPDefinitionVirtualSettingException {
 
 		return remove((Serializable)CPDefinitionVirtualSettingId);
-	}
-
-	/**
-	 * Removes the cp definition virtual setting with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the cp definition virtual setting
-	 * @return the cp definition virtual setting that was removed
-	 * @throws NoSuchCPDefinitionVirtualSettingException if a cp definition virtual setting with the primary key could not be found
-	 */
-	@Override
-	public CPDefinitionVirtualSetting remove(Serializable primaryKey)
-		throws NoSuchCPDefinitionVirtualSettingException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
-				(CPDefinitionVirtualSetting)session.get(
-					CPDefinitionVirtualSettingImpl.class, primaryKey);
-
-			if (cpDefinitionVirtualSetting == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchCPDefinitionVirtualSettingException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(cpDefinitionVirtualSetting);
-		}
-		catch (NoSuchCPDefinitionVirtualSettingException
-					noSuchEntityException) {
-
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1499,43 +605,13 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			CPDefinitionVirtualSettingImpl.class,
-			cpDefinitionVirtualSettingModelImpl, false, true);
-
-		cacheUniqueFindersCache(cpDefinitionVirtualSettingModelImpl);
+		cacheUniqueFindersResult(cpDefinitionVirtualSetting, false);
 
 		if (isNew) {
 			cpDefinitionVirtualSetting.setNew(false);
 		}
 
 		cpDefinitionVirtualSetting.resetOriginalValues();
-
-		return cpDefinitionVirtualSetting;
-	}
-
-	/**
-	 * Returns the cp definition virtual setting with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the cp definition virtual setting
-	 * @return the cp definition virtual setting
-	 * @throws NoSuchCPDefinitionVirtualSettingException if a cp definition virtual setting with the primary key could not be found
-	 */
-	@Override
-	public CPDefinitionVirtualSetting findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchCPDefinitionVirtualSettingException {
-
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
-			fetchByPrimaryKey(primaryKey);
-
-		if (cpDefinitionVirtualSetting == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchCPDefinitionVirtualSettingException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return cpDefinitionVirtualSetting;
 	}
@@ -1568,191 +644,6 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 		return fetchByPrimaryKey((Serializable)CPDefinitionVirtualSettingId);
 	}
 
-	/**
-	 * Returns all the cp definition virtual settings.
-	 *
-	 * @return the cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cp definition virtual settings.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cp definition virtual settings
-	 * @param end the upper bound of the range of cp definition virtual settings (not inclusive)
-	 * @return the range of cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp definition virtual settings.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cp definition virtual settings
-	 * @param end the upper bound of the range of cp definition virtual settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findAll(
-		int start, int end,
-		OrderByComparator<CPDefinitionVirtualSetting> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp definition virtual settings.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDefinitionVirtualSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cp definition virtual settings
-	 * @param end the upper bound of the range of cp definition virtual settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cp definition virtual settings
-	 */
-	@Override
-	public List<CPDefinitionVirtualSetting> findAll(
-		int start, int end,
-		OrderByComparator<CPDefinitionVirtualSetting> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<CPDefinitionVirtualSetting> list = null;
-
-		if (useFinderCache) {
-			list = (List<CPDefinitionVirtualSetting>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_CPDEFINITIONVIRTUALSETTING);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_CPDEFINITIONVIRTUALSETTING;
-
-				sql = sql.concat(
-					CPDefinitionVirtualSettingModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<CPDefinitionVirtualSetting>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the cp definition virtual settings from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (CPDefinitionVirtualSetting cpDefinitionVirtualSetting :
-				findAll()) {
-
-			remove(cpDefinitionVirtualSetting);
-		}
-	}
-
-	/**
-	 * Returns the number of cp definition virtual settings.
-	 *
-	 * @return the number of cp definition virtual settings
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_CPDEFINITIONVIRTUALSETTING);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
 	@Override
 	public Set<String> getBadColumnNames() {
 		return _badColumnNames;
@@ -1783,67 +674,97 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"uuid_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, false, null),
+			_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE,
+			_SQL_COUNT_CPDEFINITIONVIRTUALSETTING_WHERE,
+			CPDefinitionVirtualSettingModelImpl.ORDER_BY_JPQL,
+			_ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"cpDefinitionVirtualSetting.", "uuid", FinderColumn.Type.STRING,
+				"=", true, true, CPDefinitionVirtualSetting::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"uuid_", "groupId"}, 0, 1, false,
+				convertNullFunction(CPDefinitionVirtualSetting::getUuid),
+				CPDefinitionVirtualSetting::getGroupId),
+			_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE, "",
+			new FinderColumn<>(
+				"cpDefinitionVirtualSetting.", "uuid", FinderColumn.Type.STRING,
+				"=", true, true, CPDefinitionVirtualSetting::getUuid),
+			new FinderColumn<>(
+				"cpDefinitionVirtualSetting.", "groupId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CPDefinitionVirtualSetting::getGroupId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+					new String[] {
+						String.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_", "companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
+				_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE,
+				_SQL_COUNT_CPDEFINITIONVIRTUALSETTING_WHERE,
+				CPDefinitionVirtualSettingModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"cpDefinitionVirtualSetting.", "uuid",
+					FinderColumn.Type.STRING, "=", true, true,
+					CPDefinitionVirtualSetting::getUuid),
+				new FinderColumn<>(
+					"cpDefinitionVirtualSetting.", "companyId",
+					FinderColumn.Type.LONG, "=", true, true,
+					CPDefinitionVirtualSetting::getCompanyId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
-
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
-
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
-
-		_finderPathFetchByUUID_G = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "groupId"}, true);
-
-		_finderPathWithPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathCountByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, false);
-
-		_finderPathFetchByC_C = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByC_C",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"classNameId", "classPK"}, true);
+		_uniquePersistenceFinderByC_C = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByC_C",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"classNameId", "classPK"}, 0, 0, false,
+				CPDefinitionVirtualSetting::getClassNameId,
+				CPDefinitionVirtualSetting::getClassPK),
+			_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE, "",
+			new FinderColumn<>(
+				"cpDefinitionVirtualSetting.", "classNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CPDefinitionVirtualSetting::getClassNameId),
+			new FinderColumn<>(
+				"cpDefinitionVirtualSetting.", "classPK",
+				FinderColumn.Type.LONG, "=", true, true,
+				CPDefinitionVirtualSetting::getClassPK));
 
 		CPDefinitionVirtualSettingUtil.setPersistence(this);
 	}
@@ -1887,23 +808,17 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		CPDefinitionVirtualSettingModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_CPDEFINITIONVIRTUALSETTING =
 		"SELECT cpDefinitionVirtualSetting FROM CPDefinitionVirtualSetting cpDefinitionVirtualSetting";
 
 	private static final String _SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE =
 		"SELECT cpDefinitionVirtualSetting FROM CPDefinitionVirtualSetting cpDefinitionVirtualSetting WHERE ";
 
-	private static final String _SQL_COUNT_CPDEFINITIONVIRTUALSETTING =
-		"SELECT COUNT(cpDefinitionVirtualSetting) FROM CPDefinitionVirtualSetting cpDefinitionVirtualSetting";
-
 	private static final String _SQL_COUNT_CPDEFINITIONVIRTUALSETTING_WHERE =
 		"SELECT COUNT(cpDefinitionVirtualSetting) FROM CPDefinitionVirtualSetting cpDefinitionVirtualSetting WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"cpDefinitionVirtualSetting.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No CPDefinitionVirtualSetting exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No CPDefinitionVirtualSetting exists with the key {";
@@ -1920,4 +835,4 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1784117154
+// LIFERAY-SERVICE-BUILDER-HASH:-2099783681

@@ -18,6 +18,7 @@ import com.liferay.headless.admin.site.client.problem.Problem;
 import com.liferay.headless.admin.site.client.resource.v1_0.UtilityPageResource;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.LayoutUtilityPageEntryTestUtil;
 import com.liferay.headless.admin.site.resource.v1_0.test.util.PageSpecificationsTestUtil;
+import com.liferay.headless.admin.site.resource.v1_0.test.util.ThumbnailURLReferenceUtil;
 import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
@@ -40,11 +41,14 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -54,6 +58,9 @@ import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import java.text.DateFormat;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -305,12 +312,7 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		FileEntry fileEntry = _addPortletFileEntry(repository.getDlFolderId());
 
 		ThumbnailURLReference thumbnailURLReference =
-			new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry.getExternalReferenceCode());
-				}
-			};
+			ThumbnailURLReferenceUtil.getThumbnailURLReference(fileEntry, null);
 
 		utilityPage.setThumbnailURLReference(thumbnailURLReference);
 
@@ -326,15 +328,8 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 
 		utilityPage = randomUtilityPage();
 
-		thumbnailURLReference = new ThumbnailURLReference() {
-			{
-				setExternalReferenceCode(RandomTestUtil.randomString());
-				setUrl(
-					() ->
-						"http://localhost:8080/" +
-							RandomTestUtil.randomString());
-			}
-		};
+		thumbnailURLReference =
+			ThumbnailURLReferenceUtil.getRandomThumbnailURLReference();
 
 		utilityPage.setThumbnailURLReference(thumbnailURLReference);
 
@@ -385,7 +380,7 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 
 	@Override
 	@Test
-	@TestInfo({"LPD-42587", "LPD-48987"})
+	@TestInfo({"LPD-42587", "LPD-48987", "LPD-86647"})
 	public void testPutSiteUtilityPage() throws Exception {
 		_testPutSiteUtilityPage(Boolean.FALSE, randomUtilityPage());
 
@@ -430,6 +425,7 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 			_getUtilityPage(
 				null, null, layoutUtilityPageEntry.getExternalReferenceCode()));
 
+		_testPutSiteUtilityPageWithDates();
 		_testPutSiteUtilityPageWithPageSpecifications();
 		_testPutSiteUtilityPageWithThumbnail();
 	}
@@ -673,7 +669,8 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		).authentication(
 			user.getEmailAddress(), PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).parameters(
@@ -747,12 +744,8 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		FileEntry fileEntry = _addPortletFileEntry(repository.getDlFolderId());
 
 		randomUtilityPage.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry, null));
 
 		UtilityPage postUtilityPage = testPostSiteUtilityPage_addUtilityPage(
 			randomUtilityPage);
@@ -925,12 +918,8 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		FileEntry fileEntry = _addPortletFileEntry(repository.getDlFolderId());
 
 		utilityPage1.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry, null));
 
 		UtilityPageResource utilityPageResource = _getUtilityPageResource();
 
@@ -949,12 +938,8 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 			repository.getDlFolderId());
 
 		utilityPage1.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						newFileEntry.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				newFileEntry, null));
 
 		utilityPageResource.patchSiteUtilityPage(
 			testGroup.getExternalReferenceCode(),
@@ -967,15 +952,7 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		UtilityPage utilityPage2 = randomUtilityPage();
 
 		ThumbnailURLReference thumbnailURLReference =
-			new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(RandomTestUtil.randomString());
-					setUrl(
-						() ->
-							"http://localhost:8080/" +
-								RandomTestUtil.randomString());
-				}
-			};
+			ThumbnailURLReferenceUtil.getRandomThumbnailURLReference();
 
 		utilityPage2.setThumbnailURLReference(thumbnailURLReference);
 
@@ -1070,6 +1047,39 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 
 		Assert.assertEquals(
 			markedAsDefault, putUtilityPage.getMarkedAsDefault());
+	}
+
+	private void _testPutSiteUtilityPageWithDates() throws Exception {
+		UtilityPage utilityPage = _getUtilityPage(
+			null, Boolean.FALSE, RandomTestUtil.randomString());
+
+		DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
+			"yyyy-MM-dd");
+
+		Date date = dateFormat.parse("2023-01-01");
+
+		utilityPage.setDateCreated(date);
+		utilityPage.setDateModified(date);
+
+		UtilityPage putUtilityPage = utilityPageResource.putSiteUtilityPage(
+			testGroup.getExternalReferenceCode(),
+			utilityPage.getExternalReferenceCode(), utilityPage);
+
+		Assert.assertEquals(
+			utilityPage.getDateCreated(), putUtilityPage.getDateCreated());
+		Assert.assertEquals(
+			utilityPage.getDateModified(), putUtilityPage.getDateModified());
+
+		utilityPage.setDateCreated(RandomTestUtil.nextDate());
+		utilityPage.setDateModified(new Date(date.getTime() + Time.SECOND));
+
+		putUtilityPage = utilityPageResource.putSiteUtilityPage(
+			testGroup.getExternalReferenceCode(),
+			utilityPage.getExternalReferenceCode(), utilityPage);
+
+		Assert.assertEquals(date, putUtilityPage.getDateCreated());
+		Assert.assertEquals(
+			utilityPage.getDateModified(), putUtilityPage.getDateModified());
 	}
 
 	private void _testPutSiteUtilityPageWithPageSpecifications()
@@ -1175,12 +1185,8 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		FileEntry fileEntry1 = _addPortletFileEntry(repository.getDlFolderId());
 
 		utilityPage.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry1.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry1, null));
 
 		UtilityPage putUtilityPage = utilityPageResource.putSiteUtilityPage(
 			testGroup.getExternalReferenceCode(),
@@ -1193,12 +1199,8 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		FileEntry fileEntry2 = _addPortletFileEntry(repository.getDlFolderId());
 
 		putUtilityPage.setThumbnailURLReference(
-			() -> new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(
-						fileEntry2.getExternalReferenceCode());
-				}
-			});
+			() -> ThumbnailURLReferenceUtil.getThumbnailURLReference(
+				fileEntry2, null));
 
 		putUtilityPage = utilityPageResource.putSiteUtilityPage(
 			testGroup.getExternalReferenceCode(),
@@ -1220,15 +1222,7 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		utilityPage = randomUtilityPage();
 
 		ThumbnailURLReference thumbnailURLReference =
-			new ThumbnailURLReference() {
-				{
-					setExternalReferenceCode(RandomTestUtil.randomString());
-					setUrl(
-						() ->
-							"http://localhost:8080/" +
-								RandomTestUtil.randomString());
-				}
-			};
+			ThumbnailURLReferenceUtil.getRandomThumbnailURLReference();
 
 		utilityPage.setThumbnailURLReference(thumbnailURLReference);
 

@@ -19,7 +19,6 @@ export const test = mergeTests(
 	commercePagesTest,
 	dataApiHelpersTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	loginTest()
@@ -62,11 +61,9 @@ test('LPD-34906 Verify wishlist visibility rules', async ({
 		accountGroup.externalReferenceCode
 	);
 
-	const site = await apiHelpers.headlessSite.createSite({
+	const site = await apiHelpers.headlessAdminSite.postSite({
 		name: 'WishListsSite',
 	});
-
-	apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 	const layout = await apiHelpers.headlessDelivery.createSitePage({
 		pageDefinition: getPageDefinition([

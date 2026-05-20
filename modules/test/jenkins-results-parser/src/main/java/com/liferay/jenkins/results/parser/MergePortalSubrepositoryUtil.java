@@ -501,19 +501,39 @@ public class MergePortalSubrepositoryUtil {
 			return;
 		}
 
+		LocalGitBranch currentLocalGitBranch =
+			portalGitWorkingDirectory.getCurrentLocalGitBranch();
 		String remoteURL = JenkinsResultsParserUtil.combine(
 			"git@github.com:", gitHubURLMatcher.group("userName"), "/",
 			gitHubURLMatcher.group("repositoryName"), ".git");
+		String remoteGitBranchName = gitHubURLMatcher.group("branchName");
 
-		RemoteGitBranch remoteGitBranch =
-			portalGitWorkingDirectory.pushToRemoteGitRepository(
-				false, portalGitWorkingDirectory.getCurrentLocalGitBranch(),
-				gitHubURLMatcher.group("branchName"), remoteURL);
+		Retryable<Void> retryable = new Retryable<Void>() {
 
-		if (remoteGitBranch == null) {
+			@Override
+			public Void execute() {
+				RemoteGitBranch remoteGitBranch =
+					portalGitWorkingDirectory.pushToRemoteGitRepository(
+						false, currentLocalGitBranch, remoteGitBranchName,
+						remoteURL);
+
+				if (remoteGitBranch == null) {
+					throw new RuntimeException(
+						"Unable to push updates to " + remoteURL);
+				}
+
+				return null;
+			}
+
+		};
+
+		try {
+			retryable.executeWithRetries();
+		}
+		catch (Exception exception) {
 			_reportError(
 				"Unable to push updates to " + remoteURL, jenkinsBuildURL,
-				portalPullRequest);
+				portalPullRequest, exception);
 		}
 	}
 

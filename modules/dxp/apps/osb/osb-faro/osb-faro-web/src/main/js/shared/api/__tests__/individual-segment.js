@@ -42,10 +42,35 @@ describe('Individual Segment API', () => {
 				...newRequestParams,
 				data: {
 					channelId: '123',
+					externalReferenceCode: '',
 					filter: "(name eq 'test test')",
 					includeAnonymousUsers: false,
 					name: createArgs.name,
-					segmentType
+					segmentType,
+					sequential: false
+				}
+			});
+		});
+
+		it('should forward externalReferenceCode to sendRequest when provided', () => {
+			const externalReferenceCode = 'vip-users_2026';
+
+			create({
+				...createArgs,
+				externalReferenceCode,
+				segmentType: 'BATCH'
+			});
+
+			expect(sendRequest).toHaveBeenCalledWith({
+				...newRequestParams,
+				data: {
+					channelId: '123',
+					externalReferenceCode,
+					filter: "(name eq 'test test')",
+					includeAnonymousUsers: false,
+					name: createArgs.name,
+					segmentType: 'BATCH',
+					sequential: false
 				}
 			});
 		});
@@ -57,9 +82,11 @@ describe('Individual Segment API', () => {
 
 			const data = {
 				channelId: '123',
+				externalReferenceCode: '',
 				filter: "(name eq 'test test')",
 				includeAnonymousUsers: false,
-				name: updateArgs.name
+				name: updateArgs.name,
+				sequential: false
 			};
 
 			update({...updateArgs, segmentType});
@@ -67,6 +94,29 @@ describe('Individual Segment API', () => {
 			expect(sendRequest).toHaveBeenCalledWith({
 				...updateRequestParams,
 				data: {...data, segmentType}
+			});
+		});
+
+		it('should forward externalReferenceCode to sendRequest when provided', () => {
+			const externalReferenceCode = 'vip-users_2026';
+
+			update({
+				...updateArgs,
+				externalReferenceCode,
+				segmentType: 'BATCH'
+			});
+
+			expect(sendRequest).toHaveBeenCalledWith({
+				...updateRequestParams,
+				data: {
+					channelId: '123',
+					externalReferenceCode,
+					filter: "(name eq 'test test')",
+					includeAnonymousUsers: false,
+					name: updateArgs.name,
+					segmentType: 'BATCH',
+					sequential: false
+				}
 			});
 		});
 	});

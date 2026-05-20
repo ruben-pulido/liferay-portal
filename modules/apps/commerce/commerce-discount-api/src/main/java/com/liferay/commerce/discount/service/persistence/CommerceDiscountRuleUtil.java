@@ -36,6 +36,22 @@ public class CommerceDiscountRuleUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<CommerceDiscountRule> commerceDiscountRules) {
+
+		getPersistence().cacheResult(commerceDiscountRules);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(CommerceDiscountRule commerceDiscountRule) {
+		getPersistence().cacheResult(commerceDiscountRule);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -114,62 +130,10 @@ public class CommerceDiscountRuleUtil {
 	}
 
 	/**
-	 * Returns all the commerce discount rules where commerceDiscountId = &#63;.
-	 *
-	 * @param commerceDiscountId the commerce discount ID
-	 * @return the matching commerce discount rules
-	 */
-	public static List<CommerceDiscountRule> findByCommerceDiscountId(
-		long commerceDiscountId) {
-
-		return getPersistence().findByCommerceDiscountId(commerceDiscountId);
-	}
-
-	/**
-	 * Returns a range of all the commerce discount rules where commerceDiscountId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceDiscountRuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commerceDiscountId the commerce discount ID
-	 * @param start the lower bound of the range of commerce discount rules
-	 * @param end the upper bound of the range of commerce discount rules (not inclusive)
-	 * @return the range of matching commerce discount rules
-	 */
-	public static List<CommerceDiscountRule> findByCommerceDiscountId(
-		long commerceDiscountId, int start, int end) {
-
-		return getPersistence().findByCommerceDiscountId(
-			commerceDiscountId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce discount rules where commerceDiscountId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceDiscountRuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commerceDiscountId the commerce discount ID
-	 * @param start the lower bound of the range of commerce discount rules
-	 * @param end the upper bound of the range of commerce discount rules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce discount rules
-	 */
-	public static List<CommerceDiscountRule> findByCommerceDiscountId(
-		long commerceDiscountId, int start, int end,
-		OrderByComparator<CommerceDiscountRule> orderByComparator) {
-
-		return getPersistence().findByCommerceDiscountId(
-			commerceDiscountId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce discount rules where commerceDiscountId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceDiscountRuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.discount.model.impl.CommerceDiscountRuleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param commerceDiscountId the commerce discount ID
@@ -241,26 +205,6 @@ public class CommerceDiscountRuleUtil {
 	}
 
 	/**
-	 * Caches the commerce discount rule in the entity cache if it is enabled.
-	 *
-	 * @param commerceDiscountRule the commerce discount rule
-	 */
-	public static void cacheResult(CommerceDiscountRule commerceDiscountRule) {
-		getPersistence().cacheResult(commerceDiscountRule);
-	}
-
-	/**
-	 * Caches the commerce discount rules in the entity cache if it is enabled.
-	 *
-	 * @param commerceDiscountRules the commerce discount rules
-	 */
-	public static void cacheResult(
-		List<CommerceDiscountRule> commerceDiscountRules) {
-
-		getPersistence().cacheResult(commerceDiscountRules);
-	}
-
-	/**
 	 * Creates a new commerce discount rule with the primary key. Does not add the commerce discount rule to the database.
 	 *
 	 * @param commerceDiscountRuleId the primary key for the new commerce discount rule
@@ -318,84 +262,55 @@ public class CommerceDiscountRuleUtil {
 	}
 
 	/**
-	 * Returns all the commerce discount rules.
+	 * Returns all the commerce discount rules where commerceDiscountId = &#63;.
 	 *
-	 * @return the commerce discount rules
+	 * @param commerceDiscountId the commerce discount ID
+	 * @return the matching commerce discount rules
 	 */
-	public static List<CommerceDiscountRule> findAll() {
-		return getPersistence().findAll();
+	public static List<CommerceDiscountRule> findByCommerceDiscountId(
+		long commerceDiscountId) {
+
+		return getPersistence().findByCommerceDiscountId(commerceDiscountId);
 	}
 
 	/**
-	 * Returns a range of all the commerce discount rules.
+	 * Returns a range of all the commerce discount rules where commerceDiscountId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceDiscountRuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.discount.model.impl.CommerceDiscountRuleModelImpl</code>.
 	 * </p>
 	 *
+	 * @param commerceDiscountId the commerce discount ID
 	 * @param start the lower bound of the range of commerce discount rules
 	 * @param end the upper bound of the range of commerce discount rules (not inclusive)
-	 * @return the range of commerce discount rules
+	 * @return the range of matching commerce discount rules
 	 */
-	public static List<CommerceDiscountRule> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CommerceDiscountRule> findByCommerceDiscountId(
+		long commerceDiscountId, int start, int end) {
+
+		return getPersistence().findByCommerceDiscountId(
+			commerceDiscountId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce discount rules.
+	 * Returns an ordered range of all the commerce discount rules where commerceDiscountId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceDiscountRuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.discount.model.impl.CommerceDiscountRuleModelImpl</code>.
 	 * </p>
 	 *
+	 * @param commerceDiscountId the commerce discount ID
 	 * @param start the lower bound of the range of commerce discount rules
 	 * @param end the upper bound of the range of commerce discount rules (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce discount rules
+	 * @return the ordered range of matching commerce discount rules
 	 */
-	public static List<CommerceDiscountRule> findAll(
-		int start, int end,
+	public static List<CommerceDiscountRule> findByCommerceDiscountId(
+		long commerceDiscountId, int start, int end,
 		OrderByComparator<CommerceDiscountRule> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce discount rules.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceDiscountRuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce discount rules
-	 * @param end the upper bound of the range of commerce discount rules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce discount rules
-	 */
-	public static List<CommerceDiscountRule> findAll(
-		int start, int end,
-		OrderByComparator<CommerceDiscountRule> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the commerce discount rules from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of commerce discount rules.
-	 *
-	 * @return the number of commerce discount rules
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByCommerceDiscountId(
+			commerceDiscountId, start, end, orderByComparator);
 	}
 
 	public static CommerceDiscountRulePersistence getPersistence() {
@@ -411,4 +326,4 @@ public class CommerceDiscountRuleUtil {
 	private static volatile CommerceDiscountRulePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-205002442
+// LIFERAY-SERVICE-BUILDER-HASH:394094192

@@ -533,30 +533,34 @@ public class StyleBookEntryLocalServiceUtil {
 	}
 
 	public static StyleBookEntry updatePreviewFileEntryId(
-			long styleBookEntryId, long previewFileEntryId)
+			long styleBookEntryId, long previewFileEntryId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().updatePreviewFileEntryId(
-			styleBookEntryId, previewFileEntryId);
+			styleBookEntryId, previewFileEntryId, serviceContext);
 	}
 
 	public static StyleBookEntry updateStyleBookEntry(
 			long userId, long styleBookEntryId, boolean defaultStylebookEntry,
 			String frontendTokensValues, String name, String styleBookEntryKey,
-			long previewFileEntryId)
+			long previewFileEntryId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().updateStyleBookEntry(
 			userId, styleBookEntryId, defaultStylebookEntry,
-			frontendTokensValues, name, styleBookEntryKey, previewFileEntryId);
+			frontendTokensValues, name, styleBookEntryKey, previewFileEntryId,
+			serviceContext);
 	}
 
 	public static StyleBookEntry updateStyleBookEntry(
-			long styleBookEntryId, String frontendTokensValues, String name)
+			long styleBookEntryId, String frontendTokensValues, String name,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().updateStyleBookEntry(
-			styleBookEntryId, frontendTokensValues, name);
+			styleBookEntryId, frontendTokensValues, name, serviceContext);
 	}
 
 	/**
@@ -586,4 +590,4 @@ public class StyleBookEntryLocalServiceUtil {
 			StyleBookEntryLocalService.class);
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1778702003
+// LIFERAY-SERVICE-BUILDER-HASH:-1973879342

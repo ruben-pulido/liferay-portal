@@ -19,9 +19,6 @@ import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -34,16 +31,18 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.impl.ArrayableFinderColumn;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FilterCollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
@@ -77,7 +76,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CommerceShipmentPersistence.class)
 public class CommerceShipmentPersistenceImpl
-	extends BasePersistenceImpl<CommerceShipment>
+	extends BasePersistenceImpl<CommerceShipment, NoSuchShipmentException>
 	implements CommerceShipmentPersistence {
 
 	/*
@@ -94,67 +93,14 @@ public class CommerceShipmentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the commerce shipments where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByUuid(String uuid, int start, int end) {
-		return findByUuid(uuid, start, end, null);
-	}
+	private CollectionPersistenceFinder<CommerceShipment>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -170,106 +116,9 @@ public class CommerceShipmentPersistenceImpl
 		OrderByComparator<CommerceShipment> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShipment commerceShipment : list) {
-					if (!uuid.equals(commerceShipment.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -292,16 +141,9 @@ public class CommerceShipmentPersistenceImpl
 			return commerceShipment;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchShipmentException(sb.toString());
+		throw new NoSuchShipmentException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -315,13 +157,8 @@ public class CommerceShipmentPersistenceImpl
 	public CommerceShipment fetchByUuid_First(
 		String uuid, OrderByComparator<CommerceShipment> orderByComparator) {
 
-		List<CommerceShipment> list = findByUuid(uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -331,11 +168,8 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (CommerceShipment commerceShipment :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(commerceShipment);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -346,67 +180,12 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_COMMERCESHIPMENT_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"commerceShipment.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(commerceShipment.uuid IS NULL OR commerceShipment.uuid = '')";
-
-	private FinderPath _finderPathFetchByUUID_G;
+	private UniquePersistenceFinder<CommerceShipment>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the commerce shipment where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchShipmentException</code> if it could not be found.
@@ -423,38 +202,18 @@ public class CommerceShipmentPersistenceImpl
 		CommerceShipment commerceShipment = fetchByUUID_G(uuid, groupId);
 
 		if (commerceShipment == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("uuid=");
-			sb.append(uuid);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchShipmentException(sb.toString());
+			throw new NoSuchShipmentException(message);
 		}
 
 		return commerceShipment;
-	}
-
-	/**
-	 * Returns the commerce shipment where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching commerce shipment, or <code>null</code> if a matching commerce shipment could not be found
-	 */
-	@Override
-	public CommerceShipment fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
 	}
 
 	/**
@@ -469,96 +228,8 @@ public class CommerceShipmentPersistenceImpl
 	public CommerceShipment fetchByUUID_G(
 		String uuid, long groupId, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {uuid, groupId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
-		}
-
-		if (result instanceof CommerceShipment) {
-			CommerceShipment commerceShipment = (CommerceShipment)result;
-
-			if (!Objects.equals(uuid, commerceShipment.getUuid()) ||
-				(groupId != commerceShipment.getGroupId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(groupId);
-
-				List<CommerceShipment> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByUUID_G, finderArgs, list);
-					}
-				}
-				else {
-					CommerceShipment commerceShipment = list.get(0);
-
-					result = commerceShipment;
-
-					cacheResult(commerceShipment);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (CommerceShipment)result;
-		}
+		return _uniquePersistenceFinderByUUID_G.fetch(
+			finderCache, new Object[] {uuid, groupId}, useFinderCache);
 	}
 
 	/**
@@ -586,89 +257,18 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		CommerceShipment commerceShipment = fetchByUUID_G(uuid, groupId);
-
-		if (commerceShipment == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByUUID_G.count(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
-		"commerceShipment.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
-		"(commerceShipment.uuid IS NULL OR commerceShipment.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
-		"commerceShipment.groupId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByUuid_C;
-	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
-	private FinderPath _finderPathCountByUuid_C;
-
-	/**
-	 * Returns all the commerce shipments where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByUuid_C(String uuid, long companyId) {
-		return findByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return findByUuid_C(uuid, companyId, start, end, null);
-	}
+	private CollectionPersistenceFinder<CommerceShipment>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -685,114 +285,9 @@ public class CommerceShipmentPersistenceImpl
 		OrderByComparator<CommerceShipment> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShipment commerceShipment : list) {
-					if (!uuid.equals(commerceShipment.getUuid()) ||
-						(companyId != commerceShipment.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -817,19 +312,9 @@ public class CommerceShipmentPersistenceImpl
 			return commerceShipment;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchShipmentException(sb.toString());
+		throw new NoSuchShipmentException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -845,14 +330,8 @@ public class CommerceShipmentPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		List<CommerceShipment> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -863,13 +342,8 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (CommerceShipment commerceShipment :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(commerceShipment);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -881,135 +355,18 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_COMMERCESHIPMENT_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"commerceShipment.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(commerceShipment.uuid IS NULL OR commerceShipment.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"commerceShipment.companyId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByGroupId;
-	private FinderPath _finderPathWithoutPaginationFindByGroupId;
-	private FinderPath _finderPathCountByGroupId;
-	private FinderPath _finderPathWithPaginationCountByGroupId;
-
-	/**
-	 * Returns all the commerce shipments where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByGroupId(long groupId) {
-		return findByGroupId(
-			groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByGroupId(
-		long groupId, int start, int end) {
-
-		return findByGroupId(groupId, start, end, null);
-	}
+	private FilterCollectionPersistenceFinder<CommerceShipment>
+		_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return findByGroupId(groupId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1025,93 +382,9 @@ public class CommerceShipmentPersistenceImpl
 		OrderByComparator<CommerceShipment> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByGroupId;
-				finderArgs = new Object[] {groupId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByGroupId;
-			finderArgs = new Object[] {groupId, start, end, orderByComparator};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShipment commerceShipment : list) {
-					if (groupId != commerceShipment.getGroupId()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			sb.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByGroupId.find(
+			finderCache, new Object[] {new long[] {groupId}}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1157,77 +430,64 @@ public class CommerceShipmentPersistenceImpl
 	public CommerceShipment fetchByGroupId_First(
 		long groupId, OrderByComparator<CommerceShipment> orderByComparator) {
 
-		List<CommerceShipment> list = findByGroupId(
-			groupId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByGroupId.fetchFirst(
+			finderCache, new Object[] {new long[] {groupId}},
+			orderByComparator);
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = any &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permissions to view where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupIds the group IDs
-	 * @return the matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByGroupId(long[] groupIds) {
-		return findByGroupId(
-			groupIds, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where groupId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
 	@Override
-	public List<CommerceShipment> findByGroupId(
-		long[] groupIds, int start, int end) {
+	public List<CommerceShipment> filterFindByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return findByGroupId(groupIds, start, end, null);
+		return _collectionPersistenceFinderByGroupId.filterFind(
+			finderCache, new Object[] {new long[] {groupId}}, start, end,
+			orderByComparator, groupId);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = any &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permission to view where groupId = any &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
 	@Override
-	public List<CommerceShipment> findByGroupId(
+	public List<CommerceShipment> filterFindByGroupId(
 		long[] groupIds, int start, int end,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return findByGroupId(groupIds, start, end, orderByComparator, true);
+		groupIds = ArrayUtil.sortedUnique(groupIds);
+
+		return _collectionPersistenceFinderByGroupId.filterFind(
+			finderCache, new Object[] {groupIds}, start, end, orderByComparator,
+			groupIds);
 	}
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -1243,108 +503,9 @@ public class CommerceShipmentPersistenceImpl
 		OrderByComparator<CommerceShipment> orderByComparator,
 		boolean useFinderCache) {
 
-		if (groupIds == null) {
-			groupIds = new long[0];
-		}
-		else if (groupIds.length > 1) {
-			groupIds = ArrayUtil.sortedUnique(groupIds);
-		}
-
-		if (groupIds.length == 1) {
-			return findByGroupId(groupIds[0], start, end, orderByComparator);
-		}
-
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {StringUtil.merge(groupIds)};
-			}
-		}
-		else if (useFinderCache) {
-			finderArgs = new Object[] {
-				StringUtil.merge(groupIds), start, end, orderByComparator
-			};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				_finderPathWithPaginationFindByGroupId, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShipment commerceShipment : list) {
-					if (!ArrayUtil.contains(
-							groupIds, commerceShipment.getGroupId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = new StringBundler();
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			if (groupIds.length > 0) {
-				sb.append("(");
-
-				sb.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
-
-				sb.append(StringUtil.merge(groupIds));
-
-				sb.append(")");
-
-				sb.append(")");
-			}
-
-			sb.setStringAt(
-				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(
-						_finderPathWithPaginationFindByGroupId, finderArgs,
-						list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByGroupId.find(
+			finderCache, new Object[] {ArrayUtil.sortedUnique(groupIds)}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1354,12 +515,8 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public void removeByGroupId(long groupId) {
-		for (CommerceShipment commerceShipment :
-				findByGroupId(
-					groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(commerceShipment);
-		}
+		_collectionPersistenceFinderByGroupId.remove(
+			finderCache, new Object[] {new long[] {groupId}});
 	}
 
 	/**
@@ -1370,45 +527,8 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByGroupId(long groupId) {
-		FinderPath finderPath = _finderPathCountByGroupId;
-
-		Object[] finderArgs = new Object[] {groupId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_COMMERCESHIPMENT_WHERE);
-
-			sb.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByGroupId.count(
+			finderCache, new Object[] {new long[] {groupId}});
 	}
 
 	/**
@@ -1419,138 +539,44 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByGroupId(long[] groupIds) {
-		if (groupIds == null) {
-			groupIds = new long[0];
-		}
-		else if (groupIds.length > 1) {
-			groupIds = ArrayUtil.sortedUnique(groupIds);
-		}
-
-		Object[] finderArgs = new Object[] {StringUtil.merge(groupIds)};
-
-		Long count = (Long)finderCache.getResult(
-			_finderPathWithPaginationCountByGroupId, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler();
-
-			sb.append(_SQL_COUNT_COMMERCESHIPMENT_WHERE);
-
-			if (groupIds.length > 0) {
-				sb.append("(");
-
-				sb.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
-
-				sb.append(StringUtil.merge(groupIds));
-
-				sb.append(")");
-
-				sb.append(")");
-			}
-
-			sb.setStringAt(
-				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathWithPaginationCountByGroupId, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
-	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 =
-		"commerceShipment.groupId = ?";
-
-	private static final String _FINDER_COLUMN_GROUPID_GROUPID_7 =
-		"commerceShipment.groupId IN (";
-
-	private FinderPath _finderPathWithPaginationFindByG_C;
-	private FinderPath _finderPathWithoutPaginationFindByG_C;
-	private FinderPath _finderPathCountByG_C;
-	private FinderPath _finderPathWithPaginationCountByG_C;
-
-	/**
-	 * Returns all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param commerceAddressId the commerce address ID
-	 * @return the matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByG_C(
-		long groupId, long commerceAddressId) {
-
-		return findByG_C(
-			groupId, commerceAddressId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
+		return _collectionPersistenceFinderByGroupId.count(
+			finderCache, new Object[] {ArrayUtil.sortedUnique(groupIds)});
 	}
 
 	/**
-	 * Returns a range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param commerceAddressId the commerce address ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @return the number of matching commerce shipments that the user has permission to view
 	 */
 	@Override
-	public List<CommerceShipment> findByG_C(
-		long groupId, long commerceAddressId, int start, int end) {
-
-		return findByG_C(groupId, commerceAddressId, start, end, null);
+	public int filterCountByGroupId(long groupId) {
+		return _collectionPersistenceFinderByGroupId.filterCount(
+			finderCache, new Object[] {new long[] {groupId}}, groupId);
 	}
+
+	/**
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = any &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @return the number of matching commerce shipments that the user has permission to view
+	 */
+	@Override
+	public int filterCountByGroupId(long[] groupIds) {
+		groupIds = ArrayUtil.sortedUnique(groupIds);
+
+		return _collectionPersistenceFinderByGroupId.filterCount(
+			finderCache, new Object[] {groupIds}, groupIds);
+	}
+
+	private FilterCollectionPersistenceFinder<CommerceShipment>
+		_collectionPersistenceFinderByG_C;
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param commerceAddressId the commerce address ID
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByG_C(
-		long groupId, long commerceAddressId, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return findByG_C(
-			groupId, commerceAddressId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1567,102 +593,9 @@ public class CommerceShipmentPersistenceImpl
 		OrderByComparator<CommerceShipment> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByG_C;
-				finderArgs = new Object[] {groupId, commerceAddressId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByG_C;
-			finderArgs = new Object[] {
-				groupId, commerceAddressId, start, end, orderByComparator
-			};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShipment commerceShipment : list) {
-					if ((groupId != commerceShipment.getGroupId()) ||
-						(commerceAddressId !=
-							commerceShipment.getCommerceAddressId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			sb.append(_FINDER_COLUMN_G_C_GROUPID_2);
-
-			sb.append(_FINDER_COLUMN_G_C_COMMERCEADDRESSID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				queryPos.add(commerceAddressId);
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByG_C.find(
+			finderCache, new Object[] {new long[] {groupId}, commerceAddressId},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1715,61 +648,40 @@ public class CommerceShipmentPersistenceImpl
 		long groupId, long commerceAddressId,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		List<CommerceShipment> list = findByG_C(
-			groupId, commerceAddressId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByG_C.fetchFirst(
+			finderCache, new Object[] {new long[] {groupId}, commerceAddressId},
+			orderByComparator);
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permissions to view where groupId = &#63; and commerceAddressId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupIds the group IDs
-	 * @param commerceAddressId the commerce address ID
-	 * @return the matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByG_C(
-		long[] groupIds, long commerceAddressId) {
-
-		return findByG_C(
-			groupIds, commerceAddressId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
+	 * @param groupId the group ID
 	 * @param commerceAddressId the commerce address ID
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
 	@Override
-	public List<CommerceShipment> findByG_C(
-		long[] groupIds, long commerceAddressId, int start, int end) {
+	public List<CommerceShipment> filterFindByG_C(
+		long groupId, long commerceAddressId, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return findByG_C(groupIds, commerceAddressId, start, end, null);
+		return _collectionPersistenceFinderByG_C.filterFind(
+			finderCache, new Object[] {new long[] {groupId}, commerceAddressId},
+			start, end, orderByComparator, groupId);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = any &#63; and commerceAddressId = &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permission to view where groupId = any &#63; and commerceAddressId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -1777,22 +689,25 @@ public class CommerceShipmentPersistenceImpl
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
 	@Override
-	public List<CommerceShipment> findByG_C(
+	public List<CommerceShipment> filterFindByG_C(
 		long[] groupIds, long commerceAddressId, int start, int end,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return findByG_C(
-			groupIds, commerceAddressId, start, end, orderByComparator, true);
+		groupIds = ArrayUtil.sortedUnique(groupIds);
+
+		return _collectionPersistenceFinderByG_C.filterFind(
+			finderCache, new Object[] {groupIds, commerceAddressId}, start, end,
+			orderByComparator, groupIds);
 	}
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and commerceAddressId = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -1809,121 +724,10 @@ public class CommerceShipmentPersistenceImpl
 		OrderByComparator<CommerceShipment> orderByComparator,
 		boolean useFinderCache) {
 
-		if (groupIds == null) {
-			groupIds = new long[0];
-		}
-		else if (groupIds.length > 1) {
-			groupIds = ArrayUtil.sortedUnique(groupIds);
-		}
-
-		if (groupIds.length == 1) {
-			return findByG_C(
-				groupIds[0], commerceAddressId, start, end, orderByComparator);
-		}
-
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {
-					StringUtil.merge(groupIds), commerceAddressId
-				};
-			}
-		}
-		else if (useFinderCache) {
-			finderArgs = new Object[] {
-				StringUtil.merge(groupIds), commerceAddressId, start, end,
-				orderByComparator
-			};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				_finderPathWithPaginationFindByG_C, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShipment commerceShipment : list) {
-					if (!ArrayUtil.contains(
-							groupIds, commerceShipment.getGroupId()) ||
-						(commerceAddressId !=
-							commerceShipment.getCommerceAddressId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = new StringBundler();
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			if (groupIds.length > 0) {
-				sb.append("(");
-
-				sb.append(_FINDER_COLUMN_G_C_GROUPID_7);
-
-				sb.append(StringUtil.merge(groupIds));
-
-				sb.append(")");
-
-				sb.append(")");
-
-				sb.append(WHERE_AND);
-			}
-
-			sb.append(_FINDER_COLUMN_G_C_COMMERCEADDRESSID_2);
-
-			sb.setStringAt(
-				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(commerceAddressId);
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(
-						_finderPathWithPaginationFindByG_C, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByG_C.find(
+			finderCache,
+			new Object[] {ArrayUtil.sortedUnique(groupIds), commerceAddressId},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1934,13 +738,9 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public void removeByG_C(long groupId, long commerceAddressId) {
-		for (CommerceShipment commerceShipment :
-				findByG_C(
-					groupId, commerceAddressId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(commerceShipment);
-		}
+		_collectionPersistenceFinderByG_C.remove(
+			finderCache,
+			new Object[] {new long[] {groupId}, commerceAddressId});
 	}
 
 	/**
@@ -1952,49 +752,9 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByG_C(long groupId, long commerceAddressId) {
-		FinderPath finderPath = _finderPathCountByG_C;
-
-		Object[] finderArgs = new Object[] {groupId, commerceAddressId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_COMMERCESHIPMENT_WHERE);
-
-			sb.append(_FINDER_COLUMN_G_C_GROUPID_2);
-
-			sb.append(_FINDER_COLUMN_G_C_COMMERCEADDRESSID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				queryPos.add(commerceAddressId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByG_C.count(
+			finderCache,
+			new Object[] {new long[] {groupId}, commerceAddressId});
 	}
 
 	/**
@@ -2006,147 +766,48 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByG_C(long[] groupIds, long commerceAddressId) {
-		if (groupIds == null) {
-			groupIds = new long[0];
-		}
-		else if (groupIds.length > 1) {
-			groupIds = ArrayUtil.sortedUnique(groupIds);
-		}
-
-		Object[] finderArgs = new Object[] {
-			StringUtil.merge(groupIds), commerceAddressId
-		};
-
-		Long count = (Long)finderCache.getResult(
-			_finderPathWithPaginationCountByG_C, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler();
-
-			sb.append(_SQL_COUNT_COMMERCESHIPMENT_WHERE);
-
-			if (groupIds.length > 0) {
-				sb.append("(");
-
-				sb.append(_FINDER_COLUMN_G_C_GROUPID_7);
-
-				sb.append(StringUtil.merge(groupIds));
-
-				sb.append(")");
-
-				sb.append(")");
-
-				sb.append(WHERE_AND);
-			}
-
-			sb.append(_FINDER_COLUMN_G_C_COMMERCEADDRESSID_2);
-
-			sb.setStringAt(
-				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(commerceAddressId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathWithPaginationCountByG_C, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
-	private static final String _FINDER_COLUMN_G_C_GROUPID_2 =
-		"commerceShipment.groupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_G_C_GROUPID_7 =
-		"commerceShipment.groupId IN (";
-
-	private static final String _FINDER_COLUMN_G_C_COMMERCEADDRESSID_2 =
-		"commerceShipment.commerceAddressId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByG_S;
-	private FinderPath _finderPathWithoutPaginationFindByG_S;
-	private FinderPath _finderPathCountByG_S;
-	private FinderPath _finderPathWithPaginationCountByG_S;
-
-	/**
-	 * Returns all the commerce shipments where groupId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByG_S(long groupId, int status) {
-		return findByG_S(
-			groupId, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+		return _collectionPersistenceFinderByG_C.count(
+			finderCache,
+			new Object[] {ArrayUtil.sortedUnique(groupIds), commerceAddressId});
 	}
 
 	/**
-	 * Returns a range of all the commerce shipments where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = &#63; and commerceAddressId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param commerceAddressId the commerce address ID
+	 * @return the number of matching commerce shipments that the user has permission to view
 	 */
 	@Override
-	public List<CommerceShipment> findByG_S(
-		long groupId, int status, int start, int end) {
-
-		return findByG_S(groupId, status, start, end, null);
+	public int filterCountByG_C(long groupId, long commerceAddressId) {
+		return _collectionPersistenceFinderByG_C.filterCount(
+			finderCache, new Object[] {new long[] {groupId}, commerceAddressId},
+			groupId);
 	}
+
+	/**
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = any &#63; and commerceAddressId = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param commerceAddressId the commerce address ID
+	 * @return the number of matching commerce shipments that the user has permission to view
+	 */
+	@Override
+	public int filterCountByG_C(long[] groupIds, long commerceAddressId) {
+		groupIds = ArrayUtil.sortedUnique(groupIds);
+
+		return _collectionPersistenceFinderByG_C.filterCount(
+			finderCache, new Object[] {groupIds, commerceAddressId}, groupIds);
+	}
+
+	private FilterCollectionPersistenceFinder<CommerceShipment>
+		_collectionPersistenceFinderByG_S;
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByG_S(
-		long groupId, int status, int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return findByG_S(groupId, status, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2163,101 +824,9 @@ public class CommerceShipmentPersistenceImpl
 		OrderByComparator<CommerceShipment> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByG_S;
-				finderArgs = new Object[] {groupId, status};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByG_S;
-			finderArgs = new Object[] {
-				groupId, status, start, end, orderByComparator
-			};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShipment commerceShipment : list) {
-					if ((groupId != commerceShipment.getGroupId()) ||
-						(status != commerceShipment.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			sb.append(_FINDER_COLUMN_G_S_GROUPID_2);
-
-			sb.append(_FINDER_COLUMN_G_S_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				queryPos.add(status);
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByG_S.find(
+			finderCache, new Object[] {new long[] {groupId}, status}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2310,58 +879,40 @@ public class CommerceShipmentPersistenceImpl
 		long groupId, int status,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		List<CommerceShipment> list = findByG_S(
-			groupId, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByG_S.fetchFirst(
+			finderCache, new Object[] {new long[] {groupId}, status},
+			orderByComparator);
 	}
 
 	/**
-	 * Returns all the commerce shipments where groupId = any &#63; and status = &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permissions to view where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupIds the group IDs
-	 * @param status the status
-	 * @return the matching commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findByG_S(long[] groupIds, int status) {
-		return findByG_S(
-			groupIds, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments where groupId = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
+	 * @param groupId the group ID
 	 * @param status the status
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of matching commerce shipments
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
 	@Override
-	public List<CommerceShipment> findByG_S(
-		long[] groupIds, int status, int start, int end) {
+	public List<CommerceShipment> filterFindByG_S(
+		long groupId, int status, int start, int end,
+		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return findByG_S(groupIds, status, start, end, null);
+		return _collectionPersistenceFinderByG_S.filterFind(
+			finderCache, new Object[] {new long[] {groupId}, status}, start,
+			end, orderByComparator, groupId);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipments where groupId = any &#63; and status = &#63;.
+	 * Returns an ordered range of all the commerce shipments that the user has permission to view where groupId = any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -2369,21 +920,25 @@ public class CommerceShipmentPersistenceImpl
 	 * @param start the lower bound of the range of commerce shipments
 	 * @param end the upper bound of the range of commerce shipments (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipments
+	 * @return the ordered range of matching commerce shipments that the user has permission to view
 	 */
 	@Override
-	public List<CommerceShipment> findByG_S(
+	public List<CommerceShipment> filterFindByG_S(
 		long[] groupIds, int status, int start, int end,
 		OrderByComparator<CommerceShipment> orderByComparator) {
 
-		return findByG_S(groupIds, status, start, end, orderByComparator, true);
+		groupIds = ArrayUtil.sortedUnique(groupIds);
+
+		return _collectionPersistenceFinderByG_S.filterFind(
+			finderCache, new Object[] {groupIds, status}, start, end,
+			orderByComparator, groupIds);
 	}
 
 	/**
 	 * Returns an ordered range of all the commerce shipments where groupId = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -2400,118 +955,10 @@ public class CommerceShipmentPersistenceImpl
 		OrderByComparator<CommerceShipment> orderByComparator,
 		boolean useFinderCache) {
 
-		if (groupIds == null) {
-			groupIds = new long[0];
-		}
-		else if (groupIds.length > 1) {
-			groupIds = ArrayUtil.sortedUnique(groupIds);
-		}
-
-		if (groupIds.length == 1) {
-			return findByG_S(
-				groupIds[0], status, start, end, orderByComparator);
-		}
-
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {StringUtil.merge(groupIds), status};
-			}
-		}
-		else if (useFinderCache) {
-			finderArgs = new Object[] {
-				StringUtil.merge(groupIds), status, start, end,
-				orderByComparator
-			};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				_finderPathWithPaginationFindByG_S, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShipment commerceShipment : list) {
-					if (!ArrayUtil.contains(
-							groupIds, commerceShipment.getGroupId()) ||
-						(status != commerceShipment.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = new StringBundler();
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			if (groupIds.length > 0) {
-				sb.append("(");
-
-				sb.append(_FINDER_COLUMN_G_S_GROUPID_7);
-
-				sb.append(StringUtil.merge(groupIds));
-
-				sb.append(")");
-
-				sb.append(")");
-
-				sb.append(WHERE_AND);
-			}
-
-			sb.append(_FINDER_COLUMN_G_S_STATUS_2);
-
-			sb.setStringAt(
-				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(status);
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(
-						_finderPathWithPaginationFindByG_S, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByG_S.find(
+			finderCache,
+			new Object[] {ArrayUtil.sortedUnique(groupIds), status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2522,13 +969,8 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public void removeByG_S(long groupId, int status) {
-		for (CommerceShipment commerceShipment :
-				findByG_S(
-					groupId, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(commerceShipment);
-		}
+		_collectionPersistenceFinderByG_S.remove(
+			finderCache, new Object[] {new long[] {groupId}, status});
 	}
 
 	/**
@@ -2540,49 +982,8 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByG_S(long groupId, int status) {
-		FinderPath finderPath = _finderPathCountByG_S;
-
-		Object[] finderArgs = new Object[] {groupId, status};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_COMMERCESHIPMENT_WHERE);
-
-			sb.append(_FINDER_COLUMN_G_S_GROUPID_2);
-
-			sb.append(_FINDER_COLUMN_G_S_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByG_S.count(
+			finderCache, new Object[] {new long[] {groupId}, status});
 	}
 
 	/**
@@ -2594,81 +995,41 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByG_S(long[] groupIds, int status) {
-		if (groupIds == null) {
-			groupIds = new long[0];
-		}
-		else if (groupIds.length > 1) {
-			groupIds = ArrayUtil.sortedUnique(groupIds);
-		}
-
-		Object[] finderArgs = new Object[] {StringUtil.merge(groupIds), status};
-
-		Long count = (Long)finderCache.getResult(
-			_finderPathWithPaginationCountByG_S, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler();
-
-			sb.append(_SQL_COUNT_COMMERCESHIPMENT_WHERE);
-
-			if (groupIds.length > 0) {
-				sb.append("(");
-
-				sb.append(_FINDER_COLUMN_G_S_GROUPID_7);
-
-				sb.append(StringUtil.merge(groupIds));
-
-				sb.append(")");
-
-				sb.append(")");
-
-				sb.append(WHERE_AND);
-			}
-
-			sb.append(_FINDER_COLUMN_G_S_STATUS_2);
-
-			sb.setStringAt(
-				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathWithPaginationCountByG_S, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByG_S.count(
+			finderCache,
+			new Object[] {ArrayUtil.sortedUnique(groupIds), status});
 	}
 
-	private static final String _FINDER_COLUMN_G_S_GROUPID_2 =
-		"commerceShipment.groupId = ? AND ";
+	/**
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the number of matching commerce shipments that the user has permission to view
+	 */
+	@Override
+	public int filterCountByG_S(long groupId, int status) {
+		return _collectionPersistenceFinderByG_S.filterCount(
+			finderCache, new Object[] {new long[] {groupId}, status}, groupId);
+	}
 
-	private static final String _FINDER_COLUMN_G_S_GROUPID_7 =
-		"commerceShipment.groupId IN (";
+	/**
+	 * Returns the number of commerce shipments that the user has permission to view where groupId = any &#63; and status = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param status the status
+	 * @return the number of matching commerce shipments that the user has permission to view
+	 */
+	@Override
+	public int filterCountByG_S(long[] groupIds, int status) {
+		groupIds = ArrayUtil.sortedUnique(groupIds);
 
-	private static final String _FINDER_COLUMN_G_S_STATUS_2 =
-		"commerceShipment.status = ?";
+		return _collectionPersistenceFinderByG_S.filterCount(
+			finderCache, new Object[] {groupIds, status}, groupIds);
+	}
 
-	private FinderPath _finderPathFetchByERC_C;
+	private UniquePersistenceFinder<CommerceShipment>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the commerce shipment where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchShipmentException</code> if it could not be found.
@@ -2687,40 +1048,19 @@ public class CommerceShipmentPersistenceImpl
 			externalReferenceCode, companyId);
 
 		if (commerceShipment == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("externalReferenceCode=");
-			sb.append(externalReferenceCode);
-
-			sb.append(", companyId=");
-			sb.append(companyId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {externalReferenceCode, companyId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchShipmentException(sb.toString());
+			throw new NoSuchShipmentException(message);
 		}
 
 		return commerceShipment;
-	}
-
-	/**
-	 * Returns the commerce shipment where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching commerce shipment, or <code>null</code> if a matching commerce shipment could not be found
-	 */
-	@Override
-	public CommerceShipment fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return fetchByERC_C(externalReferenceCode, companyId, true);
 	}
 
 	/**
@@ -2735,98 +1075,9 @@ public class CommerceShipmentPersistenceImpl
 	public CommerceShipment fetchByERC_C(
 		String externalReferenceCode, long companyId, boolean useFinderCache) {
 
-		externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {externalReferenceCode, companyId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByERC_C, finderArgs, this);
-		}
-
-		if (result instanceof CommerceShipment) {
-			CommerceShipment commerceShipment = (CommerceShipment)result;
-
-			if (!Objects.equals(
-					externalReferenceCode,
-					commerceShipment.getExternalReferenceCode()) ||
-				(companyId != commerceShipment.getCompanyId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_COMMERCESHIPMENT_WHERE);
-
-			boolean bindExternalReferenceCode = false;
-
-			if (externalReferenceCode.isEmpty()) {
-				sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3);
-			}
-			else {
-				bindExternalReferenceCode = true;
-
-				sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_ERC_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExternalReferenceCode) {
-					queryPos.add(externalReferenceCode);
-				}
-
-				queryPos.add(companyId);
-
-				List<CommerceShipment> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByERC_C, finderArgs, list);
-					}
-				}
-				else {
-					CommerceShipment commerceShipment = list.get(0);
-
-					result = commerceShipment;
-
-					cacheResult(commerceShipment);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (CommerceShipment)result;
-		}
+		return _uniquePersistenceFinderByERC_C.fetch(
+			finderCache, new Object[] {externalReferenceCode, companyId},
+			useFinderCache);
 	}
 
 	/**
@@ -2856,24 +1107,9 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Override
 	public int countByERC_C(String externalReferenceCode, long companyId) {
-		CommerceShipment commerceShipment = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (commerceShipment == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByERC_C.count(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2 =
-		"commerceShipment.externalReferenceCode = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3 =
-		"(commerceShipment.externalReferenceCode IS NULL OR commerceShipment.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_COMPANYID_2 =
-		"commerceShipment.companyId = ?";
 
 	public CommerceShipmentPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -2888,123 +1124,6 @@ public class CommerceShipmentPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(CommerceShipmentTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the commerce shipment in the entity cache if it is enabled.
-	 *
-	 * @param commerceShipment the commerce shipment
-	 */
-	@Override
-	public void cacheResult(CommerceShipment commerceShipment) {
-		entityCache.putResult(
-			CommerceShipmentImpl.class, commerceShipment.getPrimaryKey(),
-			commerceShipment);
-
-		finderCache.putResult(
-			_finderPathFetchByUUID_G,
-			new Object[] {
-				commerceShipment.getUuid(), commerceShipment.getGroupId()
-			},
-			commerceShipment);
-
-		finderCache.putResult(
-			_finderPathFetchByERC_C,
-			new Object[] {
-				commerceShipment.getExternalReferenceCode(),
-				commerceShipment.getCompanyId()
-			},
-			commerceShipment);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the commerce shipments in the entity cache if it is enabled.
-	 *
-	 * @param commerceShipments the commerce shipments
-	 */
-	@Override
-	public void cacheResult(List<CommerceShipment> commerceShipments) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (commerceShipments.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (CommerceShipment commerceShipment : commerceShipments) {
-			if (entityCache.getResult(
-					CommerceShipmentImpl.class,
-					commerceShipment.getPrimaryKey()) == null) {
-
-				cacheResult(commerceShipment);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all commerce shipments.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(CommerceShipmentImpl.class);
-
-		finderCache.clearCache(CommerceShipmentImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the commerce shipment.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(CommerceShipment commerceShipment) {
-		entityCache.removeResult(CommerceShipmentImpl.class, commerceShipment);
-	}
-
-	@Override
-	public void clearCache(List<CommerceShipment> commerceShipments) {
-		for (CommerceShipment commerceShipment : commerceShipments) {
-			entityCache.removeResult(
-				CommerceShipmentImpl.class, commerceShipment);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(CommerceShipmentImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(CommerceShipmentImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		CommerceShipmentModelImpl commerceShipmentModelImpl) {
-
-		Object[] args = new Object[] {
-			commerceShipmentModelImpl.getUuid(),
-			commerceShipmentModelImpl.getGroupId()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByUUID_G, args, commerceShipmentModelImpl);
-
-		args = new Object[] {
-			commerceShipmentModelImpl.getExternalReferenceCode(),
-			commerceShipmentModelImpl.getCompanyId()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByERC_C, args, commerceShipmentModelImpl);
 	}
 
 	/**
@@ -3041,47 +1160,6 @@ public class CommerceShipmentPersistenceImpl
 		throws NoSuchShipmentException {
 
 		return remove((Serializable)commerceShipmentId);
-	}
-
-	/**
-	 * Removes the commerce shipment with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the commerce shipment
-	 * @return the commerce shipment that was removed
-	 * @throws NoSuchShipmentException if a commerce shipment with the primary key could not be found
-	 */
-	@Override
-	public CommerceShipment remove(Serializable primaryKey)
-		throws NoSuchShipmentException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			CommerceShipment commerceShipment = (CommerceShipment)session.get(
-				CommerceShipmentImpl.class, primaryKey);
-
-			if (commerceShipment == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchShipmentException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(commerceShipment);
-		}
-		catch (NoSuchShipmentException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -3256,41 +1334,13 @@ public class CommerceShipmentPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			CommerceShipmentImpl.class, commerceShipmentModelImpl, false, true);
-
-		cacheUniqueFindersCache(commerceShipmentModelImpl);
+		cacheUniqueFindersResult(commerceShipment, false);
 
 		if (isNew) {
 			commerceShipment.setNew(false);
 		}
 
 		commerceShipment.resetOriginalValues();
-
-		return commerceShipment;
-	}
-
-	/**
-	 * Returns the commerce shipment with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the commerce shipment
-	 * @return the commerce shipment
-	 * @throws NoSuchShipmentException if a commerce shipment with the primary key could not be found
-	 */
-	@Override
-	public CommerceShipment findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchShipmentException {
-
-		CommerceShipment commerceShipment = fetchByPrimaryKey(primaryKey);
-
-		if (commerceShipment == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchShipmentException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return commerceShipment;
 	}
@@ -3318,187 +1368,6 @@ public class CommerceShipmentPersistenceImpl
 	@Override
 	public CommerceShipment fetchByPrimaryKey(long commerceShipmentId) {
 		return fetchByPrimaryKey((Serializable)commerceShipmentId);
-	}
-
-	/**
-	 * Returns all the commerce shipments.
-	 *
-	 * @return the commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipments.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @return the range of commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findAll(
-		int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipments.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShipmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce shipments
-	 * @param end the upper bound of the range of commerce shipments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce shipments
-	 */
-	@Override
-	public List<CommerceShipment> findAll(
-		int start, int end,
-		OrderByComparator<CommerceShipment> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<CommerceShipment> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceShipment>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_COMMERCESHIPMENT);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_COMMERCESHIPMENT;
-
-				sql = sql.concat(CommerceShipmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<CommerceShipment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the commerce shipments from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (CommerceShipment commerceShipment : findAll()) {
-			remove(commerceShipment);
-		}
-	}
-
-	/**
-	 * Returns the number of commerce shipments.
-	 *
-	 * @return the number of commerce shipments
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_COMMERCESHIPMENT);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -3531,138 +1400,215 @@ public class CommerceShipmentPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"uuid_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, false, null),
+			_SQL_SELECT_COMMERCESHIPMENT_WHERE,
+			_SQL_COUNT_COMMERCESHIPMENT_WHERE,
+			CommerceShipmentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"commerceShipment.", "uuid", FinderColumn.Type.STRING, "=",
+				true, true, CommerceShipment::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"uuid_", "groupId"}, 0, 1, false,
+				convertNullFunction(CommerceShipment::getUuid),
+				CommerceShipment::getGroupId),
+			_SQL_SELECT_COMMERCESHIPMENT_WHERE, "",
+			new FinderColumn<>(
+				"commerceShipment.", "uuid", FinderColumn.Type.STRING, "=",
+				true, true, CommerceShipment::getUuid),
+			new FinderColumn<>(
+				"commerceShipment.", "groupId", FinderColumn.Type.LONG, "=",
+				true, true, CommerceShipment::getGroupId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+					new String[] {
+						String.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_", "companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
+				_SQL_SELECT_COMMERCESHIPMENT_WHERE,
+				_SQL_COUNT_COMMERCESHIPMENT_WHERE,
+				CommerceShipmentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				"",
+				new FinderColumn<>(
+					"commerceShipment.", "uuid", FinderColumn.Type.STRING, "=",
+					true, true, CommerceShipment::getUuid),
+				new FinderColumn<>(
+					"commerceShipment.", "companyId", FinderColumn.Type.LONG,
+					"=", true, true, CommerceShipment::getCompanyId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_collectionPersistenceFinderByGroupId =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"groupId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupId",
+					new String[] {Long.class.getName()},
+					new String[] {"groupId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByGroupId",
+					new String[] {Long.class.getName()},
+					new String[] {"groupId"}, false),
+				_SQL_SELECT_COMMERCESHIPMENT_WHERE,
+				_SQL_COUNT_COMMERCESHIPMENT_WHERE,
+				CommerceShipmentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				"",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					CommerceShipmentImpl.class, CommerceShipment.class,
+					"commerceShipment", "CommerceShipment",
+					"commerceShipment.commerceShipmentId",
+					"SELECT DISTINCT {commerceShipment.*} FROM CommerceShipment commerceShipment WHERE ",
+					"SELECT {CommerceShipment.*} FROM (SELECT DISTINCT commerceShipment.commerceShipmentId FROM CommerceShipment commerceShipment WHERE ",
+					") TEMP_TABLE INNER JOIN CommerceShipment ON TEMP_TABLE.commerceShipmentId = CommerceShipment.commerceShipmentId",
+					"SELECT COUNT(DISTINCT commerceShipment.commerceShipmentId) AS COUNT_VALUE FROM CommerceShipment commerceShipment WHERE ",
+					CommerceShipmentModelImpl.ORDER_BY_SQL,
+					CommerceShipmentModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new ArrayableFinderColumn<>(
+					"commerceShipment.", "groupId", FinderColumn.Type.LONG, "=",
+					false, true, true, CommerceShipment::getGroupId));
 
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
+		_collectionPersistenceFinderByG_C =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C",
+					new String[] {
+						Long.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"groupId", "commerceAddressId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_C",
+					new String[] {Long.class.getName(), Long.class.getName()},
+					new String[] {"groupId", "commerceAddressId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByG_C",
+					new String[] {Long.class.getName(), Long.class.getName()},
+					new String[] {"groupId", "commerceAddressId"}, false),
+				_SQL_SELECT_COMMERCESHIPMENT_WHERE,
+				_SQL_COUNT_COMMERCESHIPMENT_WHERE,
+				CommerceShipmentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				"",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					CommerceShipmentImpl.class, CommerceShipment.class,
+					"commerceShipment", "CommerceShipment",
+					"commerceShipment.commerceShipmentId",
+					"SELECT DISTINCT {commerceShipment.*} FROM CommerceShipment commerceShipment WHERE ",
+					"SELECT {CommerceShipment.*} FROM (SELECT DISTINCT commerceShipment.commerceShipmentId FROM CommerceShipment commerceShipment WHERE ",
+					") TEMP_TABLE INNER JOIN CommerceShipment ON TEMP_TABLE.commerceShipmentId = CommerceShipment.commerceShipmentId",
+					"SELECT COUNT(DISTINCT commerceShipment.commerceShipmentId) AS COUNT_VALUE FROM CommerceShipment commerceShipment WHERE ",
+					CommerceShipmentModelImpl.ORDER_BY_SQL,
+					CommerceShipmentModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new ArrayableFinderColumn<>(
+					"commerceShipment.", "groupId", FinderColumn.Type.LONG, "=",
+					false, true, true, CommerceShipment::getGroupId),
+				new FinderColumn<>(
+					"commerceShipment.", "commerceAddressId",
+					FinderColumn.Type.LONG, "=", true, true,
+					CommerceShipment::getCommerceAddressId));
 
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
+		_collectionPersistenceFinderByG_S =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_S",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"groupId", "status"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_S",
+					new String[] {
+						Long.class.getName(), Integer.class.getName()
+					},
+					new String[] {"groupId", "status"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByG_S",
+					new String[] {
+						Long.class.getName(), Integer.class.getName()
+					},
+					new String[] {"groupId", "status"}, false),
+				_SQL_SELECT_COMMERCESHIPMENT_WHERE,
+				_SQL_COUNT_COMMERCESHIPMENT_WHERE,
+				CommerceShipmentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				"",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					CommerceShipmentImpl.class, CommerceShipment.class,
+					"commerceShipment", "CommerceShipment",
+					"commerceShipment.commerceShipmentId",
+					"SELECT DISTINCT {commerceShipment.*} FROM CommerceShipment commerceShipment WHERE ",
+					"SELECT {CommerceShipment.*} FROM (SELECT DISTINCT commerceShipment.commerceShipmentId FROM CommerceShipment commerceShipment WHERE ",
+					") TEMP_TABLE INNER JOIN CommerceShipment ON TEMP_TABLE.commerceShipmentId = CommerceShipment.commerceShipmentId",
+					"SELECT COUNT(DISTINCT commerceShipment.commerceShipmentId) AS COUNT_VALUE FROM CommerceShipment commerceShipment WHERE ",
+					CommerceShipmentModelImpl.ORDER_BY_SQL,
+					CommerceShipmentModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new ArrayableFinderColumn<>(
+					"commerceShipment.", "groupId", FinderColumn.Type.LONG, "=",
+					false, true, true, CommerceShipment::getGroupId),
+				new FinderColumn<>(
+					"commerceShipment.", "status", FinderColumn.Type.INTEGER,
+					"=", true, true, CommerceShipment::getStatus));
 
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
-
-		_finderPathFetchByUUID_G = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "groupId"}, true);
-
-		_finderPathWithPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathCountByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, false);
-
-		_finderPathWithPaginationFindByGroupId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"groupId"}, true);
-
-		_finderPathWithoutPaginationFindByGroupId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupId",
-			new String[] {Long.class.getName()}, new String[] {"groupId"},
-			true);
-
-		_finderPathCountByGroupId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByGroupId",
-			new String[] {Long.class.getName()}, new String[] {"groupId"},
-			false);
-
-		_finderPathWithPaginationCountByGroupId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByGroupId",
-			new String[] {Long.class.getName()}, new String[] {"groupId"},
-			false);
-
-		_finderPathWithPaginationFindByG_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"groupId", "commerceAddressId"}, true);
-
-		_finderPathWithoutPaginationFindByG_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_C",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"groupId", "commerceAddressId"}, true);
-
-		_finderPathCountByG_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_C",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"groupId", "commerceAddressId"}, false);
-
-		_finderPathWithPaginationCountByG_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByG_C",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"groupId", "commerceAddressId"}, false);
-
-		_finderPathWithPaginationFindByG_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_S",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"groupId", "status"}, true);
-
-		_finderPathWithoutPaginationFindByG_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_S",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"groupId", "status"}, true);
-
-		_finderPathCountByG_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_S",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"groupId", "status"}, false);
-
-		_finderPathWithPaginationCountByG_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByG_S",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"groupId", "status"}, false);
-
-		_finderPathFetchByERC_C = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByERC_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"externalReferenceCode", "companyId"}, true);
+		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByERC_C",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"externalReferenceCode", "companyId"}, 0, 1,
+				false,
+				convertNullFunction(CommerceShipment::getExternalReferenceCode),
+				CommerceShipment::getCompanyId),
+			_SQL_SELECT_COMMERCESHIPMENT_WHERE, "",
+			new FinderColumn<>(
+				"commerceShipment.", "externalReferenceCode",
+				FinderColumn.Type.STRING, "=", true, true,
+				CommerceShipment::getExternalReferenceCode),
+			new FinderColumn<>(
+				"commerceShipment.", "companyId", FinderColumn.Type.LONG, "=",
+				true, true, CommerceShipment::getCompanyId));
 
 		CommerceShipmentUtil.setPersistence(this);
 	}
@@ -3706,22 +1652,17 @@ public class CommerceShipmentPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		CommerceShipmentModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_COMMERCESHIPMENT =
 		"SELECT commerceShipment FROM CommerceShipment commerceShipment";
 
 	private static final String _SQL_SELECT_COMMERCESHIPMENT_WHERE =
 		"SELECT commerceShipment FROM CommerceShipment commerceShipment WHERE ";
 
-	private static final String _SQL_COUNT_COMMERCESHIPMENT =
-		"SELECT COUNT(commerceShipment) FROM CommerceShipment commerceShipment";
-
 	private static final String _SQL_COUNT_COMMERCESHIPMENT_WHERE =
 		"SELECT COUNT(commerceShipment) FROM CommerceShipment commerceShipment WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "commerceShipment.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No CommerceShipment exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No CommerceShipment exists with the key {";
@@ -3738,4 +1679,4 @@ public class CommerceShipmentPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-865232700
+// LIFERAY-SERVICE-BUILDER-HASH:-1091231279

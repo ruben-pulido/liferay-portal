@@ -44,15 +44,6 @@ public interface SamlIbSloMessagePersistence
 		throws NoSuchIbSloMessageException;
 
 	/**
-	 * Returns the saml ib slo message where samlIdpSessionIndex = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param samlIdpSessionIndex the saml idp session index
-	 * @return the matching saml ib slo message, or <code>null</code> if a matching saml ib slo message could not be found
-	 */
-	public SamlIbSloMessage fetchBySamlIdpSessionIndex(
-		String samlIdpSessionIndex);
-
-	/**
 	 * Returns the saml ib slo message where samlIdpSessionIndex = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param samlIdpSessionIndex the saml idp session index
@@ -79,20 +70,6 @@ public interface SamlIbSloMessagePersistence
 	 * @return the number of matching saml ib slo messages
 	 */
 	public int countBySamlIdpSessionIndex(String samlIdpSessionIndex);
-
-	/**
-	 * Caches the saml ib slo message in the entity cache if it is enabled.
-	 *
-	 * @param samlIbSloMessage the saml ib slo message
-	 */
-	public void cacheResult(SamlIbSloMessage samlIbSloMessage);
-
-	/**
-	 * Caches the saml ib slo messages in the entity cache if it is enabled.
-	 *
-	 * @param samlIbSloMessages the saml ib slo messages
-	 */
-	public void cacheResult(java.util.List<SamlIbSloMessage> samlIbSloMessages);
 
 	/**
 	 * Creates a new saml ib slo message with the primary key. Does not add the saml ib slo message to the database.
@@ -133,72 +110,16 @@ public interface SamlIbSloMessagePersistence
 	public SamlIbSloMessage fetchByPrimaryKey(long samlIbSloMessageId);
 
 	/**
-	 * Returns all the saml ib slo messages.
+	 * Returns the saml ib slo message where samlIdpSessionIndex = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the saml ib slo messages
+	 * @param samlIdpSessionIndex the saml idp session index
+	 * @return the matching saml ib slo message, or <code>null</code> if a matching saml ib slo message could not be found
 	 */
-	public java.util.List<SamlIbSloMessage> findAll();
+	public default SamlIbSloMessage fetchBySamlIdpSessionIndex(
+		String samlIdpSessionIndex) {
 
-	/**
-	 * Returns a range of all the saml ib slo messages.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIbSloMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of saml ib slo messages
-	 * @param end the upper bound of the range of saml ib slo messages (not inclusive)
-	 * @return the range of saml ib slo messages
-	 */
-	public java.util.List<SamlIbSloMessage> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the saml ib slo messages.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIbSloMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of saml ib slo messages
-	 * @param end the upper bound of the range of saml ib slo messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of saml ib slo messages
-	 */
-	public java.util.List<SamlIbSloMessage> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SamlIbSloMessage>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the saml ib slo messages.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlIbSloMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of saml ib slo messages
-	 * @param end the upper bound of the range of saml ib slo messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of saml ib slo messages
-	 */
-	public java.util.List<SamlIbSloMessage> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SamlIbSloMessage>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the saml ib slo messages from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of saml ib slo messages.
-	 *
-	 * @return the number of saml ib slo messages
-	 */
-	public int countAll();
+		return fetchBySamlIdpSessionIndex(samlIdpSessionIndex, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1654599642
+// LIFERAY-SERVICE-BUILDER-HASH:-1833982896

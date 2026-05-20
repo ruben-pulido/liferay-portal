@@ -3,7 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Input, SidebarCategory} from '@liferay/object-js-components-web';
+import {
+	CountryInfo,
+	Input,
+	SidebarCategory,
+} from '@liferay/object-js-components-web';
 import classNames from 'classnames';
 import {ILearnResourceContext} from 'frontend-js-components-web';
 import React, {ElementType, useState} from 'react';
@@ -34,6 +38,7 @@ export interface AggregationFilters {
 interface BasicInfoTabProps {
 	baseResourceURL: string;
 	containerWrapper: ElementType;
+	countries: CountryInfo[];
 	dbObjectFieldRequired?: boolean;
 	errors: ObjectFieldErrors;
 	filterOperators: TFilterOperators;
@@ -56,6 +61,7 @@ interface BasicInfoTabProps {
 export function BasicInfoTab({
 	baseResourceURL,
 	containerWrapper: ContainerWrapper,
+	countries,
 	dbObjectFieldRequired,
 	errors,
 	filterOperators,
@@ -99,6 +105,7 @@ export function BasicInfoTab({
 			>
 				<BasicInfoContainer
 					baseResourceURL={baseResourceURL}
+					countries={countries}
 					creationLanguageId2={creationLanguageId2}
 					dbObjectFieldRequired={dbObjectFieldRequired}
 					errors={errors}

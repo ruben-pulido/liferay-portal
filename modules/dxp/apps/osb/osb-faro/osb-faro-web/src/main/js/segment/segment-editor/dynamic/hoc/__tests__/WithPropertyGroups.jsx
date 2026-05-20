@@ -159,7 +159,9 @@ describe('WithPropertyGroups', () => {
 	});
 
 	describe('Testing Conditional Requests', () => {
-		API.interests.searchKeywords = jest.fn();
+		beforeEach(() => {
+			API.interests.searchKeywords = jest.fn();
+		});
 
 		test('Should return mocked data when segmentType is Batch', async () => {
 			API.interests.searchKeywords.mockReturnValueOnce(
@@ -182,22 +184,20 @@ describe('WithPropertyGroups', () => {
 
 			const segmentType = 'BATCH';
 
-			const [
-				keywordsResponse,
-				sessionPropertiesResponse
-			] = await Promise.all([
-				segmentType === 'BATCH'
-					? API.interests.searchKeywords({
-							channelId: 123,
-							delta: 50,
-							groupId: 123
-					  })
-					: Promise.resolve({items: []}),
+			const [keywordsResponse, sessionPropertiesResponse] =
+				await Promise.all([
+					segmentType === 'BATCH'
+						? API.interests.searchKeywords({
+								channelId: 123,
+								delta: 50,
+								groupId: 123
+						  })
+						: Promise.resolve({items: []}),
 
-				segmentType === 'BATCH'
-					? Promise.resolve(SESSION_PROPERTIES)
-					: Promise.resolve([])
-			]);
+					segmentType === 'BATCH'
+						? Promise.resolve(SESSION_PROPERTIES)
+						: Promise.resolve([])
+				]);
 
 			expect(API.interests.searchKeywords).toHaveBeenCalledWith({
 				channelId: 123,

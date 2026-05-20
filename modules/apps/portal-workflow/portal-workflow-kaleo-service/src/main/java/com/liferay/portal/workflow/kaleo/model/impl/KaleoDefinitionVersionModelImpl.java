@@ -119,6 +119,8 @@ public class KaleoDefinitionVersionModelImpl
 	public static final String TABLE_SQL_DROP =
 		"drop table KaleoDefinitionVersion";
 
+	public static final String ENTITY_ALIAS = "kaleoDefinitionVersion";
+
 	public static final String ORDER_BY_JPQL =
 		" ORDER BY kaleoDefinitionVersion.kaleoDefinitionVersionId ASC";
 
@@ -1211,6 +1213,14 @@ public class KaleoDefinitionVersionModelImpl
 	}
 
 	@Override
+	public void copyCacheFields(KaleoDefinitionVersion source) {
+		KaleoDefinitionVersionModelImpl sourceModelImpl =
+			(KaleoDefinitionVersionModelImpl)source;
+
+		setContentAsXML(sourceModelImpl.getContentAsXML());
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -1621,4 +1631,4 @@ public class KaleoDefinitionVersionModelImpl
 	private KaleoDefinitionVersion _escapedModel;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-118862405
+// LIFERAY-SERVICE-BUILDER-HASH:-137438477

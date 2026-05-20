@@ -12,6 +12,7 @@ import NoResultsDisplay, {
 } from 'shared/components/NoResultsDisplay';
 import React, {useEffect, useState} from 'react';
 import URLConstants from 'shared/util/url-constants';
+import {AlertTypes} from 'shared/components/Alert';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
 import {
 	CREATE_DATE,
@@ -20,48 +21,73 @@ import {
 	PROVIDER_TYPE
 } from 'shared/util/pagination';
 import {DataSource} from 'shared/util/records';
-import {
-	DataSourceStates,
-	DataSourceStatuses,
-	DataSourceTypes,
-	Sizes
-} from 'shared/util/constants';
+import {DataSourceStates, DataSourceTypes, Sizes} from 'shared/util/constants';
 import {formatDateToTimeZone} from 'shared/util/date';
 import {fromJS} from 'immutable';
 import {get} from 'lodash';
 import {
-	getDataSourceDisplayObject,
-	validAnalyticsConfig,
-	validContactsConfig
-} from 'shared/util/data-sources';
+	getConnectorConfig,
+	listAvailableConnectors
+} from 'settings/components/3rd-party-connector/registry';
+import {getConnectorStatusDisplay} from 'settings/components/3rd-party-connector/getConnectorStatusDisplay';
+import {getDataSourceDisplayObject} from 'shared/util/data-sources';
 import {Link, useHistory, useParams} from 'react-router-dom';
 import {Routes, toRoute} from 'shared/util/router';
 import {sub} from 'shared/util/lang';
+import {SubscriptionNames} from 'shared/util/subscriptions';
 import {useCurrentUser} from 'shared/hooks/useCurrentUser';
 import {useQueryPagination} from 'shared/hooks/useQueryPagination';
 import {useRequest} from 'shared/hooks/useRequest';
+import {useSubscriptionName} from 'shared/hooks/useSubscriptionName';
 import {useTimeZone} from 'shared/hooks/useTimeZone';
+
+const DATA_SOURCE_SUBSCRIPTION_RULES: {
+	[type: string]: {excluded?: string[]; included?: string[]};
+} = {
+	[DataSourceTypes.Demandbase]: {
+		included: [
+			SubscriptionNames.LiferayDataPlatform,
+			SubscriptionNames.LiferayDataPlatformEnterprise
+		]
+	},
+	[DataSourceTypes.Hubspot]: {
+		included: [
+			SubscriptionNames.LiferayDataPlatform,
+			SubscriptionNames.LiferayDataPlatformEnterprise
+		]
+	},
+	[DataSourceTypes.Salesforce]: {
+		included: [
+			SubscriptionNames.LiferayDataPlatform,
+			SubscriptionNames.LiferayDataPlatformEnterprise
+		]
+	}
+};
+
+export const isDataSourceVisible = (
+	type: string,
+	subscriptionName: string | null
+): boolean => {
+	const rule = DATA_SOURCE_SUBSCRIPTION_RULES[type];
+
+	if (!rule || !subscriptionName) {
+		return true;
+	}
+
+	if (rule.excluded?.includes(subscriptionName)) {
+		return false;
+	}
+
+	if (rule.included && !rule.included.includes(subscriptionName)) {
+		return false;
+	}
+
+	return true;
+};
 
 interface ICellProps {
 	data: {[key: string]: any};
 }
-
-const AnalyticsDataCell: React.FC<ICellProps> = ({data}) => (
-	<td className='text-center'>
-		{validAnalyticsConfig(new DataSource(fromJS(data))) && (
-			<ClayIcon className='icon-root' symbol='check' />
-		)}
-	</td>
-);
-
-const IndividualsDataCell: React.FC<ICellProps> = ({data}) => (
-	<td className='text-center'>
-		{validContactsConfig(new DataSource(fromJS(data))) &&
-			data.status === DataSourceStatuses.Active && (
-				<ClayIcon className='icon-root' symbol='check' />
-			)}
-	</td>
-);
 
 interface IDataSourceNameProps {
 	data: {[key: string]: any};
@@ -88,9 +114,11 @@ export const DataSourceName: React.FC<IDataSourceNameProps> = ({
 );
 
 export const StatusRenderer: React.FC<ICellProps> = ({data}) => {
-	const {display, label} = getDataSourceDisplayObject(
-		new DataSource(fromJS(data))
-	);
+	const dataSource = new DataSource(fromJS(data));
+
+	const {display, label} = getConnectorConfig(data.providerType)
+		? getConnectorStatusDisplay(dataSource)
+		: getDataSourceDisplayObject(dataSource);
 
 	return (
 		<td>
@@ -107,7 +135,12 @@ const dateFormatter = (date: string, timeZoneId: string): string =>
 export const disableRow = ({state}: {state: DataSourceStates}): boolean =>
 	state === DataSourceStates.InProgressDeleting;
 
-const getAlertMessage = (dataSource, currentUser, count, groupId) => {
+const getAlertMessage = (
+	dataSource: {[key: string]: any},
+	currentUser: {isAdmin: () => boolean},
+	count: number,
+	groupId: string
+) => {
 	const admin = currentUser.isAdmin();
 
 	const {credentials, id, name} = dataSource;
@@ -161,7 +194,7 @@ const typeFormatter = (type: DataSourceTypes): string => {
 		case DataSourceTypes.Salesforce:
 			return Liferay.Language.get('salesforce');
 		default:
-			return '';
+			return getConnectorConfig(type)?.displayName ?? '';
 	}
 };
 
@@ -170,29 +203,35 @@ interface IDataSourceListProps extends React.HTMLAttributes<HTMLElement> {}
 const DataSourceList: React.FC<IDataSourceListProps> = ({className}) => {
 	const currentUser = useCurrentUser();
 	const history = useHistory();
-	const {groupId} = useParams();
-	const [alerts, setAlerts] = useState([]);
+	const {groupId = ''} = useParams<{groupId: string}>();
+	const [alerts, setAlerts] = useState<
+		{
+			iconSymbol: string;
+			message: React.ReactNode;
+			title: string;
+			type: AlertTypes;
+		}[]
+	>([]);
+	const subscriptionName = useSubscriptionName({groupId});
 	const {timeZoneId} = useTimeZone();
 
 	const {delta, orderIOMap, page, query} = useQueryPagination({
 		initialOrderIOMap: createOrderIOMap(NAME)
 	});
 
-	const {
-		data: invalidDataSources,
-		loading: invalidDataSourcesLoading
-	} = useRequest({
-		dataSourceFn: API.dataSource.search,
-		variables: {
-			delta: 1,
-			groupId,
-			page: 1,
-			states: [
-				DataSourceStates.CredentialsInvalid,
-				DataSourceStates.UrlInvalid
-			]
-		}
-	});
+	const {data: invalidDataSources, loading: invalidDataSourcesLoading} =
+		useRequest({
+			dataSourceFn: API.dataSource.search,
+			variables: {
+				delta: 1,
+				groupId,
+				page: 1,
+				states: [
+					DataSourceStates.CredentialsInvalid,
+					DataSourceStates.UrlInvalid
+				]
+			}
+		});
 
 	useEffect(() => {
 		if (invalidDataSources?.total) {
@@ -206,7 +245,7 @@ const DataSourceList: React.FC<IDataSourceListProps> = ({className}) => {
 						groupId
 					),
 					title: Liferay.Language.get('warning'),
-					type: 'warning'
+					type: AlertTypes.Warning
 				}
 			]);
 		}
@@ -223,49 +262,59 @@ const DataSourceList: React.FC<IDataSourceListProps> = ({className}) => {
 		}
 	});
 
-	const isDemandbaseOnDataSourceList = data?.items?.some(
-		(item: {provider: {type: string}}) =>
-			item.provider.type === 'DEMANDBASE'
+	const existingConnectorTypes = new Set<string>(
+		(data?.items ?? []).map(
+			(item: {provider: {type: string}}) => item.provider.type
+		)
 	);
+
+	const connectorItems = listAvailableConnectors(existingConnectorTypes)
+		.filter(config => isDataSourceVisible(config.type, subscriptionName))
+		.map(config => ({
+			label: config.displayName,
+			onClick: () => {
+				history.push(
+					toRoute(Routes.SETTINGS_DATA_SOURCE_ONBOARDING, {
+						groupId,
+						id: config.type
+					})
+				);
+			}
+		}));
+
+	const dataSourceItems = [
+		{
+			label: Liferay.Language.get('liferay-dxp'),
+			onClick: () => {
+				history.push(
+					toRoute(Routes.SETTINGS_DATA_SOURCE_ONBOARDING, {
+						groupId,
+						id: DataSourceTypes.Liferay
+					})
+				);
+			},
+			type: DataSourceTypes.Liferay
+		},
+		{
+			label: Liferay.Language.get('salesforce'),
+			onClick: () => {
+				history.push(
+					toRoute(Routes.SETTINGS_DATA_SOURCE_ONBOARDING, {
+						groupId,
+						id: DataSourceTypes.Salesforce
+					})
+				);
+			},
+			type: DataSourceTypes.Salesforce
+		}
+	]
+		.filter(({type}) => isDataSourceVisible(type, subscriptionName))
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		.map(({type, ...item}) => item);
 
 	const renderDataSourcesDropdown = () => (
 		<ClayDropDownWithItems
-			items={[
-				{
-					label: Liferay.Language.get('liferay-dxp'),
-					onClick: () => {
-						history.push(
-							toRoute(Routes.SETTINGS_DATA_SOURCE_ONBOARDING, {
-								groupId,
-								id: DataSourceTypes.Liferay
-							})
-						);
-					}
-				},
-				{
-					label: Liferay.Language.get('salesforce'),
-					onClick: () => {
-						history.push(
-							toRoute(Routes.SETTINGS_DATA_SOURCE_ONBOARDING, {
-								groupId,
-								id: DataSourceTypes.Salesforce
-							})
-						);
-					}
-				},
-
-				!isDemandbaseOnDataSourceList && {
-					label: Liferay.Language.get('demandbase'),
-					onClick: () => {
-						history.push(
-							toRoute(Routes.SETTINGS_DATA_SOURCE_ONBOARDING, {
-								groupId,
-								id: DataSourceTypes.Demandbase
-							})
-						);
-					}
-				}
-			]}
+			items={[...dataSourceItems, ...connectorItems]}
 			trigger={
 				<ClayButton displayType='primary' size='sm'>
 					{Liferay.Language.get('add-data-source')}
@@ -344,7 +393,7 @@ const DataSourceList: React.FC<IDataSourceListProps> = ({className}) => {
 							accessor: 'name',
 							cellRenderer: DataSourceName,
 							cellRendererProps: {
-								hrefFormatter: dataSource =>
+								hrefFormatter: (dataSource: {id: string}) =>
 									toRoute(Routes.SETTINGS_DATA_SOURCE, {
 										groupId,
 										id: dataSource.id
@@ -363,18 +412,8 @@ const DataSourceList: React.FC<IDataSourceListProps> = ({className}) => {
 							sortable: false
 						},
 						{
-							cellRenderer: IndividualsDataCell,
-							label: Liferay.Language.get('individuals-data'),
-							sortable: false
-						},
-						{
-							cellRenderer: AnalyticsDataCell,
-							label: Liferay.Language.get('analytics-data'),
-							sortable: false
-						},
-						{
 							accessor: CREATE_DATE,
-							dataFormatter: date =>
+							dataFormatter: (date: string) =>
 								dateFormatter(date, timeZoneId),
 							label: Liferay.Language.get('date-added')
 						}

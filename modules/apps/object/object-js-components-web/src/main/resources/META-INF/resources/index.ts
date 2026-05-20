@@ -34,6 +34,19 @@ export {ManagementToolbar} from './components/ManagementToolbar/index';
 export {Panel} from './components/Panel/Panel';
 export {PanelBody, PanelSimpleBody} from './components/Panel/PanelBody';
 export {PanelHeader} from './components/Panel/PanelHeader';
+export {CountryCodePicker} from './components/PhoneNumber/CountryCodePicker';
+export {PhoneNumberInput} from './components/PhoneNumber/PhoneNumberInput';
+export {
+	DEFAULT_COUNTRIES,
+	getCombinedValue,
+	getFlagSymbol,
+	parsePhoneValue,
+	PREFIX_TYPE,
+} from './components/PhoneNumber/phoneNumberUtil';
+export type {
+	CountryInfo,
+	PrefixType,
+} from './components/PhoneNumber/phoneNumberUtil';
 export {RadioField} from './components/RadioField/RadioField';
 export {RichTextLocalized} from './components/RichTextLocalized';
 

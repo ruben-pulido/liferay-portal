@@ -12,7 +12,9 @@ import React from 'react';
 
 import ApiHelper from '../../../../src/main/resources/META-INF/resources/js/common/services/ApiHelper';
 import {OBJECT_ENTRY_FOLDER_CLASS_NAME} from '../../../../src/main/resources/META-INF/resources/js/common/utils/constants';
-import ShareModalContent from '../../../../src/main/resources/META-INF/resources/js/main_view/modal/share_modal_content/ShareModalContent';
+import ShareModalContent, {
+	Collaborator,
+} from '../../../../src/main/resources/META-INF/resources/js/main_view/modal/share_modal_content/ShareModalContent';
 
 jest.useFakeTimers();
 
@@ -39,6 +41,7 @@ const DEFAULT_PROPS = {
 		name: 'Test1 Test1',
 	},
 	entryClassName: '11111-className',
+	externalUserSharingEnabled: true,
 	initialCollaborators: [
 		{
 			actionIds: 'VIEW',
@@ -51,7 +54,7 @@ const DEFAULT_PROPS = {
 				roles: [],
 			},
 		},
-	],
+	] as Collaborator[],
 	itemId: 20,
 	title: 'Test Document',
 };
@@ -185,7 +188,7 @@ describe('ShareModalContent', () => {
 
 		expect(apiPostSpy).toHaveBeenCalledWith(
 			'/o/cms/basic-documents/20/collaborators',
-			[{actionIds: ['VIEW'], id: '2', share: true, type: 'User'}]
+			[{actionIds: ['VIEW'], id: 2, share: true, type: 'User'}]
 		);
 
 		expect(mockCloseModal).toHaveBeenCalledTimes(1);
@@ -228,5 +231,347 @@ describe('ShareModalContent', () => {
 		expect(
 			queryByText('view-download-and-comment')
 		).not.toBeInTheDocument();
+	});
+
+	it('offers an invite-external-user option when the search text is a valid email without matches', async () => {
+		const {container, getByText} = renderComponent();
+
+		const input = container.querySelector<HTMLInputElement>(
+			'input#collaboratorAutocomplete'
+		)!;
+
+		await act(async () => {
+			fireEvent.change(input, {
+				target: {value: 'external@example.com'},
+			});
+		});
+
+		await act(async () => {
+			jest.advanceTimersByTime(300);
+		});
+
+		await waitFor(() => {
+			expect(getByText('invite-external-user')).toBeInTheDocument();
+		});
+	});
+
+	it('does not offer the invite-external-user option when the search text is not a valid email', async () => {
+		const {container, queryByText} = renderComponent();
+
+		const input = container.querySelector<HTMLInputElement>(
+			'input#collaboratorAutocomplete'
+		)!;
+
+		await act(async () => {
+			fireEvent.change(input, {
+				target: {value: 'not-an-email'},
+			});
+		});
+
+		await act(async () => {
+			jest.advanceTimersByTime(300);
+		});
+
+		expect(queryByText('invite-external-user')).not.toBeInTheDocument();
+	});
+
+	it('adds an external user collaborator when the invite suggestion is selected', async () => {
+		const {container, getByText} = renderComponent();
+
+		const input = container.querySelector<HTMLInputElement>(
+			'input#collaboratorAutocomplete'
+		)!;
+
+		await act(async () => {
+			fireEvent.change(input, {
+				target: {value: 'external@example.com'},
+			});
+		});
+
+		await act(async () => {
+			jest.advanceTimersByTime(300);
+		});
+
+		await waitFor(() => {
+			expect(getByText('invite-external-user')).toBeInTheDocument();
+		});
+
+		await act(async () => {
+			fireEvent.click(getByText('invite-external-user'));
+		});
+
+		expect(
+			container.querySelectorAll('.list-group-item-flex span.text-3')[0]
+		).toHaveTextContent('external@example.com');
+	});
+
+	it('does not add a collaborator when pressing Enter on an invalid email', async () => {
+		const {container} = renderComponent();
+
+		const input = container.querySelector<HTMLInputElement>(
+			'input#collaboratorAutocomplete'
+		)!;
+
+		await act(async () => {
+			fireEvent.change(input, {
+				target: {value: 'not-an-email'},
+			});
+		});
+
+		await act(async () => {
+			jest.advanceTimersByTime(300);
+		});
+
+		await act(async () => {
+			fireEvent.keyDown(input, {code: 'Enter', key: 'Enter'});
+		});
+
+		const chips = container.querySelectorAll(
+			'.list-group-item-flex span.text-3'
+		);
+
+		expect(chips).toHaveLength(2);
+
+		chips.forEach((chip) => {
+			expect(chip).not.toHaveTextContent('not-an-email');
+		});
+	});
+
+	it('does not offer the invite-external-user option when sharing an ObjectEntryFolder', async () => {
+		const folderProps = {
+			...DEFAULT_PROPS,
+			entryClassName: OBJECT_ENTRY_FOLDER_CLASS_NAME,
+		};
+
+		const {container, queryByText} = renderComponent(folderProps);
+
+		const input = container.querySelector<HTMLInputElement>(
+			'input#collaboratorAutocomplete'
+		)!;
+
+		await act(async () => {
+			fireEvent.change(input, {
+				target: {value: 'external@example.com'},
+			});
+		});
+
+		await act(async () => {
+			jest.advanceTimersByTime(300);
+		});
+
+		expect(queryByText('invite-external-user')).not.toBeInTheDocument();
+	});
+
+	it('renders existing external user collaborators as invited', () => {
+		const emailProps = {
+			...DEFAULT_PROPS,
+			initialCollaborators: [
+				{
+					actionIds: 'VIEW',
+					share: false,
+					type: 'Email',
+					user: {
+						emailAddress: 'external@example.com',
+						name: 'external@example.com',
+					},
+				},
+			] as Collaborator[],
+		};
+
+		const {container, getByText} = renderComponent(emailProps);
+
+		expect(getByText('invited')).toBeInTheDocument();
+
+		expect(
+			container.querySelectorAll<HTMLInputElement>(
+				'li.list-group-item .autofit-col-expand'
+			)[0]
+		).toHaveTextContent('external@example.com');
+	});
+
+	it('restricts permission options to view-and-download for existing external user collaborators', () => {
+		const emailProps = {
+			...DEFAULT_PROPS,
+			initialCollaborators: [
+				{
+					actionIds: 'VIEW',
+					share: false,
+					type: 'Email',
+					user: {
+						emailAddress: 'external@example.com',
+						name: 'external@example.com',
+					},
+				},
+			] as Collaborator[],
+		};
+
+		const {getByLabelText, getByRole, queryByText} =
+			renderComponent(emailProps);
+
+		fireEvent.click(getByLabelText('edit-permissions'));
+
+		expect(
+			getByRole('option', {name: 'view-and-download'})
+		).toBeInTheDocument();
+
+		expect(
+			queryByText('view-download-and-comment')
+		).not.toBeInTheDocument();
+		expect(
+			queryByText('view-download-comment-and-update')
+		).not.toBeInTheDocument();
+	});
+
+	it('omits the id when saving a newly invited external user', async () => {
+		const apiPostSpy = jest
+			.spyOn(ApiHelper, 'post')
+			.mockResolvedValue({data: {}, error: null});
+
+		const {container, getByText} = renderComponent();
+
+		const input = container.querySelector<HTMLInputElement>(
+			'input#collaboratorAutocomplete'
+		)!;
+
+		await act(async () => {
+			fireEvent.change(input, {
+				target: {value: 'external@example.com'},
+			});
+		});
+
+		await act(async () => {
+			jest.advanceTimersByTime(300);
+		});
+
+		await waitFor(() => {
+			expect(getByText('invite-external-user')).toBeInTheDocument();
+		});
+
+		await act(async () => {
+			fireEvent.click(getByText('invite-external-user'));
+		});
+
+		await act(async () => {
+			fireEvent.click(getByText('save'));
+		});
+
+		expect(apiPostSpy).toHaveBeenCalledWith(
+			'/o/cms/basic-documents/20/collaborators',
+			expect.arrayContaining([
+				expect.objectContaining({
+					emailAddress: 'external@example.com',
+					type: 'Email',
+				}),
+			])
+		);
+
+		const payload = apiPostSpy.mock.calls[0][1] as Array<{id?: number}>;
+		const externalEntry = payload.find(
+			(entry: any) => entry.type === 'Email'
+		);
+
+		expect(externalEntry).not.toHaveProperty('id');
+	});
+
+	it('sends type="Email" and the email as id when saving an external user invite', async () => {
+		const apiPostSpy = jest
+			.spyOn(ApiHelper, 'post')
+			.mockResolvedValue({data: {}, error: null});
+
+		const emailProps = {
+			...DEFAULT_PROPS,
+			initialCollaborators: [
+				{
+					actionIds: 'VIEW',
+					share: false,
+					type: 'Email',
+					user: {
+						emailAddress: 'external@example.com',
+						name: 'external@example.com',
+					},
+				},
+			] as Collaborator[],
+		};
+
+		const {getByLabelText, getByRole, getByText} =
+			renderComponent(emailProps);
+
+		fireEvent.click(getByLabelText('more-options'));
+
+		waitFor(() => {
+			expect(
+				getByRole('menuitem', {name: 'allow-resharing'})
+			).toBeInTheDocument();
+		});
+
+		await act(async () => {
+			fireEvent.click(getByRole('menuitem', {name: 'allow-resharing'}));
+		});
+
+		await act(async () => {
+			fireEvent.click(getByText('save'));
+		});
+
+		expect(apiPostSpy).toHaveBeenCalledWith(
+			'/o/cms/basic-documents/20/collaborators',
+			[
+				{
+					actionIds: ['VIEW'],
+					emailAddress: 'external@example.com',
+					share: true,
+					type: 'Email',
+				},
+			]
+		);
+	});
+
+	it('does not offer the invite-external-user option when externalUserSharingEnabled is false', async () => {
+		const {container, queryByText} = renderComponent({
+			...DEFAULT_PROPS,
+			externalUserSharingEnabled: false,
+		});
+
+		const input = container.querySelector<HTMLInputElement>(
+			'input#collaboratorAutocomplete'
+		)!;
+
+		await act(async () => {
+			fireEvent.change(input, {
+				target: {value: 'external@example.com'},
+			});
+		});
+
+		await act(async () => {
+			jest.advanceTimersByTime(300);
+		});
+
+		expect(queryByText('invite-external-user')).not.toBeInTheDocument();
+	});
+
+	it('does not render existing external user collaborators when externalUserSharingEnabled is false', () => {
+		const {container, queryByText} = renderComponent({
+			...DEFAULT_PROPS,
+			externalUserSharingEnabled: false,
+			initialCollaborators: [
+				{
+					actionIds: 'VIEW',
+					share: false,
+					type: 'Email',
+					user: {
+						emailAddress: 'external@example.com',
+						name: 'external@example.com',
+					},
+				},
+			] as Collaborator[],
+		});
+
+		expect(queryByText('invited')).not.toBeInTheDocument();
+		expect(queryByText('external@example.com')).not.toBeInTheDocument();
+
+		// Only the creator/owner row remains.
+
+		expect(container.querySelectorAll('li.list-group-item')).toHaveLength(
+			1
+		);
 	});
 });

@@ -35,51 +35,10 @@ public interface ClientExtensionEntryRelPersistence
 	 */
 
 	/**
-	 * Returns all the client extension entry rels where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the client extension entry rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the client extension entry rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<ClientExtensionEntryRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -148,15 +107,6 @@ public interface ClientExtensionEntryRelPersistence
 		throws NoSuchClientExtensionEntryRelException;
 
 	/**
-	 * Returns the client extension entry rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching client extension entry rel, or <code>null</code> if a matching client extension entry rel could not be found
-	 */
-	public ClientExtensionEntryRel fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the client extension entry rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -187,55 +137,10 @@ public interface ClientExtensionEntryRelPersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the client extension entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<ClientExtensionEntryRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -298,51 +203,10 @@ public interface ClientExtensionEntryRelPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the client extension entry rels where type = &#63;.
-	 *
-	 * @param type the type
-	 * @return the matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByType(String type);
-
-	/**
-	 * Returns a range of all the client extension entry rels where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByType(
-		String type, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the client extension entry rels where type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByType(
-		String type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<ClientExtensionEntryRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param type the type
@@ -400,55 +264,10 @@ public interface ClientExtensionEntryRelPersistence
 	public int countByType(String type);
 
 	/**
-	 * Returns all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param cetExternalReferenceCode the cet external reference code
-	 * @return the matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_CETERC(
-		long companyId, String cetExternalReferenceCode);
-
-	/**
-	 * Returns a range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param cetExternalReferenceCode the cet external reference code
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_CETERC(
-		long companyId, String cetExternalReferenceCode, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param cetExternalReferenceCode the cet external reference code
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_CETERC(
-		long companyId, String cetExternalReferenceCode, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<ClientExtensionEntryRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -512,55 +331,10 @@ public interface ClientExtensionEntryRelPersistence
 	public int countByC_CETERC(long companyId, String cetExternalReferenceCode);
 
 	/**
-	 * Returns all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_C(
-		long classNameId, long classPK);
-
-	/**
-	 * Returns a range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_C(
-		long classNameId, long classPK, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_C(
-		long classNameId, long classPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<ClientExtensionEntryRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -623,58 +397,10 @@ public interface ClientExtensionEntryRelPersistence
 	public int countByC_C(long classNameId, long classPK);
 
 	/**
-	 * Returns all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @return the matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_C_T(
-		long classNameId, long classPK, String type);
-
-	/**
-	 * Returns a range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_C_T(
-		long classNameId, long classPK, String type, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of client extension entry rels
-	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching client extension entry rels
-	 */
-	public java.util.List<ClientExtensionEntryRel> findByC_C_T(
-		long classNameId, long classPK, String type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<ClientExtensionEntryRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -754,16 +480,6 @@ public interface ClientExtensionEntryRelPersistence
 		throws NoSuchClientExtensionEntryRelException;
 
 	/**
-	 * Returns the client extension entry rel where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @return the matching client extension entry rel, or <code>null</code> if a matching client extension entry rel could not be found
-	 */
-	public ClientExtensionEntryRel fetchByERC_G(
-		String externalReferenceCode, long groupId);
-
-	/**
 	 * Returns the client extension entry rel where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -793,21 +509,6 @@ public interface ClientExtensionEntryRelPersistence
 	 * @return the number of matching client extension entry rels
 	 */
 	public int countByERC_G(String externalReferenceCode, long groupId);
-
-	/**
-	 * Caches the client extension entry rel in the entity cache if it is enabled.
-	 *
-	 * @param clientExtensionEntryRel the client extension entry rel
-	 */
-	public void cacheResult(ClientExtensionEntryRel clientExtensionEntryRel);
-
-	/**
-	 * Caches the client extension entry rels in the entity cache if it is enabled.
-	 *
-	 * @param clientExtensionEntryRels the client extension entry rels
-	 */
-	public void cacheResult(
-		java.util.List<ClientExtensionEntryRel> clientExtensionEntryRels);
 
 	/**
 	 * Creates a new client extension entry rel with the primary key. Does not add the client extension entry rel to the database.
@@ -851,72 +552,373 @@ public interface ClientExtensionEntryRelPersistence
 		long clientExtensionEntryRelId);
 
 	/**
-	 * Returns all the client extension entry rels.
+	 * Returns the client extension entry rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the client extension entry rels
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching client extension entry rel, or <code>null</code> if a matching client extension entry rel could not be found
 	 */
-	public java.util.List<ClientExtensionEntryRel> findAll();
+	public default ClientExtensionEntryRel fetchByUUID_G(
+		String uuid, long groupId) {
+
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the client extension entry rels.
+	 * Returns the client extension entry rel where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @return the matching client extension entry rel, or <code>null</code> if a matching client extension entry rel could not be found
+	 */
+	public default ClientExtensionEntryRel fetchByERC_G(
+		String externalReferenceCode, long groupId) {
+
+		return fetchByERC_G(externalReferenceCode, groupId, true);
+	}
+
+	/**
+	 * Returns all the client extension entry rels where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByUuid(
+		String uuid) {
+
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the client extension entry rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of client extension entry rels
 	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
-	 * @return the range of client extension entry rels
+	 * @return the range of matching client extension entry rels
 	 */
-	public java.util.List<ClientExtensionEntryRel> findAll(int start, int end);
+	public default java.util.List<ClientExtensionEntryRel> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the client extension entry rels.
+	 * Returns an ordered range of all the client extension entry rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of client extension entry rels
 	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of client extension entry rels
+	 * @return the ordered range of matching client extension entry rels
 	 */
-	public java.util.List<ClientExtensionEntryRel> findAll(
-		int start, int end,
+	public default java.util.List<ClientExtensionEntryRel> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<ClientExtensionEntryRel> orderByComparator);
+			<ClientExtensionEntryRel> orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the client extension entry rels.
+	 * Returns all the client extension entry rels where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ClientExtensionEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @return the range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of client extension entry rels
 	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of client extension entry rels
+	 * @return the ordered range of matching client extension entry rels
 	 */
-	public java.util.List<ClientExtensionEntryRel> findAll(
-		int start, int end,
+	public default java.util.List<ClientExtensionEntryRel> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<ClientExtensionEntryRel> orderByComparator,
-		boolean useFinderCache);
+			<ClientExtensionEntryRel> orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the client extension entry rels from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of client extension entry rels.
+	 * Returns all the client extension entry rels where type = &#63;.
 	 *
-	 * @return the number of client extension entry rels
+	 * @param type the type
+	 * @return the matching client extension entry rels
 	 */
-	public int countAll();
+	public default java.util.List<ClientExtensionEntryRel> findByType(
+		String type) {
+
+		return findByType(
+			type, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the client extension entry rels where type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @return the range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByType(
+		String type, int start, int end) {
+
+		return findByType(type, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the client extension entry rels where type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByType(
+		String type, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator
+			<ClientExtensionEntryRel> orderByComparator) {
+
+		return findByType(type, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param cetExternalReferenceCode the cet external reference code
+	 * @return the matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_CETERC(
+		long companyId, String cetExternalReferenceCode) {
+
+		return findByC_CETERC(
+			companyId, cetExternalReferenceCode,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param cetExternalReferenceCode the cet external reference code
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @return the range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_CETERC(
+		long companyId, String cetExternalReferenceCode, int start, int end) {
+
+		return findByC_CETERC(
+			companyId, cetExternalReferenceCode, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param cetExternalReferenceCode the cet external reference code
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_CETERC(
+		long companyId, String cetExternalReferenceCode, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator
+			<ClientExtensionEntryRel> orderByComparator) {
+
+		return findByC_CETERC(
+			companyId, cetExternalReferenceCode, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_C(
+		long classNameId, long classPK) {
+
+		return findByC_C(
+			classNameId, classPK,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @return the range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_C(
+		long classNameId, long classPK, int start, int end) {
+
+		return findByC_C(classNameId, classPK, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_C(
+		long classNameId, long classPK, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator
+			<ClientExtensionEntryRel> orderByComparator) {
+
+		return findByC_C(
+			classNameId, classPK, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param type the type
+	 * @return the matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_C_T(
+		long classNameId, long classPK, String type) {
+
+		return findByC_C_T(
+			classNameId, classPK, type,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param type the type
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @return the range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_C_T(
+		long classNameId, long classPK, String type, int start, int end) {
+
+		return findByC_C_T(classNameId, classPK, type, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.client.extension.model.impl.ClientExtensionEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param type the type
+	 * @param start the lower bound of the range of client extension entry rels
+	 * @param end the upper bound of the range of client extension entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching client extension entry rels
+	 */
+	public default java.util.List<ClientExtensionEntryRel> findByC_C_T(
+		long classNameId, long classPK, String type, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator
+			<ClientExtensionEntryRel> orderByComparator) {
+
+		return findByC_C_T(
+			classNameId, classPK, type, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2032124864
+// LIFERAY-SERVICE-BUILDER-HASH:-1443549160

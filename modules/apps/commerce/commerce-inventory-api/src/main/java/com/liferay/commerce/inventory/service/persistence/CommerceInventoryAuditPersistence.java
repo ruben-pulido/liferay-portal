@@ -47,7 +47,7 @@ public interface CommerceInventoryAuditPersistence
 	 * Returns a range of all the commerce inventory audits where createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.inventory.model.impl.CommerceInventoryAuditModelImpl</code>.
 	 * </p>
 	 *
 	 * @param createDate the create date
@@ -62,7 +62,7 @@ public interface CommerceInventoryAuditPersistence
 	 * Returns an ordered range of all the commerce inventory audits where createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.inventory.model.impl.CommerceInventoryAuditModelImpl</code>.
 	 * </p>
 	 *
 	 * @param createDate the create date
@@ -80,7 +80,7 @@ public interface CommerceInventoryAuditPersistence
 	 * Returns an ordered range of all the commerce inventory audits where createDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.inventory.model.impl.CommerceInventoryAuditModelImpl</code>.
 	 * </p>
 	 *
 	 * @param createDate the create date
@@ -138,59 +138,10 @@ public interface CommerceInventoryAuditPersistence
 	public int countByLtCreateDate(Date createDate);
 
 	/**
-	 * Returns all the commerce inventory audits where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param sku the sku
-	 * @param unitOfMeasureKey the unit of measure key
-	 * @return the matching commerce inventory audits
-	 */
-	public java.util.List<CommerceInventoryAudit> findByC_S_U(
-		long companyId, String sku, String unitOfMeasureKey);
-
-	/**
-	 * Returns a range of all the commerce inventory audits where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param sku the sku
-	 * @param unitOfMeasureKey the unit of measure key
-	 * @param start the lower bound of the range of commerce inventory audits
-	 * @param end the upper bound of the range of commerce inventory audits (not inclusive)
-	 * @return the range of matching commerce inventory audits
-	 */
-	public java.util.List<CommerceInventoryAudit> findByC_S_U(
-		long companyId, String sku, String unitOfMeasureKey, int start,
-		int end);
-
-	/**
 	 * Returns an ordered range of all the commerce inventory audits where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param sku the sku
-	 * @param unitOfMeasureKey the unit of measure key
-	 * @param start the lower bound of the range of commerce inventory audits
-	 * @param end the upper bound of the range of commerce inventory audits (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce inventory audits
-	 */
-	public java.util.List<CommerceInventoryAudit> findByC_S_U(
-		long companyId, String sku, String unitOfMeasureKey, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CommerceInventoryAudit>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the commerce inventory audits where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.inventory.model.impl.CommerceInventoryAuditModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -260,21 +211,6 @@ public interface CommerceInventoryAuditPersistence
 		long companyId, String sku, String unitOfMeasureKey);
 
 	/**
-	 * Caches the commerce inventory audit in the entity cache if it is enabled.
-	 *
-	 * @param commerceInventoryAudit the commerce inventory audit
-	 */
-	public void cacheResult(CommerceInventoryAudit commerceInventoryAudit);
-
-	/**
-	 * Caches the commerce inventory audits in the entity cache if it is enabled.
-	 *
-	 * @param commerceInventoryAudits the commerce inventory audits
-	 */
-	public void cacheResult(
-		java.util.List<CommerceInventoryAudit> commerceInventoryAudits);
-
-	/**
 	 * Creates a new commerce inventory audit with the primary key. Does not add the commerce inventory audit to the database.
 	 *
 	 * @param commerceInventoryAuditId the primary key for the new commerce inventory audit
@@ -316,72 +252,68 @@ public interface CommerceInventoryAuditPersistence
 		long commerceInventoryAuditId);
 
 	/**
-	 * Returns all the commerce inventory audits.
+	 * Returns all the commerce inventory audits where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
 	 *
-	 * @return the commerce inventory audits
+	 * @param companyId the company ID
+	 * @param sku the sku
+	 * @param unitOfMeasureKey the unit of measure key
+	 * @return the matching commerce inventory audits
 	 */
-	public java.util.List<CommerceInventoryAudit> findAll();
+	public default java.util.List<CommerceInventoryAudit> findByC_S_U(
+		long companyId, String sku, String unitOfMeasureKey) {
+
+		return findByC_S_U(
+			companyId, sku, unitOfMeasureKey,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the commerce inventory audits.
+	 * Returns a range of all the commerce inventory audits where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.inventory.model.impl.CommerceInventoryAuditModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param sku the sku
+	 * @param unitOfMeasureKey the unit of measure key
 	 * @param start the lower bound of the range of commerce inventory audits
 	 * @param end the upper bound of the range of commerce inventory audits (not inclusive)
-	 * @return the range of commerce inventory audits
+	 * @return the range of matching commerce inventory audits
 	 */
-	public java.util.List<CommerceInventoryAudit> findAll(int start, int end);
+	public default java.util.List<CommerceInventoryAudit> findByC_S_U(
+		long companyId, String sku, String unitOfMeasureKey, int start,
+		int end) {
+
+		return findByC_S_U(
+			companyId, sku, unitOfMeasureKey, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the commerce inventory audits.
+	 * Returns an ordered range of all the commerce inventory audits where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.inventory.model.impl.CommerceInventoryAuditModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param sku the sku
+	 * @param unitOfMeasureKey the unit of measure key
 	 * @param start the lower bound of the range of commerce inventory audits
 	 * @param end the upper bound of the range of commerce inventory audits (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce inventory audits
+	 * @return the ordered range of matching commerce inventory audits
 	 */
-	public java.util.List<CommerceInventoryAudit> findAll(
-		int start, int end,
+	public default java.util.List<CommerceInventoryAudit> findByC_S_U(
+		long companyId, String sku, String unitOfMeasureKey, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<CommerceInventoryAudit>
-			orderByComparator);
+			orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the commerce inventory audits.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceInventoryAuditModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce inventory audits
-	 * @param end the upper bound of the range of commerce inventory audits (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce inventory audits
-	 */
-	public java.util.List<CommerceInventoryAudit> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CommerceInventoryAudit>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the commerce inventory audits from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of commerce inventory audits.
-	 *
-	 * @return the number of commerce inventory audits
-	 */
-	public int countAll();
+		return findByC_S_U(
+			companyId, sku, unitOfMeasureKey, start, end, orderByComparator,
+			true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:275624792
+// LIFERAY-SERVICE-BUILDER-HASH:2065478082

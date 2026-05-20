@@ -27,9 +27,11 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.test.util.ConfigurationTestUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.encryptor.EncryptorUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
@@ -40,6 +42,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -56,7 +59,7 @@ import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.kernel.util.PropsValues;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -111,6 +114,8 @@ public class AgentInstanceResourceTest
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
+		BaseAgentInstanceResourceTestCase.setUpClass();
+
 		_accountEntry = _accountEntryLocalService.addAccountEntry(
 			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
 			AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT,
@@ -141,7 +146,17 @@ public class AgentInstanceResourceTest
 			).put(
 				"clientSecret", RandomTestUtil.randomString()
 			).put(
-				"serviceURL", "http://localhost:8080"
+				"serviceURL",
+				"http://localhost:" + PortalUtil.getPortalServerPort(false)
+			).build());
+
+		ConfigurationTestUtil.createFactoryConfiguration(
+			"com.liferay.mcp.server.internal.configuration." +
+				"MCPServerConfiguration.scoped",
+			HashMapDictionaryBuilder.<String, Object>put(
+				"companyId", TestPropsValues.getCompanyId()
+			).put(
+				"enabled", true
 			).build());
 
 		PrincipalThreadLocal.setName(TestPropsValues.getUserId());
@@ -208,19 +223,14 @@ public class AgentInstanceResourceTest
 			_mcpServerObjectDefinition.getObjectDefinitionId(), 0,
 			LocaleUtil.toLanguageId(LocaleUtil.getDefault()),
 			HashMapBuilder.<String, Serializable>put(
-				"authArguments",
-				JSONUtil.put(
-					"password", PropsValues.DEFAULT_ADMIN_PASSWORD
-				).put(
-					"userName", "test@liferay.com"
-				).toString()
-			).put(
 				"externalReferenceCode", "L_LIFERAY_AI_HUB_MCP_SERVER"
 			).put(
 				"r_accountToAIHubMCPServers_accountEntryId",
 				aiHubAccountEntry.getAccountEntryId()
 			).put(
-				"url", "http://localhost:8080/o/mcp"
+				"url",
+				"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+					"/o/mcp"
 			).build(),
 			ServiceContextTestUtil.getServiceContext(
 				GroupTestUtil.addGroup(), TestPropsValues.getUserId()));
@@ -264,6 +274,9 @@ public class AgentInstanceResourceTest
 		SseUtil.closeAll();
 		ConfigurationTestUtil.deleteConfiguration(
 			AIHubCellConfiguration.class.getName());
+		ConfigurationTestUtil.deleteConfiguration(
+			"com.liferay.mcp.server.internal.configuration." +
+				"MCPServerConfiguration.scoped");
 	}
 
 	@Override
@@ -286,6 +299,8 @@ public class AgentInstanceResourceTest
 		_testPostAgentInstanceWithTypeLLMNodeWithRAGWorkflowDefinitionWithRestrictedUser();
 		_testPostAgentInstanceWithTypeLLMNodeWithToolWorkflowDefinition();
 		_testPostAgentInstanceWithTypeMakeShorter();
+		_testPostAgentInstanceWithTypeMakeShorterAndExhaustedQuota();
+		_testPostAgentInstanceWithTypePageBuilder();
 	}
 
 	private static void _addAgentDefinitionObjectEntry(
@@ -424,10 +439,8 @@ public class AgentInstanceResourceTest
 	private JSONObject _postAgentInstance(
 			String agentDefinitionExternalReferenceCode, String inputText,
 			String inputVariable, String instructionDefinitionScope,
-			String sseEventSinkKey)
+			JSONObject tokenJSONObject, String sseEventSinkKey)
 		throws Exception {
-
-		JSONObject tokenJSONObject = TokenTestUtil.postToken();
 
 		return HTTPTestUtil.invokeToJSONObject(
 			JSONUtil.put(
@@ -451,16 +464,22 @@ public class AgentInstanceResourceTest
 			Http.Method.POST);
 	}
 
+	private JSONObject _postAgentInstance(
+			String agentDefinitionExternalReferenceCode, String inputText,
+			String inputVariable, String instructionDefinitionScope,
+			String sseEventSinkKey)
+		throws Exception {
+
+		return _postAgentInstance(
+			agentDefinitionExternalReferenceCode, inputText, inputVariable,
+			instructionDefinitionScope, TokenTestUtil.postToken(),
+			sseEventSinkKey);
+	}
+
 	private void _testPostAgentInstance() throws Exception {
-		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
-			JSONUtil.put(
-				"agentDefinitionExternalReferenceCode", "L_WORKFLOW_DEFINITION"
-			).put(
-				"context", JSONUtil.put("text", RandomTestUtil.randomString())
-			).put(
-				"sseEventSinkKey", RandomTestUtil.randomString()
-			).toString(),
-			"ai-hub/v1.0/agent-instances", Http.Method.POST);
+		JSONObject jsonObject = _postAgentInstance(
+			"L_WORKFLOW_DEFINITION", RandomTestUtil.randomString(), "text",
+			RandomTestUtil.randomString());
 
 		WorkflowInstance workflowInstance =
 			_workflowInstanceManager.getWorkflowInstance(
@@ -480,15 +499,9 @@ public class AgentInstanceResourceTest
 			WorkflowDefinitionConstants.SCOPE_AI, StringUtil.randomId(),
 			TestPropsValues.getUserId());
 
-		jsonObject = HTTPTestUtil.invokeToJSONObject(
-			JSONUtil.put(
-				"agentDefinitionExternalReferenceCode", "L_WORKFLOW_DEFINITION"
-			).put(
-				"context", JSONUtil.put("text", RandomTestUtil.randomString())
-			).put(
-				"sseEventSinkKey", RandomTestUtil.randomString()
-			).toString(),
-			"ai-hub/v1.0/agent-instances", Http.Method.POST);
+		jsonObject = _postAgentInstance(
+			"L_WORKFLOW_DEFINITION", RandomTestUtil.randomString(), "text",
+			RandomTestUtil.randomString());
 
 		workflowInstance = _workflowInstanceManager.getWorkflowInstance(
 			TestPropsValues.getCompanyId(),
@@ -509,7 +522,7 @@ public class AgentInstanceResourceTest
 			RandomTestUtil.randomString());
 
 		IdempotentRetryAssert.retryAssert(
-			5, TimeUnit.SECONDS, 1, TimeUnit.SECONDS,
+			10, TimeUnit.SECONDS, 1, TimeUnit.SECONDS,
 			() -> {
 				WorkflowInstance workflowInstance =
 					_workflowInstanceManager.getWorkflowInstance(
@@ -668,7 +681,7 @@ public class AgentInstanceResourceTest
 			"L_FIX_SPELLING_AND_GRAMMAR", input, "text",
 			instructionDefinitionScope, sseEventSinkKey);
 
-		Assert.assertTrue(countDownLatch.await(10, TimeUnit.SECONDS));
+		Assert.assertTrue(countDownLatch.await(20, TimeUnit.SECONDS));
 
 		Assert.assertEquals(lines.toString(), 4, lines.size());
 		Assert.assertEquals("event: L_FIX_SPELLING_AND_GRAMMAR", lines.get(2));
@@ -711,28 +724,35 @@ public class AgentInstanceResourceTest
 					WorkflowContextUtil.convert(
 						workflowLog.getWorkflowContext());
 
-				int inputTokensCount = GetterUtil.getInteger(
-					workflowContext.get("inputTokensCount"));
+				int inputTokenCount = GetterUtil.getInteger(
+					workflowContext.get("inputTokenCount"));
 
-				Assert.assertTrue(inputTokensCount > 0);
+				Assert.assertTrue(inputTokenCount > 0);
 
 				Assert.assertEquals(
 					expectedOutput, workflowContext.get("output"));
 
-				int outputTokensCount = GetterUtil.getInteger(
-					workflowContext.get("outputTokensCount"));
+				int outputTokenCount = GetterUtil.getInteger(
+					workflowContext.get("outputTokenCount"));
 
-				Assert.assertTrue(outputTokensCount > 0);
+				Assert.assertTrue(outputTokenCount > 0);
 
 				Assert.assertEquals(
 					_getExpectedPromptInput(
 						instructionDefinitionObjectEntry.getValues(),
 						instructionDefinitionScope),
 					workflowContext.get("promptInput"));
+
+				int thoughtsTokenCount = GetterUtil.getInteger(
+					workflowContext.get("thoughtsTokenCount"));
+
+				Assert.assertTrue(thoughtsTokenCount >= 0);
+
 				Assert.assertEquals(
-					inputTokensCount + outputTokensCount,
+					inputTokenCount + outputTokenCount + thoughtsTokenCount,
 					GetterUtil.getInteger(
 						workflowContext.get("totalTokenCount")));
+
 				Assert.assertEquals(
 					"This is the text to be fixed: " + input,
 					workflowContext.get("userMessageInput"));
@@ -758,7 +778,7 @@ public class AgentInstanceResourceTest
 			"L_LLM_NODE_WITH_RAG_WORKFLOW_DEFINITION",
 			"What is Feliphe's favorite food?", "userMessage", sseEventSinkKey);
 
-		Assert.assertTrue(countDownLatch1.await(10, TimeUnit.SECONDS));
+		Assert.assertTrue(countDownLatch1.await(20, TimeUnit.SECONDS));
 
 		Assert.assertEquals(lines.toString(), 4, lines.size());
 
@@ -782,7 +802,7 @@ public class AgentInstanceResourceTest
 			"L_LLM_NODE_WITH_RAG_WORKFLOW_DEFINITION",
 			"What is Feliphe's favorite food?", "userMessage", sseEventSinkKey);
 
-		Assert.assertTrue(countDownLatch2.await(10, TimeUnit.SECONDS));
+		Assert.assertTrue(countDownLatch2.await(20, TimeUnit.SECONDS));
 
 		Assert.assertEquals(lines.toString(), 6, lines.size());
 
@@ -841,7 +861,7 @@ public class AgentInstanceResourceTest
 					"What is Feliphe's favorite food?", "userMessage",
 					sseEventSinkKey);
 
-				Assert.assertTrue(countDownLatch1.await(10, TimeUnit.SECONDS));
+				Assert.assertTrue(countDownLatch1.await(20, TimeUnit.SECONDS));
 
 				Assert.assertEquals(lines.toString(), 4, lines.size());
 
@@ -868,7 +888,7 @@ public class AgentInstanceResourceTest
 					"What is Feliphe's favorite food?", "userMessage",
 					sseEventSinkKey);
 
-				Assert.assertTrue(countDownLatch2.await(10, TimeUnit.SECONDS));
+				Assert.assertTrue(countDownLatch2.await(20, TimeUnit.SECONDS));
 
 				Assert.assertEquals(lines.toString(), 6, lines.size());
 
@@ -898,7 +918,7 @@ public class AgentInstanceResourceTest
 			"Is the \"get_openapi\" tool available?", "userMessage",
 			sseEventSinkKey);
 
-		Assert.assertTrue(countDownLatch.await(10, TimeUnit.SECONDS));
+		Assert.assertTrue(countDownLatch.await(20, TimeUnit.SECONDS));
 
 		Assert.assertEquals(lines.toString(), 4, lines.size());
 
@@ -921,10 +941,13 @@ public class AgentInstanceResourceTest
 			"This is a long and detailed sentence that should be shortened " +
 				"by the AI model for testing purposes.";
 
-		JSONObject jsonObject = _postAgentInstance(
-			"L_MAKE_SHORTER", inputText, "text", sseEventSinkKey);
+		JSONObject tokenJSONObject = TokenTestUtil.postToken();
 
-		Assert.assertTrue(countDownLatch.await(10, TimeUnit.SECONDS));
+		JSONObject jsonObject = _postAgentInstance(
+			"L_MAKE_SHORTER", inputText, "text", null, tokenJSONObject,
+			sseEventSinkKey);
+
+		Assert.assertTrue(countDownLatch.await(20, TimeUnit.SECONDS));
 
 		Assert.assertEquals(lines.toString(), 4, lines.size());
 		Assert.assertEquals("event: L_MAKE_SHORTER", lines.get(2));
@@ -950,6 +973,16 @@ public class AgentInstanceResourceTest
 				Map<String, Serializable> workflowContext =
 					workflowInstance.getWorkflowContext();
 
+				Company company = CompanyLocalServiceUtil.getCompany(
+					TestPropsValues.getCompanyId());
+
+				Assert.assertEquals(
+					tokenJSONObject.getString("userToken"),
+					EncryptorUtil.decrypt(
+						company.getKeyObj(),
+						GetterUtil.getString(
+							workflowContext.get("userToken"))));
+
 				String rewrittenText = GetterUtil.getString(
 					workflowContext.get("rewrittenText"));
 
@@ -957,6 +990,86 @@ public class AgentInstanceResourceTest
 
 				return null;
 			});
+
+		SseUtil.closeAll();
+	}
+
+	private void _testPostAgentInstanceWithTypeMakeShorterAndExhaustedQuota()
+		throws Exception {
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					"L_AI_HUB_QUOTA", TestPropsValues.getCompanyId());
+
+		_objectEntryLocalService.addObjectEntry(
+			0, TestPropsValues.getUserId(),
+			objectDefinition.getObjectDefinitionId(), 0,
+			LocaleUtil.toLanguageId(LocaleUtil.getDefault()),
+			HashMapBuilder.<String, Serializable>put(
+				"externalReferenceCode",
+				"quota-" + _accountEntry.getAccountEntryId()
+			).put(
+				"limit", 0
+			).put(
+				"r_accountToAIHubQuotas_accountEntryId",
+				_accountEntry.getAccountEntryId()
+			).put(
+				"usage", 0
+			).build(),
+			ServiceContextTestUtil.getServiceContext());
+
+		CountDownLatch countDownLatch = new CountDownLatch(3);
+		List<String> lines = new ArrayList<>();
+
+		String sseEventSinkKey = SseEventSourceTestUtil.open(
+			List.of(countDownLatch), lines, "agent-instances/subscribe");
+
+		_postAgentInstance(
+			"L_MAKE_SHORTER", "This is a long text.", "text", sseEventSinkKey);
+
+		Assert.assertTrue(countDownLatch.await(20, TimeUnit.SECONDS));
+
+		Assert.assertEquals(lines.toString(), 4, lines.size());
+
+		String line = lines.get(3);
+
+		Assert.assertTrue(
+			line, line.contains("You have exceeded your token quota"));
+
+		SseUtil.closeAll();
+	}
+
+	private void _testPostAgentInstanceWithTypePageBuilder() throws Exception {
+		CountDownLatch countDownLatch = new CountDownLatch(4);
+		List<String> lines = new ArrayList<>();
+
+		String sseEventSinkKey = SseEventSourceTestUtil.open(
+			List.of(countDownLatch), lines, "agent-instances/subscribe");
+
+		_postAgentInstance(
+			"L_PAGE_BUILDER",
+			"Create a page called \"Hello\" with a heading that says \"Hello " +
+				"World\".",
+			"instruction", sseEventSinkKey);
+
+		Assert.assertTrue(countDownLatch.await(30, TimeUnit.SECONDS));
+
+		Assert.assertEquals(lines.toString(), 4, lines.size());
+		Assert.assertEquals("event: L_PAGE_BUILDER", lines.get(2));
+
+		JSONObject outputJSONObject = _jsonFactory.createJSONObject(
+			StringUtil.removeSubstring(lines.get(3), "data: "));
+
+		Assert.assertEquals(
+			"pageBuilder", outputJSONObject.getString("nodeName"));
+
+		String data = outputJSONObject.getString("data");
+
+		Assert.assertTrue(data, data.contains("BASIC_COMPONENT-heading"));
+		Assert.assertTrue(data, data.contains("ContentPage"));
+		Assert.assertTrue(data, data.contains("ContentPageSpecification"));
+		Assert.assertTrue(data, data.contains("Hello World"));
 
 		SseUtil.closeAll();
 	}

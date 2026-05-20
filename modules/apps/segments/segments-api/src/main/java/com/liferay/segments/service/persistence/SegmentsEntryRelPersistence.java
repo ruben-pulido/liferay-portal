@@ -34,52 +34,10 @@ public interface SegmentsEntryRelPersistence
 	 */
 
 	/**
-	 * Returns all the segments entry rels where segmentsEntryId = &#63;.
-	 *
-	 * @param segmentsEntryId the segments entry ID
-	 * @return the matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findBySegmentsEntryId(
-		long segmentsEntryId);
-
-	/**
-	 * Returns a range of all the segments entry rels where segmentsEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param segmentsEntryId the segments entry ID
-	 * @param start the lower bound of the range of segments entry rels
-	 * @param end the upper bound of the range of segments entry rels (not inclusive)
-	 * @return the range of matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findBySegmentsEntryId(
-		long segmentsEntryId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the segments entry rels where segmentsEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param segmentsEntryId the segments entry ID
-	 * @param start the lower bound of the range of segments entry rels
-	 * @param end the upper bound of the range of segments entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findBySegmentsEntryId(
-		long segmentsEntryId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SegmentsEntryRel>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the segments entry rels where segmentsEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param segmentsEntryId the segments entry ID
@@ -137,55 +95,10 @@ public interface SegmentsEntryRelPersistence
 	public int countBySegmentsEntryId(long segmentsEntryId);
 
 	/**
-	 * Returns all the segments entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findByCN_CPK(
-		long classNameId, long classPK);
-
-	/**
-	 * Returns a range of all the segments entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of segments entry rels
-	 * @param end the upper bound of the range of segments entry rels (not inclusive)
-	 * @return the range of matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findByCN_CPK(
-		long classNameId, long classPK, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the segments entry rels where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of segments entry rels
-	 * @param end the upper bound of the range of segments entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findByCN_CPK(
-		long classNameId, long classPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SegmentsEntryRel>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the segments entry rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -248,58 +161,10 @@ public interface SegmentsEntryRelPersistence
 	public int countByCN_CPK(long classNameId, long classPK);
 
 	/**
-	 * Returns all the segments entry rels where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findByG_CN_CPK(
-		long groupId, long classNameId, long classPK);
-
-	/**
-	 * Returns a range of all the segments entry rels where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of segments entry rels
-	 * @param end the upper bound of the range of segments entry rels (not inclusive)
-	 * @return the range of matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findByG_CN_CPK(
-		long groupId, long classNameId, long classPK, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the segments entry rels where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of segments entry rels
-	 * @param end the upper bound of the range of segments entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching segments entry rels
-	 */
-	public java.util.List<SegmentsEntryRel> findByG_CN_CPK(
-		long groupId, long classNameId, long classPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SegmentsEntryRel>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the segments entry rels where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -380,17 +245,6 @@ public interface SegmentsEntryRelPersistence
 		throws NoSuchEntryRelException;
 
 	/**
-	 * Returns the segments entry rel where segmentsEntryId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param segmentsEntryId the segments entry ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching segments entry rel, or <code>null</code> if a matching segments entry rel could not be found
-	 */
-	public SegmentsEntryRel fetchByS_CN_CPK(
-		long segmentsEntryId, long classNameId, long classPK);
-
-	/**
 	 * Returns the segments entry rel where segmentsEntryId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param segmentsEntryId the segments entry ID
@@ -425,20 +279,6 @@ public interface SegmentsEntryRelPersistence
 	 */
 	public int countByS_CN_CPK(
 		long segmentsEntryId, long classNameId, long classPK);
-
-	/**
-	 * Caches the segments entry rel in the entity cache if it is enabled.
-	 *
-	 * @param segmentsEntryRel the segments entry rel
-	 */
-	public void cacheResult(SegmentsEntryRel segmentsEntryRel);
-
-	/**
-	 * Caches the segments entry rels in the entity cache if it is enabled.
-	 *
-	 * @param segmentsEntryRels the segments entry rels
-	 */
-	public void cacheResult(java.util.List<SegmentsEntryRel> segmentsEntryRels);
 
 	/**
 	 * Creates a new segments entry rel with the primary key. Does not add the segments entry rel to the database.
@@ -479,72 +319,193 @@ public interface SegmentsEntryRelPersistence
 	public SegmentsEntryRel fetchByPrimaryKey(long segmentsEntryRelId);
 
 	/**
-	 * Returns all the segments entry rels.
+	 * Returns the segments entry rel where segmentsEntryId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the segments entry rels
+	 * @param segmentsEntryId the segments entry ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching segments entry rel, or <code>null</code> if a matching segments entry rel could not be found
 	 */
-	public java.util.List<SegmentsEntryRel> findAll();
+	public default SegmentsEntryRel fetchByS_CN_CPK(
+		long segmentsEntryId, long classNameId, long classPK) {
+
+		return fetchByS_CN_CPK(segmentsEntryId, classNameId, classPK, true);
+	}
 
 	/**
-	 * Returns a range of all the segments entry rels.
+	 * Returns all the segments entry rels where segmentsEntryId = &#63;.
+	 *
+	 * @param segmentsEntryId the segments entry ID
+	 * @return the matching segments entry rels
+	 */
+	public default java.util.List<SegmentsEntryRel> findBySegmentsEntryId(
+		long segmentsEntryId) {
+
+		return findBySegmentsEntryId(
+			segmentsEntryId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the segments entry rels where segmentsEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param segmentsEntryId the segments entry ID
 	 * @param start the lower bound of the range of segments entry rels
 	 * @param end the upper bound of the range of segments entry rels (not inclusive)
-	 * @return the range of segments entry rels
+	 * @return the range of matching segments entry rels
 	 */
-	public java.util.List<SegmentsEntryRel> findAll(int start, int end);
+	public default java.util.List<SegmentsEntryRel> findBySegmentsEntryId(
+		long segmentsEntryId, int start, int end) {
+
+		return findBySegmentsEntryId(segmentsEntryId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the segments entry rels.
+	 * Returns an ordered range of all the segments entry rels where segmentsEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param segmentsEntryId the segments entry ID
 	 * @param start the lower bound of the range of segments entry rels
 	 * @param end the upper bound of the range of segments entry rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of segments entry rels
+	 * @return the ordered range of matching segments entry rels
 	 */
-	public java.util.List<SegmentsEntryRel> findAll(
-		int start, int end,
+	public default java.util.List<SegmentsEntryRel> findBySegmentsEntryId(
+		long segmentsEntryId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<SegmentsEntryRel>
-			orderByComparator);
+			orderByComparator) {
+
+		return findBySegmentsEntryId(
+			segmentsEntryId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the segments entry rels.
+	 * Returns all the segments entry rels where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching segments entry rels
+	 */
+	public default java.util.List<SegmentsEntryRel> findByCN_CPK(
+		long classNameId, long classPK) {
+
+		return findByCN_CPK(
+			classNameId, classPK,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the segments entry rels where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of segments entry rels
+	 * @param end the upper bound of the range of segments entry rels (not inclusive)
+	 * @return the range of matching segments entry rels
+	 */
+	public default java.util.List<SegmentsEntryRel> findByCN_CPK(
+		long classNameId, long classPK, int start, int end) {
+
+		return findByCN_CPK(classNameId, classPK, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments entry rels where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
 	 * @param start the lower bound of the range of segments entry rels
 	 * @param end the upper bound of the range of segments entry rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of segments entry rels
+	 * @return the ordered range of matching segments entry rels
 	 */
-	public java.util.List<SegmentsEntryRel> findAll(
-		int start, int end,
+	public default java.util.List<SegmentsEntryRel> findByCN_CPK(
+		long classNameId, long classPK, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<SegmentsEntryRel>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByCN_CPK(
+			classNameId, classPK, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the segments entry rels from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of segments entry rels.
+	 * Returns all the segments entry rels where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
-	 * @return the number of segments entry rels
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching segments entry rels
 	 */
-	public int countAll();
+	public default java.util.List<SegmentsEntryRel> findByG_CN_CPK(
+		long groupId, long classNameId, long classPK) {
+
+		return findByG_CN_CPK(
+			groupId, classNameId, classPK,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the segments entry rels where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of segments entry rels
+	 * @param end the upper bound of the range of segments entry rels (not inclusive)
+	 * @return the range of matching segments entry rels
+	 */
+	public default java.util.List<SegmentsEntryRel> findByG_CN_CPK(
+		long groupId, long classNameId, long classPK, int start, int end) {
+
+		return findByG_CN_CPK(
+			groupId, classNameId, classPK, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments entry rels where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.segments.model.impl.SegmentsEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of segments entry rels
+	 * @param end the upper bound of the range of segments entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching segments entry rels
+	 */
+	public default java.util.List<SegmentsEntryRel> findByG_CN_CPK(
+		long groupId, long classNameId, long classPK, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<SegmentsEntryRel>
+			orderByComparator) {
+
+		return findByG_CN_CPK(
+			groupId, classNameId, classPK, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:583114258
+// LIFERAY-SERVICE-BUILDER-HASH:-770124875

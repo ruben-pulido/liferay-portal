@@ -5,6 +5,7 @@
 
 package com.liferay.jenkins.results.parser.test.clazz.group;
 
+import com.liferay.jenkins.results.parser.AntException;
 import com.liferay.jenkins.results.parser.AntUtil;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.NotificationUtil;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -341,10 +343,6 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 		return new ArrayList<>(playwrightJobProperties);
 	}
 
-	protected List<JSONObject> getSpecJSONObjects() {
-		return _specJSONObjects;
-	}
-
 	protected void removeProjectNames(String jobPropertyValue) {
 		String[] excludesProjectNames = jobPropertyValue.split("\\s*,\\s*");
 
@@ -358,8 +356,21 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 
 		_loadPlaywrightJSONObjects();
 
+		JSONObject configJSONObject = _playwrightJSONObject.getJSONObject(
+			"config");
+
+		File rootDir = new File(configJSONObject.getString("rootDir"));
+
+		Map<String, Map<File, TestClass>> testClassesByProjectMap =
+			new HashMap<>();
+
+		_parsePlaywrightJSONObjects(
+			rootDir, _playwrightJSONObject.optJSONArray("suites"),
+			testClassesByProjectMap);
+
 		for (String projectName : _projectNames) {
-			List<TestClass> testClasses = _getTestClasses(projectName);
+			List<TestClass> testClasses = _getTestClasses(
+				projectName, rootDir, testClassesByProjectMap);
 
 			if (testClasses.isEmpty()) {
 				continue;
@@ -578,127 +589,9 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 			portalProperties, propertyName);
 	}
 
-	private List<JSONObject> _getSpecJSONObjects(JSONObject jsonObject) {
-		List<JSONObject> specJSONObjects = new ArrayList<>();
-
-		JSONArray suitesJSONArray = jsonObject.getJSONArray("suites");
-
-		for (int i = 0; i < suitesJSONArray.length(); i++) {
-			JSONObject suiteJSONObject = suitesJSONArray.getJSONObject(i);
-
-			if (suiteJSONObject.has("suites")) {
-				specJSONObjects.addAll(_getSpecJSONObjects(suiteJSONObject));
-			}
-
-			JSONArray specsJSONArray = suiteJSONObject.optJSONArray("specs");
-
-			if (specsJSONArray == null) {
-				continue;
-			}
-
-			String file = suiteJSONObject.getString("file");
-			String title = suiteJSONObject.getString("title");
-
-			for (int j = 0; j < specsJSONArray.length(); j++) {
-				JSONObject specJSONObject = specsJSONArray.getJSONObject(j);
-
-				if (!title.equals(file) &&
-					!JenkinsResultsParserUtil.isNullOrEmpty(title)) {
-
-					specJSONObject.put("subSuite", title);
-				}
-
-				specJSONObjects.add(specJSONObject);
-				specJSONObjects.add(specsJSONArray.getJSONObject(j));
-			}
-		}
-
-		return specJSONObjects;
-	}
-
-	private List<TestClass> _getTestClasses(String projectName) {
-		JSONObject configJSONObject = _playwrightJSONObject.getJSONObject(
-			"config");
-
-		File rootDir = new File(configJSONObject.getString("rootDir"));
-
-		List<String> ignoredSpecTitles = new ArrayList<>();
-		Map<File, Set<String>> specTitlesMap = new HashMap<>();
-		Map<String, String> specTitleTagsMap = new HashMap<>();
-
-		for (JSONObject specJSONObject : getSpecJSONObjects()) {
-			JSONArray testsJSONArray = specJSONObject.optJSONArray("tests");
-
-			if ((testsJSONArray == null) || testsJSONArray.isEmpty()) {
-				continue;
-			}
-
-			JSONObject testJSONObject = testsJSONArray.getJSONObject(0);
-
-			if (!Objects.equals(
-					projectName, testJSONObject.optString("projectName"))) {
-
-				continue;
-			}
-
-			File specFile = new File(rootDir, specJSONObject.getString("file"));
-
-			Set<String> specTitles = specTitlesMap.get(specFile);
-
-			if (specTitles == null) {
-				specTitles = new HashSet<>();
-			}
-
-			String title = null;
-
-			if (specJSONObject.has("subSuite")) {
-				title =
-					specJSONObject.getString("subSuite") + " › " +
-						specJSONObject.getString("title");
-			}
-			else {
-				title = specJSONObject.getString("title");
-			}
-
-			specTitles.add(title);
-
-			JSONArray tagsJSONArray = specJSONObject.getJSONArray("tags");
-
-			if (!tagsJSONArray.isEmpty()) {
-				List<String> tags = new ArrayList<>(tagsJSONArray.length());
-
-				for (int i = 0; i < tagsJSONArray.length(); i++) {
-					tags.add(tagsJSONArray.optString(i));
-				}
-
-				specTitleTagsMap.put(
-					"tags", JenkinsResultsParserUtil.join(",", tags));
-			}
-
-			specTitlesMap.put(specFile, specTitles);
-
-			JSONArray annotationsJSONArray = testJSONObject.getJSONArray(
-				"annotations");
-
-			if (!annotationsJSONArray.isEmpty()) {
-				for (int i = 0; i < annotationsJSONArray.length(); i++) {
-					JSONObject annotationsJSONObject =
-						annotationsJSONArray.optJSONObject(i);
-
-					if (annotationsJSONObject == null) {
-						continue;
-					}
-
-					String testType = annotationsJSONObject.optString("type");
-
-					if (testType.equals("skip")) {
-						ignoredSpecTitles.add(title);
-					}
-				}
-			}
-		}
-
-		List<TestClass> testClasses = new ArrayList<>();
+	private List<TestClass> _getTestClasses(
+		String projectName, File rootDir,
+		Map<String, Map<File, TestClass>> testClassesByProjectMap) {
 
 		if (isRootCauseAnalysis()) {
 			String portalBatchTestSelector = System.getenv(
@@ -715,49 +608,29 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 				portalBatchTestSelector);
 
 			if (matcher.matches()) {
-				File specFile = new File(rootDir, matcher.group("filePath"));
+				Map<File, TestClass> testClassesMap =
+					testClassesByProjectMap.get(projectName);
 
-				TestClass testClass = TestClassFactory.newTestClass(
-					this, specFile);
+				if (testClassesMap != null) {
+					File specFile = new File(
+						rootDir, matcher.group("filePath"));
 
-				for (String specTitle :
-						specTitlesMap.getOrDefault(specFile, new HashSet<>())) {
+					TestClass testClass = testClassesMap.get(specFile);
 
-					testClass.addTestClassMethod(
-						TestClassFactory.newTestClassMethod(
-							false, specTitle, testClass));
+					if (testClass != null) {
+						return Collections.singletonList(testClass);
+					}
 				}
 
-				testClasses.add(testClass);
-
-				return testClasses;
+				return Collections.emptyList();
 			}
 		}
 
-		for (Map.Entry<File, Set<String>> entry : specTitlesMap.entrySet()) {
-			TestClass testClass = TestClassFactory.newTestClass(
-				this, entry.getKey());
+		Map<File, TestClass> testClassesMap =
+			testClassesByProjectMap.getOrDefault(
+				projectName, Collections.emptyMap());
 
-			for (String specTitle : entry.getValue()) {
-				boolean ignored = ignoredSpecTitles.contains(specTitle);
-
-				if (specTitleTagsMap.containsKey(specTitle)) {
-					testClass.addTestClassMethod(
-						TestClassFactory.newTestClassMethod(
-							ignored, specTitle, specTitleTagsMap.get(specTitle),
-							testClass));
-				}
-				else {
-					testClass.addTestClassMethod(
-						TestClassFactory.newTestClassMethod(
-							ignored, specTitle, testClass));
-				}
-			}
-
-			testClasses.add(testClass);
-		}
-
-		return testClasses;
+		return new ArrayList<>(testClassesMap.values());
 	}
 
 	private boolean _isPlaywrightInYarnWorkspace() throws IOException {
@@ -813,8 +686,18 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 					portalGitWorkingDirectory.getWorkingDirectory(),
 					"build.xml", "setup-yarn");
 			}
-			catch (Exception exception) {
-				exception.printStackTrace();
+			catch (AntException antException) {
+				System.out.println(
+					"Skipping Playwright class group enumeration because the " +
+						"\"setup-yarn\" target failed");
+
+				antException.printStackTrace();
+
+				_playwrightJSONObject = new JSONObject();
+
+				_playwrightJSONObjectsLoaded.set(true);
+
+				return;
 			}
 
 			try {
@@ -844,6 +727,8 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 				_sendNotification("Unable to parse Playwright JSON object");
 
 				exception.printStackTrace();
+
+				_playwrightJSONObject = new JSONObject();
 			}
 
 			JSONArray errorsJSONArray = _playwrightJSONObject.optJSONArray(
@@ -909,9 +794,126 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 				return;
 			}
 
-			_specJSONObjects.addAll(_getSpecJSONObjects(_playwrightJSONObject));
-
 			_playwrightJSONObjectsLoaded.set(true);
+		}
+	}
+
+	private void _parsePlaywrightJSONObjects(
+		File rootDir, JSONArray suitesJSONArray,
+		Map<String, Map<File, TestClass>> testClassesByProjectMap) {
+
+		if (suitesJSONArray == null) {
+			return;
+		}
+
+		for (int i = 0; i < suitesJSONArray.length(); i++) {
+			JSONObject suiteJSONObject = suitesJSONArray.getJSONObject(i);
+
+			JSONArray subSuitesJSONArray = suiteJSONObject.optJSONArray(
+				"suites");
+
+			if (subSuitesJSONArray != null) {
+				_parsePlaywrightJSONObjects(
+					rootDir, subSuitesJSONArray, testClassesByProjectMap);
+			}
+
+			JSONArray specsJSONArray = suiteJSONObject.optJSONArray("specs");
+
+			if (specsJSONArray == null) {
+				continue;
+			}
+
+			String file = suiteJSONObject.optString("file");
+			String title = suiteJSONObject.optString("title");
+
+			String subSuite = null;
+
+			if (!Objects.equals(title, file) &&
+				!JenkinsResultsParserUtil.isNullOrEmpty(title)) {
+
+				subSuite = title;
+			}
+
+			for (int j = 0; j < specsJSONArray.length(); j++) {
+				JSONObject specJSONObject = specsJSONArray.getJSONObject(j);
+
+				JSONArray testsJSONArray = specJSONObject.optJSONArray("tests");
+
+				if ((testsJSONArray == null) || testsJSONArray.isEmpty()) {
+					continue;
+				}
+
+				JSONObject testJSONObject = testsJSONArray.getJSONObject(0);
+
+				String specProjectName = testJSONObject.optString(
+					"projectName");
+
+				File specFile = new File(
+					rootDir, specJSONObject.getString("file"));
+
+				String specTitle = specJSONObject.getString("title");
+
+				if (subSuite != null) {
+					specTitle = subSuite + " › " + specTitle;
+				}
+
+				JSONArray tagsJSONArray = specJSONObject.optJSONArray("tags");
+
+				String tags = null;
+
+				if ((tagsJSONArray != null) && !tagsJSONArray.isEmpty()) {
+					List<String> tagsList = new ArrayList<>(
+						tagsJSONArray.length());
+
+					for (int t = 0; t < tagsJSONArray.length(); t++) {
+						tagsList.add(tagsJSONArray.optString(t));
+					}
+
+					tags = JenkinsResultsParserUtil.join(",", tagsList);
+				}
+
+				boolean ignored = false;
+
+				JSONArray annotationsJSONArray = testJSONObject.optJSONArray(
+					"annotations");
+
+				if ((annotationsJSONArray != null) &&
+					!annotationsJSONArray.isEmpty()) {
+
+					for (int a = 0; a < annotationsJSONArray.length(); a++) {
+						JSONObject annotationJSONObject =
+							annotationsJSONArray.optJSONObject(a);
+
+						if ((annotationJSONObject != null) &&
+							Objects.equals(
+								annotationJSONObject.optString("type"),
+								"skip")) {
+
+							ignored = true;
+
+							break;
+						}
+					}
+				}
+
+				Map<File, TestClass> testClassesMap =
+					testClassesByProjectMap.computeIfAbsent(
+						specProjectName, k -> new LinkedHashMap<>());
+
+				TestClass testClass = testClassesMap.computeIfAbsent(
+					specFile, k -> TestClassFactory.newTestClass(this, k));
+
+				if (tags != null) {
+					testClass.addTestClassMethod(
+						TestClassFactory.newTestClassMethod(
+							ignored, specTitle, tags, testClass));
+				}
+				else {
+					testClass.addTestClassMethod(
+						TestClassFactory.newTestClassMethod(
+							ignored, specTitle, testClass));
+				}
+			}
 		}
 	}
 
@@ -948,8 +950,6 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 	private static JSONObject _playwrightJSONObject;
 	private static final AtomicBoolean _playwrightJSONObjectsLoaded =
 		new AtomicBoolean();
-	private static final List<JSONObject> _specJSONObjects =
-		Collections.synchronizedList(new ArrayList<JSONObject>());
 
 	private final Set<String> _projectNames = new HashSet<>();
 

@@ -22,6 +22,7 @@ export class ObjectLayoutsPage {
 	readonly layoutNameInput: Locator;
 	readonly layoutsTabItem: Locator;
 	readonly layoutTab: Locator;
+	readonly layoutTabPanel: Locator;
 	readonly markAsDefaultButton: Locator;
 	readonly page: Page;
 	readonly relationshipSelect: Locator;
@@ -60,6 +61,7 @@ export class ObjectLayoutsPage {
 		this.layoutNameInput = page.getByLabel('Name');
 		this.layoutsTabItem = page.getByRole('link', {name: 'Layouts'});
 		this.layoutTab = this.iframeLocator.getByRole('tab', {name: 'Layout'});
+		this.layoutTabPanel = this.iframeLocator.locator('body');
 		this.markAsDefaultButton =
 			this.iframeLocator.getByLabel('Mark as Default');
 		this.page = page;
@@ -105,7 +107,7 @@ export class ObjectLayoutsPage {
 		await this.headerDropdown.click();
 	}
 
-	async addObjectLayoutObjectField(option: string) {
+	async addObjectLayoutObjectField(option: string, columns?: 1 | 2 | 3) {
 		await this.fieldSelect.waitFor({state: 'visible'});
 
 		await this.iframeLocator
@@ -113,7 +115,15 @@ export class ObjectLayoutsPage {
 			.filter({hasText: option})
 			.click();
 
+		if (columns && columns > 1) {
+			await this.iframeLocator
+				.locator(`button.box-btn-columns__btn[value="${columns}"]`)
+				.click();
+		}
+
 		await this.saveAddFieldButton.click();
+
+		await this.saveAddFieldButton.waitFor({state: 'hidden'});
 	}
 
 	async createObjectLayout(objectLayoutName: string) {
@@ -143,7 +153,10 @@ export class ObjectLayoutsPage {
 
 		await this.addRegularBlock.click();
 
-		await this.labelInput.fill(objectLayoutRegularBlockName);
+		await this.iframeLocator
+			.getByLabel('Add Block')
+			.getByLabel('Label')
+			.fill(objectLayoutRegularBlockName);
 
 		await this.saveBlockButton.click();
 	}
@@ -151,7 +164,33 @@ export class ObjectLayoutsPage {
 	async createObjectLayoutTab(objectLayoutTabName: string) {
 		await this.addTab.click();
 
-		await this.labelInput.fill(objectLayoutTabName);
+		await this.iframeLocator
+			.getByLabel('Add Tab')
+			.getByLabel('Label')
+			.fill(objectLayoutTabName);
+
+		await this.saveTabButton.click();
+	}
+
+	async addRelationshipTab(
+		objectLayoutTabName: string,
+		relationshipField: string
+	) {
+		await this.addTab.click();
+
+		await this.iframeLocator
+			.getByLabel('Add Tab')
+			.getByLabel('Label')
+			.fill(objectLayoutTabName);
+
+		await this.relationshipType.click();
+
+		await this.fieldList.click();
+
+		await this.iframeLocator
+			.getByRole('option', {name: relationshipField})
+			.first()
+			.click();
 
 		await this.saveTabButton.click();
 	}
@@ -163,19 +202,7 @@ export class ObjectLayoutsPage {
 	) {
 		await this.openObjectLayoutConfiguration(objectLayoutName);
 
-		await this.addTab.click();
-
-		await this.labelInput.fill(objectLayoutTabName);
-
-		await this.relationshipType.click();
-
-		await this.fieldList.fill(relationshipField);
-
-		await this.iframeLocator
-			.getByRole('option', {name: relationshipField})
-			.click();
-
-		await this.saveTabButton.click();
+		await this.addRelationshipTab(objectLayoutTabName, relationshipField);
 
 		await this.saveUpdateLayoutButton.click();
 	}

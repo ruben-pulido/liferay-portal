@@ -4,14 +4,29 @@ import {disconnect} from 'shared/api/data-source';
 import {modalTypes} from 'shared/actions/modals';
 import {Text} from '@clayui/core';
 
+interface IUseDisconnectDataSourceParams {
+	addAlert: (params: {
+		alertType: any;
+		message: string;
+		timeout?: boolean;
+	}) => any;
+	beforeSubmit?: () => Promise<any> | any;
+	close: () => any;
+	groupId: string;
+	id: string;
+	onSubmit: () => Promise<any> | any;
+	open: (type: any, options?: {[key: string]: any}) => any;
+}
+
 const useDisconnectDataSource = ({
 	addAlert,
+	beforeSubmit,
 	close,
 	groupId,
 	id,
 	onSubmit,
 	open
-}) => {
+}: IUseDisconnectDataSourceParams) => {
 	const handleDisconnect = useCallback(() => {
 		open(modalTypes.CONFIRMATION_MODAL, {
 			message: (
@@ -25,6 +40,10 @@ const useDisconnectDataSource = ({
 			onClose: close,
 			onSubmit: async () => {
 				try {
+					if (beforeSubmit) {
+						await beforeSubmit();
+					}
+
 					await disconnect({groupId, id});
 
 					await onSubmit();
@@ -51,7 +70,7 @@ const useDisconnectDataSource = ({
 			title: Liferay.Language.get('disconnect-data-source'),
 			titleIcon: 'warning-full'
 		});
-	}, [addAlert, close, groupId, id, open]);
+	}, [addAlert, beforeSubmit, close, groupId, id, open]);
 
 	return {handleDisconnect};
 };

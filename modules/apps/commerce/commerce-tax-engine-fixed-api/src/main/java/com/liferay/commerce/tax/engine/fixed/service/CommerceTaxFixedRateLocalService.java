@@ -310,4 +310,4 @@ public interface CommerceTaxFixedRateLocalService
 		throws PortalException;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1294075596
+// LIFERAY-SERVICE-BUILDER-HASH:-1428971111

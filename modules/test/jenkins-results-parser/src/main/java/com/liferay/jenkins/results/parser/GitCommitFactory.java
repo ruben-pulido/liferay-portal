@@ -102,6 +102,15 @@ public class GitCommitFactory {
 			_getGitCommitType(message), commitTime);
 	}
 
+	public static LocalGitCommit newLocalGitCommit(
+		String emailAddress, GitWorkingDirectory gitWorkingDirectory,
+		String message, String patch, String sha, long commitTime) {
+
+		return new DefaultLocalGitCommit(
+			emailAddress, gitWorkingDirectory, message, patch, sha,
+			_getGitCommitType(message), commitTime);
+	}
+
 	private static GitCommit.Type _getGitCommitType(String message) {
 		if (message.startsWith("archive:ignore")) {
 			return GitCommit.Type.LEGACY_ARCHIVE;
@@ -113,7 +122,7 @@ public class GitCommitFactory {
 	private static String _getGitHubCommitURL(
 		String gitHubUsername, String gitRepositoryName, String sha) {
 
-		return JenkinsResultsParserUtil.getGitHubApiUrl(
+		return JenkinsResultsParserUtil.getGitHubAPIURL(
 			gitRepositoryName, gitHubUsername, "commits/" + sha);
 	}
 

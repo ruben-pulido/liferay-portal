@@ -34,51 +34,10 @@ public interface TemplateEntryPersistence
 	 */
 
 	/**
-	 * Returns all the template entries where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the template entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @return the range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the template entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the template entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -147,15 +106,6 @@ public interface TemplateEntryPersistence
 		throws NoSuchTemplateEntryException;
 
 	/**
-	 * Returns the template entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching template entry, or <code>null</code> if a matching template entry could not be found
-	 */
-	public TemplateEntry fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the template entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -186,55 +136,10 @@ public interface TemplateEntryPersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the template entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the template entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @return the range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the template entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the template entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -297,51 +202,10 @@ public interface TemplateEntryPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the template entries where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByGroupId(long groupId);
-
-	/**
-	 * Returns a range of all the template entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @return the range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByGroupId(
-		long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the template entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByGroupId(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the template entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -384,55 +248,10 @@ public interface TemplateEntryPersistence
 			orderByComparator);
 
 	/**
-	 * Returns all the template entries where groupId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @return the matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByGroupId(long[] groupIds);
-
-	/**
-	 * Returns a range of all the template entries where groupId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @return the range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByGroupId(
-		long[] groupIds, int start, int end);
-
-	/**
-	 * Returns an ordered range of all the template entries where groupId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByGroupId(
-		long[] groupIds, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator);
-
-	/**
 	 * Returns an ordered range of all the template entries where groupId = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -482,14 +301,6 @@ public interface TemplateEntryPersistence
 		throws NoSuchTemplateEntryException;
 
 	/**
-	 * Returns the template entry where ddmTemplateId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param ddmTemplateId the ddm template ID
-	 * @return the matching template entry, or <code>null</code> if a matching template entry could not be found
-	 */
-	public TemplateEntry fetchByDDMTemplateId(long ddmTemplateId);
-
-	/**
 	 * Returns the template entry where ddmTemplateId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param ddmTemplateId the ddm template ID
@@ -517,55 +328,10 @@ public interface TemplateEntryPersistence
 	public int countByDDMTemplateId(long ddmTemplateId);
 
 	/**
-	 * Returns all the template entries where groupId = &#63; and infoItemClassName = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param infoItemClassName the info item class name
-	 * @return the matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN(
-		long groupId, String infoItemClassName);
-
-	/**
-	 * Returns a range of all the template entries where groupId = &#63; and infoItemClassName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param infoItemClassName the info item class name
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @return the range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN(
-		long groupId, String infoItemClassName, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param infoItemClassName the info item class name
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN(
-		long groupId, String infoItemClassName, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -628,61 +394,10 @@ public interface TemplateEntryPersistence
 	public int countByG_IICN(long groupId, String infoItemClassName);
 
 	/**
-	 * Returns all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param infoItemClassName the info item class name
-	 * @param infoItemFormVariationKey the info item form variation key
-	 * @return the matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN_IIFVK(
-		long groupId, String infoItemClassName,
-		String infoItemFormVariationKey);
-
-	/**
-	 * Returns a range of all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param infoItemClassName the info item class name
-	 * @param infoItemFormVariationKey the info item form variation key
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @return the range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN_IIFVK(
-		long groupId, String infoItemClassName, String infoItemFormVariationKey,
-		int start, int end);
-
-	/**
 	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param infoItemClassName the info item class name
-	 * @param infoItemFormVariationKey the info item form variation key
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN_IIFVK(
-		long groupId, String infoItemClassName, String infoItemFormVariationKey,
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -733,65 +448,10 @@ public interface TemplateEntryPersistence
 			orderByComparator);
 
 	/**
-	 * Returns all the template entries where groupId = any &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param infoItemClassName the info item class name
-	 * @param infoItemFormVariationKey the info item form variation key
-	 * @return the matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN_IIFVK(
-		long[] groupIds, String infoItemClassName,
-		String infoItemFormVariationKey);
-
-	/**
-	 * Returns a range of all the template entries where groupId = any &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param infoItemClassName the info item class name
-	 * @param infoItemFormVariationKey the info item form variation key
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @return the range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN_IIFVK(
-		long[] groupIds, String infoItemClassName,
-		String infoItemFormVariationKey, int start, int end);
-
-	/**
-	 * Returns an ordered range of all the template entries where groupId = any &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param infoItemClassName the info item class name
-	 * @param infoItemFormVariationKey the info item form variation key
-	 * @param start the lower bound of the range of template entries
-	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching template entries
-	 */
-	public java.util.List<TemplateEntry> findByG_IICN_IIFVK(
-		long[] groupIds, String infoItemClassName,
-		String infoItemFormVariationKey, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator);
-
-	/**
 	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -857,16 +517,6 @@ public interface TemplateEntryPersistence
 		throws NoSuchTemplateEntryException;
 
 	/**
-	 * Returns the template entry where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @return the matching template entry, or <code>null</code> if a matching template entry could not be found
-	 */
-	public TemplateEntry fetchByERC_G(
-		String externalReferenceCode, long groupId);
-
-	/**
 	 * Returns the template entry where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -896,20 +546,6 @@ public interface TemplateEntryPersistence
 	 * @return the number of matching template entries
 	 */
 	public int countByERC_G(String externalReferenceCode, long groupId);
-
-	/**
-	 * Caches the template entry in the entity cache if it is enabled.
-	 *
-	 * @param templateEntry the template entry
-	 */
-	public void cacheResult(TemplateEntry templateEntry);
-
-	/**
-	 * Caches the template entries in the entity cache if it is enabled.
-	 *
-	 * @param templateEntries the template entries
-	 */
-	public void cacheResult(java.util.List<TemplateEntry> templateEntries);
 
 	/**
 	 * Creates a new template entry with the primary key. Does not add the template entry to the database.
@@ -950,72 +586,443 @@ public interface TemplateEntryPersistence
 	public TemplateEntry fetchByPrimaryKey(long templateEntryId);
 
 	/**
-	 * Returns all the template entries.
+	 * Returns the template entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the template entries
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching template entry, or <code>null</code> if a matching template entry could not be found
 	 */
-	public java.util.List<TemplateEntry> findAll();
+	public default TemplateEntry fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the template entries.
+	 * Returns the template entry where ddmTemplateId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param ddmTemplateId the ddm template ID
+	 * @return the matching template entry, or <code>null</code> if a matching template entry could not be found
+	 */
+	public default TemplateEntry fetchByDDMTemplateId(long ddmTemplateId) {
+		return fetchByDDMTemplateId(ddmTemplateId, true);
+	}
+
+	/**
+	 * Returns the template entry where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @return the matching template entry, or <code>null</code> if a matching template entry could not be found
+	 */
+	public default TemplateEntry fetchByERC_G(
+		String externalReferenceCode, long groupId) {
+
+		return fetchByERC_G(externalReferenceCode, groupId, true);
+	}
+
+	/**
+	 * Returns all the template entries where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the template entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of template entries
 	 * @param end the upper bound of the range of template entries (not inclusive)
-	 * @return the range of template entries
+	 * @return the range of matching template entries
 	 */
-	public java.util.List<TemplateEntry> findAll(int start, int end);
+	public default java.util.List<TemplateEntry> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the template entries.
+	 * Returns an ordered range of all the template entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of template entries
 	 * @param end the upper bound of the range of template entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of template entries
+	 * @return the ordered range of matching template entries
 	 */
-	public java.util.List<TemplateEntry> findAll(
-		int start, int end,
+	public default java.util.List<TemplateEntry> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the template entries.
+	 * Returns all the template entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the template entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TemplateEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @return the range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the template entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of template entries
 	 * @param end the upper bound of the range of template entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of template entries
+	 * @return the ordered range of matching template entries
 	 */
-	public java.util.List<TemplateEntry> findAll(
+	public default java.util.List<TemplateEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
+			orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the template entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByGroupId(long groupId) {
+		return findByGroupId(
+			groupId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the template entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @return the range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByGroupId(
+		long groupId, int start, int end) {
+
+		return findByGroupId(groupId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the template entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByGroupId(
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
+			orderByComparator) {
+
+		return findByGroupId(groupId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the template entries where groupId = any &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @return the matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByGroupId(
+		long[] groupIds) {
+
+		return findByGroupId(
+			groupIds, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the template entries where groupId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @return the range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByGroupId(
+		long[] groupIds, int start, int end) {
+
+		return findByGroupId(groupIds, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the template entries where groupId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByGroupId(
+		long[] groupIds, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
+			orderByComparator) {
+
+		return findByGroupId(groupIds, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the template entries where groupId = &#63; and infoItemClassName = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param infoItemClassName the info item class name
+	 * @return the matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByG_IICN(
+		long groupId, String infoItemClassName) {
+
+		return findByG_IICN(
+			groupId, infoItemClassName,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the template entries where groupId = &#63; and infoItemClassName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param infoItemClassName the info item class name
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @return the range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByG_IICN(
+		long groupId, String infoItemClassName, int start, int end) {
+
+		return findByG_IICN(groupId, infoItemClassName, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param infoItemClassName the info item class name
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByG_IICN(
+		long groupId, String infoItemClassName, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
+			orderByComparator) {
+
+		return findByG_IICN(
+			groupId, infoItemClassName, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param infoItemClassName the info item class name
+	 * @param infoItemFormVariationKey the info item form variation key
+	 * @return the matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByG_IICN_IIFVK(
+		long groupId, String infoItemClassName,
+		String infoItemFormVariationKey) {
+
+		return findByG_IICN_IIFVK(
+			groupId, infoItemClassName, infoItemFormVariationKey,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param infoItemClassName the info item class name
+	 * @param infoItemFormVariationKey the info item form variation key
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @return the range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByG_IICN_IIFVK(
+		long groupId, String infoItemClassName, String infoItemFormVariationKey,
+		int start, int end) {
+
+		return findByG_IICN_IIFVK(
+			groupId, infoItemClassName, infoItemFormVariationKey, start, end,
+			null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param infoItemClassName the info item class name
+	 * @param infoItemFormVariationKey the info item form variation key
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByG_IICN_IIFVK(
+		long groupId, String infoItemClassName, String infoItemFormVariationKey,
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByG_IICN_IIFVK(
+			groupId, infoItemClassName, infoItemFormVariationKey, start, end,
+			orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the template entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of template entries.
+	 * Returns all the template entries where groupId = any &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
 	 *
-	 * @return the number of template entries
+	 * @param groupIds the group IDs
+	 * @param infoItemClassName the info item class name
+	 * @param infoItemFormVariationKey the info item form variation key
+	 * @return the matching template entries
 	 */
-	public int countAll();
+	public default java.util.List<TemplateEntry> findByG_IICN_IIFVK(
+		long[] groupIds, String infoItemClassName,
+		String infoItemFormVariationKey) {
+
+		return findByG_IICN_IIFVK(
+			groupIds, infoItemClassName, infoItemFormVariationKey,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the template entries where groupId = any &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param infoItemClassName the info item class name
+	 * @param infoItemFormVariationKey the info item form variation key
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @return the range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByG_IICN_IIFVK(
+		long[] groupIds, String infoItemClassName,
+		String infoItemFormVariationKey, int start, int end) {
+
+		return findByG_IICN_IIFVK(
+			groupIds, infoItemClassName, infoItemFormVariationKey, start, end,
+			null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the template entries where groupId = any &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.template.model.impl.TemplateEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param infoItemClassName the info item class name
+	 * @param infoItemFormVariationKey the info item form variation key
+	 * @param start the lower bound of the range of template entries
+	 * @param end the upper bound of the range of template entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching template entries
+	 */
+	public default java.util.List<TemplateEntry> findByG_IICN_IIFVK(
+		long[] groupIds, String infoItemClassName,
+		String infoItemFormVariationKey, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<TemplateEntry>
+			orderByComparator) {
+
+		return findByG_IICN_IIFVK(
+			groupIds, infoItemClassName, infoItemFormVariationKey, start, end,
+			orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1250595194
+// LIFERAY-SERVICE-BUILDER-HASH:1546767950

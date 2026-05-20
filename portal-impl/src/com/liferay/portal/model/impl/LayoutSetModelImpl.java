@@ -101,6 +101,8 @@ public class LayoutSetModelImpl
 
 	public static final String TABLE_SQL_DROP = "drop table LayoutSet";
 
+	public static final String ENTITY_ALIAS = "layoutSet";
+
 	public static final String ORDER_BY_JPQL =
 		" ORDER BY layoutSet.layoutSetId ASC";
 
@@ -843,6 +845,16 @@ public class LayoutSetModelImpl
 	}
 
 	@Override
+	public void copyCacheFields(LayoutSet source) {
+		LayoutSetModelImpl sourceModelImpl = (LayoutSetModelImpl)source;
+
+		setCompanyFallbackVirtualHostname(
+			sourceModelImpl.getCompanyFallbackVirtualHostname());
+
+		setVirtualHostnames(sourceModelImpl.getVirtualHostnames());
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -1249,4 +1261,4 @@ public class LayoutSetModelImpl
 	private LayoutSet _escapedModel;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1689205119
+// LIFERAY-SERVICE-BUILDER-HASH:1371047872

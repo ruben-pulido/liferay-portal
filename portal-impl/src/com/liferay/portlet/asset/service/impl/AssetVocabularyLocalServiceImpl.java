@@ -7,6 +7,7 @@ package com.liferay.portlet.asset.service.impl;
 
 import com.liferay.asset.kernel.exception.DuplicateVocabularyException;
 import com.liferay.asset.kernel.exception.DuplicateVocabularyExternalReferenceCodeException;
+import com.liferay.asset.kernel.exception.VocabularyExternalReferenceCodeException;
 import com.liferay.asset.kernel.exception.VocabularyNameException;
 import com.liferay.asset.kernel.exception.VocabularyVisibilityTypeException;
 import com.liferay.asset.kernel.model.AssetCategoryConstants;
@@ -52,6 +53,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -537,7 +539,12 @@ public class AssetVocabularyLocalServiceImpl
 			vocabulary.setExternalReferenceCode(externalReferenceCode);
 		}
 
-		vocabulary.setTitleMap(_getTrimmedTitleMap(titleMap));
+		Map<Locale, String> trimmedTitleMap = _getTrimmedTitleMap(titleMap);
+
+		vocabulary.setName(
+			_getAssetVocabularyName(trimmedTitleMap, vocabulary));
+		vocabulary.setTitleMap(trimmedTitleMap);
+
 		vocabulary.setDescriptionMap(descriptionMap);
 		vocabulary.setSettings(settings);
 		vocabulary.setVisibilityType(visibilityType);
@@ -568,7 +575,11 @@ public class AssetVocabularyLocalServiceImpl
 			vocabulary.setExternalReferenceCode(externalReferenceCode);
 		}
 
-		vocabulary.setTitleMap(_getTrimmedTitleMap(titleMap));
+		Map<Locale, String> trimmedTitleMap = _getTrimmedTitleMap(titleMap);
+
+		vocabulary.setName(
+			_getAssetVocabularyName(trimmedTitleMap, vocabulary));
+		vocabulary.setTitleMap(trimmedTitleMap);
 
 		if (Validator.isNotNull(title)) {
 			vocabulary.setTitle(title);
@@ -685,6 +696,24 @@ public class AssetVocabularyLocalServiceImpl
 		}
 	}
 
+	private String _getAssetVocabularyName(
+			Map<Locale, String> titleMap, AssetVocabulary vocabulary)
+		throws PortalException {
+
+		if (vocabulary.getStatus() != WorkflowConstants.STATUS_EMPTY) {
+			return vocabulary.getName();
+		}
+
+		String title = titleMap.get(
+			PortalUtil.getSiteDefaultLocale(vocabulary.getGroupId()));
+
+		if (Validator.isNull(title)) {
+			return vocabulary.getName();
+		}
+
+		return _generateVocabularyName(vocabulary.getGroupId(), title);
+	}
+
 	private Map<Locale, String> _getTrimmedTitleMap(
 		Map<Locale, String> titleMap) {
 
@@ -716,6 +745,16 @@ public class AssetVocabularyLocalServiceImpl
 
 		if (Validator.isNull(externalReferenceCode)) {
 			return;
+		}
+
+		int maxLength = ModelHintsUtil.getMaxLength(
+			AssetVocabulary.class.getName(), "externalReferenceCode");
+
+		if (externalReferenceCode.length() > maxLength) {
+			throw new VocabularyExternalReferenceCodeException(
+				StringBundler.concat(
+					"External reference code length cannot exceed ", maxLength,
+					" characters"));
 		}
 
 		AssetVocabulary assetVocabulary =

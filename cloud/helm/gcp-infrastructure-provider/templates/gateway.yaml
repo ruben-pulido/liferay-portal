@@ -1,4 +1,4 @@
-{{- if and .Values.gateway.className .Values.gateway.namespace }}
+{{- if and .Values.gateway.enabled .Values.gateway.className .Values.gateway.namespace }}
 {{- $gatewayProxyConfigName := "liferay-proxy-config" }}
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
@@ -16,7 +16,7 @@ spec:
             envoyDeployment:
                 pod:
                     annotations:
-                        iam.gke.io/gcp-service-account: {{ printf "%s-envoy-proxy@%s.iam.gserviceaccount.com" .Values.deploymentName .Values.gcp.projectId | quote }}
+                        iam.gke.io/gcp-service-account: {{ printf "%s-envoy-proxy@%s.iam.gserviceaccount.com" .Values.deploymentName .Values.global.gcp.projectId | quote }}
                     topologySpreadConstraints:
                         -   labelSelector:
                                 matchLabels:
@@ -37,7 +37,6 @@ spec:
                 minReplicas: 3
             envoyService:
                 annotations:
-                    cloud.google.com/neg: "{\"ingress\": true}"
                     {{- if not .Values.gateway.internetFacing }}
                     networking.gke.io/internal-load-balancer-allow-global-access: "true"
                     networking.gke.io/load-balancer-type: Internal

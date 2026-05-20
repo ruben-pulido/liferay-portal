@@ -5,21 +5,22 @@ import DataSourceQuery, {
 } from 'shared/queries/DataSourceQuery';
 import React, {useEffect, useState} from 'react';
 import {CREATE_DATE} from 'shared/util/pagination';
-import {
-	CredentialTypes,
-	DataSourceTypes,
-	OrderByDirections
-} from 'shared/util/constants';
+import {DataSourceTypes, OrderByDirections} from 'shared/util/constants';
 import {ReviewSyncedDataFragment} from '../ReviewSyncedDataFragment';
 import {updateSearchParams} from 'settings/components/base-page/utis';
 import {useHistory} from 'react-router-dom';
 import {useInterval} from 'shared/hooks/useInterval';
-import {useLazyQuery} from '@apollo/react-hooks';
+import {useLazyQuery} from '@apollo/client';
 import {WizardPageButtonGroup} from 'settings/components/base-page/WizardPageButtonGroup';
 
 const TIMEOUT_INTERVAL = 5000;
 
-const ReviewSyncedDataStep = ({onNext, onPrev}) => {
+interface IReviewSyncedDataStepProps {
+	onNext: () => void;
+	onPrev: () => void;
+}
+
+const ReviewSyncedDataStep = ({onNext, onPrev}: IReviewSyncedDataStepProps) => {
 	const history = useHistory();
 	const [dataSource, setDataSource] = useState<DataSource>({
 		contactsSyncDetails: {selected: false},
@@ -31,7 +32,6 @@ const ReviewSyncedDataStep = ({onNext, onPrev}) => {
 		{
 			fetchPolicy: 'network-only',
 			variables: {
-				credentialsType: CredentialTypes.Token,
 				size: 1,
 				sort: {
 					column: CREATE_DATE,

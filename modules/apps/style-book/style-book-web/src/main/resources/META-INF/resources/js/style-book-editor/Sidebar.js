@@ -6,6 +6,7 @@
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayDropDown, {Align} from '@clayui/drop-down';
+import ClayIcon from '@clayui/icon';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 
 import FrontendTokenSet from './FrontendTokenSet';
@@ -14,15 +15,33 @@ import {useFrontendTokensValues} from './contexts/StyleBookEditorContext';
 
 export default React.memo(function Sidebar() {
 	const sidebarRef = useRef();
+	const [activeDefinitionId, setActiveDefinitionId] = useState(
+		config.themeFrontendTokenDefinitionId
+	);
+
+	const activeDefinition = useMemo(
+		() =>
+			config.frontendTokenDefinitions.find(
+				(definition) => definition.id === activeDefinitionId
+			),
+		[activeDefinitionId]
+	);
 
 	return (
 		<div className="style-book-editor__sidebar" ref={sidebarRef}>
 			<div className="panel-group-sm style-book-editor__sidebar-content">
-				<ThemeInformation />
+				{!!config.frontendTokenDefinitions.length && (
+					<TokenDefinitionSelector
+						activeDefinitionId={activeDefinitionId}
+						setActiveDefinitionId={setActiveDefinitionId}
+					/>
+				)}
 
-				{config.frontendTokenDefinition.frontendTokenCategories ? (
+				{activeDefinition?.frontendTokenCategories ? (
 					<>
-						<FrontendTokenCategories />
+						<FrontendTokenCategories
+							activeDefinition={activeDefinition}
+						/>
 						<UpdateStyle sidebarRef={sidebarRef} />
 					</>
 				) : (
@@ -37,6 +56,73 @@ export default React.memo(function Sidebar() {
 	);
 });
 
+function TokenDefinitionSelector({activeDefinitionId, setActiveDefinitionId}) {
+	const [active, setActive] = useState(false);
+
+	const activeDefinition = config.frontendTokenDefinitions.find(
+		(definition) => definition.id === activeDefinitionId
+	);
+
+	if (!activeDefinition) {
+		return (
+			<ClayAlert className="m-0" displayType="warning">
+				{Liferay.Language.get(
+					'the-current-theme-does-not-support-editing-style-book-values'
+				)}
+			</ClayAlert>
+		);
+	}
+
+	if (config.frontendTokenDefinitions.length === 1) {
+		return (
+			<div className="mb-3 p-2">
+				<TokenDefinitionInformation
+					activeDefinition={activeDefinition}
+				/>
+			</div>
+		);
+	}
+
+	return (
+		<div className="mb-3">
+			<ClayDropDown
+				active={active}
+				alignmentPosition={Align.BottomLeft}
+				className="w-100"
+				onActiveChange={setActive}
+				trigger={
+					<button
+						aria-expanded={active}
+						aria-haspopup="listbox"
+						className="btn btn-unstyled p-2 style-book-editor__sidebar-theme-info-trigger text-left w-100"
+						type="button"
+					>
+						<TokenDefinitionInformation
+							activeDefinition={activeDefinition}
+							isDropdownOpen={active}
+						/>
+					</button>
+				}
+			>
+				<ClayDropDown.ItemList>
+					{config.frontendTokenDefinitions.map((definition) => (
+						<ClayDropDown.Item
+							active={definition.id === activeDefinitionId}
+							key={definition.id}
+							onClick={() => {
+								setActiveDefinitionId(definition.id);
+								setActive(false);
+							}}
+						>
+							{getDefinitionName(definition)}
+						</ClayDropDown.Item>
+					))}
+				</ClayDropDown.ItemList>
+			</ClayDropDown>
+		</div>
+	);
+}
+
 function UpdateStyle({sidebarRef}) {
 	const frontendTokensValues = useFrontendTokensValues();
 
@@ -44,81 +130,112 @@ function UpdateStyle({sidebarRef}) {
 		if (sidebarRef.current) {
 			sidebarRef.current.removeAttribute('style');
 
-			Object.values(frontendTokensValues).forEach(
-				({cssVariableMapping, value}) => {
-					sidebarRef.current.style.setProperty(
-						`--${cssVariableMapping}`,
-						value
-					);
-				}
-			);
+			for (const {
+				cssVariableMapping,
+				value,
+			} of config.sortFrontendTokenValues(frontendTokensValues)) {
+				sidebarRef.current.style.setProperty(
+					`--${cssVariableMapping}`,
+					value
+				);
+			}
 		}
 	}, [frontendTokensValues, sidebarRef]);
 
 	return null;
 }
 
-function ThemeInformation() {
+function TokenDefinitionInformation({activeDefinition, isDropdownOpen}) {
 	return (
-		<div className="pb-1">
-			<p className="small text-secondary">
-				{!IsValidFrontendTokenDefinition() ? (
-					<ClayAlert className="m-0" displayType="warning">
-						{Liferay.Language.get(
-							'the-current-theme-does-not-support-editing-style-book-values'
-						)}
-					</ClayAlert>
-				) : (
-					<p className="text-dark">
-						<p className="font-weight-bold mb-1">
-							{`${Liferay.Language.get(
-								'frontend-token-definition-provided-by'
-							)}`}
-						</p>
+		<div className="small text-secondary">
+			<div className="text-dark">
+				<p className="font-weight-bold mb-1">
+					{Liferay.Language.get(
+						'frontend-token-definition-provided-by'
+					)}
+				</p>
 
-						<p>{config.themeName}</p>
-					</p>
-				)}
-			</p>
+				<p className="mb-0">
+					{getDefinitionName(activeDefinition)}
+
+					{config.frontendTokenDefinitions.length > 1 && (
+						<span className="ml-1">
+							<ClayIcon
+								symbol={
+									isDropdownOpen
+										? 'caret-top'
+										: 'caret-bottom'
+								}
+							/>
+						</span>
+					)}
+				</p>
+			</div>
 		</div>
 	);
 }
 
-function IsValidFrontendTokenDefinition() {
-	const frontendTokensValues = useFrontendTokensValues();
-	const frontendThemeValues = config.frontendTokens;
-
-	return Object.keys(frontendTokensValues).every(
-		(tokenValue) => frontendThemeValues[tokenValue]
-	);
+function getDefinitionName({id, name}) {
+	return id === config.themeFrontendTokenDefinitionId
+		? config.themeName
+		: name || id;
 }
 
-function FrontendTokenCategories() {
+function FrontendTokenCategories({activeDefinition}) {
 	const frontendTokensValues = useFrontendTokensValues();
 
-	const frontendTokenCategories =
-		config.frontendTokenDefinition.frontendTokenCategories;
+	const frontendTokenCategories = activeDefinition.frontendTokenCategories;
 	const [active, setActive] = useState(false);
 	const [selectedCategory, setSelectedCategory] = useState(
 		frontendTokenCategories[0]
 	);
 
+	useEffect(() => {
+		setSelectedCategory(frontendTokenCategories[0]);
+	}, [activeDefinition, frontendTokenCategories]);
+
 	const tokenValues = useMemo(() => {
 		const nextTokenValues = {...config.frontendTokens};
 
 		for (const [name, {value}] of Object.entries(frontendTokensValues)) {
-			nextTokenValues[name] = {
-				...nextTokenValues[name],
-				value: value || nextTokenValues[name].defaultValue,
-			};
+			if (nextTokenValues[name]) {
+				nextTokenValues[name] = {
+					...nextTokenValues[name],
+					value: value || nextTokenValues[name].defaultValue,
+				};
+			}
 		}
 
 		return nextTokenValues;
 	}, [frontendTokensValues]);
 
+	const frontendTokenCategoriesWithPrefix = useMemo(() => {
+		return frontendTokenCategories.map((category) => ({
+			...category,
+			frontendTokenSets: category.frontendTokenSets.map((tokenSet) => ({
+				...tokenSet,
+				frontendTokens: tokenSet.frontendTokens.map((token) => ({
+					...token,
+					name: `${activeDefinition.id}:${token.name}`,
+					tokenDefinitionId: activeDefinition.id,
+				})),
+			})),
+		}));
+	}, [activeDefinition, frontendTokenCategories]);
+
+	const activeSelectedCategory = useMemo(() => {
+		if (!selectedCategory) {
+			return frontendTokenCategoriesWithPrefix[0];
+		}
+
+		return frontendTokenCategoriesWithPrefix.find(
+			(category) => category.name === selectedCategory.name
+		);
+	}, [selectedCategory, frontendTokenCategoriesWithPrefix]);
+
 	return (
 		<>
-			{selectedCategory && (
+			{activeSelectedCategory && (
 				<ClayDropDown
 					active={active}
 					alignmentPosition={Align.BottomLeft}
@@ -136,12 +253,12 @@ function FrontendTokenCategories() {
 							size="sm"
 							type="button"
 						>
-							{selectedCategory.label}
+							{activeSelectedCategory.label}
 						</ClayButton>
 					}
 				>
 					<ClayDropDown.ItemList>
-						{frontendTokenCategories.map(
+						{frontendTokenCategoriesWithPrefix.map(
 							(frontendTokenCategory, index) => (
 								<ClayDropDown.Item
 									key={index}
@@ -160,7 +277,7 @@ function FrontendTokenCategories() {
 				</ClayDropDown>
 			)}
 
-			{selectedCategory?.frontendTokenSets.map(
+			{activeSelectedCategory?.frontendTokenSets.map(
 				({frontendTokens, label, name}, index) => (
 					<FrontendTokenSet
 						frontendTokens={frontendTokens}

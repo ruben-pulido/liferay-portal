@@ -1,17 +1,9 @@
 import Card from 'shared/components/Card';
+import Form from 'shared/components/form';
 import React from 'react';
-import {ClayToggle} from '@clayui/form';
 import {Text} from '@clayui/core';
 
-interface ISegmentEnabledSequentialCardProps {
-	onToggle: (enabled: boolean) => void;
-	toggled: boolean;
-}
-
-const SegmentEnabledSequentialCard: React.FC<ISegmentEnabledSequentialCardProps> = ({
-	onToggle,
-	toggled
-}) => (
+const SegmentEnabledSequentialCard = () => (
 	<Card>
 		<Card.Header>
 			<Card.Title>{Liferay.Language.get('order')}</Card.Title>
@@ -19,17 +11,16 @@ const SegmentEnabledSequentialCard: React.FC<ISegmentEnabledSequentialCardProps>
 
 		<Card.Body>
 			<p>
-				<ClayToggle
-					data-testid='segment-enable-sequential-toggle'
+				<Form.ToggleSwitch
+					className='sequential'
 					label={Liferay.Language.get('enable-sequential')}
-					onToggle={onToggle}
-					toggled={toggled}
+					name='sequential'
 				/>
 			</p>
 
 			<Text color='secondary' size={3}>
 				{Liferay.Language.get(
-					'when-this-is-enabled,-event-2-must-occur-after-event-1,-with-any-number-of-events-in-between'
+					'when-this-is-enabled,the-second-event-must-come-after-the-first-event,-with-any-number-of-events-in-between'
 				)}
 			</Text>
 		</Card.Body>

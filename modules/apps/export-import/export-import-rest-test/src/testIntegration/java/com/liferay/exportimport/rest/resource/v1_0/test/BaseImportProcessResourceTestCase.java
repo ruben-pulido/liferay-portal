@@ -18,7 +18,6 @@ import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalServiceUtil;
 import com.liferay.exportimport.rest.client.dto.v1_0.ImportProcess;
 import com.liferay.exportimport.rest.client.dto.v1_0.Type;
-import com.liferay.exportimport.rest.client.dto.v1_0.ValidationResponse;
 import com.liferay.exportimport.rest.client.http.HttpInvoker;
 import com.liferay.exportimport.rest.client.pagination.Page;
 import com.liferay.exportimport.rest.client.pagination.Pagination;
@@ -49,6 +48,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -162,7 +162,8 @@ public abstract class BaseImportProcessResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -227,7 +228,7 @@ public abstract class BaseImportProcessResourceTestCase {
 
 		ImportProcess importProcess = randomImportProcess();
 
-		importProcess.setTitle(regex);
+		importProcess.setName(regex);
 
 		String json = ImportProcessSerDes.toJSON(importProcess);
 
@@ -235,7 +236,7 @@ public abstract class BaseImportProcessResourceTestCase {
 
 		importProcess = ImportProcessSerDes.toDTO(json);
 
-		Assert.assertEquals(regex, importProcess.getTitle());
+		Assert.assertEquals(regex, importProcess.getName());
 	}
 
 	@Test
@@ -662,8 +663,9 @@ public abstract class BaseImportProcessResourceTestCase {
 			public StringBuffer getRequestURL() {
 				return new StringBuffer(
 					StringBundler.concat(
-						"http://localhost:8080/o/v1.0/",
-						RandomTestUtil.randomString(), "/",
+						"http://localhost:",
+						String.valueOf(PortalUtil.getPortalServerPort(false)),
+						"/o/v1.0/", RandomTestUtil.randomString(), "/",
 						RandomTestUtil.randomString()));
 			}
 
@@ -699,8 +701,10 @@ public abstract class BaseImportProcessResourceTestCase {
 			@Override
 			public URI getRequestUri() {
 				return URI.create(
-					"http://localhost:8080/o/" + applicationPath +
-						resourcePath);
+					StringBundler.concat(
+						"http://localhost:",
+						PortalUtil.getPortalServerPort(false), "/o/",
+						applicationPath, resourcePath));
 			}
 
 			@Override
@@ -720,7 +724,11 @@ public abstract class BaseImportProcessResourceTestCase {
 
 			@Override
 			public URI getBaseUri() {
-				return URI.create("http://localhost:8080/o/" + applicationPath);
+				return URI.create(
+					StringBundler.concat(
+						"http://localhost:",
+						PortalUtil.getPortalServerPort(false), "/o/",
+						applicationPath));
 			}
 
 			@Override
@@ -1409,16 +1417,6 @@ public abstract class BaseImportProcessResourceTestCase {
 		Assert.assertTrue(true);
 	}
 
-	@Test
-	public void testPostScopeScopeKeyValidate() throws Exception {
-		Assert.assertTrue(true);
-	}
-
-	@Test
-	public void testPostValidate() throws Exception {
-		Assert.assertTrue(true);
-	}
-
 	protected void assertContains(
 		ImportProcess importProcess, List<ImportProcess> importProcesses) {
 
@@ -1464,15 +1462,6 @@ public abstract class BaseImportProcessResourceTestCase {
 
 			assertEquals(importProcess1, importProcess2);
 		}
-	}
-
-	protected void assertEquals(
-		ValidationResponse validationResponse1,
-		ValidationResponse validationResponse2) {
-
-		Assert.assertTrue(
-			validationResponse1 + " does not equal " + validationResponse2,
-			equals(validationResponse1, validationResponse2));
 	}
 
 	protected void assertEqualsIgnoringOrder(
@@ -1524,16 +1513,16 @@ public abstract class BaseImportProcessResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("status", additionalAssertFieldName)) {
-				if (importProcess.getStatus() == null) {
+			if (Objects.equals("name", additionalAssertFieldName)) {
+				if (importProcess.getName() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("title", additionalAssertFieldName)) {
-				if (importProcess.getTitle() == null) {
+			if (Objects.equals("status", additionalAssertFieldName)) {
+				if (importProcess.getStatus() == null) {
 					valid = false;
 				}
 
@@ -1591,49 +1580,7 @@ public abstract class BaseImportProcessResourceTestCase {
 		}
 	}
 
-	protected void assertValid(ValidationResponse validationResponse) {
-		boolean valid = true;
-
-		for (String additionalAssertFieldName :
-				getAdditionalValidationResponseAssertFieldNames()) {
-
-			if (Objects.equals("errorMessages", additionalAssertFieldName)) {
-				if (validationResponse.getErrorMessages() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("fileEntryId", additionalAssertFieldName)) {
-				if (validationResponse.getFileEntryId() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("success", additionalAssertFieldName)) {
-				if (validationResponse.getSuccess() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			throw new IllegalArgumentException(
-				"Invalid additional assert field name " +
-					additionalAssertFieldName);
-		}
-
-		Assert.assertTrue(valid);
-	}
-
 	protected String[] getAdditionalAssertFieldNames() {
-		return new String[0];
-	}
-
-	protected String[] getAdditionalValidationResponseAssertFieldNames() {
 		return new String[0];
 	}
 
@@ -1746,10 +1693,9 @@ public abstract class BaseImportProcessResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("status", additionalAssertFieldName)) {
+			if (Objects.equals("name", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						importProcess1.getStatus(),
-						importProcess2.getStatus())) {
+						importProcess1.getName(), importProcess2.getName())) {
 
 					return false;
 				}
@@ -1757,9 +1703,10 @@ public abstract class BaseImportProcessResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("title", additionalAssertFieldName)) {
+			if (Objects.equals("status", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						importProcess1.getTitle(), importProcess2.getTitle())) {
+						importProcess1.getStatus(),
+						importProcess2.getStatus())) {
 
 					return false;
 				}
@@ -1799,58 +1746,6 @@ public abstract class BaseImportProcessResourceTestCase {
 		}
 
 		return false;
-	}
-
-	protected boolean equals(
-		ValidationResponse validationResponse1,
-		ValidationResponse validationResponse2) {
-
-		if (validationResponse1 == validationResponse2) {
-			return true;
-		}
-
-		for (String additionalAssertFieldName :
-				getAdditionalValidationResponseAssertFieldNames()) {
-
-			if (Objects.equals("errorMessages", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						validationResponse1.getErrorMessages(),
-						validationResponse2.getErrorMessages())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("fileEntryId", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						validationResponse1.getFileEntryId(),
-						validationResponse2.getFileEntryId())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("success", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						validationResponse1.getSuccess(),
-						validationResponse2.getSuccess())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			throw new IllegalArgumentException(
-				"Invalid additional assert field name " +
-					additionalAssertFieldName);
-		}
-
-		return true;
 	}
 
 	protected java.lang.reflect.Field[] getDeclaredFields(Class clazz)
@@ -1994,13 +1889,8 @@ public abstract class BaseImportProcessResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("status")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
-		if (entityFieldName.equals("title")) {
-			Object object = importProcess.getTitle();
+		if (entityFieldName.equals("name")) {
+			Object object = importProcess.getName();
 
 			String value = String.valueOf(object);
 
@@ -2045,6 +1935,11 @@ public abstract class BaseImportProcessResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("status")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		throw new IllegalArgumentException(
 			"Invalid entity field " + entityFieldName);
 	}
@@ -2058,7 +1953,9 @@ public abstract class BaseImportProcessResourceTestCase {
 			).toString(),
 			"application/json");
 		httpInvoker.httpMethod(HttpInvoker.HttpMethod.POST);
-		httpInvoker.path("http://localhost:8080/o/graphql");
+		httpInvoker.path(
+			"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/o/graphql");
 		httpInvoker.userNameAndPassword(
 			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
 
@@ -2093,7 +1990,7 @@ public abstract class BaseImportProcessResourceTestCase {
 				dateCreated = RandomTestUtil.nextDate();
 				dateModified = RandomTestUtil.nextDate();
 				id = RandomTestUtil.randomLong();
-				title = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
 	}
@@ -2106,15 +2003,6 @@ public abstract class BaseImportProcessResourceTestCase {
 
 	protected ImportProcess randomPatchImportProcess() throws Exception {
 		return randomImportProcess();
-	}
-
-	protected ValidationResponse randomValidationResponse() throws Exception {
-		return new ValidationResponse() {
-			{
-				fileEntryId = RandomTestUtil.randomLong();
-				success = RandomTestUtil.randomBoolean();
-			}
-		};
 	}
 
 	protected ImportProcessResource importProcessResource;
@@ -2353,4 +2241,4 @@ public abstract class BaseImportProcessResourceTestCase {
 		_vulcanCRUDItemDelegateBuilderRegistry;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1726542759
+// LIFERAY-REST-BUILDER-HASH:62288014

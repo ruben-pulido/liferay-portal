@@ -36,6 +36,20 @@ public class CPDisplayLayoutUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<CPDisplayLayout> cpDisplayLayouts) {
+		getPersistence().cacheResult(cpDisplayLayouts);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(CPDisplayLayout cpDisplayLayout) {
+		getPersistence().cacheResult(cpDisplayLayout);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,58 +125,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -245,17 +211,6 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns the cp display layout where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching cp display layout, or <code>null</code> if a matching cp display layout could not be found
-	 */
-	public static CPDisplayLayout fetchByUUID_G(String uuid, long groupId) {
-		return getPersistence().fetchByUUID_G(uuid, groupId);
-	}
-
-	/**
 	 * Returns the cp display layout where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -295,64 +250,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -429,59 +330,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -550,64 +402,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_C(
-		long groupId, long classNameId) {
-
-		return getPersistence().findByG_C(groupId, classNameId);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_C(
-		long groupId, long classNameId, int start, int end) {
-
-		return getPersistence().findByG_C(groupId, classNameId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and classNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_C(
-		long groupId, long classNameId, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByG_C(
-			groupId, classNameId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -685,67 +483,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where groupId = &#63; and layoutPageTemplateEntryUuid = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param layoutPageTemplateEntryUuid the layout page template entry uuid
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_LPTEU(
-		long groupId, String layoutPageTemplateEntryUuid) {
-
-		return getPersistence().findByG_LPTEU(
-			groupId, layoutPageTemplateEntryUuid);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where groupId = &#63; and layoutPageTemplateEntryUuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param layoutPageTemplateEntryUuid the layout page template entry uuid
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_LPTEU(
-		long groupId, String layoutPageTemplateEntryUuid, int start, int end) {
-
-		return getPersistence().findByG_LPTEU(
-			groupId, layoutPageTemplateEntryUuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and layoutPageTemplateEntryUuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param layoutPageTemplateEntryUuid the layout page template entry uuid
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_LPTEU(
-		long groupId, String layoutPageTemplateEntryUuid, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByG_LPTEU(
-			groupId, layoutPageTemplateEntryUuid, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and layoutPageTemplateEntryUuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -828,64 +569,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where groupId = &#63; and layoutUuid = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param layoutUuid the layout uuid
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_L(
-		long groupId, String layoutUuid) {
-
-		return getPersistence().findByG_L(groupId, layoutUuid);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where groupId = &#63; and layoutUuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param layoutUuid the layout uuid
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_L(
-		long groupId, String layoutUuid, int start, int end) {
-
-		return getPersistence().findByG_L(groupId, layoutUuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and layoutUuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param layoutUuid the layout uuid
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByG_L(
-		long groupId, String layoutUuid, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByG_L(
-			groupId, layoutUuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and layoutUuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -962,64 +649,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C(
-		long classNameId, long classPK) {
-
-		return getPersistence().findByC_C(classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C(
-		long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByC_C(classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C(
-		long classNameId, long classPK, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByC_C(
-			classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -1097,65 +730,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C_LPTEU(
-		long classNameId, long classPK) {
-
-		return getPersistence().findByC_C_LPTEU(classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C_LPTEU(
-		long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByC_C_LPTEU(
-			classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C_LPTEU(
-		long classNameId, long classPK, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByC_C_LPTEU(
-			classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -1233,64 +811,10 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C_L(
-		long classNameId, long classPK) {
-
-		return getPersistence().findByC_C_L(classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C_L(
-		long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByC_C_L(classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of cp display layouts
-	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp display layouts
-	 */
-	public static List<CPDisplayLayout> findByC_C_L(
-		long classNameId, long classPK, int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator) {
-
-		return getPersistence().findByC_C_L(
-			classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -1385,20 +909,6 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns the cp display layout where groupId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching cp display layout, or <code>null</code> if a matching cp display layout could not be found
-	 */
-	public static CPDisplayLayout fetchByG_C_C(
-		long groupId, long classNameId, long classPK) {
-
-		return getPersistence().fetchByG_C_C(groupId, classNameId, classPK);
-	}
-
-	/**
 	 * Returns the cp display layout where groupId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -1442,24 +952,6 @@ public class CPDisplayLayoutUtil {
 		long groupId, long classNameId, long classPK) {
 
 		return getPersistence().countByG_C_C(groupId, classNameId, classPK);
-	}
-
-	/**
-	 * Caches the cp display layout in the entity cache if it is enabled.
-	 *
-	 * @param cpDisplayLayout the cp display layout
-	 */
-	public static void cacheResult(CPDisplayLayout cpDisplayLayout) {
-		getPersistence().cacheResult(cpDisplayLayout);
-	}
-
-	/**
-	 * Caches the cp display layouts in the entity cache if it is enabled.
-	 *
-	 * @param cpDisplayLayouts the cp display layouts
-	 */
-	public static void cacheResult(List<CPDisplayLayout> cpDisplayLayouts) {
-		getPersistence().cacheResult(cpDisplayLayouts);
 	}
 
 	/**
@@ -1515,84 +1007,507 @@ public class CPDisplayLayoutUtil {
 	}
 
 	/**
-	 * Returns all the cp display layouts.
+	 * Returns the cp display layout where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the cp display layouts
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching cp display layout, or <code>null</code> if a matching cp display layout could not be found
 	 */
-	public static List<CPDisplayLayout> findAll() {
-		return getPersistence().findAll();
+	public static CPDisplayLayout fetchByUUID_G(String uuid, long groupId) {
+		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
-	 * Returns a range of all the cp display layouts.
+	 * Returns the cp display layout where groupId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching cp display layout, or <code>null</code> if a matching cp display layout could not be found
+	 */
+	public static CPDisplayLayout fetchByG_C_C(
+		long groupId, long classNameId, long classPK) {
+
+		return getPersistence().fetchByG_C_C(groupId, classNameId, classPK);
+	}
+
+	/**
+	 * Returns all the cp display layouts where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of cp display layouts
 	 * @param end the upper bound of the range of cp display layouts (not inclusive)
-	 * @return the range of cp display layouts
+	 * @return the range of matching cp display layouts
 	 */
-	public static List<CPDisplayLayout> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CPDisplayLayout> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the cp display layouts.
+	 * Returns an ordered range of all the cp display layouts where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of cp display layouts
 	 * @param end the upper bound of the range of cp display layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cp display layouts
+	 * @return the ordered range of matching cp display layouts
 	 */
-	public static List<CPDisplayLayout> findAll(
-		int start, int end,
+	public static List<CPDisplayLayout> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<CPDisplayLayout> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the cp display layouts.
+	 * Returns all the cp display layouts where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPDisplayLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @return the range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp display layouts where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of cp display layouts
 	 * @param end the upper bound of the range of cp display layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cp display layouts
+	 * @return the ordered range of matching cp display layouts
 	 */
-	public static List<CPDisplayLayout> findAll(
-		int start, int end,
-		OrderByComparator<CPDisplayLayout> orderByComparator,
-		boolean useFinderCache) {
+	public static List<CPDisplayLayout> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<CPDisplayLayout> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the cp display layouts from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of cp display layouts.
+	 * Returns all the cp display layouts where groupId = &#63;.
 	 *
-	 * @return the number of cp display layouts
+	 * @param groupId the group ID
+	 * @return the matching cp display layouts
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<CPDisplayLayout> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @return the range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp display layouts where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<CPDisplayLayout> orderByComparator) {
+
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the cp display layouts where groupId = &#63; and classNameId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @return the matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_C(
+		long groupId, long classNameId) {
+
+		return getPersistence().findByG_C(groupId, classNameId);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where groupId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @return the range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_C(
+		long groupId, long classNameId, int start, int end) {
+
+		return getPersistence().findByG_C(groupId, classNameId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_C(
+		long groupId, long classNameId, int start, int end,
+		OrderByComparator<CPDisplayLayout> orderByComparator) {
+
+		return getPersistence().findByG_C(
+			groupId, classNameId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the cp display layouts where groupId = &#63; and layoutPageTemplateEntryUuid = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param layoutPageTemplateEntryUuid the layout page template entry uuid
+	 * @return the matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_LPTEU(
+		long groupId, String layoutPageTemplateEntryUuid) {
+
+		return getPersistence().findByG_LPTEU(
+			groupId, layoutPageTemplateEntryUuid);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where groupId = &#63; and layoutPageTemplateEntryUuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutPageTemplateEntryUuid the layout page template entry uuid
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @return the range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_LPTEU(
+		long groupId, String layoutPageTemplateEntryUuid, int start, int end) {
+
+		return getPersistence().findByG_LPTEU(
+			groupId, layoutPageTemplateEntryUuid, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and layoutPageTemplateEntryUuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutPageTemplateEntryUuid the layout page template entry uuid
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_LPTEU(
+		long groupId, String layoutPageTemplateEntryUuid, int start, int end,
+		OrderByComparator<CPDisplayLayout> orderByComparator) {
+
+		return getPersistence().findByG_LPTEU(
+			groupId, layoutPageTemplateEntryUuid, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the cp display layouts where groupId = &#63; and layoutUuid = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuid the layout uuid
+	 * @return the matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_L(
+		long groupId, String layoutUuid) {
+
+		return getPersistence().findByG_L(groupId, layoutUuid);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where groupId = &#63; and layoutUuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuid the layout uuid
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @return the range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_L(
+		long groupId, String layoutUuid, int start, int end) {
+
+		return getPersistence().findByG_L(groupId, layoutUuid, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and layoutUuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuid the layout uuid
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByG_L(
+		long groupId, String layoutUuid, int start, int end,
+		OrderByComparator<CPDisplayLayout> orderByComparator) {
+
+		return getPersistence().findByG_L(
+			groupId, layoutUuid, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C(
+		long classNameId, long classPK) {
+
+		return getPersistence().findByC_C(classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @return the range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C(
+		long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByC_C(classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C(
+		long classNameId, long classPK, int start, int end,
+		OrderByComparator<CPDisplayLayout> orderByComparator) {
+
+		return getPersistence().findByC_C(
+			classNameId, classPK, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C_LPTEU(
+		long classNameId, long classPK) {
+
+		return getPersistence().findByC_C_LPTEU(classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @return the range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C_LPTEU(
+		long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByC_C_LPTEU(
+			classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C_LPTEU(
+		long classNameId, long classPK, int start, int end,
+		OrderByComparator<CPDisplayLayout> orderByComparator) {
+
+		return getPersistence().findByC_C_LPTEU(
+			classNameId, classPK, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C_L(
+		long classNameId, long classPK) {
+
+		return getPersistence().findByC_C_L(classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @return the range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C_L(
+		long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByC_C_L(classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPDisplayLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of cp display layouts
+	 * @param end the upper bound of the range of cp display layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp display layouts
+	 */
+	public static List<CPDisplayLayout> findByC_C_L(
+		long classNameId, long classPK, int start, int end,
+		OrderByComparator<CPDisplayLayout> orderByComparator) {
+
+		return getPersistence().findByC_C_L(
+			classNameId, classPK, start, end, orderByComparator);
 	}
 
 	public static CPDisplayLayoutPersistence getPersistence() {
@@ -1606,4 +1521,4 @@ public class CPDisplayLayoutUtil {
 	private static volatile CPDisplayLayoutPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2126900059
+// LIFERAY-SERVICE-BUILDER-HASH:-1414545533

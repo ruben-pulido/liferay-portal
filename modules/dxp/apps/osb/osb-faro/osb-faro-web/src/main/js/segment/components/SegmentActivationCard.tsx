@@ -92,7 +92,7 @@ const FREQUENCY_TYPE_LABELS: Record<
 		value: SegmentActivationFrequencyTypes.Indefinitely
 	},
 	[SegmentActivationFrequencyTypes.Between]: {
-		label: Liferay.Language.get('between-fragment').toLowerCase(),
+		label: Liferay.Language.get('between').toLowerCase(),
 		value: SegmentActivationFrequencyTypes.Between
 	}
 };
@@ -204,7 +204,8 @@ const ActivationConfigurationModal: React.FC<
 							onSelectionChange={value =>
 								setFormState({
 									...formState,
-									scheduleType: value as SegmentActivationScheduleTypes
+									scheduleType:
+										value as SegmentActivationScheduleTypes
 								})
 							}
 							placeholder={
@@ -319,12 +320,8 @@ const SegmentActivationCard: React.FC<
 		setLocalActivation(sanitizeActivation(segmentActivation));
 	}, [segmentActivation]);
 
-	const {
-		frequencyType,
-		scheduleEndDate,
-		scheduleStartDate,
-		scheduleType
-	} = localActivation;
+	const {frequencyType, scheduleEndDate, scheduleStartDate, scheduleType} =
+		localActivation;
 
 	const handleSave = async (updatedValues: IActivationFormValues) =>
 		API.updateSegmentActivation({

@@ -36,6 +36,20 @@ public class DispatchTriggerUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<DispatchTrigger> dispatchTriggers) {
+		getPersistence().cacheResult(dispatchTriggers);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(DispatchTrigger dispatchTrigger) {
+		getPersistence().cacheResult(dispatchTrigger);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,58 +125,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dispatch triggers where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -210,38 +176,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers that the user has permission to view where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByUuid(String uuid) {
-		return getPersistence().filterFindByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers that the user has permission to view where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().filterFindByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers that the user has permissions to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -288,64 +226,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dispatch triggers where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -400,42 +284,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers that the user has permissions to view where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -486,59 +338,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dispatch triggers where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -589,38 +392,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers that the user has permission to view where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByCompanyId(long companyId) {
-		return getPersistence().filterFindByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers that the user has permission to view where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().filterFindByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers that the user has permissions to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -667,59 +442,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers where active = &#63;.
-	 *
-	 * @param active the active
-	 * @return the matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByActive(boolean active) {
-		return getPersistence().findByActive(active);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers where active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByActive(
-		boolean active, int start, int end) {
-
-		return getPersistence().findByActive(active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers where active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByActive(
-		boolean active, int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator) {
-
-		return getPersistence().findByActive(
-			active, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dispatch triggers where active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -768,38 +494,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers that the user has permission to view where active = &#63;.
-	 *
-	 * @param active the active
-	 * @return the matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByActive(boolean active) {
-		return getPersistence().filterFindByActive(active);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers that the user has permission to view where active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByActive(
-		boolean active, int start, int end) {
-
-		return getPersistence().filterFindByActive(active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers that the user has permissions to view where active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -846,62 +544,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers where companyId = &#63; and userId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @return the matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByC_U(long companyId, long userId) {
-		return getPersistence().findByC_U(companyId, userId);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers where companyId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByC_U(
-		long companyId, long userId, int start, int end) {
-
-		return getPersistence().findByC_U(companyId, userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers where companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByC_U(
-		long companyId, long userId, int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator) {
-
-		return getPersistence().findByC_U(
-			companyId, userId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dispatch triggers where companyId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -956,42 +602,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers that the user has permission to view where companyId = &#63; and userId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @return the matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByC_U(
-		long companyId, long userId) {
-
-		return getPersistence().filterFindByC_U(companyId, userId);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers that the user has permission to view where companyId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByC_U(
-		long companyId, long userId, int start, int end) {
-
-		return getPersistence().filterFindByC_U(companyId, userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers that the user has permissions to view where companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1042,66 +656,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers where companyId = &#63; and dispatchTaskExecutorType = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param dispatchTaskExecutorType the dispatch task executor type
-	 * @return the matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByC_DTET(
-		long companyId, String dispatchTaskExecutorType) {
-
-		return getPersistence().findByC_DTET(
-			companyId, dispatchTaskExecutorType);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers where companyId = &#63; and dispatchTaskExecutorType = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param dispatchTaskExecutorType the dispatch task executor type
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByC_DTET(
-		long companyId, String dispatchTaskExecutorType, int start, int end) {
-
-		return getPersistence().findByC_DTET(
-			companyId, dispatchTaskExecutorType, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers where companyId = &#63; and dispatchTaskExecutorType = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param dispatchTaskExecutorType the dispatch task executor type
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByC_DTET(
-		long companyId, String dispatchTaskExecutorType, int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator) {
-
-		return getPersistence().findByC_DTET(
-			companyId, dispatchTaskExecutorType, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dispatch triggers where companyId = &#63; and dispatchTaskExecutorType = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1157,44 +715,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers that the user has permission to view where companyId = &#63; and dispatchTaskExecutorType = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param dispatchTaskExecutorType the dispatch task executor type
-	 * @return the matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByC_DTET(
-		long companyId, String dispatchTaskExecutorType) {
-
-		return getPersistence().filterFindByC_DTET(
-			companyId, dispatchTaskExecutorType);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers that the user has permission to view where companyId = &#63; and dispatchTaskExecutorType = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param dispatchTaskExecutorType the dispatch task executor type
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByC_DTET(
-		long companyId, String dispatchTaskExecutorType, int start, int end) {
-
-		return getPersistence().filterFindByC_DTET(
-			companyId, dispatchTaskExecutorType, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers that the user has permissions to view where companyId = &#63; and dispatchTaskExecutorType = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1267,17 +791,6 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns the dispatch trigger where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param name the name
-	 * @return the matching dispatch trigger, or <code>null</code> if a matching dispatch trigger could not be found
-	 */
-	public static DispatchTrigger fetchByC_N(long companyId, String name) {
-		return getPersistence().fetchByC_N(companyId, name);
-	}
-
-	/**
 	 * Returns the dispatch trigger where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -1316,65 +829,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = &#63;.
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterMode the dispatch task cluster mode
-	 * @return the matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByA_DTCM(
-		boolean active, int dispatchTaskClusterMode) {
-
-		return getPersistence().findByA_DTCM(active, dispatchTaskClusterMode);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterMode the dispatch task cluster mode
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByA_DTCM(
-		boolean active, int dispatchTaskClusterMode, int start, int end) {
-
-		return getPersistence().findByA_DTCM(
-			active, dispatchTaskClusterMode, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterMode the dispatch task cluster mode
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByA_DTCM(
-		boolean active, int dispatchTaskClusterMode, int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator) {
-
-		return getPersistence().findByA_DTCM(
-			active, dispatchTaskClusterMode, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -1430,44 +888,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = &#63;.
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterMode the dispatch task cluster mode
-	 * @return the matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByA_DTCM(
-		boolean active, int dispatchTaskClusterMode) {
-
-		return getPersistence().filterFindByA_DTCM(
-			active, dispatchTaskClusterMode);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterMode the dispatch task cluster mode
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByA_DTCM(
-		boolean active, int dispatchTaskClusterMode, int start, int end) {
-
-		return getPersistence().filterFindByA_DTCM(
-			active, dispatchTaskClusterMode, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers that the user has permissions to view where active = &#63; and dispatchTaskClusterMode = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -1486,44 +910,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = any &#63;.
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterModes the dispatch task cluster modes
-	 * @return the matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByA_DTCM(
-		boolean active, int[] dispatchTaskClusterModes) {
-
-		return getPersistence().filterFindByA_DTCM(
-			active, dispatchTaskClusterModes);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterModes the dispatch task cluster modes
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers that the user has permission to view
-	 */
-	public static List<DispatchTrigger> filterFindByA_DTCM(
-		boolean active, int[] dispatchTaskClusterModes, int start, int end) {
-
-		return getPersistence().filterFindByA_DTCM(
-			active, dispatchTaskClusterModes, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = any &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -1542,69 +932,10 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterModes the dispatch task cluster modes
-	 * @return the matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByA_DTCM(
-		boolean active, int[] dispatchTaskClusterModes) {
-
-		return getPersistence().findByA_DTCM(active, dispatchTaskClusterModes);
-	}
-
-	/**
-	 * Returns a range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterModes the dispatch task cluster modes
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByA_DTCM(
-		boolean active, int[] dispatchTaskClusterModes, int start, int end) {
-
-		return getPersistence().findByA_DTCM(
-			active, dispatchTaskClusterModes, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param dispatchTaskClusterModes the dispatch task cluster modes
-	 * @param start the lower bound of the range of dispatch triggers
-	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching dispatch triggers
-	 */
-	public static List<DispatchTrigger> findByA_DTCM(
-		boolean active, int[] dispatchTaskClusterModes, int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator) {
-
-		return getPersistence().findByA_DTCM(
-			active, dispatchTaskClusterModes, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -1707,19 +1038,6 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns the dispatch trigger where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching dispatch trigger, or <code>null</code> if a matching dispatch trigger could not be found
-	 */
-	public static DispatchTrigger fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
 	 * Returns the dispatch trigger where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -1759,24 +1077,6 @@ public class DispatchTriggerUtil {
 		String externalReferenceCode, long companyId) {
 
 		return getPersistence().countByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
-	 * Caches the dispatch trigger in the entity cache if it is enabled.
-	 *
-	 * @param dispatchTrigger the dispatch trigger
-	 */
-	public static void cacheResult(DispatchTrigger dispatchTrigger) {
-		getPersistence().cacheResult(dispatchTrigger);
-	}
-
-	/**
-	 * Caches the dispatch triggers in the entity cache if it is enabled.
-	 *
-	 * @param dispatchTriggers the dispatch triggers
-	 */
-	public static void cacheResult(List<DispatchTrigger> dispatchTriggers) {
-		getPersistence().cacheResult(dispatchTriggers);
 	}
 
 	/**
@@ -1830,84 +1130,695 @@ public class DispatchTriggerUtil {
 	}
 
 	/**
-	 * Returns all the dispatch triggers.
+	 * Returns the dispatch trigger where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the dispatch triggers
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching dispatch trigger, or <code>null</code> if a matching dispatch trigger could not be found
 	 */
-	public static List<DispatchTrigger> findAll() {
-		return getPersistence().findAll();
+	public static DispatchTrigger fetchByC_N(long companyId, String name) {
+		return getPersistence().fetchByC_N(companyId, name);
 	}
 
 	/**
-	 * Returns a range of all the dispatch triggers.
+	 * Returns the dispatch trigger where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching dispatch trigger, or <code>null</code> if a matching dispatch trigger could not be found
+	 */
+	public static DispatchTrigger fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
+	}
+
+	/**
+	 * Returns all the dispatch triggers where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of dispatch triggers
 	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
-	 * @return the range of dispatch triggers
+	 * @return the range of matching dispatch triggers
 	 */
-	public static List<DispatchTrigger> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<DispatchTrigger> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the dispatch triggers.
+	 * Returns an ordered range of all the dispatch triggers where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of dispatch triggers
 	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of dispatch triggers
+	 * @return the ordered range of matching dispatch triggers
 	 */
-	public static List<DispatchTrigger> findAll(
-		int start, int end,
+	public static List<DispatchTrigger> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<DispatchTrigger> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the dispatch triggers.
+	 * Returns all the dispatch triggers that the user has permission to view where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByUuid(String uuid) {
+		return getPersistence().filterFindByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers that the user has permission to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DispatchTriggerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().filterFindByUuid(uuid, start, end);
+	}
+
+	/**
+	 * Returns all the dispatch triggers where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the dispatch triggers where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of dispatch triggers
 	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of dispatch triggers
+	 * @return the ordered range of matching dispatch triggers
 	 */
-	public static List<DispatchTrigger> findAll(
-		int start, int end,
-		OrderByComparator<DispatchTrigger> orderByComparator,
-		boolean useFinderCache) {
+	public static List<DispatchTrigger> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<DispatchTrigger> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the dispatch triggers from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of dispatch triggers.
+	 * Returns all the dispatch triggers that the user has permission to view where uuid = &#63; and companyId = &#63;.
 	 *
-	 * @return the number of dispatch triggers
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching dispatch triggers that the user has permission to view
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<DispatchTrigger> filterFindByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers that the user has permission to view where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns all the dispatch triggers where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the dispatch triggers where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<DispatchTrigger> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the dispatch triggers that the user has permission to view where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByCompanyId(long companyId) {
+		return getPersistence().filterFindByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers that the user has permission to view where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().filterFindByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns all the dispatch triggers where active = &#63;.
+	 *
+	 * @param active the active
+	 * @return the matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByActive(boolean active) {
+		return getPersistence().findByActive(active);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers where active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByActive(
+		boolean active, int start, int end) {
+
+		return getPersistence().findByActive(active, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the dispatch triggers where active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByActive(
+		boolean active, int start, int end,
+		OrderByComparator<DispatchTrigger> orderByComparator) {
+
+		return getPersistence().findByActive(
+			active, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the dispatch triggers that the user has permission to view where active = &#63;.
+	 *
+	 * @param active the active
+	 * @return the matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByActive(boolean active) {
+		return getPersistence().filterFindByActive(active);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers that the user has permission to view where active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByActive(
+		boolean active, int start, int end) {
+
+		return getPersistence().filterFindByActive(active, start, end);
+	}
+
+	/**
+	 * Returns all the dispatch triggers where companyId = &#63; and userId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @return the matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByC_U(long companyId, long userId) {
+		return getPersistence().findByC_U(companyId, userId);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers where companyId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByC_U(
+		long companyId, long userId, int start, int end) {
+
+		return getPersistence().findByC_U(companyId, userId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the dispatch triggers where companyId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByC_U(
+		long companyId, long userId, int start, int end,
+		OrderByComparator<DispatchTrigger> orderByComparator) {
+
+		return getPersistence().findByC_U(
+			companyId, userId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the dispatch triggers that the user has permission to view where companyId = &#63; and userId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @return the matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByC_U(
+		long companyId, long userId) {
+
+		return getPersistence().filterFindByC_U(companyId, userId);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers that the user has permission to view where companyId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByC_U(
+		long companyId, long userId, int start, int end) {
+
+		return getPersistence().filterFindByC_U(companyId, userId, start, end);
+	}
+
+	/**
+	 * Returns all the dispatch triggers where companyId = &#63; and dispatchTaskExecutorType = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param dispatchTaskExecutorType the dispatch task executor type
+	 * @return the matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByC_DTET(
+		long companyId, String dispatchTaskExecutorType) {
+
+		return getPersistence().findByC_DTET(
+			companyId, dispatchTaskExecutorType);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers where companyId = &#63; and dispatchTaskExecutorType = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param dispatchTaskExecutorType the dispatch task executor type
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByC_DTET(
+		long companyId, String dispatchTaskExecutorType, int start, int end) {
+
+		return getPersistence().findByC_DTET(
+			companyId, dispatchTaskExecutorType, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the dispatch triggers where companyId = &#63; and dispatchTaskExecutorType = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param dispatchTaskExecutorType the dispatch task executor type
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByC_DTET(
+		long companyId, String dispatchTaskExecutorType, int start, int end,
+		OrderByComparator<DispatchTrigger> orderByComparator) {
+
+		return getPersistence().findByC_DTET(
+			companyId, dispatchTaskExecutorType, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the dispatch triggers that the user has permission to view where companyId = &#63; and dispatchTaskExecutorType = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param dispatchTaskExecutorType the dispatch task executor type
+	 * @return the matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByC_DTET(
+		long companyId, String dispatchTaskExecutorType) {
+
+		return getPersistence().filterFindByC_DTET(
+			companyId, dispatchTaskExecutorType);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers that the user has permission to view where companyId = &#63; and dispatchTaskExecutorType = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param dispatchTaskExecutorType the dispatch task executor type
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByC_DTET(
+		long companyId, String dispatchTaskExecutorType, int start, int end) {
+
+		return getPersistence().filterFindByC_DTET(
+			companyId, dispatchTaskExecutorType, start, end);
+	}
+
+	/**
+	 * Returns all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = &#63;.
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterMode the dispatch task cluster mode
+	 * @return the matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByA_DTCM(
+		boolean active, int dispatchTaskClusterMode) {
+
+		return getPersistence().findByA_DTCM(active, dispatchTaskClusterMode);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterMode the dispatch task cluster mode
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByA_DTCM(
+		boolean active, int dispatchTaskClusterMode, int start, int end) {
+
+		return getPersistence().findByA_DTCM(
+			active, dispatchTaskClusterMode, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterMode the dispatch task cluster mode
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByA_DTCM(
+		boolean active, int dispatchTaskClusterMode, int start, int end,
+		OrderByComparator<DispatchTrigger> orderByComparator) {
+
+		return getPersistence().findByA_DTCM(
+			active, dispatchTaskClusterMode, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = any &#63;.
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterModes the dispatch task cluster modes
+	 * @return the matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByA_DTCM(
+		boolean active, int[] dispatchTaskClusterModes) {
+
+		return getPersistence().findByA_DTCM(active, dispatchTaskClusterModes);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterModes the dispatch task cluster modes
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByA_DTCM(
+		boolean active, int[] dispatchTaskClusterModes, int start, int end) {
+
+		return getPersistence().findByA_DTCM(
+			active, dispatchTaskClusterModes, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the dispatch triggers where active = &#63; and dispatchTaskClusterMode = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterModes the dispatch task cluster modes
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching dispatch triggers
+	 */
+	public static List<DispatchTrigger> findByA_DTCM(
+		boolean active, int[] dispatchTaskClusterModes, int start, int end,
+		OrderByComparator<DispatchTrigger> orderByComparator) {
+
+		return getPersistence().findByA_DTCM(
+			active, dispatchTaskClusterModes, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = &#63;.
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterMode the dispatch task cluster mode
+	 * @return the matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByA_DTCM(
+		boolean active, int dispatchTaskClusterMode) {
+
+		return getPersistence().filterFindByA_DTCM(
+			active, dispatchTaskClusterMode);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterMode the dispatch task cluster mode
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByA_DTCM(
+		boolean active, int dispatchTaskClusterMode, int start, int end) {
+
+		return getPersistence().filterFindByA_DTCM(
+			active, dispatchTaskClusterMode, start, end);
+	}
+
+	/**
+	 * Returns all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = any &#63;.
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterModes the dispatch task cluster modes
+	 * @return the matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByA_DTCM(
+		boolean active, int[] dispatchTaskClusterModes) {
+
+		return getPersistence().filterFindByA_DTCM(
+			active, dispatchTaskClusterModes);
+	}
+
+	/**
+	 * Returns a range of all the dispatch triggers that the user has permission to view where active = &#63; and dispatchTaskClusterMode = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dispatch.model.impl.DispatchTriggerModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param dispatchTaskClusterModes the dispatch task cluster modes
+	 * @param start the lower bound of the range of dispatch triggers
+	 * @param end the upper bound of the range of dispatch triggers (not inclusive)
+	 * @return the range of matching dispatch triggers that the user has permission to view
+	 */
+	public static List<DispatchTrigger> filterFindByA_DTCM(
+		boolean active, int[] dispatchTaskClusterModes, int start, int end) {
+
+		return getPersistence().filterFindByA_DTCM(
+			active, dispatchTaskClusterModes, start, end);
 	}
 
 	public static DispatchTriggerPersistence getPersistence() {
@@ -1921,4 +1832,4 @@ public class DispatchTriggerUtil {
 	private static volatile DispatchTriggerPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:564507952
+// LIFERAY-SERVICE-BUILDER-HASH:-552347726

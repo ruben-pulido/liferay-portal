@@ -35,10 +35,7 @@ export const test = mergeTests(
 	accountSettingsPagesTest,
 	consentManagerConfigurationPageTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPD-51356': {enabled: true},
-		'LPD-75027': {enabled: true},
-		'LPD-75032': {enabled: true},
 	}),
 	loginTest(),
 	systemSettingsPageTest
@@ -125,9 +122,9 @@ test(
 
 		await waitForAlert(page);
 
-		const cookiesBanner = page.getByRole('dialog', {
-			name: 'banner cookies',
-		});
+		const cookiesBanner = page.locator(
+			'div[role="dialog"][aria-modal="true"]'
+		);
 
 		await cookiesBanner.waitFor();
 
@@ -211,9 +208,9 @@ test(
 		await test.step('Open the Cookie Banner Consent Panel', async () => {
 			await page.goto('/');
 
-			const cookiesBanner = page.getByRole('dialog', {
-				name: 'banner cookies',
-			});
+			const cookiesBanner = page.locator(
+				'div[role="dialog"][aria-modal="true"]'
+			);
 
 			await cookiesBanner.waitFor();
 
@@ -531,6 +528,72 @@ test(
 		await page.getByRole('button', {name: 'Accept Selected'}).click();
 
 		await expect(dialog).not.toBeVisible();
+	}
+);
+
+test(
+	'Verify Global Privacy Control is visible and can be enabled',
+	{tag: '@LPD-86511'},
+	async ({consentManagerConfigurationPage}) => {
+		await consentManagerConfigurationPage.goTo();
+
+		await consentManagerConfigurationPage.globalPrivacyControlEnabledCheckbox.waitFor(
+			{state: 'visible'}
+		);
+
+		await expect(
+			consentManagerConfigurationPage.globalPrivacyControlEnabledCheckbox
+		).not.toBeChecked();
+
+		const acceptAllButton = consentManagerConfigurationPage.page.getByRole(
+			'button',
+			{
+				name: 'Accept All',
+			}
+		);
+
+		await acceptAllButton.click();
+
+		await expect(acceptAllButton).not.toBeVisible();
+
+		await consentManagerConfigurationPage.globalPrivacyControlEnabledCheckbox.check();
+
+		await consentManagerConfigurationPage.updateButton.click();
+
+		await expect(
+			consentManagerConfigurationPage.globalPrivacyControlEnabledCheckbox
+		).toBeChecked();
+	}
+);
+
+test(
+	'Verify Global Privacy Control can only be edited when Consent Manager is enabled',
+	{tag: '@LPD-86511'},
+	async ({consentManagerConfigurationPage}) => {
+		await consentManagerConfigurationPage.goTo();
+
+		const acceptAllButton = consentManagerConfigurationPage.page.getByRole(
+			'button',
+			{
+				name: 'Accept All',
+			}
+		);
+
+		await acceptAllButton.click();
+
+		await expect(acceptAllButton).not.toBeVisible();
+
+		await consentManagerConfigurationPage.enabledCheckbox.setChecked(false);
+
+		await expect(
+			consentManagerConfigurationPage.globalPrivacyControlEnabledCheckbox
+		).not.toBeEnabled();
+
+		await consentManagerConfigurationPage.enabledCheckbox.setChecked(true);
+
+		await expect(
+			consentManagerConfigurationPage.globalPrivacyControlEnabledCheckbox
+		).toBeEnabled();
 	}
 );
 

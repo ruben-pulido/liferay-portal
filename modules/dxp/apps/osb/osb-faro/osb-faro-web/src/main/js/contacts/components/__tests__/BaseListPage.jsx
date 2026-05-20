@@ -1,10 +1,10 @@
 import * as data from 'test/data';
-import * as useDataSource from 'shared/hooks/useDataSource';
+import * as useDataSources from 'shared/context/dataSources';
 import BaseListPage from '../BaseListPage';
 import mockStore from 'test/mock-store';
 import React from 'react';
 import {ChannelContext} from 'shared/context/channel';
-import {cleanup, render, waitForElement} from '@testing-library/react';
+import {cleanup, render, waitFor} from '@testing-library/react';
 import {createOrderIOMap} from 'shared/util/pagination';
 import {MemoryRouter, Route} from 'react-router-dom';
 import {mockChannelContext} from 'test/mock-channel-context';
@@ -67,20 +67,19 @@ const WrappedComponent = ({alerts, empty, query}) => (
 );
 
 jest.unmock('react-dom');
-jest.useRealTimers();
 
-const mockUseDataSource = useDataSource;
+const mockUseDataSource = useDataSources;
 
 describe('BaseListPage', () => {
 	afterEach(cleanup);
-	mockUseDataSource.useDataSource = jest.fn(() => mockSuccessState);
+	mockUseDataSource.useDataSources = jest.fn(() => mockSuccessState);
 
 	it('should render', async () => {
-		const {container} = render(<WrappedComponent />);
+		const {getByText} = render(<WrappedComponent />);
 
-		await waitForLoadingToBeRemoved(container);
+		await waitForLoadingToBeRemoved(document.body);
 
-		expect(container).toMatchSnapshot();
+		expect(getByText('Accounts')).toBeInTheDocument();
 	});
 
 	it('should load accounts', async () => {
@@ -129,7 +128,7 @@ describe('BaseListPage', () => {
 			<WrappedComponent alerts={[{message: 'foo alert'}]} />
 		);
 
-		await waitForElement(() => getByRole('alert'));
+		await waitFor(() => getByRole('alert'));
 
 		expect(getByText('foo alert')).toBeInTheDocument();
 	});
@@ -137,7 +136,7 @@ describe('BaseListPage', () => {
 
 describe('BaseListPage with no Data Source', () => {
 	it('should render EmptyState', () => {
-		mockUseDataSource.useDataSource = jest.fn(() => mockEmptyState);
+		mockUseDataSource.useDataSources = jest.fn(() => mockEmptyState);
 
 		const {getByText} = render(<WrappedComponent />);
 

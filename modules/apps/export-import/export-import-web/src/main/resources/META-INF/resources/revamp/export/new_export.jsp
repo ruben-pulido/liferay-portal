@@ -10,35 +10,15 @@
 <liferay-staging:defineObjects />
 
 <%
-String backURL = ParamUtil.getString(request, "backURL");
-
 if (liveGroup == null) {
 	liveGroup = group;
 	liveGroupId = groupId;
 }
 
-String displayStyle = ParamUtil.getString(request, "displayStyle");
-
-PortletURL portletURL = PortletURLBuilder.createRenderURL(
-	renderResponse
-).setMVCRenderCommandName(
-	"/export_import/view_export_layouts"
-).setParameter(
-	"displayStyle", displayStyle
-).setParameter(
-	"groupId", groupId
-).setParameter(
-	"liveGroupId", liveGroupId
-).setParameter(
-	"privateLayout", privateLayout
-).buildPortletURL();
-
-if (Validator.isBlank(backURL)) {
-	backURL = portletURL.toString();
-}
+ExportImportPreviewDisplayContext exportImportPreviewDisplayContext = new ExportImportPreviewDisplayContext("/export_import/view_export_layouts", request, liferayPortletResponse, group, groupId, liveGroupId, privateLayout, stagingGroupHelper);
 
 portletDisplay.setShowBackIcon(true);
-portletDisplay.setURLBack(backURL);
+portletDisplay.setURLBack(exportImportPreviewDisplayContext.getBackURL());
 %>
 
 <clay:container-fluid
@@ -52,7 +32,20 @@ portletDisplay.setURLBack(backURL);
 		module="{NewExport} from exportimport-web"
 		props='<%=
 			HashMapBuilder.<String, Object>put(
-				"backURL", backURL
+				"backURL", exportImportPreviewDisplayContext.getBackURL()
+			).put(
+				"exportPreviewAPIURL", exportImportPreviewDisplayContext.getExportPreviewAPIURL()
+			).put(
+				"exportProcessAPIURL", exportImportPreviewDisplayContext.getExportProcessAPIURL()
+			).put(
+				"pageTreeModalConfiguration",
+				HashMapBuilder.<String, Object>put(
+					"liveGroupId", liveGroupId
+				).put(
+					"pageSize", PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN
+				).put(
+					"privateLayoutsEnabled", liveGroup.isPrivateLayoutsEnabled()
+				).build()
 			).build()
 		%>'
 	/>

@@ -10,7 +10,9 @@ function main {
 		return
 	fi
 
-	_check_utils curl jq tar
+	_check_utils curl jq tar terraform
+
+	_check_terraform_version "1.5.0"
 
 	local config_file
 
@@ -31,6 +33,26 @@ function main {
 	"${extracted_dir}/cloud/scripts/setup_${provider}.sh" "${config_file}" "${extracted_dir}/cloud/scripts/versions_${provider}.tfvars"
 }
 
+function _check_terraform_version {
+	local found_version
+
+	found_version=$(terraform --version | awk '/^Terraform v/ {print $2; exit}')
+	found_version="${found_version#v}"
+
+	local required_version="${1}"
+
+	local lowest_version
+
+	lowest_version=$(printf "%s\n%s\n" "${required_version}" "${found_version}" | sort --version-sort | head -n 1)
+
+	if [ "${lowest_version}" != "${required_version}" ]
+	then
+		echo "The installed Terraform version ${found_version} is older than ${required_version}." >&2
+
+		exit 1
+	fi
+}
+
 function _check_utils {
 	for util in "${@}"
 	do
@@ -44,9 +66,21 @@ function _check_utils {
 }
 
 function _download_and_extract_files {
+	local provider="${1}"
+	local version="${2}"
+
 	local bucket_name="liferay-cloud-native-bootstrap"
 
-	local prefix="bootstrap/liferay-${1}-bootstrap"
+	local download_base_url="https://cdn.liferay.cloud"
+
+	if [[ "${version}" == *-pr-* ]]
+	then
+		bucket_name="liferay-cloud-native-bootstrap-nonprd"
+
+		download_base_url="https://cdn.liferay.sh"
+	fi
+
+	local prefix="bootstrap/liferay-${provider}-bootstrap"
 
 	local json
 
@@ -62,8 +96,6 @@ function _download_and_extract_files {
 
 		exit 1
 	fi
-
-	local version="${2}"
 
 	local output_path
 
@@ -98,21 +130,30 @@ function _download_and_extract_files {
 		exit 1
 	fi
 
+	if [ -e "${output_file}" ]
+	then
+		rm "${output_file}"
+	fi
+
 	curl \
+		--fail \
 		--location \
 		--output "${output_file}" \
 		--silent \
-		"https://cdn.liferay.cloud/${output_path}"
+		--show-error \
+		"${download_base_url}/${output_path}"
 
 	local output_dir="${output_file%.tar.gz}"
 
-	mkdir "${output_dir}"
+	if [ ! -d "${output_dir}" ]
+	then
+		mkdir "${output_dir}"
+	fi
 
 	tar \
 		--directory "${output_dir}" \
 		--extract \
-		--file "${output_file}" \
-		--ungzip
+		--file "${output_file}"
 
 	echo "${output_dir}"
 }
@@ -179,4 +220,4 @@ function _get_version {
 	echo "${version}"
 }
 
-main "${@}"
+main ${1+"$@"}

@@ -8,6 +8,7 @@ import {expect, mergeTests} from '@playwright/test';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {virtualInstancesPagesTest} from '../../../fixtures/virtualInstancesPagesTest';
+import {liferayConfig} from '../../../liferay.config';
 import getRandomString from '../../../utils/getRandomString';
 import performLogin from '../../../utils/performLogin';
 import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
@@ -21,7 +22,6 @@ const test = mergeTests(
 	editEditorConfigContributorPageTest,
 	featureFlagsTest({
 		'LPD-11235': {enabled: true},
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	loginTest(),
@@ -150,7 +150,7 @@ test('Check client extension does not apply to new instances @LPD-63018', async 
 }) => {
 	const DEFAULT_VIRTUAL_INSTANCE_NAME = 'www.able.com';
 	const virtualInstancePage = await browser.newPage({
-		baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`,
+		baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`,
 	});
 	await test.step('Create virtual instance', async () => {
 		test.slow();

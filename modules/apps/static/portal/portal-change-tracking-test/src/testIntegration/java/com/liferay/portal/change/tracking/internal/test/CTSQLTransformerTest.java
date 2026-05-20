@@ -1092,7 +1092,9 @@ public class CTSQLTransformerTest {
 		try (SafeCloseable safeCloseable =
 				CompanyThreadLocal.setCompanyIdWithSafeCloseable(
 					companyId, ctCollectionId);
+
 			Connection connection = DataAccess.getConnection();
+
 			PreparedStatement preparedStatement = connection.prepareStatement(
 				_getSQL(
 					inputSQLFileName, expectedOutputSQLFileName,
@@ -1156,7 +1158,9 @@ public class CTSQLTransformerTest {
 		try (SafeCloseable safeCloseable =
 				CompanyThreadLocal.setCompanyIdWithSafeCloseable(
 					companyId, ctCollectionId);
+
 			Connection connection = DataAccess.getConnection();
+
 			PreparedStatement preparedStatement = connection.prepareStatement(
 				_getSQL(
 					inputSQLFileName, expectedOutputSQLFileName,
@@ -1234,10 +1238,10 @@ public class CTSQLTransformerTest {
 	@Inject
 	private static CTPreferencesLocalService _ctPreferencesLocalService;
 
-	@Inject
-	private static CTSQLTransformer _ctSQLTransformer;
-
 	private static DB _db;
+
+	@Inject
+	private CTSQLTransformer _ctSQLTransformer;
 
 	private static class MainTable {
 	}

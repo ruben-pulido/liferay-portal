@@ -1752,6 +1752,16 @@ public class ServiceBuilder {
 		return fieldName;
 	}
 
+	public boolean hasApiModifications() {
+		for (String modifiedFileName : _modifiedFileNames) {
+			if (modifiedFileName.startsWith(_apiDirName)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public boolean hasEntityByGenericsName(String genericsName) {
 		if (Validator.isNull(genericsName) ||
 			!genericsName.contains(".model.") ||
@@ -1777,12 +1787,15 @@ public class ServiceBuilder {
 	public boolean isBasePersistenceMethod(JavaMethod method) {
 		String methodName = method.getName();
 
-		if (methodName.equals("clearCache") ||
-			methodName.equals("fetchByPrimaryKeys") ||
-			methodName.equals("findWithDynamicQuery") ||
-			methodName.equals("setConfiguration") ||
-			methodName.equals("setDataSource") ||
-			methodName.equals("setSessionFactory")) {
+		if (methodName.equals("cacheResult")) {
+			return isVersionGTE_7_4_0();
+		}
+		else if (methodName.equals("clearCache") ||
+				 methodName.equals("fetchByPrimaryKeys") ||
+				 methodName.equals("findWithDynamicQuery") ||
+				 methodName.equals("setConfiguration") ||
+				 methodName.equals("setDataSource") ||
+				 methodName.equals("setSessionFactory")) {
 
 			return true;
 		}
@@ -2350,7 +2363,7 @@ public class ServiceBuilder {
 		try {
 			System.out.println("Processing " + moduleDir.getFileName());
 
-			new ServiceBuilder(
+			ServiceBuilder serviceBuilder = new ServiceBuilder(
 				apiDir.toString(), true, autoNamespaceTables,
 				"com.liferay.util.bean.PortletBeanLocatorUtil", 1, true,
 				databaseNameMaxLength, hbmFile.toString(), implDir.toString(),
@@ -2361,9 +2374,14 @@ public class ServiceBuilder {
 				sqlDir.toString(), "tables.sql", "indexes.sql", "sequences.sql",
 				null, testDirName, null, true);
 
-			Path apiModuleDir = apiDir.getParent(
-			).getParent(
-			).getParent();
+			if (!serviceBuilder.hasApiModifications()) {
+				return null;
+			}
+
+			Path apiModuleDir = apiDir.getParent();
+
+			apiModuleDir = apiModuleDir.getParent();
+			apiModuleDir = apiModuleDir.getParent();
 
 			Path relativePath = baseDirPath.relativize(
 				apiModuleDir.normalize());
@@ -2371,7 +2389,14 @@ public class ServiceBuilder {
 			String gradleProjectPath = StringUtil.replace(
 				relativePath.toString(), File.separatorChar, ':');
 
-			return ":" + gradleProjectPath + ":baseline";
+			String baselineTask = ":" + gradleProjectPath + ":baseline";
+
+			System.out.println(
+				StringBundler.concat(
+					"Baseline will be invoked for ", moduleDir.getFileName(),
+					" via ", baselineTask));
+
+			return baselineTask;
 		}
 		catch (Exception exception) {
 			System.err.println(
@@ -3206,7 +3231,7 @@ public class ServiceBuilder {
 			_pendingContents.put(_normalize(modelFile.toString()), content);
 		}
 		else {
-			_write(modelFile, content, _modifiedFileNames);
+			_write(modelFile, content, _modifiedFileNames, false);
 		}
 	}
 
@@ -3926,17 +3951,23 @@ public class ServiceBuilder {
 				"Util.java"));
 
 		if (entity.hasPersistence()) {
-			JavaClass javaClass = _getJavaClass(
+			JavaClass implJavaClass = _getJavaClass(
 				StringBundler.concat(
 					_outputPath, "/service/persistence/impl/", entity.getName(),
 					"PersistenceImpl.java"));
 
+			JavaClass interfaceJavaClass = _getJavaClass(
+				StringBundler.concat(
+					_serviceOutputPath, "/service/persistence/",
+					entity.getName(), "Persistence.java"));
+
 			Map<String, Object> context = _getContext();
 
 			context.put("entity", entity);
-			context.put("methods", _getMethods(javaClass));
+			context.put(
+				"methods", _getMethods(implJavaClass, interfaceJavaClass));
 
-			context = _putDeprecatedKeys(context, javaClass);
+			context = _putDeprecatedKeys(context, implJavaClass);
 
 			String content = _processTemplate(_tplPersistenceUtil, context);
 
@@ -4219,7 +4250,7 @@ public class ServiceBuilder {
 
 		String content = _processTemplate(_tplServiceImpl, context);
 
-		_write(file, content, _modifiedFileNames);
+		_write(file, content, _modifiedFileNames, false);
 	}
 
 	private void _createServicePropsUtil() throws Exception {
@@ -4592,7 +4623,9 @@ public class ServiceBuilder {
 
 			if (_optimizeDBIndexes && (indexMetadatas != null)) {
 				indexMetadatasMap.put(
-					tableName, _optimizeForBTreeIndexes(indexMetadatas));
+					tableName,
+					_optimizeForBTreeIndexes(
+						entity.isChangeTrackingEnabled(), indexMetadatas));
 			}
 
 			for (EntityFinder indexOnlyEntityFinder :
@@ -4942,7 +4975,7 @@ public class ServiceBuilder {
 
 		String content = _processTemplate(_TPL_UAD_ANOYMIZER, context);
 
-		_write(file, content, _modifiedFileNames);
+		_write(file, content, _modifiedFileNames, false);
 	}
 
 	private void _createUADBnd(String uadApplicationName) throws Exception {
@@ -5019,7 +5052,7 @@ public class ServiceBuilder {
 
 		String content = _processTemplate(_TPL_UAD_DISPLAY, context);
 
-		_write(file, content, _modifiedFileNames);
+		_write(file, content, _modifiedFileNames, false);
 	}
 
 	private void _createUADExporter(Entity entity) throws Exception {
@@ -5038,7 +5071,7 @@ public class ServiceBuilder {
 
 		String content = _processTemplate(_TPL_UAD_EXPORTER, context);
 
-		_write(file, content, _modifiedFileNames);
+		_write(file, content, _modifiedFileNames, false);
 	}
 
 	private void _deleteFile(String fileName) {
@@ -6050,6 +6083,28 @@ public class ServiceBuilder {
 		return methods;
 	}
 
+	private List<JavaMethod> _getMethods(
+		JavaClass implJavaClass, JavaClass interfaceJavaClass) {
+
+		List<JavaMethod> methods = _getMethods(implJavaClass);
+
+		Set<String> seenSignatures = new HashSet<>();
+
+		for (JavaMethod method : methods) {
+			seenSignatures.add(_getMethodSignature(method, true));
+		}
+
+		for (JavaMethod method : interfaceJavaClass.getMethods(true)) {
+			if (method.isDefault() &&
+				seenSignatures.add(_getMethodSignature(method, true))) {
+
+				methods.add(method);
+			}
+		}
+
+		return methods;
+	}
+
 	private String _getMethodSignature(
 		JavaMethod method, boolean useFullyQualifiedNames) {
 
@@ -6546,7 +6601,7 @@ public class ServiceBuilder {
 	}
 
 	private List<IndexMetadata> _optimizeForBTreeIndexes(
-		List<IndexMetadata> indexMetadatas) {
+		boolean changeTrackingEnabled, List<IndexMetadata> indexMetadatas) {
 
 		Map<String, IntegerWrapper> frequencyMap = new HashMap<>();
 
@@ -6556,6 +6611,11 @@ public class ServiceBuilder {
 					columnName, key -> new IntegerWrapper());
 
 				if (columnName.endsWith("Date")) {
+					count.setValue(-1);
+				}
+				else if (changeTrackingEnabled &&
+						 columnName.equals("ctCollectionId")) {
+
 					count.setValue(0);
 				}
 				else {
@@ -8063,14 +8123,18 @@ public class ServiceBuilder {
 							Set<String> modifiedFileNames =
 								(Set<String>)pendingWrite[3];
 
+							boolean addHash = (Boolean)pendingWrite[4];
+
 							String parsedContent = JavaParser.parse(
 								file, packagePath, content, _MAX_LINE_LENGTH,
 								false);
 
-							parsedContent =
-								parsedContent +
-									_LIFERAY_SERVICE_BUILDER_HASH_PREFIX +
-										content.hashCode();
+							if (addHash) {
+								parsedContent =
+									parsedContent +
+										_LIFERAY_SERVICE_BUILDER_HASH_PREFIX +
+											content.hashCode();
+							}
 
 							ToolsUtil.writeFileRaw(
 								file, parsedContent, modifiedFileNames);
@@ -8558,6 +8622,14 @@ public class ServiceBuilder {
 			File file, String content, Set<String> modifiedFileNames)
 		throws Exception {
 
+		_write(file, content, modifiedFileNames, true);
+	}
+
+	private void _write(
+			File file, String content, Set<String> modifiedFileNames,
+			boolean addHash)
+		throws Exception {
+
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
 
 		String year = simpleDateFormat.format(new Date());
@@ -8580,7 +8652,11 @@ public class ServiceBuilder {
 
 		content = header + "\n\n" + content;
 
-		if (oldContent != null) {
+		String fileName = _normalize(file.toString());
+
+		_pendingContents.put(fileName, content);
+
+		if (addHash && (oldContent != null)) {
 			int index = oldContent.lastIndexOf(
 				_LIFERAY_SERVICE_BUILDER_HASH_PREFIX);
 
@@ -8595,8 +8671,6 @@ public class ServiceBuilder {
 				}
 			}
 		}
-
-		String fileName = _normalize(file.toString());
 
 		int startIndex = 0;
 
@@ -8633,9 +8707,9 @@ public class ServiceBuilder {
 			CharPool.SLASH, CharPool.PERIOD);
 
 		_pendingWrites.add(
-			new Object[] {file, packagePath, content, modifiedFileNames});
-
-		_pendingContents.put(fileName, content);
+			new Object[] {
+				file, packagePath, content, modifiedFileNames, addHash
+			});
 	}
 
 	private static final int _DEFAULT_COLUMN_MAX_LENGTH = 75;

@@ -168,13 +168,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 
 		PortletCategory newPortletCategory = new PortletCategory(categoryName);
 
-		if (newPortletCategory.getParentCategory() == null) {
-			PortletCategory rootPortletCategory = new PortletCategory();
-
-			rootPortletCategory.addCategory(newPortletCategory);
-		}
-
-		portletCategory.merge(newPortletCategory.getRootCategory());
+		portletCategory.mergeCategory(newPortletCategory.getRootCategory());
 	}
 
 	@Override
@@ -2961,17 +2955,11 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 			PortletCategory newPortletCategory = new PortletCategory(
 				categoryName);
 
-			if (newPortletCategory.getParentCategory() == null) {
-				PortletCategory rootPortletCategory = new PortletCategory();
-
-				rootPortletCategory.addCategory(newPortletCategory);
-			}
-
 			Set<String> portletIds = newPortletCategory.getPortletIds();
 
 			portletIds.add(portlet.getPortletId());
 
-			portletCategory.merge(newPortletCategory.getRootCategory());
+			portletCategory.mergeCategory(newPortletCategory.getRootCategory());
 		}
 	}
 

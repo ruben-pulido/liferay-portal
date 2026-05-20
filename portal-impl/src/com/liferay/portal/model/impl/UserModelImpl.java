@@ -147,6 +147,8 @@ public class UserModelImpl extends BaseModelImpl<User> implements UserModel {
 
 	public static final String TABLE_SQL_DROP = "drop table User_";
 
+	public static final String ENTITY_ALIAS = "user";
+
 	public static final String ORDER_BY_JPQL = " ORDER BY user.userId ASC";
 
 	public static final String ORDER_BY_SQL = " ORDER BY User_.userId ASC";
@@ -1768,6 +1770,17 @@ public class UserModelImpl extends BaseModelImpl<User> implements UserModel {
 	}
 
 	@Override
+	public void copyCacheFields(User source) {
+		UserModelImpl sourceModelImpl = (UserModelImpl)source;
+
+		setGroupId(sourceModelImpl.getGroupId());
+
+		setLayoutsUpdated(sourceModelImpl.getLayoutsUpdated());
+
+		setUserGroupIds(sourceModelImpl.getUserGroupIds());
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -2470,4 +2483,4 @@ public class UserModelImpl extends BaseModelImpl<User> implements UserModel {
 	private User _escapedModel;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1890632020
+// LIFERAY-SERVICE-BUILDER-HASH:-1664379508

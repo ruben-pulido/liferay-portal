@@ -37,6 +37,20 @@ public class LockUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<Lock> locks) {
+		getPersistence().cacheResult(locks);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(Lock lock) {
+		getPersistence().cacheResult(lock);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -108,56 +122,10 @@ public class LockUtil {
 	}
 
 	/**
-	 * Returns all the locks where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching locks
-	 */
-	public static List<Lock> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the locks where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @return the range of matching locks
-	 */
-	public static List<Lock> findByUuid(String uuid, int start, int end) {
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the locks where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching locks
-	 */
-	public static List<Lock> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<Lock> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the locks where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -223,62 +191,10 @@ public class LockUtil {
 	}
 
 	/**
-	 * Returns all the locks where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching locks
-	 */
-	public static List<Lock> findByUuid_C(String uuid, long companyId) {
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the locks where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @return the range of matching locks
-	 */
-	public static List<Lock> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the locks where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching locks
-	 */
-	public static List<Lock> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<Lock> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the locks where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -353,59 +269,10 @@ public class LockUtil {
 	}
 
 	/**
-	 * Returns all the locks where className = &#63;.
-	 *
-	 * @param className the class name
-	 * @return the matching locks
-	 */
-	public static List<Lock> findByClassName(String className) {
-		return getPersistence().findByClassName(className);
-	}
-
-	/**
-	 * Returns a range of all the locks where className = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param className the class name
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @return the range of matching locks
-	 */
-	public static List<Lock> findByClassName(
-		String className, int start, int end) {
-
-		return getPersistence().findByClassName(className, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the locks where className = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param className the class name
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching locks
-	 */
-	public static List<Lock> findByClassName(
-		String className, int start, int end,
-		OrderByComparator<Lock> orderByComparator) {
-
-		return getPersistence().findByClassName(
-			className, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the locks where className = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
 	 * @param className the class name
@@ -486,7 +353,7 @@ public class LockUtil {
 	 * Returns a range of all the locks where expirationDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
 	 * @param expirationDate the expiration date
@@ -505,7 +372,7 @@ public class LockUtil {
 	 * Returns an ordered range of all the locks where expirationDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
 	 * @param expirationDate the expiration date
@@ -526,7 +393,7 @@ public class LockUtil {
 	 * Returns an ordered range of all the locks where expirationDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
 	 * @param expirationDate the expiration date
@@ -594,62 +461,10 @@ public class LockUtil {
 	}
 
 	/**
-	 * Returns all the locks where companyId = &#63; and className = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param className the class name
-	 * @return the matching locks
-	 */
-	public static List<Lock> findByC_C(long companyId, String className) {
-		return getPersistence().findByC_C(companyId, className);
-	}
-
-	/**
-	 * Returns a range of all the locks where companyId = &#63; and className = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param className the class name
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @return the range of matching locks
-	 */
-	public static List<Lock> findByC_C(
-		long companyId, String className, int start, int end) {
-
-		return getPersistence().findByC_C(companyId, className, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the locks where companyId = &#63; and className = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param className the class name
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching locks
-	 */
-	public static List<Lock> findByC_C(
-		long companyId, String className, int start, int end,
-		OrderByComparator<Lock> orderByComparator) {
-
-		return getPersistence().findByC_C(
-			companyId, className, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the locks where companyId = &#63; and className = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -739,17 +554,6 @@ public class LockUtil {
 	}
 
 	/**
-	 * Returns the lock where className = &#63; and key = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param className the class name
-	 * @param key the key
-	 * @return the matching lock, or <code>null</code> if a matching lock could not be found
-	 */
-	public static Lock fetchByC_K(String className, String key) {
-		return getPersistence().fetchByC_K(className, key);
-	}
-
-	/**
 	 * Returns the lock where className = &#63; and key = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param className the class name
@@ -788,68 +592,10 @@ public class LockUtil {
 	}
 
 	/**
-	 * Returns all the locks where companyId = &#63; and userId = &#63; and className = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param className the class name
-	 * @return the matching locks
-	 */
-	public static List<Lock> findByC_U_C(
-		long companyId, long userId, String className) {
-
-		return getPersistence().findByC_U_C(companyId, userId, className);
-	}
-
-	/**
-	 * Returns a range of all the locks where companyId = &#63; and userId = &#63; and className = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param className the class name
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @return the range of matching locks
-	 */
-	public static List<Lock> findByC_U_C(
-		long companyId, long userId, String className, int start, int end) {
-
-		return getPersistence().findByC_U_C(
-			companyId, userId, className, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the locks where companyId = &#63; and userId = &#63; and className = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param className the class name
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching locks
-	 */
-	public static List<Lock> findByC_U_C(
-		long companyId, long userId, String className, int start, int end,
-		OrderByComparator<Lock> orderByComparator) {
-
-		return getPersistence().findByC_U_C(
-			companyId, userId, className, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the locks where companyId = &#63; and userId = &#63; and className = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -934,24 +680,6 @@ public class LockUtil {
 	}
 
 	/**
-	 * Caches the lock in the entity cache if it is enabled.
-	 *
-	 * @param lock the lock
-	 */
-	public static void cacheResult(Lock lock) {
-		getPersistence().cacheResult(lock);
-	}
-
-	/**
-	 * Caches the locks in the entity cache if it is enabled.
-	 *
-	 * @param locks the locks
-	 */
-	public static void cacheResult(List<Lock> locks) {
-		getPersistence().cacheResult(locks);
-	}
-
-	/**
 	 * Creates a new lock with the primary key. Does not add the lock to the database.
 	 *
 	 * @param lockId the primary key for the new lock
@@ -1002,82 +730,271 @@ public class LockUtil {
 	}
 
 	/**
-	 * Returns all the locks.
+	 * Returns the lock where className = &#63; and key = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the locks
+	 * @param className the class name
+	 * @param key the key
+	 * @return the matching lock, or <code>null</code> if a matching lock could not be found
 	 */
-	public static List<Lock> findAll() {
-		return getPersistence().findAll();
+	public static Lock fetchByC_K(String className, String key) {
+		return getPersistence().fetchByC_K(className, key);
 	}
 
 	/**
-	 * Returns a range of all the locks.
+	 * Returns all the locks where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching locks
+	 */
+	public static List<Lock> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the locks where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of locks
 	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @return the range of locks
+	 * @return the range of matching locks
 	 */
-	public static List<Lock> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<Lock> findByUuid(String uuid, int start, int end) {
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the locks.
+	 * Returns an ordered range of all the locks where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of locks
-	 * @param end the upper bound of the range of locks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of locks
-	 */
-	public static List<Lock> findAll(
-		int start, int end, OrderByComparator<Lock> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the locks.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LockModelImpl</code>.
-	 * </p>
-	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of locks
 	 * @param end the upper bound of the range of locks (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of locks
+	 * @return the ordered range of matching locks
 	 */
-	public static List<Lock> findAll(
-		int start, int end, OrderByComparator<Lock> orderByComparator,
-		boolean useFinderCache) {
+	public static List<Lock> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<Lock> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the locks from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of locks.
+	 * Returns all the locks where uuid = &#63; and companyId = &#63;.
 	 *
-	 * @return the number of locks
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching locks
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<Lock> findByUuid_C(String uuid, long companyId) {
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the locks where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of locks
+	 * @param end the upper bound of the range of locks (not inclusive)
+	 * @return the range of matching locks
+	 */
+	public static List<Lock> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the locks where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of locks
+	 * @param end the upper bound of the range of locks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching locks
+	 */
+	public static List<Lock> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<Lock> orderByComparator) {
+
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the locks where className = &#63;.
+	 *
+	 * @param className the class name
+	 * @return the matching locks
+	 */
+	public static List<Lock> findByClassName(String className) {
+		return getPersistence().findByClassName(className);
+	}
+
+	/**
+	 * Returns a range of all the locks where className = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
+	 * </p>
+	 *
+	 * @param className the class name
+	 * @param start the lower bound of the range of locks
+	 * @param end the upper bound of the range of locks (not inclusive)
+	 * @return the range of matching locks
+	 */
+	public static List<Lock> findByClassName(
+		String className, int start, int end) {
+
+		return getPersistence().findByClassName(className, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the locks where className = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
+	 * </p>
+	 *
+	 * @param className the class name
+	 * @param start the lower bound of the range of locks
+	 * @param end the upper bound of the range of locks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching locks
+	 */
+	public static List<Lock> findByClassName(
+		String className, int start, int end,
+		OrderByComparator<Lock> orderByComparator) {
+
+		return getPersistence().findByClassName(
+			className, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the locks where companyId = &#63; and className = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @return the matching locks
+	 */
+	public static List<Lock> findByC_C(long companyId, String className) {
+		return getPersistence().findByC_C(companyId, className);
+	}
+
+	/**
+	 * Returns a range of all the locks where companyId = &#63; and className = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @param start the lower bound of the range of locks
+	 * @param end the upper bound of the range of locks (not inclusive)
+	 * @return the range of matching locks
+	 */
+	public static List<Lock> findByC_C(
+		long companyId, String className, int start, int end) {
+
+		return getPersistence().findByC_C(companyId, className, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the locks where companyId = &#63; and className = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @param start the lower bound of the range of locks
+	 * @param end the upper bound of the range of locks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching locks
+	 */
+	public static List<Lock> findByC_C(
+		long companyId, String className, int start, int end,
+		OrderByComparator<Lock> orderByComparator) {
+
+		return getPersistence().findByC_C(
+			companyId, className, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the locks where companyId = &#63; and userId = &#63; and className = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param className the class name
+	 * @return the matching locks
+	 */
+	public static List<Lock> findByC_U_C(
+		long companyId, long userId, String className) {
+
+		return getPersistence().findByC_U_C(companyId, userId, className);
+	}
+
+	/**
+	 * Returns a range of all the locks where companyId = &#63; and userId = &#63; and className = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param className the class name
+	 * @param start the lower bound of the range of locks
+	 * @param end the upper bound of the range of locks (not inclusive)
+	 * @return the range of matching locks
+	 */
+	public static List<Lock> findByC_U_C(
+		long companyId, long userId, String className, int start, int end) {
+
+		return getPersistence().findByC_U_C(
+			companyId, userId, className, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the locks where companyId = &#63; and userId = &#63; and className = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.lock.model.impl.LockModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param className the class name
+	 * @param start the lower bound of the range of locks
+	 * @param end the upper bound of the range of locks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching locks
+	 */
+	public static List<Lock> findByC_U_C(
+		long companyId, long userId, String className, int start, int end,
+		OrderByComparator<Lock> orderByComparator) {
+
+		return getPersistence().findByC_U_C(
+			companyId, userId, className, start, end, orderByComparator);
 	}
 
 	public static LockPersistence getPersistence() {
@@ -1091,4 +1008,4 @@ public class LockUtil {
 	private static volatile LockPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1707079640
+// LIFERAY-SERVICE-BUILDER-HASH:1475643326

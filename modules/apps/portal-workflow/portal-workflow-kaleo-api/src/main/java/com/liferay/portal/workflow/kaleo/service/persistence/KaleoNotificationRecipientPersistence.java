@@ -35,52 +35,10 @@ public interface KaleoNotificationRecipientPersistence
 	 */
 
 	/**
-	 * Returns all the kaleo notification recipients where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient> findByCompanyId(
-		long companyId);
-
-	/**
-	 * Returns a range of all the kaleo notification recipients where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of kaleo notification recipients
-	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
-	 * @return the range of matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient> findByCompanyId(
-		long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the kaleo notification recipients where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of kaleo notification recipients
-	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<KaleoNotificationRecipient> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the kaleo notification recipients where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -138,54 +96,10 @@ public interface KaleoNotificationRecipientPersistence
 	public int countByCompanyId(long companyId);
 
 	/**
-	 * Returns all the kaleo notification recipients where kaleoDefinitionVersionId = &#63;.
-	 *
-	 * @param kaleoDefinitionVersionId the kaleo definition version ID
-	 * @return the matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient>
-		findByKaleoDefinitionVersionId(long kaleoDefinitionVersionId);
-
-	/**
-	 * Returns a range of all the kaleo notification recipients where kaleoDefinitionVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
-	 * </p>
-	 *
-	 * @param kaleoDefinitionVersionId the kaleo definition version ID
-	 * @param start the lower bound of the range of kaleo notification recipients
-	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
-	 * @return the range of matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient>
-		findByKaleoDefinitionVersionId(
-			long kaleoDefinitionVersionId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the kaleo notification recipients where kaleoDefinitionVersionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
-	 * </p>
-	 *
-	 * @param kaleoDefinitionVersionId the kaleo definition version ID
-	 * @param start the lower bound of the range of kaleo notification recipients
-	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient>
-		findByKaleoDefinitionVersionId(
-			long kaleoDefinitionVersionId, int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator
-				<KaleoNotificationRecipient> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the kaleo notification recipients where kaleoDefinitionVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
 	 * </p>
 	 *
 	 * @param kaleoDefinitionVersionId the kaleo definition version ID
@@ -244,52 +158,10 @@ public interface KaleoNotificationRecipientPersistence
 	public int countByKaleoDefinitionVersionId(long kaleoDefinitionVersionId);
 
 	/**
-	 * Returns all the kaleo notification recipients where kaleoNotificationId = &#63;.
-	 *
-	 * @param kaleoNotificationId the kaleo notification ID
-	 * @return the matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient> findByKaleoNotificationId(
-		long kaleoNotificationId);
-
-	/**
-	 * Returns a range of all the kaleo notification recipients where kaleoNotificationId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
-	 * </p>
-	 *
-	 * @param kaleoNotificationId the kaleo notification ID
-	 * @param start the lower bound of the range of kaleo notification recipients
-	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
-	 * @return the range of matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient> findByKaleoNotificationId(
-		long kaleoNotificationId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the kaleo notification recipients where kaleoNotificationId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
-	 * </p>
-	 *
-	 * @param kaleoNotificationId the kaleo notification ID
-	 * @param start the lower bound of the range of kaleo notification recipients
-	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient> findByKaleoNotificationId(
-		long kaleoNotificationId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<KaleoNotificationRecipient> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the kaleo notification recipients where kaleoNotificationId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
 	 * </p>
 	 *
 	 * @param kaleoNotificationId the kaleo notification ID
@@ -347,22 +219,6 @@ public interface KaleoNotificationRecipientPersistence
 	public int countByKaleoNotificationId(long kaleoNotificationId);
 
 	/**
-	 * Caches the kaleo notification recipient in the entity cache if it is enabled.
-	 *
-	 * @param kaleoNotificationRecipient the kaleo notification recipient
-	 */
-	public void cacheResult(
-		KaleoNotificationRecipient kaleoNotificationRecipient);
-
-	/**
-	 * Caches the kaleo notification recipients in the entity cache if it is enabled.
-	 *
-	 * @param kaleoNotificationRecipients the kaleo notification recipients
-	 */
-	public void cacheResult(
-		java.util.List<KaleoNotificationRecipient> kaleoNotificationRecipients);
-
-	/**
 	 * Creates a new kaleo notification recipient with the primary key. Does not add the kaleo notification recipient to the database.
 	 *
 	 * @param kaleoNotificationRecipientId the primary key for the new kaleo notification recipient
@@ -404,73 +260,173 @@ public interface KaleoNotificationRecipientPersistence
 		long kaleoNotificationRecipientId);
 
 	/**
-	 * Returns all the kaleo notification recipients.
+	 * Returns all the kaleo notification recipients where companyId = &#63;.
 	 *
-	 * @return the kaleo notification recipients
+	 * @param companyId the company ID
+	 * @return the matching kaleo notification recipients
 	 */
-	public java.util.List<KaleoNotificationRecipient> findAll();
+	public default java.util.List<KaleoNotificationRecipient> findByCompanyId(
+		long companyId) {
+
+		return findByCompanyId(
+			companyId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the kaleo notification recipients.
+	 * Returns a range of all the kaleo notification recipients where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of kaleo notification recipients
 	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
-	 * @return the range of kaleo notification recipients
+	 * @return the range of matching kaleo notification recipients
 	 */
-	public java.util.List<KaleoNotificationRecipient> findAll(
-		int start, int end);
+	public default java.util.List<KaleoNotificationRecipient> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return findByCompanyId(companyId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the kaleo notification recipients.
+	 * Returns an ordered range of all the kaleo notification recipients where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of kaleo notification recipients
-	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of kaleo notification recipients
-	 */
-	public java.util.List<KaleoNotificationRecipient> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<KaleoNotificationRecipient> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the kaleo notification recipients.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNotificationRecipientModelImpl</code>.
-	 * </p>
-	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of kaleo notification recipients
 	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of kaleo notification recipients
+	 * @return the ordered range of matching kaleo notification recipients
 	 */
-	public java.util.List<KaleoNotificationRecipient> findAll(
-		int start, int end,
+	public default java.util.List<KaleoNotificationRecipient> findByCompanyId(
+		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<KaleoNotificationRecipient> orderByComparator,
-		boolean useFinderCache);
+			<KaleoNotificationRecipient> orderByComparator) {
+
+		return findByCompanyId(companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the kaleo notification recipients from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of kaleo notification recipients.
+	 * Returns all the kaleo notification recipients where kaleoDefinitionVersionId = &#63;.
 	 *
-	 * @return the number of kaleo notification recipients
+	 * @param kaleoDefinitionVersionId the kaleo definition version ID
+	 * @return the matching kaleo notification recipients
 	 */
-	public int countAll();
+	public default java.util.List<KaleoNotificationRecipient>
+		findByKaleoDefinitionVersionId(long kaleoDefinitionVersionId) {
+
+		return findByKaleoDefinitionVersionId(
+			kaleoDefinitionVersionId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the kaleo notification recipients where kaleoDefinitionVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
+	 * </p>
+	 *
+	 * @param kaleoDefinitionVersionId the kaleo definition version ID
+	 * @param start the lower bound of the range of kaleo notification recipients
+	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
+	 * @return the range of matching kaleo notification recipients
+	 */
+	public default java.util.List<KaleoNotificationRecipient>
+		findByKaleoDefinitionVersionId(
+			long kaleoDefinitionVersionId, int start, int end) {
+
+		return findByKaleoDefinitionVersionId(
+			kaleoDefinitionVersionId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the kaleo notification recipients where kaleoDefinitionVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
+	 * </p>
+	 *
+	 * @param kaleoDefinitionVersionId the kaleo definition version ID
+	 * @param start the lower bound of the range of kaleo notification recipients
+	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kaleo notification recipients
+	 */
+	public default java.util.List<KaleoNotificationRecipient>
+		findByKaleoDefinitionVersionId(
+			long kaleoDefinitionVersionId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<KaleoNotificationRecipient> orderByComparator) {
+
+		return findByKaleoDefinitionVersionId(
+			kaleoDefinitionVersionId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the kaleo notification recipients where kaleoNotificationId = &#63;.
+	 *
+	 * @param kaleoNotificationId the kaleo notification ID
+	 * @return the matching kaleo notification recipients
+	 */
+	public default java.util.List<KaleoNotificationRecipient>
+		findByKaleoNotificationId(long kaleoNotificationId) {
+
+		return findByKaleoNotificationId(
+			kaleoNotificationId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the kaleo notification recipients where kaleoNotificationId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
+	 * </p>
+	 *
+	 * @param kaleoNotificationId the kaleo notification ID
+	 * @param start the lower bound of the range of kaleo notification recipients
+	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
+	 * @return the range of matching kaleo notification recipients
+	 */
+	public default java.util.List<KaleoNotificationRecipient>
+		findByKaleoNotificationId(
+			long kaleoNotificationId, int start, int end) {
+
+		return findByKaleoNotificationId(
+			kaleoNotificationId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the kaleo notification recipients where kaleoNotificationId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl</code>.
+	 * </p>
+	 *
+	 * @param kaleoNotificationId the kaleo notification ID
+	 * @param start the lower bound of the range of kaleo notification recipients
+	 * @param end the upper bound of the range of kaleo notification recipients (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kaleo notification recipients
+	 */
+	public default java.util.List<KaleoNotificationRecipient>
+		findByKaleoNotificationId(
+			long kaleoNotificationId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<KaleoNotificationRecipient> orderByComparator) {
+
+		return findByKaleoNotificationId(
+			kaleoNotificationId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:665502572
+// LIFERAY-SERVICE-BUILDER-HASH:1835571195

@@ -5,10 +5,10 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {formsPagesTest} from '../../../fixtures/formsPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {virtualInstancesPagesTest} from '../../../fixtures/virtualInstancesPagesTest';
+import {liferayConfig} from '../../../liferay.config';
 import {DataProviderPage} from '../../../pages/dynamic-data-mapping-form-web/DataProviderPage';
 import {FormBuilderFieldSettingsSidePanelPage} from '../../../pages/dynamic-data-mapping-form-web/FormBuilderFieldSettingsSidePanelPage';
 import {FormBuilderPage} from '../../../pages/dynamic-data-mapping-form-web/FormBuilderPage';
@@ -20,9 +20,6 @@ import performLogin from '../../../utils/performLogin';
 import {deleteItems} from './utils/deleteItems';
 
 export const test = mergeTests(
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	loginTest(),
 	formsPagesTest,
 	virtualInstancesPagesTest
@@ -69,7 +66,7 @@ test.describe('Manage forms through submission page', () => {
 		deleteAfterTestVirtualInstances.add(DEFAULT_VIRTUAL_INSTANCE_NAME);
 
 		const virtualInstancePage = await browser.newPage({
-			baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`,
+			baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`,
 		});
 
 		await performLogin(

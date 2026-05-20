@@ -6,13 +6,11 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
-import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
+import {isolatedChannelTest} from '../../../fixtures/isolatedChannelTest';
+import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginAnalyticsCloudTest} from '../../../fixtures/loginAnalyticsCloudTest';
 import {loginTest} from '../../../fixtures/loginTest';
-import {liferayConfig} from '../../../liferay.config';
-import getRandomString from '../../../utils/getRandomString';
-import {createChannel} from '../../osb-faro-web/main/utils/channel';
 import {createDataSource} from '../../osb-faro-web/main/utils/data-source';
 import {acceptsCookiesBanner} from '../../osb-faro-web/main/utils/portal';
 import {
@@ -45,10 +43,11 @@ const jobs: {
 
 export const test = mergeTests(
 	apiHelpersTest,
-	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-20640': {enabled: true},
 	}),
+	isolatedChannelTest,
+	isolatedSiteTest,
 	loginAnalyticsCloudTest(),
 	loginTest()
 );
@@ -56,25 +55,10 @@ export const test = mergeTests(
 test.describe('Test All Recommendation Job', () => {
 	jobs.forEach(({jobId, jobTitle}) => {
 		test(`Enable / Disable "${jobTitle}" job in the recommendations screen`, async ({
-			apiHelpers,
+			analyticsChannel: channel,
 			page,
+			site,
 		}) => {
-			const site = await apiHelpers.headlessSite.createSite({
-				name: getRandomString(),
-			});
-
-			apiHelpers.data.push({
-				id: site.externalReferenceCode,
-				type: 'site',
-			});
-
-			const channelName = 'My Property - ' + getRandomString();
-
-			const {channel, project} = await createChannel({
-				apiHelpers,
-				channelName,
-			});
-
 			const {token} = await createDataSource(page);
 
 			await goToAnalyticsCloudInstanceSettings(page);
@@ -86,7 +70,7 @@ test.describe('Test All Recommendation Job', () => {
 			await connectToAnalyticsCloud(page, {token});
 
 			await toggleSiteSync({
-				channelName,
+				channelName: channel.name,
 				page,
 				siteName: site.name,
 			});
@@ -157,17 +141,6 @@ test.describe('Test All Recommendation Job', () => {
 			).toBeTruthy();
 
 			expect(await toggleElement.isChecked()).toBeFalsy();
-
-			await test.step('Delete channel and delete site on the DXP side', async () => {
-				await apiHelpers.jsonWebServicesOSBFaro.deleteChannel(
-					`[${channel.id}]`,
-					project.groupId
-				);
-
-				await page.goto(liferayConfig.environment.baseUrl);
-
-				await apiHelpers.headlessSite.deleteSite(String(site.id));
-			});
 		});
 	});
 });

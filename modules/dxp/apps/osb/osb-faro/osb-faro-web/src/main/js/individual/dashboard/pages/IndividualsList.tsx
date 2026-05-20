@@ -80,9 +80,12 @@ function transformCountriesInQueryString(countries: string[]) {
 }
 
 const IndividualsList = () => {
-	const {channelId, groupId} = useParams();
+	const {channelId = '', groupId = ''} = useParams<{
+		channelId: string;
+		groupId: string;
+	}>();
 
-	const paginationParams = useStatefulPagination(null, {
+	const paginationParams = useStatefulPagination(undefined, {
 		initialOrderIOMap: createOrderIOMap(NAME)
 	});
 
@@ -103,7 +106,7 @@ const IndividualsList = () => {
 				{
 					key: 'countries',
 					label: Liferay.Language.get('country'),
-					values: countries.map(country => ({
+					values: countries.map((country: string) => ({
 						label: country,
 						value: country
 					}))

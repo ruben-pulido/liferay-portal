@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -135,7 +136,8 @@ public abstract class BaseAssetLibraryTestEntityResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -145,7 +147,8 @@ public abstract class BaseAssetLibraryTestEntityResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -270,6 +273,7 @@ public abstract class BaseAssetLibraryTestEntityResourceTestCase {
 
 		// No namespace
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		AssetLibraryTestEntity assetLibraryTestEntity1 =
 			testGraphQLDeleteAssetLibraryAssetLibraryTestEntityByExternalReferenceCode_addAssetLibraryTestEntity();
 
@@ -297,6 +301,7 @@ public abstract class BaseAssetLibraryTestEntityResourceTestCase {
 
 		// Using the namespace test_v1_0
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		AssetLibraryTestEntity assetLibraryTestEntity2 =
 			testGraphQLDeleteAssetLibraryAssetLibraryTestEntityByExternalReferenceCode_addAssetLibraryTestEntity();
 
@@ -464,7 +469,8 @@ public abstract class BaseAssetLibraryTestEntityResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).parameters(
 			parameters
 		).build();
@@ -1132,7 +1138,9 @@ public abstract class BaseAssetLibraryTestEntityResourceTestCase {
 			).toString(),
 			"application/json");
 		httpInvoker.httpMethod(HttpInvoker.HttpMethod.POST);
-		httpInvoker.path("http://localhost:8080/o/graphql");
+		httpInvoker.path(
+			"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/o/graphql");
 		httpInvoker.userNameAndPassword(
 			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
 
@@ -1433,4 +1441,4 @@ public abstract class BaseAssetLibraryTestEntityResourceTestCase {
 		AssetLibraryTestEntityResource _assetLibraryTestEntityResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-592147113
+// LIFERAY-REST-BUILDER-HASH:-1660944291

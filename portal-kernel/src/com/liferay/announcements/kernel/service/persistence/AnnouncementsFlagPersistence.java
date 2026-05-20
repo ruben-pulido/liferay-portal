@@ -35,51 +35,10 @@ public interface AnnouncementsFlagPersistence
 	 */
 
 	/**
-	 * Returns all the announcements flags where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching announcements flags
-	 */
-	public java.util.List<AnnouncementsFlag> findByCompanyId(long companyId);
-
-	/**
-	 * Returns a range of all the announcements flags where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of announcements flags
-	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @return the range of matching announcements flags
-	 */
-	public java.util.List<AnnouncementsFlag> findByCompanyId(
-		long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the announcements flags where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of announcements flags
-	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching announcements flags
-	 */
-	public java.util.List<AnnouncementsFlag> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<AnnouncementsFlag>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the announcements flags where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -137,51 +96,10 @@ public interface AnnouncementsFlagPersistence
 	public int countByCompanyId(long companyId);
 
 	/**
-	 * Returns all the announcements flags where entryId = &#63;.
-	 *
-	 * @param entryId the entry ID
-	 * @return the matching announcements flags
-	 */
-	public java.util.List<AnnouncementsFlag> findByEntryId(long entryId);
-
-	/**
-	 * Returns a range of all the announcements flags where entryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param entryId the entry ID
-	 * @param start the lower bound of the range of announcements flags
-	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @return the range of matching announcements flags
-	 */
-	public java.util.List<AnnouncementsFlag> findByEntryId(
-		long entryId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the announcements flags where entryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param entryId the entry ID
-	 * @param start the lower bound of the range of announcements flags
-	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching announcements flags
-	 */
-	public java.util.List<AnnouncementsFlag> findByEntryId(
-		long entryId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<AnnouncementsFlag>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the announcements flags where entryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param entryId the entry ID
@@ -251,16 +169,6 @@ public interface AnnouncementsFlagPersistence
 		throws NoSuchFlagException;
 
 	/**
-	 * Returns the announcements flag where userId = &#63; and entryId = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param entryId the entry ID
-	 * @param value the value
-	 * @return the matching announcements flag, or <code>null</code> if a matching announcements flag could not be found
-	 */
-	public AnnouncementsFlag fetchByU_E_V(long userId, long entryId, int value);
-
-	/**
 	 * Returns the announcements flag where userId = &#63; and entryId = &#63; and value = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param userId the user ID
@@ -292,21 +200,6 @@ public interface AnnouncementsFlagPersistence
 	 * @return the number of matching announcements flags
 	 */
 	public int countByU_E_V(long userId, long entryId, int value);
-
-	/**
-	 * Caches the announcements flag in the entity cache if it is enabled.
-	 *
-	 * @param announcementsFlag the announcements flag
-	 */
-	public void cacheResult(AnnouncementsFlag announcementsFlag);
-
-	/**
-	 * Caches the announcements flags in the entity cache if it is enabled.
-	 *
-	 * @param announcementsFlags the announcements flags
-	 */
-	public void cacheResult(
-		java.util.List<AnnouncementsFlag> announcementsFlags);
 
 	/**
 	 * Creates a new announcements flag with the primary key. Does not add the announcements flag to the database.
@@ -346,72 +239,124 @@ public interface AnnouncementsFlagPersistence
 	public AnnouncementsFlag fetchByPrimaryKey(long flagId);
 
 	/**
-	 * Returns all the announcements flags.
+	 * Returns the announcements flag where userId = &#63; and entryId = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the announcements flags
+	 * @param userId the user ID
+	 * @param entryId the entry ID
+	 * @param value the value
+	 * @return the matching announcements flag, or <code>null</code> if a matching announcements flag could not be found
 	 */
-	public java.util.List<AnnouncementsFlag> findAll();
+	public default AnnouncementsFlag fetchByU_E_V(
+		long userId, long entryId, int value) {
+
+		return fetchByU_E_V(userId, entryId, value, true);
+	}
 
 	/**
-	 * Returns a range of all the announcements flags.
+	 * Returns all the announcements flags where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching announcements flags
+	 */
+	public default java.util.List<AnnouncementsFlag> findByCompanyId(
+		long companyId) {
+
+		return findByCompanyId(
+			companyId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the announcements flags where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of announcements flags
 	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @return the range of announcements flags
+	 * @return the range of matching announcements flags
 	 */
-	public java.util.List<AnnouncementsFlag> findAll(int start, int end);
+	public default java.util.List<AnnouncementsFlag> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return findByCompanyId(companyId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the announcements flags.
+	 * Returns an ordered range of all the announcements flags where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of announcements flags
 	 * @param end the upper bound of the range of announcements flags (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of announcements flags
+	 * @return the ordered range of matching announcements flags
 	 */
-	public java.util.List<AnnouncementsFlag> findAll(
-		int start, int end,
+	public default java.util.List<AnnouncementsFlag> findByCompanyId(
+		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<AnnouncementsFlag>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByCompanyId(companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the announcements flags.
+	 * Returns all the announcements flags where entryId = &#63;.
+	 *
+	 * @param entryId the entry ID
+	 * @return the matching announcements flags
+	 */
+	public default java.util.List<AnnouncementsFlag> findByEntryId(
+		long entryId) {
+
+		return findByEntryId(
+			entryId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the announcements flags where entryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
+	 * @param entryId the entry ID
+	 * @param start the lower bound of the range of announcements flags
+	 * @param end the upper bound of the range of announcements flags (not inclusive)
+	 * @return the range of matching announcements flags
+	 */
+	public default java.util.List<AnnouncementsFlag> findByEntryId(
+		long entryId, int start, int end) {
+
+		return findByEntryId(entryId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the announcements flags where entryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
+	 * </p>
+	 *
+	 * @param entryId the entry ID
 	 * @param start the lower bound of the range of announcements flags
 	 * @param end the upper bound of the range of announcements flags (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of announcements flags
+	 * @return the ordered range of matching announcements flags
 	 */
-	public java.util.List<AnnouncementsFlag> findAll(
-		int start, int end,
+	public default java.util.List<AnnouncementsFlag> findByEntryId(
+		long entryId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<AnnouncementsFlag>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
 
-	/**
-	 * Removes all the announcements flags from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of announcements flags.
-	 *
-	 * @return the number of announcements flags
-	 */
-	public int countAll();
+		return findByEntryId(entryId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1330849348
+// LIFERAY-SERVICE-BUILDER-HASH:140241055

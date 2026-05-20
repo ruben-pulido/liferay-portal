@@ -8,7 +8,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {commercePagesTest} from '../../../../fixtures/commercePagesTest';
 import {customFieldsPagesTest} from '../../../../fixtures/customFieldsPagesTest';
 import {dataApiHelpersTest} from '../../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
 import {globalMenuPagesTest} from '../../../../fixtures/globalMenuPagesTest';
 import {loginTest} from '../../../../fixtures/loginTest';
 import {createCategories} from '../../../../helpers/CreateCategories';
@@ -22,9 +21,6 @@ export const test = mergeTests(
 	commercePagesTest,
 	customFieldsPagesTest,
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	globalMenuPagesTest,
 	loginTest()
 );
@@ -55,11 +51,9 @@ test('LPD-41420 Verify configuration list eligibility management is available', 
 		productConfigurationList.id
 	);
 
-	const site = await apiHelpers.headlessSite.createSite({
+	const site = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 	});
-
-	apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 	const channel = await apiHelpers.headlessCommerceAdminChannel.postChannel({
 		siteGroupId: site.id,
@@ -158,11 +152,9 @@ test('LPD-41420 Verify configuration list eligibility management save button cle
 		productConfigurationList.id
 	);
 
-	const site = await apiHelpers.headlessSite.createSite({
+	const site = await apiHelpers.headlessAdminSite.postSite({
 		name: getRandomString(),
 	});
-
-	apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 	const channel = await apiHelpers.headlessCommerceAdminChannel.postChannel({
 		siteGroupId: site.id,

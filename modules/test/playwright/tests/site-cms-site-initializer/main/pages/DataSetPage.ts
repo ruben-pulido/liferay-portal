@@ -67,10 +67,12 @@ export class DataSetPage {
 	async execItemAction({
 		action,
 		filter,
+		parentAction,
 		timeout,
 	}: {
 		action: string;
 		filter: string;
+		parentAction?: string;
 		timeout?: number;
 	}) {
 		const item = this.getRow(filter);
@@ -79,9 +81,24 @@ export class DataSetPage {
 			name: `${filter} Actions`,
 		});
 
+		if (parentAction) {
+			await button.click();
+
+			await this.page
+				.getByRole('menuitem', {exact: true, name: parentAction})
+				.hover();
+
+			await this.page
+				.getByRole('menuitem', {exact: true, name: action})
+				.click();
+
+			return;
+		}
+
 		await clickAndExpectToBeVisible({
 			autoClick: true,
 			target: this.page.getByRole('menuitem', {
+				exact: true,
 				name: action,
 			}),
 			timeout,

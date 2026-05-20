@@ -36,6 +36,24 @@ public class CommerceShippingMethodUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<CommerceShippingMethod> commerceShippingMethods) {
+
+		getPersistence().cacheResult(commerceShippingMethods);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		CommerceShippingMethod commerceShippingMethod) {
+
+		getPersistence().cacheResult(commerceShippingMethod);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -116,59 +134,10 @@ public class CommerceShippingMethodUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipping methods where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching commerce shipping methods
-	 */
-	public static List<CommerceShippingMethod> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipping methods where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of commerce shipping methods
-	 * @param end the upper bound of the range of commerce shipping methods (not inclusive)
-	 * @return the range of matching commerce shipping methods
-	 */
-	public static List<CommerceShippingMethod> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce shipping methods where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of commerce shipping methods
-	 * @param end the upper bound of the range of commerce shipping methods (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipping methods
-	 */
-	public static List<CommerceShippingMethod> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<CommerceShippingMethod> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipping methods where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShippingMethodModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -238,64 +207,10 @@ public class CommerceShippingMethodUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipping methods where groupId = &#63; and active = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param active the active
-	 * @return the matching commerce shipping methods
-	 */
-	public static List<CommerceShippingMethod> findByG_A(
-		long groupId, boolean active) {
-
-		return getPersistence().findByG_A(groupId, active);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipping methods where groupId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param active the active
-	 * @param start the lower bound of the range of commerce shipping methods
-	 * @param end the upper bound of the range of commerce shipping methods (not inclusive)
-	 * @return the range of matching commerce shipping methods
-	 */
-	public static List<CommerceShippingMethod> findByG_A(
-		long groupId, boolean active, int start, int end) {
-
-		return getPersistence().findByG_A(groupId, active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce shipping methods where groupId = &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param active the active
-	 * @param start the lower bound of the range of commerce shipping methods
-	 * @param end the upper bound of the range of commerce shipping methods (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce shipping methods
-	 */
-	public static List<CommerceShippingMethod> findByG_A(
-		long groupId, boolean active, int start, int end,
-		OrderByComparator<CommerceShippingMethod> orderByComparator) {
-
-		return getPersistence().findByG_A(
-			groupId, active, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipping methods where groupId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShippingMethodModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -386,19 +301,6 @@ public class CommerceShippingMethodUtil {
 	}
 
 	/**
-	 * Returns the commerce shipping method where groupId = &#63; and engineKey = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param engineKey the engine key
-	 * @return the matching commerce shipping method, or <code>null</code> if a matching commerce shipping method could not be found
-	 */
-	public static CommerceShippingMethod fetchByG_E(
-		long groupId, String engineKey) {
-
-		return getPersistence().fetchByG_E(groupId, engineKey);
-	}
-
-	/**
 	 * Returns the commerce shipping method where groupId = &#63; and engineKey = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -435,28 +337,6 @@ public class CommerceShippingMethodUtil {
 	 */
 	public static int countByG_E(long groupId, String engineKey) {
 		return getPersistence().countByG_E(groupId, engineKey);
-	}
-
-	/**
-	 * Caches the commerce shipping method in the entity cache if it is enabled.
-	 *
-	 * @param commerceShippingMethod the commerce shipping method
-	 */
-	public static void cacheResult(
-		CommerceShippingMethod commerceShippingMethod) {
-
-		getPersistence().cacheResult(commerceShippingMethod);
-	}
-
-	/**
-	 * Caches the commerce shipping methods in the entity cache if it is enabled.
-	 *
-	 * @param commerceShippingMethods the commerce shipping methods
-	 */
-	public static void cacheResult(
-		List<CommerceShippingMethod> commerceShippingMethods) {
-
-		getPersistence().cacheResult(commerceShippingMethods);
 	}
 
 	/**
@@ -515,84 +395,119 @@ public class CommerceShippingMethodUtil {
 	}
 
 	/**
-	 * Returns all the commerce shipping methods.
+	 * Returns the commerce shipping method where groupId = &#63; and engineKey = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the commerce shipping methods
+	 * @param groupId the group ID
+	 * @param engineKey the engine key
+	 * @return the matching commerce shipping method, or <code>null</code> if a matching commerce shipping method could not be found
 	 */
-	public static List<CommerceShippingMethod> findAll() {
-		return getPersistence().findAll();
+	public static CommerceShippingMethod fetchByG_E(
+		long groupId, String engineKey) {
+
+		return getPersistence().fetchByG_E(groupId, engineKey);
 	}
 
 	/**
-	 * Returns a range of all the commerce shipping methods.
+	 * Returns all the commerce shipping methods where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching commerce shipping methods
+	 */
+	public static List<CommerceShippingMethod> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipping methods where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShippingMethodModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of commerce shipping methods
 	 * @param end the upper bound of the range of commerce shipping methods (not inclusive)
-	 * @return the range of commerce shipping methods
+	 * @return the range of matching commerce shipping methods
 	 */
-	public static List<CommerceShippingMethod> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CommerceShippingMethod> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipping methods.
+	 * Returns an ordered range of all the commerce shipping methods where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShippingMethodModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of commerce shipping methods
 	 * @param end the upper bound of the range of commerce shipping methods (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce shipping methods
+	 * @return the ordered range of matching commerce shipping methods
 	 */
-	public static List<CommerceShippingMethod> findAll(
-		int start, int end,
+	public static List<CommerceShippingMethod> findByGroupId(
+		long groupId, int start, int end,
 		OrderByComparator<CommerceShippingMethod> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce shipping methods.
+	 * Returns all the commerce shipping methods where groupId = &#63; and active = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @return the matching commerce shipping methods
+	 */
+	public static List<CommerceShippingMethod> findByG_A(
+		long groupId, boolean active) {
+
+		return getPersistence().findByG_A(groupId, active);
+	}
+
+	/**
+	 * Returns a range of all the commerce shipping methods where groupId = &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingMethodModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShippingMethodModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param start the lower bound of the range of commerce shipping methods
+	 * @param end the upper bound of the range of commerce shipping methods (not inclusive)
+	 * @return the range of matching commerce shipping methods
+	 */
+	public static List<CommerceShippingMethod> findByG_A(
+		long groupId, boolean active, int start, int end) {
+
+		return getPersistence().findByG_A(groupId, active, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce shipping methods where groupId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceShippingMethodModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param active the active
 	 * @param start the lower bound of the range of commerce shipping methods
 	 * @param end the upper bound of the range of commerce shipping methods (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce shipping methods
+	 * @return the ordered range of matching commerce shipping methods
 	 */
-	public static List<CommerceShippingMethod> findAll(
-		int start, int end,
-		OrderByComparator<CommerceShippingMethod> orderByComparator,
-		boolean useFinderCache) {
+	public static List<CommerceShippingMethod> findByG_A(
+		long groupId, boolean active, int start, int end,
+		OrderByComparator<CommerceShippingMethod> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the commerce shipping methods from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of commerce shipping methods.
-	 *
-	 * @return the number of commerce shipping methods
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByG_A(
+			groupId, active, start, end, orderByComparator);
 	}
 
 	public static CommerceShippingMethodPersistence getPersistence() {
@@ -608,4 +523,4 @@ public class CommerceShippingMethodUtil {
 	private static volatile CommerceShippingMethodPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1492401553
+// LIFERAY-SERVICE-BUILDER-HASH:568031503

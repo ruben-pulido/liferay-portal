@@ -25,7 +25,6 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	instanceSettingsPagesTest,
@@ -191,7 +190,7 @@ test(
 			).toBeVisible();
 		}
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: `Site${getRandomString()}`,
 		});
 
@@ -220,10 +219,8 @@ test(
 			);
 
 			try {
-				const {port} = new URL(liferayConfig.environment.baseUrl);
-
 				await registrationPage.goto(
-					`http://www.able.com:${port || '8080'}`
+					`http://www.able.com:${liferayConfig.environment.port}`
 				);
 
 				await userRegistrationPage.signInButton.click();
@@ -271,8 +268,6 @@ test(
 		}
 		finally {
 			await mockMockPage.close();
-
-			await apiHelpers.headlessSite.deleteSite(site.id);
 
 			await emailInstanceSettingsPage.goToEmailSender();
 

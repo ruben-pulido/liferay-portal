@@ -1,24 +1,38 @@
+global:
+    gcp:
+        projectId: ""
 liferay-default:
     annotations:
-        gke-gcsfuse/volumes: "true"
         instrumentation.opentelemetry.io/inject-dotnet: "false"
         instrumentation.opentelemetry.io/inject-java: "false"
         instrumentation.opentelemetry.io/inject-nodejs: "false"
         instrumentation.opentelemetry.io/inject-python: "false"
         sidecar.opentelemetry.io/inject: "false"
+    autoscaling:
+        keda:
+            prometheusServerAddress: https://monitoring.googleapis.com/v1/projects/{{ .Values.global.gcp.projectId }}/location/global/prometheus
+            triggerAuthentication:
+                spec:
+                    podIdentity:
+                        provider: gcp
+        type: keda
     configmap:
         data:
             com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration.config: |
-                authenticationEnabled=B"false"
+                authenticationEnabled=B"true"
                 httpSSLEnabled=B"false"
                 networkHostAddresses=["$[env:ELASTICSEARCH_URL]"]
                 operationMode="REMOTE"
+                password="$[env:ELASTICSEARCH_PASSWORD]"
                 productionModeEnabled=B"true"
+                username="$[env:ELASTICSEARCH_USERNAME]"
             com.liferay.portal.search.elasticsearch8.configuration.ElasticsearchConfiguration.config: |
-                authenticationEnabled=B"false"
+                authenticationEnabled=B"true"
                 httpSSLEnabled=B"false"
                 networkHostAddresses=["$[env:ELASTICSEARCH_URL]"]
+                password="$[env:ELASTICSEARCH_PASSWORD]"
                 productionModeEnabled=B"true"
+                username="$[env:ELASTICSEARCH_USERNAME]"
             com.liferay.portal.store.gcs.configuration.GCSStoreConfiguration.config: |
                 bucketName="$[env:LIFERAY_GCS_BUCKET_NAME]"
     customEnv:
@@ -74,6 +88,28 @@ liferay-default:
                     runAsNonRoot: true
                     seccompProfile:
                         type: RuntimeDefault
+        x-wait-for-elasticsearch:
+            -   command:
+                    -   sh
+                    -   /liferay-init-scripts/wait-for-elasticsearch.sh
+                envFrom:
+                    -   secretRef:
+                            name: elasticsearch-connection-details
+                image: busybox:1.36
+                name: wait-for-elasticsearch
+                securityContext:
+                    allowPrivilegeEscalation: false
+                    capabilities:
+                        drop:
+                            -   ALL
+                    runAsNonRoot: true
+                    runAsUser: 1000
+                    seccompProfile:
+                        type: RuntimeDefault
+                volumeMounts:
+                    -   mountPath: /liferay-init-scripts/wait-for-elasticsearch.sh
+                        name: liferay-init-scripts-gcp
+                        subPath: wait-for-elasticsearch.sh
     customLabels:
         origin: liferay-gcp
     customVolumeMounts:
@@ -96,6 +132,11 @@ liferay-default:
             -   name: liferay-license
                 secret:
                     secretName: liferay-license
+        x-liferay-init-scripts-gcp:
+            -   configMap:
+                    defaultMode: 0755
+                    name: liferay-init-scripts-gcp
+                name: liferay-init-scripts-gcp
     network:
         enabled: true
         hostnames: []
@@ -103,9 +144,9 @@ liferay-default:
             backendRequest: 300s
             request: 300s
     overlay:
-        bucketName: ""
-        driver: gcsfuse.csi.storage.gke.io
+        copy: []
         enabled: false
+        type: gcs
     podSecurityContext:
         fsGroup: 1000
         runAsNonRoot: true

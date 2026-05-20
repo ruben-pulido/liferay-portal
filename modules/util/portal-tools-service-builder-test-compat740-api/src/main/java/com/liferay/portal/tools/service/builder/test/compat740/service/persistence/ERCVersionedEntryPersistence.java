@@ -33,51 +33,10 @@ public interface ERCVersionedEntryPersistence
 	 */
 
 	/**
-	 * Returns all the erc versioned entries where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the erc versioned entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @return the range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the erc versioned entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -135,55 +94,10 @@ public interface ERCVersionedEntryPersistence
 	public int countByUuid(String uuid);
 
 	/**
-	 * Returns all the erc versioned entries where uuid = &#63; and head = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param head the head
-	 * @return the matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_Head(
-		String uuid, boolean head);
-
-	/**
-	 * Returns a range of all the erc versioned entries where uuid = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param head the head
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @return the range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_Head(
-		String uuid, boolean head, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param head the head
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_Head(
-		String uuid, boolean head, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -246,55 +160,10 @@ public interface ERCVersionedEntryPersistence
 	public int countByUuid_Head(String uuid, boolean head);
 
 	/**
-	 * Returns all the erc versioned entries where uuid = &#63; and groupId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUUID_G(
-		String uuid, long groupId);
-
-	/**
-	 * Returns a range of all the erc versioned entries where uuid = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @return the range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUUID_G(
-		String uuid, long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUUID_G(
-		String uuid, long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -370,17 +239,6 @@ public interface ERCVersionedEntryPersistence
 		throws NoSuchERCVersionedEntryException;
 
 	/**
-	 * Returns the erc versioned entry where uuid = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @return the matching erc versioned entry, or <code>null</code> if a matching erc versioned entry could not be found
-	 */
-	public ERCVersionedEntry fetchByUUID_G_Head(
-		String uuid, long groupId, boolean head);
-
-	/**
 	 * Returns the erc versioned entry where uuid = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -415,55 +273,10 @@ public interface ERCVersionedEntryPersistence
 	public int countByUUID_G_Head(String uuid, long groupId, boolean head);
 
 	/**
-	 * Returns all the erc versioned entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the erc versioned entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @return the range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -526,58 +339,10 @@ public interface ERCVersionedEntryPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param head the head
-	 * @return the matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_C_Head(
-		String uuid, long companyId, boolean head);
-
-	/**
-	 * Returns a range of all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param head the head
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @return the range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_C_Head(
-		String uuid, long companyId, boolean head, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param head the head
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByUuid_C_Head(
-		String uuid, long companyId, boolean head, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -645,55 +410,10 @@ public interface ERCVersionedEntryPersistence
 	public int countByUuid_C_Head(String uuid, long companyId, boolean head);
 
 	/**
-	 * Returns all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @return the matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByERC_G(
-		String externalReferenceCode, long groupId);
-
-	/**
-	 * Returns a range of all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @return the range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByERC_G(
-		String externalReferenceCode, long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching erc versioned entries
-	 */
-	public java.util.List<ERCVersionedEntry> findByERC_G(
-		String externalReferenceCode, long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -769,17 +489,6 @@ public interface ERCVersionedEntryPersistence
 		throws NoSuchERCVersionedEntryException;
 
 	/**
-	 * Returns the erc versioned entry where externalReferenceCode = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @return the matching erc versioned entry, or <code>null</code> if a matching erc versioned entry could not be found
-	 */
-	public ERCVersionedEntry fetchByERC_G_Head(
-		String externalReferenceCode, long groupId, boolean head);
-
-	/**
 	 * Returns the erc versioned entry where externalReferenceCode = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -826,14 +535,6 @@ public interface ERCVersionedEntryPersistence
 		throws NoSuchERCVersionedEntryException;
 
 	/**
-	 * Returns the erc versioned entry where headId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param headId the head ID
-	 * @return the matching erc versioned entry, or <code>null</code> if a matching erc versioned entry could not be found
-	 */
-	public ERCVersionedEntry fetchByHeadId(long headId);
-
-	/**
 	 * Returns the erc versioned entry where headId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param headId the head ID
@@ -858,21 +559,6 @@ public interface ERCVersionedEntryPersistence
 	 * @return the number of matching erc versioned entries
 	 */
 	public int countByHeadId(long headId);
-
-	/**
-	 * Caches the erc versioned entry in the entity cache if it is enabled.
-	 *
-	 * @param ercVersionedEntry the erc versioned entry
-	 */
-	public void cacheResult(ERCVersionedEntry ercVersionedEntry);
-
-	/**
-	 * Caches the erc versioned entries in the entity cache if it is enabled.
-	 *
-	 * @param ercVersionedEntries the erc versioned entries
-	 */
-	public void cacheResult(
-		java.util.List<ERCVersionedEntry> ercVersionedEntries);
 
 	/**
 	 * Creates a new erc versioned entry with the primary key. Does not add the erc versioned entry to the database.
@@ -913,72 +599,384 @@ public interface ERCVersionedEntryPersistence
 	public ERCVersionedEntry fetchByPrimaryKey(long ercVersionedEntryId);
 
 	/**
-	 * Returns all the erc versioned entries.
+	 * Returns the erc versioned entry where uuid = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the erc versioned entries
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @return the matching erc versioned entry, or <code>null</code> if a matching erc versioned entry could not be found
 	 */
-	public java.util.List<ERCVersionedEntry> findAll();
+	public default ERCVersionedEntry fetchByUUID_G_Head(
+		String uuid, long groupId, boolean head) {
+
+		return fetchByUUID_G_Head(uuid, groupId, head, true);
+	}
 
 	/**
-	 * Returns a range of all the erc versioned entries.
+	 * Returns the erc versioned entry where externalReferenceCode = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @return the matching erc versioned entry, or <code>null</code> if a matching erc versioned entry could not be found
+	 */
+	public default ERCVersionedEntry fetchByERC_G_Head(
+		String externalReferenceCode, long groupId, boolean head) {
+
+		return fetchByERC_G_Head(externalReferenceCode, groupId, head, true);
+	}
+
+	/**
+	 * Returns the erc versioned entry where headId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param headId the head ID
+	 * @return the matching erc versioned entry, or <code>null</code> if a matching erc versioned entry could not be found
+	 */
+	public default ERCVersionedEntry fetchByHeadId(long headId) {
+		return fetchByHeadId(headId, true);
+	}
+
+	/**
+	 * Returns all the erc versioned entries where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the erc versioned entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of erc versioned entries
 	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @return the range of erc versioned entries
+	 * @return the range of matching erc versioned entries
 	 */
-	public java.util.List<ERCVersionedEntry> findAll(int start, int end);
+	public default java.util.List<ERCVersionedEntry> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the erc versioned entries.
+	 * Returns an ordered range of all the erc versioned entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of erc versioned entries
 	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of erc versioned entries
+	 * @return the ordered range of matching erc versioned entries
 	 */
-	public java.util.List<ERCVersionedEntry> findAll(
-		int start, int end,
+	public default java.util.List<ERCVersionedEntry> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the erc versioned entries.
+	 * Returns all the erc versioned entries where uuid = &#63; and head = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param head the head
+	 * @return the matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid_Head(
+		String uuid, boolean head) {
+
+		return findByUuid_Head(
+			uuid, head, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the erc versioned entries where uuid = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param head the head
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @return the range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid_Head(
+		String uuid, boolean head, int start, int end) {
+
+		return findByUuid_Head(uuid, head, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param head the head
 	 * @param start the lower bound of the range of erc versioned entries
 	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of erc versioned entries
+	 * @return the ordered range of matching erc versioned entries
 	 */
-	public java.util.List<ERCVersionedEntry> findAll(
-		int start, int end,
+	public default java.util.List<ERCVersionedEntry> findByUuid_Head(
+		String uuid, boolean head, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByUuid_Head(uuid, head, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the erc versioned entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of erc versioned entries.
+	 * Returns all the erc versioned entries where uuid = &#63; and groupId = &#63;.
 	 *
-	 * @return the number of erc versioned entries
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching erc versioned entries
 	 */
-	public int countAll();
+	public default java.util.List<ERCVersionedEntry> findByUUID_G(
+		String uuid, long groupId) {
+
+		return findByUUID_G(
+			uuid, groupId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the erc versioned entries where uuid = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @return the range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUUID_G(
+		String uuid, long groupId, int start, int end) {
+
+		return findByUUID_G(uuid, groupId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUUID_G(
+		String uuid, long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
+			orderByComparator) {
+
+		return findByUUID_G(uuid, groupId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the erc versioned entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the erc versioned entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @return the range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
+			orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param head the head
+	 * @return the matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid_C_Head(
+		String uuid, long companyId, boolean head) {
+
+		return findByUuid_C_Head(
+			uuid, companyId, head,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param head the head
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @return the range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid_C_Head(
+		String uuid, long companyId, boolean head, int start, int end) {
+
+		return findByUuid_C_Head(uuid, companyId, head, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param head the head
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByUuid_C_Head(
+		String uuid, long companyId, boolean head, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
+			orderByComparator) {
+
+		return findByUuid_C_Head(
+			uuid, companyId, head, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @return the matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByERC_G(
+		String externalReferenceCode, long groupId) {
+
+		return findByERC_G(
+			externalReferenceCode, groupId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @return the range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByERC_G(
+		String externalReferenceCode, long groupId, int start, int end) {
+
+		return findByERC_G(
+			externalReferenceCode, groupId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.ERCVersionedEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of erc versioned entries
+	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching erc versioned entries
+	 */
+	public default java.util.List<ERCVersionedEntry> findByERC_G(
+		String externalReferenceCode, long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<ERCVersionedEntry>
+			orderByComparator) {
+
+		return findByERC_G(
+			externalReferenceCode, groupId, start, end, orderByComparator,
+			true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1683158314
+// LIFERAY-SERVICE-BUILDER-HASH:477977821

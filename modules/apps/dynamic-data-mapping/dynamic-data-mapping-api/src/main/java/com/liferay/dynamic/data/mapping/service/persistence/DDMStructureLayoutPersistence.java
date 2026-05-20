@@ -35,51 +35,10 @@ public interface DDMStructureLayoutPersistence
 	 */
 
 	/**
-	 * Returns all the ddm structure layouts where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the ddm structure layouts where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @return the range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the ddm structure layouts where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the ddm structure layouts where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -148,15 +107,6 @@ public interface DDMStructureLayoutPersistence
 		throws NoSuchStructureLayoutException;
 
 	/**
-	 * Returns the ddm structure layout where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching ddm structure layout, or <code>null</code> if a matching ddm structure layout could not be found
-	 */
-	public DDMStructureLayout fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the ddm structure layout where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -187,55 +137,10 @@ public interface DDMStructureLayoutPersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the ddm structure layouts where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the ddm structure layouts where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @return the range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the ddm structure layouts where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the ddm structure layouts where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -298,51 +203,10 @@ public interface DDMStructureLayoutPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the ddm structure layouts where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByGroupId(long groupId);
-
-	/**
-	 * Returns a range of all the ddm structure layouts where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @return the range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByGroupId(
-		long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByGroupId(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -400,52 +264,10 @@ public interface DDMStructureLayoutPersistence
 	public int countByGroupId(long groupId);
 
 	/**
-	 * Returns all the ddm structure layouts where structureLayoutKey = &#63;.
-	 *
-	 * @param structureLayoutKey the structure layout key
-	 * @return the matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByStructureLayoutKey(
-		String structureLayoutKey);
-
-	/**
-	 * Returns a range of all the ddm structure layouts where structureLayoutKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param structureLayoutKey the structure layout key
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @return the range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByStructureLayoutKey(
-		String structureLayoutKey, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the ddm structure layouts where structureLayoutKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param structureLayoutKey the structure layout key
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByStructureLayoutKey(
-		String structureLayoutKey, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the ddm structure layouts where structureLayoutKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param structureLayoutKey the structure layout key
@@ -513,15 +335,6 @@ public interface DDMStructureLayoutPersistence
 		throws NoSuchStructureLayoutException;
 
 	/**
-	 * Returns the ddm structure layout where structureVersionId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param structureVersionId the structure version ID
-	 * @return the matching ddm structure layout, or <code>null</code> if a matching ddm structure layout could not be found
-	 */
-	public DDMStructureLayout fetchByStructureVersionId(
-		long structureVersionId);
-
-	/**
 	 * Returns the ddm structure layout where structureVersionId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param structureVersionId the structure version ID
@@ -550,55 +363,10 @@ public interface DDMStructureLayoutPersistence
 	public int countByStructureVersionId(long structureVersionId);
 
 	/**
-	 * Returns all the ddm structure layouts where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @return the matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByG_C(
-		long groupId, long classNameId);
-
-	/**
-	 * Returns a range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @return the range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByG_C(
-		long groupId, long classNameId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByG_C(
-		long groupId, long classNameId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -674,17 +442,6 @@ public interface DDMStructureLayoutPersistence
 		throws NoSuchStructureLayoutException;
 
 	/**
-	 * Returns the ddm structure layout where groupId = &#63; and classNameId = &#63; and structureLayoutKey = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param structureLayoutKey the structure layout key
-	 * @return the matching ddm structure layout, or <code>null</code> if a matching ddm structure layout could not be found
-	 */
-	public DDMStructureLayout fetchByG_C_S(
-		long groupId, long classNameId, String structureLayoutKey);
-
-	/**
 	 * Returns the ddm structure layout where groupId = &#63; and classNameId = &#63; and structureLayoutKey = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -721,60 +478,10 @@ public interface DDMStructureLayoutPersistence
 		long groupId, long classNameId, String structureLayoutKey);
 
 	/**
-	 * Returns all the ddm structure layouts where groupId = &#63; and classNameId = &#63; and structureVersionId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param structureVersionId the structure version ID
-	 * @return the matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByG_C_SV(
-		long groupId, long classNameId, long structureVersionId);
-
-	/**
-	 * Returns a range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63; and structureVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param structureVersionId the structure version ID
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @return the range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByG_C_SV(
-		long groupId, long classNameId, long structureVersionId, int start,
-		int end);
-
-	/**
 	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63; and structureVersionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param structureVersionId the structure version ID
-	 * @param start the lower bound of the range of ddm structure layouts
-	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddm structure layouts
-	 */
-	public java.util.List<DDMStructureLayout> findByG_C_SV(
-		long groupId, long classNameId, long structureVersionId, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63; and structureVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -845,21 +552,6 @@ public interface DDMStructureLayoutPersistence
 		long groupId, long classNameId, long structureVersionId);
 
 	/**
-	 * Caches the ddm structure layout in the entity cache if it is enabled.
-	 *
-	 * @param ddmStructureLayout the ddm structure layout
-	 */
-	public void cacheResult(DDMStructureLayout ddmStructureLayout);
-
-	/**
-	 * Caches the ddm structure layouts in the entity cache if it is enabled.
-	 *
-	 * @param ddmStructureLayouts the ddm structure layouts
-	 */
-	public void cacheResult(
-		java.util.List<DDMStructureLayout> ddmStructureLayouts);
-
-	/**
 	 * Creates a new ddm structure layout with the primary key. Does not add the ddm structure layout to the database.
 	 *
 	 * @param structureLayoutId the primary key for the new ddm structure layout
@@ -898,72 +590,382 @@ public interface DDMStructureLayoutPersistence
 	public DDMStructureLayout fetchByPrimaryKey(long structureLayoutId);
 
 	/**
-	 * Returns all the ddm structure layouts.
+	 * Returns the ddm structure layout where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the ddm structure layouts
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching ddm structure layout, or <code>null</code> if a matching ddm structure layout could not be found
 	 */
-	public java.util.List<DDMStructureLayout> findAll();
+	public default DDMStructureLayout fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the ddm structure layouts.
+	 * Returns the ddm structure layout where structureVersionId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param structureVersionId the structure version ID
+	 * @return the matching ddm structure layout, or <code>null</code> if a matching ddm structure layout could not be found
+	 */
+	public default DDMStructureLayout fetchByStructureVersionId(
+		long structureVersionId) {
+
+		return fetchByStructureVersionId(structureVersionId, true);
+	}
+
+	/**
+	 * Returns the ddm structure layout where groupId = &#63; and classNameId = &#63; and structureLayoutKey = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param structureLayoutKey the structure layout key
+	 * @return the matching ddm structure layout, or <code>null</code> if a matching ddm structure layout could not be found
+	 */
+	public default DDMStructureLayout fetchByG_C_S(
+		long groupId, long classNameId, String structureLayoutKey) {
+
+		return fetchByG_C_S(groupId, classNameId, structureLayoutKey, true);
+	}
+
+	/**
+	 * Returns all the ddm structure layouts where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the ddm structure layouts where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of ddm structure layouts
 	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
-	 * @return the range of ddm structure layouts
+	 * @return the range of matching ddm structure layouts
 	 */
-	public java.util.List<DDMStructureLayout> findAll(int start, int end);
+	public default java.util.List<DDMStructureLayout> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the ddm structure layouts.
+	 * Returns an ordered range of all the ddm structure layouts where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of ddm structure layouts
 	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of ddm structure layouts
+	 * @return the ordered range of matching ddm structure layouts
 	 */
-	public java.util.List<DDMStructureLayout> findAll(
-		int start, int end,
+	public default java.util.List<DDMStructureLayout> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the ddm structure layouts.
+	 * Returns all the ddm structure layouts where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the ddm structure layouts where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLayoutModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @return the range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the ddm structure layouts where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of ddm structure layouts
 	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of ddm structure layouts
+	 * @return the ordered range of matching ddm structure layouts
 	 */
-	public java.util.List<DDMStructureLayout> findAll(
-		int start, int end,
+	public default java.util.List<DDMStructureLayout> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the ddm structure layouts from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of ddm structure layouts.
+	 * Returns all the ddm structure layouts where groupId = &#63;.
 	 *
-	 * @return the number of ddm structure layouts
+	 * @param groupId the group ID
+	 * @return the matching ddm structure layouts
 	 */
-	public int countAll();
+	public default java.util.List<DDMStructureLayout> findByGroupId(
+		long groupId) {
+
+		return findByGroupId(
+			groupId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the ddm structure layouts where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @return the range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByGroupId(
+		long groupId, int start, int end) {
+
+		return findByGroupId(groupId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByGroupId(
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
+			orderByComparator) {
+
+		return findByGroupId(groupId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the ddm structure layouts where structureLayoutKey = &#63;.
+	 *
+	 * @param structureLayoutKey the structure layout key
+	 * @return the matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByStructureLayoutKey(
+		String structureLayoutKey) {
+
+		return findByStructureLayoutKey(
+			structureLayoutKey,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the ddm structure layouts where structureLayoutKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param structureLayoutKey the structure layout key
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @return the range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByStructureLayoutKey(
+		String structureLayoutKey, int start, int end) {
+
+		return findByStructureLayoutKey(
+			structureLayoutKey, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the ddm structure layouts where structureLayoutKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param structureLayoutKey the structure layout key
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByStructureLayoutKey(
+		String structureLayoutKey, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
+			orderByComparator) {
+
+		return findByStructureLayoutKey(
+			structureLayoutKey, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the ddm structure layouts where groupId = &#63; and classNameId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @return the matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByG_C(
+		long groupId, long classNameId) {
+
+		return findByG_C(
+			groupId, classNameId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @return the range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByG_C(
+		long groupId, long classNameId, int start, int end) {
+
+		return findByG_C(groupId, classNameId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByG_C(
+		long groupId, long classNameId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
+			orderByComparator) {
+
+		return findByG_C(
+			groupId, classNameId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the ddm structure layouts where groupId = &#63; and classNameId = &#63; and structureVersionId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param structureVersionId the structure version ID
+	 * @return the matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByG_C_SV(
+		long groupId, long classNameId, long structureVersionId) {
+
+		return findByG_C_SV(
+			groupId, classNameId, structureVersionId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63; and structureVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param structureVersionId the structure version ID
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @return the range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByG_C_SV(
+		long groupId, long classNameId, long structureVersionId, int start,
+		int end) {
+
+		return findByG_C_SV(
+			groupId, classNameId, structureVersionId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the ddm structure layouts where groupId = &#63; and classNameId = &#63; and structureVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLayoutModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param structureVersionId the structure version ID
+	 * @param start the lower bound of the range of ddm structure layouts
+	 * @param end the upper bound of the range of ddm structure layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching ddm structure layouts
+	 */
+	public default java.util.List<DDMStructureLayout> findByG_C_SV(
+		long groupId, long classNameId, long structureVersionId, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLayout>
+			orderByComparator) {
+
+		return findByG_C_SV(
+			groupId, classNameId, structureVersionId, start, end,
+			orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-202572028
+// LIFERAY-SERVICE-BUILDER-HASH:110598399

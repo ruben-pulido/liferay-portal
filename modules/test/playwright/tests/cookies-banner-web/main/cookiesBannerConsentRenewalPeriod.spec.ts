@@ -6,7 +6,6 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {consentManagerConfigurationPageTest} from '../../../fixtures/consentManagerConfigurationPageTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
 import {ConsentManagerConfigurationPage} from '../../../pages/cookies-banner-web/ConsentManagerConfigurationPage';
@@ -33,10 +32,6 @@ const allCookieKeys = [...optionalCookieKeys, ...requiredCookieKeys];
 
 export const test = mergeTests(
 	consentManagerConfigurationPageTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-		'LPD-75032': {enabled: true},
-	}),
 	loginTest(),
 	systemSettingsPageTest
 );
@@ -60,9 +55,9 @@ test.beforeEach(async ({page}) => {
 	});
 
 	await test.step('Verify Cookies Banner appears, then Accept All cookies', async () => {
-		const cookiesBanner = page.getByRole('dialog', {
-			name: 'banner cookies',
-		});
+		const cookiesBanner = page.locator(
+			'div[role="dialog"][aria-modal="true"]'
+		);
 
 		await expect(cookiesBanner).toBeVisible();
 
@@ -174,9 +169,9 @@ test(
 
 		await page.waitForTimeout(1000);
 
-		const cookiesBanner = page.getByRole('dialog', {
-			name: 'banner cookies',
-		});
+		const cookiesBanner = page.locator(
+			'div[role="dialog"][aria-modal="true"]'
+		);
 
 		await expect(cookiesBanner).not.toBeVisible();
 
@@ -195,6 +190,50 @@ test(
 		await consentManagerConfigurationPage.updateButton.click();
 
 		await expect(cookiesBanner).toBeVisible();
+	}
+);
+
+test(
+	'Verify clicking Forced Re-Consent button retriggers the Cookies Banner',
+	{tag: '@LPD-86096'},
+	async ({consentManagerConfigurationPage, page}) => {
+		const cookiesBanner = page.locator(
+			'div[role="dialog"][aria-modal="true"]'
+		);
+
+		await test.step('Initial state: Verify Cookies Banner is not visible after acceptance', async () => {
+			await expect(cookiesBanner).not.toBeVisible();
+		});
+
+		await test.step('Click Forced Re-Consent and accept the confirmation dialog', async () => {
+			page.once('dialog', async (dialogWindow) => {
+				expect(dialogWindow.message()).toContain(
+					'You are about to force the re-consent'
+				);
+
+				await dialogWindow.accept();
+			});
+
+			await consentManagerConfigurationPage.forcedReconsentButton.click();
+		});
+
+		await test.step('Verify success alert and reappearance of Cookies Banner', async () => {
+			await waitForAlert(page);
+
+			await expect(cookiesBanner).toBeVisible();
+		});
+
+		await test.step('Verify consent cookies were cleared', async () => {
+			const cookies = await page.context().cookies();
+
+			for (const cookieKey of optionalCookieKeys) {
+				const cookie = cookies.find(
+					(cookie) => cookie.name === cookieKey
+				);
+
+				expect(cookie).toBeUndefined();
+			}
+		});
 	}
 );
 
@@ -302,7 +341,7 @@ test(
 			});
 
 			await page
-				.getByRole('dialog', {name: 'banner cookies'})
+				.locator('div[role="dialog"][aria-modal="true"]')
 				.waitFor({state: 'visible'});
 		});
 
@@ -446,7 +485,7 @@ async function validateConsentRenewalPeriodValue(
 		await waitForAlert(consentManagerConfigurationPage.page);
 
 		await consentManagerConfigurationPage.page
-			.getByRole('dialog', {name: 'banner cookies'})
+			.locator('div[role="dialog"][aria-modal="true"]')
 			.waitFor({state: 'visible'});
 
 		if (dissent) {

@@ -1,6 +1,7 @@
 @component-name = "portal-commerce"
 definition {
 
+	property custom.properties = "feature.flag.LPD-11235=true";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Shopping Experience";
@@ -10,6 +11,10 @@ definition {
 
 		task ("Enable private pages") {
 			PagesAdmin.enablePrivatePages();
+		}
+
+		task ("Enable CKE4") {
+			PagesAdmin.enableCKE4();
 		}
 	}
 

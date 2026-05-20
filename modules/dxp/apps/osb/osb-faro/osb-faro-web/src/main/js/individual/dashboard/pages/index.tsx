@@ -11,7 +11,7 @@ import {getMatchedRoute, Routes} from 'shared/util/router';
 import {sub} from 'shared/util/lang';
 import {Switch, useParams} from 'react-router-dom';
 import {useChannelContext} from 'shared/context/channel';
-import {useDataSource} from 'shared/hooks/useDataSource';
+import {useDataSources} from 'shared/context/dataSources';
 
 const Distribution = lazy(
 	() =>
@@ -72,9 +72,12 @@ const NAV_ITEMS = [
 ];
 
 const Dashboard: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
-	const dataSourceStates = useDataSource();
+	const dataSourceStates = useDataSources();
 	const {selectedChannel} = useChannelContext();
-	const {channelId, groupId} = useParams();
+	const {channelId = '', groupId = ''} = useParams<{
+		channelId: string;
+		groupId: string;
+	}>();
 	const matchedRoute = getMatchedRoute(NAV_ITEMS);
 
 	return (
@@ -114,7 +117,7 @@ const Dashboard: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
 									[Liferay.Language.get('active-individuals')]
 								) as string
 							}
-							disabled={dataSourceStates.empty}
+							disabled={!!dataSourceStates.empty}
 							subtitle={selectedChannel?.name}
 							title={Liferay.Language.get(
 								'individuals-dashboard'
@@ -128,7 +131,7 @@ const Dashboard: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
 				<BasePage.SubHeader>
 					<div className='d-flex justify-content-end w-100'>
 						<DownloadStaticCSVReport
-							disabled={dataSourceStates.empty}
+							disabled={!!dataSourceStates.empty}
 							type={CSVType.Individual}
 							typeLang={Liferay.Language.get('individuals')}
 						/>

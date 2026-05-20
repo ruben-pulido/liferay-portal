@@ -75,7 +75,6 @@ export default function ContentContainer({
 				}}
 				placeholder=""
 				required
-				selectedLocale={selectedLocale}
 				translations={values.subject}
 			/>
 

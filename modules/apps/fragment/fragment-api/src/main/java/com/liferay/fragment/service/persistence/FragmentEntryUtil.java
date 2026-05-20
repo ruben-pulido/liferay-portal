@@ -36,6 +36,20 @@ public class FragmentEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<FragmentEntry> fragmentEntries) {
+		getPersistence().cacheResult(fragmentEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(FragmentEntry fragmentEntry) {
+		getPersistence().cacheResult(fragmentEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,58 +125,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -229,64 +195,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where uuid = &#63; and head = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_Head(
-		String uuid, boolean head) {
-
-		return getPersistence().findByUuid_Head(uuid, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where uuid = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_Head(
-		String uuid, boolean head, int start, int end) {
-
-		return getPersistence().findByUuid_Head(uuid, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where uuid = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_Head(
-		String uuid, boolean head, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByUuid_Head(
-			uuid, head, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where uuid = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -362,62 +274,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where uuid = &#63; and groupId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUUID_G(String uuid, long groupId) {
-		return getPersistence().findByUUID_G(uuid, groupId);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where uuid = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUUID_G(
-		String uuid, long groupId, int start, int end) {
-
-		return getPersistence().findByUUID_G(uuid, groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where uuid = &#63; and groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUUID_G(
-		String uuid, long groupId, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByUUID_G(
-			uuid, groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where uuid = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -509,20 +369,6 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns the fragment entry where uuid = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
-	 */
-	public static FragmentEntry fetchByUUID_G_Head(
-		String uuid, long groupId, boolean head) {
-
-		return getPersistence().fetchByUUID_G_Head(uuid, groupId, head);
-	}
-
-	/**
 	 * Returns the fragment entry where uuid = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -568,64 +414,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -701,68 +493,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where uuid = &#63; and companyId = &#63; and head = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_C_Head(
-		String uuid, long companyId, boolean head) {
-
-		return getPersistence().findByUuid_C_Head(uuid, companyId, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where uuid = &#63; and companyId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_C_Head(
-		String uuid, long companyId, boolean head, int start, int end) {
-
-		return getPersistence().findByUuid_C_Head(
-			uuid, companyId, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where uuid = &#63; and companyId = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByUuid_C_Head(
-		String uuid, long companyId, boolean head, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByUuid_C_Head(
-			uuid, companyId, head, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where uuid = &#63; and companyId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -848,59 +582,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -968,64 +653,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and head = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByGroupId_Head(
-		long groupId, boolean head) {
-
-		return getPersistence().findByGroupId_Head(groupId, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByGroupId_Head(
-		long groupId, boolean head, int start, int end) {
-
-		return getPersistence().findByGroupId_Head(groupId, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByGroupId_Head(
-		long groupId, boolean head, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByGroupId_Head(
-			groupId, head, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1101,63 +732,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where fragmentCollectionId = &#63;.
-	 *
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByFragmentCollectionId(
-		long fragmentCollectionId) {
-
-		return getPersistence().findByFragmentCollectionId(
-			fragmentCollectionId);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where fragmentCollectionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByFragmentCollectionId(
-		long fragmentCollectionId, int start, int end) {
-
-		return getPersistence().findByFragmentCollectionId(
-			fragmentCollectionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where fragmentCollectionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByFragmentCollectionId(
-		long fragmentCollectionId, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByFragmentCollectionId(
-			fragmentCollectionId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where fragmentCollectionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param fragmentCollectionId the fragment collection ID
@@ -1230,66 +808,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where fragmentCollectionId = &#63; and head = &#63;.
-	 *
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByFragmentCollectionId_Head(
-		long fragmentCollectionId, boolean head) {
-
-		return getPersistence().findByFragmentCollectionId_Head(
-			fragmentCollectionId, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where fragmentCollectionId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByFragmentCollectionId_Head(
-		long fragmentCollectionId, boolean head, int start, int end) {
-
-		return getPersistence().findByFragmentCollectionId_Head(
-			fragmentCollectionId, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where fragmentCollectionId = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByFragmentCollectionId_Head(
-		long fragmentCollectionId, boolean head, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByFragmentCollectionId_Head(
-			fragmentCollectionId, head, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where fragmentCollectionId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param fragmentCollectionId the fragment collection ID
@@ -1372,56 +894,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where type = &#63;.
-	 *
-	 * @param type the type
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByType(int type) {
-		return getPersistence().findByType(type);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByType(int type, int start, int end) {
-		return getPersistence().findByType(type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByType(
-		int type, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByType(type, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param type the type
@@ -1488,62 +964,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where type = &#63; and head = &#63;.
-	 *
-	 * @param type the type
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByType_Head(int type, boolean head) {
-		return getPersistence().findByType_Head(type, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where type = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByType_Head(
-		int type, boolean head, int start, int end) {
-
-		return getPersistence().findByType_Head(type, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where type = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByType_Head(
-		int type, boolean head, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByType_Head(
-			type, head, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where type = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param type the type
@@ -1619,65 +1043,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI(
-		long groupId, long fragmentCollectionId) {
-
-		return getPersistence().findByG_FCI(groupId, fragmentCollectionId);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI(
-		long groupId, long fragmentCollectionId, int start, int end) {
-
-		return getPersistence().findByG_FCI(
-			groupId, fragmentCollectionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI(
-		long groupId, long fragmentCollectionId, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FCI(
-			groupId, fragmentCollectionId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1754,70 +1123,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and head = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_Head(
-		long groupId, long fragmentCollectionId, boolean head) {
-
-		return getPersistence().findByG_FCI_Head(
-			groupId, fragmentCollectionId, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_Head(
-		long groupId, long fragmentCollectionId, boolean head, int start,
-		int end) {
-
-		return getPersistence().findByG_FCI_Head(
-			groupId, fragmentCollectionId, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_Head(
-		long groupId, long fragmentCollectionId, boolean head, int start,
-		int end, OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FCI_Head(
-			groupId, fragmentCollectionId, head, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1905,65 +1214,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentEntryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentEntryKey the fragment entry key
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FEK(
-		long groupId, String fragmentEntryKey) {
-
-		return getPersistence().findByG_FEK(groupId, fragmentEntryKey);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentEntryKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentEntryKey the fragment entry key
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FEK(
-		long groupId, String fragmentEntryKey, int start, int end) {
-
-		return getPersistence().findByG_FEK(
-			groupId, fragmentEntryKey, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentEntryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentEntryKey the fragment entry key
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FEK(
-		long groupId, String fragmentEntryKey, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FEK(
-			groupId, fragmentEntryKey, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentEntryKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2057,21 +1311,6 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns the fragment entry where groupId = &#63; and fragmentEntryKey = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentEntryKey the fragment entry key
-	 * @param head the head
-	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
-	 */
-	public static FragmentEntry fetchByG_FEK_Head(
-		long groupId, String fragmentEntryKey, boolean head) {
-
-		return getPersistence().fetchByG_FEK_Head(
-			groupId, fragmentEntryKey, head);
-	}
-
-	/**
 	 * Returns the fragment entry where groupId = &#63; and fragmentEntryKey = &#63; and head = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -2138,7 +1377,7 @@ public class FragmentEntryUtil {
 	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2160,7 +1399,7 @@ public class FragmentEntryUtil {
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2183,7 +1422,7 @@ public class FragmentEntryUtil {
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2290,7 +1529,7 @@ public class FragmentEntryUtil {
 	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2313,7 +1552,7 @@ public class FragmentEntryUtil {
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2339,7 +1578,7 @@ public class FragmentEntryUtil {
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2432,69 +1671,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T(
-		long groupId, long fragmentCollectionId, int type) {
-
-		return getPersistence().findByG_FCI_T(
-			groupId, fragmentCollectionId, type);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T(
-		long groupId, long fragmentCollectionId, int type, int start, int end) {
-
-		return getPersistence().findByG_FCI_T(
-			groupId, fragmentCollectionId, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T(
-		long groupId, long fragmentCollectionId, int type, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FCI_T(
-			groupId, fragmentCollectionId, type, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2581,75 +1761,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and head = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_Head(
-		long groupId, long fragmentCollectionId, int type, boolean head) {
-
-		return getPersistence().findByG_FCI_T_Head(
-			groupId, fragmentCollectionId, type, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_Head(
-		long groupId, long fragmentCollectionId, int type, boolean head,
-		int start, int end) {
-
-		return getPersistence().findByG_FCI_T_Head(
-			groupId, fragmentCollectionId, type, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_Head(
-		long groupId, long fragmentCollectionId, int type, boolean head,
-		int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FCI_T_Head(
-			groupId, fragmentCollectionId, type, head, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2742,71 +1857,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param status the status
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_S(
-		long groupId, long fragmentCollectionId, int status) {
-
-		return getPersistence().findByG_FCI_S(
-			groupId, fragmentCollectionId, status);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param status the status
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_S(
-		long groupId, long fragmentCollectionId, int status, int start,
-		int end) {
-
-		return getPersistence().findByG_FCI_S(
-			groupId, fragmentCollectionId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param status the status
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_S(
-		long groupId, long fragmentCollectionId, int status, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FCI_S(
-			groupId, fragmentCollectionId, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2893,75 +1947,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63; and head = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param status the status
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_S_Head(
-		long groupId, long fragmentCollectionId, int status, boolean head) {
-
-		return getPersistence().findByG_FCI_S_Head(
-			groupId, fragmentCollectionId, status, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param status the status
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_S_Head(
-		long groupId, long fragmentCollectionId, int status, boolean head,
-		int start, int end) {
-
-		return getPersistence().findByG_FCI_S_Head(
-			groupId, fragmentCollectionId, status, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param status the status
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_S_Head(
-		long groupId, long fragmentCollectionId, int status, boolean head,
-		int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FCI_S_Head(
-			groupId, fragmentCollectionId, status, head, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3073,7 +2062,7 @@ public class FragmentEntryUtil {
 	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3096,7 +2085,7 @@ public class FragmentEntryUtil {
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3122,7 +2111,7 @@ public class FragmentEntryUtil {
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3236,7 +2225,7 @@ public class FragmentEntryUtil {
 	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and status = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3260,7 +2249,7 @@ public class FragmentEntryUtil {
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and status = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3287,7 +2276,7 @@ public class FragmentEntryUtil {
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and name LIKE &#63; and status = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3390,75 +2379,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param status the status
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_S(
-		long groupId, long fragmentCollectionId, int type, int status) {
-
-		return getPersistence().findByG_FCI_T_S(
-			groupId, fragmentCollectionId, type, status);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param status the status
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_S(
-		long groupId, long fragmentCollectionId, int type, int status,
-		int start, int end) {
-
-		return getPersistence().findByG_FCI_T_S(
-			groupId, fragmentCollectionId, type, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param status the status
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_S(
-		long groupId, long fragmentCollectionId, int type, int status,
-		int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FCI_T_S(
-			groupId, fragmentCollectionId, type, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3551,79 +2475,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; and head = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param status the status
-	 * @param head the head
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_S_Head(
-		long groupId, long fragmentCollectionId, int type, int status,
-		boolean head) {
-
-		return getPersistence().findByG_FCI_T_S_Head(
-			groupId, fragmentCollectionId, type, status, head);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param status the status
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_S_Head(
-		long groupId, long fragmentCollectionId, int type, int status,
-		boolean head, int start, int end) {
-
-		return getPersistence().findByG_FCI_T_S_Head(
-			groupId, fragmentCollectionId, type, status, head, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; and head = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param fragmentCollectionId the fragment collection ID
-	 * @param type the type
-	 * @param status the status
-	 * @param head the head
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByG_FCI_T_S_Head(
-		long groupId, long fragmentCollectionId, int type, int status,
-		boolean head, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByG_FCI_T_S_Head(
-			groupId, fragmentCollectionId, type, status, head, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3726,65 +2581,10 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries where externalReferenceCode = &#63; and groupId = &#63;.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @return the matching fragment entries
-	 */
-	public static List<FragmentEntry> findByERC_G(
-		String externalReferenceCode, long groupId) {
-
-		return getPersistence().findByERC_G(externalReferenceCode, groupId);
-	}
-
-	/**
-	 * Returns a range of all the fragment entries where externalReferenceCode = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByERC_G(
-		String externalReferenceCode, long groupId, int start, int end) {
-
-		return getPersistence().findByERC_G(
-			externalReferenceCode, groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the fragment entries where externalReferenceCode = &#63; and groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of fragment entries
-	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching fragment entries
-	 */
-	public static List<FragmentEntry> findByERC_G(
-		String externalReferenceCode, long groupId, int start, int end,
-		OrderByComparator<FragmentEntry> orderByComparator) {
-
-		return getPersistence().findByERC_G(
-			externalReferenceCode, groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the fragment entries where externalReferenceCode = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -3880,21 +2680,6 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns the fragment entry where externalReferenceCode = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @param head the head
-	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
-	 */
-	public static FragmentEntry fetchByERC_G_Head(
-		String externalReferenceCode, long groupId, boolean head) {
-
-		return getPersistence().fetchByERC_G_Head(
-			externalReferenceCode, groupId, head);
-	}
-
-	/**
 	 * Returns the fragment entry where externalReferenceCode = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -3956,16 +2741,6 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns the fragment entry where headId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param headId the head ID
-	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
-	 */
-	public static FragmentEntry fetchByHeadId(long headId) {
-		return getPersistence().fetchByHeadId(headId);
-	}
-
-	/**
 	 * Returns the fragment entry where headId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param headId the head ID
@@ -3998,24 +2773,6 @@ public class FragmentEntryUtil {
 	 */
 	public static int countByHeadId(long headId) {
 		return getPersistence().countByHeadId(headId);
-	}
-
-	/**
-	 * Caches the fragment entry in the entity cache if it is enabled.
-	 *
-	 * @param fragmentEntry the fragment entry
-	 */
-	public static void cacheResult(FragmentEntry fragmentEntry) {
-		getPersistence().cacheResult(fragmentEntry);
-	}
-
-	/**
-	 * Caches the fragment entries in the entity cache if it is enabled.
-	 *
-	 * @param fragmentEntries the fragment entries
-	 */
-	public static void cacheResult(List<FragmentEntry> fragmentEntries) {
-		getPersistence().cacheResult(fragmentEntries);
 	}
 
 	/**
@@ -4069,83 +2826,1242 @@ public class FragmentEntryUtil {
 	}
 
 	/**
-	 * Returns all the fragment entries.
+	 * Returns the fragment entry where uuid = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the fragment entries
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
 	 */
-	public static List<FragmentEntry> findAll() {
-		return getPersistence().findAll();
+	public static FragmentEntry fetchByUUID_G_Head(
+		String uuid, long groupId, boolean head) {
+
+		return getPersistence().fetchByUUID_G_Head(uuid, groupId, head);
 	}
 
 	/**
-	 * Returns a range of all the fragment entries.
+	 * Returns the fragment entry where groupId = &#63; and fragmentEntryKey = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentEntryKey the fragment entry key
+	 * @param head the head
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	public static FragmentEntry fetchByG_FEK_Head(
+		long groupId, String fragmentEntryKey, boolean head) {
+
+		return getPersistence().fetchByG_FEK_Head(
+			groupId, fragmentEntryKey, head);
+	}
+
+	/**
+	 * Returns the fragment entry where externalReferenceCode = &#63; and groupId = &#63; and head = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	public static FragmentEntry fetchByERC_G_Head(
+		String externalReferenceCode, long groupId, boolean head) {
+
+		return getPersistence().fetchByERC_G_Head(
+			externalReferenceCode, groupId, head);
+	}
+
+	/**
+	 * Returns the fragment entry where headId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param headId the head ID
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	public static FragmentEntry fetchByHeadId(long headId) {
+		return getPersistence().fetchByHeadId(headId);
+	}
+
+	/**
+	 * Returns all the fragment entries where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of fragment entries
 	 * @param end the upper bound of the range of fragment entries (not inclusive)
-	 * @return the range of fragment entries
+	 * @return the range of matching fragment entries
 	 */
-	public static List<FragmentEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<FragmentEntry> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the fragment entries.
+	 * Returns an ordered range of all the fragment entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of fragment entries
 	 * @param end the upper bound of the range of fragment entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of fragment entries
+	 * @return the ordered range of matching fragment entries
 	 */
-	public static List<FragmentEntry> findAll(
+	public static List<FragmentEntry> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where uuid = &#63; and head = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param head the head
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_Head(
+		String uuid, boolean head) {
+
+		return getPersistence().findByUuid_Head(uuid, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where uuid = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_Head(
+		String uuid, boolean head, int start, int end) {
+
+		return getPersistence().findByUuid_Head(uuid, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where uuid = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_Head(
+		String uuid, boolean head, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByUuid_Head(
+			uuid, head, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where uuid = &#63; and groupId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUUID_G(String uuid, long groupId) {
+		return getPersistence().findByUUID_G(uuid, groupId);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where uuid = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUUID_G(
+		String uuid, long groupId, int start, int end) {
+
+		return getPersistence().findByUUID_G(uuid, groupId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where uuid = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUUID_G(
+		String uuid, long groupId, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByUUID_G(
+			uuid, groupId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where uuid = &#63; and companyId = &#63; and head = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param head the head
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_C_Head(
+		String uuid, long companyId, boolean head) {
+
+		return getPersistence().findByUuid_C_Head(uuid, companyId, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where uuid = &#63; and companyId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_C_Head(
+		String uuid, long companyId, boolean head, int start, int end) {
+
+		return getPersistence().findByUuid_C_Head(
+			uuid, companyId, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where uuid = &#63; and companyId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByUuid_C_Head(
+		String uuid, long companyId, boolean head, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByUuid_C_Head(
+			uuid, companyId, head, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63; and head = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByGroupId_Head(
+		long groupId, boolean head) {
+
+		return getPersistence().findByGroupId_Head(groupId, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByGroupId_Head(
+		long groupId, boolean head, int start, int end) {
+
+		return getPersistence().findByGroupId_Head(groupId, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByGroupId_Head(
+		long groupId, boolean head, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByGroupId_Head(
+			groupId, head, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where fragmentCollectionId = &#63;.
+	 *
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByFragmentCollectionId(
+		long fragmentCollectionId) {
+
+		return getPersistence().findByFragmentCollectionId(
+			fragmentCollectionId);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where fragmentCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByFragmentCollectionId(
+		long fragmentCollectionId, int start, int end) {
+
+		return getPersistence().findByFragmentCollectionId(
+			fragmentCollectionId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where fragmentCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByFragmentCollectionId(
+		long fragmentCollectionId, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByFragmentCollectionId(
+			fragmentCollectionId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where fragmentCollectionId = &#63; and head = &#63;.
+	 *
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param head the head
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByFragmentCollectionId_Head(
+		long fragmentCollectionId, boolean head) {
+
+		return getPersistence().findByFragmentCollectionId_Head(
+			fragmentCollectionId, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where fragmentCollectionId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByFragmentCollectionId_Head(
+		long fragmentCollectionId, boolean head, int start, int end) {
+
+		return getPersistence().findByFragmentCollectionId_Head(
+			fragmentCollectionId, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where fragmentCollectionId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByFragmentCollectionId_Head(
+		long fragmentCollectionId, boolean head, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByFragmentCollectionId_Head(
+			fragmentCollectionId, head, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where type = &#63;.
+	 *
+	 * @param type the type
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByType(int type) {
+		return getPersistence().findByType(type);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByType(int type, int start, int end) {
+		return getPersistence().findByType(type, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByType(
+		int type, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByType(type, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where type = &#63; and head = &#63;.
+	 *
+	 * @param type the type
+	 * @param head the head
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByType_Head(int type, boolean head) {
+		return getPersistence().findByType_Head(type, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where type = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByType_Head(
+		int type, boolean head, int start, int end) {
+
+		return getPersistence().findByType_Head(type, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where type = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByType_Head(
+		int type, boolean head, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByType_Head(
+			type, head, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI(
+		long groupId, long fragmentCollectionId) {
+
+		return getPersistence().findByG_FCI(groupId, fragmentCollectionId);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI(
+		long groupId, long fragmentCollectionId, int start, int end) {
+
+		return getPersistence().findByG_FCI(
+			groupId, fragmentCollectionId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI(
+		long groupId, long fragmentCollectionId, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByG_FCI(
+			groupId, fragmentCollectionId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and head = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param head the head
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_Head(
+		long groupId, long fragmentCollectionId, boolean head) {
+
+		return getPersistence().findByG_FCI_Head(
+			groupId, fragmentCollectionId, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_Head(
+		long groupId, long fragmentCollectionId, boolean head, int start,
+		int end) {
+
+		return getPersistence().findByG_FCI_Head(
+			groupId, fragmentCollectionId, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_Head(
+		long groupId, long fragmentCollectionId, boolean head, int start,
+		int end, OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByG_FCI_Head(
+			groupId, fragmentCollectionId, head, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63; and fragmentEntryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentEntryKey the fragment entry key
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FEK(
+		long groupId, String fragmentEntryKey) {
+
+		return getPersistence().findByG_FEK(groupId, fragmentEntryKey);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentEntryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentEntryKey the fragment entry key
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FEK(
+		long groupId, String fragmentEntryKey, int start, int end) {
+
+		return getPersistence().findByG_FEK(
+			groupId, fragmentEntryKey, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentEntryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentEntryKey the fragment entry key
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FEK(
+		long groupId, String fragmentEntryKey, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByG_FEK(
+			groupId, fragmentEntryKey, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T(
+		long groupId, long fragmentCollectionId, int type) {
+
+		return getPersistence().findByG_FCI_T(
+			groupId, fragmentCollectionId, type);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T(
+		long groupId, long fragmentCollectionId, int type, int start, int end) {
+
+		return getPersistence().findByG_FCI_T(
+			groupId, fragmentCollectionId, type, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T(
+		long groupId, long fragmentCollectionId, int type, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByG_FCI_T(
+			groupId, fragmentCollectionId, type, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and head = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param head the head
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_Head(
+		long groupId, long fragmentCollectionId, int type, boolean head) {
+
+		return getPersistence().findByG_FCI_T_Head(
+			groupId, fragmentCollectionId, type, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_Head(
+		long groupId, long fragmentCollectionId, int type, boolean head,
+		int start, int end) {
+
+		return getPersistence().findByG_FCI_T_Head(
+			groupId, fragmentCollectionId, type, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_Head(
+		long groupId, long fragmentCollectionId, int type, boolean head,
 		int start, int end,
 		OrderByComparator<FragmentEntry> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByG_FCI_T_Head(
+			groupId, fragmentCollectionId, type, head, start, end,
+			orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the fragment entries.
+	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param status the status
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_S(
+		long groupId, long fragmentCollectionId, int status) {
+
+		return getPersistence().findByG_FCI_S(
+			groupId, fragmentCollectionId, status);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FragmentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param status the status
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_S(
+		long groupId, long fragmentCollectionId, int status, int start,
+		int end) {
+
+		return getPersistence().findByG_FCI_S(
+			groupId, fragmentCollectionId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param status the status
 	 * @param start the lower bound of the range of fragment entries
 	 * @param end the upper bound of the range of fragment entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of fragment entries
+	 * @return the ordered range of matching fragment entries
 	 */
-	public static List<FragmentEntry> findAll(
-		int start, int end, OrderByComparator<FragmentEntry> orderByComparator,
-		boolean useFinderCache) {
+	public static List<FragmentEntry> findByG_FCI_S(
+		long groupId, long fragmentCollectionId, int status, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByG_FCI_S(
+			groupId, fragmentCollectionId, status, start, end,
+			orderByComparator);
 	}
 
 	/**
-	 * Removes all the fragment entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of fragment entries.
+	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63; and head = &#63;.
 	 *
-	 * @return the number of fragment entries
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param status the status
+	 * @param head the head
+	 * @return the matching fragment entries
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<FragmentEntry> findByG_FCI_S_Head(
+		long groupId, long fragmentCollectionId, int status, boolean head) {
+
+		return getPersistence().findByG_FCI_S_Head(
+			groupId, fragmentCollectionId, status, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param status the status
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_S_Head(
+		long groupId, long fragmentCollectionId, int status, boolean head,
+		int start, int end) {
+
+		return getPersistence().findByG_FCI_S_Head(
+			groupId, fragmentCollectionId, status, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param status the status
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_S_Head(
+		long groupId, long fragmentCollectionId, int status, boolean head,
+		int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByG_FCI_S_Head(
+			groupId, fragmentCollectionId, status, head, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_S(
+		long groupId, long fragmentCollectionId, int type, int status) {
+
+		return getPersistence().findByG_FCI_T_S(
+			groupId, fragmentCollectionId, type, status);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_S(
+		long groupId, long fragmentCollectionId, int type, int status,
+		int start, int end) {
+
+		return getPersistence().findByG_FCI_T_S(
+			groupId, fragmentCollectionId, type, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_S(
+		long groupId, long fragmentCollectionId, int type, int status,
+		int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByG_FCI_T_S(
+			groupId, fragmentCollectionId, type, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; and head = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @param head the head
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_S_Head(
+		long groupId, long fragmentCollectionId, int type, int status,
+		boolean head) {
+
+		return getPersistence().findByG_FCI_T_S_Head(
+			groupId, fragmentCollectionId, type, status, head);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_S_Head(
+		long groupId, long fragmentCollectionId, int type, int status,
+		boolean head, int start, int end) {
+
+		return getPersistence().findByG_FCI_T_S_Head(
+			groupId, fragmentCollectionId, type, status, head, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; and head = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @param head the head
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByG_FCI_T_S_Head(
+		long groupId, long fragmentCollectionId, int type, int status,
+		boolean head, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByG_FCI_T_S_Head(
+			groupId, fragmentCollectionId, type, status, head, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the fragment entries where externalReferenceCode = &#63; and groupId = &#63;.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @return the matching fragment entries
+	 */
+	public static List<FragmentEntry> findByERC_G(
+		String externalReferenceCode, long groupId) {
+
+		return getPersistence().findByERC_G(externalReferenceCode, groupId);
+	}
+
+	/**
+	 * Returns a range of all the fragment entries where externalReferenceCode = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @return the range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByERC_G(
+		String externalReferenceCode, long groupId, int start, int end) {
+
+		return getPersistence().findByERC_G(
+			externalReferenceCode, groupId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the fragment entries where externalReferenceCode = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.fragment.model.impl.FragmentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of fragment entries
+	 * @param end the upper bound of the range of fragment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching fragment entries
+	 */
+	public static List<FragmentEntry> findByERC_G(
+		String externalReferenceCode, long groupId, int start, int end,
+		OrderByComparator<FragmentEntry> orderByComparator) {
+
+		return getPersistence().findByERC_G(
+			externalReferenceCode, groupId, start, end, orderByComparator);
 	}
 
 	public static FragmentEntryPersistence getPersistence() {
@@ -4159,4 +4075,4 @@ public class FragmentEntryUtil {
 	private static volatile FragmentEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1626830044
+// LIFERAY-SERVICE-BUILDER-HASH:-1090627304

@@ -36,6 +36,20 @@ public class ObjectStateUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<ObjectState> objectStates) {
+		getPersistence().cacheResult(objectStates);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(ObjectState objectState) {
+		getPersistence().cacheResult(objectState);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,58 +125,10 @@ public class ObjectStateUtil {
 	}
 
 	/**
-	 * Returns all the object states where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching object states
-	 */
-	public static List<ObjectState> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the object states where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object states
-	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @return the range of matching object states
-	 */
-	public static List<ObjectState> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object states where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object states
-	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object states
-	 */
-	public static List<ObjectState> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<ObjectState> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object states where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -229,62 +195,10 @@ public class ObjectStateUtil {
 	}
 
 	/**
-	 * Returns all the object states where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching object states
-	 */
-	public static List<ObjectState> findByUuid_C(String uuid, long companyId) {
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the object states where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object states
-	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @return the range of matching object states
-	 */
-	public static List<ObjectState> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object states where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object states
-	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object states
-	 */
-	public static List<ObjectState> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<ObjectState> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object states where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -360,62 +274,10 @@ public class ObjectStateUtil {
 	}
 
 	/**
-	 * Returns all the object states where listTypeEntryId = &#63;.
-	 *
-	 * @param listTypeEntryId the list type entry ID
-	 * @return the matching object states
-	 */
-	public static List<ObjectState> findByListTypeEntryId(
-		long listTypeEntryId) {
-
-		return getPersistence().findByListTypeEntryId(listTypeEntryId);
-	}
-
-	/**
-	 * Returns a range of all the object states where listTypeEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param listTypeEntryId the list type entry ID
-	 * @param start the lower bound of the range of object states
-	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @return the range of matching object states
-	 */
-	public static List<ObjectState> findByListTypeEntryId(
-		long listTypeEntryId, int start, int end) {
-
-		return getPersistence().findByListTypeEntryId(
-			listTypeEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object states where listTypeEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param listTypeEntryId the list type entry ID
-	 * @param start the lower bound of the range of object states
-	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object states
-	 */
-	public static List<ObjectState> findByListTypeEntryId(
-		long listTypeEntryId, int start, int end,
-		OrderByComparator<ObjectState> orderByComparator) {
-
-		return getPersistence().findByListTypeEntryId(
-			listTypeEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object states where listTypeEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
 	 * </p>
 	 *
 	 * @param listTypeEntryId the list type entry ID
@@ -486,62 +348,10 @@ public class ObjectStateUtil {
 	}
 
 	/**
-	 * Returns all the object states where objectStateFlowId = &#63;.
-	 *
-	 * @param objectStateFlowId the object state flow ID
-	 * @return the matching object states
-	 */
-	public static List<ObjectState> findByObjectStateFlowId(
-		long objectStateFlowId) {
-
-		return getPersistence().findByObjectStateFlowId(objectStateFlowId);
-	}
-
-	/**
-	 * Returns a range of all the object states where objectStateFlowId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectStateFlowId the object state flow ID
-	 * @param start the lower bound of the range of object states
-	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @return the range of matching object states
-	 */
-	public static List<ObjectState> findByObjectStateFlowId(
-		long objectStateFlowId, int start, int end) {
-
-		return getPersistence().findByObjectStateFlowId(
-			objectStateFlowId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object states where objectStateFlowId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectStateFlowId the object state flow ID
-	 * @param start the lower bound of the range of object states
-	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object states
-	 */
-	public static List<ObjectState> findByObjectStateFlowId(
-		long objectStateFlowId, int start, int end,
-		OrderByComparator<ObjectState> orderByComparator) {
-
-		return getPersistence().findByObjectStateFlowId(
-			objectStateFlowId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object states where objectStateFlowId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
 	 * </p>
 	 *
 	 * @param objectStateFlowId the object state flow ID
@@ -628,20 +438,6 @@ public class ObjectStateUtil {
 	}
 
 	/**
-	 * Returns the object state where listTypeEntryId = &#63; and objectStateFlowId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param listTypeEntryId the list type entry ID
-	 * @param objectStateFlowId the object state flow ID
-	 * @return the matching object state, or <code>null</code> if a matching object state could not be found
-	 */
-	public static ObjectState fetchByLTEI_OSFI(
-		long listTypeEntryId, long objectStateFlowId) {
-
-		return getPersistence().fetchByLTEI_OSFI(
-			listTypeEntryId, objectStateFlowId);
-	}
-
-	/**
 	 * Returns the object state where listTypeEntryId = &#63; and objectStateFlowId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param listTypeEntryId the list type entry ID
@@ -683,24 +479,6 @@ public class ObjectStateUtil {
 
 		return getPersistence().countByLTEI_OSFI(
 			listTypeEntryId, objectStateFlowId);
-	}
-
-	/**
-	 * Caches the object state in the entity cache if it is enabled.
-	 *
-	 * @param objectState the object state
-	 */
-	public static void cacheResult(ObjectState objectState) {
-		getPersistence().cacheResult(objectState);
-	}
-
-	/**
-	 * Caches the object states in the entity cache if it is enabled.
-	 *
-	 * @param objectStates the object states
-	 */
-	public static void cacheResult(List<ObjectState> objectStates) {
-		getPersistence().cacheResult(objectStates);
 	}
 
 	/**
@@ -754,82 +532,221 @@ public class ObjectStateUtil {
 	}
 
 	/**
-	 * Returns all the object states.
+	 * Returns the object state where listTypeEntryId = &#63; and objectStateFlowId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the object states
+	 * @param listTypeEntryId the list type entry ID
+	 * @param objectStateFlowId the object state flow ID
+	 * @return the matching object state, or <code>null</code> if a matching object state could not be found
 	 */
-	public static List<ObjectState> findAll() {
-		return getPersistence().findAll();
+	public static ObjectState fetchByLTEI_OSFI(
+		long listTypeEntryId, long objectStateFlowId) {
+
+		return getPersistence().fetchByLTEI_OSFI(
+			listTypeEntryId, objectStateFlowId);
 	}
 
 	/**
-	 * Returns a range of all the object states.
+	 * Returns all the object states where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching object states
+	 */
+	public static List<ObjectState> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the object states where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of object states
 	 * @param end the upper bound of the range of object states (not inclusive)
-	 * @return the range of object states
+	 * @return the range of matching object states
 	 */
-	public static List<ObjectState> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<ObjectState> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the object states.
+	 * Returns an ordered range of all the object states where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of object states
 	 * @param end the upper bound of the range of object states (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of object states
+	 * @return the ordered range of matching object states
 	 */
-	public static List<ObjectState> findAll(
-		int start, int end, OrderByComparator<ObjectState> orderByComparator) {
+	public static List<ObjectState> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<ObjectState> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the object states.
+	 * Returns all the object states where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching object states
+	 */
+	public static List<ObjectState> findByUuid_C(String uuid, long companyId) {
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the object states where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectStateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of object states
+	 * @param end the upper bound of the range of object states (not inclusive)
+	 * @return the range of matching object states
+	 */
+	public static List<ObjectState> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object states where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of object states
 	 * @param end the upper bound of the range of object states (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of object states
+	 * @return the ordered range of matching object states
 	 */
-	public static List<ObjectState> findAll(
-		int start, int end, OrderByComparator<ObjectState> orderByComparator,
-		boolean useFinderCache) {
+	public static List<ObjectState> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<ObjectState> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the object states from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of object states.
+	 * Returns all the object states where listTypeEntryId = &#63;.
 	 *
-	 * @return the number of object states
+	 * @param listTypeEntryId the list type entry ID
+	 * @return the matching object states
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<ObjectState> findByListTypeEntryId(
+		long listTypeEntryId) {
+
+		return getPersistence().findByListTypeEntryId(listTypeEntryId);
+	}
+
+	/**
+	 * Returns a range of all the object states where listTypeEntryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
+	 * </p>
+	 *
+	 * @param listTypeEntryId the list type entry ID
+	 * @param start the lower bound of the range of object states
+	 * @param end the upper bound of the range of object states (not inclusive)
+	 * @return the range of matching object states
+	 */
+	public static List<ObjectState> findByListTypeEntryId(
+		long listTypeEntryId, int start, int end) {
+
+		return getPersistence().findByListTypeEntryId(
+			listTypeEntryId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object states where listTypeEntryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
+	 * </p>
+	 *
+	 * @param listTypeEntryId the list type entry ID
+	 * @param start the lower bound of the range of object states
+	 * @param end the upper bound of the range of object states (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object states
+	 */
+	public static List<ObjectState> findByListTypeEntryId(
+		long listTypeEntryId, int start, int end,
+		OrderByComparator<ObjectState> orderByComparator) {
+
+		return getPersistence().findByListTypeEntryId(
+			listTypeEntryId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object states where objectStateFlowId = &#63;.
+	 *
+	 * @param objectStateFlowId the object state flow ID
+	 * @return the matching object states
+	 */
+	public static List<ObjectState> findByObjectStateFlowId(
+		long objectStateFlowId) {
+
+		return getPersistence().findByObjectStateFlowId(objectStateFlowId);
+	}
+
+	/**
+	 * Returns a range of all the object states where objectStateFlowId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectStateFlowId the object state flow ID
+	 * @param start the lower bound of the range of object states
+	 * @param end the upper bound of the range of object states (not inclusive)
+	 * @return the range of matching object states
+	 */
+	public static List<ObjectState> findByObjectStateFlowId(
+		long objectStateFlowId, int start, int end) {
+
+		return getPersistence().findByObjectStateFlowId(
+			objectStateFlowId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object states where objectStateFlowId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectStateModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectStateFlowId the object state flow ID
+	 * @param start the lower bound of the range of object states
+	 * @param end the upper bound of the range of object states (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object states
+	 */
+	public static List<ObjectState> findByObjectStateFlowId(
+		long objectStateFlowId, int start, int end,
+		OrderByComparator<ObjectState> orderByComparator) {
+
+		return getPersistence().findByObjectStateFlowId(
+			objectStateFlowId, start, end, orderByComparator);
 	}
 
 	public static ObjectStatePersistence getPersistence() {
@@ -843,4 +760,4 @@ public class ObjectStateUtil {
 	private static volatile ObjectStatePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:252435635
+// LIFERAY-SERVICE-BUILDER-HASH:-996220475

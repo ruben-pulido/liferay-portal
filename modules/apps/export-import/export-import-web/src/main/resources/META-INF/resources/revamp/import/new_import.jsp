@@ -10,35 +10,15 @@
 <liferay-staging:defineObjects />
 
 <%
-String backURL = ParamUtil.getString(request, "backURL");
-
 if (liveGroup == null) {
 	liveGroup = group;
 	liveGroupId = groupId;
 }
 
-String displayStyle = ParamUtil.getString(request, "displayStyle");
-
-PortletURL portletURL = PortletURLBuilder.createRenderURL(
-	renderResponse
-).setMVCRenderCommandName(
-	"/export_import/view_export_layouts"
-).setParameter(
-	"displayStyle", displayStyle
-).setParameter(
-	"groupId", groupId
-).setParameter(
-	"liveGroupId", liveGroupId
-).setParameter(
-	"privateLayout", privateLayout
-).buildPortletURL();
-
-if (Validator.isBlank(backURL)) {
-	backURL = portletURL.toString();
-}
+ExportImportPreviewDisplayContext exportImportPreviewDisplayContext = new ExportImportPreviewDisplayContext("/export_import/view_import_layouts", request, liferayPortletResponse, liveGroup, groupId, liveGroupId, privateLayout, stagingGroupHelper);
 
 portletDisplay.setShowBackIcon(true);
-portletDisplay.setURLBack(backURL);
+portletDisplay.setURLBack(exportImportPreviewDisplayContext.getBackURL());
 %>
 
 <clay:container-fluid
@@ -50,5 +30,12 @@ portletDisplay.setURLBack(backURL);
 
 	<react:component
 		module="{NewImport} from exportimport-web"
+		props='<%=
+			HashMapBuilder.<String, Object>put(
+				"backURL", exportImportPreviewDisplayContext.getBackURL()
+			).put(
+				"importPreviewAPIURL", exportImportPreviewDisplayContext.getImportPreviewAPIURL()
+			).build()
+		%>'
 	/>
 </clay:container-fluid>

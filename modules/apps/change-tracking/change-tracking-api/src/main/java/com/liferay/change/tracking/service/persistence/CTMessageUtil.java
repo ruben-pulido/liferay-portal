@@ -36,6 +36,20 @@ public class CTMessageUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<CTMessage> ctMessages) {
+		getPersistence().cacheResult(ctMessages);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(CTMessage ctMessage) {
+		getPersistence().cacheResult(ctMessage);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,60 +125,10 @@ public class CTMessageUtil {
 	}
 
 	/**
-	 * Returns all the ct messages where ctCollectionId = &#63;.
-	 *
-	 * @param ctCollectionId the ct collection ID
-	 * @return the matching ct messages
-	 */
-	public static List<CTMessage> findByCtCollectionId(long ctCollectionId) {
-		return getPersistence().findByCtCollectionId(ctCollectionId);
-	}
-
-	/**
-	 * Returns a range of all the ct messages where ctCollectionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ctCollectionId the ct collection ID
-	 * @param start the lower bound of the range of ct messages
-	 * @param end the upper bound of the range of ct messages (not inclusive)
-	 * @return the range of matching ct messages
-	 */
-	public static List<CTMessage> findByCtCollectionId(
-		long ctCollectionId, int start, int end) {
-
-		return getPersistence().findByCtCollectionId(
-			ctCollectionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the ct messages where ctCollectionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ctCollectionId the ct collection ID
-	 * @param start the lower bound of the range of ct messages
-	 * @param end the upper bound of the range of ct messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ct messages
-	 */
-	public static List<CTMessage> findByCtCollectionId(
-		long ctCollectionId, int start, int end,
-		OrderByComparator<CTMessage> orderByComparator) {
-
-		return getPersistence().findByCtCollectionId(
-			ctCollectionId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the ct messages where ctCollectionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.model.impl.CTMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ctCollectionId the ct collection ID
@@ -233,24 +197,6 @@ public class CTMessageUtil {
 	}
 
 	/**
-	 * Caches the ct message in the entity cache if it is enabled.
-	 *
-	 * @param ctMessage the ct message
-	 */
-	public static void cacheResult(CTMessage ctMessage) {
-		getPersistence().cacheResult(ctMessage);
-	}
-
-	/**
-	 * Caches the ct messages in the entity cache if it is enabled.
-	 *
-	 * @param ctMessages the ct messages
-	 */
-	public static void cacheResult(List<CTMessage> ctMessages) {
-		getPersistence().cacheResult(ctMessages);
-	}
-
-	/**
 	 * Creates a new ct message with the primary key. Does not add the ct message to the database.
 	 *
 	 * @param ctMessageId the primary key for the new ct message
@@ -301,82 +247,53 @@ public class CTMessageUtil {
 	}
 
 	/**
-	 * Returns all the ct messages.
+	 * Returns all the ct messages where ctCollectionId = &#63;.
 	 *
-	 * @return the ct messages
+	 * @param ctCollectionId the ct collection ID
+	 * @return the matching ct messages
 	 */
-	public static List<CTMessage> findAll() {
-		return getPersistence().findAll();
+	public static List<CTMessage> findByCtCollectionId(long ctCollectionId) {
+		return getPersistence().findByCtCollectionId(ctCollectionId);
 	}
 
 	/**
-	 * Returns a range of all the ct messages.
+	 * Returns a range of all the ct messages where ctCollectionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.model.impl.CTMessageModelImpl</code>.
 	 * </p>
 	 *
+	 * @param ctCollectionId the ct collection ID
 	 * @param start the lower bound of the range of ct messages
 	 * @param end the upper bound of the range of ct messages (not inclusive)
-	 * @return the range of ct messages
+	 * @return the range of matching ct messages
 	 */
-	public static List<CTMessage> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CTMessage> findByCtCollectionId(
+		long ctCollectionId, int start, int end) {
+
+		return getPersistence().findByCtCollectionId(
+			ctCollectionId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the ct messages.
+	 * Returns an ordered range of all the ct messages where ctCollectionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.model.impl.CTMessageModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of ct messages
-	 * @param end the upper bound of the range of ct messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of ct messages
-	 */
-	public static List<CTMessage> findAll(
-		int start, int end, OrderByComparator<CTMessage> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the ct messages.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTMessageModelImpl</code>.
-	 * </p>
-	 *
+	 * @param ctCollectionId the ct collection ID
 	 * @param start the lower bound of the range of ct messages
 	 * @param end the upper bound of the range of ct messages (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of ct messages
+	 * @return the ordered range of matching ct messages
 	 */
-	public static List<CTMessage> findAll(
-		int start, int end, OrderByComparator<CTMessage> orderByComparator,
-		boolean useFinderCache) {
+	public static List<CTMessage> findByCtCollectionId(
+		long ctCollectionId, int start, int end,
+		OrderByComparator<CTMessage> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the ct messages from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of ct messages.
-	 *
-	 * @return the number of ct messages
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByCtCollectionId(
+			ctCollectionId, start, end, orderByComparator);
 	}
 
 	public static CTMessagePersistence getPersistence() {
@@ -390,4 +307,4 @@ public class CTMessageUtil {
 	private static volatile CTMessagePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1785475451
+// LIFERAY-SERVICE-BUILDER-HASH:-953342166

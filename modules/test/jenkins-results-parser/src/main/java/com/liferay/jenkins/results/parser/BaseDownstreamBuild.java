@@ -18,6 +18,7 @@ import com.liferay.jenkins.results.parser.failure.message.generator.PMDFailureMe
 import com.liferay.jenkins.results.parser.failure.message.generator.PlaywrightCompilationFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.PlaywrightTimeoutFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.PluginGitIDFailureMessageGenerator;
+import com.liferay.jenkins.results.parser.failure.message.generator.RESTBuilderFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.SemanticVersioningFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.ServiceBuilderFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.SourceFormatFailureMessageGenerator;
@@ -47,7 +48,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -645,7 +646,7 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 			for (Element valueElement : rootElement.elements("value")) {
 				String liferayErrorText = "LIFERAY_ERROR: ";
 
-				String valueElementText = StringEscapeUtils.escapeHtml(
+				String valueElementText = StringEscapeUtils.escapeHtml4(
 					valueElement.getText());
 
 				if (valueElementText.startsWith(liferayErrorText)) {
@@ -1267,6 +1268,7 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 		new PlaywrightCompilationFailureMessageGenerator(),
 		new PlaywrightTimeoutFailureMessageGenerator(),
 		new PluginGitIDFailureMessageGenerator(),
+		new RESTBuilderFailureMessageGenerator(),
 		new SemanticVersioningFailureMessageGenerator(),
 		new ServiceBuilderFailureMessageGenerator(),
 		new SourceFormatFailureMessageGenerator(),

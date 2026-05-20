@@ -36,6 +36,20 @@ public class TrashEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<TrashEntry> trashEntries) {
+		getPersistence().cacheResult(trashEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(TrashEntry trashEntry) {
+		getPersistence().cacheResult(trashEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,24 +125,6 @@ public class TrashEntryUtil {
 	}
 
 	/**
-	 * Caches the trash entry in the entity cache if it is enabled.
-	 *
-	 * @param trashEntry the trash entry
-	 */
-	public static void cacheResult(TrashEntry trashEntry) {
-		getPersistence().cacheResult(trashEntry);
-	}
-
-	/**
-	 * Caches the trash entries in the entity cache if it is enabled.
-	 *
-	 * @param trashEntries the trash entries
-	 */
-	public static void cacheResult(List<TrashEntry> trashEntries) {
-		getPersistence().cacheResult(trashEntries);
-	}
-
-	/**
 	 * Creates a new trash entry with the primary key. Does not add the trash entry to the database.
 	 *
 	 * @param trashEntryId the primary key for the new trash entry
@@ -180,85 +176,6 @@ public class TrashEntryUtil {
 		return getPersistence().fetchByPrimaryKey(trashEntryId);
 	}
 
-	/**
-	 * Returns all the trash entries.
-	 *
-	 * @return the trash entries
-	 */
-	public static List<TrashEntry> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the trash entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @return the range of trash entries
-	 */
-	public static List<TrashEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the trash entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of trash entries
-	 */
-	public static List<TrashEntry> findAll(
-		int start, int end, OrderByComparator<TrashEntry> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the trash entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>TrashEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of trash entries
-	 * @param end the upper bound of the range of trash entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of trash entries
-	 */
-	public static List<TrashEntry> findAll(
-		int start, int end, OrderByComparator<TrashEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the trash entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of trash entries.
-	 *
-	 * @return the number of trash entries
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
-	}
-
 	public static TrashEntryPersistence getPersistence() {
 		return _persistence;
 	}
@@ -270,4 +187,4 @@ public class TrashEntryUtil {
 	private static volatile TrashEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1241820132
+// LIFERAY-SERVICE-BUILDER-HASH:1291578650

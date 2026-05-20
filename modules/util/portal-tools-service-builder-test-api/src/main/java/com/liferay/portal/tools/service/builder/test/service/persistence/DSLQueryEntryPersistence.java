@@ -33,20 +33,6 @@ public interface DSLQueryEntryPersistence
 	 */
 
 	/**
-	 * Caches the dsl query entry in the entity cache if it is enabled.
-	 *
-	 * @param dslQueryEntry the dsl query entry
-	 */
-	public void cacheResult(DSLQueryEntry dslQueryEntry);
-
-	/**
-	 * Caches the dsl query entries in the entity cache if it is enabled.
-	 *
-	 * @param dslQueryEntries the dsl query entries
-	 */
-	public void cacheResult(java.util.List<DSLQueryEntry> dslQueryEntries);
-
-	/**
 	 * Creates a new dsl query entry with the primary key. Does not add the dsl query entry to the database.
 	 *
 	 * @param dslQueryEntryId the primary key for the new dsl query entry
@@ -84,73 +70,5 @@ public interface DSLQueryEntryPersistence
 	 */
 	public DSLQueryEntry fetchByPrimaryKey(long dslQueryEntryId);
 
-	/**
-	 * Returns all the dsl query entries.
-	 *
-	 * @return the dsl query entries
-	 */
-	public java.util.List<DSLQueryEntry> findAll();
-
-	/**
-	 * Returns a range of all the dsl query entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DSLQueryEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dsl query entries
-	 * @param end the upper bound of the range of dsl query entries (not inclusive)
-	 * @return the range of dsl query entries
-	 */
-	public java.util.List<DSLQueryEntry> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the dsl query entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DSLQueryEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dsl query entries
-	 * @param end the upper bound of the range of dsl query entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of dsl query entries
-	 */
-	public java.util.List<DSLQueryEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DSLQueryEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the dsl query entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DSLQueryEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of dsl query entries
-	 * @param end the upper bound of the range of dsl query entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of dsl query entries
-	 */
-	public java.util.List<DSLQueryEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DSLQueryEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the dsl query entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of dsl query entries.
-	 *
-	 * @return the number of dsl query entries
-	 */
-	public int countAll();
-
 }
-// LIFERAY-SERVICE-BUILDER-HASH:709369616
+// LIFERAY-SERVICE-BUILDER-HASH:2140456628

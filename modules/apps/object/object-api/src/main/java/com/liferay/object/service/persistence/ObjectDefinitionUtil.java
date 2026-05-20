@@ -36,6 +36,20 @@ public class ObjectDefinitionUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<ObjectDefinition> objectDefinitions) {
+		getPersistence().cacheResult(objectDefinitions);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(ObjectDefinition objectDefinition) {
+		getPersistence().cacheResult(objectDefinition);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,58 +125,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -210,38 +176,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByUuid(String uuid) {
-		return getPersistence().filterFindByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().filterFindByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -288,64 +226,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -400,42 +284,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -486,59 +338,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -589,38 +392,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByCompanyId(long companyId) {
-		return getPersistence().filterFindByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().filterFindByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -667,62 +442,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where objectFolderId = &#63;.
-	 *
-	 * @param objectFolderId the object folder ID
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByObjectFolderId(
-		long objectFolderId) {
-
-		return getPersistence().findByObjectFolderId(objectFolderId);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where objectFolderId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectFolderId the object folder ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByObjectFolderId(
-		long objectFolderId, int start, int end) {
-
-		return getPersistence().findByObjectFolderId(
-			objectFolderId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where objectFolderId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectFolderId the object folder ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByObjectFolderId(
-		long objectFolderId, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByObjectFolderId(
-			objectFolderId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where objectFolderId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param objectFolderId the object folder ID
@@ -774,41 +497,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where objectFolderId = &#63;.
-	 *
-	 * @param objectFolderId the object folder ID
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByObjectFolderId(
-		long objectFolderId) {
-
-		return getPersistence().filterFindByObjectFolderId(objectFolderId);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where objectFolderId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param objectFolderId the object folder ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByObjectFolderId(
-		long objectFolderId, int start, int end) {
-
-		return getPersistence().filterFindByObjectFolderId(
-			objectFolderId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where objectFolderId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param objectFolderId the object folder ID
@@ -855,63 +547,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where accountEntryRestricted = &#63;.
-	 *
-	 * @param accountEntryRestricted the account entry restricted
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByAccountEntryRestricted(
-		boolean accountEntryRestricted) {
-
-		return getPersistence().findByAccountEntryRestricted(
-			accountEntryRestricted);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where accountEntryRestricted = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param accountEntryRestricted the account entry restricted
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByAccountEntryRestricted(
-		boolean accountEntryRestricted, int start, int end) {
-
-		return getPersistence().findByAccountEntryRestricted(
-			accountEntryRestricted, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where accountEntryRestricted = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param accountEntryRestricted the account entry restricted
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByAccountEntryRestricted(
-		boolean accountEntryRestricted, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByAccountEntryRestricted(
-			accountEntryRestricted, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where accountEntryRestricted = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param accountEntryRestricted the account entry restricted
@@ -964,42 +603,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where accountEntryRestricted = &#63;.
-	 *
-	 * @param accountEntryRestricted the account entry restricted
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByAccountEntryRestricted(
-		boolean accountEntryRestricted) {
-
-		return getPersistence().filterFindByAccountEntryRestricted(
-			accountEntryRestricted);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where accountEntryRestricted = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param accountEntryRestricted the account entry restricted
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByAccountEntryRestricted(
-		boolean accountEntryRestricted, int start, int end) {
-
-		return getPersistence().filterFindByAccountEntryRestricted(
-			accountEntryRestricted, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where accountEntryRestricted = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param accountEntryRestricted the account entry restricted
@@ -1067,16 +674,6 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns the object definition where className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param className the class name
-	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
-	 */
-	public static ObjectDefinition fetchByClassName(String className) {
-		return getPersistence().fetchByClassName(className);
-	}
-
-	/**
 	 * Returns the object definition where className = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param className the class name
@@ -1112,59 +709,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where system = &#63;.
-	 *
-	 * @param system the system
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findBySystem(boolean system) {
-		return getPersistence().findBySystem(system);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where system = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param system the system
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findBySystem(
-		boolean system, int start, int end) {
-
-		return getPersistence().findBySystem(system, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where system = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param system the system
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findBySystem(
-		boolean system, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findBySystem(
-			system, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where system = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param system the system
@@ -1213,38 +761,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where system = &#63;.
-	 *
-	 * @param system the system
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindBySystem(boolean system) {
-		return getPersistence().filterFindBySystem(system);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where system = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param system the system
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindBySystem(
-		boolean system, int start, int end) {
-
-		return getPersistence().filterFindBySystem(system, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where system = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param system the system
@@ -1291,64 +811,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where companyId = &#63; and userId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_U(
-		long companyId, long userId) {
-
-		return getPersistence().findByC_U(companyId, userId);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where companyId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_U(
-		long companyId, long userId, int start, int end) {
-
-		return getPersistence().findByC_U(companyId, userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_U(
-		long companyId, long userId, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByC_U(
-			companyId, userId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where companyId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1403,42 +869,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and userId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_U(
-		long companyId, long userId) {
-
-		return getPersistence().filterFindByC_U(companyId, userId);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_U(
-		long companyId, long userId, int start, int end) {
-
-		return getPersistence().filterFindByC_U(companyId, userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1503,19 +937,6 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns the object definition where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param className the class name
-	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
-	 */
-	public static ObjectDefinition fetchByC_C(
-		long companyId, String className) {
-
-		return getPersistence().fetchByC_C(companyId, className);
-	}
-
-	/**
 	 * Returns the object definition where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -1569,17 +990,6 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns the object definition where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param name the name
-	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
-	 */
-	public static ObjectDefinition fetchByC_N(long companyId, String name) {
-		return getPersistence().fetchByC_N(companyId, name);
-	}
-
-	/**
 	 * Returns the object definition where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -1618,62 +1028,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where companyId = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_S(long companyId, int status) {
-		return getPersistence().findByC_S(companyId, status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_S(
-		long companyId, int status, int start, int end) {
-
-		return getPersistence().findByC_S(companyId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where companyId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_S(
-		long companyId, int status, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByC_S(
-			companyId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1728,42 +1086,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_S(
-		long companyId, int status) {
-
-		return getPersistence().filterFindByC_S(companyId, status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_S(
-		long companyId, int status, int start, int end) {
-
-		return getPersistence().filterFindByC_S(companyId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where companyId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1814,62 +1140,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where system = &#63; and status = &#63;.
-	 *
-	 * @param system the system
-	 * @param status the status
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByS_S(boolean system, int status) {
-		return getPersistence().findByS_S(system, status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where system = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param system the system
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByS_S(
-		boolean system, int status, int start, int end) {
-
-		return getPersistence().findByS_S(system, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where system = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param system the system
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByS_S(
-		boolean system, int status, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByS_S(
-			system, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where system = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param system the system
@@ -1924,42 +1198,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where system = &#63; and status = &#63;.
-	 *
-	 * @param system the system
-	 * @param status the status
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByS_S(
-		boolean system, int status) {
-
-		return getPersistence().filterFindByS_S(system, status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where system = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param system the system
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByS_S(
-		boolean system, int status, int start, int end) {
-
-		return getPersistence().filterFindByS_S(system, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where system = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param system the system
@@ -2010,68 +1252,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where companyId = &#63; and active = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param status the status
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_A_S(
-		long companyId, boolean active, int status) {
-
-		return getPersistence().findByC_A_S(companyId, active, status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where companyId = &#63; and active = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_A_S(
-		long companyId, boolean active, int status, int start, int end) {
-
-		return getPersistence().findByC_A_S(
-			companyId, active, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where companyId = &#63; and active = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_A_S(
-		long companyId, boolean active, int status, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByC_A_S(
-			companyId, active, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where companyId = &#63; and active = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2130,45 +1314,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and active = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param status the status
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_A_S(
-		long companyId, boolean active, int status) {
-
-		return getPersistence().filterFindByC_A_S(companyId, active, status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and active = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_A_S(
-		long companyId, boolean active, int status, int start, int end) {
-
-		return getPersistence().filterFindByC_A_S(
-			companyId, active, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where companyId = &#63; and active = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2227,69 +1376,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where companyId = &#63; and modifiable = &#63; and system = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param modifiable the modifiable
-	 * @param system the system
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_M_S(
-		long companyId, boolean modifiable, boolean system) {
-
-		return getPersistence().findByC_M_S(companyId, modifiable, system);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where companyId = &#63; and modifiable = &#63; and system = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param modifiable the modifiable
-	 * @param system the system
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_M_S(
-		long companyId, boolean modifiable, boolean system, int start,
-		int end) {
-
-		return getPersistence().findByC_M_S(
-			companyId, modifiable, system, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where companyId = &#63; and modifiable = &#63; and system = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param modifiable the modifiable
-	 * @param system the system
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_M_S(
-		long companyId, boolean modifiable, boolean system, int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByC_M_S(
-			companyId, modifiable, system, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where companyId = &#63; and modifiable = &#63; and system = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2348,47 +1438,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and modifiable = &#63; and system = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param modifiable the modifiable
-	 * @param system the system
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_M_S(
-		long companyId, boolean modifiable, boolean system) {
-
-		return getPersistence().filterFindByC_M_S(
-			companyId, modifiable, system);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and modifiable = &#63; and system = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param modifiable the modifiable
-	 * @param system the system
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_M_S(
-		long companyId, boolean modifiable, boolean system, int start,
-		int end) {
-
-		return getPersistence().filterFindByC_M_S(
-			companyId, modifiable, system, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where companyId = &#63; and modifiable = &#63; and system = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2450,73 +1503,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param system the system
-	 * @param status the status
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_A_S_S(
-		long companyId, boolean active, boolean system, int status) {
-
-		return getPersistence().findByC_A_S_S(
-			companyId, active, system, status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param system the system
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_A_S_S(
-		long companyId, boolean active, boolean system, int status, int start,
-		int end) {
-
-		return getPersistence().findByC_A_S_S(
-			companyId, active, system, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param system the system
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_A_S_S(
-		long companyId, boolean active, boolean system, int status, int start,
-		int end, OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByC_A_S_S(
-			companyId, active, system, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2578,49 +1568,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param system the system
-	 * @param status the status
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_A_S_S(
-		long companyId, boolean active, boolean system, int status) {
-
-		return getPersistence().filterFindByC_A_S_S(
-			companyId, active, system, status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param system the system
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_A_S_S(
-		long companyId, boolean active, boolean system, int status, int start,
-		int end) {
-
-		return getPersistence().filterFindByC_A_S_S(
-			companyId, active, system, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2687,85 +1638,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderId the object folder ID
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
-		long companyId, long objectFolderId, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status) {
-
-		return getPersistence().findByC_OFI_A_E_S_S(
-			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
-			status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderId the object folder ID
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
-		long companyId, long objectFolderId, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status, int start,
-		int end) {
-
-		return getPersistence().findByC_OFI_A_E_S_S(
-			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
-			status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderId the object folder ID
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
-		long companyId, long objectFolderId, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status, int start,
-		int end, OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByC_OFI_A_E_S_S(
-			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
-			status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2838,57 +1714,10 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderId the object folder ID
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_OFI_A_E_S_S(
-		long companyId, long objectFolderId, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status) {
-
-		return getPersistence().filterFindByC_OFI_A_E_S_S(
-			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
-			status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderId the object folder ID
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_OFI_A_E_S_S(
-		long companyId, long objectFolderId, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status, int start,
-		int end) {
-
-		return getPersistence().filterFindByC_OFI_A_E_S_S(
-			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
-			status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the object definitions that the user has permissions to view where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2910,60 +1739,13 @@ public class ObjectDefinitionUtil {
 		return getPersistence().filterFindByC_OFI_A_E_S_S(
 			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
 			status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderIds the object folder IDs
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @return the matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_OFI_A_E_S_S(
-		long companyId, long[] objectFolderIds, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status) {
-
-		return getPersistence().filterFindByC_OFI_A_E_S_S(
-			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
-			status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderIds the object folder IDs
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions that the user has permission to view
-	 */
-	public static List<ObjectDefinition> filterFindByC_OFI_A_E_S_S(
-		long companyId, long[] objectFolderIds, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status, int start,
-		int end) {
-
-		return getPersistence().filterFindByC_OFI_A_E_S_S(
-			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
-			status, start, end);
 	}
 
 	/**
 	 * Returns an ordered range of all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2983,85 +1765,6 @@ public class ObjectDefinitionUtil {
 		int end, OrderByComparator<ObjectDefinition> orderByComparator) {
 
 		return getPersistence().filterFindByC_OFI_A_E_S_S(
-			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
-			status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns all the object definitions where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderIds the object folder IDs
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @return the matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
-		long companyId, long[] objectFolderIds, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status) {
-
-		return getPersistence().findByC_OFI_A_E_S_S(
-			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
-			status);
-	}
-
-	/**
-	 * Returns a range of all the object definitions where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderIds the object folder IDs
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
-		long companyId, long[] objectFolderIds, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status, int start,
-		int end) {
-
-		return getPersistence().findByC_OFI_A_E_S_S(
-			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
-			status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the object definitions where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param objectFolderIds the object folder IDs
-	 * @param active the active
-	 * @param enableObjectEntryDraft the enable object entry draft
-	 * @param scope the scope
-	 * @param status the status
-	 * @param start the lower bound of the range of object definitions
-	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching object definitions
-	 */
-	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
-		long companyId, long[] objectFolderIds, boolean active,
-		boolean enableObjectEntryDraft, String scope, int status, int start,
-		int end, OrderByComparator<ObjectDefinition> orderByComparator) {
-
-		return getPersistence().findByC_OFI_A_E_S_S(
 			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
 			status, start, end, orderByComparator);
 	}
@@ -3070,7 +1773,7 @@ public class ObjectDefinitionUtil {
 	 * Returns an ordered range of all the object definitions where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -3211,19 +1914,6 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns the object definition where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
-	 */
-	public static ObjectDefinition fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
 	 * Returns the object definition where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -3263,24 +1953,6 @@ public class ObjectDefinitionUtil {
 		String externalReferenceCode, long companyId) {
 
 		return getPersistence().countByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
-	 * Caches the object definition in the entity cache if it is enabled.
-	 *
-	 * @param objectDefinition the object definition
-	 */
-	public static void cacheResult(ObjectDefinition objectDefinition) {
-		getPersistence().cacheResult(objectDefinition);
-	}
-
-	/**
-	 * Caches the object definitions in the entity cache if it is enabled.
-	 *
-	 * @param objectDefinitions the object definitions
-	 */
-	public static void cacheResult(List<ObjectDefinition> objectDefinitions) {
-		getPersistence().cacheResult(objectDefinitions);
 	}
 
 	/**
@@ -3336,84 +2008,1323 @@ public class ObjectDefinitionUtil {
 	}
 
 	/**
-	 * Returns all the object definitions.
+	 * Returns the object definition where className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the object definitions
+	 * @param className the class name
+	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
 	 */
-	public static List<ObjectDefinition> findAll() {
-		return getPersistence().findAll();
+	public static ObjectDefinition fetchByClassName(String className) {
+		return getPersistence().fetchByClassName(className);
 	}
 
 	/**
-	 * Returns a range of all the object definitions.
+	 * Returns the object definition where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
+	 */
+	public static ObjectDefinition fetchByC_C(
+		long companyId, String className) {
+
+		return getPersistence().fetchByC_C(companyId, className);
+	}
+
+	/**
+	 * Returns the object definition where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
+	 */
+	public static ObjectDefinition fetchByC_N(long companyId, String name) {
+		return getPersistence().fetchByC_N(companyId, name);
+	}
+
+	/**
+	 * Returns the object definition where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching object definition, or <code>null</code> if a matching object definition could not be found
+	 */
+	public static ObjectDefinition fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
+	}
+
+	/**
+	 * Returns all the object definitions where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of object definitions
 	 * @param end the upper bound of the range of object definitions (not inclusive)
-	 * @return the range of object definitions
+	 * @return the range of matching object definitions
 	 */
-	public static List<ObjectDefinition> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<ObjectDefinition> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the object definitions.
+	 * Returns an ordered range of all the object definitions where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of object definitions
 	 * @param end the upper bound of the range of object definitions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of object definitions
+	 * @return the ordered range of matching object definitions
 	 */
-	public static List<ObjectDefinition> findAll(
-		int start, int end,
+	public static List<ObjectDefinition> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<ObjectDefinition> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the object definitions.
+	 * Returns all the object definitions that the user has permission to view where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByUuid(String uuid) {
+		return getPersistence().filterFindByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ObjectDefinitionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().filterFindByUuid(uuid, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of object definitions
 	 * @param end the upper bound of the range of object definitions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of object definitions
+	 * @return the ordered range of matching object definitions
 	 */
-	public static List<ObjectDefinition> findAll(
-		int start, int end,
-		OrderByComparator<ObjectDefinition> orderByComparator,
-		boolean useFinderCache) {
+	public static List<ObjectDefinition> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the object definitions from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of object definitions.
+	 * Returns all the object definitions that the user has permission to view where uuid = &#63; and companyId = &#63;.
 	 *
-	 * @return the number of object definitions
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching object definitions that the user has permission to view
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<ObjectDefinition> filterFindByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByCompanyId(long companyId) {
+		return getPersistence().filterFindByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().filterFindByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where objectFolderId = &#63;.
+	 *
+	 * @param objectFolderId the object folder ID
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByObjectFolderId(
+		long objectFolderId) {
+
+		return getPersistence().findByObjectFolderId(objectFolderId);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where objectFolderId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectFolderId the object folder ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByObjectFolderId(
+		long objectFolderId, int start, int end) {
+
+		return getPersistence().findByObjectFolderId(
+			objectFolderId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where objectFolderId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectFolderId the object folder ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByObjectFolderId(
+		long objectFolderId, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByObjectFolderId(
+			objectFolderId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where objectFolderId = &#63;.
+	 *
+	 * @param objectFolderId the object folder ID
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByObjectFolderId(
+		long objectFolderId) {
+
+		return getPersistence().filterFindByObjectFolderId(objectFolderId);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where objectFolderId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param objectFolderId the object folder ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByObjectFolderId(
+		long objectFolderId, int start, int end) {
+
+		return getPersistence().filterFindByObjectFolderId(
+			objectFolderId, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where accountEntryRestricted = &#63;.
+	 *
+	 * @param accountEntryRestricted the account entry restricted
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByAccountEntryRestricted(
+		boolean accountEntryRestricted) {
+
+		return getPersistence().findByAccountEntryRestricted(
+			accountEntryRestricted);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where accountEntryRestricted = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param accountEntryRestricted the account entry restricted
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByAccountEntryRestricted(
+		boolean accountEntryRestricted, int start, int end) {
+
+		return getPersistence().findByAccountEntryRestricted(
+			accountEntryRestricted, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where accountEntryRestricted = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param accountEntryRestricted the account entry restricted
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByAccountEntryRestricted(
+		boolean accountEntryRestricted, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByAccountEntryRestricted(
+			accountEntryRestricted, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where accountEntryRestricted = &#63;.
+	 *
+	 * @param accountEntryRestricted the account entry restricted
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByAccountEntryRestricted(
+		boolean accountEntryRestricted) {
+
+		return getPersistence().filterFindByAccountEntryRestricted(
+			accountEntryRestricted);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where accountEntryRestricted = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param accountEntryRestricted the account entry restricted
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByAccountEntryRestricted(
+		boolean accountEntryRestricted, int start, int end) {
+
+		return getPersistence().filterFindByAccountEntryRestricted(
+			accountEntryRestricted, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where system = &#63;.
+	 *
+	 * @param system the system
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findBySystem(boolean system) {
+		return getPersistence().findBySystem(system);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where system = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param system the system
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findBySystem(
+		boolean system, int start, int end) {
+
+		return getPersistence().findBySystem(system, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where system = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param system the system
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findBySystem(
+		boolean system, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findBySystem(
+			system, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where system = &#63;.
+	 *
+	 * @param system the system
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindBySystem(boolean system) {
+		return getPersistence().filterFindBySystem(system);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where system = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param system the system
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindBySystem(
+		boolean system, int start, int end) {
+
+		return getPersistence().filterFindBySystem(system, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where companyId = &#63; and userId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_U(
+		long companyId, long userId) {
+
+		return getPersistence().findByC_U(companyId, userId);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_U(
+		long companyId, long userId, int start, int end) {
+
+		return getPersistence().findByC_U(companyId, userId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_U(
+		long companyId, long userId, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByC_U(
+			companyId, userId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and userId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_U(
+		long companyId, long userId) {
+
+		return getPersistence().filterFindByC_U(companyId, userId);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_U(
+		long companyId, long userId, int start, int end) {
+
+		return getPersistence().filterFindByC_U(companyId, userId, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where companyId = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_S(long companyId, int status) {
+		return getPersistence().findByC_S(companyId, status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_S(
+		long companyId, int status, int start, int end) {
+
+		return getPersistence().findByC_S(companyId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_S(
+		long companyId, int status, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByC_S(
+			companyId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_S(
+		long companyId, int status) {
+
+		return getPersistence().filterFindByC_S(companyId, status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_S(
+		long companyId, int status, int start, int end) {
+
+		return getPersistence().filterFindByC_S(companyId, status, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where system = &#63; and status = &#63;.
+	 *
+	 * @param system the system
+	 * @param status the status
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByS_S(boolean system, int status) {
+		return getPersistence().findByS_S(system, status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where system = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param system the system
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByS_S(
+		boolean system, int status, int start, int end) {
+
+		return getPersistence().findByS_S(system, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where system = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param system the system
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByS_S(
+		boolean system, int status, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByS_S(
+			system, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where system = &#63; and status = &#63;.
+	 *
+	 * @param system the system
+	 * @param status the status
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByS_S(
+		boolean system, int status) {
+
+		return getPersistence().filterFindByS_S(system, status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where system = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param system the system
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByS_S(
+		boolean system, int status, int start, int end) {
+
+		return getPersistence().filterFindByS_S(system, status, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where companyId = &#63; and active = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param status the status
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_A_S(
+		long companyId, boolean active, int status) {
+
+		return getPersistence().findByC_A_S(companyId, active, status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63; and active = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_A_S(
+		long companyId, boolean active, int status, int start, int end) {
+
+		return getPersistence().findByC_A_S(
+			companyId, active, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and active = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_A_S(
+		long companyId, boolean active, int status, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByC_A_S(
+			companyId, active, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and active = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param status the status
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_A_S(
+		long companyId, boolean active, int status) {
+
+		return getPersistence().filterFindByC_A_S(companyId, active, status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and active = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_A_S(
+		long companyId, boolean active, int status, int start, int end) {
+
+		return getPersistence().filterFindByC_A_S(
+			companyId, active, status, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where companyId = &#63; and modifiable = &#63; and system = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param modifiable the modifiable
+	 * @param system the system
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_M_S(
+		long companyId, boolean modifiable, boolean system) {
+
+		return getPersistence().findByC_M_S(companyId, modifiable, system);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63; and modifiable = &#63; and system = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param modifiable the modifiable
+	 * @param system the system
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_M_S(
+		long companyId, boolean modifiable, boolean system, int start,
+		int end) {
+
+		return getPersistence().findByC_M_S(
+			companyId, modifiable, system, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and modifiable = &#63; and system = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param modifiable the modifiable
+	 * @param system the system
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_M_S(
+		long companyId, boolean modifiable, boolean system, int start, int end,
+		OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByC_M_S(
+			companyId, modifiable, system, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and modifiable = &#63; and system = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param modifiable the modifiable
+	 * @param system the system
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_M_S(
+		long companyId, boolean modifiable, boolean system) {
+
+		return getPersistence().filterFindByC_M_S(
+			companyId, modifiable, system);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and modifiable = &#63; and system = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param modifiable the modifiable
+	 * @param system the system
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_M_S(
+		long companyId, boolean modifiable, boolean system, int start,
+		int end) {
+
+		return getPersistence().filterFindByC_M_S(
+			companyId, modifiable, system, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param system the system
+	 * @param status the status
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_A_S_S(
+		long companyId, boolean active, boolean system, int status) {
+
+		return getPersistence().findByC_A_S_S(
+			companyId, active, system, status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param system the system
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_A_S_S(
+		long companyId, boolean active, boolean system, int status, int start,
+		int end) {
+
+		return getPersistence().findByC_A_S_S(
+			companyId, active, system, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param system the system
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_A_S_S(
+		long companyId, boolean active, boolean system, int status, int start,
+		int end, OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByC_A_S_S(
+			companyId, active, system, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param system the system
+	 * @param status the status
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_A_S_S(
+		long companyId, boolean active, boolean system, int status) {
+
+		return getPersistence().filterFindByC_A_S_S(
+			companyId, active, system, status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and active = &#63; and system = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param system the system
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_A_S_S(
+		long companyId, boolean active, boolean system, int status, int start,
+		int end) {
+
+		return getPersistence().filterFindByC_A_S_S(
+			companyId, active, system, status, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderId the object folder ID
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
+		long companyId, long objectFolderId, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status) {
+
+		return getPersistence().findByC_OFI_A_E_S_S(
+			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
+			status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderId the object folder ID
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
+		long companyId, long objectFolderId, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status, int start,
+		int end) {
+
+		return getPersistence().findByC_OFI_A_E_S_S(
+			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
+			status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderId the object folder ID
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
+		long companyId, long objectFolderId, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status, int start,
+		int end, OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByC_OFI_A_E_S_S(
+			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
+			status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderIds the object folder IDs
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @return the matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
+		long companyId, long[] objectFolderIds, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status) {
+
+		return getPersistence().findByC_OFI_A_E_S_S(
+			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
+			status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderIds the object folder IDs
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
+		long companyId, long[] objectFolderIds, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status, int start,
+		int end) {
+
+		return getPersistence().findByC_OFI_A_E_S_S(
+			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
+			status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the object definitions where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderIds the object folder IDs
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching object definitions
+	 */
+	public static List<ObjectDefinition> findByC_OFI_A_E_S_S(
+		long companyId, long[] objectFolderIds, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status, int start,
+		int end, OrderByComparator<ObjectDefinition> orderByComparator) {
+
+		return getPersistence().findByC_OFI_A_E_S_S(
+			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
+			status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderId the object folder ID
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_OFI_A_E_S_S(
+		long companyId, long objectFolderId, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status) {
+
+		return getPersistence().filterFindByC_OFI_A_E_S_S(
+			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
+			status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderId the object folder ID
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_OFI_A_E_S_S(
+		long companyId, long objectFolderId, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status, int start,
+		int end) {
+
+		return getPersistence().filterFindByC_OFI_A_E_S_S(
+			companyId, objectFolderId, active, enableObjectEntryDraft, scope,
+			status, start, end);
+	}
+
+	/**
+	 * Returns all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderIds the object folder IDs
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @return the matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_OFI_A_E_S_S(
+		long companyId, long[] objectFolderIds, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status) {
+
+		return getPersistence().filterFindByC_OFI_A_E_S_S(
+			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
+			status);
+	}
+
+	/**
+	 * Returns a range of all the object definitions that the user has permission to view where companyId = &#63; and objectFolderId = any &#63; and active = &#63; and enableObjectEntryDraft = &#63; and scope = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.object.model.impl.ObjectDefinitionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param objectFolderIds the object folder IDs
+	 * @param active the active
+	 * @param enableObjectEntryDraft the enable object entry draft
+	 * @param scope the scope
+	 * @param status the status
+	 * @param start the lower bound of the range of object definitions
+	 * @param end the upper bound of the range of object definitions (not inclusive)
+	 * @return the range of matching object definitions that the user has permission to view
+	 */
+	public static List<ObjectDefinition> filterFindByC_OFI_A_E_S_S(
+		long companyId, long[] objectFolderIds, boolean active,
+		boolean enableObjectEntryDraft, String scope, int status, int start,
+		int end) {
+
+		return getPersistence().filterFindByC_OFI_A_E_S_S(
+			companyId, objectFolderIds, active, enableObjectEntryDraft, scope,
+			status, start, end);
 	}
 
 	public static ObjectDefinitionPersistence getPersistence() {
@@ -3427,4 +3338,4 @@ public class ObjectDefinitionUtil {
 	private static volatile ObjectDefinitionPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-858162154
+// LIFERAY-SERVICE-BUILDER-HASH:-1356615250

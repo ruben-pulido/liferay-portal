@@ -14,15 +14,11 @@ import com.liferay.commerce.order.rule.model.impl.COREntryModelImpl;
 import com.liferay.commerce.order.rule.service.persistence.COREntryPersistence;
 import com.liferay.commerce.order.rule.service.persistence.COREntryUtil;
 import com.liferay.commerce.order.rule.service.persistence.impl.constants.CORPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -33,26 +29,23 @@ import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.FilterCollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
 import java.io.Serializable;
 
 import java.lang.reflect.InvocationHandler;
-
-import java.sql.Timestamp;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -80,7 +73,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = COREntryPersistence.class)
 public class COREntryPersistenceImpl
-	extends BasePersistenceImpl<COREntry> implements COREntryPersistence {
+	extends BasePersistenceImpl<COREntry, NoSuchCOREntryException>
+	implements COREntryPersistence {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -96,61 +90,8 @@ public class COREntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the cor entries where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cor entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @return the range of matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByUuid(String uuid, int start, int end) {
-		return findByUuid(uuid, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the cor entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<COREntry> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
+	private FilterCollectionPersistenceFinder<COREntry>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cor entries where uuid = &#63;.
@@ -171,106 +112,9 @@ public class COREntryPersistenceImpl
 		String uuid, int start, int end,
 		OrderByComparator<COREntry> orderByComparator, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<COREntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<COREntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (COREntry corEntry : list) {
-					if (!uuid.equals(corEntry.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_CORENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<COREntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -292,16 +136,9 @@ public class COREntryPersistenceImpl
 			return corEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchCOREntryException(sb.toString());
+		throw new NoSuchCOREntryException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -315,42 +152,8 @@ public class COREntryPersistenceImpl
 	public COREntry fetchByUuid_First(
 		String uuid, OrderByComparator<COREntry> orderByComparator) {
 
-		List<COREntry> list = findByUuid(uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns all the cor entries that the user has permission to view where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching cor entries that the user has permission to view
-	 */
-	@Override
-	public List<COREntry> filterFindByUuid(String uuid) {
-		return filterFindByUuid(
-			uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cor entries that the user has permission to view where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @return the range of matching cor entries that the user has permission to view
-	 */
-	@Override
-	public List<COREntry> filterFindByUuid(String uuid, int start, int end) {
-		return filterFindByUuid(uuid, start, end, null);
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -371,105 +174,8 @@ public class COREntryPersistenceImpl
 		String uuid, int start, int end,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		if (!InlineSQLHelperUtil.isEnabled()) {
-			return findByUuid(uuid, start, end, orderByComparator);
-		}
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			isPermissionsInMemoryFilterEnabled()) {
-
-			return InlineSQLHelperUtil.filter(
-				findByUuid(
-					uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					orderByComparator));
-		}
-
-		uuid = Objects.toString(uuid, "");
-
-		StringBundler sb = null;
-
-		if (orderByComparator != null) {
-			sb = new StringBundler(
-				3 + (orderByComparator.getOrderByFields().length * 2));
-		}
-		else {
-			sb = new StringBundler(4);
-		}
-
-		if (getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_WHERE);
-		}
-		else {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_1);
-		}
-
-		boolean bindUuid = false;
-
-		if (uuid.isEmpty()) {
-			sb.append(_FINDER_COLUMN_UUID_UUID_3_SQL);
-		}
-		else {
-			bindUuid = true;
-
-			sb.append(_FINDER_COLUMN_UUID_UUID_2_SQL);
-		}
-
-		if (!getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_2);
-		}
-
-		if (orderByComparator != null) {
-			if (getDB().isSupportsInlineDistinct()) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
-			}
-			else {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
-			}
-		}
-		else {
-			if (getDB().isSupportsInlineDistinct()) {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL);
-			}
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			if (getDB().isSupportsInlineDistinct()) {
-				sqlQuery.addEntity(_FILTER_ENTITY_ALIAS, COREntryImpl.class);
-			}
-			else {
-				sqlQuery.addEntity(_FILTER_ENTITY_TABLE, COREntryImpl.class);
-			}
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			if (bindUuid) {
-				queryPos.add(uuid);
-			}
-
-			return (List<COREntry>)QueryUtil.list(
-				sqlQuery, getDialect(), start, end);
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByUuid.filterFind(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator);
 	}
 
 	/**
@@ -479,11 +185,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (COREntry corEntry :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(corEntry);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -494,58 +197,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_CORENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -556,138 +209,12 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int filterCountByUuid(String uuid) {
-		if (!InlineSQLHelperUtil.isEnabled()) {
-			return countByUuid(uuid);
-		}
-
-		if (isPermissionsInMemoryFilterEnabled()) {
-			List<COREntry> corEntries = findByUuid(uuid);
-
-			corEntries = InlineSQLHelperUtil.filter(corEntries);
-
-			return corEntries.size();
-		}
-
-		uuid = Objects.toString(uuid, "");
-
-		StringBundler sb = new StringBundler(2);
-
-		sb.append(_FILTER_SQL_COUNT_CORENTRY_WHERE);
-
-		boolean bindUuid = false;
-
-		if (uuid.isEmpty()) {
-			sb.append(_FINDER_COLUMN_UUID_UUID_3_SQL);
-		}
-		else {
-			bindUuid = true;
-
-			sb.append(_FINDER_COLUMN_UUID_UUID_2_SQL);
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			sqlQuery.addScalar(
-				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			if (bindUuid) {
-				queryPos.add(uuid);
-			}
-
-			Long count = (Long)sqlQuery.uniqueResult();
-
-			return count.intValue();
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByUuid.filterCount(
+			finderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"corEntry.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(corEntry.uuid IS NULL OR corEntry.uuid = '')";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_2_SQL =
-		"corEntry.uuid_ = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3_SQL =
-		"(corEntry.uuid_ IS NULL OR corEntry.uuid_ = '')";
-
-	private FinderPath _finderPathWithPaginationFindByUuid_C;
-	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
-	private FinderPath _finderPathCountByUuid_C;
-
-	/**
-	 * Returns all the cor entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByUuid_C(String uuid, long companyId) {
-		return findByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cor entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @return the range of matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return findByUuid_C(uuid, companyId, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the cor entries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<COREntry> orderByComparator) {
-
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
-	}
+	private FilterCollectionPersistenceFinder<COREntry>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cor entries where uuid = &#63; and companyId = &#63;.
@@ -709,114 +236,9 @@ public class COREntryPersistenceImpl
 		String uuid, long companyId, int start, int end,
 		OrderByComparator<COREntry> orderByComparator, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<COREntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<COREntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (COREntry corEntry : list) {
-					if (!uuid.equals(corEntry.getUuid()) ||
-						(companyId != corEntry.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_CORENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<COREntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -841,19 +263,9 @@ public class COREntryPersistenceImpl
 			return corEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchCOREntryException(sb.toString());
+		throw new NoSuchCOREntryException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -869,47 +281,8 @@ public class COREntryPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		List<COREntry> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns all the cor entries that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching cor entries that the user has permission to view
-	 */
-	@Override
-	public List<COREntry> filterFindByUuid_C(String uuid, long companyId) {
-		return filterFindByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cor entries that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @return the range of matching cor entries that the user has permission to view
-	 */
-	@Override
-	public List<COREntry> filterFindByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return filterFindByUuid_C(uuid, companyId, start, end, null);
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -931,109 +304,9 @@ public class COREntryPersistenceImpl
 		String uuid, long companyId, int start, int end,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
-			return findByUuid_C(uuid, companyId, start, end, orderByComparator);
-		}
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			isPermissionsInMemoryFilterEnabled()) {
-
-			return InlineSQLHelperUtil.filter(
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					orderByComparator));
-		}
-
-		uuid = Objects.toString(uuid, "");
-
-		StringBundler sb = null;
-
-		if (orderByComparator != null) {
-			sb = new StringBundler(
-				4 + (orderByComparator.getOrderByFields().length * 2));
-		}
-		else {
-			sb = new StringBundler(5);
-		}
-
-		if (getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_WHERE);
-		}
-		else {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_1);
-		}
-
-		boolean bindUuid = false;
-
-		if (uuid.isEmpty()) {
-			sb.append(_FINDER_COLUMN_UUID_C_UUID_3_SQL);
-		}
-		else {
-			bindUuid = true;
-
-			sb.append(_FINDER_COLUMN_UUID_C_UUID_2_SQL);
-		}
-
-		sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-		if (!getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_2);
-		}
-
-		if (orderByComparator != null) {
-			if (getDB().isSupportsInlineDistinct()) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
-			}
-			else {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
-			}
-		}
-		else {
-			if (getDB().isSupportsInlineDistinct()) {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL);
-			}
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			if (getDB().isSupportsInlineDistinct()) {
-				sqlQuery.addEntity(_FILTER_ENTITY_ALIAS, COREntryImpl.class);
-			}
-			else {
-				sqlQuery.addEntity(_FILTER_ENTITY_TABLE, COREntryImpl.class);
-			}
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			if (bindUuid) {
-				queryPos.add(uuid);
-			}
-
-			queryPos.add(companyId);
-
-			return (List<COREntry>)QueryUtil.list(
-				sqlQuery, getDialect(), start, end);
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByUuid_C.filterFind(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, companyId, 0);
 	}
 
 	/**
@@ -1044,13 +317,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (COREntry corEntry :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(corEntry);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -1062,62 +330,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_CORENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -1129,145 +343,12 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int filterCountByUuid_C(String uuid, long companyId) {
-		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
-			return countByUuid_C(uuid, companyId);
-		}
-
-		if (isPermissionsInMemoryFilterEnabled()) {
-			List<COREntry> corEntries = findByUuid_C(uuid, companyId);
-
-			corEntries = InlineSQLHelperUtil.filter(corEntries);
-
-			return corEntries.size();
-		}
-
-		uuid = Objects.toString(uuid, "");
-
-		StringBundler sb = new StringBundler(3);
-
-		sb.append(_FILTER_SQL_COUNT_CORENTRY_WHERE);
-
-		boolean bindUuid = false;
-
-		if (uuid.isEmpty()) {
-			sb.append(_FINDER_COLUMN_UUID_C_UUID_3_SQL);
-		}
-		else {
-			bindUuid = true;
-
-			sb.append(_FINDER_COLUMN_UUID_C_UUID_2_SQL);
-		}
-
-		sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			sqlQuery.addScalar(
-				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			if (bindUuid) {
-				queryPos.add(uuid);
-			}
-
-			queryPos.add(companyId);
-
-			Long count = (Long)sqlQuery.uniqueResult();
-
-			return count.intValue();
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByUuid_C.filterCount(
+			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"corEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(corEntry.uuid IS NULL OR corEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2_SQL =
-		"corEntry.uuid_ = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3_SQL =
-		"(corEntry.uuid_ IS NULL OR corEntry.uuid_ = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"corEntry.companyId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByC_A;
-	private FinderPath _finderPathWithoutPaginationFindByC_A;
-	private FinderPath _finderPathCountByC_A;
-
-	/**
-	 * Returns all the cor entries where companyId = &#63; and active = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @return the matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByC_A(long companyId, boolean active) {
-		return findByC_A(
-			companyId, active, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cor entries where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @return the range of matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByC_A(
-		long companyId, boolean active, int start, int end) {
-
-		return findByC_A(companyId, active, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the cor entries where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cor entries
-	 */
-	@Override
-	public List<COREntry> findByC_A(
-		long companyId, boolean active, int start, int end,
-		OrderByComparator<COREntry> orderByComparator) {
-
-		return findByC_A(
-			companyId, active, start, end, orderByComparator, true);
-	}
+	private FilterCollectionPersistenceFinder<COREntry>
+		_collectionPersistenceFinderByC_A;
 
 	/**
 	 * Returns an ordered range of all the cor entries where companyId = &#63; and active = &#63;.
@@ -1289,101 +370,9 @@ public class COREntryPersistenceImpl
 		long companyId, boolean active, int start, int end,
 		OrderByComparator<COREntry> orderByComparator, boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByC_A;
-				finderArgs = new Object[] {companyId, active};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByC_A;
-			finderArgs = new Object[] {
-				companyId, active, start, end, orderByComparator
-			};
-		}
-
-		List<COREntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<COREntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (COREntry corEntry : list) {
-					if ((companyId != corEntry.getCompanyId()) ||
-						(active != corEntry.isActive())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_CORENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_A_COMPANYID_2);
-
-			sb.append(_FINDER_COLUMN_C_A_ACTIVE_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				queryPos.add(active);
-
-				list = (List<COREntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByC_A.find(
+			finderCache, new Object[] {companyId, active}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1408,19 +397,9 @@ public class COREntryPersistenceImpl
 			return corEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", active=");
-		sb.append(active);
-
-		sb.append("}");
-
-		throw new NoSuchCOREntryException(sb.toString());
+		throw new NoSuchCOREntryException(
+			_collectionPersistenceFinderByC_A.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, active}));
 	}
 
 	/**
@@ -1436,47 +415,8 @@ public class COREntryPersistenceImpl
 		long companyId, boolean active,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		List<COREntry> list = findByC_A(
-			companyId, active, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns all the cor entries that the user has permission to view where companyId = &#63; and active = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @return the matching cor entries that the user has permission to view
-	 */
-	@Override
-	public List<COREntry> filterFindByC_A(long companyId, boolean active) {
-		return filterFindByC_A(
-			companyId, active, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cor entries that the user has permission to view where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @return the range of matching cor entries that the user has permission to view
-	 */
-	@Override
-	public List<COREntry> filterFindByC_A(
-		long companyId, boolean active, int start, int end) {
-
-		return filterFindByC_A(companyId, active, start, end, null);
+		return _collectionPersistenceFinderByC_A.fetchFirst(
+			finderCache, new Object[] {companyId, active}, orderByComparator);
 	}
 
 	/**
@@ -1498,96 +438,9 @@ public class COREntryPersistenceImpl
 		long companyId, boolean active, int start, int end,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
-			return findByC_A(companyId, active, start, end, orderByComparator);
-		}
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			isPermissionsInMemoryFilterEnabled()) {
-
-			return InlineSQLHelperUtil.filter(
-				findByC_A(
-					companyId, active, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					orderByComparator));
-		}
-
-		StringBundler sb = null;
-
-		if (orderByComparator != null) {
-			sb = new StringBundler(
-				4 + (orderByComparator.getOrderByFields().length * 2));
-		}
-		else {
-			sb = new StringBundler(5);
-		}
-
-		if (getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_WHERE);
-		}
-		else {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_1);
-		}
-
-		sb.append(_FINDER_COLUMN_C_A_COMPANYID_2);
-
-		sb.append(_FINDER_COLUMN_C_A_ACTIVE_2_SQL);
-
-		if (!getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_2);
-		}
-
-		if (orderByComparator != null) {
-			if (getDB().isSupportsInlineDistinct()) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
-			}
-			else {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
-			}
-		}
-		else {
-			if (getDB().isSupportsInlineDistinct()) {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL);
-			}
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			if (getDB().isSupportsInlineDistinct()) {
-				sqlQuery.addEntity(_FILTER_ENTITY_ALIAS, COREntryImpl.class);
-			}
-			else {
-				sqlQuery.addEntity(_FILTER_ENTITY_TABLE, COREntryImpl.class);
-			}
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			queryPos.add(companyId);
-
-			queryPos.add(active);
-
-			return (List<COREntry>)QueryUtil.list(
-				sqlQuery, getDialect(), start, end);
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByC_A.filterFind(
+			finderCache, new Object[] {companyId, active}, start, end,
+			orderByComparator, companyId, 0);
 	}
 
 	/**
@@ -1598,13 +451,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public void removeByC_A(long companyId, boolean active) {
-		for (COREntry corEntry :
-				findByC_A(
-					companyId, active, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(corEntry);
-		}
+		_collectionPersistenceFinderByC_A.remove(
+			finderCache, new Object[] {companyId, active});
 	}
 
 	/**
@@ -1616,49 +464,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int countByC_A(long companyId, boolean active) {
-		FinderPath finderPath = _finderPathCountByC_A;
-
-		Object[] finderArgs = new Object[] {companyId, active};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_CORENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_A_COMPANYID_2);
-
-			sb.append(_FINDER_COLUMN_C_A_ACTIVE_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				queryPos.add(active);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByC_A.count(
+			finderCache, new Object[] {companyId, active});
 	}
 
 	/**
@@ -1670,69 +477,12 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int filterCountByC_A(long companyId, boolean active) {
-		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
-			return countByC_A(companyId, active);
-		}
-
-		if (isPermissionsInMemoryFilterEnabled()) {
-			List<COREntry> corEntries = findByC_A(companyId, active);
-
-			corEntries = InlineSQLHelperUtil.filter(corEntries);
-
-			return corEntries.size();
-		}
-
-		StringBundler sb = new StringBundler(3);
-
-		sb.append(_FILTER_SQL_COUNT_CORENTRY_WHERE);
-
-		sb.append(_FINDER_COLUMN_C_A_COMPANYID_2);
-
-		sb.append(_FINDER_COLUMN_C_A_ACTIVE_2_SQL);
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			sqlQuery.addScalar(
-				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			queryPos.add(companyId);
-
-			queryPos.add(active);
-
-			Long count = (Long)sqlQuery.uniqueResult();
-
-			return count.intValue();
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByC_A.filterCount(
+			finderCache, new Object[] {companyId, active}, companyId, 0);
 	}
 
-	private static final String _FINDER_COLUMN_C_A_COMPANYID_2 =
-		"corEntry.companyId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_A_ACTIVE_2 =
-		"corEntry.active = ?";
-
-	private static final String _FINDER_COLUMN_C_A_ACTIVE_2_SQL =
-		"corEntry.active_ = ?";
-
-	private FinderPath _finderPathWithPaginationFindByC_LikeType;
-	private FinderPath _finderPathWithPaginationCountByC_LikeType;
+	private FilterCollectionPersistenceFinder<COREntry>
+		_collectionPersistenceFinderByC_LikeType;
 
 	/**
 	 * Returns all the cor entries where companyId = &#63; and type LIKE &#63;.
@@ -1810,105 +560,9 @@ public class COREntryPersistenceImpl
 		long companyId, String type, int start, int end,
 		OrderByComparator<COREntry> orderByComparator, boolean useFinderCache) {
 
-		type = Objects.toString(type, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		finderPath = _finderPathWithPaginationFindByC_LikeType;
-		finderArgs = new Object[] {
-			companyId, type, start, end, orderByComparator
-		};
-
-		List<COREntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<COREntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (COREntry corEntry : list) {
-					if ((companyId != corEntry.getCompanyId()) ||
-						!StringUtil.wildcardMatches(
-							corEntry.getType(), type, '_', '%', '\\', true)) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_CORENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_LIKETYPE_COMPANYID_2);
-
-			boolean bindType = false;
-
-			if (type.isEmpty()) {
-				sb.append(_FINDER_COLUMN_C_LIKETYPE_TYPE_3);
-			}
-			else {
-				bindType = true;
-
-				sb.append(_FINDER_COLUMN_C_LIKETYPE_TYPE_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				if (bindType) {
-					queryPos.add(type);
-				}
-
-				list = (List<COREntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByC_LikeType.find(
+			finderCache, new Object[] {companyId, type}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1933,19 +587,9 @@ public class COREntryPersistenceImpl
 			return corEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", typeLIKE");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchCOREntryException(sb.toString());
+		throw new NoSuchCOREntryException(
+			_collectionPersistenceFinderByC_LikeType.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, type}));
 	}
 
 	/**
@@ -1961,14 +605,8 @@ public class COREntryPersistenceImpl
 		long companyId, String type,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		List<COREntry> list = findByC_LikeType(
-			companyId, type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_LikeType.fetchFirst(
+			finderCache, new Object[] {companyId, type}, orderByComparator);
 	}
 
 	/**
@@ -2023,110 +661,9 @@ public class COREntryPersistenceImpl
 		long companyId, String type, int start, int end,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
-			return findByC_LikeType(
-				companyId, type, start, end, orderByComparator);
-		}
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			isPermissionsInMemoryFilterEnabled()) {
-
-			return InlineSQLHelperUtil.filter(
-				findByC_LikeType(
-					companyId, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					orderByComparator));
-		}
-
-		type = Objects.toString(type, "");
-
-		StringBundler sb = null;
-
-		if (orderByComparator != null) {
-			sb = new StringBundler(
-				4 + (orderByComparator.getOrderByFields().length * 2));
-		}
-		else {
-			sb = new StringBundler(5);
-		}
-
-		if (getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_WHERE);
-		}
-		else {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_1);
-		}
-
-		sb.append(_FINDER_COLUMN_C_LIKETYPE_COMPANYID_2);
-
-		boolean bindType = false;
-
-		if (type.isEmpty()) {
-			sb.append(_FINDER_COLUMN_C_LIKETYPE_TYPE_3_SQL);
-		}
-		else {
-			bindType = true;
-
-			sb.append(_FINDER_COLUMN_C_LIKETYPE_TYPE_2_SQL);
-		}
-
-		if (!getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_2);
-		}
-
-		if (orderByComparator != null) {
-			if (getDB().isSupportsInlineDistinct()) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
-			}
-			else {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
-			}
-		}
-		else {
-			if (getDB().isSupportsInlineDistinct()) {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL);
-			}
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			if (getDB().isSupportsInlineDistinct()) {
-				sqlQuery.addEntity(_FILTER_ENTITY_ALIAS, COREntryImpl.class);
-			}
-			else {
-				sqlQuery.addEntity(_FILTER_ENTITY_TABLE, COREntryImpl.class);
-			}
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			queryPos.add(companyId);
-
-			if (bindType) {
-				queryPos.add(type);
-			}
-
-			return (List<COREntry>)QueryUtil.list(
-				sqlQuery, getDialect(), start, end);
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByC_LikeType.filterFind(
+			finderCache, new Object[] {companyId, type}, start, end,
+			orderByComparator, companyId, 0);
 	}
 
 	/**
@@ -2137,13 +674,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public void removeByC_LikeType(long companyId, String type) {
-		for (COREntry corEntry :
-				findByC_LikeType(
-					companyId, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(corEntry);
-		}
+		_collectionPersistenceFinderByC_LikeType.remove(
+			finderCache, new Object[] {companyId, type});
 	}
 
 	/**
@@ -2155,62 +687,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int countByC_LikeType(long companyId, String type) {
-		type = Objects.toString(type, "");
-
-		FinderPath finderPath = _finderPathWithPaginationCountByC_LikeType;
-
-		Object[] finderArgs = new Object[] {companyId, type};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_CORENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_LIKETYPE_COMPANYID_2);
-
-			boolean bindType = false;
-
-			if (type.isEmpty()) {
-				sb.append(_FINDER_COLUMN_C_LIKETYPE_TYPE_3);
-			}
-			else {
-				bindType = true;
-
-				sb.append(_FINDER_COLUMN_C_LIKETYPE_TYPE_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				if (bindType) {
-					queryPos.add(type);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByC_LikeType.count(
+			finderCache, new Object[] {companyId, type});
 	}
 
 	/**
@@ -2222,88 +700,12 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int filterCountByC_LikeType(long companyId, String type) {
-		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
-			return countByC_LikeType(companyId, type);
-		}
-
-		if (isPermissionsInMemoryFilterEnabled()) {
-			List<COREntry> corEntries = findByC_LikeType(companyId, type);
-
-			corEntries = InlineSQLHelperUtil.filter(corEntries);
-
-			return corEntries.size();
-		}
-
-		type = Objects.toString(type, "");
-
-		StringBundler sb = new StringBundler(3);
-
-		sb.append(_FILTER_SQL_COUNT_CORENTRY_WHERE);
-
-		sb.append(_FINDER_COLUMN_C_LIKETYPE_COMPANYID_2);
-
-		boolean bindType = false;
-
-		if (type.isEmpty()) {
-			sb.append(_FINDER_COLUMN_C_LIKETYPE_TYPE_3_SQL);
-		}
-		else {
-			bindType = true;
-
-			sb.append(_FINDER_COLUMN_C_LIKETYPE_TYPE_2_SQL);
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			sqlQuery.addScalar(
-				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			queryPos.add(companyId);
-
-			if (bindType) {
-				queryPos.add(type);
-			}
-
-			Long count = (Long)sqlQuery.uniqueResult();
-
-			return count.intValue();
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByC_LikeType.filterCount(
+			finderCache, new Object[] {companyId, type}, companyId, 0);
 	}
 
-	private static final String _FINDER_COLUMN_C_LIKETYPE_COMPANYID_2 =
-		"corEntry.companyId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_LIKETYPE_TYPE_2 =
-		"corEntry.type LIKE ?";
-
-	private static final String _FINDER_COLUMN_C_LIKETYPE_TYPE_3 =
-		"(corEntry.type IS NULL OR corEntry.type LIKE '')";
-
-	private static final String _FINDER_COLUMN_C_LIKETYPE_TYPE_2_SQL =
-		"corEntry.type_ LIKE ?";
-
-	private static final String _FINDER_COLUMN_C_LIKETYPE_TYPE_3_SQL =
-		"(corEntry.type_ IS NULL OR corEntry.type_ LIKE '')";
-
-	private FinderPath _finderPathWithPaginationFindByLtD_S;
-	private FinderPath _finderPathWithPaginationCountByLtD_S;
+	private FilterCollectionPersistenceFinder<COREntry>
+		_collectionPersistenceFinderByLtD_S;
 
 	/**
 	 * Returns all the cor entries where displayDate &lt; &#63; and status = &#63;.
@@ -2381,102 +783,9 @@ public class COREntryPersistenceImpl
 		Date displayDate, int status, int start, int end,
 		OrderByComparator<COREntry> orderByComparator, boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		finderPath = _finderPathWithPaginationFindByLtD_S;
-		finderArgs = new Object[] {
-			_getTime(displayDate), status, start, end, orderByComparator
-		};
-
-		List<COREntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<COREntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (COREntry corEntry : list) {
-					if ((displayDate.getTime() <= corEntry.getDisplayDate(
-						).getTime()) || (status != corEntry.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_CORENTRY_WHERE);
-
-			boolean bindDisplayDate = false;
-
-			if (displayDate == null) {
-				sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_1);
-			}
-			else {
-				bindDisplayDate = true;
-
-				sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_LTD_S_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindDisplayDate) {
-					queryPos.add(new Timestamp(displayDate.getTime()));
-				}
-
-				queryPos.add(status);
-
-				list = (List<COREntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByLtD_S.find(
+			finderCache, new Object[] {displayDate, status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2501,19 +810,9 @@ public class COREntryPersistenceImpl
 			return corEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("displayDate<");
-		sb.append(displayDate);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchCOREntryException(sb.toString());
+		throw new NoSuchCOREntryException(
+			_collectionPersistenceFinderByLtD_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {displayDate, status}));
 	}
 
 	/**
@@ -2529,14 +828,8 @@ public class COREntryPersistenceImpl
 		Date displayDate, int status,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		List<COREntry> list = findByLtD_S(
-			displayDate, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByLtD_S.fetchFirst(
+			finderCache, new Object[] {displayDate, status}, orderByComparator);
 	}
 
 	/**
@@ -2591,108 +884,9 @@ public class COREntryPersistenceImpl
 		Date displayDate, int status, int start, int end,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		if (!InlineSQLHelperUtil.isEnabled()) {
-			return findByLtD_S(
-				displayDate, status, start, end, orderByComparator);
-		}
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			isPermissionsInMemoryFilterEnabled()) {
-
-			return InlineSQLHelperUtil.filter(
-				findByLtD_S(
-					displayDate, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					orderByComparator));
-		}
-
-		StringBundler sb = null;
-
-		if (orderByComparator != null) {
-			sb = new StringBundler(
-				4 + (orderByComparator.getOrderByFields().length * 2));
-		}
-		else {
-			sb = new StringBundler(5);
-		}
-
-		if (getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_WHERE);
-		}
-		else {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_1);
-		}
-
-		boolean bindDisplayDate = false;
-
-		if (displayDate == null) {
-			sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_1);
-		}
-		else {
-			bindDisplayDate = true;
-
-			sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_2);
-		}
-
-		sb.append(_FINDER_COLUMN_LTD_S_STATUS_2);
-
-		if (!getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_2);
-		}
-
-		if (orderByComparator != null) {
-			if (getDB().isSupportsInlineDistinct()) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
-			}
-			else {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
-			}
-		}
-		else {
-			if (getDB().isSupportsInlineDistinct()) {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL);
-			}
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			if (getDB().isSupportsInlineDistinct()) {
-				sqlQuery.addEntity(_FILTER_ENTITY_ALIAS, COREntryImpl.class);
-			}
-			else {
-				sqlQuery.addEntity(_FILTER_ENTITY_TABLE, COREntryImpl.class);
-			}
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			if (bindDisplayDate) {
-				queryPos.add(new Timestamp(displayDate.getTime()));
-			}
-
-			queryPos.add(status);
-
-			return (List<COREntry>)QueryUtil.list(
-				sqlQuery, getDialect(), start, end);
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByLtD_S.filterFind(
+			finderCache, new Object[] {displayDate, status}, start, end,
+			orderByComparator);
 	}
 
 	/**
@@ -2703,13 +897,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public void removeByLtD_S(Date displayDate, int status) {
-		for (COREntry corEntry :
-				findByLtD_S(
-					displayDate, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(corEntry);
-		}
+		_collectionPersistenceFinderByLtD_S.remove(
+			finderCache, new Object[] {displayDate, status});
 	}
 
 	/**
@@ -2721,60 +910,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int countByLtD_S(Date displayDate, int status) {
-		FinderPath finderPath = _finderPathWithPaginationCountByLtD_S;
-
-		Object[] finderArgs = new Object[] {_getTime(displayDate), status};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_CORENTRY_WHERE);
-
-			boolean bindDisplayDate = false;
-
-			if (displayDate == null) {
-				sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_1);
-			}
-			else {
-				bindDisplayDate = true;
-
-				sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_LTD_S_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindDisplayDate) {
-					queryPos.add(new Timestamp(displayDate.getTime()));
-				}
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByLtD_S.count(
+			finderCache, new Object[] {displayDate, status});
 	}
 
 	/**
@@ -2786,80 +923,12 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int filterCountByLtD_S(Date displayDate, int status) {
-		if (!InlineSQLHelperUtil.isEnabled()) {
-			return countByLtD_S(displayDate, status);
-		}
-
-		if (isPermissionsInMemoryFilterEnabled()) {
-			List<COREntry> corEntries = findByLtD_S(displayDate, status);
-
-			corEntries = InlineSQLHelperUtil.filter(corEntries);
-
-			return corEntries.size();
-		}
-
-		StringBundler sb = new StringBundler(3);
-
-		sb.append(_FILTER_SQL_COUNT_CORENTRY_WHERE);
-
-		boolean bindDisplayDate = false;
-
-		if (displayDate == null) {
-			sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_1);
-		}
-		else {
-			bindDisplayDate = true;
-
-			sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_2);
-		}
-
-		sb.append(_FINDER_COLUMN_LTD_S_STATUS_2);
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			sqlQuery.addScalar(
-				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			if (bindDisplayDate) {
-				queryPos.add(new Timestamp(displayDate.getTime()));
-			}
-
-			queryPos.add(status);
-
-			Long count = (Long)sqlQuery.uniqueResult();
-
-			return count.intValue();
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByLtD_S.filterCount(
+			finderCache, new Object[] {displayDate, status});
 	}
 
-	private static final String _FINDER_COLUMN_LTD_S_DISPLAYDATE_1 =
-		"corEntry.displayDate IS NULL AND ";
-
-	private static final String _FINDER_COLUMN_LTD_S_DISPLAYDATE_2 =
-		"corEntry.displayDate < ? AND ";
-
-	private static final String _FINDER_COLUMN_LTD_S_STATUS_2 =
-		"corEntry.status = ?";
-
-	private FinderPath _finderPathWithPaginationFindByLtE_S;
-	private FinderPath _finderPathWithPaginationCountByLtE_S;
+	private FilterCollectionPersistenceFinder<COREntry>
+		_collectionPersistenceFinderByLtE_S;
 
 	/**
 	 * Returns all the cor entries where expirationDate &lt; &#63; and status = &#63;.
@@ -2937,102 +1006,9 @@ public class COREntryPersistenceImpl
 		Date expirationDate, int status, int start, int end,
 		OrderByComparator<COREntry> orderByComparator, boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		finderPath = _finderPathWithPaginationFindByLtE_S;
-		finderArgs = new Object[] {
-			_getTime(expirationDate), status, start, end, orderByComparator
-		};
-
-		List<COREntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<COREntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (COREntry corEntry : list) {
-					if ((expirationDate.getTime() <= corEntry.getExpirationDate(
-						).getTime()) || (status != corEntry.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_CORENTRY_WHERE);
-
-			boolean bindExpirationDate = false;
-
-			if (expirationDate == null) {
-				sb.append(_FINDER_COLUMN_LTE_S_EXPIRATIONDATE_1);
-			}
-			else {
-				bindExpirationDate = true;
-
-				sb.append(_FINDER_COLUMN_LTE_S_EXPIRATIONDATE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_LTE_S_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExpirationDate) {
-					queryPos.add(new Timestamp(expirationDate.getTime()));
-				}
-
-				queryPos.add(status);
-
-				list = (List<COREntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByLtE_S.find(
+			finderCache, new Object[] {expirationDate, status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -3057,19 +1033,10 @@ public class COREntryPersistenceImpl
 			return corEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("expirationDate<");
-		sb.append(expirationDate);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchCOREntryException(sb.toString());
+		throw new NoSuchCOREntryException(
+			_collectionPersistenceFinderByLtE_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {expirationDate, status}));
 	}
 
 	/**
@@ -3085,14 +1052,9 @@ public class COREntryPersistenceImpl
 		Date expirationDate, int status,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		List<COREntry> list = findByLtE_S(
-			expirationDate, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByLtE_S.fetchFirst(
+			finderCache, new Object[] {expirationDate, status},
+			orderByComparator);
 	}
 
 	/**
@@ -3147,108 +1109,9 @@ public class COREntryPersistenceImpl
 		Date expirationDate, int status, int start, int end,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		if (!InlineSQLHelperUtil.isEnabled()) {
-			return findByLtE_S(
-				expirationDate, status, start, end, orderByComparator);
-		}
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			isPermissionsInMemoryFilterEnabled()) {
-
-			return InlineSQLHelperUtil.filter(
-				findByLtE_S(
-					expirationDate, status, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, orderByComparator));
-		}
-
-		StringBundler sb = null;
-
-		if (orderByComparator != null) {
-			sb = new StringBundler(
-				4 + (orderByComparator.getOrderByFields().length * 2));
-		}
-		else {
-			sb = new StringBundler(5);
-		}
-
-		if (getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_WHERE);
-		}
-		else {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_1);
-		}
-
-		boolean bindExpirationDate = false;
-
-		if (expirationDate == null) {
-			sb.append(_FINDER_COLUMN_LTE_S_EXPIRATIONDATE_1);
-		}
-		else {
-			bindExpirationDate = true;
-
-			sb.append(_FINDER_COLUMN_LTE_S_EXPIRATIONDATE_2);
-		}
-
-		sb.append(_FINDER_COLUMN_LTE_S_STATUS_2);
-
-		if (!getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_2);
-		}
-
-		if (orderByComparator != null) {
-			if (getDB().isSupportsInlineDistinct()) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
-			}
-			else {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
-			}
-		}
-		else {
-			if (getDB().isSupportsInlineDistinct()) {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL);
-			}
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			if (getDB().isSupportsInlineDistinct()) {
-				sqlQuery.addEntity(_FILTER_ENTITY_ALIAS, COREntryImpl.class);
-			}
-			else {
-				sqlQuery.addEntity(_FILTER_ENTITY_TABLE, COREntryImpl.class);
-			}
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			if (bindExpirationDate) {
-				queryPos.add(new Timestamp(expirationDate.getTime()));
-			}
-
-			queryPos.add(status);
-
-			return (List<COREntry>)QueryUtil.list(
-				sqlQuery, getDialect(), start, end);
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByLtE_S.filterFind(
+			finderCache, new Object[] {expirationDate, status}, start, end,
+			orderByComparator);
 	}
 
 	/**
@@ -3259,13 +1122,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public void removeByLtE_S(Date expirationDate, int status) {
-		for (COREntry corEntry :
-				findByLtE_S(
-					expirationDate, status, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(corEntry);
-		}
+		_collectionPersistenceFinderByLtE_S.remove(
+			finderCache, new Object[] {expirationDate, status});
 	}
 
 	/**
@@ -3277,60 +1135,8 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int countByLtE_S(Date expirationDate, int status) {
-		FinderPath finderPath = _finderPathWithPaginationCountByLtE_S;
-
-		Object[] finderArgs = new Object[] {_getTime(expirationDate), status};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_CORENTRY_WHERE);
-
-			boolean bindExpirationDate = false;
-
-			if (expirationDate == null) {
-				sb.append(_FINDER_COLUMN_LTE_S_EXPIRATIONDATE_1);
-			}
-			else {
-				bindExpirationDate = true;
-
-				sb.append(_FINDER_COLUMN_LTE_S_EXPIRATIONDATE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_LTE_S_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExpirationDate) {
-					queryPos.add(new Timestamp(expirationDate.getTime()));
-				}
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByLtE_S.count(
+			finderCache, new Object[] {expirationDate, status});
 	}
 
 	/**
@@ -3342,80 +1148,12 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int filterCountByLtE_S(Date expirationDate, int status) {
-		if (!InlineSQLHelperUtil.isEnabled()) {
-			return countByLtE_S(expirationDate, status);
-		}
-
-		if (isPermissionsInMemoryFilterEnabled()) {
-			List<COREntry> corEntries = findByLtE_S(expirationDate, status);
-
-			corEntries = InlineSQLHelperUtil.filter(corEntries);
-
-			return corEntries.size();
-		}
-
-		StringBundler sb = new StringBundler(3);
-
-		sb.append(_FILTER_SQL_COUNT_CORENTRY_WHERE);
-
-		boolean bindExpirationDate = false;
-
-		if (expirationDate == null) {
-			sb.append(_FINDER_COLUMN_LTE_S_EXPIRATIONDATE_1);
-		}
-		else {
-			bindExpirationDate = true;
-
-			sb.append(_FINDER_COLUMN_LTE_S_EXPIRATIONDATE_2);
-		}
-
-		sb.append(_FINDER_COLUMN_LTE_S_STATUS_2);
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			sqlQuery.addScalar(
-				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			if (bindExpirationDate) {
-				queryPos.add(new Timestamp(expirationDate.getTime()));
-			}
-
-			queryPos.add(status);
-
-			Long count = (Long)sqlQuery.uniqueResult();
-
-			return count.intValue();
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByLtE_S.filterCount(
+			finderCache, new Object[] {expirationDate, status});
 	}
 
-	private static final String _FINDER_COLUMN_LTE_S_EXPIRATIONDATE_1 =
-		"corEntry.expirationDate IS NULL AND ";
-
-	private static final String _FINDER_COLUMN_LTE_S_EXPIRATIONDATE_2 =
-		"corEntry.expirationDate < ? AND ";
-
-	private static final String _FINDER_COLUMN_LTE_S_STATUS_2 =
-		"corEntry.status = ?";
-
-	private FinderPath _finderPathWithPaginationFindByC_A_LikeType;
-	private FinderPath _finderPathWithPaginationCountByC_A_LikeType;
+	private FilterCollectionPersistenceFinder<COREntry>
+		_collectionPersistenceFinderByC_A_LikeType;
 
 	/**
 	 * Returns all the cor entries where companyId = &#63; and active = &#63; and type LIKE &#63;.
@@ -3500,110 +1238,9 @@ public class COREntryPersistenceImpl
 		long companyId, boolean active, String type, int start, int end,
 		OrderByComparator<COREntry> orderByComparator, boolean useFinderCache) {
 
-		type = Objects.toString(type, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		finderPath = _finderPathWithPaginationFindByC_A_LikeType;
-		finderArgs = new Object[] {
-			companyId, active, type, start, end, orderByComparator
-		};
-
-		List<COREntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<COREntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (COREntry corEntry : list) {
-					if ((companyId != corEntry.getCompanyId()) ||
-						(active != corEntry.isActive()) ||
-						!StringUtil.wildcardMatches(
-							corEntry.getType(), type, '_', '%', '\\', true)) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_CORENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_A_LIKETYPE_COMPANYID_2);
-
-			sb.append(_FINDER_COLUMN_C_A_LIKETYPE_ACTIVE_2);
-
-			boolean bindType = false;
-
-			if (type.isEmpty()) {
-				sb.append(_FINDER_COLUMN_C_A_LIKETYPE_TYPE_3);
-			}
-			else {
-				bindType = true;
-
-				sb.append(_FINDER_COLUMN_C_A_LIKETYPE_TYPE_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				queryPos.add(active);
-
-				if (bindType) {
-					queryPos.add(type);
-				}
-
-				list = (List<COREntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByC_A_LikeType.find(
+			finderCache, new Object[] {companyId, active, type}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -3629,22 +1266,10 @@ public class COREntryPersistenceImpl
 			return corEntry;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", active=");
-		sb.append(active);
-
-		sb.append(", typeLIKE");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchCOREntryException(sb.toString());
+		throw new NoSuchCOREntryException(
+			_collectionPersistenceFinderByC_A_LikeType.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {companyId, active, type}));
 	}
 
 	/**
@@ -3661,14 +1286,9 @@ public class COREntryPersistenceImpl
 		long companyId, boolean active, String type,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		List<COREntry> list = findByC_A_LikeType(
-			companyId, active, type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_A_LikeType.fetchFirst(
+			finderCache, new Object[] {companyId, active, type},
+			orderByComparator);
 	}
 
 	/**
@@ -3730,114 +1350,9 @@ public class COREntryPersistenceImpl
 		long companyId, boolean active, String type, int start, int end,
 		OrderByComparator<COREntry> orderByComparator) {
 
-		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
-			return findByC_A_LikeType(
-				companyId, active, type, start, end, orderByComparator);
-		}
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			isPermissionsInMemoryFilterEnabled()) {
-
-			return InlineSQLHelperUtil.filter(
-				findByC_A_LikeType(
-					companyId, active, type, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, orderByComparator));
-		}
-
-		type = Objects.toString(type, "");
-
-		StringBundler sb = null;
-
-		if (orderByComparator != null) {
-			sb = new StringBundler(
-				5 + (orderByComparator.getOrderByFields().length * 2));
-		}
-		else {
-			sb = new StringBundler(6);
-		}
-
-		if (getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_WHERE);
-		}
-		else {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_1);
-		}
-
-		sb.append(_FINDER_COLUMN_C_A_LIKETYPE_COMPANYID_2);
-
-		sb.append(_FINDER_COLUMN_C_A_LIKETYPE_ACTIVE_2_SQL);
-
-		boolean bindType = false;
-
-		if (type.isEmpty()) {
-			sb.append(_FINDER_COLUMN_C_A_LIKETYPE_TYPE_3_SQL);
-		}
-		else {
-			bindType = true;
-
-			sb.append(_FINDER_COLUMN_C_A_LIKETYPE_TYPE_2_SQL);
-		}
-
-		if (!getDB().isSupportsInlineDistinct()) {
-			sb.append(_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_2);
-		}
-
-		if (orderByComparator != null) {
-			if (getDB().isSupportsInlineDistinct()) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
-			}
-			else {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
-			}
-		}
-		else {
-			if (getDB().isSupportsInlineDistinct()) {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT);
-			}
-			else {
-				sb.append(COREntryModelImpl.ORDER_BY_SQL);
-			}
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			if (getDB().isSupportsInlineDistinct()) {
-				sqlQuery.addEntity(_FILTER_ENTITY_ALIAS, COREntryImpl.class);
-			}
-			else {
-				sqlQuery.addEntity(_FILTER_ENTITY_TABLE, COREntryImpl.class);
-			}
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			queryPos.add(companyId);
-
-			queryPos.add(active);
-
-			if (bindType) {
-				queryPos.add(type);
-			}
-
-			return (List<COREntry>)QueryUtil.list(
-				sqlQuery, getDialect(), start, end);
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByC_A_LikeType.filterFind(
+			finderCache, new Object[] {companyId, active, type}, start, end,
+			orderByComparator, companyId, 0);
 	}
 
 	/**
@@ -3851,13 +1366,8 @@ public class COREntryPersistenceImpl
 	public void removeByC_A_LikeType(
 		long companyId, boolean active, String type) {
 
-		for (COREntry corEntry :
-				findByC_A_LikeType(
-					companyId, active, type, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(corEntry);
-		}
+		_collectionPersistenceFinderByC_A_LikeType.remove(
+			finderCache, new Object[] {companyId, active, type});
 	}
 
 	/**
@@ -3872,66 +1382,8 @@ public class COREntryPersistenceImpl
 	public int countByC_A_LikeType(
 		long companyId, boolean active, String type) {
 
-		type = Objects.toString(type, "");
-
-		FinderPath finderPath = _finderPathWithPaginationCountByC_A_LikeType;
-
-		Object[] finderArgs = new Object[] {companyId, active, type};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_CORENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_A_LIKETYPE_COMPANYID_2);
-
-			sb.append(_FINDER_COLUMN_C_A_LIKETYPE_ACTIVE_2);
-
-			boolean bindType = false;
-
-			if (type.isEmpty()) {
-				sb.append(_FINDER_COLUMN_C_A_LIKETYPE_TYPE_3);
-			}
-			else {
-				bindType = true;
-
-				sb.append(_FINDER_COLUMN_C_A_LIKETYPE_TYPE_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				queryPos.add(active);
-
-				if (bindType) {
-					queryPos.add(type);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByC_A_LikeType.count(
+			finderCache, new Object[] {companyId, active, type});
 	}
 
 	/**
@@ -3946,98 +1398,11 @@ public class COREntryPersistenceImpl
 	public int filterCountByC_A_LikeType(
 		long companyId, boolean active, String type) {
 
-		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
-			return countByC_A_LikeType(companyId, active, type);
-		}
-
-		if (isPermissionsInMemoryFilterEnabled()) {
-			List<COREntry> corEntries = findByC_A_LikeType(
-				companyId, active, type);
-
-			corEntries = InlineSQLHelperUtil.filter(corEntries);
-
-			return corEntries.size();
-		}
-
-		type = Objects.toString(type, "");
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_FILTER_SQL_COUNT_CORENTRY_WHERE);
-
-		sb.append(_FINDER_COLUMN_C_A_LIKETYPE_COMPANYID_2);
-
-		sb.append(_FINDER_COLUMN_C_A_LIKETYPE_ACTIVE_2_SQL);
-
-		boolean bindType = false;
-
-		if (type.isEmpty()) {
-			sb.append(_FINDER_COLUMN_C_A_LIKETYPE_TYPE_3_SQL);
-		}
-		else {
-			bindType = true;
-
-			sb.append(_FINDER_COLUMN_C_A_LIKETYPE_TYPE_2_SQL);
-		}
-
-		String sql = InlineSQLHelperUtil.replacePermissionCheck(
-			sb.toString(), COREntry.class.getName(),
-			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-
-			sqlQuery.addScalar(
-				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
-
-			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
-
-			queryPos.add(companyId);
-
-			queryPos.add(active);
-
-			if (bindType) {
-				queryPos.add(type);
-			}
-
-			Long count = (Long)sqlQuery.uniqueResult();
-
-			return count.intValue();
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
+		return _collectionPersistenceFinderByC_A_LikeType.filterCount(
+			finderCache, new Object[] {companyId, active, type}, companyId, 0);
 	}
 
-	private static final String _FINDER_COLUMN_C_A_LIKETYPE_COMPANYID_2 =
-		"corEntry.companyId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_A_LIKETYPE_ACTIVE_2 =
-		"corEntry.active = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_A_LIKETYPE_ACTIVE_2_SQL =
-		"corEntry.active_ = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_A_LIKETYPE_TYPE_2 =
-		"corEntry.type LIKE ?";
-
-	private static final String _FINDER_COLUMN_C_A_LIKETYPE_TYPE_3 =
-		"(corEntry.type IS NULL OR corEntry.type LIKE '')";
-
-	private static final String _FINDER_COLUMN_C_A_LIKETYPE_TYPE_2_SQL =
-		"corEntry.type_ LIKE ?";
-
-	private static final String _FINDER_COLUMN_C_A_LIKETYPE_TYPE_3_SQL =
-		"(corEntry.type_ IS NULL OR corEntry.type_ LIKE '')";
-
-	private FinderPath _finderPathFetchByERC_C;
+	private UniquePersistenceFinder<COREntry> _uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the cor entry where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCOREntryException</code> if it could not be found.
@@ -4054,38 +1419,19 @@ public class COREntryPersistenceImpl
 		COREntry corEntry = fetchByERC_C(externalReferenceCode, companyId);
 
 		if (corEntry == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("externalReferenceCode=");
-			sb.append(externalReferenceCode);
-
-			sb.append(", companyId=");
-			sb.append(companyId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {externalReferenceCode, companyId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCOREntryException(sb.toString());
+			throw new NoSuchCOREntryException(message);
 		}
 
 		return corEntry;
-	}
-
-	/**
-	 * Returns the cor entry where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching cor entry, or <code>null</code> if a matching cor entry could not be found
-	 */
-	@Override
-	public COREntry fetchByERC_C(String externalReferenceCode, long companyId) {
-		return fetchByERC_C(externalReferenceCode, companyId, true);
 	}
 
 	/**
@@ -4100,98 +1446,9 @@ public class COREntryPersistenceImpl
 	public COREntry fetchByERC_C(
 		String externalReferenceCode, long companyId, boolean useFinderCache) {
 
-		externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {externalReferenceCode, companyId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByERC_C, finderArgs, this);
-		}
-
-		if (result instanceof COREntry) {
-			COREntry corEntry = (COREntry)result;
-
-			if (!Objects.equals(
-					externalReferenceCode,
-					corEntry.getExternalReferenceCode()) ||
-				(companyId != corEntry.getCompanyId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_CORENTRY_WHERE);
-
-			boolean bindExternalReferenceCode = false;
-
-			if (externalReferenceCode.isEmpty()) {
-				sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3);
-			}
-			else {
-				bindExternalReferenceCode = true;
-
-				sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_ERC_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExternalReferenceCode) {
-					queryPos.add(externalReferenceCode);
-				}
-
-				queryPos.add(companyId);
-
-				List<COREntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByERC_C, finderArgs, list);
-					}
-				}
-				else {
-					COREntry corEntry = list.get(0);
-
-					result = corEntry;
-
-					cacheResult(corEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (COREntry)result;
-		}
+		return _uniquePersistenceFinderByERC_C.fetch(
+			finderCache, new Object[] {externalReferenceCode, companyId},
+			useFinderCache);
 	}
 
 	/**
@@ -4219,23 +1476,9 @@ public class COREntryPersistenceImpl
 	 */
 	@Override
 	public int countByERC_C(String externalReferenceCode, long companyId) {
-		COREntry corEntry = fetchByERC_C(externalReferenceCode, companyId);
-
-		if (corEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByERC_C.count(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2 =
-		"corEntry.externalReferenceCode = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3 =
-		"(corEntry.externalReferenceCode IS NULL OR corEntry.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_COMPANYID_2 =
-		"corEntry.companyId = ?";
 
 	public COREntryPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -4252,102 +1495,6 @@ public class COREntryPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(COREntryTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the cor entry in the entity cache if it is enabled.
-	 *
-	 * @param corEntry the cor entry
-	 */
-	@Override
-	public void cacheResult(COREntry corEntry) {
-		entityCache.putResult(
-			COREntryImpl.class, corEntry.getPrimaryKey(), corEntry);
-
-		finderCache.putResult(
-			_finderPathFetchByERC_C,
-			new Object[] {
-				corEntry.getExternalReferenceCode(), corEntry.getCompanyId()
-			},
-			corEntry);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the cor entries in the entity cache if it is enabled.
-	 *
-	 * @param corEntries the cor entries
-	 */
-	@Override
-	public void cacheResult(List<COREntry> corEntries) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (corEntries.size() > _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (COREntry corEntry : corEntries) {
-			if (entityCache.getResult(
-					COREntryImpl.class, corEntry.getPrimaryKey()) == null) {
-
-				cacheResult(corEntry);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all cor entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(COREntryImpl.class);
-
-		finderCache.clearCache(COREntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the cor entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(COREntry corEntry) {
-		entityCache.removeResult(COREntryImpl.class, corEntry);
-	}
-
-	@Override
-	public void clearCache(List<COREntry> corEntries) {
-		for (COREntry corEntry : corEntries) {
-			entityCache.removeResult(COREntryImpl.class, corEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(COREntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(COREntryImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		COREntryModelImpl corEntryModelImpl) {
-
-		Object[] args = new Object[] {
-			corEntryModelImpl.getExternalReferenceCode(),
-			corEntryModelImpl.getCompanyId()
-		};
-
-		finderCache.putResult(_finderPathFetchByERC_C, args, corEntryModelImpl);
 	}
 
 	/**
@@ -4382,47 +1529,6 @@ public class COREntryPersistenceImpl
 	@Override
 	public COREntry remove(long COREntryId) throws NoSuchCOREntryException {
 		return remove((Serializable)COREntryId);
-	}
-
-	/**
-	 * Removes the cor entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the cor entry
-	 * @return the cor entry that was removed
-	 * @throws NoSuchCOREntryException if a cor entry with the primary key could not be found
-	 */
-	@Override
-	public COREntry remove(Serializable primaryKey)
-		throws NoSuchCOREntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			COREntry corEntry = (COREntry)session.get(
-				COREntryImpl.class, primaryKey);
-
-			if (corEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchCOREntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(corEntry);
-		}
-		catch (NoSuchCOREntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -4585,41 +1691,13 @@ public class COREntryPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			COREntryImpl.class, corEntryModelImpl, false, true);
-
-		cacheUniqueFindersCache(corEntryModelImpl);
+		cacheUniqueFindersResult(corEntry, false);
 
 		if (isNew) {
 			corEntry.setNew(false);
 		}
 
 		corEntry.resetOriginalValues();
-
-		return corEntry;
-	}
-
-	/**
-	 * Returns the cor entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the cor entry
-	 * @return the cor entry
-	 * @throws NoSuchCOREntryException if a cor entry with the primary key could not be found
-	 */
-	@Override
-	public COREntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchCOREntryException {
-
-		COREntry corEntry = fetchByPrimaryKey(primaryKey);
-
-		if (corEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchCOREntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return corEntry;
 	}
@@ -4647,185 +1725,6 @@ public class COREntryPersistenceImpl
 	@Override
 	public COREntry fetchByPrimaryKey(long COREntryId) {
 		return fetchByPrimaryKey((Serializable)COREntryId);
-	}
-
-	/**
-	 * Returns all the cor entries.
-	 *
-	 * @return the cor entries
-	 */
-	@Override
-	public List<COREntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cor entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @return the range of cor entries
-	 */
-	@Override
-	public List<COREntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the cor entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cor entries
-	 */
-	@Override
-	public List<COREntry> findAll(
-		int start, int end, OrderByComparator<COREntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cor entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>COREntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cor entries
-	 * @param end the upper bound of the range of cor entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cor entries
-	 */
-	@Override
-	public List<COREntry> findAll(
-		int start, int end, OrderByComparator<COREntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<COREntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<COREntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_CORENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_CORENTRY;
-
-				sql = sql.concat(COREntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<COREntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the cor entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (COREntry corEntry : findAll()) {
-			remove(corEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of cor entries.
-	 *
-	 * @return the number of cor entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_CORENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -4858,140 +1757,282 @@ public class COREntryPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+					new String[] {
+						String.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+					new String[] {String.class.getName()},
+					new String[] {"uuid_"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+					new String[] {String.class.getName()},
+					new String[] {"uuid_"}, 0, 1, false, null),
+				_SQL_SELECT_CORENTRY_WHERE, _SQL_COUNT_CORENTRY_WHERE,
+				COREntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					COREntryImpl.class, COREntry.class, "corEntry", "COREntry",
+					"corEntry.COREntryId",
+					"SELECT DISTINCT {corEntry.*} FROM COREntry corEntry WHERE ",
+					"SELECT {COREntry.*} FROM (SELECT DISTINCT corEntry.COREntryId FROM COREntry corEntry WHERE ",
+					") TEMP_TABLE INNER JOIN COREntry ON TEMP_TABLE.COREntryId = COREntry.COREntryId",
+					"SELECT COUNT(DISTINCT corEntry.COREntryId) AS COUNT_VALUE FROM COREntry corEntry WHERE ",
+					COREntryModelImpl.ORDER_BY_SQL,
+					COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new FinderColumn<>(
+					"corEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
+					true, COREntry::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByUuid_C =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+					new String[] {
+						String.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_", "companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
+				_SQL_SELECT_CORENTRY_WHERE, _SQL_COUNT_CORENTRY_WHERE,
+				COREntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					COREntryImpl.class, COREntry.class, "corEntry", "COREntry",
+					"corEntry.COREntryId",
+					"SELECT DISTINCT {corEntry.*} FROM COREntry corEntry WHERE ",
+					"SELECT {COREntry.*} FROM (SELECT DISTINCT corEntry.COREntryId FROM COREntry corEntry WHERE ",
+					") TEMP_TABLE INNER JOIN COREntry ON TEMP_TABLE.COREntryId = COREntry.COREntryId",
+					"SELECT COUNT(DISTINCT corEntry.COREntryId) AS COUNT_VALUE FROM COREntry corEntry WHERE ",
+					COREntryModelImpl.ORDER_BY_SQL,
+					COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new FinderColumn<>(
+					"corEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
+					true, COREntry::getUuid),
+				new FinderColumn<>(
+					"corEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
+					true, COREntry::getCompanyId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByC_A =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_A",
+					new String[] {
+						Long.class.getName(), Boolean.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"companyId", "active_"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_A",
+					new String[] {
+						Long.class.getName(), Boolean.class.getName()
+					},
+					new String[] {"companyId", "active_"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_A",
+					new String[] {
+						Long.class.getName(), Boolean.class.getName()
+					},
+					new String[] {"companyId", "active_"}, false),
+				_SQL_SELECT_CORENTRY_WHERE, _SQL_COUNT_CORENTRY_WHERE,
+				COREntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					COREntryImpl.class, COREntry.class, "corEntry", "COREntry",
+					"corEntry.COREntryId",
+					"SELECT DISTINCT {corEntry.*} FROM COREntry corEntry WHERE ",
+					"SELECT {COREntry.*} FROM (SELECT DISTINCT corEntry.COREntryId FROM COREntry corEntry WHERE ",
+					") TEMP_TABLE INNER JOIN COREntry ON TEMP_TABLE.COREntryId = COREntry.COREntryId",
+					"SELECT COUNT(DISTINCT corEntry.COREntryId) AS COUNT_VALUE FROM COREntry corEntry WHERE ",
+					COREntryModelImpl.ORDER_BY_SQL,
+					COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new FinderColumn<>(
+					"corEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
+					true, COREntry::getCompanyId),
+				new FinderColumn<>(
+					"corEntry.", "active", FinderColumn.Type.BOOLEAN, "=", true,
+					true, COREntry::isActive));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_collectionPersistenceFinderByC_LikeType =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_LikeType",
+					new String[] {
+						Long.class.getName(), String.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"companyId", "type_"}, true),
+				null,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByC_LikeType",
+					new String[] {Long.class.getName(), String.class.getName()},
+					new String[] {"companyId", "type_"}, false),
+				_SQL_SELECT_CORENTRY_WHERE, _SQL_COUNT_CORENTRY_WHERE,
+				COREntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					COREntryImpl.class, COREntry.class, "corEntry", "COREntry",
+					"corEntry.COREntryId",
+					"SELECT DISTINCT {corEntry.*} FROM COREntry corEntry WHERE ",
+					"SELECT {COREntry.*} FROM (SELECT DISTINCT corEntry.COREntryId FROM COREntry corEntry WHERE ",
+					") TEMP_TABLE INNER JOIN COREntry ON TEMP_TABLE.COREntryId = COREntry.COREntryId",
+					"SELECT COUNT(DISTINCT corEntry.COREntryId) AS COUNT_VALUE FROM COREntry corEntry WHERE ",
+					COREntryModelImpl.ORDER_BY_SQL,
+					COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new FinderColumn<>(
+					"corEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
+					true, COREntry::getCompanyId),
+				new FinderColumn<>(
+					"corEntry.", "type", FinderColumn.Type.STRING, "LIKE", true,
+					true, COREntry::getType));
 
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
+		_collectionPersistenceFinderByLtD_S =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByLtD_S",
+					new String[] {
+						Date.class.getName(), Integer.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"displayDate", "status"}, true),
+				null,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByLtD_S",
+					new String[] {
+						Date.class.getName(), Integer.class.getName()
+					},
+					new String[] {"displayDate", "status"}, false),
+				_SQL_SELECT_CORENTRY_WHERE, _SQL_COUNT_CORENTRY_WHERE,
+				COREntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					COREntryImpl.class, COREntry.class, "corEntry", "COREntry",
+					"corEntry.COREntryId",
+					"SELECT DISTINCT {corEntry.*} FROM COREntry corEntry WHERE ",
+					"SELECT {COREntry.*} FROM (SELECT DISTINCT corEntry.COREntryId FROM COREntry corEntry WHERE ",
+					") TEMP_TABLE INNER JOIN COREntry ON TEMP_TABLE.COREntryId = COREntry.COREntryId",
+					"SELECT COUNT(DISTINCT corEntry.COREntryId) AS COUNT_VALUE FROM COREntry corEntry WHERE ",
+					COREntryModelImpl.ORDER_BY_SQL,
+					COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new FinderColumn<>(
+					"corEntry.", "displayDate", FinderColumn.Type.DATE, "<",
+					true, true, COREntry::getDisplayDate),
+				new FinderColumn<>(
+					"corEntry.", "status", FinderColumn.Type.INTEGER, "=", true,
+					true, COREntry::getStatus));
 
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
+		_collectionPersistenceFinderByLtE_S =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByLtE_S",
+					new String[] {
+						Date.class.getName(), Integer.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"expirationDate", "status"}, true),
+				null,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByLtE_S",
+					new String[] {
+						Date.class.getName(), Integer.class.getName()
+					},
+					new String[] {"expirationDate", "status"}, false),
+				_SQL_SELECT_CORENTRY_WHERE, _SQL_COUNT_CORENTRY_WHERE,
+				COREntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					COREntryImpl.class, COREntry.class, "corEntry", "COREntry",
+					"corEntry.COREntryId",
+					"SELECT DISTINCT {corEntry.*} FROM COREntry corEntry WHERE ",
+					"SELECT {COREntry.*} FROM (SELECT DISTINCT corEntry.COREntryId FROM COREntry corEntry WHERE ",
+					") TEMP_TABLE INNER JOIN COREntry ON TEMP_TABLE.COREntryId = COREntry.COREntryId",
+					"SELECT COUNT(DISTINCT corEntry.COREntryId) AS COUNT_VALUE FROM COREntry corEntry WHERE ",
+					COREntryModelImpl.ORDER_BY_SQL,
+					COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new FinderColumn<>(
+					"corEntry.", "expirationDate", FinderColumn.Type.DATE, "<",
+					true, true, COREntry::getExpirationDate),
+				new FinderColumn<>(
+					"corEntry.", "status", FinderColumn.Type.INTEGER, "=", true,
+					true, COREntry::getStatus));
 
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
+		_collectionPersistenceFinderByC_A_LikeType =
+			new FilterCollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByC_A_LikeType",
+					new String[] {
+						Long.class.getName(), Boolean.class.getName(),
+						String.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"companyId", "active_", "type_"}, true),
+				null,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"countByC_A_LikeType",
+					new String[] {
+						Long.class.getName(), Boolean.class.getName(),
+						String.class.getName()
+					},
+					new String[] {"companyId", "active_", "type_"}, false),
+				_SQL_SELECT_CORENTRY_WHERE, _SQL_COUNT_CORENTRY_WHERE,
+				COREntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FilterCollectionPersistenceFinder.FilterMetadata<>(
+					COREntryImpl.class, COREntry.class, "corEntry", "COREntry",
+					"corEntry.COREntryId",
+					"SELECT DISTINCT {corEntry.*} FROM COREntry corEntry WHERE ",
+					"SELECT {COREntry.*} FROM (SELECT DISTINCT corEntry.COREntryId FROM COREntry corEntry WHERE ",
+					") TEMP_TABLE INNER JOIN COREntry ON TEMP_TABLE.COREntryId = COREntry.COREntryId",
+					"SELECT COUNT(DISTINCT corEntry.COREntryId) AS COUNT_VALUE FROM COREntry corEntry WHERE ",
+					COREntryModelImpl.ORDER_BY_SQL,
+					COREntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				new FinderColumn<>(
+					"corEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
+					true, COREntry::getCompanyId),
+				new FinderColumn<>(
+					"corEntry.", "active", FinderColumn.Type.BOOLEAN, "=", true,
+					true, COREntry::isActive),
+				new FinderColumn<>(
+					"corEntry.", "type", FinderColumn.Type.STRING, "LIKE", true,
+					true, COREntry::getType));
 
-		_finderPathWithPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathCountByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, false);
-
-		_finderPathWithPaginationFindByC_A = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_A",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"companyId", "active_"}, true);
-
-		_finderPathWithoutPaginationFindByC_A = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_A",
-			new String[] {Long.class.getName(), Boolean.class.getName()},
-			new String[] {"companyId", "active_"}, true);
-
-		_finderPathCountByC_A = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_A",
-			new String[] {Long.class.getName(), Boolean.class.getName()},
-			new String[] {"companyId", "active_"}, false);
-
-		_finderPathWithPaginationFindByC_LikeType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_LikeType",
-			new String[] {
-				Long.class.getName(), String.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"companyId", "type_"}, true);
-
-		_finderPathWithPaginationCountByC_LikeType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByC_LikeType",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"companyId", "type_"}, false);
-
-		_finderPathWithPaginationFindByLtD_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByLtD_S",
-			new String[] {
-				Date.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"displayDate", "status"}, true);
-
-		_finderPathWithPaginationCountByLtD_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByLtD_S",
-			new String[] {Date.class.getName(), Integer.class.getName()},
-			new String[] {"displayDate", "status"}, false);
-
-		_finderPathWithPaginationFindByLtE_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByLtE_S",
-			new String[] {
-				Date.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"expirationDate", "status"}, true);
-
-		_finderPathWithPaginationCountByLtE_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByLtE_S",
-			new String[] {Date.class.getName(), Integer.class.getName()},
-			new String[] {"expirationDate", "status"}, false);
-
-		_finderPathWithPaginationFindByC_A_LikeType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_A_LikeType",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"companyId", "active_", "type_"}, true);
-
-		_finderPathWithPaginationCountByC_A_LikeType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByC_A_LikeType",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				String.class.getName()
-			},
-			new String[] {"companyId", "active_", "type_"}, false);
-
-		_finderPathFetchByERC_C = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByERC_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"externalReferenceCode", "companyId"}, true);
+		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByERC_C",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"externalReferenceCode", "companyId"}, 0, 1,
+				false, convertNullFunction(COREntry::getExternalReferenceCode),
+				COREntry::getCompanyId),
+			_SQL_SELECT_CORENTRY_WHERE, "",
+			new FinderColumn<>(
+				"corEntry.", "externalReferenceCode", FinderColumn.Type.STRING,
+				"=", true, true, COREntry::getExternalReferenceCode),
+			new FinderColumn<>(
+				"corEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
+				true, COREntry::getCompanyId));
 
 		COREntryUtil.setPersistence(this);
 	}
@@ -5035,13 +2076,8 @@ public class COREntryPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
-	private static Long _getTime(Date date) {
-		if (date == null) {
-			return null;
-		}
-
-		return date.getTime();
-	}
+	private static final String _ENTITY_ALIAS_PREFIX =
+		COREntryModelImpl.ENTITY_ALIAS + ".";
 
 	private static final String _SQL_SELECT_CORENTRY =
 		"SELECT corEntry FROM COREntry corEntry";
@@ -5049,39 +2085,8 @@ public class COREntryPersistenceImpl
 	private static final String _SQL_SELECT_CORENTRY_WHERE =
 		"SELECT corEntry FROM COREntry corEntry WHERE ";
 
-	private static final String _SQL_COUNT_CORENTRY =
-		"SELECT COUNT(corEntry) FROM COREntry corEntry";
-
 	private static final String _SQL_COUNT_CORENTRY_WHERE =
 		"SELECT COUNT(corEntry) FROM COREntry corEntry WHERE ";
-
-	private static final String _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN =
-		"corEntry.COREntryId";
-
-	private static final String _FILTER_SQL_SELECT_CORENTRY_WHERE =
-		"SELECT DISTINCT {corEntry.*} FROM COREntry corEntry WHERE ";
-
-	private static final String
-		_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_1 =
-			"SELECT {COREntry.*} FROM (SELECT DISTINCT corEntry.COREntryId FROM COREntry corEntry WHERE ";
-
-	private static final String
-		_FILTER_SQL_SELECT_CORENTRY_NO_INLINE_DISTINCT_WHERE_2 =
-			") TEMP_TABLE INNER JOIN COREntry ON TEMP_TABLE.COREntryId = COREntry.COREntryId";
-
-	private static final String _FILTER_SQL_COUNT_CORENTRY_WHERE =
-		"SELECT COUNT(DISTINCT corEntry.COREntryId) AS COUNT_VALUE FROM COREntry corEntry WHERE ";
-
-	private static final String _FILTER_ENTITY_ALIAS = "corEntry";
-
-	private static final String _FILTER_ENTITY_TABLE = "COREntry";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "corEntry.";
-
-	private static final String _ORDER_BY_ENTITY_TABLE = "COREntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No COREntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No COREntry exists with the key {";
@@ -5098,4 +2103,4 @@ public class COREntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:647631302
+// LIFERAY-SERVICE-BUILDER-HASH:10518695

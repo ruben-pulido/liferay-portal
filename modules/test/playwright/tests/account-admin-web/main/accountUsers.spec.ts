@@ -13,6 +13,7 @@ import {loginTest} from '../../../fixtures/loginTest';
 import {serverAdministrationPageTest} from '../../../fixtures/serverAdministrationPageTest';
 import {usersAndOrganizationsPagesTest} from '../../../fixtures/usersAndOrganizationsPagesTest';
 import {virtualInstancesPagesTest} from '../../../fixtures/virtualInstancesPagesTest';
+import {liferayConfig} from '../../../liferay.config';
 import {AccountUserSelectorPage} from '../../../pages/account-admin-web/AccountUserSelectorPage';
 import {AccountUsersPage} from '../../../pages/account-admin-web/AccountUsersPage';
 import {AccountsPage} from '../../../pages/account-admin-web/AccountsPage';
@@ -22,7 +23,6 @@ import getRandomString from '../../../utils/getRandomString';
 import {nextPage, setItemsPerPage} from '../../../utils/pagination';
 import performLogin from '../../../utils/performLogin';
 import {waitForAlert} from '../../../utils/waitForAlert';
-import {enableGlobalMenuFeatureFlag} from '../../roles-admin-web/main/utils/featureFlag';
 
 export const test = mergeTests(
 	accountsPagesTest,
@@ -30,7 +30,6 @@ export const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-36105': {enabled: true},
 	}),
 	loginTest(),
 	serverAdministrationPageTest,
@@ -1638,7 +1637,7 @@ test(
 			);
 
 			newPage = await browser.newPage({
-				baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`,
+				baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`,
 			});
 
 			accountUserSelectorPage = new AccountUserSelectorPage(newPage);
@@ -1653,8 +1652,6 @@ test(
 				'',
 				`@${DEFAULT_VIRTUAL_INSTANCE_NAME}.com`
 			);
-
-			await enableGlobalMenuFeatureFlag(newPage);
 
 			await accountsPage.goto(false);
 

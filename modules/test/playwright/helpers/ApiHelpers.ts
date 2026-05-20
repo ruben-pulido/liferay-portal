@@ -31,6 +31,7 @@ import {HeadlessCommerceAdminCatalogApiHelper} from './HeadlessCommerceAdminCata
 import {HeadlessCommerceAdminChannelApiHelper} from './HeadlessCommerceAdminChannelApiHelper';
 import {HeadlessCommerceAdminInventoryApiHelper} from './HeadlessCommerceAdminInventoryApiHelper';
 import {HeadlessCommerceAdminOrderApiHelper} from './HeadlessCommerceAdminOrderApiHelper';
+import {HeadlessCommerceAdminOrderAttachmentApiHelper} from './HeadlessCommerceAdminOrderAttachmentApiHelper';
 import {HeadlessCommerceAdminPaymentApiHelper} from './HeadlessCommerceAdminPaymentApiHelper';
 import {HeadlessCommerceAdminPricingApiHelper} from './HeadlessCommerceAdminPricingApiHelper';
 import {HeadlessCommerceAdminShipmentApiHelper} from './HeadlessCommerceAdminShipmentApiHelper';
@@ -44,6 +45,7 @@ import {HeadlessSiteApiHelper} from './HeadlessSiteApiHelper';
 import {LanguageApiHelper} from './LanguageApiHelper';
 import {ListTypeAdminApiHelper} from './ListTypeAdminApiHelper';
 import {NotificationApiHelper} from './NotificationApiHelper';
+import {ObjectActionApiHelper} from './ObjectActionApiHelper';
 import {ObjectAdminApiHelper} from './ObjectAdminApiHelper';
 import {ObjectEntryApiHelper} from './ObjectEntryApiHelper';
 import {ObjectEntryFolderApiHelper} from './ObjectEntryFolderApiHelper';
@@ -137,6 +139,7 @@ export class ApiHelpers {
 	readonly headlessCommerceAdminChannel: HeadlessCommerceAdminChannelApiHelper;
 	readonly headlessCommerceAdminInventoryApiHelper: HeadlessCommerceAdminInventoryApiHelper;
 	readonly headlessCommerceAdminOrder: HeadlessCommerceAdminOrderApiHelper;
+	readonly headlessCommerceAdminOrderAttachment: HeadlessCommerceAdminOrderAttachmentApiHelper;
 	readonly headlessCommerceAdminPaymentApiHelper: HeadlessCommerceAdminPaymentApiHelper;
 	readonly headlessCommerceAdminPricing: HeadlessCommerceAdminPricingApiHelper;
 	readonly headlessCommerceAdminShipment: HeadlessCommerceAdminShipmentApiHelper;
@@ -180,6 +183,7 @@ export class ApiHelpers {
 	readonly language: LanguageApiHelper;
 	readonly listTypeAdmin: ListTypeAdminApiHelper;
 	readonly notification: NotificationApiHelper;
+	readonly objectAction: ObjectActionApiHelper;
 	readonly objectAdmin: ObjectAdminApiHelper;
 	readonly objectEntry: ObjectEntryApiHelper;
 	readonly objectFolder: ObjectEntryFolderApiHelper;
@@ -219,6 +223,8 @@ export class ApiHelpers {
 			new HeadlessCommerceAdminInventoryApiHelper(this);
 		this.headlessCommerceAdminOrder =
 			new HeadlessCommerceAdminOrderApiHelper(this);
+		this.headlessCommerceAdminOrderAttachment =
+			new HeadlessCommerceAdminOrderAttachmentApiHelper(this);
 		this.headlessCommerceAdminPaymentApiHelper =
 			new HeadlessCommerceAdminPaymentApiHelper(this);
 		this.headlessCommerceAdminPricing =
@@ -290,6 +296,7 @@ export class ApiHelpers {
 		this.language = new LanguageApiHelper(this);
 		this.listTypeAdmin = new ListTypeAdminApiHelper(this);
 		this.notification = new NotificationApiHelper(this);
+		this.objectAction = new ObjectActionApiHelper(this);
 		this.objectAdmin = new ObjectAdminApiHelper(this);
 		this.objectEntry = new ObjectEntryApiHelper(this);
 		this.objectFolder = new ObjectEntryFolderApiHelper(this);
@@ -510,6 +517,11 @@ export class DataApiHelpers extends ApiHelpers {
 			else if (item.type === 'document') {
 				await this.headlessDelivery.deleteDocument(item.id);
 			}
+			else if (item.type === 'keyword') {
+				await this.headlessAdminTaxonomy.deleteKeyword({
+					id: item.id,
+				});
+			}
 			else if (item.type === 'layoutSetPrototype') {
 				await this.jsonWebServicesLayoutSetPrototype.deleteLayoutSetPrototypes(
 					item.id
@@ -598,6 +610,16 @@ export class DataApiHelpers extends ApiHelpers {
 			else if (item.type === 'order') {
 				await this.headlessCommerceAdminOrder.deleteOrder(item.id);
 			}
+			else if (item.type === 'orderAttachment') {
+				const [orderId, attachmentId] = String(item.id)
+					.split('_')
+					.map(Number);
+
+				await this.headlessCommerceAdminOrderAttachment.deleteOrderAttachment(
+					attachmentId,
+					orderId
+				);
+			}
 			else if (item.type === 'orderRule') {
 				await this.headlessCommerceAdminOrder.deleteOrderRules(item.id);
 			}
@@ -634,6 +656,11 @@ export class DataApiHelpers extends ApiHelpers {
 			}
 			else if (item.type === 'product') {
 				await this.headlessCommerceAdminCatalog.deleteProduct(item.id);
+			}
+			else if (item.type === 'productGroup') {
+				await this.headlessCommerceAdminCatalog.deleteProductGroup(
+					item.id
+				);
 			}
 			else if (item.type === 'productConfiguration') {
 				await this.headlessCommerceAdminCatalog.deleteProductConfiguration(
@@ -729,6 +756,11 @@ export class DataApiHelpers extends ApiHelpers {
 			}
 			else if (item.type === 'wishList') {
 				await this.headlessCommerceDeliveryCatalog.deleteWishList(
+					item.id
+				);
+			}
+			else if (item.type === 'workflowDefinition') {
+				await this.headlessAdminWorkflow.deleteWorkflowDefinition(
 					item.id
 				);
 			}

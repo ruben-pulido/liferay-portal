@@ -58,6 +58,7 @@ import com.liferay.object.definition.setting.util.ObjectDefinitionSettingUtil;
 import com.liferay.object.definition.util.ObjectDefinitionThreadLocal;
 import com.liferay.object.definition.util.ObjectDefinitionUtil;
 import com.liferay.object.entry.ObjectEntryContext;
+import com.liferay.object.entry.contributor.ObjectEntryReviewNotificationContributor;
 import com.liferay.object.entry.contributor.ObjectEntryValuesContributor;
 import com.liferay.object.entry.folder.subscription.util.ObjectEntryFolderSubscriptionUtil;
 import com.liferay.object.entry.folder.util.ObjectEntryFolderUtil;
@@ -787,10 +788,16 @@ public class ObjectEntryLocalServiceImpl
 
 		serviceContext.setAttribute(Constants.ACTION, Constants.COPY);
 
-		return addObjectEntry(
+		ObjectEntry newObjectEntry = addObjectEntry(
 			groupId, userId, objectDefinition.getObjectDefinitionId(),
 			objectEntryFolderId, objectEntry.getDefaultLanguageId(), values,
 			serviceContext);
+
+		_copyRelatedObjectEntries(
+			userId, 1, objectDefinition, serviceContext, objectEntry,
+			newObjectEntry);
+
+		return newObjectEntry;
 	}
 
 	@Override
@@ -1845,6 +1852,20 @@ public class ObjectEntryLocalServiceImpl
 			this::getValues);
 	}
 
+	@Override
+	public int getValuesListCount(
+			long companyId, Long[] groupIds, Long[] objectDefinitionIds,
+			Predicate predicate)
+		throws PortalException {
+
+		return objectEntryPersistence.dslQueryCount(
+			_getObjectEntriesGroupByStep(
+				companyId,
+				DSLQueryFactoryUtil.countDistinct(
+					ObjectEntryTable.INSTANCE.objectEntryId),
+				groupIds, objectDefinitionIds, predicate));
+	}
+
 	public int getValuesListCount(
 			Long[] groupIds, long companyId, long userId,
 			long objectDefinitionId, Predicate predicate,
@@ -2532,6 +2553,9 @@ public class ObjectEntryLocalServiceImpl
 			ObjectFilterConstants.TYPE_EXCLUDES,
 			ObjectFilterConstants.TYPE_INCLUDES);
 
+		_objectEntryReviewNotificationContributors =
+			ServiceTrackerListFactory.open(
+				bundleContext, ObjectEntryReviewNotificationContributor.class);
 		_serviceTrackerList = ServiceTrackerListFactory.open(
 			bundleContext, ObjectEntryValuesContributor.class);
 	}
@@ -2541,6 +2565,7 @@ public class ObjectEntryLocalServiceImpl
 	protected void deactivate() {
 		super.deactivate();
 
+		_objectEntryReviewNotificationContributors.close();
 		_serviceTrackerList.close();
 	}
 
@@ -2588,6 +2613,26 @@ public class ObjectEntryLocalServiceImpl
 			return;
 		}
 
+		boolean duplicateFile = false;
+
+		if (StringUtil.equals(
+				GetterUtil.getString(
+					serviceContext.getAttribute(Constants.ACTION)),
+				Constants.COPY)) {
+
+			String showFilesInLibrary = ObjectFieldSettingUtil.getValue(
+				ObjectFieldSettingConstants.NAME_SHOW_FILES_IN_LIBRARY,
+				objectField.getObjectFieldSettings());
+
+			if (Validator.isNull(showFilesInLibrary) ||
+				GetterUtil.getBoolean(showFilesInLibrary)) {
+
+				return;
+			}
+
+			duplicateFile = true;
+		}
+
 		DLFolder dlFileEntryFolder = dlFileEntry.getFolder();
 
 		if ((groupId == 0) ||
@@ -2602,7 +2647,8 @@ public class ObjectEntryLocalServiceImpl
 			dlFileEntry.getCompanyId(), groupId, objectField.getObjectFieldId(),
 			serviceContext, userId);
 
-		if (Objects.equals(
+		if (!duplicateFile &&
+			Objects.equals(
 				dlFileEntryFolder.getFolderId(), dlFolder.getFolderId())) {
 
 			if (Validator.isNull(dlFileEntry.getClassName()) ||
@@ -2690,7 +2736,21 @@ public class ObjectEntryLocalServiceImpl
 		Map<String, String> urlTitleMap = new HashMap<>();
 
 		for (Map.Entry<String, String> entry : friendlyUrlMap.entrySet()) {
-			if (Validator.isNull(entry.getValue())) {
+			String friendlyURL = entry.getValue();
+
+			if (Validator.isNull(friendlyURL)) {
+				continue;
+			}
+
+			if (friendlyURL.startsWith(StringPool.SLASH)) {
+				friendlyURL = friendlyURL.replaceAll("^/+", StringPool.BLANK);
+			}
+
+			if (friendlyURL.contains(StringPool.SLASH)) {
+				friendlyURL = friendlyURL.replaceAll("/+", StringPool.SLASH);
+			}
+
+			if (Validator.isNull(friendlyURL)) {
 				continue;
 			}
 
@@ -2698,7 +2758,7 @@ public class ObjectEntryLocalServiceImpl
 				entry.getKey(),
 				_friendlyURLEntryLocalService.getUniqueUrlTitle(
 					groupId, classNameId, objectEntry.getObjectEntryId(),
-					entry.getValue(), entry.getKey()));
+					friendlyURL, entry.getKey()));
 		}
 
 		urlTitleMap.computeIfAbsent(
@@ -3209,6 +3269,22 @@ public class ObjectEntryLocalServiceImpl
 			));
 
 		for (ObjectEntry objectEntry : objectEntries) {
+			JSONObject payloadJSONObject = JSONUtil.put(
+				"classPK", objectEntry.getObjectEntryId()
+			).put(
+				"notificationMessageArg", objectEntry.getTitleValue()
+			).put(
+				"notificationMessageKey", "x-has-reached-its-review-date"
+			);
+
+			for (ObjectEntryReviewNotificationContributor contributor :
+					_objectEntryReviewNotificationContributors) {
+
+				if (contributor.isApplicable(objectEntry)) {
+					contributor.contribute(objectEntry, payloadJSONObject);
+				}
+			}
+
 			ObjectDefinition objectDefinition =
 				_objectDefinitionPersistence.fetchByPrimaryKey(
 					objectEntry.getObjectDefinitionId());
@@ -3216,14 +3292,7 @@ public class ObjectEntryLocalServiceImpl
 			_userNotificationEventLocalService.sendUserNotificationEvents(
 				objectEntry.getUserId(), objectDefinition.getPortletId(),
 				UserNotificationDeliveryConstants.TYPE_WEBSITE, false,
-				JSONUtil.put(
-					"classPK", objectEntry.getObjectEntryId()
-				).put(
-					"notificationMessage",
-					StringBundler.concat(
-						"The object entry ", objectEntry.getTitleValue(),
-						" has reached its review date.")
-				));
+				payloadJSONObject);
 		}
 	}
 
@@ -3262,6 +3331,121 @@ public class ObjectEntryLocalServiceImpl
 				new ObjectEntryContext(
 					groupId, objectDefinition.getObjectDefinitionId(), userId,
 					values));
+		}
+	}
+
+	private void _copyRelatedObjectEntries(
+			long userId, int currentCopyDepth,
+			ObjectDefinition objectDefinition, ServiceContext serviceContext,
+			ObjectEntry sourceObjectEntry, ObjectEntry targetObjectEntry)
+		throws PortalException {
+
+		if (currentCopyDepth > _RELATED_OBJECT_ENTRY_MAX_COPY_DEPTH) {
+			return;
+		}
+
+		for (ObjectRelationship objectRelationship :
+				_objectRelationshipPersistence.findByObjectDefinitionId1(
+					objectDefinition.getObjectDefinitionId())) {
+
+			_copyRelatedObjectEntry(
+				userId, currentCopyDepth, objectDefinition, objectRelationship,
+				serviceContext, sourceObjectEntry, targetObjectEntry);
+		}
+	}
+
+	private void _copyRelatedObjectEntry(
+			long userId, int currentCopyDepth,
+			ObjectDefinition objectDefinition,
+			ObjectRelationship objectRelationship,
+			ServiceContext serviceContext, ObjectEntry sourceObjectEntry,
+			ObjectEntry targetObjectEntry)
+		throws PortalException {
+
+		if (Objects.equals(
+				objectRelationship.getType(),
+				ObjectRelationshipConstants.TYPE_MANY_TO_MANY)) {
+
+			ObjectRelationshipLocalService objectRelationshipLocalService =
+				_objectRelationshipLocalServiceSnapshot.get();
+
+			List<ObjectEntry> relatedObjectEntries = getManyToManyObjectEntries(
+				sourceObjectEntry.getGroupId(),
+				objectRelationship.getObjectRelationshipId(),
+				sourceObjectEntry.getObjectEntryId(), true, false, null,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+			for (ObjectEntry relatedObjectEntry : relatedObjectEntries) {
+				objectRelationshipLocalService.
+					addObjectRelationshipMappingTableValues(
+						userId, objectRelationship.getObjectRelationshipId(),
+						targetObjectEntry.getObjectEntryId(),
+						relatedObjectEntry.getObjectEntryId(), serviceContext);
+			}
+		}
+		else if (Objects.equals(
+					objectRelationship.getType(),
+					ObjectRelationshipConstants.TYPE_ONE_TO_MANY)) {
+
+			if (!objectRelationship.isEdge()) {
+				return;
+			}
+
+			ObjectDefinition relatedObjectDefinition =
+				_objectDefinitionPersistence.findByPrimaryKey(
+					objectRelationship.getObjectDefinitionId2());
+
+			if (!relatedObjectDefinition.isApproved() ||
+				relatedObjectDefinition.isUnmodifiableSystemObject()) {
+
+				return;
+			}
+
+			int originalWorkflowAction = serviceContext.getWorkflowAction();
+
+			if (relatedObjectDefinition.isEnableObjectEntryDraft()) {
+				serviceContext.setWorkflowAction(
+					WorkflowConstants.ACTION_SAVE_DRAFT);
+			}
+			else {
+				serviceContext.setWorkflowAction(
+					WorkflowConstants.ACTION_PUBLISH);
+			}
+
+			String relationshipFieldName =
+				ObjectRelationshipUtil.getObjectRelationshipFieldName(
+					objectDefinition, objectRelationship.getName());
+
+			List<ObjectEntry> relatedObjectEntries = getOneToManyObjectEntries(
+				sourceObjectEntry.getGroupId(),
+				objectRelationship.getObjectRelationshipId(), null, false,
+				sourceObjectEntry.getObjectEntryId(), true, null,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+			for (ObjectEntry relatedObjectEntry : relatedObjectEntries) {
+				Map<String, Serializable> relatedValues =
+					HashMapBuilder.<String, Serializable>putAll(
+						getValues(relatedObjectEntry.getObjectEntryId())
+					).put(
+						relationshipFieldName,
+						targetObjectEntry.getObjectEntryId()
+					).put(
+						"externalReferenceCode", () -> null
+					).build();
+
+				ObjectEntry newObjectEntry = addObjectEntry(
+					relatedObjectEntry.getGroupId(), userId,
+					relatedObjectDefinition.getObjectDefinitionId(),
+					relatedObjectEntry.getObjectEntryFolderId(),
+					relatedObjectEntry.getDefaultLanguageId(), relatedValues,
+					serviceContext);
+
+				_copyRelatedObjectEntries(
+					userId, currentCopyDepth + 1, relatedObjectDefinition,
+					serviceContext, relatedObjectEntry, newObjectEntry);
+			}
+
+			serviceContext.setWorkflowAction(originalWorkflowAction);
 		}
 	}
 
@@ -3659,31 +3843,8 @@ public class ObjectEntryLocalServiceImpl
 		Predicate searchPredicate = null;
 
 		for (ObjectField objectField : objectFields) {
-			Table<?> table = _objectFieldLocalService.getTable(
-				objectDefinitionId, objectField.getName());
-
-			Column<?, ?> column = table.getColumn(
-				objectField.getDBColumnName());
-
-			if (column == null) {
-				continue;
-			}
-
-			Predicate objectFieldPredicate = null;
-
-			if (Objects.equals(
-					objectField.getRelationshipType(),
-					ObjectRelationshipConstants.TYPE_ONE_TO_MANY)) {
-
-				objectFieldPredicate = _getRelationshipObjectFieldPredicate(
-					column, objectField, search);
-			}
-			else {
-				objectFieldPredicate =
-					ObjectEntrySearchUtil.getObjectFieldPredicate(
-						objectField.getBusinessType(), column,
-						objectField.getDBType(), search);
-			}
+			Predicate objectFieldPredicate = _getObjectFieldPredicate(
+				objectDefinitionId, objectField, search);
 
 			if (objectFieldPredicate == null) {
 				continue;
@@ -4500,6 +4661,52 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private GroupByStep _getObjectEntriesGroupByStep(
+			long companyId, FromStep fromStep, Long[] groupIds,
+			Long[] objectDefinitionIds, Predicate predicate)
+		throws PortalException {
+
+		return fromStep.from(
+			ObjectEntryTable.INSTANCE
+		).where(
+			ObjectEntryTable.INSTANCE.companyId.eq(
+				companyId
+			).and(
+				ObjectEntryTable.INSTANCE.rootObjectEntryId.eq(
+					ObjectEntryTable.INSTANCE.objectEntryId
+				).or(
+					ObjectEntryTable.INSTANCE.rootObjectEntryId.eq(0L)
+				).withParentheses()
+			).and(
+				ObjectEntryTable.INSTANCE.status.neq(
+					WorkflowConstants.STATUS_IN_TRASH)
+			).and(
+				() -> {
+					if (ArrayUtil.isEmpty(groupIds)) {
+						return null;
+					}
+
+					return ObjectEntryTable.INSTANCE.groupId.in(groupIds);
+				}
+			).and(
+				() -> {
+					if (ArrayUtil.isEmpty(objectDefinitionIds)) {
+						return null;
+					}
+
+					return ObjectEntryTable.INSTANCE.objectDefinitionId.in(
+						objectDefinitionIds);
+				}
+			).and(
+				predicate
+			).and(
+				_getHeadObjectEntryPredicate(false)
+			).and(
+				_getPermissionWherePredicate(groupIds, objectDefinitionIds)
+			)
+		);
+	}
+
+	private GroupByStep _getObjectEntriesGroupByStep(
 			Long[] groupIds, FromStep fromStep,
 			ObjectDefinition objectDefinition, Predicate predicate,
 			boolean preferApproved, String search)
@@ -4579,6 +4786,39 @@ public class ObjectEntryLocalServiceImpl
 		catch (PortalException portalException) {
 			throw new RuntimeException(portalException);
 		}
+	}
+
+	private Predicate _getObjectFieldPredicate(
+			long objectDefinitionId, ObjectField objectField, String search)
+		throws PortalException {
+
+		Table<?> table = _objectFieldLocalService.getTable(
+			objectDefinitionId, objectField.getName());
+
+		if (objectField.compareBusinessType(
+				ObjectFieldConstants.BUSINESS_TYPE_ASSIGNEE)) {
+
+			return ObjectEntrySearchUtil.getAssigneeFieldPredicate(
+				table, objectField.getDBColumnName(), search);
+		}
+
+		Column<?, ?> column = table.getColumn(objectField.getDBColumnName());
+
+		if (column == null) {
+			return null;
+		}
+
+		if (Objects.equals(
+				objectField.getRelationshipType(),
+				ObjectRelationshipConstants.TYPE_ONE_TO_MANY)) {
+
+			return _getRelationshipObjectFieldPredicate(
+				column, objectField, search);
+		}
+
+		return ObjectEntrySearchUtil.getObjectFieldPredicate(
+			objectField.getBusinessType(), column, objectField.getDBType(),
+			search);
 	}
 
 	private GroupByStep _getOneToManyObjectEntriesGroupByStep(
@@ -4777,6 +5017,59 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		return permissionWherePredicate;
+	}
+
+	private Predicate _getPermissionWherePredicate(
+			Long[] groupIds, Long[] objectDefinitionIds)
+		throws PortalException {
+
+		if (ArrayUtil.isEmpty(groupIds) ||
+			ArrayUtil.isEmpty(objectDefinitionIds) ||
+			(PermissionThreadLocal.getPermissionChecker() == null)) {
+
+			return null;
+		}
+
+		Predicate permissionWherePredicate = null;
+
+		for (Long objectDefinitionId : objectDefinitionIds) {
+			ObjectDefinition objectDefinition =
+				_objectDefinitionPersistence.findByPrimaryKey(
+					objectDefinitionId);
+
+			if (objectDefinition.isAccountEntryRestricted()) {
+				throw new PortalException(
+					"Account entry restricted object definitions are not " +
+						"supported");
+			}
+
+			Predicate objectDefinitionPermissionWherePredicate =
+				_getPermissionWherePredicate(
+					DynamicObjectDefinitionTableUtil.
+						getDynamicObjectDefinitionTable(
+							false, objectDefinition, _objectFieldLocalService),
+					groupIds);
+
+			Predicate objectDefinitionPredicate =
+				ObjectEntryTable.INSTANCE.objectDefinitionId.eq(
+					objectDefinitionId);
+
+			if (objectDefinitionPermissionWherePredicate != null) {
+				objectDefinitionPredicate = objectDefinitionPredicate.and(
+					Predicate.withParentheses(
+						objectDefinitionPermissionWherePredicate));
+			}
+
+			if (permissionWherePredicate == null) {
+				permissionWherePredicate = objectDefinitionPredicate;
+			}
+			else {
+				permissionWherePredicate = permissionWherePredicate.or(
+					objectDefinitionPredicate);
+			}
+		}
+
+		return Predicate.withParentheses(permissionWherePredicate);
 	}
 
 	private Column<?, Long> _getPrimaryKeyColumn(
@@ -6576,11 +6869,6 @@ public class ObjectEntryLocalServiceImpl
 			_objectDefinitionPersistence.findByPrimaryKey(
 				objectEntry.getObjectDefinitionId());
 
-		if (!objectDefinition.isEnableCategorization()) {
-			assetCategoryIds = null;
-			assetTagNames = null;
-		}
-
 		String mimeType = ContentTypes.TEXT_PLAIN;
 		String title = StringPool.BLANK;
 
@@ -6616,19 +6904,35 @@ public class ObjectEntryLocalServiceImpl
 			}
 		}
 
-		AssetEntry assetEntry = _assetEntryLocalService.updateEntry(
-			userId, objectEntry.getNonzeroGroupId(),
-			objectEntry.getCreateDate(), objectEntry.getModifiedDate(),
-			objectDefinition.getClassName(), objectEntry.getObjectEntryId(),
-			objectEntry.getUuid(), 0, assetCategoryIds, assetTagNames, true,
-			objectEntry.isApproved(), null, null, null, null, mimeType, title,
-			String.valueOf(objectEntry.getObjectEntryId()), null, null, null, 0,
-			0, priority, serviceContext);
+		boolean originalSkipRequiredCategoryValidation =
+			AssetVocabularyThreadLocal.isSkipRequiredCategoryValidation();
 
-		if (assetLinkEntryIds != null) {
-			_assetLinkLocalService.updateLinks(
-				userId, assetEntry.getEntryId(), assetLinkEntryIds,
-				AssetLinkConstants.TYPE_RELATED);
+		if (!objectDefinition.isEnableCategorization()) {
+			assetCategoryIds = null;
+			assetTagNames = null;
+
+			AssetVocabularyThreadLocal.setSkipRequiredCategoryValidation(true);
+		}
+
+		try {
+			AssetEntry assetEntry = _assetEntryLocalService.updateEntry(
+				userId, objectEntry.getNonzeroGroupId(),
+				objectEntry.getCreateDate(), objectEntry.getModifiedDate(),
+				objectDefinition.getClassName(), objectEntry.getObjectEntryId(),
+				objectEntry.getUuid(), 0, assetCategoryIds, assetTagNames, true,
+				objectEntry.isApproved(), null, null, null, null, mimeType,
+				title, String.valueOf(objectEntry.getObjectEntryId()), null,
+				null, null, 0, 0, priority, serviceContext);
+
+			if (assetLinkEntryIds != null) {
+				_assetLinkLocalService.updateLinks(
+					userId, assetEntry.getEntryId(), assetLinkEntryIds,
+					AssetLinkConstants.TYPE_RELATED);
+			}
+		}
+		finally {
+			AssetVocabularyThreadLocal.setSkipRequiredCategoryValidation(
+				originalSkipRequiredCategoryValidation);
 		}
 	}
 
@@ -7160,10 +7464,6 @@ public class ObjectEntryLocalServiceImpl
 			long groupId, ObjectDefinition objectDefinition)
 		throws PortalException {
 
-		if (objectDefinition.isAutogeneratedGroupId()) {
-			return;
-		}
-
 		String scope = objectDefinition.getScope();
 
 		ObjectScopeProvider objectScopeProvider =
@@ -7178,6 +7478,11 @@ public class ObjectEntryLocalServiceImpl
 			GetterUtil.getBoolean(
 				ObjectDefinitionSettingUtil.getValue(
 					ObjectDefinitionSettingConstants.NAME_ACCEPT_ALL_GROUPS,
+					objectDefinition.getObjectDefinitionSettings())) ||
+			GetterUtil.getBoolean(
+				ObjectDefinitionSettingUtil.getValue(
+					ObjectDefinitionSettingConstants.
+						NAME_AUTOGENERATED_GROUP_ID,
 					objectDefinition.getObjectDefinitionSettings()))) {
 
 			return;
@@ -7858,14 +8163,26 @@ public class ObjectEntryLocalServiceImpl
 				defaultLanguageId, existingValues, objectField, partialUpdate,
 				serviceContext, status, validationErrors, values);
 
+			ObjectFieldBusinessType objectFieldBusinessType =
+				_objectFieldBusinessTypeRegistry.getObjectFieldBusinessType(
+					objectField.getBusinessType());
+
 			if (!objectField.isLocalized() &&
 				(values.get(objectField.getName()) != null)) {
+
+				Serializable value = values.get(objectField.getName());
+
+				Serializable processedValue =
+					objectFieldBusinessType.processValue(objectField, value);
+
+				if (!Objects.equals(value, processedValue)) {
+					values.put(objectField.getName(), processedValue);
+				}
 
 				_validateValues(
 					dlFileEntriesMap, existingValues, groupId, guestUser,
 					objectDefinition, objectEntryId, objectField, userId,
-					validationErrors, values.get(objectField.getName()),
-					StringPool.BLANK);
+					validationErrors, processedValue, StringPool.BLANK);
 			}
 
 			Map<String, Serializable> localizedValues =
@@ -7879,10 +8196,19 @@ public class ObjectEntryLocalServiceImpl
 			for (Map.Entry<String, Serializable> entry :
 					localizedValues.entrySet()) {
 
+				Serializable value = entry.getValue();
+
+				Serializable processedValue =
+					objectFieldBusinessType.processValue(objectField, value);
+
+				if (!Objects.equals(value, processedValue)) {
+					entry.setValue(processedValue);
+				}
+
 				_validateValues(
 					dlFileEntriesMap, existingValues, groupId, guestUser,
 					objectDefinition, objectEntryId, objectField, userId,
-					validationErrors, entry.getValue(), entry.getKey());
+					validationErrors, processedValue, entry.getKey());
 			}
 		}
 	}
@@ -7912,6 +8238,8 @@ public class ObjectEntryLocalServiceImpl
 		ObjectEntryTable.INSTANCE.externalReferenceCode,
 		ObjectEntryTable.INSTANCE.status
 	};
+
+	private static final int _RELATED_OBJECT_ENTRY_MAX_COPY_DEPTH = 5;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectEntryLocalServiceImpl.class);
@@ -8219,6 +8547,9 @@ public class ObjectEntryLocalServiceImpl
 
 	@Reference
 	private ObjectEntryFolderPersistence _objectEntryFolderPersistence;
+
+	private ServiceTrackerList<ObjectEntryReviewNotificationContributor>
+		_objectEntryReviewNotificationContributors;
 
 	@Reference
 	private ObjectEntryVersionLocalService _objectEntryVersionLocalService;

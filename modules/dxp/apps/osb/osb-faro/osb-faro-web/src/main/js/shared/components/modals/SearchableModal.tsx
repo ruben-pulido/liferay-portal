@@ -8,6 +8,8 @@ import NoResultsDisplay, {
 } from 'shared/components/NoResultsDisplay';
 import React, {useEffect, useState} from 'react';
 import Toolbar from 'shared/components/toolbar';
+import {OrderedMap} from 'immutable';
+import {OrderParams} from 'shared/util/records';
 import {sub} from 'shared/util/lang';
 import {useRequest} from 'shared/hooks/useRequest';
 import {useStatefulPagination} from 'shared/hooks/useStatefulPagination';
@@ -16,11 +18,11 @@ interface ISearchableModalProps {
 	children: React.ReactNode;
 	className?: string;
 	countLabel: string;
-	dataSourceFn: (params: any) => any;
+	dataSourceFn: (params: any) => Promise<{items: any[]; total: number}>;
 	fitContent?: boolean;
 	footer?: React.ReactNode;
-	initialDelta?: boolean;
-	initialOrderIOMap: boolean;
+	initialDelta?: number;
+	initialOrderIOMap: OrderedMap<string, OrderParams>;
 	items?: any[];
 	noResultsIcon: string;
 	noResultsName: string;
@@ -54,18 +56,12 @@ const SearchableModal: React.FC<ISearchableModalProps> = ({
 }) => {
 	const [searchValue, setSearchValue] = useState('');
 
-	const {
-		delta,
-		onOrderIOMapChange,
-		onPageChange,
-		orderIOMap,
-		page,
-		query
-	} = useStatefulPagination(null, {
-		initialDelta,
-		initialOrderIOMap,
-		initialPage: 1
-	});
+	const {delta, onOrderIOMapChange, onPageChange, orderIOMap, page, query} =
+		useStatefulPagination(undefined, {
+			initialDelta,
+			initialOrderIOMap,
+			initialPage: 1
+		});
 
 	const {data, loading} = useRequest({
 		dataSourceFn,
@@ -92,7 +88,7 @@ const SearchableModal: React.FC<ISearchableModalProps> = ({
 	}, [data]);
 
 	const renderChildren = () => {
-		if (items?.length < data?.total) {
+		if ((items?.length ?? 0) < (data?.total ?? 0)) {
 			return (
 				<div>
 					{children}

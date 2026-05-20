@@ -36,6 +36,24 @@ public class DEDataDefinitionFieldLinkUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<DEDataDefinitionFieldLink> deDataDefinitionFieldLinks) {
+
+		getPersistence().cacheResult(deDataDefinitionFieldLinks);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		DEDataDefinitionFieldLink deDataDefinitionFieldLink) {
+
+		getPersistence().cacheResult(deDataDefinitionFieldLink);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,58 +135,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -254,19 +224,6 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns the de data definition field link where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching de data definition field link, or <code>null</code> if a matching de data definition field link could not be found
-	 */
-	public static DEDataDefinitionFieldLink fetchByUUID_G(
-		String uuid, long groupId) {
-
-		return getPersistence().fetchByUUID_G(uuid, groupId);
-	}
-
-	/**
 	 * Returns the de data definition field link where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -307,64 +264,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -441,62 +344,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where ddmStructureId = &#63;.
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMStructureId(
-		long ddmStructureId) {
-
-		return getPersistence().findByDDMStructureId(ddmStructureId);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where ddmStructureId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMStructureId(
-		long ddmStructureId, int start, int end) {
-
-		return getPersistence().findByDDMStructureId(
-			ddmStructureId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMStructureId(
-		long ddmStructureId, int start, int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByDDMStructureId(
-			ddmStructureId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ddmStructureId the ddm structure ID
@@ -568,64 +419,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_C(
-		long classNameId, long classPK) {
-
-		return getPersistence().findByC_C(classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_C(
-		long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByC_C(classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_C(
-		long classNameId, long classPK, int start, int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByC_C(
-			classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -703,65 +500,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI(
-		long classNameId, long ddmStructureId) {
-
-		return getPersistence().findByC_DDMSI(classNameId, ddmStructureId);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI(
-		long classNameId, long ddmStructureId, int start, int end) {
-
-		return getPersistence().findByC_DDMSI(
-			classNameId, ddmStructureId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI(
-		long classNameId, long ddmStructureId, int start, int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByC_DDMSI(
-			classNameId, ddmStructureId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -839,65 +581,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where ddmStructureId = &#63; and fieldName = &#63;.
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldName the field name
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
-		long ddmStructureId, String fieldName) {
-
-		return getPersistence().findByDDMSI_F(ddmStructureId, fieldName);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where ddmStructureId = &#63; and fieldName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldName the field name
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
-		long ddmStructureId, String fieldName, int start, int end) {
-
-		return getPersistence().findByDDMSI_F(
-			ddmStructureId, fieldName, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63; and fieldName = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldName the field name
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
-		long ddmStructureId, String fieldName, int start, int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByDDMSI_F(
-			ddmStructureId, fieldName, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63; and fieldName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ddmStructureId the ddm structure ID
@@ -954,69 +641,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where ddmStructureId = &#63; and fieldName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldNames the field names
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
-		long ddmStructureId, String[] fieldNames) {
-
-		return getPersistence().findByDDMSI_F(ddmStructureId, fieldNames);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where ddmStructureId = &#63; and fieldName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldNames the field names
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
-		long ddmStructureId, String[] fieldNames, int start, int end) {
-
-		return getPersistence().findByDDMSI_F(
-			ddmStructureId, fieldNames, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63; and fieldName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldNames the field names
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
-		long ddmStructureId, String[] fieldNames, int start, int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByDDMSI_F(
-			ddmStructureId, fieldNames, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63; and fieldName = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param ddmStructureId the ddm structure ID
@@ -1070,72 +698,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldName the field name
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
-		long classNameId, long ddmStructureId, String fieldName) {
-
-		return getPersistence().findByC_DDMSI_F(
-			classNameId, ddmStructureId, fieldName);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldName the field name
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
-		long classNameId, long ddmStructureId, String fieldName, int start,
-		int end) {
-
-		return getPersistence().findByC_DDMSI_F(
-			classNameId, ddmStructureId, fieldName, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldName the field name
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
-		long classNameId, long ddmStructureId, String fieldName, int start,
-		int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByC_DDMSI_F(
-			classNameId, ddmStructureId, fieldName, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -1195,76 +761,10 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldNames the field names
-	 * @return the matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
-		long classNameId, long ddmStructureId, String[] fieldNames) {
-
-		return getPersistence().findByC_DDMSI_F(
-			classNameId, ddmStructureId, fieldNames);
-	}
-
-	/**
-	 * Returns a range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldNames the field names
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
-		long classNameId, long ddmStructureId, String[] fieldNames, int start,
-		int end) {
-
-		return getPersistence().findByC_DDMSI_F(
-			classNameId, ddmStructureId, fieldNames, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldNames the field names
-	 * @param start the lower bound of the range of de data definition field links
-	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching de data definition field links
-	 */
-	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
-		long classNameId, long ddmStructureId, String[] fieldNames, int start,
-		int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
-
-		return getPersistence().findByC_DDMSI_F(
-			classNameId, ddmStructureId, fieldNames, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -1351,22 +851,6 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns the de data definition field link where classNameId = &#63; and classPK = &#63; and ddmStructureId = &#63; and fieldName = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param ddmStructureId the ddm structure ID
-	 * @param fieldName the field name
-	 * @return the matching de data definition field link, or <code>null</code> if a matching de data definition field link could not be found
-	 */
-	public static DEDataDefinitionFieldLink fetchByC_C_DDMSI_F(
-		long classNameId, long classPK, long ddmStructureId, String fieldName) {
-
-		return getPersistence().fetchByC_C_DDMSI_F(
-			classNameId, classPK, ddmStructureId, fieldName);
-	}
-
-	/**
 	 * Returns the de data definition field link where classNameId = &#63; and classPK = &#63; and ddmStructureId = &#63; and fieldName = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param classNameId the class name ID
@@ -1437,28 +921,6 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Caches the de data definition field link in the entity cache if it is enabled.
-	 *
-	 * @param deDataDefinitionFieldLink the de data definition field link
-	 */
-	public static void cacheResult(
-		DEDataDefinitionFieldLink deDataDefinitionFieldLink) {
-
-		getPersistence().cacheResult(deDataDefinitionFieldLink);
-	}
-
-	/**
-	 * Caches the de data definition field links in the entity cache if it is enabled.
-	 *
-	 * @param deDataDefinitionFieldLinks the de data definition field links
-	 */
-	public static void cacheResult(
-		List<DEDataDefinitionFieldLink> deDataDefinitionFieldLinks) {
-
-		getPersistence().cacheResult(deDataDefinitionFieldLinks);
-	}
-
-	/**
 	 * Creates a new de data definition field link with the primary key. Does not add the de data definition field link to the database.
 	 *
 	 * @param deDataDefinitionFieldLinkId the primary key for the new de data definition field link
@@ -1519,84 +981,529 @@ public class DEDataDefinitionFieldLinkUtil {
 	}
 
 	/**
-	 * Returns all the de data definition field links.
+	 * Returns the de data definition field link where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the de data definition field links
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching de data definition field link, or <code>null</code> if a matching de data definition field link could not be found
 	 */
-	public static List<DEDataDefinitionFieldLink> findAll() {
-		return getPersistence().findAll();
+	public static DEDataDefinitionFieldLink fetchByUUID_G(
+		String uuid, long groupId) {
+
+		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
-	 * Returns a range of all the de data definition field links.
+	 * Returns the de data definition field link where classNameId = &#63; and classPK = &#63; and ddmStructureId = &#63; and fieldName = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldName the field name
+	 * @return the matching de data definition field link, or <code>null</code> if a matching de data definition field link could not be found
+	 */
+	public static DEDataDefinitionFieldLink fetchByC_C_DDMSI_F(
+		long classNameId, long classPK, long ddmStructureId, String fieldName) {
+
+		return getPersistence().fetchByC_C_DDMSI_F(
+			classNameId, classPK, ddmStructureId, fieldName);
+	}
+
+	/**
+	 * Returns all the de data definition field links where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of de data definition field links
 	 * @param end the upper bound of the range of de data definition field links (not inclusive)
-	 * @return the range of de data definition field links
+	 * @return the range of matching de data definition field links
 	 */
-	public static List<DEDataDefinitionFieldLink> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<DEDataDefinitionFieldLink> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the de data definition field links.
+	 * Returns an ordered range of all the de data definition field links where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of de data definition field links
 	 * @param end the upper bound of the range of de data definition field links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of de data definition field links
+	 * @return the ordered range of matching de data definition field links
 	 */
-	public static List<DEDataDefinitionFieldLink> findAll(
-		int start, int end,
+	public static List<DEDataDefinitionFieldLink> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the de data definition field links.
+	 * Returns all the de data definition field links where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DEDataDefinitionFieldLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @return the range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the de data definition field links where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of de data definition field links
 	 * @param end the upper bound of the range of de data definition field links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of de data definition field links
+	 * @return the ordered range of matching de data definition field links
 	 */
-	public static List<DEDataDefinitionFieldLink> findAll(
-		int start, int end,
-		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator,
-		boolean useFinderCache) {
+	public static List<DEDataDefinitionFieldLink> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the de data definition field links from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of de data definition field links.
+	 * Returns all the de data definition field links where ddmStructureId = &#63;.
 	 *
-	 * @return the number of de data definition field links
+	 * @param ddmStructureId the ddm structure ID
+	 * @return the matching de data definition field links
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<DEDataDefinitionFieldLink> findByDDMStructureId(
+		long ddmStructureId) {
+
+		return getPersistence().findByDDMStructureId(ddmStructureId);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where ddmStructureId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ddmStructureId the ddm structure ID
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @return the range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByDDMStructureId(
+		long ddmStructureId, int start, int end) {
+
+		return getPersistence().findByDDMStructureId(
+			ddmStructureId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ddmStructureId the ddm structure ID
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByDDMStructureId(
+		long ddmStructureId, int start, int end,
+		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
+
+		return getPersistence().findByDDMStructureId(
+			ddmStructureId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the de data definition field links where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_C(
+		long classNameId, long classPK) {
+
+		return getPersistence().findByC_C(classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @return the range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_C(
+		long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByC_C(classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_C(
+		long classNameId, long classPK, int start, int end,
+		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
+
+		return getPersistence().findByC_C(
+			classNameId, classPK, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @return the matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI(
+		long classNameId, long ddmStructureId) {
+
+		return getPersistence().findByC_DDMSI(classNameId, ddmStructureId);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @return the range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI(
+		long classNameId, long ddmStructureId, int start, int end) {
+
+		return getPersistence().findByC_DDMSI(
+			classNameId, ddmStructureId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI(
+		long classNameId, long ddmStructureId, int start, int end,
+		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
+
+		return getPersistence().findByC_DDMSI(
+			classNameId, ddmStructureId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the de data definition field links where ddmStructureId = &#63; and fieldName = &#63;.
+	 *
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldName the field name
+	 * @return the matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
+		long ddmStructureId, String fieldName) {
+
+		return getPersistence().findByDDMSI_F(ddmStructureId, fieldName);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where ddmStructureId = &#63; and fieldName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldName the field name
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @return the range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
+		long ddmStructureId, String fieldName, int start, int end) {
+
+		return getPersistence().findByDDMSI_F(
+			ddmStructureId, fieldName, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63; and fieldName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldName the field name
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
+		long ddmStructureId, String fieldName, int start, int end,
+		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
+
+		return getPersistence().findByDDMSI_F(
+			ddmStructureId, fieldName, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the de data definition field links where ddmStructureId = &#63; and fieldName = any &#63;.
+	 *
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldNames the field names
+	 * @return the matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
+		long ddmStructureId, String[] fieldNames) {
+
+		return getPersistence().findByDDMSI_F(ddmStructureId, fieldNames);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where ddmStructureId = &#63; and fieldName = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldNames the field names
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @return the range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
+		long ddmStructureId, String[] fieldNames, int start, int end) {
+
+		return getPersistence().findByDDMSI_F(
+			ddmStructureId, fieldNames, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the de data definition field links where ddmStructureId = &#63; and fieldName = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldNames the field names
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByDDMSI_F(
+		long ddmStructureId, String[] fieldNames, int start, int end,
+		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
+
+		return getPersistence().findByDDMSI_F(
+			ddmStructureId, fieldNames, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldName the field name
+	 * @return the matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
+		long classNameId, long ddmStructureId, String fieldName) {
+
+		return getPersistence().findByC_DDMSI_F(
+			classNameId, ddmStructureId, fieldName);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldName the field name
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @return the range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
+		long classNameId, long ddmStructureId, String fieldName, int start,
+		int end) {
+
+		return getPersistence().findByC_DDMSI_F(
+			classNameId, ddmStructureId, fieldName, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldName the field name
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
+		long classNameId, long ddmStructureId, String fieldName, int start,
+		int end,
+		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
+
+		return getPersistence().findByC_DDMSI_F(
+			classNameId, ddmStructureId, fieldName, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = any &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldNames the field names
+	 * @return the matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
+		long classNameId, long ddmStructureId, String[] fieldNames) {
+
+		return getPersistence().findByC_DDMSI_F(
+			classNameId, ddmStructureId, fieldNames);
+	}
+
+	/**
+	 * Returns a range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldNames the field names
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @return the range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
+		long classNameId, long ddmStructureId, String[] fieldNames, int start,
+		int end) {
+
+		return getPersistence().findByC_DDMSI_F(
+			classNameId, ddmStructureId, fieldNames, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the de data definition field links where classNameId = &#63; and ddmStructureId = &#63; and fieldName = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.data.engine.model.impl.DEDataDefinitionFieldLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param ddmStructureId the ddm structure ID
+	 * @param fieldNames the field names
+	 * @param start the lower bound of the range of de data definition field links
+	 * @param end the upper bound of the range of de data definition field links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching de data definition field links
+	 */
+	public static List<DEDataDefinitionFieldLink> findByC_DDMSI_F(
+		long classNameId, long ddmStructureId, String[] fieldNames, int start,
+		int end,
+		OrderByComparator<DEDataDefinitionFieldLink> orderByComparator) {
+
+		return getPersistence().findByC_DDMSI_F(
+			classNameId, ddmStructureId, fieldNames, start, end,
+			orderByComparator);
 	}
 
 	public static DEDataDefinitionFieldLinkPersistence getPersistence() {
@@ -1612,4 +1519,4 @@ public class DEDataDefinitionFieldLinkUtil {
 	private static volatile DEDataDefinitionFieldLinkPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:494576710
+// LIFERAY-SERVICE-BUILDER-HASH:1723036554

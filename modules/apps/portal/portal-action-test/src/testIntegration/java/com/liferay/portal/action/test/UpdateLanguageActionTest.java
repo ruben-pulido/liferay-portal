@@ -8,6 +8,7 @@ package com.liferay.portal.action.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.test.util.JournalTestUtil;
+import com.liferay.layout.test.util.LayoutFriendlyURLRandomizerBumper;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -17,18 +18,23 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.VirtualLayoutConstants;
 import com.liferay.portal.kernel.portlet.FriendlyURLResolverRegistryUtil;
 import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.TestInfo;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
@@ -36,12 +42,14 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TreeMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LanguageIds;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -59,6 +67,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * @author Ricardo Couso
@@ -72,8 +81,10 @@ public class UpdateLanguageActionTest {
 
 	@ClassRule
 	@Rule
-	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
-		new LiferayIntegrationTestRule();
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@Before
 	public void setUp() throws Exception {
@@ -118,11 +129,20 @@ public class UpdateLanguageActionTest {
 	}
 
 	@Test
+	@TestInfo("LPD-88958")
+	public void testExecute() throws Exception {
+		_testExecuteWithImpersonation();
+	}
+
+	@Test
+	@TestInfo("LPD-86415")
 	public void testGetRedirect() throws Exception {
 		_testGetRedirectWithControlPanelURL(false);
 		_testGetRedirectWithControlPanelURL(true);
 		_testGetRedirectWithFriendlyURL(false);
 		_testGetRedirectWithFriendlyURL(true);
+		_testGetRedirectWithGroupFriendlyURLWithPortletURLMapping();
+		_testGetRedirectWithLayoutFriendlyURLWithPortletURLMapping();
 		_testGetRedirectWithPortletFriendlyURL(_sourceLocale);
 		_testGetRedirectWithPortletFriendlyURL(null);
 		_testGetRedirectWithPortletURLMapping(_sourceLocale);
@@ -258,6 +278,76 @@ public class UpdateLanguageActionTest {
 			_journalArticle.getFriendlyURLMap();
 
 		return separator + friendlyURLMap.get(locale);
+	}
+
+	private void _testExecuteWithImpersonation() throws Exception {
+		User impersonatedUser = UserTestUtil.addUser(_group.getGroupId());
+
+		impersonatedUser.setLanguageId(LocaleUtil.toLanguageId(_sourceLocale));
+
+		impersonatedUser = _userLocalService.updateUser(impersonatedUser);
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		HttpSession httpSession = mockHttpServletRequest.getSession();
+
+		httpSession.setAttribute(WebKeys.LOCALE, _sourceLocale);
+
+		ThemeDisplay themeDisplay = new ThemeDisplay();
+
+		themeDisplay.setCompany(
+			_companyLocalService.getCompany(_group.getCompanyId()));
+		themeDisplay.setDoAsUserId(
+			String.valueOf(impersonatedUser.getUserId()));
+		themeDisplay.setLayout(_layout);
+		themeDisplay.setLayoutSet(_group.getPublicLayoutSet());
+		themeDisplay.setSignedIn(true);
+		themeDisplay.setSiteGroupId(_group.getGroupId());
+		themeDisplay.setUser(impersonatedUser);
+
+		mockHttpServletRequest.setAttribute(
+			WebKeys.THEME_DISPLAY, themeDisplay);
+
+		String languageId = LocaleUtil.toLanguageId(_targetLocale);
+
+		mockHttpServletRequest.setParameter("languageId", languageId);
+
+		mockHttpServletRequest.setParameter(
+			"redirect",
+			PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING +
+				_group.getFriendlyURL() + StringPool.SLASH);
+
+		User user = TestPropsValues.getUser();
+
+		String userLanguageId = user.getLanguageId();
+
+		UpdateLanguageAction updateLanguageAction = new UpdateLanguageAction();
+
+		MockHttpServletResponse mockHttpServletResponse =
+			new MockHttpServletResponse();
+
+		updateLanguageAction.execute(
+			null, mockHttpServletRequest, mockHttpServletResponse);
+
+		String redirectedURL = mockHttpServletResponse.getRedirectedUrl();
+
+		Assert.assertTrue(
+			redirectedURL.contains("doAsUserLanguageId=" + languageId));
+
+		Assert.assertEquals(
+			_sourceLocale, httpSession.getAttribute(WebKeys.LOCALE));
+
+		impersonatedUser = _userLocalService.getUser(
+			impersonatedUser.getUserId());
+
+		Assert.assertEquals(languageId, impersonatedUser.getLanguageId());
+
+		user = _userLocalService.getUser(user.getUserId());
+
+		Assert.assertEquals(userLanguageId, user.getLanguageId());
+
+		_userLocalService.deleteUser(impersonatedUser);
 	}
 
 	private void _testGetRedirect(
@@ -448,6 +538,64 @@ public class UpdateLanguageActionTest {
 			"/" + _sourceLocale.getLanguage() + sourceURL);
 	}
 
+	private void _testGetRedirectWithGroupFriendlyURLWithPortletURLMapping()
+		throws Exception {
+
+		_testGetRedirectWithGroupFriendlyURLWithPortletURLMapping(
+			"questions", _sourceLocale);
+		_testGetRedirectWithGroupFriendlyURLWithPortletURLMapping(
+			"questions", null);
+		_testGetRedirectWithGroupFriendlyURLWithPortletURLMapping(
+			"tags", _sourceLocale);
+		_testGetRedirectWithGroupFriendlyURLWithPortletURLMapping("tags", null);
+	}
+
+	private void _testGetRedirectWithGroupFriendlyURLWithPortletURLMapping(
+			String mapping, Locale sourceLocale)
+		throws Exception {
+
+		String originalGroupFriendlyURL = _group.getFriendlyURL();
+
+		try {
+			_group = _groupLocalService.updateFriendlyURL(
+				_group.getGroupId(), StringPool.SLASH + mapping);
+
+			String layoutFriendlyURL = StringUtil.toLowerCase(
+				RandomTestUtil.randomString(
+					LayoutFriendlyURLRandomizerBumper.INSTANCE));
+
+			Locale locale = sourceLocale;
+
+			if (locale == null) {
+				locale = _defaultLocale;
+			}
+
+			for (Locale curLocale : Arrays.asList(locale, _targetLocale)) {
+				_layout = _layoutLocalService.updateFriendlyURL(
+					TestPropsValues.getUserId(), _layout.getPlid(),
+					StringPool.SLASH + layoutFriendlyURL,
+					LocaleUtil.toLanguageId(curLocale));
+			}
+
+			String sourceURL = StringBundler.concat(
+				PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING,
+				_group.getFriendlyURL(), _layout.getFriendlyURL(locale),
+				"?queryString");
+
+			String targetURL = StringBundler.concat(
+				PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING,
+				_group.getFriendlyURL(), _layout.getFriendlyURL(_targetLocale),
+				"?queryString");
+
+			_testGetRedirect(
+				sourceLocale, sourceURL, _targetLocale, targetURL, false);
+		}
+		finally {
+			_group = _groupLocalService.updateFriendlyURL(
+				_group.getGroupId(), originalGroupFriendlyURL);
+		}
+	}
+
 	private void _testGetRedirectWithLayoutFriendlyURL(boolean virtualHost)
 		throws Exception {
 
@@ -484,6 +632,55 @@ public class UpdateLanguageActionTest {
 
 		_testGetRedirect(
 			sourceLocale, sourceURL, targetLocale, targetURL, virtualHost);
+	}
+
+	private void _testGetRedirectWithLayoutFriendlyURLWithPortletURLMapping()
+		throws Exception {
+
+		_testGetRedirectWithLayoutFriendlyURLWithPortletURLMapping(
+			"questions", _sourceLocale);
+		_testGetRedirectWithLayoutFriendlyURLWithPortletURLMapping(
+			"questions", null);
+		_testGetRedirectWithLayoutFriendlyURLWithPortletURLMapping(
+			"tags", _sourceLocale);
+		_testGetRedirectWithLayoutFriendlyURLWithPortletURLMapping(
+			"tags", null);
+	}
+
+	private void _testGetRedirectWithLayoutFriendlyURLWithPortletURLMapping(
+			String mapping, Locale sourceLocale)
+		throws Exception {
+
+		String layoutFriendlyURL = StringBundler.concat(
+			StringUtil.toLowerCase(
+				RandomTestUtil.randomString(
+					LayoutFriendlyURLRandomizerBumper.INSTANCE)),
+			StringPool.DASH, mapping, StringPool.DASH,
+			StringUtil.toLowerCase(
+				RandomTestUtil.randomString(
+					LayoutFriendlyURLRandomizerBumper.INSTANCE)));
+
+		String languageId = "en_US";
+
+		if (sourceLocale != null) {
+			languageId = LocaleUtil.toLanguageId(sourceLocale);
+		}
+
+		_layout = _layoutLocalService.updateFriendlyURL(
+			TestPropsValues.getUserId(), _layout.getPlid(),
+			StringPool.SLASH + layoutFriendlyURL, languageId);
+
+		_testGetRedirect(
+			sourceLocale,
+			StringBundler.concat(
+				PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING,
+				_group.getFriendlyURL(), layoutFriendlyURL, "?queryString"),
+			_targetLocale,
+			StringBundler.concat(
+				PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING,
+				_group.getFriendlyURL(), _layout.getFriendlyURL(_targetLocale),
+				"?queryString"),
+			false);
 	}
 
 	private void _testGetRedirectWithPortletFriendlyURL(Locale sourceLocale)
@@ -532,6 +729,10 @@ public class UpdateLanguageActionTest {
 	private CompanyLocalService _companyLocalService;
 
 	private Group _group;
+
+	@Inject
+	private GroupLocalService _groupLocalService;
+
 	private JournalArticle _journalArticle;
 	private Layout _layout;
 
@@ -544,5 +745,8 @@ public class UpdateLanguageActionTest {
 	private final Locale _sourceLocale = LocaleUtil.FRANCE;
 	private final Locale _sourceUKLocale = LocaleUtil.UK;
 	private final Locale _targetLocale = LocaleUtil.GERMANY;
+
+	@Inject
+	private UserLocalService _userLocalService;
 
 }

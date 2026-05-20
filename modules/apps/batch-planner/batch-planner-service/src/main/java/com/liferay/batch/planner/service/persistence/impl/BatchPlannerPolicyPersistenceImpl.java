@@ -13,14 +13,10 @@ import com.liferay.batch.planner.model.impl.BatchPlannerPolicyModelImpl;
 import com.liferay.batch.planner.service.persistence.BatchPlannerPolicyPersistence;
 import com.liferay.batch.planner.service.persistence.BatchPlannerPolicyUtil;
 import com.liferay.batch.planner.service.persistence.impl.constants.BatchPlannerPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -29,10 +25,10 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 
 import java.io.Serializable;
@@ -42,8 +38,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -64,7 +58,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = BatchPlannerPolicyPersistence.class)
 public class BatchPlannerPolicyPersistenceImpl
-	extends BasePersistenceImpl<BatchPlannerPolicy>
+	extends BasePersistenceImpl<BatchPlannerPolicy, NoSuchPolicyException>
 	implements BatchPlannerPolicyPersistence {
 
 	/*
@@ -81,73 +75,14 @@ public class BatchPlannerPolicyPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByBatchPlannerPlanId;
-	private FinderPath _finderPathWithoutPaginationFindByBatchPlannerPlanId;
-	private FinderPath _finderPathCountByBatchPlannerPlanId;
-
-	/**
-	 * Returns all the batch planner policies where batchPlannerPlanId = &#63;.
-	 *
-	 * @param batchPlannerPlanId the batch planner plan ID
-	 * @return the matching batch planner policies
-	 */
-	@Override
-	public List<BatchPlannerPolicy> findByBatchPlannerPlanId(
-		long batchPlannerPlanId) {
-
-		return findByBatchPlannerPlanId(
-			batchPlannerPlanId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the batch planner policies where batchPlannerPlanId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchPlannerPolicyModelImpl</code>.
-	 * </p>
-	 *
-	 * @param batchPlannerPlanId the batch planner plan ID
-	 * @param start the lower bound of the range of batch planner policies
-	 * @param end the upper bound of the range of batch planner policies (not inclusive)
-	 * @return the range of matching batch planner policies
-	 */
-	@Override
-	public List<BatchPlannerPolicy> findByBatchPlannerPlanId(
-		long batchPlannerPlanId, int start, int end) {
-
-		return findByBatchPlannerPlanId(batchPlannerPlanId, start, end, null);
-	}
+	private CollectionPersistenceFinder<BatchPlannerPolicy>
+		_collectionPersistenceFinderByBatchPlannerPlanId;
 
 	/**
 	 * Returns an ordered range of all the batch planner policies where batchPlannerPlanId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchPlannerPolicyModelImpl</code>.
-	 * </p>
-	 *
-	 * @param batchPlannerPlanId the batch planner plan ID
-	 * @param start the lower bound of the range of batch planner policies
-	 * @param end the upper bound of the range of batch planner policies (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching batch planner policies
-	 */
-	@Override
-	public List<BatchPlannerPolicy> findByBatchPlannerPlanId(
-		long batchPlannerPlanId, int start, int end,
-		OrderByComparator<BatchPlannerPolicy> orderByComparator) {
-
-		return findByBatchPlannerPlanId(
-			batchPlannerPlanId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the batch planner policies where batchPlannerPlanId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchPlannerPolicyModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchPlannerPolicyModelImpl</code>.
 	 * </p>
 	 *
 	 * @param batchPlannerPlanId the batch planner plan ID
@@ -163,98 +98,9 @@ public class BatchPlannerPolicyPersistenceImpl
 		OrderByComparator<BatchPlannerPolicy> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByBatchPlannerPlanId;
-				finderArgs = new Object[] {batchPlannerPlanId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByBatchPlannerPlanId;
-			finderArgs = new Object[] {
-				batchPlannerPlanId, start, end, orderByComparator
-			};
-		}
-
-		List<BatchPlannerPolicy> list = null;
-
-		if (useFinderCache) {
-			list = (List<BatchPlannerPolicy>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (BatchPlannerPolicy batchPlannerPolicy : list) {
-					if (batchPlannerPlanId !=
-							batchPlannerPolicy.getBatchPlannerPlanId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_BATCHPLANNERPOLICY_WHERE);
-
-			sb.append(_FINDER_COLUMN_BATCHPLANNERPLANID_BATCHPLANNERPLANID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(BatchPlannerPolicyModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(batchPlannerPlanId);
-
-				list = (List<BatchPlannerPolicy>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByBatchPlannerPlanId.find(
+			finderCache, new Object[] {batchPlannerPlanId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -278,16 +124,11 @@ public class BatchPlannerPolicyPersistenceImpl
 			return batchPlannerPolicy;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("batchPlannerPlanId=");
-		sb.append(batchPlannerPlanId);
-
-		sb.append("}");
-
-		throw new NoSuchPolicyException(sb.toString());
+		throw new NoSuchPolicyException(
+			_collectionPersistenceFinderByBatchPlannerPlanId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {batchPlannerPlanId}));
 	}
 
 	/**
@@ -302,14 +143,8 @@ public class BatchPlannerPolicyPersistenceImpl
 		long batchPlannerPlanId,
 		OrderByComparator<BatchPlannerPolicy> orderByComparator) {
 
-		List<BatchPlannerPolicy> list = findByBatchPlannerPlanId(
-			batchPlannerPlanId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByBatchPlannerPlanId.fetchFirst(
+			finderCache, new Object[] {batchPlannerPlanId}, orderByComparator);
 	}
 
 	/**
@@ -319,13 +154,8 @@ public class BatchPlannerPolicyPersistenceImpl
 	 */
 	@Override
 	public void removeByBatchPlannerPlanId(long batchPlannerPlanId) {
-		for (BatchPlannerPolicy batchPlannerPolicy :
-				findByBatchPlannerPlanId(
-					batchPlannerPlanId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(batchPlannerPolicy);
-		}
+		_collectionPersistenceFinderByBatchPlannerPlanId.remove(
+			finderCache, new Object[] {batchPlannerPlanId});
 	}
 
 	/**
@@ -336,52 +166,12 @@ public class BatchPlannerPolicyPersistenceImpl
 	 */
 	@Override
 	public int countByBatchPlannerPlanId(long batchPlannerPlanId) {
-		FinderPath finderPath = _finderPathCountByBatchPlannerPlanId;
-
-		Object[] finderArgs = new Object[] {batchPlannerPlanId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_BATCHPLANNERPOLICY_WHERE);
-
-			sb.append(_FINDER_COLUMN_BATCHPLANNERPLANID_BATCHPLANNERPLANID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(batchPlannerPlanId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByBatchPlannerPlanId.count(
+			finderCache, new Object[] {batchPlannerPlanId});
 	}
 
-	private static final String
-		_FINDER_COLUMN_BATCHPLANNERPLANID_BATCHPLANNERPLANID_2 =
-			"batchPlannerPolicy.batchPlannerPlanId = ?";
-
-	private FinderPath _finderPathFetchByBPPI_N;
+	private UniquePersistenceFinder<BatchPlannerPolicy>
+		_uniquePersistenceFinderByBPPI_N;
 
 	/**
 	 * Returns the batch planner policy where batchPlannerPlanId = &#63; and name = &#63; or throws a <code>NoSuchPolicyException</code> if it could not be found.
@@ -399,40 +189,19 @@ public class BatchPlannerPolicyPersistenceImpl
 			batchPlannerPlanId, name);
 
 		if (batchPlannerPolicy == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("batchPlannerPlanId=");
-			sb.append(batchPlannerPlanId);
-
-			sb.append(", name=");
-			sb.append(name);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByBPPI_N.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {batchPlannerPlanId, name});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchPolicyException(sb.toString());
+			throw new NoSuchPolicyException(message);
 		}
 
 		return batchPlannerPolicy;
-	}
-
-	/**
-	 * Returns the batch planner policy where batchPlannerPlanId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param batchPlannerPlanId the batch planner plan ID
-	 * @param name the name
-	 * @return the matching batch planner policy, or <code>null</code> if a matching batch planner policy could not be found
-	 */
-	@Override
-	public BatchPlannerPolicy fetchByBPPI_N(
-		long batchPlannerPlanId, String name) {
-
-		return fetchByBPPI_N(batchPlannerPlanId, name, true);
 	}
 
 	/**
@@ -447,97 +216,9 @@ public class BatchPlannerPolicyPersistenceImpl
 	public BatchPlannerPolicy fetchByBPPI_N(
 		long batchPlannerPlanId, String name, boolean useFinderCache) {
 
-		name = Objects.toString(name, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {batchPlannerPlanId, name};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByBPPI_N, finderArgs, this);
-		}
-
-		if (result instanceof BatchPlannerPolicy) {
-			BatchPlannerPolicy batchPlannerPolicy = (BatchPlannerPolicy)result;
-
-			if ((batchPlannerPlanId !=
-					batchPlannerPolicy.getBatchPlannerPlanId()) ||
-				!Objects.equals(name, batchPlannerPolicy.getName())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_BATCHPLANNERPOLICY_WHERE);
-
-			sb.append(_FINDER_COLUMN_BPPI_N_BATCHPLANNERPLANID_2);
-
-			boolean bindName = false;
-
-			if (name.isEmpty()) {
-				sb.append(_FINDER_COLUMN_BPPI_N_NAME_3);
-			}
-			else {
-				bindName = true;
-
-				sb.append(_FINDER_COLUMN_BPPI_N_NAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(batchPlannerPlanId);
-
-				if (bindName) {
-					queryPos.add(name);
-				}
-
-				List<BatchPlannerPolicy> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByBPPI_N, finderArgs, list);
-					}
-				}
-				else {
-					BatchPlannerPolicy batchPlannerPolicy = list.get(0);
-
-					result = batchPlannerPolicy;
-
-					cacheResult(batchPlannerPolicy);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (BatchPlannerPolicy)result;
-		}
+		return _uniquePersistenceFinderByBPPI_N.fetch(
+			finderCache, new Object[] {batchPlannerPlanId, name},
+			useFinderCache);
 	}
 
 	/**
@@ -567,24 +248,9 @@ public class BatchPlannerPolicyPersistenceImpl
 	 */
 	@Override
 	public int countByBPPI_N(long batchPlannerPlanId, String name) {
-		BatchPlannerPolicy batchPlannerPolicy = fetchByBPPI_N(
-			batchPlannerPlanId, name);
-
-		if (batchPlannerPolicy == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByBPPI_N.count(
+			finderCache, new Object[] {batchPlannerPlanId, name});
 	}
-
-	private static final String _FINDER_COLUMN_BPPI_N_BATCHPLANNERPLANID_2 =
-		"batchPlannerPolicy.batchPlannerPlanId = ? AND ";
-
-	private static final String _FINDER_COLUMN_BPPI_N_NAME_2 =
-		"batchPlannerPolicy.name = ?";
-
-	private static final String _FINDER_COLUMN_BPPI_N_NAME_3 =
-		"(batchPlannerPolicy.name IS NULL OR batchPlannerPolicy.name = '')";
 
 	public BatchPlannerPolicyPersistenceImpl() {
 		setModelClass(BatchPlannerPolicy.class);
@@ -593,109 +259,6 @@ public class BatchPlannerPolicyPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(BatchPlannerPolicyTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the batch planner policy in the entity cache if it is enabled.
-	 *
-	 * @param batchPlannerPolicy the batch planner policy
-	 */
-	@Override
-	public void cacheResult(BatchPlannerPolicy batchPlannerPolicy) {
-		entityCache.putResult(
-			BatchPlannerPolicyImpl.class, batchPlannerPolicy.getPrimaryKey(),
-			batchPlannerPolicy);
-
-		finderCache.putResult(
-			_finderPathFetchByBPPI_N,
-			new Object[] {
-				batchPlannerPolicy.getBatchPlannerPlanId(),
-				batchPlannerPolicy.getName()
-			},
-			batchPlannerPolicy);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the batch planner policies in the entity cache if it is enabled.
-	 *
-	 * @param batchPlannerPolicies the batch planner policies
-	 */
-	@Override
-	public void cacheResult(List<BatchPlannerPolicy> batchPlannerPolicies) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (batchPlannerPolicies.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (BatchPlannerPolicy batchPlannerPolicy : batchPlannerPolicies) {
-			if (entityCache.getResult(
-					BatchPlannerPolicyImpl.class,
-					batchPlannerPolicy.getPrimaryKey()) == null) {
-
-				cacheResult(batchPlannerPolicy);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all batch planner policies.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(BatchPlannerPolicyImpl.class);
-
-		finderCache.clearCache(BatchPlannerPolicyImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the batch planner policy.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(BatchPlannerPolicy batchPlannerPolicy) {
-		entityCache.removeResult(
-			BatchPlannerPolicyImpl.class, batchPlannerPolicy);
-	}
-
-	@Override
-	public void clearCache(List<BatchPlannerPolicy> batchPlannerPolicies) {
-		for (BatchPlannerPolicy batchPlannerPolicy : batchPlannerPolicies) {
-			entityCache.removeResult(
-				BatchPlannerPolicyImpl.class, batchPlannerPolicy);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(BatchPlannerPolicyImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(BatchPlannerPolicyImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		BatchPlannerPolicyModelImpl batchPlannerPolicyModelImpl) {
-
-		Object[] args = new Object[] {
-			batchPlannerPolicyModelImpl.getBatchPlannerPlanId(),
-			batchPlannerPolicyModelImpl.getName()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByBPPI_N, args, batchPlannerPolicyModelImpl);
 	}
 
 	/**
@@ -728,48 +291,6 @@ public class BatchPlannerPolicyPersistenceImpl
 		throws NoSuchPolicyException {
 
 		return remove((Serializable)batchPlannerPolicyId);
-	}
-
-	/**
-	 * Removes the batch planner policy with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the batch planner policy
-	 * @return the batch planner policy that was removed
-	 * @throws NoSuchPolicyException if a batch planner policy with the primary key could not be found
-	 */
-	@Override
-	public BatchPlannerPolicy remove(Serializable primaryKey)
-		throws NoSuchPolicyException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			BatchPlannerPolicy batchPlannerPolicy =
-				(BatchPlannerPolicy)session.get(
-					BatchPlannerPolicyImpl.class, primaryKey);
-
-			if (batchPlannerPolicy == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchPolicyException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(batchPlannerPolicy);
-		}
-		catch (NoSuchPolicyException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -876,42 +397,13 @@ public class BatchPlannerPolicyPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			BatchPlannerPolicyImpl.class, batchPlannerPolicyModelImpl, false,
-			true);
-
-		cacheUniqueFindersCache(batchPlannerPolicyModelImpl);
+		cacheUniqueFindersResult(batchPlannerPolicy, false);
 
 		if (isNew) {
 			batchPlannerPolicy.setNew(false);
 		}
 
 		batchPlannerPolicy.resetOriginalValues();
-
-		return batchPlannerPolicy;
-	}
-
-	/**
-	 * Returns the batch planner policy with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the batch planner policy
-	 * @return the batch planner policy
-	 * @throws NoSuchPolicyException if a batch planner policy with the primary key could not be found
-	 */
-	@Override
-	public BatchPlannerPolicy findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchPolicyException {
-
-		BatchPlannerPolicy batchPlannerPolicy = fetchByPrimaryKey(primaryKey);
-
-		if (batchPlannerPolicy == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchPolicyException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return batchPlannerPolicy;
 	}
@@ -941,188 +433,6 @@ public class BatchPlannerPolicyPersistenceImpl
 		return fetchByPrimaryKey((Serializable)batchPlannerPolicyId);
 	}
 
-	/**
-	 * Returns all the batch planner policies.
-	 *
-	 * @return the batch planner policies
-	 */
-	@Override
-	public List<BatchPlannerPolicy> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the batch planner policies.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchPlannerPolicyModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of batch planner policies
-	 * @param end the upper bound of the range of batch planner policies (not inclusive)
-	 * @return the range of batch planner policies
-	 */
-	@Override
-	public List<BatchPlannerPolicy> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the batch planner policies.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchPlannerPolicyModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of batch planner policies
-	 * @param end the upper bound of the range of batch planner policies (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of batch planner policies
-	 */
-	@Override
-	public List<BatchPlannerPolicy> findAll(
-		int start, int end,
-		OrderByComparator<BatchPlannerPolicy> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the batch planner policies.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchPlannerPolicyModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of batch planner policies
-	 * @param end the upper bound of the range of batch planner policies (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of batch planner policies
-	 */
-	@Override
-	public List<BatchPlannerPolicy> findAll(
-		int start, int end,
-		OrderByComparator<BatchPlannerPolicy> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<BatchPlannerPolicy> list = null;
-
-		if (useFinderCache) {
-			list = (List<BatchPlannerPolicy>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_BATCHPLANNERPOLICY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_BATCHPLANNERPOLICY;
-
-				sql = sql.concat(BatchPlannerPolicyModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<BatchPlannerPolicy>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the batch planner policies from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (BatchPlannerPolicy batchPlannerPolicy : findAll()) {
-			remove(batchPlannerPolicy);
-		}
-	}
-
-	/**
-	 * Returns the number of batch planner policies.
-	 *
-	 * @return the number of batch planner policies
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_BATCHPLANNERPOLICY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
 	@Override
 	protected EntityCache getEntityCache() {
 		return entityCache;
@@ -1148,43 +458,53 @@ public class BatchPlannerPolicyPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByBatchPlannerPlanId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByBatchPlannerPlanId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"batchPlannerPlanId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByBatchPlannerPlanId",
+					new String[] {Long.class.getName()},
+					new String[] {"batchPlannerPlanId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByBatchPlannerPlanId",
+					new String[] {Long.class.getName()},
+					new String[] {"batchPlannerPlanId"}, false),
+				_SQL_SELECT_BATCHPLANNERPOLICY_WHERE,
+				_SQL_COUNT_BATCHPLANNERPOLICY_WHERE,
+				BatchPlannerPolicyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				"",
+				new FinderColumn<>(
+					"batchPlannerPolicy.", "batchPlannerPlanId",
+					FinderColumn.Type.LONG, "=", true, true,
+					BatchPlannerPolicy::getBatchPlannerPlanId));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByBatchPlannerPlanId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByBatchPlannerPlanId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"batchPlannerPlanId"}, true);
-
-		_finderPathWithoutPaginationFindByBatchPlannerPlanId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByBatchPlannerPlanId", new String[] {Long.class.getName()},
-			new String[] {"batchPlannerPlanId"}, true);
-
-		_finderPathCountByBatchPlannerPlanId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByBatchPlannerPlanId", new String[] {Long.class.getName()},
-			new String[] {"batchPlannerPlanId"}, false);
-
-		_finderPathFetchByBPPI_N = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByBPPI_N",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"batchPlannerPlanId", "name"}, true);
+		_uniquePersistenceFinderByBPPI_N = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByBPPI_N",
+				new String[] {Long.class.getName(), String.class.getName()},
+				new String[] {"batchPlannerPlanId", "name"}, 0, 2, false,
+				BatchPlannerPolicy::getBatchPlannerPlanId,
+				convertNullFunction(BatchPlannerPolicy::getName)),
+			_SQL_SELECT_BATCHPLANNERPOLICY_WHERE, "",
+			new FinderColumn<>(
+				"batchPlannerPolicy.", "batchPlannerPlanId",
+				FinderColumn.Type.LONG, "=", true, true,
+				BatchPlannerPolicy::getBatchPlannerPlanId),
+			new FinderColumn<>(
+				"batchPlannerPolicy.", "name", FinderColumn.Type.STRING, "=",
+				true, true, BatchPlannerPolicy::getName));
 
 		BatchPlannerPolicyUtil.setPersistence(this);
 	}
@@ -1228,22 +548,17 @@ public class BatchPlannerPolicyPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		BatchPlannerPolicyModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_BATCHPLANNERPOLICY =
 		"SELECT batchPlannerPolicy FROM BatchPlannerPolicy batchPlannerPolicy";
 
 	private static final String _SQL_SELECT_BATCHPLANNERPOLICY_WHERE =
 		"SELECT batchPlannerPolicy FROM BatchPlannerPolicy batchPlannerPolicy WHERE ";
 
-	private static final String _SQL_COUNT_BATCHPLANNERPOLICY =
-		"SELECT COUNT(batchPlannerPolicy) FROM BatchPlannerPolicy batchPlannerPolicy";
-
 	private static final String _SQL_COUNT_BATCHPLANNERPOLICY_WHERE =
 		"SELECT COUNT(batchPlannerPolicy) FROM BatchPlannerPolicy batchPlannerPolicy WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "batchPlannerPolicy.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No BatchPlannerPolicy exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No BatchPlannerPolicy exists with the key {";
@@ -1257,4 +572,4 @@ public class BatchPlannerPolicyPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-290750838
+// LIFERAY-SERVICE-BUILDER-HASH:99918095

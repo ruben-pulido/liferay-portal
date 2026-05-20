@@ -31,51 +31,10 @@ public interface UserIdMapperPersistence extends BasePersistence<UserIdMapper> {
 	 */
 
 	/**
-	 * Returns all the user ID mappers where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching user ID mappers
-	 */
-	public java.util.List<UserIdMapper> findByUserId(long userId);
-
-	/**
-	 * Returns a range of all the user ID mappers where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserIdMapperModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of user ID mappers
-	 * @param end the upper bound of the range of user ID mappers (not inclusive)
-	 * @return the range of matching user ID mappers
-	 */
-	public java.util.List<UserIdMapper> findByUserId(
-		long userId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user ID mappers where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserIdMapperModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of user ID mappers
-	 * @param end the upper bound of the range of user ID mappers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user ID mappers
-	 */
-	public java.util.List<UserIdMapper> findByUserId(
-		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserIdMapper>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user ID mappers where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserIdMapperModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserIdMapperModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -144,15 +103,6 @@ public interface UserIdMapperPersistence extends BasePersistence<UserIdMapper> {
 		throws NoSuchUserIdMapperException;
 
 	/**
-	 * Returns the user ID mapper where userId = &#63; and type = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param type the type
-	 * @return the matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
-	 */
-	public UserIdMapper fetchByU_T(long userId, String type);
-
-	/**
 	 * Returns the user ID mapper where userId = &#63; and type = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param userId the user ID
@@ -194,15 +144,6 @@ public interface UserIdMapperPersistence extends BasePersistence<UserIdMapper> {
 		throws NoSuchUserIdMapperException;
 
 	/**
-	 * Returns the user ID mapper where type = &#63; and externalUserId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param type the type
-	 * @param externalUserId the external user ID
-	 * @return the matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
-	 */
-	public UserIdMapper fetchByT_E(String type, String externalUserId);
-
-	/**
 	 * Returns the user ID mapper where type = &#63; and externalUserId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param type the type
@@ -231,20 +172,6 @@ public interface UserIdMapperPersistence extends BasePersistence<UserIdMapper> {
 	 * @return the number of matching user ID mappers
 	 */
 	public int countByT_E(String type, String externalUserId);
-
-	/**
-	 * Caches the user ID mapper in the entity cache if it is enabled.
-	 *
-	 * @param userIdMapper the user ID mapper
-	 */
-	public void cacheResult(UserIdMapper userIdMapper);
-
-	/**
-	 * Caches the user ID mappers in the entity cache if it is enabled.
-	 *
-	 * @param userIdMappers the user ID mappers
-	 */
-	public void cacheResult(java.util.List<UserIdMapper> userIdMappers);
 
 	/**
 	 * Creates a new user ID mapper with the primary key. Does not add the user ID mapper to the database.
@@ -285,72 +212,77 @@ public interface UserIdMapperPersistence extends BasePersistence<UserIdMapper> {
 	public UserIdMapper fetchByPrimaryKey(long userIdMapperId);
 
 	/**
-	 * Returns all the user ID mappers.
+	 * Returns the user ID mapper where userId = &#63; and type = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the user ID mappers
+	 * @param userId the user ID
+	 * @param type the type
+	 * @return the matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
 	 */
-	public java.util.List<UserIdMapper> findAll();
+	public default UserIdMapper fetchByU_T(long userId, String type) {
+		return fetchByU_T(userId, type, true);
+	}
 
 	/**
-	 * Returns a range of all the user ID mappers.
+	 * Returns the user ID mapper where type = &#63; and externalUserId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param type the type
+	 * @param externalUserId the external user ID
+	 * @return the matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
+	 */
+	public default UserIdMapper fetchByT_E(String type, String externalUserId) {
+		return fetchByT_E(type, externalUserId, true);
+	}
+
+	/**
+	 * Returns all the user ID mappers where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching user ID mappers
+	 */
+	public default java.util.List<UserIdMapper> findByUserId(long userId) {
+		return findByUserId(
+			userId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user ID mappers where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserIdMapperModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserIdMapperModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of user ID mappers
 	 * @param end the upper bound of the range of user ID mappers (not inclusive)
-	 * @return the range of user ID mappers
+	 * @return the range of matching user ID mappers
 	 */
-	public java.util.List<UserIdMapper> findAll(int start, int end);
+	public default java.util.List<UserIdMapper> findByUserId(
+		long userId, int start, int end) {
+
+		return findByUserId(userId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the user ID mappers.
+	 * Returns an ordered range of all the user ID mappers where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserIdMapperModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserIdMapperModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of user ID mappers
 	 * @param end the upper bound of the range of user ID mappers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of user ID mappers
+	 * @return the ordered range of matching user ID mappers
 	 */
-	public java.util.List<UserIdMapper> findAll(
-		int start, int end,
+	public default java.util.List<UserIdMapper> findByUserId(
+		long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<UserIdMapper>
-			orderByComparator);
+			orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the user ID mappers.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserIdMapperModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of user ID mappers
-	 * @param end the upper bound of the range of user ID mappers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of user ID mappers
-	 */
-	public java.util.List<UserIdMapper> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserIdMapper>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the user ID mappers from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of user ID mappers.
-	 *
-	 * @return the number of user ID mappers
-	 */
-	public int countAll();
+		return findByUserId(userId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1384636523
+// LIFERAY-SERVICE-BUILDER-HASH:1432785736

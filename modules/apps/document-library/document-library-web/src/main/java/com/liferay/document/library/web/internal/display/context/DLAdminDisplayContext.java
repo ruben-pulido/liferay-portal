@@ -52,7 +52,6 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.repository.model.RepositoryEntry;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
@@ -72,7 +71,6 @@ import com.liferay.portal.kernel.search.SortFactoryUtil;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
@@ -685,7 +683,7 @@ public class DLAdminDisplayContext {
 		long[] assetCategoryIds, String[] assetTagNames, String[] extensions,
 		long fileEntryTypeId, long userId) {
 
-		BooleanQuery booleanQuery = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		BooleanFilter booleanFilter = new BooleanFilter();
 
@@ -720,8 +718,7 @@ public class DLAdminDisplayContext {
 		booleanQuery.setPreBooleanFilter(booleanFilter);
 
 		return new BooleanClause[] {
-			BooleanClauseFactoryUtil.create(
-				booleanQuery, BooleanClauseOccur.MUST.getName())
+			new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST)
 		};
 	}
 

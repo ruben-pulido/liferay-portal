@@ -33,7 +33,6 @@ export const test = mergeTests(
 	changeTrackingPagesTest,
 	customFieldsPagesTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPD-39304': {enabled: true},
 	}),
 	isolatedSiteTest,
@@ -919,10 +918,12 @@ test(
 
 		await changeTrackingPage.reviewChange(layoutTitle);
 
-		const view = page.frameLocator('iframe');
-
-		await expect(view.nth(0).getByText('Heading Example')).toBeVisible();
-		await expect(view.nth(1).getByText('Edited Text')).toBeVisible();
+		await expect(page.getByText('Heading Example')).toBeVisible({
+			timeout: 30000,
+		});
+		await expect(page.getByText('Edited Text')).toBeVisible({
+			timeout: 30000,
+		});
 
 		await apiHelpers.jsonWebServicesLayout.deleteLayout(layout.plid);
 	}

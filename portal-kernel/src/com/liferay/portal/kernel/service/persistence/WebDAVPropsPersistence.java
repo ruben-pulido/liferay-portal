@@ -42,15 +42,6 @@ public interface WebDAVPropsPersistence extends BasePersistence<WebDAVProps> {
 		throws NoSuchWebDAVPropsException;
 
 	/**
-	 * Returns the web dav props where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching web dav props, or <code>null</code> if a matching web dav props could not be found
-	 */
-	public WebDAVProps fetchByC_C(long classNameId, long classPK);
-
-	/**
 	 * Returns the web dav props where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param classNameId the class name ID
@@ -79,20 +70,6 @@ public interface WebDAVPropsPersistence extends BasePersistence<WebDAVProps> {
 	 * @return the number of matching web dav propses
 	 */
 	public int countByC_C(long classNameId, long classPK);
-
-	/**
-	 * Caches the web dav props in the entity cache if it is enabled.
-	 *
-	 * @param webDAVProps the web dav props
-	 */
-	public void cacheResult(WebDAVProps webDAVProps);
-
-	/**
-	 * Caches the web dav propses in the entity cache if it is enabled.
-	 *
-	 * @param webDAVPropses the web dav propses
-	 */
-	public void cacheResult(java.util.List<WebDAVProps> webDAVPropses);
 
 	/**
 	 * Creates a new web dav props with the primary key. Does not add the web dav props to the database.
@@ -133,72 +110,15 @@ public interface WebDAVPropsPersistence extends BasePersistence<WebDAVProps> {
 	public WebDAVProps fetchByPrimaryKey(long webDavPropsId);
 
 	/**
-	 * Returns all the web dav propses.
+	 * Returns the web dav props where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the web dav propses
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching web dav props, or <code>null</code> if a matching web dav props could not be found
 	 */
-	public java.util.List<WebDAVProps> findAll();
-
-	/**
-	 * Returns a range of all the web dav propses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WebDAVPropsModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of web dav propses
-	 * @param end the upper bound of the range of web dav propses (not inclusive)
-	 * @return the range of web dav propses
-	 */
-	public java.util.List<WebDAVProps> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the web dav propses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WebDAVPropsModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of web dav propses
-	 * @param end the upper bound of the range of web dav propses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of web dav propses
-	 */
-	public java.util.List<WebDAVProps> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<WebDAVProps>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the web dav propses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WebDAVPropsModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of web dav propses
-	 * @param end the upper bound of the range of web dav propses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of web dav propses
-	 */
-	public java.util.List<WebDAVProps> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<WebDAVProps>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the web dav propses from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of web dav propses.
-	 *
-	 * @return the number of web dav propses
-	 */
-	public int countAll();
+	public default WebDAVProps fetchByC_C(long classNameId, long classPK) {
+		return fetchByC_C(classNameId, classPK, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2030536413
+// LIFERAY-SERVICE-BUILDER-HASH:2137837106

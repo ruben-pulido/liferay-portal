@@ -16,6 +16,7 @@ import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CPInstanceUnitOfMeasure;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.service.CPInstanceUnitOfMeasureLocalService;
+import com.liferay.commerce.product.test.util.CPTestUtil;
 import com.liferay.commerce.test.util.CommerceInventoryTestUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
@@ -315,10 +316,85 @@ public class CommerceInventoryWarehouseItemLocalServiceTest {
 				RandomTestUtil.randomString());
 	}
 
+	@Test
+	public void testDeleteCommerceInventoryWarehouseItem() throws Exception {
+		CommerceInventoryWarehouse commerceInventoryWarehouse1 =
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
+				true, _serviceContext);
+
+		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem1 =
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouseItem(
+				_user.getUserId(), commerceInventoryWarehouse1, BigDecimal.ONE,
+				_cpInstance.getSku(), _cpInstanceUnitOfMeasure.getKey());
+
+		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure1 =
+			CPTestUtil.addCPInstanceUnitOfMeasure(
+				_group.getGroupId(), _cpInstance.getCPInstanceId(),
+				RandomTestUtil.randomString(), BigDecimal.TEN,
+				_cpInstance.getSku());
+
+		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem2 =
+			_commerceInventoryWarehouseItemLocalService.
+				fetchCommerceInventoryWarehouseItem(
+					commerceInventoryWarehouse1.
+						getCommerceInventoryWarehouseId(),
+					_cpInstance.getSku(), cpInstanceUnitOfMeasure1.getKey());
+
+		CommerceInventoryWarehouse commerceInventoryWarehouse2 =
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
+				true, _serviceContext);
+
+		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem3 =
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouseItem(
+				_user.getUserId(), commerceInventoryWarehouse2, BigDecimal.ONE,
+				_cpInstance.getSku(), _cpInstanceUnitOfMeasure.getKey());
+
+		CPInstance cpInstance =
+			CommerceInventoryTestUtil.addRandomCPInstanceSku(
+				_group.getGroupId());
+
+		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure2 =
+			CPTestUtil.addCPInstanceUnitOfMeasure(
+				_group.getGroupId(), cpInstance.getCPInstanceId(),
+				RandomTestUtil.randomString(), BigDecimal.TEN,
+				cpInstance.getSku());
+
+		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem4 =
+			_commerceInventoryWarehouseItemLocalService.
+				fetchCommerceInventoryWarehouseItem(
+					commerceInventoryWarehouse1.
+						getCommerceInventoryWarehouseId(),
+					cpInstance.getSku(), cpInstanceUnitOfMeasure2.getKey());
+
+		_commerceInventoryWarehouseItemLocalService.
+			deleteCommerceInventoryWarehouseItem(
+				commerceInventoryWarehouseItem1.
+					getCommerceInventoryWarehouseItemId());
+
+		Assert.assertNull(
+			_commerceInventoryWarehouseItemLocalService.
+				fetchCommerceInventoryWarehouseItem(
+					commerceInventoryWarehouseItem1.
+						getCommerceInventoryWarehouseItemId()));
+		Assert.assertNotNull(
+			_commerceInventoryWarehouseItemLocalService.
+				fetchCommerceInventoryWarehouseItem(
+					commerceInventoryWarehouseItem2.
+						getCommerceInventoryWarehouseItemId()));
+		Assert.assertNotNull(
+			_commerceInventoryWarehouseItemLocalService.
+				fetchCommerceInventoryWarehouseItem(
+					commerceInventoryWarehouseItem3.
+						getCommerceInventoryWarehouseItemId()));
+		Assert.assertNotNull(
+			_commerceInventoryWarehouseItemLocalService.
+				fetchCommerceInventoryWarehouseItem(
+					commerceInventoryWarehouseItem4.
+						getCommerceInventoryWarehouseItemId()));
+	}
+
 	@Rule
 	public FrutillaRule frutillaRule = new FrutillaRule();
-
-	private static User _user;
 
 	@Inject
 	private CommerceInventoryWarehouseItemLocalService
@@ -341,5 +417,6 @@ public class CommerceInventoryWarehouseItemLocalServiceTest {
 
 	private Group _group;
 	private ServiceContext _serviceContext;
+	private User _user;
 
 }

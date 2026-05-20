@@ -36,6 +36,24 @@ public class AssetListEntryAssetEntryRelUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<AssetListEntryAssetEntryRel> assetListEntryAssetEntryRels) {
+
+		getPersistence().cacheResult(assetListEntryAssetEntryRels);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		AssetListEntryAssetEntryRel assetListEntryAssetEntryRel) {
+
+		getPersistence().cacheResult(assetListEntryAssetEntryRel);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,58 +135,10 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns all the asset list entry asset entry rels where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the asset list entry asset entry rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @return the range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the asset list entry asset entry rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the asset list entry asset entry rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -254,19 +224,6 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns the asset list entry asset entry rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching asset list entry asset entry rel, or <code>null</code> if a matching asset list entry asset entry rel could not be found
-	 */
-	public static AssetListEntryAssetEntryRel fetchByUUID_G(
-		String uuid, long groupId) {
-
-		return getPersistence().fetchByUUID_G(uuid, groupId);
-	}
-
-	/**
 	 * Returns the asset list entry asset entry rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -307,64 +264,10 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns all the asset list entry asset entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the asset list entry asset entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @return the range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the asset list entry asset entry rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the asset list entry asset entry rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -441,62 +344,10 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns all the asset list entry asset entry rels where assetListEntryId = &#63;.
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @return the matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByAssetListEntryId(
-		long assetListEntryId) {
-
-		return getPersistence().findByAssetListEntryId(assetListEntryId);
-	}
-
-	/**
-	 * Returns a range of all the asset list entry asset entry rels where assetListEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @return the range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByAssetListEntryId(
-		long assetListEntryId, int start, int end) {
-
-		return getPersistence().findByAssetListEntryId(
-			assetListEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByAssetListEntryId(
-		long assetListEntryId, int start, int end,
-		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
-
-		return getPersistence().findByAssetListEntryId(
-			assetListEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetListEntryId the asset list entry ID
@@ -568,61 +419,10 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns all the asset list entry asset entry rels where assetEntryId = &#63;.
-	 *
-	 * @param assetEntryId the asset entry ID
-	 * @return the matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByAssetEntryId(
-		long assetEntryId) {
-
-		return getPersistence().findByAssetEntryId(assetEntryId);
-	}
-
-	/**
-	 * Returns a range of all the asset list entry asset entry rels where assetEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetEntryId the asset entry ID
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @return the range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByAssetEntryId(
-		long assetEntryId, int start, int end) {
-
-		return getPersistence().findByAssetEntryId(assetEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the asset list entry asset entry rels where assetEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetEntryId the asset entry ID
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByAssetEntryId(
-		long assetEntryId, int start, int end,
-		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
-
-		return getPersistence().findByAssetEntryId(
-			assetEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the asset list entry asset entry rels where assetEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetEntryId the asset entry ID
@@ -694,65 +494,10 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63;.
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param segmentsEntryId the segments entry ID
-	 * @return the matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByA_S(
-		long assetListEntryId, long segmentsEntryId) {
-
-		return getPersistence().findByA_S(assetListEntryId, segmentsEntryId);
-	}
-
-	/**
-	 * Returns a range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param segmentsEntryId the segments entry ID
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @return the range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByA_S(
-		long assetListEntryId, long segmentsEntryId, int start, int end) {
-
-		return getPersistence().findByA_S(
-			assetListEntryId, segmentsEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param segmentsEntryId the segments entry ID
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByA_S(
-		long assetListEntryId, long segmentsEntryId, int start, int end,
-		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
-
-		return getPersistence().findByA_S(
-			assetListEntryId, segmentsEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetListEntryId the asset list entry ID
@@ -809,69 +554,10 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param segmentsEntryIds the segments entry IDs
-	 * @return the matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByA_S(
-		long assetListEntryId, long[] segmentsEntryIds) {
-
-		return getPersistence().findByA_S(assetListEntryId, segmentsEntryIds);
-	}
-
-	/**
-	 * Returns a range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param segmentsEntryIds the segments entry IDs
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @return the range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByA_S(
-		long assetListEntryId, long[] segmentsEntryIds, int start, int end) {
-
-		return getPersistence().findByA_S(
-			assetListEntryId, segmentsEntryIds, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param segmentsEntryIds the segments entry IDs
-	 * @param start the lower bound of the range of asset list entry asset entry rels
-	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching asset list entry asset entry rels
-	 */
-	public static List<AssetListEntryAssetEntryRel> findByA_S(
-		long assetListEntryId, long[] segmentsEntryIds, int start, int end,
-		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
-
-		return getPersistence().findByA_S(
-			assetListEntryId, segmentsEntryIds, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetListEntryId the asset list entry ID
@@ -947,21 +633,6 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns the asset list entry asset entry rel where assetListEntryId = &#63; and segmentsEntryId = &#63; and position = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param assetListEntryId the asset list entry ID
-	 * @param segmentsEntryId the segments entry ID
-	 * @param position the position
-	 * @return the matching asset list entry asset entry rel, or <code>null</code> if a matching asset list entry asset entry rel could not be found
-	 */
-	public static AssetListEntryAssetEntryRel fetchByA_S_P(
-		long assetListEntryId, long segmentsEntryId, int position) {
-
-		return getPersistence().fetchByA_S_P(
-			assetListEntryId, segmentsEntryId, position);
-	}
-
-	/**
 	 * Returns the asset list entry asset entry rel where assetListEntryId = &#63; and segmentsEntryId = &#63; and position = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param assetListEntryId the asset list entry ID
@@ -1029,7 +700,7 @@ public class AssetListEntryAssetEntryRelUtil {
 	 * Returns a range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63; and position &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetListEntryId the asset list entry ID
@@ -1051,7 +722,7 @@ public class AssetListEntryAssetEntryRelUtil {
 	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63; and position &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetListEntryId the asset list entry ID
@@ -1076,7 +747,7 @@ public class AssetListEntryAssetEntryRelUtil {
 	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63; and position &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetListEntryId the asset list entry ID
@@ -1166,28 +837,6 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Caches the asset list entry asset entry rel in the entity cache if it is enabled.
-	 *
-	 * @param assetListEntryAssetEntryRel the asset list entry asset entry rel
-	 */
-	public static void cacheResult(
-		AssetListEntryAssetEntryRel assetListEntryAssetEntryRel) {
-
-		getPersistence().cacheResult(assetListEntryAssetEntryRel);
-	}
-
-	/**
-	 * Caches the asset list entry asset entry rels in the entity cache if it is enabled.
-	 *
-	 * @param assetListEntryAssetEntryRels the asset list entry asset entry rels
-	 */
-	public static void cacheResult(
-		List<AssetListEntryAssetEntryRel> assetListEntryAssetEntryRels) {
-
-		getPersistence().cacheResult(assetListEntryAssetEntryRels);
-	}
-
-	/**
 	 * Creates a new asset list entry asset entry rel with the primary key. Does not add the asset list entry asset entry rel to the database.
 	 *
 	 * @param assetListEntryAssetEntryRelId the primary key for the new asset list entry asset entry rel
@@ -1249,86 +898,346 @@ public class AssetListEntryAssetEntryRelUtil {
 	}
 
 	/**
-	 * Returns all the asset list entry asset entry rels.
+	 * Returns the asset list entry asset entry rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the asset list entry asset entry rels
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching asset list entry asset entry rel, or <code>null</code> if a matching asset list entry asset entry rel could not be found
 	 */
-	public static List<AssetListEntryAssetEntryRel> findAll() {
-		return getPersistence().findAll();
+	public static AssetListEntryAssetEntryRel fetchByUUID_G(
+		String uuid, long groupId) {
+
+		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
-	 * Returns a range of all the asset list entry asset entry rels.
+	 * Returns the asset list entry asset entry rel where assetListEntryId = &#63; and segmentsEntryId = &#63; and position = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param segmentsEntryId the segments entry ID
+	 * @param position the position
+	 * @return the matching asset list entry asset entry rel, or <code>null</code> if a matching asset list entry asset entry rel could not be found
+	 */
+	public static AssetListEntryAssetEntryRel fetchByA_S_P(
+		long assetListEntryId, long segmentsEntryId, int position) {
+
+		return getPersistence().fetchByA_S_P(
+			assetListEntryId, segmentsEntryId, position);
+	}
+
+	/**
+	 * Returns all the asset list entry asset entry rels where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the asset list entry asset entry rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of asset list entry asset entry rels
 	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
-	 * @return the range of asset list entry asset entry rels
+	 * @return the range of matching asset list entry asset entry rels
 	 */
-	public static List<AssetListEntryAssetEntryRel> findAll(
-		int start, int end) {
+	public static List<AssetListEntryAssetEntryRel> findByUuid(
+		String uuid, int start, int end) {
 
-		return getPersistence().findAll(start, end);
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the asset list entry asset entry rels.
+	 * Returns an ordered range of all the asset list entry asset entry rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of asset list entry asset entry rels
 	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of asset list entry asset entry rels
+	 * @return the ordered range of matching asset list entry asset entry rels
 	 */
-	public static List<AssetListEntryAssetEntryRel> findAll(
-		int start, int end,
+	public static List<AssetListEntryAssetEntryRel> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the asset list entry asset entry rels.
+	 * Returns all the asset list entry asset entry rels where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the asset list entry asset entry rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetListEntryAssetEntryRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @return the range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the asset list entry asset entry rels where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of asset list entry asset entry rels
 	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of asset list entry asset entry rels
+	 * @return the ordered range of matching asset list entry asset entry rels
 	 */
-	public static List<AssetListEntryAssetEntryRel> findAll(
-		int start, int end,
-		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator,
-		boolean useFinderCache) {
+	public static List<AssetListEntryAssetEntryRel> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the asset list entry asset entry rels from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of asset list entry asset entry rels.
+	 * Returns all the asset list entry asset entry rels where assetListEntryId = &#63;.
 	 *
-	 * @return the number of asset list entry asset entry rels
+	 * @param assetListEntryId the asset list entry ID
+	 * @return the matching asset list entry asset entry rels
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<AssetListEntryAssetEntryRel> findByAssetListEntryId(
+		long assetListEntryId) {
+
+		return getPersistence().findByAssetListEntryId(assetListEntryId);
+	}
+
+	/**
+	 * Returns a range of all the asset list entry asset entry rels where assetListEntryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @return the range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByAssetListEntryId(
+		long assetListEntryId, int start, int end) {
+
+		return getPersistence().findByAssetListEntryId(
+			assetListEntryId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByAssetListEntryId(
+		long assetListEntryId, int start, int end,
+		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
+
+		return getPersistence().findByAssetListEntryId(
+			assetListEntryId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the asset list entry asset entry rels where assetEntryId = &#63;.
+	 *
+	 * @param assetEntryId the asset entry ID
+	 * @return the matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByAssetEntryId(
+		long assetEntryId) {
+
+		return getPersistence().findByAssetEntryId(assetEntryId);
+	}
+
+	/**
+	 * Returns a range of all the asset list entry asset entry rels where assetEntryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetEntryId the asset entry ID
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @return the range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByAssetEntryId(
+		long assetEntryId, int start, int end) {
+
+		return getPersistence().findByAssetEntryId(assetEntryId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the asset list entry asset entry rels where assetEntryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetEntryId the asset entry ID
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByAssetEntryId(
+		long assetEntryId, int start, int end,
+		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
+
+		return getPersistence().findByAssetEntryId(
+			assetEntryId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63;.
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param segmentsEntryId the segments entry ID
+	 * @return the matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByA_S(
+		long assetListEntryId, long segmentsEntryId) {
+
+		return getPersistence().findByA_S(assetListEntryId, segmentsEntryId);
+	}
+
+	/**
+	 * Returns a range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param segmentsEntryId the segments entry ID
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @return the range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByA_S(
+		long assetListEntryId, long segmentsEntryId, int start, int end) {
+
+		return getPersistence().findByA_S(
+			assetListEntryId, segmentsEntryId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param segmentsEntryId the segments entry ID
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByA_S(
+		long assetListEntryId, long segmentsEntryId, int start, int end,
+		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
+
+		return getPersistence().findByA_S(
+			assetListEntryId, segmentsEntryId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = any &#63;.
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param segmentsEntryIds the segments entry IDs
+	 * @return the matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByA_S(
+		long assetListEntryId, long[] segmentsEntryIds) {
+
+		return getPersistence().findByA_S(assetListEntryId, segmentsEntryIds);
+	}
+
+	/**
+	 * Returns a range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param segmentsEntryIds the segments entry IDs
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @return the range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByA_S(
+		long assetListEntryId, long[] segmentsEntryIds, int start, int end) {
+
+		return getPersistence().findByA_S(
+			assetListEntryId, segmentsEntryIds, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the asset list entry asset entry rels where assetListEntryId = &#63; and segmentsEntryId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.list.model.impl.AssetListEntryAssetEntryRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetListEntryId the asset list entry ID
+	 * @param segmentsEntryIds the segments entry IDs
+	 * @param start the lower bound of the range of asset list entry asset entry rels
+	 * @param end the upper bound of the range of asset list entry asset entry rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching asset list entry asset entry rels
+	 */
+	public static List<AssetListEntryAssetEntryRel> findByA_S(
+		long assetListEntryId, long[] segmentsEntryIds, int start, int end,
+		OrderByComparator<AssetListEntryAssetEntryRel> orderByComparator) {
+
+		return getPersistence().findByA_S(
+			assetListEntryId, segmentsEntryIds, start, end, orderByComparator);
 	}
 
 	public static AssetListEntryAssetEntryRelPersistence getPersistence() {
@@ -1344,4 +1253,4 @@ public class AssetListEntryAssetEntryRelUtil {
 	private static volatile AssetListEntryAssetEntryRelPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1547406068
+// LIFERAY-SERVICE-BUILDER-HASH:-1143132833

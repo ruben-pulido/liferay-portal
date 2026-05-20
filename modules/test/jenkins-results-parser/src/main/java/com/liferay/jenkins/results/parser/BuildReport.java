@@ -30,6 +30,8 @@ public interface BuildReport {
 
 	public String getFailureMessage();
 
+	public List<FailureReport> getFailureReports();
+
 	public JenkinsMaster getJenkinsMaster();
 
 	public String getJobName();
@@ -39,6 +41,8 @@ public interface BuildReport {
 	public Date getStartDate();
 
 	public StopWatchRecordsGroup getStopWatchRecordsGroup();
+
+	public URL getTestrayAttachmentURLBySuffix(String suffix);
 
 	public List<URL> getTestrayAttachmentURLs();
 

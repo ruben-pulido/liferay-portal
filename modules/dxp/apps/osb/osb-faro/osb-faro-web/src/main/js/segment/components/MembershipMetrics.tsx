@@ -92,7 +92,7 @@ export const CardSection: React.FC<ICardSectionProps> = ({
 	);
 
 	const previousValueComparison =
-		(data?.previousValue * trendComparison) / 100;
+		((data?.previousValue ?? 0) * (trendComparison ?? 0)) / 100;
 
 	return (
 		<Card.Body className='card-section my-2 py-2 type-trend-root'>
@@ -226,11 +226,13 @@ export const CardSection: React.FC<ICardSectionProps> = ({
 													}}
 												>
 													<ClayIcon
-														symbol={getIcon(
-															data?.trend
-																?.percentage ??
-																0
-														)}
+														symbol={
+															getIcon(
+																data?.trend
+																	?.percentage ??
+																	0
+															) ?? ''
+														}
 													/>
 												</span>
 											)}
@@ -281,7 +283,7 @@ export const CardSection: React.FC<ICardSectionProps> = ({
 	);
 };
 const MembershipMetrics: React.FC<PropsFromRedux> = ({addAlert}) => {
-	const {groupId, id} = useParams();
+	const {groupId, id} = useParams<{groupId: string; id: string}>();
 
 	const {data, error, loading} = useRequest({
 		dataSourceFn: fetchMembershipMetrics,

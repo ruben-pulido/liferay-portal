@@ -36,6 +36,24 @@ public class CommercePriceModifierRelUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<CommercePriceModifierRel> commercePriceModifierRels) {
+
+		getPersistence().cacheResult(commercePriceModifierRels);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		CommercePriceModifierRel commercePriceModifierRel) {
+
+		getPersistence().cacheResult(commercePriceModifierRel);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,63 +135,10 @@ public class CommercePriceModifierRelUtil {
 	}
 
 	/**
-	 * Returns all the commerce price modifier rels where commercePriceModifierId = &#63;.
-	 *
-	 * @param commercePriceModifierId the commerce price modifier ID
-	 * @return the matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCommercePriceModifierId(
-		long commercePriceModifierId) {
-
-		return getPersistence().findByCommercePriceModifierId(
-			commercePriceModifierId);
-	}
-
-	/**
-	 * Returns a range of all the commerce price modifier rels where commercePriceModifierId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commercePriceModifierId the commerce price modifier ID
-	 * @param start the lower bound of the range of commerce price modifier rels
-	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
-	 * @return the range of matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCommercePriceModifierId(
-		long commercePriceModifierId, int start, int end) {
-
-		return getPersistence().findByCommercePriceModifierId(
-			commercePriceModifierId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce price modifier rels where commercePriceModifierId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commercePriceModifierId the commerce price modifier ID
-	 * @param start the lower bound of the range of commerce price modifier rels
-	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCommercePriceModifierId(
-		long commercePriceModifierId, int start, int end,
-		OrderByComparator<CommercePriceModifierRel> orderByComparator) {
-
-		return getPersistence().findByCommercePriceModifierId(
-			commercePriceModifierId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce price modifier rels where commercePriceModifierId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param commercePriceModifierId the commerce price modifier ID
@@ -252,67 +217,10 @@ public class CommercePriceModifierRelUtil {
 	}
 
 	/**
-	 * Returns all the commerce price modifier rels where commercePriceModifierId = &#63; and classNameId = &#63;.
-	 *
-	 * @param commercePriceModifierId the commerce price modifier ID
-	 * @param classNameId the class name ID
-	 * @return the matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCPM_CN(
-		long commercePriceModifierId, long classNameId) {
-
-		return getPersistence().findByCPM_CN(
-			commercePriceModifierId, classNameId);
-	}
-
-	/**
-	 * Returns a range of all the commerce price modifier rels where commercePriceModifierId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commercePriceModifierId the commerce price modifier ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of commerce price modifier rels
-	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
-	 * @return the range of matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCPM_CN(
-		long commercePriceModifierId, long classNameId, int start, int end) {
-
-		return getPersistence().findByCPM_CN(
-			commercePriceModifierId, classNameId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce price modifier rels where commercePriceModifierId = &#63; and classNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commercePriceModifierId the commerce price modifier ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of commerce price modifier rels
-	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCPM_CN(
-		long commercePriceModifierId, long classNameId, int start, int end,
-		OrderByComparator<CommercePriceModifierRel> orderByComparator) {
-
-		return getPersistence().findByCPM_CN(
-			commercePriceModifierId, classNameId, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce price modifier rels where commercePriceModifierId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param commercePriceModifierId the commerce price modifier ID
@@ -395,64 +303,10 @@ public class CommercePriceModifierRelUtil {
 	}
 
 	/**
-	 * Returns all the commerce price modifier rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCN_CPK(
-		long classNameId, long classPK) {
-
-		return getPersistence().findByCN_CPK(classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the commerce price modifier rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of commerce price modifier rels
-	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
-	 * @return the range of matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCN_CPK(
-		long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByCN_CPK(classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce price modifier rels where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of commerce price modifier rels
-	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce price modifier rels
-	 */
-	public static List<CommercePriceModifierRel> findByCN_CPK(
-		long classNameId, long classPK, int start, int end,
-		OrderByComparator<CommercePriceModifierRel> orderByComparator) {
-
-		return getPersistence().findByCN_CPK(
-			classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce price modifier rels where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -548,21 +402,6 @@ public class CommercePriceModifierRelUtil {
 	}
 
 	/**
-	 * Returns the commerce price modifier rel where commercePriceModifierId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param commercePriceModifierId the commerce price modifier ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching commerce price modifier rel, or <code>null</code> if a matching commerce price modifier rel could not be found
-	 */
-	public static CommercePriceModifierRel fetchByCPM_CN_CPK(
-		long commercePriceModifierId, long classNameId, long classPK) {
-
-		return getPersistence().fetchByCPM_CN_CPK(
-			commercePriceModifierId, classNameId, classPK);
-	}
-
-	/**
 	 * Returns the commerce price modifier rel where commercePriceModifierId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param commercePriceModifierId the commerce price modifier ID
@@ -609,28 +448,6 @@ public class CommercePriceModifierRelUtil {
 
 		return getPersistence().countByCPM_CN_CPK(
 			commercePriceModifierId, classNameId, classPK);
-	}
-
-	/**
-	 * Caches the commerce price modifier rel in the entity cache if it is enabled.
-	 *
-	 * @param commercePriceModifierRel the commerce price modifier rel
-	 */
-	public static void cacheResult(
-		CommercePriceModifierRel commercePriceModifierRel) {
-
-		getPersistence().cacheResult(commercePriceModifierRel);
-	}
-
-	/**
-	 * Caches the commerce price modifier rels in the entity cache if it is enabled.
-	 *
-	 * @param commercePriceModifierRels the commerce price modifier rels
-	 */
-	public static void cacheResult(
-		List<CommercePriceModifierRel> commercePriceModifierRels) {
-
-		getPersistence().cacheResult(commercePriceModifierRels);
 	}
 
 	/**
@@ -694,84 +511,182 @@ public class CommercePriceModifierRelUtil {
 	}
 
 	/**
-	 * Returns all the commerce price modifier rels.
+	 * Returns the commerce price modifier rel where commercePriceModifierId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the commerce price modifier rels
+	 * @param commercePriceModifierId the commerce price modifier ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching commerce price modifier rel, or <code>null</code> if a matching commerce price modifier rel could not be found
 	 */
-	public static List<CommercePriceModifierRel> findAll() {
-		return getPersistence().findAll();
+	public static CommercePriceModifierRel fetchByCPM_CN_CPK(
+		long commercePriceModifierId, long classNameId, long classPK) {
+
+		return getPersistence().fetchByCPM_CN_CPK(
+			commercePriceModifierId, classNameId, classPK);
 	}
 
 	/**
-	 * Returns a range of all the commerce price modifier rels.
+	 * Returns all the commerce price modifier rels where commercePriceModifierId = &#63;.
+	 *
+	 * @param commercePriceModifierId the commerce price modifier ID
+	 * @return the matching commerce price modifier rels
+	 */
+	public static List<CommercePriceModifierRel> findByCommercePriceModifierId(
+		long commercePriceModifierId) {
+
+		return getPersistence().findByCommercePriceModifierId(
+			commercePriceModifierId);
+	}
+
+	/**
+	 * Returns a range of all the commerce price modifier rels where commercePriceModifierId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param commercePriceModifierId the commerce price modifier ID
 	 * @param start the lower bound of the range of commerce price modifier rels
 	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
-	 * @return the range of commerce price modifier rels
+	 * @return the range of matching commerce price modifier rels
 	 */
-	public static List<CommercePriceModifierRel> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CommercePriceModifierRel> findByCommercePriceModifierId(
+		long commercePriceModifierId, int start, int end) {
+
+		return getPersistence().findByCommercePriceModifierId(
+			commercePriceModifierId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce price modifier rels.
+	 * Returns an ordered range of all the commerce price modifier rels where commercePriceModifierId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param commercePriceModifierId the commerce price modifier ID
 	 * @param start the lower bound of the range of commerce price modifier rels
 	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce price modifier rels
+	 * @return the ordered range of matching commerce price modifier rels
 	 */
-	public static List<CommercePriceModifierRel> findAll(
-		int start, int end,
+	public static List<CommercePriceModifierRel> findByCommercePriceModifierId(
+		long commercePriceModifierId, int start, int end,
 		OrderByComparator<CommercePriceModifierRel> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByCommercePriceModifierId(
+			commercePriceModifierId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce price modifier rels.
+	 * Returns all the commerce price modifier rels where commercePriceModifierId = &#63; and classNameId = &#63;.
+	 *
+	 * @param commercePriceModifierId the commerce price modifier ID
+	 * @param classNameId the class name ID
+	 * @return the matching commerce price modifier rels
+	 */
+	public static List<CommercePriceModifierRel> findByCPM_CN(
+		long commercePriceModifierId, long classNameId) {
+
+		return getPersistence().findByCPM_CN(
+			commercePriceModifierId, classNameId);
+	}
+
+	/**
+	 * Returns a range of all the commerce price modifier rels where commercePriceModifierId = &#63; and classNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePriceModifierRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param commercePriceModifierId the commerce price modifier ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of commerce price modifier rels
+	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
+	 * @return the range of matching commerce price modifier rels
+	 */
+	public static List<CommercePriceModifierRel> findByCPM_CN(
+		long commercePriceModifierId, long classNameId, int start, int end) {
+
+		return getPersistence().findByCPM_CN(
+			commercePriceModifierId, classNameId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce price modifier rels where commercePriceModifierId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param commercePriceModifierId the commerce price modifier ID
+	 * @param classNameId the class name ID
 	 * @param start the lower bound of the range of commerce price modifier rels
 	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce price modifier rels
+	 * @return the ordered range of matching commerce price modifier rels
 	 */
-	public static List<CommercePriceModifierRel> findAll(
-		int start, int end,
-		OrderByComparator<CommercePriceModifierRel> orderByComparator,
-		boolean useFinderCache) {
+	public static List<CommercePriceModifierRel> findByCPM_CN(
+		long commercePriceModifierId, long classNameId, int start, int end,
+		OrderByComparator<CommercePriceModifierRel> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByCPM_CN(
+			commercePriceModifierId, classNameId, start, end,
+			orderByComparator);
 	}
 
 	/**
-	 * Removes all the commerce price modifier rels from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of commerce price modifier rels.
+	 * Returns all the commerce price modifier rels where classNameId = &#63; and classPK = &#63;.
 	 *
-	 * @return the number of commerce price modifier rels
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching commerce price modifier rels
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<CommercePriceModifierRel> findByCN_CPK(
+		long classNameId, long classPK) {
+
+		return getPersistence().findByCN_CPK(classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the commerce price modifier rels where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of commerce price modifier rels
+	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
+	 * @return the range of matching commerce price modifier rels
+	 */
+	public static List<CommercePriceModifierRel> findByCN_CPK(
+		long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByCN_CPK(classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce price modifier rels where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.pricing.model.impl.CommercePriceModifierRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of commerce price modifier rels
+	 * @param end the upper bound of the range of commerce price modifier rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce price modifier rels
+	 */
+	public static List<CommercePriceModifierRel> findByCN_CPK(
+		long classNameId, long classPK, int start, int end,
+		OrderByComparator<CommercePriceModifierRel> orderByComparator) {
+
+		return getPersistence().findByCN_CPK(
+			classNameId, classPK, start, end, orderByComparator);
 	}
 
 	public static CommercePriceModifierRelPersistence getPersistence() {
@@ -787,4 +702,4 @@ public class CommercePriceModifierRelUtil {
 	private static volatile CommercePriceModifierRelPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2143385910
+// LIFERAY-SERVICE-BUILDER-HASH:-163812265

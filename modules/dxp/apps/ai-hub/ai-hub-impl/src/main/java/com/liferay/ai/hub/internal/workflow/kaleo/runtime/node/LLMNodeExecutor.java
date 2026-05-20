@@ -8,9 +8,10 @@ package com.liferay.ai.hub.internal.workflow.kaleo.runtime.node;
 import com.liferay.ai.hub.internal.assistant.handler.AssistantHandlerContext;
 import com.liferay.ai.hub.internal.assistant.handler.AssistantHandlerUtil;
 import com.liferay.ai.hub.internal.mcp.tool.provider.MCPToolProviderUtil;
-import com.liferay.ai.hub.internal.model.VertexAiGeminiStreamingChatModelUtil;
+import com.liferay.ai.hub.internal.model.VertexAiGeminiUtil;
 import com.liferay.ai.hub.internal.workflow.kaleo.runtime.node.util.KaleoLogUtil;
 import com.liferay.ai.hub.internal.workflow.kaleo.runtime.node.util.PromptUtil;
+import com.liferay.ai.hub.internal.workflow.kaleo.runtime.node.util.QuotaUtil;
 import com.liferay.ai.hub.internal.workflow.kaleo.runtime.node.util.RetrievalAugmentorUtil;
 import com.liferay.ai.hub.internal.workflow.kaleo.runtime.node.util.ToolsUtil;
 import com.liferay.ai.hub.internal.workflow.kaleo.runtime.node.util.VariablesUtil;
@@ -106,12 +107,18 @@ public class LLMNodeExecutor extends BaseNodeExecutor {
 
 		ServiceContext serviceContext = executionContext.getServiceContext();
 
-		VertexAiGeminiStreamingChatModel vertexAiGeminiStreamingChatModel =
-			VertexAiGeminiStreamingChatModelUtil.create(
-				serviceContext.getCompanyId());
-
 		Map<String, Serializable> workflowContext =
 			executionContext.getWorkflowContext();
+
+		QuotaUtil.checkUsage(
+			serviceContext.getCompanyId(), currentKaleoNode.getName(),
+			prompt + "\n" + userMessage, workflowContext,
+			kaleoInstanceToken.getKaleoInstanceId(),
+			serviceContext.getUserId());
+
+		VertexAiGeminiStreamingChatModel vertexAiGeminiStreamingChatModel =
+			VertexAiGeminiUtil.createVertexAiGeminiStreamingChatModel(
+				serviceContext.getCompanyId());
 
 		AtomicReference<ChatResponse> chatResponseAtomicReference =
 			new AtomicReference<>();
@@ -180,7 +187,7 @@ public class LLMNodeExecutor extends BaseNodeExecutor {
 					ToolsUtil.getMCPServerExternalReferenceCodes(
 						_jsonFactory, kaleoNodeSettingValues),
 					_objectEntryManager, sseEventSinkKey,
-					serviceContext.getUserId())
+					serviceContext.getUserId(), workflowContext)
 			).userMessage(
 				userMessage
 			).vertexAiGeminiStreamingChatModel(
@@ -246,6 +253,9 @@ public class LLMNodeExecutor extends BaseNodeExecutor {
 		KaleoLogUtil.addNodeUsageKaleoLog(
 			chatResponse, kaleoInstanceToken, aiMessage.text(), prompt,
 			executionContext.getServiceContext(), userMessage);
+
+		QuotaUtil.updateUsage(
+			chatResponse, executionContext.getServiceContext());
 
 		List<KaleoTransition> kaleoTransitions =
 			kaleoNode.getKaleoTransitions();

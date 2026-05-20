@@ -58,9 +58,9 @@ public class SharingEntryLocalServiceUtil {
 	 * @review
 	 */
 	public static SharingEntry addOrUpdateSharingEntry(
-			String externalReferenceCode, long userId, long toUserGroupId,
-			long toUserId, long classNameId, long classPK, long groupId,
-			boolean shareable,
+			String externalReferenceCode, long userId, long toTicketId,
+			long toUserGroupId, long toUserId, long classNameId, long classPK,
+			long groupId, boolean shareable,
 			java.util.Collection
 				<com.liferay.sharing.security.permission.SharingEntryAction>
 					sharingEntryActions,
@@ -69,9 +69,9 @@ public class SharingEntryLocalServiceUtil {
 		throws PortalException {
 
 		return getService().addOrUpdateSharingEntry(
-			externalReferenceCode, userId, toUserGroupId, toUserId, classNameId,
-			classPK, groupId, shareable, sharingEntryActions, expirationDate,
-			serviceContext);
+			externalReferenceCode, userId, toTicketId, toUserGroupId, toUserId,
+			classNameId, classPK, groupId, shareable, sharingEntryActions,
+			expirationDate, serviceContext);
 	}
 
 	/**
@@ -110,9 +110,9 @@ public class SharingEntryLocalServiceUtil {
 	 * @review
 	 */
 	public static SharingEntry addSharingEntry(
-			String externalReferenceCode, long userId, long toUserGroupId,
-			long toUserId, long classNameId, long classPK, long groupId,
-			boolean shareable,
+			String externalReferenceCode, long userId, long toTicketId,
+			long toUserGroupId, long toUserId, long classNameId, long classPK,
+			long groupId, boolean shareable,
 			java.util.Collection
 				<com.liferay.sharing.security.permission.SharingEntryAction>
 					sharingEntryActions,
@@ -121,9 +121,9 @@ public class SharingEntryLocalServiceUtil {
 		throws PortalException {
 
 		return getService().addSharingEntry(
-			externalReferenceCode, userId, toUserGroupId, toUserId, classNameId,
-			classPK, groupId, shareable, sharingEntryActions, expirationDate,
-			serviceContext);
+			externalReferenceCode, userId, toTicketId, toUserGroupId, toUserId,
+			classNameId, classPK, groupId, shareable, sharingEntryActions,
+			expirationDate, serviceContext);
 	}
 
 	/**
@@ -246,6 +246,14 @@ public class SharingEntryLocalServiceUtil {
 			externalReferenceCode, groupId);
 	}
 
+	public static void deleteToTicketSharingEntries(long toTicketId) {
+		getService().deleteToTicketSharingEntries(toTicketId);
+	}
+
+	public static void deleteToUserGroupSharingEntries(long toUserGroupId) {
+		getService().deleteToUserGroupSharingEntries(toUserGroupId);
+	}
+
 	/**
 	 * Deletes the sharing entries for resources shared with the user.
 	 *
@@ -359,6 +367,14 @@ public class SharingEntryLocalServiceUtil {
 		long toUserId, long classNameId, long classPK) {
 
 		return getService().fetchSharingEntry(toUserId, classNameId, classPK);
+	}
+
+	public static SharingEntry fetchSharingEntry(
+		long toTicketId, long toUserGroupId, long toUserId, long classNameId,
+		long classPK) {
+
+		return getService().fetchSharingEntry(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
 	}
 
 	public static SharingEntry fetchSharingEntryByExternalReferenceCode(
@@ -616,6 +632,15 @@ public class SharingEntryLocalServiceUtil {
 		return getService().getSharingEntry(toUserId, classNameId, classPK);
 	}
 
+	public static SharingEntry getSharingEntry(
+			long toTicketId, long toUserGroupId, long toUserId,
+			long classNameId, long classPK)
+		throws PortalException {
+
+		return getService().getSharingEntry(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
+	}
+
 	public static SharingEntry getSharingEntryByExternalReferenceCode(
 			String externalReferenceCode, long groupId)
 		throws PortalException {
@@ -637,6 +662,18 @@ public class SharingEntryLocalServiceUtil {
 		throws PortalException {
 
 		return getService().getSharingEntryByUuidAndGroupId(uuid, groupId);
+	}
+
+	public static List<SharingEntry> getToTicketSharingEntries(
+		long toTicketId) {
+
+		return getService().getToTicketSharingEntries(toTicketId);
+	}
+
+	public static List<SharingEntry> getToUserGroupSharingEntries(
+		long toUserGroupId) {
+
+		return getService().getToUserGroupSharingEntries(toUserGroupId);
 	}
 
 	/**
@@ -854,4 +891,4 @@ public class SharingEntryLocalServiceUtil {
 			SharingEntryLocalServiceUtil.class, SharingEntryLocalService.class);
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:920194991
+// LIFERAY-SERVICE-BUILDER-HASH:646395971

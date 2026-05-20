@@ -1,0 +1,260 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.portal.kernel.search;
+
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.search.query.QueryVisitor;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @author Michael C. Han
+ */
+public class MoreLikeThisQuery extends Query {
+
+	public MoreLikeThisQuery(String indexName) {
+		_indexName = indexName;
+	}
+
+	@Override
+	public <T> T accept(QueryVisitor<T> queryVisitor) {
+		return queryVisitor.visitQuery(this);
+	}
+
+	public void addDocumentUID(String documentUID) {
+		_documentUIDs.add(documentUID);
+	}
+
+	public void addDocumentUIDs(Collection<String> documentUIDs) {
+		_documentUIDs.addAll(documentUIDs);
+	}
+
+	public void addDocumentUIDs(String... documentUIDs) {
+		Collections.addAll(_documentUIDs, documentUIDs);
+	}
+
+	public void addField(String field) {
+		_fields.add(field);
+	}
+
+	public void addFields(Collection<String> fields) {
+		_fields.addAll(fields);
+	}
+
+	public void addFields(String... fields) {
+		Collections.addAll(_fields, fields);
+	}
+
+	public void addStopWord(String stopWord) {
+		_stopWords.add(stopWord);
+	}
+
+	public void addStopWords(Collection<String> stopWords) {
+		_stopWords.addAll(stopWords);
+	}
+
+	public void addStopWords(String... stopWords) {
+		Collections.addAll(_stopWords, stopWords);
+	}
+
+	public String getAnalyzer() {
+		return _analyzer;
+	}
+
+	public Set<String> getDocumentUIDs() {
+		return Collections.unmodifiableSet(_documentUIDs);
+	}
+
+	public List<String> getFields() {
+		return Collections.unmodifiableList(_fields);
+	}
+
+	public String getIndexName() {
+		return _indexName;
+	}
+
+	public String getLikeText() {
+		return _likeText;
+	}
+
+	public Integer getMaxDocFrequency() {
+		return _maxDocFrequency;
+	}
+
+	public Integer getMaxQueryTerms() {
+		return _maxQueryTerms;
+	}
+
+	public Integer getMaxWordLength() {
+		return _maxWordLength;
+	}
+
+	public Integer getMinDocFrequency() {
+		return _minDocFrequency;
+	}
+
+	public String getMinShouldMatch() {
+		return _minShouldMatch;
+	}
+
+	public Integer getMinTermFrequency() {
+		return _minTermFrequency;
+	}
+
+	public Integer getMinWordLength() {
+		return _minWordLength;
+	}
+
+	public Set<String> getStopWords() {
+		return Collections.unmodifiableSet(_stopWords);
+	}
+
+	public Float getTermBoost() {
+		return _termBoost;
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
+	 */
+	@Deprecated
+	public String getType() {
+		return _type;
+	}
+
+	public boolean isDocumentUIDsEmpty() {
+		return _documentUIDs.isEmpty();
+	}
+
+	public boolean isFieldsEmpty() {
+		return _fields.isEmpty();
+	}
+
+	public Boolean isIncludeInput() {
+		return _includeInput;
+	}
+
+	public void setAnalyzer(String analyzer) {
+		_analyzer = analyzer;
+	}
+
+	public void setIncludeInput(Boolean includeInput) {
+		_includeInput = includeInput;
+	}
+
+	public void setLikeText(String likeText) {
+		_likeText = likeText;
+	}
+
+	public void setMaxDocFrequency(Integer maxDocFrequency) {
+		_maxDocFrequency = maxDocFrequency;
+	}
+
+	public void setMaxQueryTerms(Integer maxQueryTerms) {
+		_maxQueryTerms = maxQueryTerms;
+	}
+
+	public void setMaxWordLength(Integer maxWordLength) {
+		_maxWordLength = maxWordLength;
+	}
+
+	public void setMinDocFrequency(Integer minDocFrequency) {
+		_minDocFrequency = minDocFrequency;
+	}
+
+	public void setMinShouldMatch(String minShouldMatch) {
+		_minShouldMatch = minShouldMatch;
+	}
+
+	public void setMinTermFrequency(Integer minTermFrequency) {
+		_minTermFrequency = minTermFrequency;
+	}
+
+	public void setMinWordLength(Integer minWordLength) {
+		_minWordLength = minWordLength;
+	}
+
+	public void setTermBoost(Float termBoost) {
+		_termBoost = termBoost;
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
+	 */
+	@Deprecated
+	public void setType(String type) {
+		_type = type;
+	}
+
+	@Override
+	public String toString() {
+		StringBundler sb = new StringBundler(35);
+
+		sb.append("{analyzer=");
+		sb.append(_analyzer);
+		sb.append(", className=");
+
+		Class<?> clazz = getClass();
+
+		sb.append(clazz.getSimpleName());
+
+		sb.append(", documentUIDs=");
+		sb.append(_documentUIDs);
+		sb.append(", fields=");
+		sb.append(_fields);
+		sb.append(", includeInput=");
+		sb.append(_includeInput);
+		sb.append(", indexName=");
+		sb.append(_indexName);
+		sb.append(", likeText=");
+		sb.append(_likeText);
+		sb.append(", maxDocFrequency=");
+		sb.append(_maxDocFrequency);
+		sb.append(", maxQueryTerms=");
+		sb.append(_maxQueryTerms);
+		sb.append(", maxWordLength=");
+		sb.append(_maxWordLength);
+		sb.append(", minDocFrequency=");
+		sb.append(_minDocFrequency);
+		sb.append(", minShouldMatch=");
+		sb.append(_minShouldMatch);
+		sb.append(", minTermFrequency=");
+		sb.append(_minTermFrequency);
+		sb.append(", minWordLength=");
+		sb.append(_minWordLength);
+		sb.append(", stopWords=");
+		sb.append(_stopWords);
+		sb.append(", termBoost=");
+		sb.append(_termBoost);
+		sb.append(", type=");
+		sb.append(_type);
+		sb.append("}");
+
+		return sb.toString();
+	}
+
+	private String _analyzer;
+	private final Set<String> _documentUIDs = new HashSet<>();
+	private final List<String> _fields = new ArrayList<>();
+	private Boolean _includeInput;
+	private final String _indexName;
+	private String _likeText;
+	private Integer _maxDocFrequency;
+	private Integer _maxQueryTerms;
+	private Integer _maxWordLength;
+	private Integer _minDocFrequency;
+	private String _minShouldMatch;
+	private Integer _minTermFrequency;
+	private Integer _minWordLength;
+	private final Set<String> _stopWords = new HashSet<>();
+	private Float _termBoost;
+	private String _type;
+
+}

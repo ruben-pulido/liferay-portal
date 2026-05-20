@@ -15,6 +15,7 @@ import {LAYOUT_TYPES} from './constants/layoutTypes';
 import {LayoutContextProvider} from './contexts/LayoutContext';
 import {StyleBookEditorContextProvider} from './contexts/StyleBookEditorContext';
 import {useCloseProductMenu} from './useCloseProductMenu';
+import {getFrontendTokenValuesSorter} from './utils/getFrontendTokenValuesSorter';
 
 const StyleBookEditor = React.memo(() => {
 	useCloseProductMenu();
@@ -48,8 +49,9 @@ const StyleBookEditor = React.memo(() => {
 });
 
 export default function ({
+	defaultTokenDefinitionPriority,
 	fragmentCollectionPreviewURL = '',
-	frontendTokenDefinition = [],
+	frontendTokenDefinitions = [],
 	frontendTokensValues = {},
 	isPrivateLayoutsEnabled,
 	namespace,
@@ -58,19 +60,35 @@ export default function ({
 	redirectURL,
 	saveDraftURL,
 	styleBookEntryId,
+	themeFrontendTokenDefinitionId,
 	themeName,
 } = {}) {
+	const filteredFrontendTokenDefinitions = frontendTokenDefinitions.filter(
+		(definition) =>
+			definition.frontendTokenCategories &&
+			!!definition.frontendTokenCategories.length
+	);
+
 	initializeConfig({
+		defaultTokenDefinitionPriority,
 		fragmentCollectionPreviewURL,
-		frontendTokenDefinition,
-		frontendTokens: getFrontendTokens(frontendTokenDefinition),
+		frontendTokenDefinitions: filteredFrontendTokenDefinitions,
+		frontendTokens: getFrontendTokens(
+			filteredFrontendTokenDefinitions,
+			themeFrontendTokenDefinitionId
+		),
 		isPrivateLayoutsEnabled,
 		namespace,
 		previewOptions,
 		publishURL,
 		redirectURL,
 		saveDraftURL,
+		sortFrontendTokenValues: getFrontendTokenValuesSorter({
+			defaultPriority: defaultTokenDefinitionPriority,
+			frontendTokenDefinitions: filteredFrontendTokenDefinitions,
+		}),
 		styleBookEntryId,
+		themeFrontendTokenDefinitionId,
 		themeName,
 	});
 
@@ -110,28 +128,44 @@ function getMostRecentLayout(previewOptions) {
 	return null;
 }
 
-const getFrontendTokens = ({frontendTokenCategories}) => {
-	let tokens = {};
+const getFrontendTokens = (
+	frontendTokenDefinitions,
+	themeFrontendTokenDefinitionId
+) => {
+	const tokens = {};
 
-	if (!frontendTokenCategories) {
-		return tokens;
-	}
+	frontendTokenDefinitions.forEach((definition) => {
+		const {frontendTokenCategories, id: definitionId} = definition;
 
-	for (const category of frontendTokenCategories) {
-		for (const tokenSet of category.frontendTokenSets) {
-			for (const token of tokenSet.frontendTokens) {
-				tokens = {
-					...tokens,
-					[token.name]: {
+		if (!frontendTokenCategories) {
+			return;
+		}
+
+		for (const category of frontendTokenCategories) {
+			for (const tokenSet of category.frontendTokenSets) {
+				for (const token of tokenSet.frontendTokens) {
+					const namespacedName = `${definitionId}:${token.name}`;
+
+					const tokenData = {
 						...token,
+						name: namespacedName,
 						tokenCategoryLabel: category.label,
 						tokenSetLabel: tokenSet.label,
 						value: token.defaultValue,
-					},
-				};
+					};
+
+					tokens[namespacedName] = tokenData;
+
+					if (definitionId === themeFrontendTokenDefinitionId) {
+						tokens[token.name] = {
+							...tokenData,
+							name: token.name,
+						};
+					}
+				}
 			}
 		}
-	}
+	});
 
 	return tokens;
 };

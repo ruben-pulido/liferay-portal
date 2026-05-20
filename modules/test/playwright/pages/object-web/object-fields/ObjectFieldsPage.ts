@@ -22,7 +22,10 @@ export class ObjectFieldsPage {
 	readonly fieldsTabItem: Locator;
 	readonly maximumFileSize: Locator;
 	readonly objectFieldLabelInput: Locator;
+	readonly objectFieldNameInput: Locator;
 	readonly objectFieldOptionsDropdown: Locator;
+	readonly prefixDropdown: Locator;
+	readonly prefixTypeDropdown: Locator;
 	readonly page: Page;
 	readonly saveButton: Locator;
 	readonly selectOptionButton: Locator;
@@ -58,8 +61,17 @@ export class ObjectFieldsPage {
 			.frameLocator('iframe')
 			.getByLabel('Maximum File Size' + 'Mandatory');
 		this.objectFieldLabelInput = page.locator('input[name="label"]');
+		this.objectFieldNameInput = page.locator('input[name="name"]');
 		this.objectFieldOptionsDropdown = page.getByText('Select an Option');
 		this.page = page;
+		this.prefixDropdown = this.iframeLocator.getByRole('combobox', {
+			exact: true,
+			name: 'Prefix',
+		});
+		this.prefixTypeDropdown = this.iframeLocator.getByRole('combobox', {
+			exact: true,
+			name: 'Prefix Type',
+		});
 		this.saveButton = page.getByRole('button', {name: 'Save'});
 		this.selectOptionButton = this.iframeLocator.getByRole('combobox');
 		this.useDefaultValueToggle = this.iframeLocator.getByRole('switch', {
@@ -222,6 +234,14 @@ export class ObjectFieldsPage {
 
 			await this.page.waitForLoadState('networkidle');
 		});
+	}
+
+	async closeObjectFieldSidePanel() {
+		const cancelButton = this.iframeLocator.getByLabel('Cancel');
+
+		await cancelButton.click();
+
+		await cancelButton.waitFor({state: 'hidden'});
 	}
 
 	async saveObjectField() {

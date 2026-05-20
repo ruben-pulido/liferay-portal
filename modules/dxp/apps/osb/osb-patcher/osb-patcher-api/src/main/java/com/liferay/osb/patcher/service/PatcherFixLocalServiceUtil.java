@@ -74,6 +74,17 @@ public class PatcherFixLocalServiceUtil {
 			parentPatcherFixIds);
 	}
 
+	public static PatcherFix addPatcherFix(
+			long userId, long patcherProductVersionId,
+			long patcherProjectVersionId, String committish,
+			String gitRemoteURL, String name, int type, int status)
+		throws Exception {
+
+		return getService().addPatcherFix(
+			userId, patcherProductVersionId, patcherProjectVersionId,
+			committish, gitRemoteURL, name, type, status);
+	}
+
 	/**
 	 * Adds the patcher fix to the database. Also notifies the appropriate model listeners.
 	 *
@@ -114,6 +125,15 @@ public class PatcherFixLocalServiceUtil {
 
 		return getService().addPatcherFixPackPatcherFixes(
 			patcherFixPackId, patcherFixIds);
+	}
+
+	public static com.liferay.portal.kernel.json.JSONObject
+			checkPatcherFixesByPatcherProjectVersionName(
+				String patcherFixNames, String patcherProjectVersionName)
+		throws PortalException {
+
+		return getService().checkPatcherFixesByPatcherProjectVersionName(
+			patcherFixNames, patcherProjectVersionName);
 	}
 
 	public static void clearPatcherBuildPatcherFixes(long patcherBuildId) {
@@ -661,4 +681,4 @@ public class PatcherFixLocalServiceUtil {
 			PatcherFixLocalServiceUtil.class, PatcherFixLocalService.class);
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1689815650
+// LIFERAY-SERVICE-BUILDER-HASH:1726772050

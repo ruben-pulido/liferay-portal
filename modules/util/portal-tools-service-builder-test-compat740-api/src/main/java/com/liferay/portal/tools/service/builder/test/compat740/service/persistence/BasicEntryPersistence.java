@@ -32,51 +32,10 @@ public interface BasicEntryPersistence extends BasePersistence<BasicEntry> {
 	 */
 
 	/**
-	 * Returns all the basic entries where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching basic entries
-	 */
-	public java.util.List<BasicEntry> findByGroupId(long groupId);
-
-	/**
-	 * Returns a range of all the basic entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BasicEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of basic entries
-	 * @param end the upper bound of the range of basic entries (not inclusive)
-	 * @return the range of matching basic entries
-	 */
-	public java.util.List<BasicEntry> findByGroupId(
-		long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the basic entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BasicEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of basic entries
-	 * @param end the upper bound of the range of basic entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching basic entries
-	 */
-	public java.util.List<BasicEntry> findByGroupId(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<BasicEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the basic entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BasicEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.BasicEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -145,15 +104,6 @@ public interface BasicEntryPersistence extends BasePersistence<BasicEntry> {
 		throws NoSuchBasicEntryException;
 
 	/**
-	 * Returns the basic entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param name the name
-	 * @return the matching basic entry, or <code>null</code> if a matching basic entry could not be found
-	 */
-	public BasicEntry fetchByC_N(long companyId, String name);
-
-	/**
 	 * Returns the basic entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -182,20 +132,6 @@ public interface BasicEntryPersistence extends BasePersistence<BasicEntry> {
 	 * @return the number of matching basic entries
 	 */
 	public int countByC_N(long companyId, String name);
-
-	/**
-	 * Caches the basic entry in the entity cache if it is enabled.
-	 *
-	 * @param basicEntry the basic entry
-	 */
-	public void cacheResult(BasicEntry basicEntry);
-
-	/**
-	 * Caches the basic entries in the entity cache if it is enabled.
-	 *
-	 * @param basicEntries the basic entries
-	 */
-	public void cacheResult(java.util.List<BasicEntry> basicEntries);
 
 	/**
 	 * Creates a new basic entry with the primary key. Does not add the basic entry to the database.
@@ -236,74 +172,6 @@ public interface BasicEntryPersistence extends BasePersistence<BasicEntry> {
 	public BasicEntry fetchByPrimaryKey(long basicEntryId);
 
 	/**
-	 * Returns all the basic entries.
-	 *
-	 * @return the basic entries
-	 */
-	public java.util.List<BasicEntry> findAll();
-
-	/**
-	 * Returns a range of all the basic entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BasicEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of basic entries
-	 * @param end the upper bound of the range of basic entries (not inclusive)
-	 * @return the range of basic entries
-	 */
-	public java.util.List<BasicEntry> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the basic entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BasicEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of basic entries
-	 * @param end the upper bound of the range of basic entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of basic entries
-	 */
-	public java.util.List<BasicEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<BasicEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the basic entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BasicEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of basic entries
-	 * @param end the upper bound of the range of basic entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of basic entries
-	 */
-	public java.util.List<BasicEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<BasicEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the basic entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of basic entries.
-	 *
-	 * @return the number of basic entries
-	 */
-	public int countAll();
-
-	/**
 	 * Returns the primaryKeys of mapping entries associated with the basic entry.
 	 *
 	 * @param pk the primary key of the basic entry
@@ -323,7 +191,7 @@ public interface BasicEntryPersistence extends BasePersistence<BasicEntry> {
 	 * Returns all the basic entry associated with the mapping entry.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BasicEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.BasicEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the mapping entry
@@ -338,7 +206,7 @@ public interface BasicEntryPersistence extends BasePersistence<BasicEntry> {
 	 * Returns all the basic entry associated with the mapping entry.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BasicEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.BasicEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the mapping entry
@@ -486,5 +354,67 @@ public interface BasicEntryPersistence extends BasePersistence<BasicEntry> {
 			<com.liferay.portal.tools.service.builder.test.compat740.model.
 				MappingEntry> mappingEntries);
 
+	/**
+	 * Returns the basic entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching basic entry, or <code>null</code> if a matching basic entry could not be found
+	 */
+	public default BasicEntry fetchByC_N(long companyId, String name) {
+		return fetchByC_N(companyId, name, true);
+	}
+
+	/**
+	 * Returns all the basic entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching basic entries
+	 */
+	public default java.util.List<BasicEntry> findByGroupId(long groupId) {
+		return findByGroupId(
+			groupId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the basic entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.BasicEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of basic entries
+	 * @param end the upper bound of the range of basic entries (not inclusive)
+	 * @return the range of matching basic entries
+	 */
+	public default java.util.List<BasicEntry> findByGroupId(
+		long groupId, int start, int end) {
+
+		return findByGroupId(groupId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the basic entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.BasicEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of basic entries
+	 * @param end the upper bound of the range of basic entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching basic entries
+	 */
+	public default java.util.List<BasicEntry> findByGroupId(
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<BasicEntry>
+			orderByComparator) {
+
+		return findByGroupId(groupId, start, end, orderByComparator, true);
+	}
+
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1088736769
+// LIFERAY-SERVICE-BUILDER-HASH:-120678797

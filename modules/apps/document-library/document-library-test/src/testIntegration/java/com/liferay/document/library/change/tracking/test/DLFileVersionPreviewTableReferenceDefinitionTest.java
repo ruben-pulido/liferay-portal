@@ -80,12 +80,11 @@ public class DLFileVersionPreviewTableReferenceDefinitionTest
 	}
 
 	@Inject
-	private static DLFileEntryLocalService _dlFileEntryLocalService;
-
-	@Inject
-	private static DLFileVersionPreviewLocalService
-		_dlFileVersionPreviewLocalService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
 
 	private DLFileVersion _dlFileVersion;
+
+	@Inject
+	private DLFileVersionPreviewLocalService _dlFileVersionPreviewLocalService;
 
 }

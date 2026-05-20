@@ -16,9 +16,7 @@ import {waitForAlert} from '../../../utils/waitForAlert';
 
 export const test = mergeTests(
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPD-51356': {enabled: true},
-		'LPD-75032': {enabled: true},
 	}),
 	instanceSettingsPagesTest,
 	loginTest(),
@@ -248,7 +246,7 @@ test(
 		});
 
 		await test.step('Verify Product Analytics Banner is no longer present', async () => {
-			page.reload();
+			await page.reload();
 
 			await expect(
 				productAnalyticsBannerPage.bannerLocator
@@ -308,7 +306,7 @@ test(
 		await acceptAll.click();
 
 		await test.step('Verify Product Analytics Banner is no longer present', async () => {
-			page.reload();
+			await page.reload();
 
 			await expect(
 				productAnalyticsBannerPage.bannerLocator

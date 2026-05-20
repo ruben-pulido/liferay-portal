@@ -36,6 +36,24 @@ public class LocalizedEntryLocalizationUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<LocalizedEntryLocalization> localizedEntryLocalizations) {
+
+		getPersistence().cacheResult(localizedEntryLocalizations);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		LocalizedEntryLocalization localizedEntryLocalization) {
+
+		getPersistence().cacheResult(localizedEntryLocalization);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,62 +135,10 @@ public class LocalizedEntryLocalizationUtil {
 	}
 
 	/**
-	 * Returns all the localized entry localizations where localizedEntryId = &#63;.
-	 *
-	 * @param localizedEntryId the localized entry ID
-	 * @return the matching localized entry localizations
-	 */
-	public static List<LocalizedEntryLocalization> findByLocalizedEntryId(
-		long localizedEntryId) {
-
-		return getPersistence().findByLocalizedEntryId(localizedEntryId);
-	}
-
-	/**
-	 * Returns a range of all the localized entry localizations where localizedEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LocalizedEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param localizedEntryId the localized entry ID
-	 * @param start the lower bound of the range of localized entry localizations
-	 * @param end the upper bound of the range of localized entry localizations (not inclusive)
-	 * @return the range of matching localized entry localizations
-	 */
-	public static List<LocalizedEntryLocalization> findByLocalizedEntryId(
-		long localizedEntryId, int start, int end) {
-
-		return getPersistence().findByLocalizedEntryId(
-			localizedEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the localized entry localizations where localizedEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LocalizedEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param localizedEntryId the localized entry ID
-	 * @param start the lower bound of the range of localized entry localizations
-	 * @param end the upper bound of the range of localized entry localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching localized entry localizations
-	 */
-	public static List<LocalizedEntryLocalization> findByLocalizedEntryId(
-		long localizedEntryId, int start, int end,
-		OrderByComparator<LocalizedEntryLocalization> orderByComparator) {
-
-		return getPersistence().findByLocalizedEntryId(
-			localizedEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the localized entry localizations where localizedEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LocalizedEntryLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.LocalizedEntryLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param localizedEntryId the localized entry ID
@@ -261,20 +227,6 @@ public class LocalizedEntryLocalizationUtil {
 	}
 
 	/**
-	 * Returns the localized entry localization where localizedEntryId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param localizedEntryId the localized entry ID
-	 * @param languageId the language ID
-	 * @return the matching localized entry localization, or <code>null</code> if a matching localized entry localization could not be found
-	 */
-	public static LocalizedEntryLocalization fetchByLocalizedEntryId_LanguageId(
-		long localizedEntryId, String languageId) {
-
-		return getPersistence().fetchByLocalizedEntryId_LanguageId(
-			localizedEntryId, languageId);
-	}
-
-	/**
 	 * Returns the localized entry localization where localizedEntryId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param localizedEntryId the localized entry ID
@@ -318,28 +270,6 @@ public class LocalizedEntryLocalizationUtil {
 
 		return getPersistence().countByLocalizedEntryId_LanguageId(
 			localizedEntryId, languageId);
-	}
-
-	/**
-	 * Caches the localized entry localization in the entity cache if it is enabled.
-	 *
-	 * @param localizedEntryLocalization the localized entry localization
-	 */
-	public static void cacheResult(
-		LocalizedEntryLocalization localizedEntryLocalization) {
-
-		getPersistence().cacheResult(localizedEntryLocalization);
-	}
-
-	/**
-	 * Caches the localized entry localizations in the entity cache if it is enabled.
-	 *
-	 * @param localizedEntryLocalizations the localized entry localizations
-	 */
-	public static void cacheResult(
-		List<LocalizedEntryLocalization> localizedEntryLocalizations) {
-
-		getPersistence().cacheResult(localizedEntryLocalizations);
 	}
 
 	/**
@@ -403,84 +333,69 @@ public class LocalizedEntryLocalizationUtil {
 	}
 
 	/**
-	 * Returns all the localized entry localizations.
+	 * Returns the localized entry localization where localizedEntryId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the localized entry localizations
+	 * @param localizedEntryId the localized entry ID
+	 * @param languageId the language ID
+	 * @return the matching localized entry localization, or <code>null</code> if a matching localized entry localization could not be found
 	 */
-	public static List<LocalizedEntryLocalization> findAll() {
-		return getPersistence().findAll();
+	public static LocalizedEntryLocalization fetchByLocalizedEntryId_LanguageId(
+		long localizedEntryId, String languageId) {
+
+		return getPersistence().fetchByLocalizedEntryId_LanguageId(
+			localizedEntryId, languageId);
 	}
 
 	/**
-	 * Returns a range of all the localized entry localizations.
+	 * Returns all the localized entry localizations where localizedEntryId = &#63;.
+	 *
+	 * @param localizedEntryId the localized entry ID
+	 * @return the matching localized entry localizations
+	 */
+	public static List<LocalizedEntryLocalization> findByLocalizedEntryId(
+		long localizedEntryId) {
+
+		return getPersistence().findByLocalizedEntryId(localizedEntryId);
+	}
+
+	/**
+	 * Returns a range of all the localized entry localizations where localizedEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LocalizedEntryLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.LocalizedEntryLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param localizedEntryId the localized entry ID
 	 * @param start the lower bound of the range of localized entry localizations
 	 * @param end the upper bound of the range of localized entry localizations (not inclusive)
-	 * @return the range of localized entry localizations
+	 * @return the range of matching localized entry localizations
 	 */
-	public static List<LocalizedEntryLocalization> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<LocalizedEntryLocalization> findByLocalizedEntryId(
+		long localizedEntryId, int start, int end) {
+
+		return getPersistence().findByLocalizedEntryId(
+			localizedEntryId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the localized entry localizations.
+	 * Returns an ordered range of all the localized entry localizations where localizedEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LocalizedEntryLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.LocalizedEntryLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param localizedEntryId the localized entry ID
 	 * @param start the lower bound of the range of localized entry localizations
 	 * @param end the upper bound of the range of localized entry localizations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of localized entry localizations
+	 * @return the ordered range of matching localized entry localizations
 	 */
-	public static List<LocalizedEntryLocalization> findAll(
-		int start, int end,
+	public static List<LocalizedEntryLocalization> findByLocalizedEntryId(
+		long localizedEntryId, int start, int end,
 		OrderByComparator<LocalizedEntryLocalization> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the localized entry localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LocalizedEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of localized entry localizations
-	 * @param end the upper bound of the range of localized entry localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of localized entry localizations
-	 */
-	public static List<LocalizedEntryLocalization> findAll(
-		int start, int end,
-		OrderByComparator<LocalizedEntryLocalization> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the localized entry localizations from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of localized entry localizations.
-	 *
-	 * @return the number of localized entry localizations
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByLocalizedEntryId(
+			localizedEntryId, start, end, orderByComparator);
 	}
 
 	public static LocalizedEntryLocalizationPersistence getPersistence() {
@@ -496,4 +411,4 @@ public class LocalizedEntryLocalizationUtil {
 	private static volatile LocalizedEntryLocalizationPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-562897555
+// LIFERAY-SERVICE-BUILDER-HASH:-191830466

@@ -1,3 +1,5 @@
+jest.unmock('react-dom');
+
 import * as data from 'test/data';
 import * as utils from '../utils';
 import {
@@ -342,6 +344,120 @@ describe('utils', () => {
 
 			expect(property).toBe(mockProperty);
 		});
+
+		it('should return a Vocabulary Property whose label uses the name extracted from the criterion group when not in the cache', () => {
+			const criterion = data.generateCriterion({
+				operatorName: CustomFunctionOperators.VocabulariesFilter,
+				propertyName: 'vocab-id',
+				value: fromJS({
+					criterionGroup: {
+						conjunctionName: And,
+						criteriaGroupId: 'group_0',
+						items: [
+							{
+								operatorName: EQ,
+								propertyName: 'vocabularies/id',
+								value: 'vocab-id'
+							},
+							{
+								operatorName: EQ,
+								propertyName: 'vocabularies/name',
+								value: 'My Vocabulary'
+							}
+						]
+					}
+				})
+			});
+
+			const property = utils.findPropertyByCriterion(criterion, Map());
+
+			expect(property).toBeInstanceOf(Property);
+			expect(property.name).toBe('vocab-id');
+			expect(property.label).toBe('My Vocabulary');
+			expect(property.propertyKey).toBe('vocabulary');
+		});
+
+		it('should return the cached Vocabulary Property when present in referencedPropertiesIMap', () => {
+			const criterion = data.generateCriterion({
+				operatorName: CustomFunctionOperators.VocabulariesFilter,
+				propertyName: 'vocab-id',
+				value: fromJS({criterionGroup: {items: []}})
+			});
+
+			const cachedProperty = new Property({
+				label: 'Cached Vocabulary',
+				name: 'vocab-id',
+				propertyKey: 'vocabulary'
+			});
+
+			const referencedPropertiesIMap = fromJS({
+				vocabulary: {'vocab-id': cachedProperty}
+			});
+
+			const property = utils.findPropertyByCriterion(
+				criterion,
+				referencedPropertiesIMap
+			);
+
+			expect(property).toBe(cachedProperty);
+		});
+
+		it('should return a Tag Property whose label uses the name extracted from the criterion group when not in the cache', () => {
+			const criterion = data.generateCriterion({
+				operatorName: CustomFunctionOperators.TagsFilter,
+				propertyName: 'tag-id',
+				value: fromJS({
+					criterionGroup: {
+						conjunctionName: And,
+						criteriaGroupId: 'group_0',
+						items: [
+							{
+								operatorName: EQ,
+								propertyName: 'tags/id',
+								value: 'tag-id'
+							},
+							{
+								operatorName: EQ,
+								propertyName: 'tags/name',
+								value: 'My Tag'
+							}
+						]
+					}
+				})
+			});
+
+			const property = utils.findPropertyByCriterion(criterion, Map());
+
+			expect(property).toBeInstanceOf(Property);
+			expect(property.name).toBe('tag-id');
+			expect(property.label).toBe('My Tag');
+			expect(property.propertyKey).toBe('tag');
+		});
+
+		it('should return the cached Tag Property when present in referencedPropertiesIMap', () => {
+			const criterion = data.generateCriterion({
+				operatorName: CustomFunctionOperators.TagsFilter,
+				propertyName: 'tag-id',
+				value: fromJS({criterionGroup: {items: []}})
+			});
+
+			const cachedProperty = new Property({
+				label: 'Cached Tag',
+				name: 'tag-id',
+				propertyKey: 'tag'
+			});
+
+			const referencedPropertiesIMap = fromJS({
+				tag: {'tag-id': cachedProperty}
+			});
+
+			const property = utils.findPropertyByCriterion(
+				criterion,
+				referencedPropertiesIMap
+			);
+
+			expect(property).toBe(cachedProperty);
+		});
 	});
 
 	describe('isValid', () => {
@@ -420,15 +536,15 @@ describe('utils', () => {
 		};
 
 		it('should convert fieldMapping to an Account Property Record', () => {
-			expect(
-				utils.convertFieldMappingToAccountProperty(accountFieldMapping)
-			).toMatchSnapshot();
-		});
+			const result =
+				utils.convertFieldMappingToAccountProperty(accountFieldMapping);
 
-		it('should convert fieldMappingIMap to an Account Property Record', () => {
-			expect(
-				utils.convertFieldMappingToAccountProperty(accountFieldMapping)
-			).toMatchSnapshot();
+			expect(result).toBeInstanceOf(Property);
+			expect(result.id).toBe('345606994945962466');
+			expect(result.name).toBe('345606994945962466');
+			expect(result.label).toBe('accountName');
+			expect(result.propertyKey).toBe('account');
+			expect(result.type).toBe('account-text');
 		});
 	});
 
@@ -442,19 +558,16 @@ describe('utils', () => {
 		};
 
 		it('should convert fieldMapping to an Individual Property Record', () => {
-			expect(
-				utils.convertFieldMappingToIndividualProperty(
-					individualFieldMapping
-				)
-			).toMatchSnapshot();
-		});
+			const result = utils.convertFieldMappingToIndividualProperty(
+				individualFieldMapping
+			);
 
-		it('should convert fieldMappingIMap to an Individual Property Record', () => {
-			expect(
-				utils.convertFieldMappingToIndividualProperty(
-					individualFieldMapping
-				)
-			).toMatchSnapshot();
+			expect(result).toBeInstanceOf(Property);
+			expect(result.id).toBe('335454102264596251');
+			expect(result.name).toBe('demographics/335454102264596251/value');
+			expect(result.label).toBe('additionalName');
+			expect(result.propertyKey).toBe('individual');
+			expect(result.type).toBe('text');
 		});
 	});
 
@@ -505,9 +618,27 @@ describe('utils', () => {
 				}
 			});
 
-			expect(
-				utils.convertFieldMappingsToProperties(fieldMappingsIMap)
-			).toMatchSnapshot();
+			const result =
+				utils.convertFieldMappingsToProperties(fieldMappingsIMap);
+
+			const accountProp = result.getIn([
+				'account',
+				'organization',
+				'accountName'
+			]);
+			expect(accountProp).toBeInstanceOf(Property);
+			expect(accountProp.id).toBe('345606994945962466');
+			expect(accountProp.propertyKey).toBe('account');
+			expect(accountProp.type).toBe('account-text');
+
+			const individualProp = result.getIn([
+				'individual',
+				'demographics',
+				'additionaName'
+			]);
+			expect(individualProp).toBeInstanceOf(Property);
+			expect(individualProp.id).toBe('335454102264596251');
+			expect(individualProp.propertyKey).toBe('individual');
 		});
 	});
 

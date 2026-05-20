@@ -8,19 +8,16 @@ import path from 'path';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {appManagerPagesTest} from '../../../fixtures/appManagerPagesTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {globalMenuPagesTest} from '../../../fixtures/globalMenuPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {virtualInstancesPagesTest} from '../../../fixtures/virtualInstancesPagesTest';
+import {liferayConfig} from '../../../liferay.config';
 import performLogin from '../../../utils/performLogin';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {zipFolder} from '../../../utils/zip';
 
 export const test = mergeTests(
 	apiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	globalMenuPagesTest,
 	appManagerPagesTest,
 	loginTest(),
@@ -322,7 +319,7 @@ test(
 			);
 
 			newPage = await browser.newPage({
-				baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`,
+				baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`,
 			});
 
 			await performLogin(

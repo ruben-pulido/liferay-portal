@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
 set -o errexit
+set -o errtrace
 set -o nounset
 set -o pipefail
+
+trap "_recover_kubectl_context \${?}" ERR
+
+_GCP_DEPLOYMENT_NAME=""
+_GCP_PROJECT_ID=""
 
 _SCRIPTS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -18,17 +24,138 @@ function main {
 
 	_generate_tfvars "${1}" "${_SCRIPTS_DIR}/global_terraform.tfvars"
 
+	_GCP_DEPLOYMENT_NAME="$(jq --raw-output '.variables.deployment_name' "${1}")"
+	_GCP_PROJECT_ID="$(jq --raw-output '.variables.project_id' "${1}")"
+
 	echo "Attempting to login to your Google Cloud account via application default credentials."
 
 	gcloud auth application-default login
 
+	local bucket_name=""
+	local region=""
+
 	local terraform_args
 
-	terraform_args="$(_get_terraform_apply_args "${1}" "${2}")"
+	readarray -t terraform_args < <(_get_terraform_apply_args "${1}" "${2}")
 
-	_set_up_gcp_gke "${terraform_args}"
+	if jq --exit-status '.variables.tfstate_bucket_name' "${1}" &> /dev/null
+	then
+		bucket_name="$(jq --raw-output '.variables.tfstate_bucket_name' "${1}")"
+		region="$(jq --raw-output '.variables.region' "${1}")"
 
-	_set_up_gcp_gitops "${terraform_args}"
+		_create_tfstate_bucket "${bucket_name}" "${region}" "${_GCP_PROJECT_ID}"
+	fi
+
+	_set_up_gcp_gke "${bucket_name}" "${_GCP_DEPLOYMENT_NAME}" "${region}" "${terraform_args[@]}"
+
+	_set_up_gcp_gitops "${bucket_name}" "${_GCP_DEPLOYMENT_NAME}" "${region}" "${terraform_args[@]}"
+}
+
+function _configure_gcs_bucket {
+	local bucket_name="${1}"
+	local key_name="tfstate-${bucket_name}"
+	local project_id="${3}"
+	local region="${2}"
+
+	if ! gcloud kms keyrings describe \
+		"${key_name}" \
+		--location "${region}" \
+		--project "${project_id}" \
+		&> /dev/null
+	then
+		_log "Creating KMS keyring ${key_name}."
+
+		gcloud kms keyrings create \
+			"${key_name}" \
+			--location "${region}" \
+			--project "${project_id}"
+
+		_log "KMS keyring ${key_name} was created successfully."
+	else
+		_log "KMS keyring ${key_name} already exists. Skipping creation process."
+	fi
+
+	if ! gcloud kms keys describe \
+		"${key_name}" \
+		--keyring "${key_name}" \
+		--location "${region}" \
+		--project "${project_id}" \
+		&> /dev/null
+	then
+		_log "Creating KMS key ${key_name}."
+
+		gcloud kms keys create \
+			"${key_name}" \
+			--keyring "${key_name}" \
+			--location "${region}" \
+			--project "${project_id}" \
+			--purpose "encryption"
+
+		_log "KMS key ${key_name} was created successfully."
+	else
+		_log "KMS key ${key_name} already exists. Skipping creation process."
+	fi
+
+	local service_agent
+
+	service_agent="$(gcloud storage service-agent --project "${project_id}")"
+
+	gcloud kms keys add-iam-policy-binding \
+		"${key_name}" \
+		--keyring "${key_name}" \
+		--location "${region}" \
+		--member "serviceAccount:${service_agent}" \
+		--project "${project_id}" \
+		--role "roles/cloudkms.cryptoKeyEncrypterDecrypter" \
+		> /dev/null
+
+	gcloud storage buckets update \
+		"gs://${bucket_name}" \
+		--default-encryption-key "projects/${project_id}/locations/${region}/keyRings/${key_name}/cryptoKeys/${key_name}" \
+		--project "${project_id}" \
+		--retention-period "90d"
+}
+
+function _create_tfstate_bucket {
+	local bucket_name="${1}"
+	local project_id="${3}"
+	local region="${2}"
+
+	if ! gcloud storage buckets describe "gs://${bucket_name}" --project "${project_id}" &> /dev/null
+	then
+		_log "Creating bucket ${bucket_name}."
+
+		_create_gcs_bucket "${bucket_name}" "${region}" "${project_id}"
+
+		_log "Bucket ${bucket_name} was created successfully."
+	else
+		_log "Bucket ${bucket_name} already exists. Skipping creation process."
+	fi
+
+	_log "Configuring bucket ${bucket_name}."
+
+	_configure_gcs_bucket "${bucket_name}" "${region}" "${project_id}"
+
+	_log "Bucket ${bucket_name} was configured successfully."
+}
+
+function _create_gcs_bucket {
+	local bucket_name="${1}"
+	local project_id="${3}"
+	local region="${2}"
+
+	gcloud storage buckets create \
+		"gs://${bucket_name}" \
+		--location "${region}" \
+		--project "${project_id}" \
+		--public-access-prevention \
+		--uniform-bucket-level-access \
+		1> /dev/null
+
+	gcloud storage buckets update \
+		"gs://${bucket_name}" \
+		--project "${project_id}" \
+		--versioning
 }
 
 function _generate_tfvars {
@@ -120,7 +247,11 @@ function _get_terraform_apply_args {
 		apply_args+=("-parallelism=${parallelism}")
 	fi
 
-	echo "${apply_args[@]}"
+	printf '%s\n' "${apply_args[@]}"
+}
+
+function _log {
+	echo "[Tfstate bucket configuration] ${1}"
 }
 
 function _popd {
@@ -131,12 +262,76 @@ function _pushd {
 	pushd "${1}" > /dev/null
 }
 
+function _recover_kubectl_context {
+	local exit_code="${1}"
+
+	if [ -z "${_GCP_DEPLOYMENT_NAME:-}" ] || [ "${_GCP_DEPLOYMENT_NAME}" = "null" ] || [ -z "${_GCP_PROJECT_ID:-}" ] || [ "${_GCP_PROJECT_ID}" = "null" ]
+	then
+		exit "${exit_code}"
+	fi
+
+	echo "Unable to apply Terraform. Attempting to recover the kubectl context via fleet membership ${_GCP_DEPLOYMENT_NAME}-membership." >&2
+
+	if ! gcloud \
+		container \
+		fleet \
+		memberships \
+		describe \
+		"${_GCP_DEPLOYMENT_NAME}-membership" \
+		--project "${_GCP_PROJECT_ID}" \
+		> /dev/null 2>&1
+	then
+		echo "Fleet membership ${_GCP_DEPLOYMENT_NAME}-membership does not exist. No kubectl context can be recovered." >&2
+
+		exit "${exit_code}"
+	fi
+
+	if ! gcloud \
+		container \
+		fleet \
+		memberships \
+		get-credentials \
+		"${_GCP_DEPLOYMENT_NAME}-membership" \
+		--project "${_GCP_PROJECT_ID}"
+	then
+		echo "Unable to recover the kubectl context for fleet membership ${_GCP_DEPLOYMENT_NAME}-membership." >&2
+
+		exit "${exit_code}"
+	fi
+
+	echo "Recovered the kubectl context via fleet membership ${_GCP_DEPLOYMENT_NAME}-membership." >&2
+
+	exit "${exit_code}"
+}
+
+function _set_up_gcp_gitops {
+	local bucket_name="${1}"
+	local deployment_name="${2}"
+	local region="${3}"
+
+	_pushd "${_ROOT_CLOUD_DIR}/terraform/gcp/gitops"
+
+	echo "Setting up the Google GCP GitOps infrastructure."
+
+	_terraform_init_and_apply "./platform" "gitops/platform" "${bucket_name}" "${deployment_name}" "${region}" "${@:4}"
+
+	_terraform_init_and_apply "./resources" "gitops/resources" "${bucket_name}" "${deployment_name}" "${region}" "${@:4}"
+
+	echo "Google GCP GitOps infrastructure setup complete."
+
+	_popd
+}
+
 function _set_up_gcp_gke {
+	local bucket_name="${1}"
+	local deployment_name="${2}"
+	local region="${3}"
+
 	_pushd "${_ROOT_CLOUD_DIR}/terraform/gcp/gke"
 
 	echo "Setting up the Google GKE cluster."
 
-	_terraform_init_and_apply "." "${1}"
+	_terraform_init_and_apply "." "gke" "${bucket_name}" "${deployment_name}" "${region}" "${@:4}"
 
 	gcloud auth login
 
@@ -153,26 +348,30 @@ function _set_up_gcp_gke {
 	_popd
 }
 
-function _set_up_gcp_gitops {
-	_pushd "${_ROOT_CLOUD_DIR}/terraform/gcp/gitops"
-
-	echo "Setting up the Google GCP GitOps infrastructure."
-
-	_terraform_init_and_apply "./platform" "${1}"
-
-	_terraform_init_and_apply "./resources" "${1}"
-
-	echo "Google GCP GitOps infrastructure setup complete."
-
-	_popd
-}
-
 function _terraform_init_and_apply {
+	local bucket_name="${3}"
+	local deployment_name="${4}"
+	local folder_separator="${2}"
+	local region="${5}"
+
 	_pushd "${1}"
 
-	terraform init -upgrade
+	if [ -n "${bucket_name}" ]
+	then
+		terraform init \
+			-backend-config="bucket=${bucket_name}" \
+			-backend-config="prefix=${deployment_name}/${region}/${folder_separator}" \
+			-upgrade
+	else
+		cat > backend_override.tf <<EOF
+terraform {
+	backend "local" {}
+}
+EOF
+		terraform init -upgrade
+	fi
 
-	terraform apply ${@:2}
+	terraform apply "${@:6}"
 
 	_popd
 }

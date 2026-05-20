@@ -21,11 +21,10 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.StringQuery;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.StringQuery;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -90,7 +89,7 @@ public class AssetSearcher extends BaseSearcher {
 			return;
 		}
 
-		BooleanQuery keywordsQuery = new BooleanQueryImpl();
+		BooleanQuery keywordsQuery = new BooleanQuery();
 
 		for (String keyword : allKeywords) {
 			if (keyword.contains(" ")) {
@@ -144,7 +143,7 @@ public class AssetSearcher extends BaseSearcher {
 			return;
 		}
 
-		BooleanQuery keywordsQuery = new BooleanQueryImpl();
+		BooleanQuery keywordsQuery = new BooleanQuery();
 
 		for (String keyword : anyKeywords) {
 			if (keyword.contains(" ")) {
@@ -252,7 +251,7 @@ public class AssetSearcher extends BaseSearcher {
 			return;
 		}
 
-		BooleanQuery keywordsQuery = new BooleanQueryImpl();
+		BooleanQuery keywordsQuery = new BooleanQuery();
 
 		for (String keyword : notAllKeywords) {
 			if (keyword.contains(" ")) {
@@ -306,7 +305,7 @@ public class AssetSearcher extends BaseSearcher {
 			return;
 		}
 
-		BooleanQuery keywordsQuery = new BooleanQueryImpl();
+		BooleanQuery keywordsQuery = new BooleanQuery();
 
 		for (String keyword : notAnyKeywords) {
 			if (keyword.contains(" ")) {

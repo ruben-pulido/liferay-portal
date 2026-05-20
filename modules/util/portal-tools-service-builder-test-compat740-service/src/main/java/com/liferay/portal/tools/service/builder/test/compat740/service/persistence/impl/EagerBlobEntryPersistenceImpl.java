@@ -5,23 +5,19 @@
 
 package com.liferay.portal.tools.service.builder.test.compat740.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -42,7 +38,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -64,7 +59,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = EagerBlobEntryPersistence.class)
 public class EagerBlobEntryPersistenceImpl
-	extends BasePersistenceImpl<EagerBlobEntry>
+	extends BasePersistenceImpl<EagerBlobEntry, NoSuchEagerBlobEntryException>
 	implements EagerBlobEntryPersistence {
 
 	/*
@@ -81,67 +76,14 @@ public class EagerBlobEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the eager blob entries where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching eager blob entries
-	 */
-	@Override
-	public List<EagerBlobEntry> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the eager blob entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of eager blob entries
-	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @return the range of matching eager blob entries
-	 */
-	@Override
-	public List<EagerBlobEntry> findByUuid(String uuid, int start, int end) {
-		return findByUuid(uuid, start, end, null);
-	}
+	private CollectionPersistenceFinder<EagerBlobEntry>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the eager blob entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of eager blob entries
-	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching eager blob entries
-	 */
-	@Override
-	public List<EagerBlobEntry> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<EagerBlobEntry> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the eager blob entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -157,106 +99,9 @@ public class EagerBlobEntryPersistenceImpl
 		OrderByComparator<EagerBlobEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<EagerBlobEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<EagerBlobEntry>)dummyFinderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (EagerBlobEntry eagerBlobEntry : list) {
-					if (!uuid.equals(eagerBlobEntry.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_EAGERBLOBENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(EagerBlobEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<EagerBlobEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					dummyFinderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			dummyFinderCache, new Object[] {uuid}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -279,16 +124,9 @@ public class EagerBlobEntryPersistenceImpl
 			return eagerBlobEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchEagerBlobEntryException(sb.toString());
+		throw new NoSuchEagerBlobEntryException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -302,13 +140,8 @@ public class EagerBlobEntryPersistenceImpl
 	public EagerBlobEntry fetchByUuid_First(
 		String uuid, OrderByComparator<EagerBlobEntry> orderByComparator) {
 
-		List<EagerBlobEntry> list = findByUuid(uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			dummyFinderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -318,11 +151,8 @@ public class EagerBlobEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (EagerBlobEntry eagerBlobEntry :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(eagerBlobEntry);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			dummyFinderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -333,68 +163,12 @@ public class EagerBlobEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)dummyFinderCache.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_EAGERBLOBENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				dummyFinderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			dummyFinderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"eagerBlobEntry.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(eagerBlobEntry.uuid IS NULL OR eagerBlobEntry.uuid = '')";
-
-	private FinderPath _finderPathFetchByUUID_G;
+	private UniquePersistenceFinder<EagerBlobEntry>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the eager blob entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchEagerBlobEntryException</code> if it could not be found.
@@ -411,38 +185,18 @@ public class EagerBlobEntryPersistenceImpl
 		EagerBlobEntry eagerBlobEntry = fetchByUUID_G(uuid, groupId);
 
 		if (eagerBlobEntry == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("uuid=");
-			sb.append(uuid);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchEagerBlobEntryException(sb.toString());
+			throw new NoSuchEagerBlobEntryException(message);
 		}
 
 		return eagerBlobEntry;
-	}
-
-	/**
-	 * Returns the eager blob entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching eager blob entry, or <code>null</code> if a matching eager blob entry could not be found
-	 */
-	@Override
-	public EagerBlobEntry fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
 	}
 
 	/**
@@ -457,96 +211,8 @@ public class EagerBlobEntryPersistenceImpl
 	public EagerBlobEntry fetchByUUID_G(
 		String uuid, long groupId, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {uuid, groupId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = dummyFinderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
-		}
-
-		if (result instanceof EagerBlobEntry) {
-			EagerBlobEntry eagerBlobEntry = (EagerBlobEntry)result;
-
-			if (!Objects.equals(uuid, eagerBlobEntry.getUuid()) ||
-				(groupId != eagerBlobEntry.getGroupId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_EAGERBLOBENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(groupId);
-
-				List<EagerBlobEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						dummyFinderCache.putResult(
-							_finderPathFetchByUUID_G, finderArgs, list);
-					}
-				}
-				else {
-					EagerBlobEntry eagerBlobEntry = list.get(0);
-
-					result = eagerBlobEntry;
-
-					cacheResult(eagerBlobEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (EagerBlobEntry)result;
-		}
+		return _uniquePersistenceFinderByUUID_G.fetch(
+			dummyFinderCache, new Object[] {uuid, groupId}, useFinderCache);
 	}
 
 	/**
@@ -574,23 +240,9 @@ public class EagerBlobEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		EagerBlobEntry eagerBlobEntry = fetchByUUID_G(uuid, groupId);
-
-		if (eagerBlobEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByUUID_G.count(
+			dummyFinderCache, new Object[] {uuid, groupId});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
-		"eagerBlobEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
-		"(eagerBlobEntry.uuid IS NULL OR eagerBlobEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
-		"eagerBlobEntry.groupId = ?";
 
 	public EagerBlobEntryPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -606,107 +258,6 @@ public class EagerBlobEntryPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(EagerBlobEntryTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the eager blob entry in the entity cache if it is enabled.
-	 *
-	 * @param eagerBlobEntry the eager blob entry
-	 */
-	@Override
-	public void cacheResult(EagerBlobEntry eagerBlobEntry) {
-		dummyEntityCache.putResult(
-			EagerBlobEntryImpl.class, eagerBlobEntry.getPrimaryKey(),
-			eagerBlobEntry);
-
-		dummyFinderCache.putResult(
-			_finderPathFetchByUUID_G,
-			new Object[] {
-				eagerBlobEntry.getUuid(), eagerBlobEntry.getGroupId()
-			},
-			eagerBlobEntry);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the eager blob entries in the entity cache if it is enabled.
-	 *
-	 * @param eagerBlobEntries the eager blob entries
-	 */
-	@Override
-	public void cacheResult(List<EagerBlobEntry> eagerBlobEntries) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (eagerBlobEntries.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (EagerBlobEntry eagerBlobEntry : eagerBlobEntries) {
-			if (dummyEntityCache.getResult(
-					EagerBlobEntryImpl.class, eagerBlobEntry.getPrimaryKey()) ==
-						null) {
-
-				cacheResult(eagerBlobEntry);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all eager blob entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		dummyEntityCache.clearCache(EagerBlobEntryImpl.class);
-
-		dummyFinderCache.clearCache(EagerBlobEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the eager blob entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(EagerBlobEntry eagerBlobEntry) {
-		dummyEntityCache.removeResult(EagerBlobEntryImpl.class, eagerBlobEntry);
-	}
-
-	@Override
-	public void clearCache(List<EagerBlobEntry> eagerBlobEntries) {
-		for (EagerBlobEntry eagerBlobEntry : eagerBlobEntries) {
-			dummyEntityCache.removeResult(
-				EagerBlobEntryImpl.class, eagerBlobEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		dummyFinderCache.clearCache(EagerBlobEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			dummyEntityCache.removeResult(EagerBlobEntryImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		EagerBlobEntryModelImpl eagerBlobEntryModelImpl) {
-
-		Object[] args = new Object[] {
-			eagerBlobEntryModelImpl.getUuid(),
-			eagerBlobEntryModelImpl.getGroupId()
-		};
-
-		dummyFinderCache.putResult(
-			_finderPathFetchByUUID_G, args, eagerBlobEntryModelImpl);
 	}
 
 	/**
@@ -741,47 +292,6 @@ public class EagerBlobEntryPersistenceImpl
 		throws NoSuchEagerBlobEntryException {
 
 		return remove((Serializable)eagerBlobEntryId);
-	}
-
-	/**
-	 * Removes the eager blob entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the eager blob entry
-	 * @return the eager blob entry that was removed
-	 * @throws NoSuchEagerBlobEntryException if a eager blob entry with the primary key could not be found
-	 */
-	@Override
-	public EagerBlobEntry remove(Serializable primaryKey)
-		throws NoSuchEagerBlobEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			EagerBlobEntry eagerBlobEntry = (EagerBlobEntry)session.get(
-				EagerBlobEntryImpl.class, primaryKey);
-
-			if (eagerBlobEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchEagerBlobEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(eagerBlobEntry);
-		}
-		catch (NoSuchEagerBlobEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -864,41 +374,13 @@ public class EagerBlobEntryPersistenceImpl
 			closeSession(session);
 		}
 
-		dummyEntityCache.putResult(
-			EagerBlobEntryImpl.class, eagerBlobEntryModelImpl, false, true);
-
-		cacheUniqueFindersCache(eagerBlobEntryModelImpl);
+		cacheUniqueFindersResult(eagerBlobEntry, false);
 
 		if (isNew) {
 			eagerBlobEntry.setNew(false);
 		}
 
 		eagerBlobEntry.resetOriginalValues();
-
-		return eagerBlobEntry;
-	}
-
-	/**
-	 * Returns the eager blob entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the eager blob entry
-	 * @return the eager blob entry
-	 * @throws NoSuchEagerBlobEntryException if a eager blob entry with the primary key could not be found
-	 */
-	@Override
-	public EagerBlobEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchEagerBlobEntryException {
-
-		EagerBlobEntry eagerBlobEntry = fetchByPrimaryKey(primaryKey);
-
-		if (eagerBlobEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchEagerBlobEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return eagerBlobEntry;
 	}
@@ -926,186 +408,6 @@ public class EagerBlobEntryPersistenceImpl
 	@Override
 	public EagerBlobEntry fetchByPrimaryKey(long eagerBlobEntryId) {
 		return fetchByPrimaryKey((Serializable)eagerBlobEntryId);
-	}
-
-	/**
-	 * Returns all the eager blob entries.
-	 *
-	 * @return the eager blob entries
-	 */
-	@Override
-	public List<EagerBlobEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the eager blob entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of eager blob entries
-	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @return the range of eager blob entries
-	 */
-	@Override
-	public List<EagerBlobEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the eager blob entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of eager blob entries
-	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of eager blob entries
-	 */
-	@Override
-	public List<EagerBlobEntry> findAll(
-		int start, int end,
-		OrderByComparator<EagerBlobEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the eager blob entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of eager blob entries
-	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of eager blob entries
-	 */
-	@Override
-	public List<EagerBlobEntry> findAll(
-		int start, int end, OrderByComparator<EagerBlobEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<EagerBlobEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<EagerBlobEntry>)dummyFinderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_EAGERBLOBENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_EAGERBLOBENTRY;
-
-				sql = sql.concat(EagerBlobEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<EagerBlobEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					dummyFinderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the eager blob entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (EagerBlobEntry eagerBlobEntry : findAll()) {
-			remove(eagerBlobEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of eager blob entries.
-	 *
-	 * @return the number of eager blob entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)dummyFinderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_EAGERBLOBENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				dummyFinderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -1138,43 +440,44 @@ public class EagerBlobEntryPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"uuid_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, false, null),
+			_SQL_SELECT_EAGERBLOBENTRY_WHERE, _SQL_COUNT_EAGERBLOBENTRY_WHERE,
+			EagerBlobEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"eagerBlobEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
+				true, EagerBlobEntry::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
-
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
-
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
-
-		_finderPathFetchByUUID_G = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "groupId"}, true);
+		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"uuid_", "groupId"}, 0, 1, false,
+				convertNullFunction(EagerBlobEntry::getUuid),
+				EagerBlobEntry::getGroupId),
+			_SQL_SELECT_EAGERBLOBENTRY_WHERE, "",
+			new FinderColumn<>(
+				"eagerBlobEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
+				true, EagerBlobEntry::getUuid),
+			new FinderColumn<>(
+				"eagerBlobEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
+				true, EagerBlobEntry::getGroupId));
 
 		EagerBlobEntryUtil.setPersistence(this);
 	}
@@ -1212,22 +515,17 @@ public class EagerBlobEntryPersistenceImpl
 		super.setSessionFactory(sessionFactory);
 	}
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		EagerBlobEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_EAGERBLOBENTRY =
 		"SELECT eagerBlobEntry FROM EagerBlobEntry eagerBlobEntry";
 
 	private static final String _SQL_SELECT_EAGERBLOBENTRY_WHERE =
 		"SELECT eagerBlobEntry FROM EagerBlobEntry eagerBlobEntry WHERE ";
 
-	private static final String _SQL_COUNT_EAGERBLOBENTRY =
-		"SELECT COUNT(eagerBlobEntry) FROM EagerBlobEntry eagerBlobEntry";
-
 	private static final String _SQL_COUNT_EAGERBLOBENTRY_WHERE =
 		"SELECT COUNT(eagerBlobEntry) FROM EagerBlobEntry eagerBlobEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "eagerBlobEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No EagerBlobEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No EagerBlobEntry exists with the key {";
@@ -1244,4 +542,4 @@ public class EagerBlobEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1019556316
+// LIFERAY-SERVICE-BUILDER-HASH:480376287

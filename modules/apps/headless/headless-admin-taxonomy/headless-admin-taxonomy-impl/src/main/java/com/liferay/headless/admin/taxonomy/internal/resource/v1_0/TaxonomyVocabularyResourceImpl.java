@@ -19,6 +19,7 @@ import com.liferay.asset.kernel.service.AssetVocabularyGroupRelLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyService;
 import com.liferay.depot.util.SiteConnectedGroupGroupProviderUtil;
+import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.AssetLibrary;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.AssetType;
@@ -40,14 +41,13 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -171,6 +171,11 @@ public class TaxonomyVocabularyResourceImpl
 				getScope() {
 
 				return ExportImportVulcanBatchEngineTaskItemDelegate.Scope.SITE;
+			}
+
+			@Override
+			public String getSectionKey() {
+				return ExportImportConstants.SECTION_KEY_CONTENT;
 			}
 
 			@Override
@@ -908,8 +913,8 @@ public class TaxonomyVocabularyResourceImpl
 
 					searchContext.setBooleanClauses(
 						new BooleanClause[] {
-							BooleanClauseFactoryUtil.create(
-								new BooleanQueryImpl() {
+							new BooleanClause<>(
+								new BooleanQuery() {
 									{
 										if (filter != null) {
 											booleanFilter.add(
@@ -920,7 +925,7 @@ public class TaxonomyVocabularyResourceImpl
 										setPreBooleanFilter(booleanFilter);
 									}
 								},
-								BooleanClauseOccur.MUST.getName())
+								BooleanClauseOccur.MUST)
 						});
 				}
 				else {

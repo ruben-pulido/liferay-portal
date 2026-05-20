@@ -11,6 +11,7 @@
 *.iml
 *.ipr
 *.iws
+*.local.*
 *.swp
 *~
 .DS_Store
@@ -19,6 +20,7 @@
 .gh.json
 .sass-cache
 .sass_cache_*.css
+.worktree-port-offset
 /*.ant-*
 /*.ipr
 /*.iws
@@ -31,6 +33,7 @@
 /.sonar
 /.xmlcatalog
 /ActiveMQ
+/CLAUDE.local.md
 /WEB-INF
 /ant.install.log
 /api
@@ -45,6 +48,7 @@
 /bin
 /build
 /build.*.properties
+/bundle
 /classes/Test.class
 /dist
 /intellij
@@ -90,7 +94,6 @@
 /portal-web/*.iws
 /portal-web/ROOT.war
 /portal-web/build
-/portal-web/poshi-ext.properties
 /portal-web/classes
 /portal-web/docroot/WEB-INF/classes
 /portal-web/docroot/WEB-INF/lib
@@ -108,6 +111,7 @@
 /portal-web/liferay-portal.war
 /portal-web/portal-web.war
 /portal-web/portal-web.war.asc
+/portal-web/poshi-ext.properties
 /portal-web/poshi-ext.properties
 /portal-web/test-ant-scripts
 /portal-web/test-classes

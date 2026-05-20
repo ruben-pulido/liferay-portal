@@ -1,0 +1,473 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2026 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.headless.admin.fragment.internal.resource.v1_0;
+
+import com.liferay.fragment.constants.FragmentConstants;
+import com.liferay.fragment.exception.RequiredFragmentEntryVersionException;
+import com.liferay.fragment.exception.UnsupportedUnpublishFragmentEntryOperationException;
+import com.liferay.fragment.model.FragmentCollection;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.service.FragmentCollectionLocalService;
+import com.liferay.fragment.service.FragmentCollectionService;
+import com.liferay.fragment.service.FragmentEntryLocalService;
+import com.liferay.fragment.service.FragmentEntryService;
+import com.liferay.headless.admin.fragment.dto.v1_0.Fragment;
+import com.liferay.headless.admin.fragment.dto.v1_0.FragmentSet;
+import com.liferay.headless.admin.fragment.dto.v1_0.FragmentVersion;
+import com.liferay.headless.admin.fragment.internal.resource.v1_0.util.FragmentSetUtil;
+import com.liferay.headless.admin.fragment.internal.resource.v1_0.util.ServiceContextUtil;
+import com.liferay.headless.admin.fragment.internal.util.EnabledUtil;
+import com.liferay.headless.admin.fragment.resource.v1_0.FragmentResource;
+import com.liferay.headless.common.spi.util.GroupUtil;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
+import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.vulcan.dto.converter.DTOConverter;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
+import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ServiceScope;
+
+/**
+ * @author Rubén Pulido
+ */
+@Component(
+	properties = "OSGI-INF/liferay/rest/v1_0/fragment.properties",
+	scope = ServiceScope.PROTOTYPE, service = FragmentResource.class
+)
+public class FragmentResourceImpl extends BaseFragmentResourceImpl {
+
+	@Override
+	public void deleteSiteFragment(
+			String siteExternalReferenceCode,
+			String fragmentExternalReferenceCode)
+		throws Exception {
+
+		EnabledUtil.checkEnabled(contextCompany);
+
+		_fragmentEntryService.deleteFragmentEntry(
+			fragmentExternalReferenceCode,
+			GroupUtil.getStagingAwareGroupId(
+				true, contextCompany.getCompanyId(),
+				siteExternalReferenceCode));
+	}
+
+	@Override
+	public Fragment getSiteFragment(
+			String siteExternalReferenceCode,
+			String fragmentExternalReferenceCode)
+		throws Exception {
+
+		EnabledUtil.checkEnabled(contextCompany);
+
+		long groupId = GroupUtil.getGroupId(
+			true, true, contextCompany.getCompanyId(),
+			siteExternalReferenceCode);
+
+		try {
+			return _toFragment(
+				_fragmentEntryService.getFragmentEntryByExternalReferenceCode(
+					fragmentExternalReferenceCode, groupId));
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchModelException);
+			}
+
+			FragmentEntry draftFragmentEntry =
+				_fragmentEntryLocalService.
+					fetchFragmentEntryByExternalReferenceCode(
+						fragmentExternalReferenceCode, groupId, false);
+
+			if (draftFragmentEntry == null) {
+				throw noSuchModelException;
+			}
+
+			return _toFragment(draftFragmentEntry);
+		}
+	}
+
+	@Override
+	public Page<Fragment> getSiteFragmentSetFragmentsPage(
+			String siteExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, Pagination pagination)
+		throws Exception {
+
+		EnabledUtil.checkEnabled(contextCompany);
+
+		long groupId = GroupUtil.getGroupId(
+			true, true, contextCompany.getCompanyId(),
+			siteExternalReferenceCode);
+
+		FragmentCollection fragmentCollection =
+			_fragmentCollectionService.
+				getFragmentCollectionByExternalReferenceCode(
+					fragmentSetExternalReferenceCode, groupId);
+
+		return Page.of(
+			transform(
+				_fragmentEntryService.getFragmentCompositionsAndFragmentEntries(
+					groupId, fragmentCollection.getFragmentCollectionId(),
+					WorkflowConstants.STATUS_ANY, pagination.getStartPosition(),
+					pagination.getEndPosition(), null),
+				object -> {
+					if (object instanceof FragmentEntry) {
+						return _toFragment((FragmentEntry)object);
+					}
+
+					return null;
+				}),
+			pagination,
+			_fragmentEntryService.
+				getFragmentCompositionsAndFragmentEntriesCount(
+					groupId, fragmentCollection.getFragmentCollectionId(),
+					WorkflowConstants.STATUS_ANY));
+	}
+
+	@Override
+	public Fragment postSiteFragment(
+			String siteExternalReferenceCode, Fragment fragment)
+		throws Exception {
+
+		EnabledUtil.checkEnabled(contextCompany);
+
+		long groupId = GroupUtil.getStagingAwareGroupId(
+			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		return _addFragmentEntry(
+			fragment.getExternalReferenceCode(), fragment,
+			_getOrAddFragmentCollection(fragment.getFragmentSet(), groupId),
+			groupId);
+	}
+
+	@Override
+	public Fragment postSiteFragmentSetFragment(
+			String siteExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, Fragment fragment)
+		throws Exception {
+
+		EnabledUtil.checkEnabled(contextCompany);
+
+		long groupId = GroupUtil.getStagingAwareGroupId(
+			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		return _addFragmentEntry(
+			fragment.getExternalReferenceCode(), fragment,
+			_fragmentCollectionService.
+				getFragmentCollectionByExternalReferenceCode(
+					fragmentSetExternalReferenceCode, groupId),
+			groupId);
+	}
+
+	@Override
+	public Fragment putSiteFragment(
+			String siteExternalReferenceCode,
+			String fragmentExternalReferenceCode, Fragment fragment)
+		throws Exception {
+
+		EnabledUtil.checkEnabled(contextCompany);
+
+		long groupId = GroupUtil.getStagingAwareGroupId(
+			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		try {
+			FragmentEntry fragmentEntry =
+				_fragmentEntryService.getFragmentEntryByExternalReferenceCode(
+					fragmentExternalReferenceCode, groupId);
+
+			return _updateFragmentEntry(fragment, fragmentEntry, groupId);
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchModelException);
+			}
+
+			FragmentEntry draftFragmentEntry =
+				_fragmentEntryLocalService.
+					fetchFragmentEntryByExternalReferenceCode(
+						fragmentExternalReferenceCode, groupId, false);
+
+			if (draftFragmentEntry != null) {
+				return _updateFragmentEntry(
+					fragment, draftFragmentEntry, groupId);
+			}
+
+			return _addFragmentEntry(
+				fragmentExternalReferenceCode, fragment,
+				_getOrAddFragmentCollection(fragment.getFragmentSet(), groupId),
+				groupId);
+		}
+	}
+
+	private Fragment _addFragmentEntry(
+			String externalReferenceCode, Fragment fragment,
+			FragmentCollection fragmentCollection, long groupId)
+		throws Exception {
+
+		FragmentEntry fragmentEntry = null;
+
+		FragmentVersion approvedFragmentVersion = _getFragmentVersion(
+			fragment, FragmentVersion.Status.APPROVED);
+		FragmentVersion draftFragmentVersion = _getFragmentVersion(
+			fragment, FragmentVersion.Status.DRAFT);
+
+		if (approvedFragmentVersion != null) {
+			fragmentEntry = _fragmentEntryService.addFragmentEntry(
+				externalReferenceCode, groupId,
+				fragmentCollection.getFragmentCollectionId(), fragment.getKey(),
+				fragment.getName(), approvedFragmentVersion.getCss(),
+				approvedFragmentVersion.getHtml(),
+				approvedFragmentVersion.getJs(),
+				GetterUtil.getBoolean(fragment.getCacheable()),
+				approvedFragmentVersion.getConfiguration(), fragment.getIcon(),
+				0L, GetterUtil.getBoolean(fragment.getMarketplace()),
+				GetterUtil.getBoolean(fragment.getReadOnly()),
+				FragmentConstants.TYPE_COMPONENT, null,
+				WorkflowConstants.STATUS_APPROVED,
+				ServiceContextUtil.getServiceContext(
+					contextCompany.getCompanyId(), fragment.getDateCreated(),
+					groupId, contextHttpServletRequest,
+					fragment.getDateModified(), contextUser.getUserId()));
+
+			if (draftFragmentVersion != null) {
+				_updateDraft(
+					fragmentEntry.getFragmentEntryId(), draftFragmentVersion);
+			}
+		}
+		else if (draftFragmentVersion != null) {
+			fragmentEntry = _fragmentEntryService.addFragmentEntry(
+				externalReferenceCode, groupId,
+				fragmentCollection.getFragmentCollectionId(), fragment.getKey(),
+				fragment.getName(), draftFragmentVersion.getCss(),
+				draftFragmentVersion.getHtml(), draftFragmentVersion.getJs(),
+				GetterUtil.getBoolean(fragment.getCacheable()),
+				draftFragmentVersion.getConfiguration(), fragment.getIcon(), 0L,
+				GetterUtil.getBoolean(fragment.getMarketplace()),
+				GetterUtil.getBoolean(fragment.getReadOnly()),
+				FragmentConstants.TYPE_COMPONENT, null,
+				WorkflowConstants.STATUS_DRAFT,
+				ServiceContextUtil.getServiceContext(
+					contextCompany.getCompanyId(), fragment.getDateCreated(),
+					groupId, contextHttpServletRequest,
+					fragment.getDateModified(), contextUser.getUserId()));
+		}
+		else {
+			fragmentEntry = _fragmentEntryService.addFragmentEntry(
+				externalReferenceCode, groupId,
+				fragmentCollection.getFragmentCollectionId(), fragment.getKey(),
+				fragment.getName(), null, null, null,
+				GetterUtil.getBoolean(fragment.getCacheable()), null, null, 0L,
+				GetterUtil.getBoolean(fragment.getMarketplace()),
+				GetterUtil.getBoolean(fragment.getReadOnly()),
+				FragmentConstants.TYPE_COMPONENT, null,
+				WorkflowConstants.STATUS_DRAFT,
+				ServiceContextUtil.getServiceContext(
+					contextCompany.getCompanyId(), fragment.getDateCreated(),
+					groupId, contextHttpServletRequest,
+					fragment.getDateModified(), contextUser.getUserId()));
+		}
+
+		return _toFragment(fragmentEntry);
+	}
+
+	private FragmentVersion _getFragmentVersion(
+		Fragment fragment, FragmentVersion.Status status) {
+
+		FragmentVersion[] fragmentVersions = fragment.getFragmentVersions();
+
+		if (fragmentVersions == null) {
+			return null;
+		}
+
+		for (FragmentVersion fragmentVersion : fragmentVersions) {
+			if (status == fragmentVersion.getStatus()) {
+				return fragmentVersion;
+			}
+		}
+
+		return null;
+	}
+
+	private FragmentCollection _getOrAddFragmentCollection(
+			FragmentSet fragmentSet, long groupId)
+		throws Exception {
+
+		if ((fragmentSet == null) ||
+			Validator.isNull(fragmentSet.getExternalReferenceCode())) {
+
+			throw new IllegalArgumentException(
+				_language.get(
+					contextAcceptLanguage.getPreferredLocale(),
+					"a-fragment-set-external-reference-code-is-required-to-" +
+						"create-a-new-fragment"));
+		}
+
+		FragmentCollection fragmentCollection =
+			_fragmentCollectionLocalService.
+				fetchFragmentCollectionByExternalReferenceCode(
+					fragmentSet.getExternalReferenceCode(), groupId);
+
+		if (fragmentCollection != null) {
+			return fragmentCollection;
+		}
+
+		if (!LazyReferencingThreadLocal.isEnabled()) {
+			throw new IllegalArgumentException(
+				_language.format(
+					contextAcceptLanguage.getPreferredLocale(),
+					"no-fragment-set-was-found-with-external-reference-code-x",
+					fragmentSet.getExternalReferenceCode()));
+		}
+
+		return FragmentSetUtil.addFragmentCollection(
+			fragmentSet,
+			ServiceContextUtil.getServiceContext(
+				contextCompany.getCompanyId(), fragmentSet.getDateCreated(),
+				groupId, contextHttpServletRequest,
+				fragmentSet.getDateModified(), contextUser.getUserId()));
+	}
+
+	private Fragment _toFragment(FragmentEntry fragmentEntry) throws Exception {
+		return _fragmentDTOConverter.toDTO(
+			new DefaultDTOConverterContext(
+				false, null, _dtoConverterRegistry, contextHttpServletRequest,
+				fragmentEntry.getFragmentEntryId(),
+				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
+				contextUser),
+			fragmentEntry);
+	}
+
+	private void _updateDraft(
+			long fragmentEntryId, FragmentVersion fragmentVersion)
+		throws Exception {
+
+		FragmentEntry draftFragmentEntry = _fragmentEntryService.getDraft(
+			fragmentEntryId);
+
+		draftFragmentEntry.setCss(fragmentVersion.getCss());
+		draftFragmentEntry.setHtml(fragmentVersion.getHtml());
+		draftFragmentEntry.setJs(fragmentVersion.getJs());
+		draftFragmentEntry.setConfiguration(fragmentVersion.getConfiguration());
+
+		_fragmentEntryService.updateDraft(draftFragmentEntry);
+	}
+
+	private Fragment _updateFragmentEntry(
+			Fragment fragment, FragmentEntry fragmentEntry, long groupId)
+		throws Exception {
+
+		FragmentVersion approvedFragmentVersion = _getFragmentVersion(
+			fragment, FragmentVersion.Status.APPROVED);
+		FragmentVersion draftFragmentVersion = _getFragmentVersion(
+			fragment, FragmentVersion.Status.DRAFT);
+
+		if ((approvedFragmentVersion == null) &&
+			(draftFragmentVersion == null)) {
+
+			throw new RequiredFragmentEntryVersionException();
+		}
+
+		if ((approvedFragmentVersion == null) && fragmentEntry.isHead()) {
+			throw new UnsupportedUnpublishFragmentEntryOperationException();
+		}
+
+		FragmentEntry updatedFragmentEntry = null;
+
+		long fragmentCollectionId = fragmentEntry.getFragmentCollectionId();
+
+		FragmentSet fragmentSet = fragment.getFragmentSet();
+
+		if ((fragmentSet != null) &&
+			Validator.isNotNull(fragmentSet.getExternalReferenceCode())) {
+
+			FragmentCollection fragmentCollection = _getOrAddFragmentCollection(
+				fragmentSet, groupId);
+
+			fragmentCollectionId = fragmentCollection.getFragmentCollectionId();
+		}
+
+		long fragmentEntryId = fragmentEntry.getFragmentEntryId();
+
+		if (fragmentEntry.isHead()) {
+			FragmentEntry draftFragmentEntry = _fragmentEntryService.getDraft(
+				fragmentEntry.getFragmentEntryId());
+
+			fragmentEntryId = draftFragmentEntry.getFragmentEntryId();
+		}
+
+		if (approvedFragmentVersion != null) {
+			updatedFragmentEntry = _fragmentEntryService.updateFragmentEntry(
+				fragmentEntryId, fragmentCollectionId, fragment.getName(),
+				approvedFragmentVersion.getCss(),
+				approvedFragmentVersion.getHtml(),
+				approvedFragmentVersion.getJs(),
+				GetterUtil.getBoolean(fragment.getCacheable()),
+				approvedFragmentVersion.getConfiguration(), fragment.getIcon(),
+				fragmentEntry.getPreviewFileEntryId(),
+				GetterUtil.getBoolean(fragment.getReadOnly()),
+				fragmentEntry.getTypeOptions(),
+				WorkflowConstants.STATUS_APPROVED);
+
+			if (draftFragmentVersion != null) {
+				_updateDraft(
+					updatedFragmentEntry.getFragmentEntryId(),
+					draftFragmentVersion);
+			}
+		}
+		else {
+			updatedFragmentEntry = _fragmentEntryService.updateFragmentEntry(
+				fragmentEntryId, fragmentCollectionId, fragment.getName(),
+				draftFragmentVersion.getCss(), draftFragmentVersion.getHtml(),
+				draftFragmentVersion.getJs(),
+				GetterUtil.getBoolean(fragment.getCacheable()),
+				draftFragmentVersion.getConfiguration(), fragment.getIcon(),
+				fragmentEntry.getPreviewFileEntryId(),
+				GetterUtil.getBoolean(fragment.getReadOnly()),
+				fragmentEntry.getTypeOptions(), WorkflowConstants.STATUS_DRAFT);
+
+			updatedFragmentEntry = _fragmentEntryService.updateDraft(
+				updatedFragmentEntry);
+		}
+
+		return _toFragment(updatedFragmentEntry);
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		FragmentResourceImpl.class);
+
+	@Reference
+	private DTOConverterRegistry _dtoConverterRegistry;
+
+	@Reference
+	private FragmentCollectionLocalService _fragmentCollectionLocalService;
+
+	@Reference
+	private FragmentCollectionService _fragmentCollectionService;
+
+	@Reference(
+		target = "(component.name=com.liferay.headless.admin.fragment.internal.dto.v1_0.converter.FragmentDTOConverter)"
+	)
+	private DTOConverter<FragmentEntry, Fragment> _fragmentDTOConverter;
+
+	@Reference
+	private FragmentEntryLocalService _fragmentEntryLocalService;
+
+	@Reference
+	private FragmentEntryService _fragmentEntryService;
+
+	@Reference
+	private Language _language;
+
+}

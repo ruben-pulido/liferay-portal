@@ -51,9 +51,9 @@ public class SharingEntryLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.sharing.model.SharingEntry addOrUpdateSharingEntry(
-			String externalReferenceCode, long userId, long toUserGroupId,
-			long toUserId, long classNameId, long classPK, long groupId,
-			boolean shareable,
+			String externalReferenceCode, long userId, long toTicketId,
+			long toUserGroupId, long toUserId, long classNameId, long classPK,
+			long groupId, boolean shareable,
 			java.util.Collection
 				<com.liferay.sharing.security.permission.SharingEntryAction>
 					sharingEntryActions,
@@ -62,9 +62,9 @@ public class SharingEntryLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _sharingEntryLocalService.addOrUpdateSharingEntry(
-			externalReferenceCode, userId, toUserGroupId, toUserId, classNameId,
-			classPK, groupId, shareable, sharingEntryActions, expirationDate,
-			serviceContext);
+			externalReferenceCode, userId, toTicketId, toUserGroupId, toUserId,
+			classNameId, classPK, groupId, shareable, sharingEntryActions,
+			expirationDate, serviceContext);
 	}
 
 	/**
@@ -107,9 +107,9 @@ public class SharingEntryLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.sharing.model.SharingEntry addSharingEntry(
-			String externalReferenceCode, long userId, long toUserGroupId,
-			long toUserId, long classNameId, long classPK, long groupId,
-			boolean shareable,
+			String externalReferenceCode, long userId, long toTicketId,
+			long toUserGroupId, long toUserId, long classNameId, long classPK,
+			long groupId, boolean shareable,
 			java.util.Collection
 				<com.liferay.sharing.security.permission.SharingEntryAction>
 					sharingEntryActions,
@@ -118,9 +118,9 @@ public class SharingEntryLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _sharingEntryLocalService.addSharingEntry(
-			externalReferenceCode, userId, toUserGroupId, toUserId, classNameId,
-			classPK, groupId, shareable, sharingEntryActions, expirationDate,
-			serviceContext);
+			externalReferenceCode, userId, toTicketId, toUserGroupId, toUserId,
+			classNameId, classPK, groupId, shareable, sharingEntryActions,
+			expirationDate, serviceContext);
 	}
 
 	/**
@@ -261,6 +261,17 @@ public class SharingEntryLocalServiceWrapper
 				externalReferenceCode, groupId);
 	}
 
+	@Override
+	public void deleteToTicketSharingEntries(long toTicketId) {
+		_sharingEntryLocalService.deleteToTicketSharingEntries(toTicketId);
+	}
+
+	@Override
+	public void deleteToUserGroupSharingEntries(long toUserGroupId) {
+		_sharingEntryLocalService.deleteToUserGroupSharingEntries(
+			toUserGroupId);
+	}
+
 	/**
 	 * Deletes the sharing entries for resources shared with the user.
 	 *
@@ -397,6 +408,15 @@ public class SharingEntryLocalServiceWrapper
 
 		return _sharingEntryLocalService.fetchSharingEntry(
 			toUserId, classNameId, classPK);
+	}
+
+	@Override
+	public com.liferay.sharing.model.SharingEntry fetchSharingEntry(
+		long toTicketId, long toUserGroupId, long toUserId, long classNameId,
+		long classPK) {
+
+		return _sharingEntryLocalService.fetchSharingEntry(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
 	}
 
 	@Override
@@ -692,6 +712,16 @@ public class SharingEntryLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.sharing.model.SharingEntry getSharingEntry(
+			long toTicketId, long toUserGroupId, long toUserId,
+			long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _sharingEntryLocalService.getSharingEntry(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
+	}
+
+	@Override
 	public com.liferay.sharing.model.SharingEntry
 			getSharingEntryByExternalReferenceCode(
 				String externalReferenceCode, long groupId)
@@ -716,6 +746,21 @@ public class SharingEntryLocalServiceWrapper
 
 		return _sharingEntryLocalService.getSharingEntryByUuidAndGroupId(
 			uuid, groupId);
+	}
+
+	@Override
+	public java.util.List<com.liferay.sharing.model.SharingEntry>
+		getToTicketSharingEntries(long toTicketId) {
+
+		return _sharingEntryLocalService.getToTicketSharingEntries(toTicketId);
+	}
+
+	@Override
+	public java.util.List<com.liferay.sharing.model.SharingEntry>
+		getToUserGroupSharingEntries(long toUserGroupId) {
+
+		return _sharingEntryLocalService.getToUserGroupSharingEntries(
+			toUserGroupId);
 	}
 
 	/**
@@ -962,4 +1007,4 @@ public class SharingEntryLocalServiceWrapper
 	private SharingEntryLocalService _sharingEntryLocalService;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1751671215
+// LIFERAY-SERVICE-BUILDER-HASH:-612691477

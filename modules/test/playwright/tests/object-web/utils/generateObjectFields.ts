@@ -9,6 +9,7 @@ import {getRandomInt} from '../../../utils/getRandomInt';
 
 type objectFieldBaseProperties = {
 	externalReferenceCode?: string;
+	indexed?: boolean;
 	indexedAsKeyword: boolean;
 	indexedLanguageId: string;
 	label: LocalizedValue<string>;
@@ -161,6 +162,18 @@ function getObjectFieldSpecificProperties(
 				listTypeDefinitionExternalReferenceCode,
 				type: 'String',
 			};
+		case 'PhoneNumber':
+			return {
+				DBType: 'String',
+				businessType: 'PhoneNumber',
+				objectFieldSettings: [
+					{
+						name: 'prefixType',
+						value: 'definedByUser',
+					},
+				],
+				type: 'String',
+			};
 		case 'PrecisionDecimal':
 			return {
 				DBType: 'BigDecimal',
@@ -202,10 +215,19 @@ function generateObjectFieldProperties({
 		listTypeDefinitionExternalReferenceCode
 	);
 
-	const mergedSettings = [
+	// Combine the default settings with the caller's settings. If both
+	// have a setting with the same name, the caller's value is kept.
+
+	const mergedSettingsByName = new Map<string, any>();
+
+	for (const setting of [
 		...(objectFieldSpecificProperties.objectFieldSettings ?? []),
 		...(additionalSettings.objectFieldSettings ?? []),
-	];
+	]) {
+		mergedSettingsByName.set(setting.name, setting);
+	}
+
+	const mergedSettings = Array.from(mergedSettingsByName.values());
 
 	return {
 		...objectFieldBaseProperties,

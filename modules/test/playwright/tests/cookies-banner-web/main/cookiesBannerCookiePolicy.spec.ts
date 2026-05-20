@@ -6,7 +6,6 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {consentManagerConfigurationPageTest} from '../../../fixtures/consentManagerConfigurationPageTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
 import {waitForAlert} from '../../../utils/waitForAlert';
@@ -24,10 +23,6 @@ const hideableCookieTypes = [
 
 export const test = mergeTests(
 	consentManagerConfigurationPageTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-		'LPD-75032': {enabled: true},
-	}),
 	loginTest(),
 	systemSettingsPageTest
 );
@@ -65,11 +60,11 @@ test('LPD-30561 Cookie Banner Cookie Policy Page', async ({
 		await page.goto('/');
 
 		await page
-			.getByRole('dialog', {name: 'banner cookies'})
+			.locator('div[role="dialog"][aria-modal="true"]')
 			.waitFor({state: 'visible'});
 
 		const cookiesBannerContainer = page.locator(
-			'//div[@role="dialog"][@aria-label="banner cookies"]'
+			'div[role="dialog"][aria-modal="true"]'
 		);
 
 		await expect(cookiesBannerContainer).toBeVisible();
@@ -128,9 +123,9 @@ test(
 			});
 		});
 
-		const cookiesBanner = page.getByRole('dialog', {
-			name: 'banner cookies',
-		});
+		const cookiesBanner = page.locator(
+			'div[role="dialog"][aria-modal="true"]'
+		);
 
 		// Accept All cookies so the Cookies Banner doesn't break the test
 

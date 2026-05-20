@@ -36,6 +36,22 @@ public class NullConvertibleEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<NullConvertibleEntry> nullConvertibleEntries) {
+
+		getPersistence().cacheResult(nullConvertibleEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(NullConvertibleEntry nullConvertibleEntry) {
+		getPersistence().cacheResult(nullConvertibleEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -128,16 +144,6 @@ public class NullConvertibleEntryUtil {
 	}
 
 	/**
-	 * Returns the null convertible entry where name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param name the name
-	 * @return the matching null convertible entry, or <code>null</code> if a matching null convertible entry could not be found
-	 */
-	public static NullConvertibleEntry fetchByName(String name) {
-		return getPersistence().fetchByName(name);
-	}
-
-	/**
 	 * Returns the null convertible entry where name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param name the name
@@ -171,26 +177,6 @@ public class NullConvertibleEntryUtil {
 	 */
 	public static int countByName(String name) {
 		return getPersistence().countByName(name);
-	}
-
-	/**
-	 * Caches the null convertible entry in the entity cache if it is enabled.
-	 *
-	 * @param nullConvertibleEntry the null convertible entry
-	 */
-	public static void cacheResult(NullConvertibleEntry nullConvertibleEntry) {
-		getPersistence().cacheResult(nullConvertibleEntry);
-	}
-
-	/**
-	 * Caches the null convertible entries in the entity cache if it is enabled.
-	 *
-	 * @param nullConvertibleEntries the null convertible entries
-	 */
-	public static void cacheResult(
-		List<NullConvertibleEntry> nullConvertibleEntries) {
-
-		getPersistence().cacheResult(nullConvertibleEntries);
 	}
 
 	/**
@@ -251,84 +237,13 @@ public class NullConvertibleEntryUtil {
 	}
 
 	/**
-	 * Returns all the null convertible entries.
+	 * Returns the null convertible entry where name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the null convertible entries
+	 * @param name the name
+	 * @return the matching null convertible entry, or <code>null</code> if a matching null convertible entry could not be found
 	 */
-	public static List<NullConvertibleEntry> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the null convertible entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NullConvertibleEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of null convertible entries
-	 * @param end the upper bound of the range of null convertible entries (not inclusive)
-	 * @return the range of null convertible entries
-	 */
-	public static List<NullConvertibleEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the null convertible entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NullConvertibleEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of null convertible entries
-	 * @param end the upper bound of the range of null convertible entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of null convertible entries
-	 */
-	public static List<NullConvertibleEntry> findAll(
-		int start, int end,
-		OrderByComparator<NullConvertibleEntry> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the null convertible entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NullConvertibleEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of null convertible entries
-	 * @param end the upper bound of the range of null convertible entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of null convertible entries
-	 */
-	public static List<NullConvertibleEntry> findAll(
-		int start, int end,
-		OrderByComparator<NullConvertibleEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the null convertible entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of null convertible entries.
-	 *
-	 * @return the number of null convertible entries
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static NullConvertibleEntry fetchByName(String name) {
+		return getPersistence().fetchByName(name);
 	}
 
 	public static NullConvertibleEntryPersistence getPersistence() {
@@ -344,4 +259,4 @@ public class NullConvertibleEntryUtil {
 	private static volatile NullConvertibleEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:348491736
+// LIFERAY-SERVICE-BUILDER-HASH:1581979850

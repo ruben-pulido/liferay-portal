@@ -21,12 +21,10 @@ import getDateCustomFormat from '~/utils/getDateCustomFormat';
 import useHasAllEventsPermissions from '../../pages/Project/BusinessEvents/hooks/useHasAllEventsPermissions';
 
 const Layout = () => {
-	const [{businessEvents, subscriptions, userProjectAccess}] =
+	const [{businessEvents, userProjectAccess}] =
 		useAppContext();
 
 	const [hasSideMenu, setHasSideMenu] = useState(true);
-	const [showBanner, setShowBanner] = useState(true);
-
 	const [dismissedBanners, setDismissedBanners] = useState(() => {
 		const stored = sessionStorage.getItem(
 			'@liferayCP:dismissedOverdueBanners'
@@ -53,14 +51,6 @@ const Layout = () => {
 		}
 	}, [accountKey]);
 
-	const hasBusinessEnterpriseOrProSubscription = subscriptions?.some(
-		(subscription) =>
-			subscription.accountSubscriptionGroupERC?.includes('saas') &&
-			(subscription.name?.includes('Business Plan') ||
-				subscription.name?.includes('Enterprise Plan') ||
-				subscription.name?.includes('Pro Plan'))
-	);
-
 	const handleOverdueBannerDismiss = (businessId) => {
 		setDismissedBanners((prev) => {
 			const updated = [...prev, businessId];
@@ -74,20 +64,6 @@ const Layout = () => {
 		});
 	};
 
-	const handleBannerDismiss = () => {
-		sessionStorage.setItem('@liferayCP:showSaaSProjectBanner', 'false');
-
-		setShowBanner(false);
-	};
-
-	useEffect(() => {
-		const bannerState = !sessionStorage.getItem(
-			'@liferayCP:showSaaSProjectBanner'
-		);
-
-		setShowBanner(bannerState);
-	}, []);
-
 	if (userProjectAccess) {
 		if (
 			userProjectAccess.denyAccess ||
@@ -98,7 +74,7 @@ const Layout = () => {
 	}
 
 	const overdueBusinessEvents = businessEvents?.filter(
-		(businessEvent) => businessEvent.eventStatus.key === 'overdue'
+		(businessEvent) => businessEvent.eventStatus.key === 'Overdue'
 	);
 
 	return (
@@ -114,11 +90,11 @@ const Layout = () => {
 						?.map((businessEvent, businessEventIndex) => (
 							<InformationBanner
 								content={i18n.sub(
-									'the-target-go-Live-date-of-x-has-passed-please-close-this-business-event-or-update-event-details',
+									'the-planned-event-date-of-x-has-passed-please-close-this-business-event-or-update-event-details',
 									[
 										getDateCustomFormat(
 											FORMAT_DATE_TYPES.day2DMonthSYearN,
-											businessEvent.targetGoLiveDateTime
+											businessEvent.plannedEventDate
 										),
 										`<a href="${Liferay.currentURL}#/${accountKey}/business-events/${businessEvent.id}?openModal=goLiveEvent">`,
 										'</a>',

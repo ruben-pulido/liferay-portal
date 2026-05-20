@@ -814,7 +814,7 @@ public class CommerceCheckoutTest {
 
 		if (country == null) {
 			country = CountryLocalServiceUtil.addCountry(
-				a2, a3, true, true, RandomTestUtil.randomString(),
+				null, a2, a3, true, true, RandomTestUtil.randomString(),
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				0D, true, true, false, _serviceContext);
 		}
@@ -828,9 +828,6 @@ public class CommerceCheckoutTest {
 			RandomTestUtil.randomString(), StringPool.BLANK, addressType,
 			RandomTestUtil.randomString(), _serviceContext);
 	}
-
-	private static Company _company;
-	private static User _user;
 
 	private AccountEntry _accountEntry;
 
@@ -863,6 +860,8 @@ public class CommerceCheckoutTest {
 	@Inject
 	private CommercePriceListLocalService _commercePriceListLocalService;
 
+	private Company _company;
+
 	@Inject
 	private CPDefinitionInventoryLocalService
 		_cpDefinitionInventoryLocalService;
@@ -875,5 +874,6 @@ public class CommerceCheckoutTest {
 
 	private Group _group;
 	private ServiceContext _serviceContext;
+	private User _user;
 
 }

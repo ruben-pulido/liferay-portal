@@ -13,14 +13,10 @@ import com.liferay.commerce.qualifier.model.impl.CommerceQualifierEntryModelImpl
 import com.liferay.commerce.qualifier.service.persistence.CommerceQualifierEntryPersistence;
 import com.liferay.commerce.qualifier.service.persistence.CommerceQualifierEntryUtil;
 import com.liferay.commerce.qualifier.service.persistence.impl.constants.CommercePersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -29,10 +25,10 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 
@@ -65,7 +61,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CommerceQualifierEntryPersistence.class)
 public class CommerceQualifierEntryPersistenceImpl
-	extends BasePersistenceImpl<CommerceQualifierEntry>
+	extends BasePersistenceImpl
+		<CommerceQualifierEntry, NoSuchCommerceQualifierEntryException>
 	implements CommerceQualifierEntryPersistence {
 
 	/*
@@ -82,78 +79,14 @@ public class CommerceQualifierEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByS_S;
-	private FinderPath _finderPathWithoutPaginationFindByS_S;
-	private FinderPath _finderPathCountByS_S;
-
-	/**
-	 * Returns all the commerce qualifier entries where sourceClassNameId = &#63; and sourceClassPK = &#63;.
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param sourceClassPK the source class pk
-	 * @return the matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_S(
-		long sourceClassNameId, long sourceClassPK) {
-
-		return findByS_S(
-			sourceClassNameId, sourceClassPK, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce qualifier entries where sourceClassNameId = &#63; and sourceClassPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param sourceClassPK the source class pk
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @return the range of matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_S(
-		long sourceClassNameId, long sourceClassPK, int start, int end) {
-
-		return findByS_S(sourceClassNameId, sourceClassPK, start, end, null);
-	}
+	private CollectionPersistenceFinder<CommerceQualifierEntry>
+		_collectionPersistenceFinderByS_S;
 
 	/**
 	 * Returns an ordered range of all the commerce qualifier entries where sourceClassNameId = &#63; and sourceClassPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param sourceClassPK the source class pk
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_S(
-		long sourceClassNameId, long sourceClassPK, int start, int end,
-		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
-
-		return findByS_S(
-			sourceClassNameId, sourceClassPK, start, end, orderByComparator,
-			true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce qualifier entries where sourceClassNameId = &#63; and sourceClassPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sourceClassNameId the source class name ID
@@ -170,103 +103,9 @@ public class CommerceQualifierEntryPersistenceImpl
 		OrderByComparator<CommerceQualifierEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByS_S;
-				finderArgs = new Object[] {sourceClassNameId, sourceClassPK};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByS_S;
-			finderArgs = new Object[] {
-				sourceClassNameId, sourceClassPK, start, end, orderByComparator
-			};
-		}
-
-		List<CommerceQualifierEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceQualifierEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceQualifierEntry commerceQualifierEntry : list) {
-					if ((sourceClassNameId !=
-							commerceQualifierEntry.getSourceClassNameId()) ||
-						(sourceClassPK !=
-							commerceQualifierEntry.getSourceClassPK())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_S_S_SOURCECLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_S_SOURCECLASSPK_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceQualifierEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceClassNameId);
-
-				queryPos.add(sourceClassPK);
-
-				list = (List<CommerceQualifierEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByS_S.find(
+			finderCache, new Object[] {sourceClassNameId, sourceClassPK}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -291,19 +130,10 @@ public class CommerceQualifierEntryPersistenceImpl
 			return commerceQualifierEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("sourceClassNameId=");
-		sb.append(sourceClassNameId);
-
-		sb.append(", sourceClassPK=");
-		sb.append(sourceClassPK);
-
-		sb.append("}");
-
-		throw new NoSuchCommerceQualifierEntryException(sb.toString());
+		throw new NoSuchCommerceQualifierEntryException(
+			_collectionPersistenceFinderByS_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {sourceClassNameId, sourceClassPK}));
 	}
 
 	/**
@@ -319,14 +149,9 @@ public class CommerceQualifierEntryPersistenceImpl
 		long sourceClassNameId, long sourceClassPK,
 		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
 
-		List<CommerceQualifierEntry> list = findByS_S(
-			sourceClassNameId, sourceClassPK, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByS_S.fetchFirst(
+			finderCache, new Object[] {sourceClassNameId, sourceClassPK},
+			orderByComparator);
 	}
 
 	/**
@@ -337,13 +162,8 @@ public class CommerceQualifierEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByS_S(long sourceClassNameId, long sourceClassPK) {
-		for (CommerceQualifierEntry commerceQualifierEntry :
-				findByS_S(
-					sourceClassNameId, sourceClassPK, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(commerceQualifierEntry);
-		}
+		_collectionPersistenceFinderByS_S.remove(
+			finderCache, new Object[] {sourceClassNameId, sourceClassPK});
 	}
 
 	/**
@@ -355,126 +175,18 @@ public class CommerceQualifierEntryPersistenceImpl
 	 */
 	@Override
 	public int countByS_S(long sourceClassNameId, long sourceClassPK) {
-		FinderPath finderPath = _finderPathCountByS_S;
-
-		Object[] finderArgs = new Object[] {sourceClassNameId, sourceClassPK};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_S_S_SOURCECLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_S_SOURCECLASSPK_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceClassNameId);
-
-				queryPos.add(sourceClassPK);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByS_S.count(
+			finderCache, new Object[] {sourceClassNameId, sourceClassPK});
 	}
 
-	private static final String _FINDER_COLUMN_S_S_SOURCECLASSNAMEID_2 =
-		"commerceQualifierEntry.sourceClassNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_S_SOURCECLASSPK_2 =
-		"commerceQualifierEntry.sourceClassPK = ?";
-
-	private FinderPath _finderPathWithPaginationFindByT_T;
-	private FinderPath _finderPathWithoutPaginationFindByT_T;
-	private FinderPath _finderPathCountByT_T;
-
-	/**
-	 * Returns all the commerce qualifier entries where targetClassNameId = &#63; and targetClassPK = &#63;.
-	 *
-	 * @param targetClassNameId the target class name ID
-	 * @param targetClassPK the target class pk
-	 * @return the matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByT_T(
-		long targetClassNameId, long targetClassPK) {
-
-		return findByT_T(
-			targetClassNameId, targetClassPK, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce qualifier entries where targetClassNameId = &#63; and targetClassPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param targetClassNameId the target class name ID
-	 * @param targetClassPK the target class pk
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @return the range of matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByT_T(
-		long targetClassNameId, long targetClassPK, int start, int end) {
-
-		return findByT_T(targetClassNameId, targetClassPK, start, end, null);
-	}
+	private CollectionPersistenceFinder<CommerceQualifierEntry>
+		_collectionPersistenceFinderByT_T;
 
 	/**
 	 * Returns an ordered range of all the commerce qualifier entries where targetClassNameId = &#63; and targetClassPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param targetClassNameId the target class name ID
-	 * @param targetClassPK the target class pk
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByT_T(
-		long targetClassNameId, long targetClassPK, int start, int end,
-		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
-
-		return findByT_T(
-			targetClassNameId, targetClassPK, start, end, orderByComparator,
-			true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce qualifier entries where targetClassNameId = &#63; and targetClassPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param targetClassNameId the target class name ID
@@ -491,103 +203,9 @@ public class CommerceQualifierEntryPersistenceImpl
 		OrderByComparator<CommerceQualifierEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByT_T;
-				finderArgs = new Object[] {targetClassNameId, targetClassPK};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByT_T;
-			finderArgs = new Object[] {
-				targetClassNameId, targetClassPK, start, end, orderByComparator
-			};
-		}
-
-		List<CommerceQualifierEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceQualifierEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceQualifierEntry commerceQualifierEntry : list) {
-					if ((targetClassNameId !=
-							commerceQualifierEntry.getTargetClassNameId()) ||
-						(targetClassPK !=
-							commerceQualifierEntry.getTargetClassPK())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_T_T_TARGETCLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_T_T_TARGETCLASSPK_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceQualifierEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(targetClassNameId);
-
-				queryPos.add(targetClassPK);
-
-				list = (List<CommerceQualifierEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByT_T.find(
+			finderCache, new Object[] {targetClassNameId, targetClassPK}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -612,19 +230,10 @@ public class CommerceQualifierEntryPersistenceImpl
 			return commerceQualifierEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("targetClassNameId=");
-		sb.append(targetClassNameId);
-
-		sb.append(", targetClassPK=");
-		sb.append(targetClassPK);
-
-		sb.append("}");
-
-		throw new NoSuchCommerceQualifierEntryException(sb.toString());
+		throw new NoSuchCommerceQualifierEntryException(
+			_collectionPersistenceFinderByT_T.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {targetClassNameId, targetClassPK}));
 	}
 
 	/**
@@ -640,14 +249,9 @@ public class CommerceQualifierEntryPersistenceImpl
 		long targetClassNameId, long targetClassPK,
 		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
 
-		List<CommerceQualifierEntry> list = findByT_T(
-			targetClassNameId, targetClassPK, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByT_T.fetchFirst(
+			finderCache, new Object[] {targetClassNameId, targetClassPK},
+			orderByComparator);
 	}
 
 	/**
@@ -658,13 +262,8 @@ public class CommerceQualifierEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByT_T(long targetClassNameId, long targetClassPK) {
-		for (CommerceQualifierEntry commerceQualifierEntry :
-				findByT_T(
-					targetClassNameId, targetClassPK, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(commerceQualifierEntry);
-		}
+		_collectionPersistenceFinderByT_T.remove(
+			finderCache, new Object[] {targetClassNameId, targetClassPK});
 	}
 
 	/**
@@ -676,133 +275,18 @@ public class CommerceQualifierEntryPersistenceImpl
 	 */
 	@Override
 	public int countByT_T(long targetClassNameId, long targetClassPK) {
-		FinderPath finderPath = _finderPathCountByT_T;
-
-		Object[] finderArgs = new Object[] {targetClassNameId, targetClassPK};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_T_T_TARGETCLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_T_T_TARGETCLASSPK_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(targetClassNameId);
-
-				queryPos.add(targetClassPK);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByT_T.count(
+			finderCache, new Object[] {targetClassNameId, targetClassPK});
 	}
 
-	private static final String _FINDER_COLUMN_T_T_TARGETCLASSNAMEID_2 =
-		"commerceQualifierEntry.targetClassNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_T_T_TARGETCLASSPK_2 =
-		"commerceQualifierEntry.targetClassPK = ?";
-
-	private FinderPath _finderPathWithPaginationFindByS_S_T;
-	private FinderPath _finderPathWithoutPaginationFindByS_S_T;
-	private FinderPath _finderPathCountByS_S_T;
-
-	/**
-	 * Returns all the commerce qualifier entries where sourceClassNameId = &#63; and sourceClassPK = &#63; and targetClassNameId = &#63;.
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param sourceClassPK the source class pk
-	 * @param targetClassNameId the target class name ID
-	 * @return the matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_S_T(
-		long sourceClassNameId, long sourceClassPK, long targetClassNameId) {
-
-		return findByS_S_T(
-			sourceClassNameId, sourceClassPK, targetClassNameId,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce qualifier entries where sourceClassNameId = &#63; and sourceClassPK = &#63; and targetClassNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param sourceClassPK the source class pk
-	 * @param targetClassNameId the target class name ID
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @return the range of matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_S_T(
-		long sourceClassNameId, long sourceClassPK, long targetClassNameId,
-		int start, int end) {
-
-		return findByS_S_T(
-			sourceClassNameId, sourceClassPK, targetClassNameId, start, end,
-			null);
-	}
+	private CollectionPersistenceFinder<CommerceQualifierEntry>
+		_collectionPersistenceFinderByS_S_T;
 
 	/**
 	 * Returns an ordered range of all the commerce qualifier entries where sourceClassNameId = &#63; and sourceClassPK = &#63; and targetClassNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param sourceClassPK the source class pk
-	 * @param targetClassNameId the target class name ID
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_S_T(
-		long sourceClassNameId, long sourceClassPK, long targetClassNameId,
-		int start, int end,
-		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
-
-		return findByS_S_T(
-			sourceClassNameId, sourceClassPK, targetClassNameId, start, end,
-			orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce qualifier entries where sourceClassNameId = &#63; and sourceClassPK = &#63; and targetClassNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sourceClassNameId the source class name ID
@@ -821,112 +305,10 @@ public class CommerceQualifierEntryPersistenceImpl
 		OrderByComparator<CommerceQualifierEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByS_S_T;
-				finderArgs = new Object[] {
-					sourceClassNameId, sourceClassPK, targetClassNameId
-				};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByS_S_T;
-			finderArgs = new Object[] {
-				sourceClassNameId, sourceClassPK, targetClassNameId, start, end,
-				orderByComparator
-			};
-		}
-
-		List<CommerceQualifierEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceQualifierEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceQualifierEntry commerceQualifierEntry : list) {
-					if ((sourceClassNameId !=
-							commerceQualifierEntry.getSourceClassNameId()) ||
-						(sourceClassPK !=
-							commerceQualifierEntry.getSourceClassPK()) ||
-						(targetClassNameId !=
-							commerceQualifierEntry.getTargetClassNameId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_S_S_T_SOURCECLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_S_T_SOURCECLASSPK_2);
-
-			sb.append(_FINDER_COLUMN_S_S_T_TARGETCLASSNAMEID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceQualifierEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceClassNameId);
-
-				queryPos.add(sourceClassPK);
-
-				queryPos.add(targetClassNameId);
-
-				list = (List<CommerceQualifierEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByS_S_T.find(
+			finderCache,
+			new Object[] {sourceClassNameId, sourceClassPK, targetClassNameId},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -953,22 +335,12 @@ public class CommerceQualifierEntryPersistenceImpl
 			return commerceQualifierEntry;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("sourceClassNameId=");
-		sb.append(sourceClassNameId);
-
-		sb.append(", sourceClassPK=");
-		sb.append(sourceClassPK);
-
-		sb.append(", targetClassNameId=");
-		sb.append(targetClassNameId);
-
-		sb.append("}");
-
-		throw new NoSuchCommerceQualifierEntryException(sb.toString());
+		throw new NoSuchCommerceQualifierEntryException(
+			_collectionPersistenceFinderByS_S_T.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {
+					sourceClassNameId, sourceClassPK, targetClassNameId
+				}));
 	}
 
 	/**
@@ -985,15 +357,10 @@ public class CommerceQualifierEntryPersistenceImpl
 		long sourceClassNameId, long sourceClassPK, long targetClassNameId,
 		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
 
-		List<CommerceQualifierEntry> list = findByS_S_T(
-			sourceClassNameId, sourceClassPK, targetClassNameId, 0, 1,
+		return _collectionPersistenceFinderByS_S_T.fetchFirst(
+			finderCache,
+			new Object[] {sourceClassNameId, sourceClassPK, targetClassNameId},
 			orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
 	}
 
 	/**
@@ -1007,13 +374,9 @@ public class CommerceQualifierEntryPersistenceImpl
 	public void removeByS_S_T(
 		long sourceClassNameId, long sourceClassPK, long targetClassNameId) {
 
-		for (CommerceQualifierEntry commerceQualifierEntry :
-				findByS_S_T(
-					sourceClassNameId, sourceClassPK, targetClassNameId,
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(commerceQualifierEntry);
-		}
+		_collectionPersistenceFinderByS_S_T.remove(
+			finderCache,
+			new Object[] {sourceClassNameId, sourceClassPK, targetClassNameId});
 	}
 
 	/**
@@ -1028,142 +391,19 @@ public class CommerceQualifierEntryPersistenceImpl
 	public int countByS_S_T(
 		long sourceClassNameId, long sourceClassPK, long targetClassNameId) {
 
-		FinderPath finderPath = _finderPathCountByS_S_T;
-
-		Object[] finderArgs = new Object[] {
-			sourceClassNameId, sourceClassPK, targetClassNameId
-		};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_S_S_T_SOURCECLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_S_T_SOURCECLASSPK_2);
-
-			sb.append(_FINDER_COLUMN_S_S_T_TARGETCLASSNAMEID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceClassNameId);
-
-				queryPos.add(sourceClassPK);
-
-				queryPos.add(targetClassNameId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByS_S_T.count(
+			finderCache,
+			new Object[] {sourceClassNameId, sourceClassPK, targetClassNameId});
 	}
 
-	private static final String _FINDER_COLUMN_S_S_T_SOURCECLASSNAMEID_2 =
-		"commerceQualifierEntry.sourceClassNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_S_T_SOURCECLASSPK_2 =
-		"commerceQualifierEntry.sourceClassPK = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_S_T_TARGETCLASSNAMEID_2 =
-		"commerceQualifierEntry.targetClassNameId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByS_T_T;
-	private FinderPath _finderPathWithoutPaginationFindByS_T_T;
-	private FinderPath _finderPathCountByS_T_T;
-
-	/**
-	 * Returns all the commerce qualifier entries where sourceClassNameId = &#63; and targetClassNameId = &#63; and targetClassPK = &#63;.
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param targetClassNameId the target class name ID
-	 * @param targetClassPK the target class pk
-	 * @return the matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_T_T(
-		long sourceClassNameId, long targetClassNameId, long targetClassPK) {
-
-		return findByS_T_T(
-			sourceClassNameId, targetClassNameId, targetClassPK,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce qualifier entries where sourceClassNameId = &#63; and targetClassNameId = &#63; and targetClassPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param targetClassNameId the target class name ID
-	 * @param targetClassPK the target class pk
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @return the range of matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_T_T(
-		long sourceClassNameId, long targetClassNameId, long targetClassPK,
-		int start, int end) {
-
-		return findByS_T_T(
-			sourceClassNameId, targetClassNameId, targetClassPK, start, end,
-			null);
-	}
+	private CollectionPersistenceFinder<CommerceQualifierEntry>
+		_collectionPersistenceFinderByS_T_T;
 
 	/**
 	 * Returns an ordered range of all the commerce qualifier entries where sourceClassNameId = &#63; and targetClassNameId = &#63; and targetClassPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param targetClassNameId the target class name ID
-	 * @param targetClassPK the target class pk
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findByS_T_T(
-		long sourceClassNameId, long targetClassNameId, long targetClassPK,
-		int start, int end,
-		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
-
-		return findByS_T_T(
-			sourceClassNameId, targetClassNameId, targetClassPK, start, end,
-			orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce qualifier entries where sourceClassNameId = &#63; and targetClassNameId = &#63; and targetClassPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sourceClassNameId the source class name ID
@@ -1182,112 +422,10 @@ public class CommerceQualifierEntryPersistenceImpl
 		OrderByComparator<CommerceQualifierEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByS_T_T;
-				finderArgs = new Object[] {
-					sourceClassNameId, targetClassNameId, targetClassPK
-				};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByS_T_T;
-			finderArgs = new Object[] {
-				sourceClassNameId, targetClassNameId, targetClassPK, start, end,
-				orderByComparator
-			};
-		}
-
-		List<CommerceQualifierEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceQualifierEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceQualifierEntry commerceQualifierEntry : list) {
-					if ((sourceClassNameId !=
-							commerceQualifierEntry.getSourceClassNameId()) ||
-						(targetClassNameId !=
-							commerceQualifierEntry.getTargetClassNameId()) ||
-						(targetClassPK !=
-							commerceQualifierEntry.getTargetClassPK())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_S_T_T_SOURCECLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_T_T_TARGETCLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_T_T_TARGETCLASSPK_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CommerceQualifierEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceClassNameId);
-
-				queryPos.add(targetClassNameId);
-
-				queryPos.add(targetClassPK);
-
-				list = (List<CommerceQualifierEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByS_T_T.find(
+			finderCache,
+			new Object[] {sourceClassNameId, targetClassNameId, targetClassPK},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1314,22 +452,12 @@ public class CommerceQualifierEntryPersistenceImpl
 			return commerceQualifierEntry;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("sourceClassNameId=");
-		sb.append(sourceClassNameId);
-
-		sb.append(", targetClassNameId=");
-		sb.append(targetClassNameId);
-
-		sb.append(", targetClassPK=");
-		sb.append(targetClassPK);
-
-		sb.append("}");
-
-		throw new NoSuchCommerceQualifierEntryException(sb.toString());
+		throw new NoSuchCommerceQualifierEntryException(
+			_collectionPersistenceFinderByS_T_T.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {
+					sourceClassNameId, targetClassNameId, targetClassPK
+				}));
 	}
 
 	/**
@@ -1346,15 +474,10 @@ public class CommerceQualifierEntryPersistenceImpl
 		long sourceClassNameId, long targetClassNameId, long targetClassPK,
 		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
 
-		List<CommerceQualifierEntry> list = findByS_T_T(
-			sourceClassNameId, targetClassNameId, targetClassPK, 0, 1,
+		return _collectionPersistenceFinderByS_T_T.fetchFirst(
+			finderCache,
+			new Object[] {sourceClassNameId, targetClassNameId, targetClassPK},
 			orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
 	}
 
 	/**
@@ -1368,13 +491,9 @@ public class CommerceQualifierEntryPersistenceImpl
 	public void removeByS_T_T(
 		long sourceClassNameId, long targetClassNameId, long targetClassPK) {
 
-		for (CommerceQualifierEntry commerceQualifierEntry :
-				findByS_T_T(
-					sourceClassNameId, targetClassNameId, targetClassPK,
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(commerceQualifierEntry);
-		}
+		_collectionPersistenceFinderByS_T_T.remove(
+			finderCache,
+			new Object[] {sourceClassNameId, targetClassNameId, targetClassPK});
 	}
 
 	/**
@@ -1389,67 +508,13 @@ public class CommerceQualifierEntryPersistenceImpl
 	public int countByS_T_T(
 		long sourceClassNameId, long targetClassNameId, long targetClassPK) {
 
-		FinderPath finderPath = _finderPathCountByS_T_T;
-
-		Object[] finderArgs = new Object[] {
-			sourceClassNameId, targetClassNameId, targetClassPK
-		};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_S_T_T_SOURCECLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_T_T_TARGETCLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_T_T_TARGETCLASSPK_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceClassNameId);
-
-				queryPos.add(targetClassNameId);
-
-				queryPos.add(targetClassPK);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByS_T_T.count(
+			finderCache,
+			new Object[] {sourceClassNameId, targetClassNameId, targetClassPK});
 	}
 
-	private static final String _FINDER_COLUMN_S_T_T_SOURCECLASSNAMEID_2 =
-		"commerceQualifierEntry.sourceClassNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_T_T_TARGETCLASSNAMEID_2 =
-		"commerceQualifierEntry.targetClassNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_T_T_TARGETCLASSPK_2 =
-		"commerceQualifierEntry.targetClassPK = ?";
-
-	private FinderPath _finderPathFetchByS_S_T_T;
+	private UniquePersistenceFinder<CommerceQualifierEntry>
+		_uniquePersistenceFinderByS_S_T_T;
 
 	/**
 	 * Returns the commerce qualifier entry where sourceClassNameId = &#63; and sourceClassPK = &#63; and targetClassNameId = &#63; and targetClassPK = &#63; or throws a <code>NoSuchCommerceQualifierEntryException</code> if it could not be found.
@@ -1471,51 +536,22 @@ public class CommerceQualifierEntryPersistenceImpl
 			sourceClassNameId, sourceClassPK, targetClassNameId, targetClassPK);
 
 		if (commerceQualifierEntry == null) {
-			StringBundler sb = new StringBundler(10);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("sourceClassNameId=");
-			sb.append(sourceClassNameId);
-
-			sb.append(", sourceClassPK=");
-			sb.append(sourceClassPK);
-
-			sb.append(", targetClassNameId=");
-			sb.append(targetClassNameId);
-
-			sb.append(", targetClassPK=");
-			sb.append(targetClassPK);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByS_S_T_T.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {
+						sourceClassNameId, sourceClassPK, targetClassNameId,
+						targetClassPK
+					});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCommerceQualifierEntryException(sb.toString());
+			throw new NoSuchCommerceQualifierEntryException(message);
 		}
 
 		return commerceQualifierEntry;
-	}
-
-	/**
-	 * Returns the commerce qualifier entry where sourceClassNameId = &#63; and sourceClassPK = &#63; and targetClassNameId = &#63; and targetClassPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param sourceClassNameId the source class name ID
-	 * @param sourceClassPK the source class pk
-	 * @param targetClassNameId the target class name ID
-	 * @param targetClassPK the target class pk
-	 * @return the matching commerce qualifier entry, or <code>null</code> if a matching commerce qualifier entry could not be found
-	 */
-	@Override
-	public CommerceQualifierEntry fetchByS_S_T_T(
-		long sourceClassNameId, long sourceClassPK, long targetClassNameId,
-		long targetClassPK) {
-
-		return fetchByS_S_T_T(
-			sourceClassNameId, sourceClassPK, targetClassNameId, targetClassPK,
-			true);
 	}
 
 	/**
@@ -1533,99 +569,13 @@ public class CommerceQualifierEntryPersistenceImpl
 		long sourceClassNameId, long sourceClassPK, long targetClassNameId,
 		long targetClassPK, boolean useFinderCache) {
 
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {
+		return _uniquePersistenceFinderByS_S_T_T.fetch(
+			finderCache,
+			new Object[] {
 				sourceClassNameId, sourceClassPK, targetClassNameId,
 				targetClassPK
-			};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByS_S_T_T, finderArgs, this);
-		}
-
-		if (result instanceof CommerceQualifierEntry) {
-			CommerceQualifierEntry commerceQualifierEntry =
-				(CommerceQualifierEntry)result;
-
-			if ((sourceClassNameId !=
-					commerceQualifierEntry.getSourceClassNameId()) ||
-				(sourceClassPK != commerceQualifierEntry.getSourceClassPK()) ||
-				(targetClassNameId !=
-					commerceQualifierEntry.getTargetClassNameId()) ||
-				(targetClassPK != commerceQualifierEntry.getTargetClassPK())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_S_S_T_T_SOURCECLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_S_T_T_SOURCECLASSPK_2);
-
-			sb.append(_FINDER_COLUMN_S_S_T_T_TARGETCLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_S_S_T_T_TARGETCLASSPK_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(sourceClassNameId);
-
-				queryPos.add(sourceClassPK);
-
-				queryPos.add(targetClassNameId);
-
-				queryPos.add(targetClassPK);
-
-				List<CommerceQualifierEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByS_S_T_T, finderArgs, list);
-					}
-				}
-				else {
-					CommerceQualifierEntry commerceQualifierEntry = list.get(0);
-
-					result = commerceQualifierEntry;
-
-					cacheResult(commerceQualifierEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (CommerceQualifierEntry)result;
-		}
+			},
+			useFinderCache);
 	}
 
 	/**
@@ -1663,27 +613,13 @@ public class CommerceQualifierEntryPersistenceImpl
 		long sourceClassNameId, long sourceClassPK, long targetClassNameId,
 		long targetClassPK) {
 
-		CommerceQualifierEntry commerceQualifierEntry = fetchByS_S_T_T(
-			sourceClassNameId, sourceClassPK, targetClassNameId, targetClassPK);
-
-		if (commerceQualifierEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByS_S_T_T.count(
+			finderCache,
+			new Object[] {
+				sourceClassNameId, sourceClassPK, targetClassNameId,
+				targetClassPK
+			});
 	}
-
-	private static final String _FINDER_COLUMN_S_S_T_T_SOURCECLASSNAMEID_2 =
-		"commerceQualifierEntry.sourceClassNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_S_T_T_SOURCECLASSPK_2 =
-		"commerceQualifierEntry.sourceClassPK = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_S_T_T_TARGETCLASSNAMEID_2 =
-		"commerceQualifierEntry.targetClassNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_S_T_T_TARGETCLASSPK_2 =
-		"commerceQualifierEntry.targetClassPK = ?";
 
 	public CommerceQualifierEntryPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -1703,122 +639,6 @@ public class CommerceQualifierEntryPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(CommerceQualifierEntryTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the commerce qualifier entry in the entity cache if it is enabled.
-	 *
-	 * @param commerceQualifierEntry the commerce qualifier entry
-	 */
-	@Override
-	public void cacheResult(CommerceQualifierEntry commerceQualifierEntry) {
-		entityCache.putResult(
-			CommerceQualifierEntryImpl.class,
-			commerceQualifierEntry.getPrimaryKey(), commerceQualifierEntry);
-
-		finderCache.putResult(
-			_finderPathFetchByS_S_T_T,
-			new Object[] {
-				commerceQualifierEntry.getSourceClassNameId(),
-				commerceQualifierEntry.getSourceClassPK(),
-				commerceQualifierEntry.getTargetClassNameId(),
-				commerceQualifierEntry.getTargetClassPK()
-			},
-			commerceQualifierEntry);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the commerce qualifier entries in the entity cache if it is enabled.
-	 *
-	 * @param commerceQualifierEntries the commerce qualifier entries
-	 */
-	@Override
-	public void cacheResult(
-		List<CommerceQualifierEntry> commerceQualifierEntries) {
-
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (commerceQualifierEntries.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (CommerceQualifierEntry commerceQualifierEntry :
-				commerceQualifierEntries) {
-
-			if (entityCache.getResult(
-					CommerceQualifierEntryImpl.class,
-					commerceQualifierEntry.getPrimaryKey()) == null) {
-
-				cacheResult(commerceQualifierEntry);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all commerce qualifier entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(CommerceQualifierEntryImpl.class);
-
-		finderCache.clearCache(CommerceQualifierEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the commerce qualifier entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(CommerceQualifierEntry commerceQualifierEntry) {
-		entityCache.removeResult(
-			CommerceQualifierEntryImpl.class, commerceQualifierEntry);
-	}
-
-	@Override
-	public void clearCache(
-		List<CommerceQualifierEntry> commerceQualifierEntries) {
-
-		for (CommerceQualifierEntry commerceQualifierEntry :
-				commerceQualifierEntries) {
-
-			entityCache.removeResult(
-				CommerceQualifierEntryImpl.class, commerceQualifierEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(CommerceQualifierEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				CommerceQualifierEntryImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		CommerceQualifierEntryModelImpl commerceQualifierEntryModelImpl) {
-
-		Object[] args = new Object[] {
-			commerceQualifierEntryModelImpl.getSourceClassNameId(),
-			commerceQualifierEntryModelImpl.getSourceClassPK(),
-			commerceQualifierEntryModelImpl.getTargetClassNameId(),
-			commerceQualifierEntryModelImpl.getTargetClassPK()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByS_S_T_T, args, commerceQualifierEntryModelImpl);
 	}
 
 	/**
@@ -1852,48 +672,6 @@ public class CommerceQualifierEntryPersistenceImpl
 		throws NoSuchCommerceQualifierEntryException {
 
 		return remove((Serializable)commerceQualifierEntryId);
-	}
-
-	/**
-	 * Removes the commerce qualifier entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the commerce qualifier entry
-	 * @return the commerce qualifier entry that was removed
-	 * @throws NoSuchCommerceQualifierEntryException if a commerce qualifier entry with the primary key could not be found
-	 */
-	@Override
-	public CommerceQualifierEntry remove(Serializable primaryKey)
-		throws NoSuchCommerceQualifierEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			CommerceQualifierEntry commerceQualifierEntry =
-				(CommerceQualifierEntry)session.get(
-					CommerceQualifierEntryImpl.class, primaryKey);
-
-			if (commerceQualifierEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchCommerceQualifierEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(commerceQualifierEntry);
-		}
-		catch (NoSuchCommerceQualifierEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -2002,43 +780,13 @@ public class CommerceQualifierEntryPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			CommerceQualifierEntryImpl.class, commerceQualifierEntryModelImpl,
-			false, true);
-
-		cacheUniqueFindersCache(commerceQualifierEntryModelImpl);
+		cacheUniqueFindersResult(commerceQualifierEntry, false);
 
 		if (isNew) {
 			commerceQualifierEntry.setNew(false);
 		}
 
 		commerceQualifierEntry.resetOriginalValues();
-
-		return commerceQualifierEntry;
-	}
-
-	/**
-	 * Returns the commerce qualifier entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the commerce qualifier entry
-	 * @return the commerce qualifier entry
-	 * @throws NoSuchCommerceQualifierEntryException if a commerce qualifier entry with the primary key could not be found
-	 */
-	@Override
-	public CommerceQualifierEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchCommerceQualifierEntryException {
-
-		CommerceQualifierEntry commerceQualifierEntry = fetchByPrimaryKey(
-			primaryKey);
-
-		if (commerceQualifierEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchCommerceQualifierEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return commerceQualifierEntry;
 	}
@@ -2071,188 +819,6 @@ public class CommerceQualifierEntryPersistenceImpl
 		return fetchByPrimaryKey((Serializable)commerceQualifierEntryId);
 	}
 
-	/**
-	 * Returns all the commerce qualifier entries.
-	 *
-	 * @return the commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce qualifier entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @return the range of commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce qualifier entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findAll(
-		int start, int end,
-		OrderByComparator<CommerceQualifierEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce qualifier entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceQualifierEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce qualifier entries
-	 * @param end the upper bound of the range of commerce qualifier entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce qualifier entries
-	 */
-	@Override
-	public List<CommerceQualifierEntry> findAll(
-		int start, int end,
-		OrderByComparator<CommerceQualifierEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<CommerceQualifierEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<CommerceQualifierEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_COMMERCEQUALIFIERENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_COMMERCEQUALIFIERENTRY;
-
-				sql = sql.concat(CommerceQualifierEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<CommerceQualifierEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the commerce qualifier entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (CommerceQualifierEntry commerceQualifierEntry : findAll()) {
-			remove(commerceQualifierEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of commerce qualifier entries.
-	 *
-	 * @return the number of commerce qualifier entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_COMMERCEQUALIFIERENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
 	@Override
 	public Set<String> getBadColumnNames() {
 		return _badColumnNames;
@@ -2283,134 +849,201 @@ public class CommerceQualifierEntryPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByS_S = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByS_S",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"sourceClassNameId", "sourceClassPK"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByS_S",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"sourceClassNameId", "sourceClassPK"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByS_S",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"sourceClassNameId", "sourceClassPK"}, false),
+			_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE,
+			_SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE,
+			CommerceQualifierEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			"",
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "sourceClassNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getSourceClassNameId),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "sourceClassPK",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getSourceClassPK));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByT_T = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByT_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"targetClassNameId", "targetClassPK"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByT_T",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"targetClassNameId", "targetClassPK"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByT_T",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"targetClassNameId", "targetClassPK"}, false),
+			_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE,
+			_SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE,
+			CommerceQualifierEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			"",
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "targetClassNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getTargetClassNameId),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "targetClassPK",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getTargetClassPK));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByS_S_T = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByS_S_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {
+					"sourceClassNameId", "sourceClassPK", "targetClassNameId"
+				},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByS_S_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {
+					"sourceClassNameId", "sourceClassPK", "targetClassNameId"
+				},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByS_S_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {
+					"sourceClassNameId", "sourceClassPK", "targetClassNameId"
+				},
+				false),
+			_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE,
+			_SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE,
+			CommerceQualifierEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			"",
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "sourceClassNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getSourceClassNameId),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "sourceClassPK",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getSourceClassPK),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "targetClassNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getTargetClassNameId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_collectionPersistenceFinderByS_T_T = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByS_T_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {
+					"sourceClassNameId", "targetClassNameId", "targetClassPK"
+				},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByS_T_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {
+					"sourceClassNameId", "targetClassNameId", "targetClassPK"
+				},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByS_T_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {
+					"sourceClassNameId", "targetClassNameId", "targetClassPK"
+				},
+				false),
+			_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE,
+			_SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE,
+			CommerceQualifierEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			"",
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "sourceClassNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getSourceClassNameId),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "targetClassNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getTargetClassNameId),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "targetClassPK",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getTargetClassPK));
 
-		_finderPathWithPaginationFindByS_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByS_S",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"sourceClassNameId", "sourceClassPK"}, true);
-
-		_finderPathWithoutPaginationFindByS_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByS_S",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"sourceClassNameId", "sourceClassPK"}, true);
-
-		_finderPathCountByS_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByS_S",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"sourceClassNameId", "sourceClassPK"}, false);
-
-		_finderPathWithPaginationFindByT_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByT_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"targetClassNameId", "targetClassPK"}, true);
-
-		_finderPathWithoutPaginationFindByT_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByT_T",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"targetClassNameId", "targetClassPK"}, true);
-
-		_finderPathCountByT_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByT_T",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"targetClassNameId", "targetClassPK"}, false);
-
-		_finderPathWithPaginationFindByS_S_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByS_S_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {
-				"sourceClassNameId", "sourceClassPK", "targetClassNameId"
-			},
-			true);
-
-		_finderPathWithoutPaginationFindByS_S_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByS_S_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {
-				"sourceClassNameId", "sourceClassPK", "targetClassNameId"
-			},
-			true);
-
-		_finderPathCountByS_S_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByS_S_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {
-				"sourceClassNameId", "sourceClassPK", "targetClassNameId"
-			},
-			false);
-
-		_finderPathWithPaginationFindByS_T_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByS_T_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {
-				"sourceClassNameId", "targetClassNameId", "targetClassPK"
-			},
-			true);
-
-		_finderPathWithoutPaginationFindByS_T_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByS_T_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {
-				"sourceClassNameId", "targetClassNameId", "targetClassPK"
-			},
-			true);
-
-		_finderPathCountByS_T_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByS_T_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {
-				"sourceClassNameId", "targetClassNameId", "targetClassPK"
-			},
-			false);
-
-		_finderPathFetchByS_S_T_T = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByS_S_T_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Long.class.getName()
-			},
-			new String[] {
-				"sourceClassNameId", "sourceClassPK", "targetClassNameId",
-				"targetClassPK"
-			},
-			true);
+		_uniquePersistenceFinderByS_S_T_T = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByS_S_T_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Long.class.getName()
+				},
+				new String[] {
+					"sourceClassNameId", "sourceClassPK", "targetClassNameId",
+					"targetClassPK"
+				},
+				0, 0, false, CommerceQualifierEntry::getSourceClassNameId,
+				CommerceQualifierEntry::getSourceClassPK,
+				CommerceQualifierEntry::getTargetClassNameId,
+				CommerceQualifierEntry::getTargetClassPK),
+			_SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE, "",
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "sourceClassNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getSourceClassNameId),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "sourceClassPK",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getSourceClassPK),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "targetClassNameId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getTargetClassNameId),
+			new FinderColumn<>(
+				"commerceQualifierEntry.", "targetClassPK",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceQualifierEntry::getTargetClassPK));
 
 		CommerceQualifierEntryUtil.setPersistence(this);
 	}
@@ -2454,23 +1087,17 @@ public class CommerceQualifierEntryPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		CommerceQualifierEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_COMMERCEQUALIFIERENTRY =
 		"SELECT commerceQualifierEntry FROM CommerceQualifierEntry commerceQualifierEntry";
 
 	private static final String _SQL_SELECT_COMMERCEQUALIFIERENTRY_WHERE =
 		"SELECT commerceQualifierEntry FROM CommerceQualifierEntry commerceQualifierEntry WHERE ";
 
-	private static final String _SQL_COUNT_COMMERCEQUALIFIERENTRY =
-		"SELECT COUNT(commerceQualifierEntry) FROM CommerceQualifierEntry commerceQualifierEntry";
-
 	private static final String _SQL_COUNT_COMMERCEQUALIFIERENTRY_WHERE =
 		"SELECT COUNT(commerceQualifierEntry) FROM CommerceQualifierEntry commerceQualifierEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"commerceQualifierEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No CommerceQualifierEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No CommerceQualifierEntry exists with the key {";
@@ -2490,4 +1117,4 @@ public class CommerceQualifierEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-465397600
+// LIFERAY-SERVICE-BUILDER-HASH:1253922160

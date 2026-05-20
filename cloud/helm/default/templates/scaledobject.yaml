@@ -1,0 +1,51 @@
+{{- if and .Values.autoscaling.enabled (eq .Values.autoscaling.type "keda") }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+    labels:
+        {{- include "liferay.labels" . | nindent 8 }}
+    name: {{ include "liferay.name" . }}
+    namespace: {{ include "liferay.namespace" . }}
+spec:
+    maxReplicaCount: {{ .Values.autoscaling.keda.maxReplicaCount }}
+    minReplicaCount: {{ .Values.autoscaling.keda.minReplicaCount }}
+    pollingInterval: {{ .Values.autoscaling.keda.pollingInterval }}
+    scaleTargetRef:
+        apiVersion: apps/v1
+        kind: StatefulSet
+        name: {{ include "liferay.name" . }}
+    {{- $hasTriggerAuthentication := .Values.autoscaling.keda.triggerAuthentication.spec }}
+    {{- $merged := mergeOverwrite (deepCopy (.Values.autoscaling.keda.triggers | default dict)) (.Values.autoscaling.keda.customTriggers | default dict) }}
+    {{- $resolvedServerAddress := include "liferay.keda.prometheusServerAddress" . }}
+    {{- $triggerAuthenticationName := include "liferay.name" . }}
+    {{- $triggers := list }}
+    {{- range $k, $v := $merged }}
+        {{- $trigger := deepCopy $v }}
+        {{- $enabled := true }}
+        {{- if hasKey $trigger "enabled" }}
+            {{- $enabled = $trigger.enabled }}
+            {{- $_ := unset $trigger "enabled" }}
+        {{- end }}
+        {{- if $enabled }}
+            {{- if not (hasKey $trigger "type") }}
+                {{- $_ := set $trigger "type" "prometheus" }}
+            {{- end }}
+            {{- if eq $trigger.type "prometheus" }}
+                {{- if not (hasKey $trigger.metadata "serverAddress") }}
+                    {{- $_ := set $trigger.metadata "serverAddress" $resolvedServerAddress }}
+                {{- end }}
+            {{- end }}
+            {{- if and $hasTriggerAuthentication (not (hasKey $trigger "authenticationRef")) }}
+                {{- $_ := set $trigger "authenticationRef" (dict "name" $triggerAuthenticationName) }}
+            {{- end }}
+            {{- $triggers = append $triggers $trigger }}
+            {{- if hasKey $trigger.metadata "query" }}
+                {{- $_ := set $trigger.metadata "query" (tpl $trigger.metadata.query $) }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+    {{- with $triggers }}
+    triggers:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+{{- end }}

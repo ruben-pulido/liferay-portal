@@ -114,6 +114,8 @@ public class CompanyModelImpl
 
 	public static final String TABLE_SQL_DROP = "drop table Company";
 
+	public static final String ENTITY_ALIAS = "company";
+
 	public static final String ORDER_BY_JPQL =
 		" ORDER BY company.companyId ASC";
 
@@ -988,6 +990,15 @@ public class CompanyModelImpl
 	}
 
 	@Override
+	public void copyCacheFields(Company source) {
+		CompanyModelImpl sourceModelImpl = (CompanyModelImpl)source;
+
+		setGroupId(sourceModelImpl.getGroupId());
+
+		setVirtualHostname(sourceModelImpl.getVirtualHostname());
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -1479,4 +1490,4 @@ public class CompanyModelImpl
 	private Company _escapedModel;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:988125139
+// LIFERAY-SERVICE-BUILDER-HASH:1837531940

@@ -57,6 +57,10 @@ public class IndividualSegment {
 		return _embeddedResources;
 	}
 
+	public String getExternalReferenceCode() {
+		return _externalReferenceCode;
+	}
+
 	public String getFilterMetadata() {
 		return _filterMetadata;
 	}
@@ -122,6 +126,10 @@ public class IndividualSegment {
 		return _includeAnonymousUsers;
 	}
 
+	public boolean isSequential() {
+		return _sequential;
+	}
+
 	public void setActiveIndividualCount(long activeIndividualCount) {
 		_activeIndividualCount = activeIndividualCount;
 	}
@@ -156,6 +164,10 @@ public class IndividualSegment {
 
 	public void setEmbeddedResources(Map<String, Object> embeddedResources) {
 		_embeddedResources = embeddedResources;
+	}
+
+	public void setExternalReferenceCode(String externalReferenceCode) {
+		_externalReferenceCode = externalReferenceCode;
 	}
 
 	public void setFilterMetadata(String filterMetadata) {
@@ -211,6 +223,10 @@ public class IndividualSegment {
 		_segmentType = segmentType;
 	}
 
+	public void setSequential(boolean sequential) {
+		_sequential = sequential;
+	}
+
 	public void setState(String state) {
 		_state = state;
 	}
@@ -251,6 +267,7 @@ public class IndividualSegment {
 	private Date _dateCreated;
 	private Date _dateModified;
 	private Map<String, Object> _embeddedResources = new HashMap<>();
+	private String _externalReferenceCode;
 	private String _filterMetadata;
 	private String _filterString;
 	private String _id;
@@ -263,6 +280,7 @@ public class IndividualSegment {
 	private String _scope = Scope.PROJECT.name();
 	private SegmentActivation _segmentActivation;
 	private String _segmentType = Type.BATCH.name();
+	private boolean _sequential;
 	private String _state = State.READY.name();
 	private String _status = Status.ACTIVE.name();
 

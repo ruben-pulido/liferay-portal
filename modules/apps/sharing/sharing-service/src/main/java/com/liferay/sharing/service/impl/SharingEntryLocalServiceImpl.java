@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.TicketLocalService;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
@@ -32,8 +33,9 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.sharing.exception.DuplicateSharingEntryException;
 import com.liferay.sharing.exception.InvalidSharingEntryActionException;
 import com.liferay.sharing.exception.InvalidSharingEntryExpirationDateException;
-import com.liferay.sharing.exception.InvalidSharingEntryUserAndUserGroupException;
+import com.liferay.sharing.exception.InvalidSharingEntryTicketException;
 import com.liferay.sharing.exception.InvalidSharingEntryUserException;
+import com.liferay.sharing.exception.InvalidSharingEntryUserGroupException;
 import com.liferay.sharing.model.SharingEntry;
 import com.liferay.sharing.model.SharingEntryTable;
 import com.liferay.sharing.security.permission.SharingEntryAction;
@@ -92,21 +94,22 @@ public class SharingEntryLocalServiceImpl
 	 */
 	@Override
 	public SharingEntry addOrUpdateSharingEntry(
-			String externalReferenceCode, long userId, long toUserGroupId,
-			long toUserId, long classNameId, long classPK, long groupId,
-			boolean shareable,
+			String externalReferenceCode, long userId, long toTicketId,
+			long toUserGroupId, long toUserId, long classNameId, long classPK,
+			long groupId, boolean shareable,
 			Collection<SharingEntryAction> sharingEntryActions,
 			Date expirationDate, ServiceContext serviceContext)
 		throws PortalException {
 
-		SharingEntry sharingEntry = sharingEntryPersistence.fetchByTUG_TU_C_C(
-			toUserGroupId, toUserId, classNameId, classPK);
+		SharingEntry sharingEntry =
+			sharingEntryPersistence.fetchByTT_TUG_TU_C_C(
+				toTicketId, toUserGroupId, toUserId, classNameId, classPK);
 
 		if (sharingEntry == null) {
 			return sharingEntryLocalService.addSharingEntry(
-				externalReferenceCode, userId, toUserGroupId, toUserId,
-				classNameId, classPK, groupId, shareable, sharingEntryActions,
-				expirationDate, serviceContext);
+				externalReferenceCode, userId, toTicketId, toUserGroupId,
+				toUserId, classNameId, classPK, groupId, shareable,
+				sharingEntryActions, expirationDate, serviceContext);
 		}
 
 		return sharingEntryLocalService.updateSharingEntry(
@@ -138,22 +141,24 @@ public class SharingEntryLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public SharingEntry addSharingEntry(
-			String externalReferenceCode, long userId, long toUserGroupId,
-			long toUserId, long classNameId, long classPK, long groupId,
-			boolean shareable,
+			String externalReferenceCode, long userId, long toTicketId,
+			long toUserGroupId, long toUserId, long classNameId, long classPK,
+			long groupId, boolean shareable,
 			Collection<SharingEntryAction> sharingEntryActions,
 			Date expirationDate, ServiceContext serviceContext)
 		throws PortalException {
 
 		_validateSharingEntryActions(sharingEntryActions);
 
-		_validateUsersAndUserGroup(userId, toUserGroupId, toUserId);
+		_validateTicket(toTicketId, toUserGroupId, toUserId);
+		_validateUserGroup(toTicketId, toUserGroupId, toUserId);
+		_validateUser(userId, toTicketId, toUserGroupId, toUserId);
 
 		_validateExpirationDate(expirationDate);
 
 		SharingEntry existingSharingEntry =
-			sharingEntryPersistence.fetchByTUG_TU_C_C(
-				toUserGroupId, toUserId, classNameId, classPK);
+			sharingEntryPersistence.fetchByTT_TUG_TU_C_C(
+				toTicketId, toUserGroupId, toUserId, classNameId, classPK);
 
 		if (existingSharingEntry != null) {
 			throw new DuplicateSharingEntryException(
@@ -178,6 +183,7 @@ public class SharingEntryLocalServiceImpl
 		sharingEntry.setUserId(user.getUserId());
 		sharingEntry.setUserName(user.getFullName());
 
+		sharingEntry.setToTicketId(toTicketId);
 		sharingEntry.setToUserGroupId(toUserGroupId);
 		sharingEntry.setToUserId(toUserId);
 		sharingEntry.setClassNameId(classNameId);
@@ -286,8 +292,8 @@ public class SharingEntryLocalServiceImpl
 			long toUserId, long classNameId, long classPK)
 		throws PortalException {
 
-		SharingEntry sharingEntry = sharingEntryPersistence.findByTUG_TU_C_C(
-			0, toUserId, classNameId, classPK);
+		SharingEntry sharingEntry = sharingEntryPersistence.findByTT_TUG_TU_C_C(
+			0, 0, toUserId, classNameId, classPK);
 
 		return sharingEntryLocalService.deleteSharingEntry(sharingEntry);
 	}
@@ -337,6 +343,26 @@ public class SharingEntryLocalServiceImpl
 				externalReferenceCode, groupId));
 	}
 
+	@Override
+	public void deleteToTicketSharingEntries(long toTicketId) {
+		List<SharingEntry> sharingEntries =
+			sharingEntryPersistence.findByToTicketId(toTicketId);
+
+		for (SharingEntry sharingEntry : sharingEntries) {
+			sharingEntryLocalService.deleteSharingEntry(sharingEntry);
+		}
+	}
+
+	@Override
+	public void deleteToUserGroupSharingEntries(long toUserGroupId) {
+		List<SharingEntry> sharingEntries =
+			sharingEntryPersistence.findByToUserGroupId(toUserGroupId);
+
+		for (SharingEntry sharingEntry : sharingEntries) {
+			sharingEntryLocalService.deleteSharingEntry(sharingEntry);
+		}
+	}
+
 	/**
 	 * Deletes the sharing entries for resources shared with the user.
 	 *
@@ -367,8 +393,17 @@ public class SharingEntryLocalServiceImpl
 	public SharingEntry fetchSharingEntry(
 		long toUserId, long classNameId, long classPK) {
 
-		return sharingEntryPersistence.fetchByTUG_TU_C_C(
-			0, toUserId, classNameId, classPK);
+		return sharingEntryLocalService.fetchSharingEntry(
+			0, 0, toUserId, classNameId, classPK);
+	}
+
+	@Override
+	public SharingEntry fetchSharingEntry(
+		long toTicketId, long toUserGroupId, long toUserId, long classNameId,
+		long classPK) {
+
+		return sharingEntryPersistence.fetchByTT_TUG_TU_C_C(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
 	}
 
 	@Override
@@ -500,8 +535,28 @@ public class SharingEntryLocalServiceImpl
 			long toUserId, long classNameId, long classPK)
 		throws PortalException {
 
-		return sharingEntryPersistence.findByTUG_TU_C_C(
-			0, toUserId, classNameId, classPK);
+		return sharingEntryLocalService.getSharingEntry(
+			0, 0, toUserId, classNameId, classPK);
+	}
+
+	@Override
+	public SharingEntry getSharingEntry(
+			long toTicketId, long toUserGroupId, long toUserId,
+			long classNameId, long classPK)
+		throws PortalException {
+
+		return sharingEntryPersistence.findByTT_TUG_TU_C_C(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
+	}
+
+	@Override
+	public List<SharingEntry> getToTicketSharingEntries(long toTicketId) {
+		return sharingEntryPersistence.findByToTicketId(toTicketId);
+	}
+
+	@Override
+	public List<SharingEntry> getToUserGroupSharingEntries(long toUserGroupId) {
+		return sharingEntryPersistence.findByToUserGroupId(toUserGroupId);
 	}
 
 	/**
@@ -824,24 +879,82 @@ public class SharingEntryLocalServiceImpl
 		}
 	}
 
-	private void _validateUsersAndUserGroup(
-			long fromUserId, long toUserGroupId, long toUserId)
+	private void _validateTicket(
+			long toTicketId, long toUserGroupId, long toUserId)
 		throws PortalException {
 
-		if (toUserGroupId > 0) {
-			_userGroupLocalService.getUserGroup(toUserGroupId);
+		if (toTicketId <= 0) {
+			return;
 		}
 
-		if ((toUserGroupId > 0) && (toUserId > 0)) {
-			throw new InvalidSharingEntryUserAndUserGroupException(
+		if (toUserGroupId > 0) {
+			throw new InvalidSharingEntryTicketException(
+				"A sharing entry cannot be associated with a ticket and a " +
+					"user group at the same time");
+		}
+
+		if (toUserId > 0) {
+			throw new InvalidSharingEntryTicketException(
+				"A sharing entry cannot be associated with a ticket and a " +
+					"user at the same time");
+		}
+
+		_ticketLocalService.getTicket(toTicketId);
+	}
+
+	private void _validateUser(
+			long fromUserId, long toTicketId, long toUserGroupId, long toUserId)
+		throws InvalidSharingEntryUserException {
+
+		if ((toTicketId <= 0) && (toUserGroupId <= 0) && (toUserId <= 0)) {
+			throw new InvalidSharingEntryUserException(
+				"A sharing entry must be associated with a ticket, a user, " +
+					"or a user group");
+		}
+
+		if (toUserId <= 0) {
+			return;
+		}
+
+		if (toTicketId > 0) {
+			throw new InvalidSharingEntryUserException(
+				"A sharing entry cannot be associated with a user and a " +
+					"ticket at the same time");
+		}
+
+		if (toUserGroupId > 0) {
+			throw new InvalidSharingEntryUserException(
 				"A sharing entry cannot be associated with a user and a user " +
 					"group at the same time");
 		}
 
-		if ((toUserId > 0) && (fromUserId == toUserId)) {
+		if (fromUserId == toUserId) {
 			throw new InvalidSharingEntryUserException(
 				"From user cannot be the same as to user");
 		}
+	}
+
+	private void _validateUserGroup(
+			long toTicketId, long toUserGroupId, long toUserId)
+		throws PortalException {
+
+		if (toUserGroupId <= 0) {
+			return;
+		}
+
+		if (toTicketId > 0) {
+			throw new InvalidSharingEntryUserGroupException(
+				"A sharing entry cannot be associated with a user group and " +
+					"a ticket at the same time");
+		}
+
+		if (toUserId > 0) {
+			throw new InvalidSharingEntryUserGroupException(
+				"A sharing entry cannot be associated with a user group and " +
+					"a user at the same time");
+		}
+
+		_userGroupLocalService.getUserGroup(toUserGroupId);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -852,6 +965,9 @@ public class SharingEntryLocalServiceImpl
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private TicketLocalService _ticketLocalService;
 
 	@Reference
 	private UserGroupLocalService _userGroupLocalService;

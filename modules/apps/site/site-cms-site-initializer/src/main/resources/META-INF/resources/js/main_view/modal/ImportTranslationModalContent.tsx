@@ -7,6 +7,7 @@ import ClayModal from '@clayui/modal';
 import {
 	FileData,
 	MultipleFileUploader,
+	UploadBatchesCallback,
 	UploadMessages,
 	openToast,
 } from 'frontend-js-components-web';
@@ -16,6 +17,9 @@ import React from 'react';
 import ApiHelper from '../../common/services/ApiHelper';
 
 const VALID_EXTENSIONS = '.xliff,.xlf,.zip';
+
+const sequentialUploadBatches: UploadBatchesCallback = (files) =>
+	files.map((file) => [file]);
 
 const IMPORT_MESSAGES: UploadMessages = {
 	anotherFileButton: Liferay.Language.get('import-another-file'),
@@ -40,16 +44,16 @@ interface ImportTranslationResultData {
 
 export default function ImportTranslationModalContent({
 	actionLink,
-	itemId,
 	itemName,
 	loadData,
 	onModalClose,
+	translationsAPIURL,
 }: {
 	actionLink: string;
-	itemId: number;
 	itemName: string;
 	loadData?: () => void;
 	onModalClose: () => void;
+	translationsAPIURL: string;
 }) {
 	const getItemLink = () => {
 		return `<a href="${actionLink}" class="alert-link lead"><strong>${itemName}</strong></a>`;
@@ -63,29 +67,30 @@ export default function ImportTranslationModalContent({
 		const response =
 			await ApiHelper.postFormData<ImportTranslationResultData>(
 				formData,
-				`/o/cms/basic-web-contents/${itemId}/translations`
+				translationsAPIURL
 			);
 
-		const errors = response.data?.failureMessagesJSON.map((item) => {
-			const jsonItem = JSON.parse(item) as FailedImportMessage;
+		const failureMessagesJSON = response.data?.failureMessagesJSON ?? [];
+		const successFiles = response.data?.successMessages ?? [];
 
+		if (!failureMessagesJSON.length) {
 			return {
-				errorMessage: jsonItem.errorMessage,
-				name: jsonItem.fileName,
+				successFiles,
 			};
-		});
+		}
 
-		const responseObject: {
-			errors?: {errorMessage: string; name: string}[];
-			multipleErrors: boolean;
-			successFiles: string[];
-		} = {
-			errors,
-			multipleErrors: !!errors?.length,
-			successFiles: response.data?.successMessages || [],
+		return {
+			errors: failureMessagesJSON.map((item) => {
+				const jsonItem = JSON.parse(item) as FailedImportMessage;
+
+				return {
+					errorMessage: jsonItem.errorMessage,
+					name: jsonItem.fileName,
+				};
+			}),
+			multipleErrors: true,
+			successFiles,
 		};
-
-		return responseObject;
 	};
 
 	const onUploadComplete = ({
@@ -142,6 +147,7 @@ export default function ImportTranslationModalContent({
 				messages={IMPORT_MESSAGES}
 				onModalClose={onModalClose}
 				onUploadComplete={onUploadComplete}
+				uploadBatches={sequentialUploadBatches}
 				uploadRequest={uploadRequest}
 				validExtensions={VALID_EXTENSIONS}
 			/>

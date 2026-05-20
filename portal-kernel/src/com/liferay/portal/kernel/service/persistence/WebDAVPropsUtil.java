@@ -36,6 +36,20 @@ public class WebDAVPropsUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<WebDAVProps> webDAVPropses) {
+		getPersistence().cacheResult(webDAVPropses);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(WebDAVProps webDAVProps) {
+		getPersistence().cacheResult(webDAVProps);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -125,17 +139,6 @@ public class WebDAVPropsUtil {
 	}
 
 	/**
-	 * Returns the web dav props where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching web dav props, or <code>null</code> if a matching web dav props could not be found
-	 */
-	public static WebDAVProps fetchByC_C(long classNameId, long classPK) {
-		return getPersistence().fetchByC_C(classNameId, classPK);
-	}
-
-	/**
 	 * Returns the web dav props where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param classNameId the class name ID
@@ -172,24 +175,6 @@ public class WebDAVPropsUtil {
 	 */
 	public static int countByC_C(long classNameId, long classPK) {
 		return getPersistence().countByC_C(classNameId, classPK);
-	}
-
-	/**
-	 * Caches the web dav props in the entity cache if it is enabled.
-	 *
-	 * @param webDAVProps the web dav props
-	 */
-	public static void cacheResult(WebDAVProps webDAVProps) {
-		getPersistence().cacheResult(webDAVProps);
-	}
-
-	/**
-	 * Caches the web dav propses in the entity cache if it is enabled.
-	 *
-	 * @param webDAVPropses the web dav propses
-	 */
-	public static void cacheResult(List<WebDAVProps> webDAVPropses) {
-		getPersistence().cacheResult(webDAVPropses);
 	}
 
 	/**
@@ -243,82 +228,14 @@ public class WebDAVPropsUtil {
 	}
 
 	/**
-	 * Returns all the web dav propses.
+	 * Returns the web dav props where classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the web dav propses
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching web dav props, or <code>null</code> if a matching web dav props could not be found
 	 */
-	public static List<WebDAVProps> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the web dav propses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WebDAVPropsModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of web dav propses
-	 * @param end the upper bound of the range of web dav propses (not inclusive)
-	 * @return the range of web dav propses
-	 */
-	public static List<WebDAVProps> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the web dav propses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WebDAVPropsModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of web dav propses
-	 * @param end the upper bound of the range of web dav propses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of web dav propses
-	 */
-	public static List<WebDAVProps> findAll(
-		int start, int end, OrderByComparator<WebDAVProps> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the web dav propses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WebDAVPropsModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of web dav propses
-	 * @param end the upper bound of the range of web dav propses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of web dav propses
-	 */
-	public static List<WebDAVProps> findAll(
-		int start, int end, OrderByComparator<WebDAVProps> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the web dav propses from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of web dav propses.
-	 *
-	 * @return the number of web dav propses
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static WebDAVProps fetchByC_C(long classNameId, long classPK) {
+		return getPersistence().fetchByC_C(classNameId, classPK);
 	}
 
 	public static WebDAVPropsPersistence getPersistence() {
@@ -332,4 +249,4 @@ public class WebDAVPropsUtil {
 	private static volatile WebDAVPropsPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:254826298
+// LIFERAY-SERVICE-BUILDER-HASH:-812182512

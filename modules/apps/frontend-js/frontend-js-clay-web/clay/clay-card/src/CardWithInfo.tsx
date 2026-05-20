@@ -192,6 +192,7 @@ export function ClayCardWithInfo({
 							['aspect-ratio-item-vertical-flush']: flushVertical,
 						}
 					)}
+					draggable={false}
 					{...(typeof imgProps === 'string'
 						? {src: imgProps}
 						: imgProps)}
@@ -228,6 +229,7 @@ export function ClayCardWithInfo({
 		<ClayCard
 			{...otherProps}
 			active={selected}
+			disabled={disabled}
 			displayType={isCardType.image ? 'image' : 'file'}
 			selectable={!!onSelectChange}
 		>

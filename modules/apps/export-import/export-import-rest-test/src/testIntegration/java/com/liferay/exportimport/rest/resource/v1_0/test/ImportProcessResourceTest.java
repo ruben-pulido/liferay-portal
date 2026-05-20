@@ -8,38 +8,25 @@ package com.liferay.exportimport.rest.resource.v1_0.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.exportimport.kernel.background.task.BackgroundTaskExecutorNames;
-import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationSettingsMapFactoryUtil;
-import com.liferay.exportimport.kernel.configuration.constants.ExportImportConfigurationConstants;
-import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
-import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalServiceUtil;
-import com.liferay.exportimport.kernel.service.ExportImportLocalServiceUtil;
 import com.liferay.exportimport.rest.client.dto.v1_0.ImportProcess;
-import com.liferay.exportimport.rest.client.dto.v1_0.ValidationResponse;
 import com.liferay.portal.background.task.model.BackgroundTask;
 import com.liferay.portal.background.task.service.BackgroundTaskLocalService;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.staging.StagingGroupHelper;
 
-import java.io.File;
 import java.io.Serializable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -53,24 +40,6 @@ public class ImportProcessResourceTest
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-	}
-
-	@Override
-	@Test
-	public void testPostScopeScopeKeyValidate() throws Exception {
-		super.testPostScopeScopeKeyValidate();
-
-		_testPostScopeScopeKeyValidateInDifferentScope();
-		_testPostScopeScopeKeyValidateInSameScope();
-	}
-
-	@Override
-	@Test
-	public void testPostValidate() throws Exception {
-		super.testPostValidate();
-
-		_testPostValidateInDifferentScope();
-		_testPostValidateInSameScope();
 	}
 
 	@Override
@@ -115,7 +84,7 @@ public class ImportProcessResourceTest
 
 		BackgroundTask backgroundTask =
 			_backgroundTaskLocalService.addBackgroundTask(
-				TestPropsValues.getUserId(), groupId, importProcess.getTitle(),
+				TestPropsValues.getUserId(), groupId, importProcess.getName(),
 				BackgroundTaskExecutorNames.
 					LAYOUT_IMPORT_BACKGROUND_TASK_EXECUTOR,
 				HashMapBuilder.<String, Serializable>put(
@@ -130,29 +99,9 @@ public class ImportProcessResourceTest
 				setDateCreated(backgroundTask.getCreateDate());
 				setDateModified(backgroundTask.getModifiedDate());
 				setId(backgroundTask.getBackgroundTaskId());
-				setTitle(backgroundTask.getName());
+				setName(backgroundTask.getName());
 			}
 		};
-	}
-
-	private File _exportLayoutAsFile(long groupId) throws Exception {
-		Map<String, Serializable> parameterMap =
-			ExportImportConfigurationSettingsMapFactoryUtil.
-				buildExportLayoutSettingsMap(
-					TestPropsValues.getUser(), groupId, false, null,
-					new HashMap<String, String[]>());
-
-		ExportImportConfiguration exportImportConfiguration =
-			ExportImportConfigurationLocalServiceUtil.
-				addExportImportConfiguration(
-					TestPropsValues.getUserId(), groupId,
-					RandomTestUtil.randomString(),
-					RandomTestUtil.randomString(),
-					ExportImportConfigurationConstants.TYPE_EXPORT_LAYOUT,
-					parameterMap, new ServiceContext());
-
-		return ExportImportLocalServiceUtil.exportLayoutsAsFile(
-			exportImportConfiguration);
 	}
 
 	private long _getCompanyGroupId() throws Exception {
@@ -160,86 +109,6 @@ public class ImportProcessResourceTest
 			TestPropsValues.getCompanyId());
 
 		return group.getGroupId();
-	}
-
-	private void _testPostScopeScopeKeyValidateInDifferentScope()
-		throws Exception {
-
-		File file = _exportLayoutAsFile(_getCompanyGroupId());
-
-		try {
-			ValidationResponse validationResponse =
-				importProcessResource.postScopeScopeKeyValidate(
-					String.valueOf(testGroup.getGroupId()), null,
-					HashMapBuilder.<String, File>put(
-						"file", file
-					).build());
-
-			String[] errorMessages = validationResponse.getErrorMessages();
-
-			Assert.assertTrue(errorMessages.length > 0);
-
-			Assert.assertFalse(validationResponse.getSuccess());
-		}
-		finally {
-			FileUtil.delete(file);
-		}
-	}
-
-	private void _testPostScopeScopeKeyValidateInSameScope() throws Exception {
-		File file = _exportLayoutAsFile(testGroup.getGroupId());
-
-		try {
-			ValidationResponse validationResponse =
-				importProcessResource.postScopeScopeKeyValidate(
-					String.valueOf(testGroup.getGroupId()), null,
-					HashMapBuilder.<String, File>put(
-						"file", file
-					).build());
-
-			Assert.assertNotNull(validationResponse.getFileEntryId());
-			Assert.assertTrue(validationResponse.getSuccess());
-		}
-		finally {
-			FileUtil.delete(file);
-		}
-	}
-
-	private void _testPostValidateInDifferentScope() throws Exception {
-		File file = _exportLayoutAsFile(testGroup.getGroupId());
-
-		try {
-			ValidationResponse validationResponse =
-				importProcessResource.postValidate(
-					null,
-					HashMapBuilder.<String, File>put(
-						"file", file
-					).build());
-
-			Assert.assertFalse(validationResponse.getSuccess());
-		}
-		finally {
-			FileUtil.delete(file);
-		}
-	}
-
-	private void _testPostValidateInSameScope() throws Exception {
-		File file = _exportLayoutAsFile(_getCompanyGroupId());
-
-		try {
-			ValidationResponse validationResponse =
-				importProcessResource.postValidate(
-					null,
-					HashMapBuilder.<String, File>put(
-						"file", file
-					).build());
-
-			Assert.assertNotNull(validationResponse.getFileEntryId());
-			Assert.assertTrue(validationResponse.getSuccess());
-		}
-		finally {
-			FileUtil.delete(file);
-		}
 	}
 
 	@Inject

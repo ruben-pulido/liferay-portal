@@ -11,11 +11,18 @@ import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.FragmentRenderer;
 import com.liferay.fragment.renderer.FragmentRendererContext;
+import com.liferay.fragment.renderer.constants.FragmentRendererConstants;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
@@ -23,6 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -39,8 +47,40 @@ public class CollectionFilterFragmentRenderer implements FragmentRenderer {
 	}
 
 	@Override
+	public JSONObject getConfigurationJSONObject(
+		FragmentRendererContext fragmentRendererContext) {
+
+		try {
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				"content.Language", LocaleUtil.getMostRelevantLocale(),
+				getClass());
+
+			String json = StringUtil.read(
+				getClass(),
+				"/com/liferay/fragment/renderer/collection/filter/internal" +
+					"/dependencies/collection-filter-configuration.json");
+
+			return _fragmentEntryConfigurationParser.translateConfiguration(
+				_jsonFactory.createJSONObject(json), resourceBundle);
+		}
+		catch (JSONException jsonException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(jsonException);
+			}
+
+			return null;
+		}
+	}
+
+	@Override
 	public String getIcon() {
 		return "filter";
+	}
+
+	@Override
+	public String getKey() {
+		return FragmentRendererConstants.
+			FRAGMENT_RENDERER_CLASS_NAME_COLLECTION_FILTER;
 	}
 
 	@Override
@@ -103,6 +143,9 @@ public class CollectionFilterFragmentRenderer implements FragmentRenderer {
 
 	@Reference
 	private FragmentEntryConfigurationParser _fragmentEntryConfigurationParser;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

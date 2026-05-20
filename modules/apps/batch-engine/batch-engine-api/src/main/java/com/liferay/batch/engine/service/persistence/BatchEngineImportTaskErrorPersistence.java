@@ -33,54 +33,10 @@ public interface BatchEngineImportTaskErrorPersistence
 	 */
 
 	/**
-	 * Returns all the batch engine import task errors where batchEngineImportTaskId = &#63;.
-	 *
-	 * @param batchEngineImportTaskId the batch engine import task ID
-	 * @return the matching batch engine import task errors
-	 */
-	public java.util.List<BatchEngineImportTaskError>
-		findByBatchEngineImportTaskId(long batchEngineImportTaskId);
-
-	/**
-	 * Returns a range of all the batch engine import task errors where batchEngineImportTaskId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineImportTaskErrorModelImpl</code>.
-	 * </p>
-	 *
-	 * @param batchEngineImportTaskId the batch engine import task ID
-	 * @param start the lower bound of the range of batch engine import task errors
-	 * @param end the upper bound of the range of batch engine import task errors (not inclusive)
-	 * @return the range of matching batch engine import task errors
-	 */
-	public java.util.List<BatchEngineImportTaskError>
-		findByBatchEngineImportTaskId(
-			long batchEngineImportTaskId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the batch engine import task errors where batchEngineImportTaskId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineImportTaskErrorModelImpl</code>.
-	 * </p>
-	 *
-	 * @param batchEngineImportTaskId the batch engine import task ID
-	 * @param start the lower bound of the range of batch engine import task errors
-	 * @param end the upper bound of the range of batch engine import task errors (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching batch engine import task errors
-	 */
-	public java.util.List<BatchEngineImportTaskError>
-		findByBatchEngineImportTaskId(
-			long batchEngineImportTaskId, int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator
-				<BatchEngineImportTaskError> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the batch engine import task errors where batchEngineImportTaskId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineImportTaskErrorModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineImportTaskErrorModelImpl</code>.
 	 * </p>
 	 *
 	 * @param batchEngineImportTaskId the batch engine import task ID
@@ -139,22 +95,6 @@ public interface BatchEngineImportTaskErrorPersistence
 	public int countByBatchEngineImportTaskId(long batchEngineImportTaskId);
 
 	/**
-	 * Caches the batch engine import task error in the entity cache if it is enabled.
-	 *
-	 * @param batchEngineImportTaskError the batch engine import task error
-	 */
-	public void cacheResult(
-		BatchEngineImportTaskError batchEngineImportTaskError);
-
-	/**
-	 * Caches the batch engine import task errors in the entity cache if it is enabled.
-	 *
-	 * @param batchEngineImportTaskErrors the batch engine import task errors
-	 */
-	public void cacheResult(
-		java.util.List<BatchEngineImportTaskError> batchEngineImportTaskErrors);
-
-	/**
 	 * Creates a new batch engine import task error with the primary key. Does not add the batch engine import task error to the database.
 	 *
 	 * @param batchEngineImportTaskErrorId the primary key for the new batch engine import task error
@@ -196,73 +136,62 @@ public interface BatchEngineImportTaskErrorPersistence
 		long batchEngineImportTaskErrorId);
 
 	/**
-	 * Returns all the batch engine import task errors.
+	 * Returns all the batch engine import task errors where batchEngineImportTaskId = &#63;.
 	 *
-	 * @return the batch engine import task errors
+	 * @param batchEngineImportTaskId the batch engine import task ID
+	 * @return the matching batch engine import task errors
 	 */
-	public java.util.List<BatchEngineImportTaskError> findAll();
+	public default java.util.List<BatchEngineImportTaskError>
+		findByBatchEngineImportTaskId(long batchEngineImportTaskId) {
+
+		return findByBatchEngineImportTaskId(
+			batchEngineImportTaskId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the batch engine import task errors.
+	 * Returns a range of all the batch engine import task errors where batchEngineImportTaskId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineImportTaskErrorModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineImportTaskErrorModelImpl</code>.
 	 * </p>
 	 *
+	 * @param batchEngineImportTaskId the batch engine import task ID
 	 * @param start the lower bound of the range of batch engine import task errors
 	 * @param end the upper bound of the range of batch engine import task errors (not inclusive)
-	 * @return the range of batch engine import task errors
+	 * @return the range of matching batch engine import task errors
 	 */
-	public java.util.List<BatchEngineImportTaskError> findAll(
-		int start, int end);
+	public default java.util.List<BatchEngineImportTaskError>
+		findByBatchEngineImportTaskId(
+			long batchEngineImportTaskId, int start, int end) {
+
+		return findByBatchEngineImportTaskId(
+			batchEngineImportTaskId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the batch engine import task errors.
+	 * Returns an ordered range of all the batch engine import task errors where batchEngineImportTaskId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineImportTaskErrorModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineImportTaskErrorModelImpl</code>.
 	 * </p>
 	 *
+	 * @param batchEngineImportTaskId the batch engine import task ID
 	 * @param start the lower bound of the range of batch engine import task errors
 	 * @param end the upper bound of the range of batch engine import task errors (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of batch engine import task errors
+	 * @return the ordered range of matching batch engine import task errors
 	 */
-	public java.util.List<BatchEngineImportTaskError> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<BatchEngineImportTaskError> orderByComparator);
+	public default java.util.List<BatchEngineImportTaskError>
+		findByBatchEngineImportTaskId(
+			long batchEngineImportTaskId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<BatchEngineImportTaskError> orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the batch engine import task errors.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineImportTaskErrorModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of batch engine import task errors
-	 * @param end the upper bound of the range of batch engine import task errors (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of batch engine import task errors
-	 */
-	public java.util.List<BatchEngineImportTaskError> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<BatchEngineImportTaskError> orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the batch engine import task errors from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of batch engine import task errors.
-	 *
-	 * @return the number of batch engine import task errors
-	 */
-	public int countAll();
+		return findByBatchEngineImportTaskId(
+			batchEngineImportTaskId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1118745056
+// LIFERAY-SERVICE-BUILDER-HASH:1906163802

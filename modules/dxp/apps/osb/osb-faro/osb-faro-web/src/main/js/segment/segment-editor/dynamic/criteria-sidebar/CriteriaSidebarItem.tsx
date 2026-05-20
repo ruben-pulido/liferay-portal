@@ -28,7 +28,9 @@ const TYPE_ICON_MAP = {
 	[PropertyTypes.SessionDateTime]: 'date',
 	[PropertyTypes.SessionNumber]: 'integer',
 	[PropertyTypes.SessionText]: 'text',
+	[PropertyTypes.Vocabulary]: 'text',
 	[PropertyTypes.Interest]: 'check',
+	[PropertyTypes.Tag]: 'text',
 	[PropertyTypes.Text]: 'text'
 };
 
@@ -118,13 +120,8 @@ interface ICriteriaSidebarItemProps {
 
 export class CriteriaSidebarItem extends React.Component<ICriteriaSidebarItemProps> {
 	render() {
-		const {
-			className,
-			connectDragSource,
-			dragging,
-			label,
-			type
-		} = this.props;
+		const {className, connectDragSource, dragging, label, type} =
+			this.props;
 
 		const classes = getCN(
 			'criteria-sidebar-item-root',
@@ -142,7 +139,11 @@ export class CriteriaSidebarItem extends React.Component<ICriteriaSidebarItemPro
 					<span className='inline-item'>
 						<ClayIcon
 							className='icon-root'
-							symbol={TYPE_ICON_MAP[type] || 'text'}
+							symbol={
+								TYPE_ICON_MAP[
+									type as keyof typeof TYPE_ICON_MAP
+								] || 'text'
+							}
 						/>
 					</span>
 				</span>

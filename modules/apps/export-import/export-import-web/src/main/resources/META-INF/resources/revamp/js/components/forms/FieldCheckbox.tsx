@@ -4,10 +4,12 @@
  */
 
 import {ClayCheckbox} from '@clayui/form';
-import ClayLayout from '@clayui/layout';
 import React from 'react';
 
+import {OptionRow} from './OptionRow';
+
 export function FieldCheckbox({
+	bordered = true,
 	checked,
 	description,
 	id,
@@ -16,6 +18,7 @@ export function FieldCheckbox({
 	onChange,
 	...restProps
 }: {
+	bordered?: boolean;
 	checked: boolean;
 	description?: string;
 	id?: string;
@@ -27,57 +30,23 @@ export function FieldCheckbox({
 	const labelId = `${fieldId}-label`;
 	const descriptionId = `${fieldId}-description`;
 
-	const handleChange = () => onChange(!checked);
-
-	const stopPropagation = (event: React.SyntheticEvent) => {
-		event.stopPropagation();
-	};
-
 	return (
-		<div
-			className="border mb-2 p-3 rounded text-3"
-			onClick={handleChange}
-			style={{cursor: 'pointer'}}
-		>
-			<ClayLayout.ContentRow padded>
-				<ClayLayout.ContentCol expand={false}>
-					<div className="pt-1">
-						<ClayCheckbox
-							{...restProps}
-							aria-describedby={
-								description ? descriptionId : undefined
-							}
-							aria-labelledby={labelId}
-							checked={checked}
-							id={fieldId}
-							onChange={handleChange}
-							onClick={stopPropagation}
-						/>
-					</div>
-				</ClayLayout.ContentCol>
-
-				<ClayLayout.ContentCol expand>
-					<ClayLayout.ContentSection>
-						<label
-							className="font-weight-semi-bold mb-0 text-dark"
-							htmlFor={fieldId}
-							id={labelId}
-							onClick={stopPropagation}
-						>
-							{label}
-						</label>
-
-						{description && (
-							<div
-								className="small text-secondary"
-								id={descriptionId}
-							>
-								{description}
-							</div>
-						)}
-					</ClayLayout.ContentSection>
-				</ClayLayout.ContentCol>
-			</ClayLayout.ContentRow>
-		</div>
+		<OptionRow
+			bordered={bordered}
+			description={description}
+			descriptionId={description ? descriptionId : undefined}
+			input={
+				<ClayCheckbox
+					{...restProps}
+					aria-describedby={description ? descriptionId : undefined}
+					aria-labelledby={labelId}
+					checked={checked}
+					id={fieldId}
+					onChange={() => onChange(!checked)}
+				/>
+			}
+			label={label}
+			labelId={labelId}
+		/>
 	);
 }

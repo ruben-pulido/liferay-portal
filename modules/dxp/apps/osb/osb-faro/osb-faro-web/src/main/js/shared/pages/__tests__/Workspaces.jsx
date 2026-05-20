@@ -3,7 +3,7 @@ import client from 'shared/apollo/client';
 import mockStore from 'test/mock-store';
 import React from 'react';
 import Workspaces, {routingFn} from '../Workspaces';
-import {ApolloProvider} from '@apollo/react-components';
+import {ApolloProvider} from '@apollo/client';
 import {BrowserRouter} from 'react-router-dom';
 import {cleanup, render} from '@testing-library/react';
 import {Map} from 'immutable';
@@ -11,6 +11,7 @@ import {noop} from 'lodash';
 import {Project} from 'shared/util/records';
 import {Provider} from 'react-redux';
 import {Routes, toRoute} from 'shared/util/router';
+import {SubscriptionNames} from 'shared/util/subscriptions';
 import {useFetchProjects} from 'shared/hooks/useProjects';
 
 const corpProjectUuid = 'corpProjectUuid24';
@@ -19,7 +20,7 @@ const mockBasicProject = id =>
 	data.getImmutableMock(Project, data.mockProject, id, {
 		faroSubscription: new Map(
 			data.mockSubscription({
-				name: 'Liferay Analytics Cloud Basic'
+				name: SubscriptionNames.LiferayAnalyticsCloudBasic
 			})
 		)
 	});
@@ -29,7 +30,7 @@ const mockBasicProjectUnconfigured = id =>
 		corpProjectUuid,
 		faroSubscription: new Map(
 			data.mockSubscription({
-				name: 'Liferay Analytics Cloud Basic'
+				name: SubscriptionNames.LiferayAnalyticsCloudBasic
 			})
 		)
 	});
@@ -113,7 +114,7 @@ describe('Workspaces', () => {
 			data.getImmutableMock(Project, data.mockProject, 123, {
 				faroSubscription: new Map(
 					data.mockSubscription({
-						name: 'Liferay Analytics Cloud Business'
+						name: SubscriptionNames.LiferayAnalyticsCloudBusiness
 					})
 				)
 			})

@@ -35,52 +35,10 @@ public interface AssetAutoTaggerEntryPersistence
 	 */
 
 	/**
-	 * Returns all the asset auto tagger entries where assetEntryId = &#63;.
-	 *
-	 * @param assetEntryId the asset entry ID
-	 * @return the matching asset auto tagger entries
-	 */
-	public java.util.List<AssetAutoTaggerEntry> findByAssetEntryId(
-		long assetEntryId);
-
-	/**
-	 * Returns a range of all the asset auto tagger entries where assetEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetEntryId the asset entry ID
-	 * @param start the lower bound of the range of asset auto tagger entries
-	 * @param end the upper bound of the range of asset auto tagger entries (not inclusive)
-	 * @return the range of matching asset auto tagger entries
-	 */
-	public java.util.List<AssetAutoTaggerEntry> findByAssetEntryId(
-		long assetEntryId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the asset auto tagger entries where assetEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetEntryId the asset entry ID
-	 * @param start the lower bound of the range of asset auto tagger entries
-	 * @param end the upper bound of the range of asset auto tagger entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching asset auto tagger entries
-	 */
-	public java.util.List<AssetAutoTaggerEntry> findByAssetEntryId(
-		long assetEntryId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<AssetAutoTaggerEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the asset auto tagger entries where assetEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.auto.tagger.model.impl.AssetAutoTaggerEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetEntryId the asset entry ID
@@ -138,52 +96,10 @@ public interface AssetAutoTaggerEntryPersistence
 	public int countByAssetEntryId(long assetEntryId);
 
 	/**
-	 * Returns all the asset auto tagger entries where assetTagId = &#63;.
-	 *
-	 * @param assetTagId the asset tag ID
-	 * @return the matching asset auto tagger entries
-	 */
-	public java.util.List<AssetAutoTaggerEntry> findByAssetTagId(
-		long assetTagId);
-
-	/**
-	 * Returns a range of all the asset auto tagger entries where assetTagId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetTagId the asset tag ID
-	 * @param start the lower bound of the range of asset auto tagger entries
-	 * @param end the upper bound of the range of asset auto tagger entries (not inclusive)
-	 * @return the range of matching asset auto tagger entries
-	 */
-	public java.util.List<AssetAutoTaggerEntry> findByAssetTagId(
-		long assetTagId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the asset auto tagger entries where assetTagId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param assetTagId the asset tag ID
-	 * @param start the lower bound of the range of asset auto tagger entries
-	 * @param end the upper bound of the range of asset auto tagger entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching asset auto tagger entries
-	 */
-	public java.util.List<AssetAutoTaggerEntry> findByAssetTagId(
-		long assetTagId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<AssetAutoTaggerEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the asset auto tagger entries where assetTagId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.auto.tagger.model.impl.AssetAutoTaggerEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param assetTagId the asset tag ID
@@ -252,15 +168,6 @@ public interface AssetAutoTaggerEntryPersistence
 		throws NoSuchEntryException;
 
 	/**
-	 * Returns the asset auto tagger entry where assetEntryId = &#63; and assetTagId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param assetEntryId the asset entry ID
-	 * @param assetTagId the asset tag ID
-	 * @return the matching asset auto tagger entry, or <code>null</code> if a matching asset auto tagger entry could not be found
-	 */
-	public AssetAutoTaggerEntry fetchByA_A(long assetEntryId, long assetTagId);
-
-	/**
 	 * Returns the asset auto tagger entry where assetEntryId = &#63; and assetTagId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param assetEntryId the asset entry ID
@@ -289,21 +196,6 @@ public interface AssetAutoTaggerEntryPersistence
 	 * @return the number of matching asset auto tagger entries
 	 */
 	public int countByA_A(long assetEntryId, long assetTagId);
-
-	/**
-	 * Caches the asset auto tagger entry in the entity cache if it is enabled.
-	 *
-	 * @param assetAutoTaggerEntry the asset auto tagger entry
-	 */
-	public void cacheResult(AssetAutoTaggerEntry assetAutoTaggerEntry);
-
-	/**
-	 * Caches the asset auto tagger entries in the entity cache if it is enabled.
-	 *
-	 * @param assetAutoTaggerEntries the asset auto tagger entries
-	 */
-	public void cacheResult(
-		java.util.List<AssetAutoTaggerEntry> assetAutoTaggerEntries);
 
 	/**
 	 * Creates a new asset auto tagger entry with the primary key. Does not add the asset auto tagger entry to the database.
@@ -345,72 +237,125 @@ public interface AssetAutoTaggerEntryPersistence
 	public AssetAutoTaggerEntry fetchByPrimaryKey(long assetAutoTaggerEntryId);
 
 	/**
-	 * Returns all the asset auto tagger entries.
+	 * Returns the asset auto tagger entry where assetEntryId = &#63; and assetTagId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the asset auto tagger entries
+	 * @param assetEntryId the asset entry ID
+	 * @param assetTagId the asset tag ID
+	 * @return the matching asset auto tagger entry, or <code>null</code> if a matching asset auto tagger entry could not be found
 	 */
-	public java.util.List<AssetAutoTaggerEntry> findAll();
+	public default AssetAutoTaggerEntry fetchByA_A(
+		long assetEntryId, long assetTagId) {
+
+		return fetchByA_A(assetEntryId, assetTagId, true);
+	}
 
 	/**
-	 * Returns a range of all the asset auto tagger entries.
+	 * Returns all the asset auto tagger entries where assetEntryId = &#63;.
+	 *
+	 * @param assetEntryId the asset entry ID
+	 * @return the matching asset auto tagger entries
+	 */
+	public default java.util.List<AssetAutoTaggerEntry> findByAssetEntryId(
+		long assetEntryId) {
+
+		return findByAssetEntryId(
+			assetEntryId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the asset auto tagger entries where assetEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.auto.tagger.model.impl.AssetAutoTaggerEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param assetEntryId the asset entry ID
 	 * @param start the lower bound of the range of asset auto tagger entries
 	 * @param end the upper bound of the range of asset auto tagger entries (not inclusive)
-	 * @return the range of asset auto tagger entries
+	 * @return the range of matching asset auto tagger entries
 	 */
-	public java.util.List<AssetAutoTaggerEntry> findAll(int start, int end);
+	public default java.util.List<AssetAutoTaggerEntry> findByAssetEntryId(
+		long assetEntryId, int start, int end) {
+
+		return findByAssetEntryId(assetEntryId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the asset auto tagger entries.
+	 * Returns an ordered range of all the asset auto tagger entries where assetEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.auto.tagger.model.impl.AssetAutoTaggerEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param assetEntryId the asset entry ID
 	 * @param start the lower bound of the range of asset auto tagger entries
 	 * @param end the upper bound of the range of asset auto tagger entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of asset auto tagger entries
+	 * @return the ordered range of matching asset auto tagger entries
 	 */
-	public java.util.List<AssetAutoTaggerEntry> findAll(
-		int start, int end,
+	public default java.util.List<AssetAutoTaggerEntry> findByAssetEntryId(
+		long assetEntryId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<AssetAutoTaggerEntry>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByAssetEntryId(
+			assetEntryId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the asset auto tagger entries.
+	 * Returns all the asset auto tagger entries where assetTagId = &#63;.
+	 *
+	 * @param assetTagId the asset tag ID
+	 * @return the matching asset auto tagger entries
+	 */
+	public default java.util.List<AssetAutoTaggerEntry> findByAssetTagId(
+		long assetTagId) {
+
+		return findByAssetTagId(
+			assetTagId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the asset auto tagger entries where assetTagId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetAutoTaggerEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.auto.tagger.model.impl.AssetAutoTaggerEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param assetTagId the asset tag ID
+	 * @param start the lower bound of the range of asset auto tagger entries
+	 * @param end the upper bound of the range of asset auto tagger entries (not inclusive)
+	 * @return the range of matching asset auto tagger entries
+	 */
+	public default java.util.List<AssetAutoTaggerEntry> findByAssetTagId(
+		long assetTagId, int start, int end) {
+
+		return findByAssetTagId(assetTagId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the asset auto tagger entries where assetTagId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.asset.auto.tagger.model.impl.AssetAutoTaggerEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param assetTagId the asset tag ID
 	 * @param start the lower bound of the range of asset auto tagger entries
 	 * @param end the upper bound of the range of asset auto tagger entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of asset auto tagger entries
+	 * @return the ordered range of matching asset auto tagger entries
 	 */
-	public java.util.List<AssetAutoTaggerEntry> findAll(
-		int start, int end,
+	public default java.util.List<AssetAutoTaggerEntry> findByAssetTagId(
+		long assetTagId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<AssetAutoTaggerEntry>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
 
-	/**
-	 * Removes all the asset auto tagger entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of asset auto tagger entries.
-	 *
-	 * @return the number of asset auto tagger entries
-	 */
-	public int countAll();
+		return findByAssetTagId(
+			assetTagId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-801234522
+// LIFERAY-SERVICE-BUILDER-HASH:-1954250608

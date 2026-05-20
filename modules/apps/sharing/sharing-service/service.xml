@@ -23,6 +23,7 @@
 
 		<!-- Other fields -->
 
+		<column name="toTicketId" type="long" />
 		<column name="toUserGroupId" type="long" />
 		<column name="toUserId" type="long" />
 		<column name="classNameId" type="long" />
@@ -38,6 +39,12 @@
 		</finder>
 		<finder name="UserId" return-type="Collection">
 			<finder-column name="userId" />
+		</finder>
+		<finder name="ToTicketId" return-type="Collection">
+			<finder-column name="toTicketId" />
+		</finder>
+		<finder name="ToUserGroupId" return-type="Collection">
+			<finder-column name="toUserGroupId" />
 		</finder>
 		<finder name="ToUserId" return-type="Collection">
 			<finder-column name="toUserId" />
@@ -61,7 +68,8 @@
 			<finder-column name="classNameId" />
 			<finder-column name="classPK" />
 		</finder>
-		<finder name="TUG_TU_C_C" return-type="SharingEntry" unique="true">
+		<finder name="TT_TUG_TU_C_C" return-type="SharingEntry" unique="true">
+			<finder-column name="toTicketId" />
 			<finder-column name="toUserGroupId" />
 			<finder-column name="toUserId" />
 			<finder-column name="classNameId" />
@@ -72,7 +80,8 @@
 		<exception>DuplicateSharingEntry</exception>
 		<exception>InvalidSharingEntryAction</exception>
 		<exception>InvalidSharingEntryExpirationDate</exception>
+		<exception>InvalidSharingEntryTicket</exception>
 		<exception>InvalidSharingEntryUser</exception>
-		<exception>InvalidSharingEntryUserAndUserGroup</exception>
+		<exception>InvalidSharingEntryUserGroup</exception>
 	</exceptions>
 </service-builder>

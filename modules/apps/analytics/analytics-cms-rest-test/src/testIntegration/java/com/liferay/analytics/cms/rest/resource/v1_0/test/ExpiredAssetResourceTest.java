@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.FeatureFlags;
@@ -175,7 +176,7 @@ public class ExpiredAssetResourceTest extends BaseExpiredAssetResourceTestCase {
 			() -> StringBundler.concat(
 				_themeDisplay.getPortalURL(), _portal.getPathMain(),
 				GroupConstants.CMS_FRIENDLY_URL,
-				"/edit_content_item?&p_l_mode=read&p_p_state=",
+				"/edit_content_item?p_l_mode=read&p_p_state=",
 				LiferayWindowState.POP_UP, "&objectEntryId=",
 				objectEntry.getObjectEntryId()));
 
@@ -196,7 +197,7 @@ public class ExpiredAssetResourceTest extends BaseExpiredAssetResourceTestCase {
 		themeDisplay.setPortalURL(
 			testCompany.getPortalURL(testGroup.getGroupId()));
 		themeDisplay.setServerName("localhost");
-		themeDisplay.setServerPort(8080);
+		themeDisplay.setServerPort(PortalUtil.getPortalServerPort(false));
 		themeDisplay.setSiteGroupId(testGroup.getGroupId());
 		themeDisplay.setUser(testCompany.getGuestUser());
 

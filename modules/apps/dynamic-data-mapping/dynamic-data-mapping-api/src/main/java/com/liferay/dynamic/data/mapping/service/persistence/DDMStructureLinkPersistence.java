@@ -34,51 +34,10 @@ public interface DDMStructureLinkPersistence
 	 */
 
 	/**
-	 * Returns all the ddm structure links where structureId = &#63;.
-	 *
-	 * @param structureId the structure ID
-	 * @return the matching ddm structure links
-	 */
-	public java.util.List<DDMStructureLink> findByStructureId(long structureId);
-
-	/**
-	 * Returns a range of all the ddm structure links where structureId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param structureId the structure ID
-	 * @param start the lower bound of the range of ddm structure links
-	 * @param end the upper bound of the range of ddm structure links (not inclusive)
-	 * @return the range of matching ddm structure links
-	 */
-	public java.util.List<DDMStructureLink> findByStructureId(
-		long structureId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the ddm structure links where structureId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param structureId the structure ID
-	 * @param start the lower bound of the range of ddm structure links
-	 * @param end the upper bound of the range of ddm structure links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddm structure links
-	 */
-	public java.util.List<DDMStructureLink> findByStructureId(
-		long structureId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLink>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the ddm structure links where structureId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param structureId the structure ID
@@ -136,55 +95,10 @@ public interface DDMStructureLinkPersistence
 	public int countByStructureId(long structureId);
 
 	/**
-	 * Returns all the ddm structure links where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching ddm structure links
-	 */
-	public java.util.List<DDMStructureLink> findByC_C(
-		long classNameId, long classPK);
-
-	/**
-	 * Returns a range of all the ddm structure links where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of ddm structure links
-	 * @param end the upper bound of the range of ddm structure links (not inclusive)
-	 * @return the range of matching ddm structure links
-	 */
-	public java.util.List<DDMStructureLink> findByC_C(
-		long classNameId, long classPK, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the ddm structure links where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of ddm structure links
-	 * @param end the upper bound of the range of ddm structure links (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching ddm structure links
-	 */
-	public java.util.List<DDMStructureLink> findByC_C(
-		long classNameId, long classPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLink>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the ddm structure links where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLinkModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -260,17 +174,6 @@ public interface DDMStructureLinkPersistence
 		throws NoSuchStructureLinkException;
 
 	/**
-	 * Returns the ddm structure link where classNameId = &#63; and classPK = &#63; and structureId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param structureId the structure ID
-	 * @return the matching ddm structure link, or <code>null</code> if a matching ddm structure link could not be found
-	 */
-	public DDMStructureLink fetchByC_C_S(
-		long classNameId, long classPK, long structureId);
-
-	/**
 	 * Returns the ddm structure link where classNameId = &#63; and classPK = &#63; and structureId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param classNameId the class name ID
@@ -304,20 +207,6 @@ public interface DDMStructureLinkPersistence
 	 * @return the number of matching ddm structure links
 	 */
 	public int countByC_C_S(long classNameId, long classPK, long structureId);
-
-	/**
-	 * Caches the ddm structure link in the entity cache if it is enabled.
-	 *
-	 * @param ddmStructureLink the ddm structure link
-	 */
-	public void cacheResult(DDMStructureLink ddmStructureLink);
-
-	/**
-	 * Caches the ddm structure links in the entity cache if it is enabled.
-	 *
-	 * @param ddmStructureLinks the ddm structure links
-	 */
-	public void cacheResult(java.util.List<DDMStructureLink> ddmStructureLinks);
 
 	/**
 	 * Creates a new ddm structure link with the primary key. Does not add the ddm structure link to the database.
@@ -358,72 +247,130 @@ public interface DDMStructureLinkPersistence
 	public DDMStructureLink fetchByPrimaryKey(long structureLinkId);
 
 	/**
-	 * Returns all the ddm structure links.
+	 * Returns the ddm structure link where classNameId = &#63; and classPK = &#63; and structureId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the ddm structure links
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param structureId the structure ID
+	 * @return the matching ddm structure link, or <code>null</code> if a matching ddm structure link could not be found
 	 */
-	public java.util.List<DDMStructureLink> findAll();
+	public default DDMStructureLink fetchByC_C_S(
+		long classNameId, long classPK, long structureId) {
+
+		return fetchByC_C_S(classNameId, classPK, structureId, true);
+	}
 
 	/**
-	 * Returns a range of all the ddm structure links.
+	 * Returns all the ddm structure links where structureId = &#63;.
+	 *
+	 * @param structureId the structure ID
+	 * @return the matching ddm structure links
+	 */
+	public default java.util.List<DDMStructureLink> findByStructureId(
+		long structureId) {
+
+		return findByStructureId(
+			structureId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the ddm structure links where structureId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLinkModelImpl</code>.
 	 * </p>
 	 *
+	 * @param structureId the structure ID
 	 * @param start the lower bound of the range of ddm structure links
 	 * @param end the upper bound of the range of ddm structure links (not inclusive)
-	 * @return the range of ddm structure links
+	 * @return the range of matching ddm structure links
 	 */
-	public java.util.List<DDMStructureLink> findAll(int start, int end);
+	public default java.util.List<DDMStructureLink> findByStructureId(
+		long structureId, int start, int end) {
+
+		return findByStructureId(structureId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the ddm structure links.
+	 * Returns an ordered range of all the ddm structure links where structureId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLinkModelImpl</code>.
 	 * </p>
 	 *
+	 * @param structureId the structure ID
 	 * @param start the lower bound of the range of ddm structure links
 	 * @param end the upper bound of the range of ddm structure links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of ddm structure links
+	 * @return the ordered range of matching ddm structure links
 	 */
-	public java.util.List<DDMStructureLink> findAll(
-		int start, int end,
+	public default java.util.List<DDMStructureLink> findByStructureId(
+		long structureId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLink>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByStructureId(
+			structureId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the ddm structure links.
+	 * Returns all the ddm structure links where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching ddm structure links
+	 */
+	public default java.util.List<DDMStructureLink> findByC_C(
+		long classNameId, long classPK) {
+
+		return findByC_C(
+			classNameId, classPK,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the ddm structure links where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DDMStructureLinkModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLinkModelImpl</code>.
 	 * </p>
 	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of ddm structure links
+	 * @param end the upper bound of the range of ddm structure links (not inclusive)
+	 * @return the range of matching ddm structure links
+	 */
+	public default java.util.List<DDMStructureLink> findByC_C(
+		long classNameId, long classPK, int start, int end) {
+
+		return findByC_C(classNameId, classPK, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the ddm structure links where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.dynamic.data.mapping.model.impl.DDMStructureLinkModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
 	 * @param start the lower bound of the range of ddm structure links
 	 * @param end the upper bound of the range of ddm structure links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of ddm structure links
+	 * @return the ordered range of matching ddm structure links
 	 */
-	public java.util.List<DDMStructureLink> findAll(
-		int start, int end,
+	public default java.util.List<DDMStructureLink> findByC_C(
+		long classNameId, long classPK, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructureLink>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
 
-	/**
-	 * Removes all the ddm structure links from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of ddm structure links.
-	 *
-	 * @return the number of ddm structure links
-	 */
-	public int countAll();
+		return findByC_C(
+			classNameId, classPK, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1981137842
+// LIFERAY-SERVICE-BUILDER-HASH:-1749044325

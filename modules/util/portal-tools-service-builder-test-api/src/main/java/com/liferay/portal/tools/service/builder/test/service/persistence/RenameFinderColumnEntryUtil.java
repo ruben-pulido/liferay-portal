@@ -36,6 +36,24 @@ public class RenameFinderColumnEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<RenameFinderColumnEntry> renameFinderColumnEntries) {
+
+		getPersistence().cacheResult(renameFinderColumnEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		RenameFinderColumnEntry renameFinderColumnEntry) {
+
+		getPersistence().cacheResult(renameFinderColumnEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -131,18 +149,6 @@ public class RenameFinderColumnEntryUtil {
 	}
 
 	/**
-	 * Returns the rename finder column entry where columnToRename = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param columnToRename the column to rename
-	 * @return the matching rename finder column entry, or <code>null</code> if a matching rename finder column entry could not be found
-	 */
-	public static RenameFinderColumnEntry fetchByColumnToRename(
-		String columnToRename) {
-
-		return getPersistence().fetchByColumnToRename(columnToRename);
-	}
-
-	/**
 	 * Returns the rename finder column entry where columnToRename = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param columnToRename the column to rename
@@ -178,28 +184,6 @@ public class RenameFinderColumnEntryUtil {
 	 */
 	public static int countByColumnToRename(String columnToRename) {
 		return getPersistence().countByColumnToRename(columnToRename);
-	}
-
-	/**
-	 * Caches the rename finder column entry in the entity cache if it is enabled.
-	 *
-	 * @param renameFinderColumnEntry the rename finder column entry
-	 */
-	public static void cacheResult(
-		RenameFinderColumnEntry renameFinderColumnEntry) {
-
-		getPersistence().cacheResult(renameFinderColumnEntry);
-	}
-
-	/**
-	 * Caches the rename finder column entries in the entity cache if it is enabled.
-	 *
-	 * @param renameFinderColumnEntries the rename finder column entries
-	 */
-	public static void cacheResult(
-		List<RenameFinderColumnEntry> renameFinderColumnEntries) {
-
-		getPersistence().cacheResult(renameFinderColumnEntries);
 	}
 
 	/**
@@ -262,84 +246,15 @@ public class RenameFinderColumnEntryUtil {
 	}
 
 	/**
-	 * Returns all the rename finder column entries.
+	 * Returns the rename finder column entry where columnToRename = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the rename finder column entries
+	 * @param columnToRename the column to rename
+	 * @return the matching rename finder column entry, or <code>null</code> if a matching rename finder column entry could not be found
 	 */
-	public static List<RenameFinderColumnEntry> findAll() {
-		return getPersistence().findAll();
-	}
+	public static RenameFinderColumnEntry fetchByColumnToRename(
+		String columnToRename) {
 
-	/**
-	 * Returns a range of all the rename finder column entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RenameFinderColumnEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of rename finder column entries
-	 * @param end the upper bound of the range of rename finder column entries (not inclusive)
-	 * @return the range of rename finder column entries
-	 */
-	public static List<RenameFinderColumnEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the rename finder column entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RenameFinderColumnEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of rename finder column entries
-	 * @param end the upper bound of the range of rename finder column entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of rename finder column entries
-	 */
-	public static List<RenameFinderColumnEntry> findAll(
-		int start, int end,
-		OrderByComparator<RenameFinderColumnEntry> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the rename finder column entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RenameFinderColumnEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of rename finder column entries
-	 * @param end the upper bound of the range of rename finder column entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of rename finder column entries
-	 */
-	public static List<RenameFinderColumnEntry> findAll(
-		int start, int end,
-		OrderByComparator<RenameFinderColumnEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the rename finder column entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of rename finder column entries.
-	 *
-	 * @return the number of rename finder column entries
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().fetchByColumnToRename(columnToRename);
 	}
 
 	public static RenameFinderColumnEntryPersistence getPersistence() {
@@ -355,4 +270,4 @@ public class RenameFinderColumnEntryUtil {
 	private static volatile RenameFinderColumnEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1557345340
+// LIFERAY-SERVICE-BUILDER-HASH:-300600426

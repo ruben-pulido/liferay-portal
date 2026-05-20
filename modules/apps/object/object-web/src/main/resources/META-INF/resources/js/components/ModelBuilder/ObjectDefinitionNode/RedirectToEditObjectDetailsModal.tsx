@@ -4,7 +4,6 @@
  */
 
 import ClayButton from '@clayui/button';
-import ClayForm from '@clayui/form';
 import ClayModal, {ClayModalProvider, useModal} from '@clayui/modal';
 import React from 'react';
 
@@ -29,51 +28,39 @@ export function RedirectToEditObjectDetailsModal({
 		<>
 			<ClayModalProvider>
 				<ClayModal center observer={observer} status="info">
-					<ClayForm>
-						<ClayModal.Header
-							closeButtonAriaLabel={Liferay.Language.get('close')}
-						>
+					<ClayModal.Header
+						closeButtonAriaLabel={Liferay.Language.get('close')}
+					>
+						{Liferay.Language.get('leaving-object-model-builder')}
+					</ClayModal.Header>
+
+					<ClayModal.Body>
+						<p>
 							{Liferay.Language.get(
-								'leaving-object-model-builder'
+								'you-are-leaving-object-model-builder-and-opening-the-object-admin-page-view-in-a-new-tab'
 							)}
-						</ClayModal.Header>
+						</p>
+					</ClayModal.Body>
 
-						<ClayModal.Body>
-							<p>
-								{Liferay.Language.get(
-									'you-are-leaving-object-model-builder-and-opening-the-object-admin-page-view-in-a-new-tab'
-								)}
-							</p>
-						</ClayModal.Body>
+					<ClayModal.Footer
+						last={
+							<ClayButton.Group spaced>
+								<ClayButton
+									displayType="secondary"
+									onClick={onClose}
+								>
+									{Liferay.Language.get('cancel')}
+								</ClayButton>
 
-						<ClayModal.Footer
-							last={
-								<ClayButton.Group key={1} spaced>
-									<ClayButton
-										aria-labelledby={Liferay.Language.get(
-											'cancel'
-										)}
-										displayType="secondary"
-										onClick={onClose}
-										size="sm"
-									>
-										{Liferay.Language.get('cancel')}
-									</ClayButton>
-
-									<ClayButton
-										aria-labelledby={Liferay.Language.get(
-											'open-page-view'
-										)}
-										displayType="primary"
-										onClick={handleSubmit}
-										size="sm"
-									>
-										{Liferay.Language.get('open-page-view')}
-									</ClayButton>
-								</ClayButton.Group>
-							}
-						/>
-					</ClayForm>
+								<ClayButton
+									displayType="info"
+									onClick={handleSubmit}
+								>
+									{Liferay.Language.get('open-page-view')}
+								</ClayButton>
+							</ClayButton.Group>
+						}
+					/>
 				</ClayModal>
 			</ClayModalProvider>
 		</>

@@ -36,6 +36,20 @@ public class BackgroundTaskUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<BackgroundTask> backgroundTasks) {
+		getPersistence().cacheResult(backgroundTasks);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(BackgroundTask backgroundTask) {
+		getPersistence().cacheResult(backgroundTask);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,59 +125,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -232,59 +197,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -354,59 +270,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where completed = &#63;.
-	 *
-	 * @param completed the completed
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByCompleted(boolean completed) {
-		return getPersistence().findByCompleted(completed);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByCompleted(
-		boolean completed, int start, int end) {
-
-		return getPersistence().findByCompleted(completed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where completed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByCompleted(
-		boolean completed, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByCompleted(
-			completed, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param completed the completed
@@ -478,59 +345,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where status = &#63;.
-	 *
-	 * @param status the status
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByStatus(int status) {
-		return getPersistence().findByStatus(status);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByStatus(
-		int status, int start, int end) {
-
-		return getPersistence().findByStatus(status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByStatus(
-		int status, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByStatus(
-			status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param status the status
@@ -598,65 +416,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T(
-		long groupId, String taskExecutorClassName) {
-
-		return getPersistence().findByG_T(groupId, taskExecutorClassName);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T(
-		long groupId, String taskExecutorClassName, int start, int end) {
-
-		return getPersistence().findByG_T(
-			groupId, taskExecutorClassName, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T(
-		long groupId, String taskExecutorClassName, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_T(
-			groupId, taskExecutorClassName, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -713,69 +476,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param taskExecutorClassNames the task executor class names
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T(
-		long[] groupIds, String[] taskExecutorClassNames) {
-
-		return getPersistence().findByG_T(groupIds, taskExecutorClassNames);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T(
-		long[] groupIds, String[] taskExecutorClassNames, int start, int end) {
-
-		return getPersistence().findByG_T(
-			groupIds, taskExecutorClassNames, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T(
-		long[] groupIds, String[] taskExecutorClassNames, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_T(
-			groupIds, taskExecutorClassNames, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -831,62 +535,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_S(long groupId, int status) {
-		return getPersistence().findByG_S(groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_S(
-		long groupId, int status, int start, int end) {
-
-		return getPersistence().findByG_S(groupId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_S(
-		long groupId, int status, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_S(
-			groupId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -963,65 +615,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
-	 *
-	 * @param taskExecutorClassName the task executor class name
-	 * @param status the status
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByT_S(
-		String taskExecutorClassName, int status) {
-
-		return getPersistence().findByT_S(taskExecutorClassName, status);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param taskExecutorClassName the task executor class name
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByT_S(
-		String taskExecutorClassName, int status, int start, int end) {
-
-		return getPersistence().findByT_S(
-			taskExecutorClassName, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param taskExecutorClassName the task executor class name
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByT_S(
-		String taskExecutorClassName, int status, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByT_S(
-			taskExecutorClassName, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param taskExecutorClassName the task executor class name
@@ -1078,69 +675,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param status the status
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByT_S(
-		String[] taskExecutorClassNames, int status) {
-
-		return getPersistence().findByT_S(taskExecutorClassNames, status);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByT_S(
-		String[] taskExecutorClassNames, int status, int start, int end) {
-
-		return getPersistence().findByT_S(
-			taskExecutorClassNames, status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByT_S(
-		String[] taskExecutorClassNames, int status, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByT_S(
-			taskExecutorClassNames, status, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where taskExecutorClassName = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param taskExecutorClassNames the task executor class names
@@ -1194,71 +732,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T(
-		long groupId, String name, String taskExecutorClassName) {
-
-		return getPersistence().findByG_N_T(
-			groupId, name, taskExecutorClassName);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T(
-		long groupId, String name, String taskExecutorClassName, int start,
-		int end) {
-
-		return getPersistence().findByG_N_T(
-			groupId, name, taskExecutorClassName, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T(
-		long groupId, String name, String taskExecutorClassName, int start,
-		int end, OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_N_T(
-			groupId, name, taskExecutorClassName, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1318,76 +795,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param name the name
-	 * @param taskExecutorClassNames the task executor class names
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T(
-		long[] groupIds, String name, String[] taskExecutorClassNames) {
-
-		return getPersistence().findByG_N_T(
-			groupIds, name, taskExecutorClassNames);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param name the name
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T(
-		long[] groupIds, String name, String[] taskExecutorClassNames,
-		int start, int end) {
-
-		return getPersistence().findByG_N_T(
-			groupIds, name, taskExecutorClassNames, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param name the name
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T(
-		long[] groupIds, String name, String[] taskExecutorClassNames,
-		int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_N_T(
-			groupIds, name, taskExecutorClassNames, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -1453,72 +864,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_C(
-		long groupId, String taskExecutorClassName, boolean completed) {
-
-		return getPersistence().findByG_T_C(
-			groupId, taskExecutorClassName, completed);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_C(
-		long groupId, String taskExecutorClassName, boolean completed,
-		int start, int end) {
-
-		return getPersistence().findByG_T_C(
-			groupId, taskExecutorClassName, completed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_C(
-		long groupId, String taskExecutorClassName, boolean completed,
-		int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_T_C(
-			groupId, taskExecutorClassName, completed, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1578,76 +927,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param completed the completed
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_C(
-		long[] groupIds, String[] taskExecutorClassNames, boolean completed) {
-
-		return getPersistence().findByG_T_C(
-			groupIds, taskExecutorClassNames, completed);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_C(
-		long[] groupIds, String[] taskExecutorClassNames, boolean completed,
-		int start, int end) {
-
-		return getPersistence().findByG_T_C(
-			groupIds, taskExecutorClassNames, completed, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_C(
-		long[] groupIds, String[] taskExecutorClassNames, boolean completed,
-		int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_T_C(
-			groupIds, taskExecutorClassNames, completed, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -1714,71 +997,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @param status the status
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_S(
-		long groupId, String taskExecutorClassName, int status) {
-
-		return getPersistence().findByG_T_S(
-			groupId, taskExecutorClassName, status);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_S(
-		long groupId, String taskExecutorClassName, int status, int start,
-		int end) {
-
-		return getPersistence().findByG_T_S(
-			groupId, taskExecutorClassName, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassName the task executor class name
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_S(
-		long groupId, String taskExecutorClassName, int status, int start,
-		int end, OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_T_S(
-			groupId, taskExecutorClassName, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1838,75 +1060,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param status the status
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_S(
-		long groupId, String[] taskExecutorClassNames, int status) {
-
-		return getPersistence().findByG_T_S(
-			groupId, taskExecutorClassNames, status);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_S(
-		long groupId, String[] taskExecutorClassNames, int status, int start,
-		int end) {
-
-		return getPersistence().findByG_T_S(
-			groupId, taskExecutorClassNames, status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param taskExecutorClassNames the task executor class names
-	 * @param status the status
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_T_S(
-		long groupId, String[] taskExecutorClassNames, int status, int start,
-		int end, OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_T_S(
-			groupId, taskExecutorClassNames, status, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1972,76 +1129,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T_C(
-		long groupId, String name, String taskExecutorClassName,
-		boolean completed) {
-
-		return getPersistence().findByG_N_T_C(
-			groupId, name, taskExecutorClassName, completed);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T_C(
-		long groupId, String name, String taskExecutorClassName,
-		boolean completed, int start, int end) {
-
-		return getPersistence().findByG_N_T_C(
-			groupId, name, taskExecutorClassName, completed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T_C(
-		long groupId, String name, String taskExecutorClassName,
-		boolean completed, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_N_T_C(
-			groupId, name, taskExecutorClassName, completed, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2107,80 +1198,10 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @return the matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T_C(
-		long[] groupIds, String name, String taskExecutorClassName,
-		boolean completed) {
-
-		return getPersistence().findByG_N_T_C(
-			groupIds, name, taskExecutorClassName, completed);
-	}
-
-	/**
-	 * Returns a range of all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T_C(
-		long[] groupIds, String name, String taskExecutorClassName,
-		boolean completed, int start, int end) {
-
-		return getPersistence().findByG_N_T_C(
-			groupIds, name, taskExecutorClassName, completed, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupIds the group IDs
-	 * @param name the name
-	 * @param taskExecutorClassName the task executor class name
-	 * @param completed the completed
-	 * @param start the lower bound of the range of background tasks
-	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching background tasks
-	 */
-	public static List<BackgroundTask> findByG_N_T_C(
-		long[] groupIds, String name, String taskExecutorClassName,
-		boolean completed, int start, int end,
-		OrderByComparator<BackgroundTask> orderByComparator) {
-
-		return getPersistence().findByG_N_T_C(
-			groupIds, name, taskExecutorClassName, completed, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupIds the group IDs
@@ -2255,24 +1276,6 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Caches the background task in the entity cache if it is enabled.
-	 *
-	 * @param backgroundTask the background task
-	 */
-	public static void cacheResult(BackgroundTask backgroundTask) {
-		getPersistence().cacheResult(backgroundTask);
-	}
-
-	/**
-	 * Caches the background tasks in the entity cache if it is enabled.
-	 *
-	 * @param backgroundTasks the background tasks
-	 */
-	public static void cacheResult(List<BackgroundTask> backgroundTasks) {
-		getPersistence().cacheResult(backgroundTasks);
-	}
-
-	/**
 	 * Creates a new background task with the primary key. Does not add the background task to the database.
 	 *
 	 * @param backgroundTaskId the primary key for the new background task
@@ -2325,83 +1328,972 @@ public class BackgroundTaskUtil {
 	}
 
 	/**
-	 * Returns all the background tasks.
+	 * Returns all the background tasks where groupId = &#63;.
 	 *
-	 * @return the background tasks
+	 * @param groupId the group ID
+	 * @return the matching background tasks
 	 */
-	public static List<BackgroundTask> findAll() {
-		return getPersistence().findAll();
+	public static List<BackgroundTask> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
 	}
 
 	/**
-	 * Returns a range of all the background tasks.
+	 * Returns a range of all the background tasks where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of background tasks
 	 * @param end the upper bound of the range of background tasks (not inclusive)
-	 * @return the range of background tasks
+	 * @return the range of matching background tasks
 	 */
-	public static List<BackgroundTask> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<BackgroundTask> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the background tasks.
+	 * Returns an ordered range of all the background tasks where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of background tasks
 	 * @param end the upper bound of the range of background tasks (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of background tasks
+	 * @return the ordered range of matching background tasks
 	 */
-	public static List<BackgroundTask> findAll(
+	public static List<BackgroundTask> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where completed = &#63;.
+	 *
+	 * @param completed the completed
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByCompleted(boolean completed) {
+		return getPersistence().findByCompleted(completed);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByCompleted(
+		boolean completed, int start, int end) {
+
+		return getPersistence().findByCompleted(completed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByCompleted(
+		boolean completed, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByCompleted(
+			completed, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where status = &#63;.
+	 *
+	 * @param status the status
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByStatus(int status) {
+		return getPersistence().findByStatus(status);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByStatus(
+		int status, int start, int end) {
+
+		return getPersistence().findByStatus(status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByStatus(
+		int status, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByStatus(
+			status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T(
+		long groupId, String taskExecutorClassName) {
+
+		return getPersistence().findByG_T(groupId, taskExecutorClassName);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T(
+		long groupId, String taskExecutorClassName, int start, int end) {
+
+		return getPersistence().findByG_T(
+			groupId, taskExecutorClassName, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T(
+		long groupId, String taskExecutorClassName, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_T(
+			groupId, taskExecutorClassName, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param taskExecutorClassNames the task executor class names
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T(
+		long[] groupIds, String[] taskExecutorClassNames) {
+
+		return getPersistence().findByG_T(groupIds, taskExecutorClassNames);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T(
+		long[] groupIds, String[] taskExecutorClassNames, int start, int end) {
+
+		return getPersistence().findByG_T(
+			groupIds, taskExecutorClassNames, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T(
+		long[] groupIds, String[] taskExecutorClassNames, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_T(
+			groupIds, taskExecutorClassNames, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_S(long groupId, int status) {
+		return getPersistence().findByG_S(groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_S(
+		long groupId, int status, int start, int end) {
+
+		return getPersistence().findByG_S(groupId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_S(
+		long groupId, int status, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_S(
+			groupId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
+	 *
+	 * @param taskExecutorClassName the task executor class name
+	 * @param status the status
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByT_S(
+		String taskExecutorClassName, int status) {
+
+		return getPersistence().findByT_S(taskExecutorClassName, status);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param taskExecutorClassName the task executor class name
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByT_S(
+		String taskExecutorClassName, int status, int start, int end) {
+
+		return getPersistence().findByT_S(
+			taskExecutorClassName, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param taskExecutorClassName the task executor class name
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByT_S(
+		String taskExecutorClassName, int status, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByT_S(
+			taskExecutorClassName, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
+	 *
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param status the status
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByT_S(
+		String[] taskExecutorClassNames, int status) {
+
+		return getPersistence().findByT_S(taskExecutorClassNames, status);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByT_S(
+		String[] taskExecutorClassNames, int status, int start, int end) {
+
+		return getPersistence().findByT_S(
+			taskExecutorClassNames, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByT_S(
+		String[] taskExecutorClassNames, int status, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByT_S(
+			taskExecutorClassNames, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T(
+		long groupId, String name, String taskExecutorClassName) {
+
+		return getPersistence().findByG_N_T(
+			groupId, name, taskExecutorClassName);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T(
+		long groupId, String name, String taskExecutorClassName, int start,
+		int end) {
+
+		return getPersistence().findByG_N_T(
+			groupId, name, taskExecutorClassName, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T(
+		long groupId, String name, String taskExecutorClassName, int start,
+		int end, OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_N_T(
+			groupId, name, taskExecutorClassName, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = any &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param name the name
+	 * @param taskExecutorClassNames the task executor class names
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T(
+		long[] groupIds, String name, String[] taskExecutorClassNames) {
+
+		return getPersistence().findByG_N_T(
+			groupIds, name, taskExecutorClassNames);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param name the name
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T(
+		long[] groupIds, String name, String[] taskExecutorClassNames,
+		int start, int end) {
+
+		return getPersistence().findByG_N_T(
+			groupIds, name, taskExecutorClassNames, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param name the name
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T(
+		long[] groupIds, String name, String[] taskExecutorClassNames,
 		int start, int end,
 		OrderByComparator<BackgroundTask> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByG_N_T(
+			groupIds, name, taskExecutorClassNames, start, end,
+			orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the background tasks.
+	 * Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_C(
+		long groupId, String taskExecutorClassName, boolean completed) {
+
+		return getPersistence().findByG_T_C(
+			groupId, taskExecutorClassName, completed);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BackgroundTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_C(
+		long groupId, String taskExecutorClassName, boolean completed,
+		int start, int end) {
+
+		return getPersistence().findByG_T_C(
+			groupId, taskExecutorClassName, completed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
 	 * @param start the lower bound of the range of background tasks
 	 * @param end the upper bound of the range of background tasks (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of background tasks
+	 * @return the ordered range of matching background tasks
 	 */
-	public static List<BackgroundTask> findAll(
-		int start, int end, OrderByComparator<BackgroundTask> orderByComparator,
-		boolean useFinderCache) {
+	public static List<BackgroundTask> findByG_T_C(
+		long groupId, String taskExecutorClassName, boolean completed,
+		int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByG_T_C(
+			groupId, taskExecutorClassName, completed, start, end,
+			orderByComparator);
 	}
 
 	/**
-	 * Removes all the background tasks from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of background tasks.
+	 * Returns all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
 	 *
-	 * @return the number of background tasks
+	 * @param groupIds the group IDs
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param completed the completed
+	 * @return the matching background tasks
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<BackgroundTask> findByG_T_C(
+		long[] groupIds, String[] taskExecutorClassNames, boolean completed) {
+
+		return getPersistence().findByG_T_C(
+			groupIds, taskExecutorClassNames, completed);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_C(
+		long[] groupIds, String[] taskExecutorClassNames, boolean completed,
+		int start, int end) {
+
+		return getPersistence().findByG_T_C(
+			groupIds, taskExecutorClassNames, completed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = any &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_C(
+		long[] groupIds, String[] taskExecutorClassNames, boolean completed,
+		int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_T_C(
+			groupIds, taskExecutorClassNames, completed, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @param status the status
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_S(
+		long groupId, String taskExecutorClassName, int status) {
+
+		return getPersistence().findByG_T_S(
+			groupId, taskExecutorClassName, status);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_S(
+		long groupId, String taskExecutorClassName, int status, int start,
+		int end) {
+
+		return getPersistence().findByG_T_S(
+			groupId, taskExecutorClassName, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassName the task executor class name
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_S(
+		long groupId, String taskExecutorClassName, int status, int start,
+		int end, OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_T_S(
+			groupId, taskExecutorClassName, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param status the status
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_S(
+		long groupId, String[] taskExecutorClassNames, int status) {
+
+		return getPersistence().findByG_T_S(
+			groupId, taskExecutorClassNames, status);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_S(
+		long groupId, String[] taskExecutorClassNames, int status, int start,
+		int end) {
+
+		return getPersistence().findByG_T_S(
+			groupId, taskExecutorClassNames, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param taskExecutorClassNames the task executor class names
+	 * @param status the status
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_T_S(
+		long groupId, String[] taskExecutorClassNames, int status, int start,
+		int end, OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_T_S(
+			groupId, taskExecutorClassNames, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T_C(
+		long groupId, String name, String taskExecutorClassName,
+		boolean completed) {
+
+		return getPersistence().findByG_N_T_C(
+			groupId, name, taskExecutorClassName, completed);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T_C(
+		long groupId, String name, String taskExecutorClassName,
+		boolean completed, int start, int end) {
+
+		return getPersistence().findByG_N_T_C(
+			groupId, name, taskExecutorClassName, completed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T_C(
+		long groupId, String name, String taskExecutorClassName,
+		boolean completed, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_N_T_C(
+			groupId, name, taskExecutorClassName, completed, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
+	 *
+	 * @param groupIds the group IDs
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
+	 * @return the matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T_C(
+		long[] groupIds, String name, String taskExecutorClassName,
+		boolean completed) {
+
+		return getPersistence().findByG_N_T_C(
+			groupIds, name, taskExecutorClassName, completed);
+	}
+
+	/**
+	 * Returns a range of all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @return the range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T_C(
+		long[] groupIds, String name, String taskExecutorClassName,
+		boolean completed, int start, int end) {
+
+		return getPersistence().findByG_N_T_C(
+			groupIds, name, taskExecutorClassName, completed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the background tasks where groupId = any &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.background.task.model.impl.BackgroundTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupIds the group IDs
+	 * @param name the name
+	 * @param taskExecutorClassName the task executor class name
+	 * @param completed the completed
+	 * @param start the lower bound of the range of background tasks
+	 * @param end the upper bound of the range of background tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching background tasks
+	 */
+	public static List<BackgroundTask> findByG_N_T_C(
+		long[] groupIds, String name, String taskExecutorClassName,
+		boolean completed, int start, int end,
+		OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return getPersistence().findByG_N_T_C(
+			groupIds, name, taskExecutorClassName, completed, start, end,
+			orderByComparator);
 	}
 
 	public static BackgroundTaskPersistence getPersistence() {
@@ -2415,4 +2307,4 @@ public class BackgroundTaskUtil {
 	private static volatile BackgroundTaskPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-130896511
+// LIFERAY-SERVICE-BUILDER-HASH:-1771495336

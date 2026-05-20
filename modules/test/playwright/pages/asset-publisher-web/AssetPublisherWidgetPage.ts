@@ -16,6 +16,7 @@ export class AssetPublisherWidgetPage {
 	readonly collectionInput: Locator;
 	readonly collectionSelectorIframe: FrameLocator;
 	readonly configurationIframe: FrameLocator;
+	readonly selectCollectionPanel: Locator;
 
 	constructor(page: Page) {
 		this.apiHelpers = new ApiHelpers(page);
@@ -25,10 +26,12 @@ export class AssetPublisherWidgetPage {
 		this.configurationIframe = this.page.frameLocator(
 			'iframe[title*="Configuration"]'
 		);
-		this.collectionInput = this.configurationIframe.getByLabel(
-			'Collection',
-			{exact: true}
+		this.selectCollectionPanel = this.configurationIframe.locator(
+			'a[data-toggle="liferay-collapse"][aria-controls$="selectCollectionContent"]'
 		);
+		this.collectionInput = this.configurationIframe.getByRole('textbox', {
+			name: 'Collection',
+		});
 		this.collectionSelectorIframe = this.configurationIframe.frameLocator(
 			'iframe[title="Select Collection"]'
 		);
@@ -50,6 +53,13 @@ export class AssetPublisherWidgetPage {
 	}
 
 	async selectCollection(assetListEntryName: string) {
+		if (
+			(await this.selectCollectionPanel.getAttribute('aria-expanded')) ===
+			'false'
+		) {
+			await this.selectCollectionPanel.click();
+		}
+
 		await this.collectionInput.click();
 		await this.collectionSelectorIframe
 			.getByRole('button', {name: `${assetListEntryName}`})

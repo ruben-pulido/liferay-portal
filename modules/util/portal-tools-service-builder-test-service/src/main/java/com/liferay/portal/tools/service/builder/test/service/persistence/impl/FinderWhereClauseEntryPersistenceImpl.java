@@ -5,21 +5,14 @@
 
 package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.tools.service.builder.test.exception.NoSuchFinderWhereClauseEntryException;
@@ -36,8 +29,6 @@ import java.lang.reflect.InvocationHandler;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * The persistence implementation for the finder where clause entry service.
@@ -50,7 +41,8 @@ import java.util.Set;
  * @generated
  */
 public class FinderWhereClauseEntryPersistenceImpl
-	extends BasePersistenceImpl<FinderWhereClauseEntry>
+	extends BasePersistenceImpl
+		<FinderWhereClauseEntry, NoSuchFinderWhereClauseEntryException>
 	implements FinderWhereClauseEntryPersistence {
 
 	/*
@@ -67,70 +59,14 @@ public class FinderWhereClauseEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByName_Nickname;
-	private FinderPath _finderPathWithoutPaginationFindByName_Nickname;
-	private FinderPath _finderPathCountByName_Nickname;
-
-	/**
-	 * Returns all the finder where clause entries where name = &#63;.
-	 *
-	 * @param name the name
-	 * @return the matching finder where clause entries
-	 */
-	@Override
-	public List<FinderWhereClauseEntry> findByName_Nickname(String name) {
-		return findByName_Nickname(
-			name, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the finder where clause entries where name = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param name the name
-	 * @param start the lower bound of the range of finder where clause entries
-	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @return the range of matching finder where clause entries
-	 */
-	@Override
-	public List<FinderWhereClauseEntry> findByName_Nickname(
-		String name, int start, int end) {
-
-		return findByName_Nickname(name, start, end, null);
-	}
+	private CollectionPersistenceFinder<FinderWhereClauseEntry>
+		_collectionPersistenceFinderByName_Nickname;
 
 	/**
 	 * Returns an ordered range of all the finder where clause entries where name = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param name the name
-	 * @param start the lower bound of the range of finder where clause entries
-	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching finder where clause entries
-	 */
-	@Override
-	public List<FinderWhereClauseEntry> findByName_Nickname(
-		String name, int start, int end,
-		OrderByComparator<FinderWhereClauseEntry> orderByComparator) {
-
-		return findByName_Nickname(name, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the finder where clause entries where name = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param name the name
@@ -146,106 +82,9 @@ public class FinderWhereClauseEntryPersistenceImpl
 		OrderByComparator<FinderWhereClauseEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		name = Objects.toString(name, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByName_Nickname;
-				finderArgs = new Object[] {name};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByName_Nickname;
-			finderArgs = new Object[] {name, start, end, orderByComparator};
-		}
-
-		List<FinderWhereClauseEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<FinderWhereClauseEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (FinderWhereClauseEntry finderWhereClauseEntry : list) {
-					if (!name.equals(finderWhereClauseEntry.getName())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_FINDERWHERECLAUSEENTRY_WHERE);
-
-			boolean bindName = false;
-
-			if (name.isEmpty()) {
-				sb.append(_FINDER_COLUMN_NAME_NICKNAME_NAME_3);
-			}
-			else {
-				bindName = true;
-
-				sb.append(_FINDER_COLUMN_NAME_NICKNAME_NAME_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(FinderWhereClauseEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindName) {
-					queryPos.add(name);
-				}
-
-				list = (List<FinderWhereClauseEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByName_Nickname.find(
+			finderCache, new Object[] {name}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -269,16 +108,9 @@ public class FinderWhereClauseEntryPersistenceImpl
 			return finderWhereClauseEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("name=");
-		sb.append(name);
-
-		sb.append("}");
-
-		throw new NoSuchFinderWhereClauseEntryException(sb.toString());
+		throw new NoSuchFinderWhereClauseEntryException(
+			_collectionPersistenceFinderByName_Nickname.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name}));
 	}
 
 	/**
@@ -293,14 +125,8 @@ public class FinderWhereClauseEntryPersistenceImpl
 		String name,
 		OrderByComparator<FinderWhereClauseEntry> orderByComparator) {
 
-		List<FinderWhereClauseEntry> list = findByName_Nickname(
-			name, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByName_Nickname.fetchFirst(
+			finderCache, new Object[] {name}, orderByComparator);
 	}
 
 	/**
@@ -310,12 +136,8 @@ public class FinderWhereClauseEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByName_Nickname(String name) {
-		for (FinderWhereClauseEntry finderWhereClauseEntry :
-				findByName_Nickname(
-					name, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(finderWhereClauseEntry);
-		}
+		_collectionPersistenceFinderByName_Nickname.remove(
+			finderCache, new Object[] {name});
 	}
 
 	/**
@@ -326,65 +148,9 @@ public class FinderWhereClauseEntryPersistenceImpl
 	 */
 	@Override
 	public int countByName_Nickname(String name) {
-		name = Objects.toString(name, "");
-
-		FinderPath finderPath = _finderPathCountByName_Nickname;
-
-		Object[] finderArgs = new Object[] {name};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_FINDERWHERECLAUSEENTRY_WHERE);
-
-			boolean bindName = false;
-
-			if (name.isEmpty()) {
-				sb.append(_FINDER_COLUMN_NAME_NICKNAME_NAME_3);
-			}
-			else {
-				bindName = true;
-
-				sb.append(_FINDER_COLUMN_NAME_NICKNAME_NAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindName) {
-					queryPos.add(name);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByName_Nickname.count(
+			finderCache, new Object[] {name});
 	}
-
-	private static final String _FINDER_COLUMN_NAME_NICKNAME_NAME_2 =
-		"finderWhereClauseEntry.name = ? AND finderWhereClauseEntry.nickname IS NOT NULL";
-
-	private static final String _FINDER_COLUMN_NAME_NICKNAME_NAME_3 =
-		"(finderWhereClauseEntry.name IS NULL OR finderWhereClauseEntry.name = '') AND finderWhereClauseEntry.nickname IS NOT NULL";
 
 	public FinderWhereClauseEntryPersistenceImpl() {
 		setModelClass(FinderWhereClauseEntry.class);
@@ -393,98 +159,6 @@ public class FinderWhereClauseEntryPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(FinderWhereClauseEntryTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the finder where clause entry in the entity cache if it is enabled.
-	 *
-	 * @param finderWhereClauseEntry the finder where clause entry
-	 */
-	@Override
-	public void cacheResult(FinderWhereClauseEntry finderWhereClauseEntry) {
-		entityCache.putResult(
-			FinderWhereClauseEntryImpl.class,
-			finderWhereClauseEntry.getPrimaryKey(), finderWhereClauseEntry);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the finder where clause entries in the entity cache if it is enabled.
-	 *
-	 * @param finderWhereClauseEntries the finder where clause entries
-	 */
-	@Override
-	public void cacheResult(
-		List<FinderWhereClauseEntry> finderWhereClauseEntries) {
-
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (finderWhereClauseEntries.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (FinderWhereClauseEntry finderWhereClauseEntry :
-				finderWhereClauseEntries) {
-
-			if (entityCache.getResult(
-					FinderWhereClauseEntryImpl.class,
-					finderWhereClauseEntry.getPrimaryKey()) == null) {
-
-				cacheResult(finderWhereClauseEntry);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all finder where clause entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(FinderWhereClauseEntryImpl.class);
-
-		finderCache.clearCache(FinderWhereClauseEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the finder where clause entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(FinderWhereClauseEntry finderWhereClauseEntry) {
-		entityCache.removeResult(
-			FinderWhereClauseEntryImpl.class, finderWhereClauseEntry);
-	}
-
-	@Override
-	public void clearCache(
-		List<FinderWhereClauseEntry> finderWhereClauseEntries) {
-
-		for (FinderWhereClauseEntry finderWhereClauseEntry :
-				finderWhereClauseEntries) {
-
-			entityCache.removeResult(
-				FinderWhereClauseEntryImpl.class, finderWhereClauseEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(FinderWhereClauseEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				FinderWhereClauseEntryImpl.class, primaryKey);
-		}
 	}
 
 	/**
@@ -516,48 +190,6 @@ public class FinderWhereClauseEntryPersistenceImpl
 		throws NoSuchFinderWhereClauseEntryException {
 
 		return remove((Serializable)finderWhereClauseEntryId);
-	}
-
-	/**
-	 * Removes the finder where clause entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the finder where clause entry
-	 * @return the finder where clause entry that was removed
-	 * @throws NoSuchFinderWhereClauseEntryException if a finder where clause entry with the primary key could not be found
-	 */
-	@Override
-	public FinderWhereClauseEntry remove(Serializable primaryKey)
-		throws NoSuchFinderWhereClauseEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			FinderWhereClauseEntry finderWhereClauseEntry =
-				(FinderWhereClauseEntry)session.get(
-					FinderWhereClauseEntryImpl.class, primaryKey);
-
-			if (finderWhereClauseEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchFinderWhereClauseEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(finderWhereClauseEntry);
-		}
-		catch (NoSuchFinderWhereClauseEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -641,41 +273,13 @@ public class FinderWhereClauseEntryPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			FinderWhereClauseEntryImpl.class, finderWhereClauseEntryModelImpl,
-			false, true);
+		cacheUniqueFindersResult(finderWhereClauseEntry, false);
 
 		if (isNew) {
 			finderWhereClauseEntry.setNew(false);
 		}
 
 		finderWhereClauseEntry.resetOriginalValues();
-
-		return finderWhereClauseEntry;
-	}
-
-	/**
-	 * Returns the finder where clause entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the finder where clause entry
-	 * @return the finder where clause entry
-	 * @throws NoSuchFinderWhereClauseEntryException if a finder where clause entry with the primary key could not be found
-	 */
-	@Override
-	public FinderWhereClauseEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchFinderWhereClauseEntryException {
-
-		FinderWhereClauseEntry finderWhereClauseEntry = fetchByPrimaryKey(
-			primaryKey);
-
-		if (finderWhereClauseEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchFinderWhereClauseEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return finderWhereClauseEntry;
 	}
@@ -708,188 +312,6 @@ public class FinderWhereClauseEntryPersistenceImpl
 		return fetchByPrimaryKey((Serializable)finderWhereClauseEntryId);
 	}
 
-	/**
-	 * Returns all the finder where clause entries.
-	 *
-	 * @return the finder where clause entries
-	 */
-	@Override
-	public List<FinderWhereClauseEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the finder where clause entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of finder where clause entries
-	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @return the range of finder where clause entries
-	 */
-	@Override
-	public List<FinderWhereClauseEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the finder where clause entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of finder where clause entries
-	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of finder where clause entries
-	 */
-	@Override
-	public List<FinderWhereClauseEntry> findAll(
-		int start, int end,
-		OrderByComparator<FinderWhereClauseEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the finder where clause entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of finder where clause entries
-	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of finder where clause entries
-	 */
-	@Override
-	public List<FinderWhereClauseEntry> findAll(
-		int start, int end,
-		OrderByComparator<FinderWhereClauseEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<FinderWhereClauseEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<FinderWhereClauseEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_FINDERWHERECLAUSEENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_FINDERWHERECLAUSEENTRY;
-
-				sql = sql.concat(FinderWhereClauseEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<FinderWhereClauseEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the finder where clause entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (FinderWhereClauseEntry finderWhereClauseEntry : findAll()) {
-			remove(finderWhereClauseEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of finder where clause entries.
-	 *
-	 * @return the number of finder where clause entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_FINDERWHERECLAUSEENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
 	@Override
 	protected EntityCache getEntityCache() {
 		return entityCache;
@@ -914,37 +336,36 @@ public class FinderWhereClauseEntryPersistenceImpl
 	 * Initializes the finder where clause entry persistence.
 	 */
 	public void afterPropertiesSet() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
-
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByName_Nickname = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByName_Nickname",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"name"}, true);
-
-		_finderPathWithoutPaginationFindByName_Nickname = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByName_Nickname",
-			new String[] {String.class.getName()}, new String[] {"name"}, true);
-
-		_finderPathCountByName_Nickname = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByName_Nickname",
-			new String[] {String.class.getName()}, new String[] {"name"},
-			false);
+		_collectionPersistenceFinderByName_Nickname =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByName_Nickname",
+					new String[] {
+						String.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"name"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByName_Nickname",
+					new String[] {String.class.getName()},
+					new String[] {"name"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByName_Nickname",
+					new String[] {String.class.getName()},
+					new String[] {"name"}, 0, 1, false, null),
+				_SQL_SELECT_FINDERWHERECLAUSEENTRY_WHERE,
+				_SQL_COUNT_FINDERWHERECLAUSEENTRY_WHERE,
+				FinderWhereClauseEntryModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				"finderWhereClauseEntry.nickname IS NOT NULL",
+				new FinderColumn<>(
+					"finderWhereClauseEntry.", "name", FinderColumn.Type.STRING,
+					"=", true, true, FinderWhereClauseEntry::getName));
 
 		FinderWhereClauseEntryUtil.setPersistence(this);
 	}
@@ -961,29 +382,20 @@ public class FinderWhereClauseEntryPersistenceImpl
 	@ServiceReference(type = FinderCache.class)
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		FinderWhereClauseEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_FINDERWHERECLAUSEENTRY =
 		"SELECT finderWhereClauseEntry FROM FinderWhereClauseEntry finderWhereClauseEntry";
 
 	private static final String _SQL_SELECT_FINDERWHERECLAUSEENTRY_WHERE =
 		"SELECT finderWhereClauseEntry FROM FinderWhereClauseEntry finderWhereClauseEntry WHERE ";
 
-	private static final String _SQL_COUNT_FINDERWHERECLAUSEENTRY =
-		"SELECT COUNT(finderWhereClauseEntry) FROM FinderWhereClauseEntry finderWhereClauseEntry";
-
 	private static final String _SQL_COUNT_FINDERWHERECLAUSEENTRY_WHERE =
 		"SELECT COUNT(finderWhereClauseEntry) FROM FinderWhereClauseEntry finderWhereClauseEntry WHERE ";
 
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"finderWhereClauseEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No FinderWhereClauseEntry exists with the primary key ";
-
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No FinderWhereClauseEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FinderWhereClauseEntryPersistenceImpl.class);
 
 	@Override
 	protected FinderCache getFinderCache() {
@@ -991,4 +403,4 @@ public class FinderWhereClauseEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1793073920
+// LIFERAY-SERVICE-BUILDER-HASH:1519084935

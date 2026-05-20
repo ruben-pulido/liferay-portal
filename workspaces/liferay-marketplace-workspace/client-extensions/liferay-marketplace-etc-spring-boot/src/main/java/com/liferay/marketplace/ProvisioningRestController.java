@@ -8,6 +8,7 @@ package com.liferay.marketplace;
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
 import com.liferay.marketplace.constants.MarketplaceConstants;
+import com.liferay.marketplace.service.AnalyticsService;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.marketplace.service.ProvisioningService;
@@ -19,7 +20,9 @@ import com.liferay.osb.provisioning.marketplace.rest.client.pagination.Paginatio
 import com.liferay.osb.provisioning.marketplace.rest.client.resource.v1_0.AppLicenseKeyResource;
 import com.liferay.osb.provisioning.rest.client.dto.v1_0.LicenseKey;
 import com.liferay.osb.provisioning.rest.client.resource.v1_0.LicenseKeyResource;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -176,54 +179,36 @@ public class ProvisioningRestController extends BaseRestController {
 	}
 
 	@PostMapping("cmp-beta-license-key")
-	public AppLicenseKey postCMPBetaLicenseKey(
+	public void postCMPBetaLicenseKey(
 			@AuthenticationPrincipal Jwt jwt, @RequestBody String json)
 		throws Exception {
 
 		AppLicenseKey appLicenseKey = AppLicenseKey.toDTO(json);
 
-		if (Objects.equals(appLicenseKey.getHostName(), null) &&
-			Objects.equals(appLicenseKey.getIpAddresses(), null) &&
-			Objects.equals(appLicenseKey.getMacAddresses(), null)) {
+		_postAppLicenseKey(
+			appLicenseKey, jwt,
+			_marketplaceService.getOrder(
+				GetterUtil.getLong(appLicenseKey.getOrderId())));
+	}
 
-			throw new ResponseStatusException(
-				HttpStatus.BAD_REQUEST,
-				"At least one of the following fields is required: host " +
-					"name, IP addresses, or MAC addresses");
-		}
+	@PostMapping("dsr-beta-license-key")
+	public void postDSRBetaLicenseKey(
+			@AuthenticationPrincipal Jwt jwt, @RequestBody String json)
+		throws Exception {
+
+		AppLicenseKey appLicenseKey = AppLicenseKey.toDTO(
+			new JSONObject(
+				json
+			).getJSONObject(
+				"licenseEntry"
+			).toString());
 
 		Order order = _marketplaceService.getOrder(
 			GetterUtil.getLong(appLicenseKey.getOrderId()));
 
-		ProductPurchase[] productPurchases =
-			_koroneikiService.postAccountProductPurchases(
-				jwt, "3 Months Limited Beta", order);
+		_postAppLicenseKey(appLicenseKey, jwt, order);
 
-		ProductPurchase productPurchase = productPurchases[0];
-
-		if (productPurchase == null) {
-			return null;
-		}
-
-		Map<String, String> productSpecificationsMap =
-			_marketplaceService.getProductSpecificationsMap(
-				_marketplaceService.getOrderProductId(order));
-
-		if (Validator.isNotNull(
-				productSpecificationsMap.get("app-entry-uuid"))) {
-
-			appLicenseKey.setProductId(
-				productSpecificationsMap.get("app-entry-uuid"));
-		}
-
-		appLicenseKey = _provisioningService.postAppLicenseKey(
-			appLicenseKey, jwt, productPurchase);
-
-		_marketplaceService.completeOrder(
-			order.getId(),
-			MarketplaceConstants.ORDER_PAYMENT_STATUS_NOT_REQUIRED);
-
-		return appLicenseKey;
+		_provisionAnalyticsWorkspace(new JSONObject(json), order);
 	}
 
 	@PostMapping("license-key-type-free")
@@ -241,6 +226,33 @@ public class ProvisioningRestController extends BaseRestController {
 			MarketplaceConstants.ORDER_PAYMENT_STATUS_NOT_REQUIRED);
 
 		return licenseKey;
+	}
+
+	@PostMapping("license-key-type-free-domains-check")
+	public void postLicenseKeyTypeFreeDomainCheck(@RequestBody String json)
+		throws Exception {
+
+		LicenseKey licenseKey = LicenseKey.toDTO(json);
+
+		LicenseKeyResource licenseKeyResource =
+			_provisioningService.getLicenseKeyResource();
+
+		com.liferay.osb.provisioning.rest.client.pagination.Page<LicenseKey>
+			licenseKeysPage = licenseKeyResource.getLicenseKeysPage(
+				null,
+				StringBundler.concat(
+					"domains eq '", licenseKey.getDomains(), "' and owner eq '",
+					licenseKey.getOwner(), "'"),
+				com.liferay.osb.provisioning.rest.client.pagination.Pagination.
+					of(1, 20),
+				null);
+
+		if (licenseKeysPage.fetchFirstItem() != null) {
+			throw new ResponseStatusException(
+				HttpStatus.CONFLICT,
+				"A License key was already provisioned for the owner with " +
+					"this domain");
+		}
 	}
 
 	@PostMapping("license-key-type-free/{id}/renew")
@@ -303,6 +315,87 @@ public class ProvisioningRestController extends BaseRestController {
 
 		return new ResponseEntity<>(content, httpHeaders, HttpStatus.OK);
 	}
+
+	private void _postAppLicenseKey(
+			AppLicenseKey appLicenseKey, Jwt jwt, Order order)
+		throws Exception {
+
+		if (Objects.equals(appLicenseKey.getHostName(), null) &&
+			Objects.equals(appLicenseKey.getIpAddresses(), null) &&
+			Objects.equals(appLicenseKey.getMacAddresses(), null)) {
+
+			throw new ResponseStatusException(
+				HttpStatus.BAD_REQUEST,
+				"At least one of the following fields is required: host " +
+					"name, IP addresses, or MAC addresses");
+		}
+
+		ProductPurchase[] productPurchases =
+			_koroneikiService.postAccountProductPurchases(
+				jwt, "3 Months Limited Beta", order);
+
+		ProductPurchase productPurchase = productPurchases[0];
+
+		if (productPurchase == null) {
+			return;
+		}
+
+		Map<String, String> productSpecificationsMap =
+			_marketplaceService.getProductSpecificationsMap(
+				_marketplaceService.getOrderProductId(order));
+
+		if (Validator.isNotNull(
+				productSpecificationsMap.get("app-entry-uuid"))) {
+
+			appLicenseKey.setProductId(
+				productSpecificationsMap.get("app-entry-uuid"));
+		}
+
+		_provisioningService.postAppLicenseKey(
+			appLicenseKey, jwt, productPurchase);
+
+		_marketplaceService.completeOrder(
+			order.getId(),
+			MarketplaceConstants.ORDER_PAYMENT_STATUS_NOT_REQUIRED);
+	}
+
+	private void _provisionAnalyticsWorkspace(
+			JSONObject jsonObject, Order order)
+		throws Exception {
+
+		String analyticsProject = _analyticsService.getCorpProjectUuid(
+			order.getAccountExternalReferenceCode());
+
+		if (analyticsProject == null) {
+			JSONObject analyticsFormJSONObject = jsonObject.getJSONObject(
+				"analyticsForm");
+
+			analyticsFormJSONObject.put(
+				"corpProjectUuid", order.getAccountExternalReferenceCode());
+
+			analyticsProject = _analyticsService.provision(
+				analyticsFormJSONObject);
+		}
+
+		_marketplaceService.updateOrder(
+			HashMapBuilder.put(
+				"order-metadata",
+				new JSONObject(
+					GetterUtil.get(
+						order.getCustomFields(
+						).get(
+							"order-metadata"
+						),
+						"{}")
+				).put(
+					"analyticsProject", new JSONObject(analyticsProject)
+				).toString()
+			).build(),
+			order.getId(), MarketplaceConstants.ORDER_STATUS_COMPLETED);
+	}
+
+	@Autowired
+	private AnalyticsService _analyticsService;
 
 	@Autowired
 	private KoroneikiService _koroneikiService;

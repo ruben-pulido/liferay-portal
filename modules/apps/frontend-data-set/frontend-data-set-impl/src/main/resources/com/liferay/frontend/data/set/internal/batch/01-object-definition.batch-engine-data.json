@@ -253,6 +253,23 @@
 				{
 					"DBType": "Boolean",
 					"businessType": "Boolean",
+					"defaultValue": true,
+					"externalReferenceCode": "SHOW_SEARCH",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "Show Search"
+					},
+					"localized": false,
+					"name": "showSearch",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "Boolean"
+				},
+				{
+					"DBType": "Boolean",
+					"businessType": "Boolean",
 					"defaultValue": false,
 					"externalReferenceCode": "SNAPSHOTS_ENABLED",
 					"indexed": true,
@@ -466,6 +483,12 @@
 			},
 			"modifiable": true,
 			"name": "DataSetAction",
+			"objectDefinitionSettings": [
+				{
+					"name": "allowStandaloneObjectEntry",
+					"value": "false"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Boolean",
@@ -730,6 +753,12 @@
 			},
 			"modifiable": true,
 			"name": "DataSetCardsSection",
+			"objectDefinitionSettings": [
+				{
+					"name": "allowStandaloneObjectEntry",
+					"value": "false"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Boolean",
@@ -816,6 +845,12 @@
 			},
 			"modifiable": true,
 			"name": "DataSetClientExtensionFilter",
+			"objectDefinitionSettings": [
+				{
+					"name": "allowStandaloneObjectEntry",
+					"value": "false"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Boolean",
@@ -905,6 +940,12 @@
 			},
 			"modifiable": true,
 			"name": "DataSetDateFilter",
+			"objectDefinitionSettings": [
+				{
+					"name": "allowStandaloneObjectEntry",
+					"value": "false"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Boolean",
@@ -1025,6 +1066,12 @@
 			},
 			"modifiable": true,
 			"name": "DataSetListSection",
+			"objectDefinitionSettings": [
+				{
+					"name": "allowStandaloneObjectEntry",
+					"value": "false"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Boolean",
@@ -1111,6 +1158,12 @@
 			},
 			"modifiable": true,
 			"name": "DataSetSelectionFilter",
+			"objectDefinitionSettings": [
+				{
+					"name": "allowStandaloneObjectEntry",
+					"value": "false"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Boolean",
@@ -1128,6 +1181,22 @@
 					"state": false,
 					"system": true,
 					"type": "Boolean"
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "ENTITY_FIELD_TYPE",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "Entity Field Type"
+					},
+					"localized": false,
+					"name": "entityFieldType",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "String"
 				},
 				{
 					"DBType": "String",
@@ -1344,6 +1413,12 @@
 			},
 			"modifiable": true,
 			"name": "DataSetSort",
+			"objectDefinitionSettings": [
+				{
+					"name": "allowStandaloneObjectEntry",
+					"value": "false"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Boolean",
@@ -1449,6 +1524,12 @@
 			},
 			"modifiable": true,
 			"name": "DataSetTableSection",
+			"objectDefinitionSettings": [
+				{
+					"name": "allowStandaloneObjectEntry",
+					"value": "false"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Boolean",

@@ -36,6 +36,24 @@ public class OAuthClientASLocalMetadataUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<OAuthClientASLocalMetadata> oAuthClientASLocalMetadatas) {
+
+		getPersistence().cacheResult(oAuthClientASLocalMetadatas);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		OAuthClientASLocalMetadata oAuthClientASLocalMetadata) {
+
+		getPersistence().cacheResult(oAuthClientASLocalMetadata);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,58 +135,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the o auth client as local metadatas where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -219,40 +189,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas that the user has permission to view where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByUuid(
-		String uuid) {
-
-		return getPersistence().filterFindByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().filterFindByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas that the user has permissions to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -299,64 +239,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the o auth client as local metadatas where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -412,42 +298,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas that the user has permissions to view where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -498,61 +352,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByCompanyId(
-		long companyId) {
-
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the o auth client as local metadatas where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -605,40 +408,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas that the user has permission to view where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByCompanyId(
-		long companyId) {
-
-		return getPersistence().filterFindByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().filterFindByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas that the user has permissions to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -685,59 +458,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUserId(long userId) {
-		return getPersistence().findByUserId(userId);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUserId(
-		long userId, int start, int end) {
-
-		return getPersistence().findByUserId(userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByUserId(
-		long userId, int start, int end,
-		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
-
-		return getPersistence().findByUserId(
-			userId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the o auth client as local metadatas where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -788,40 +512,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas that the user has permission to view where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByUserId(
-		long userId) {
-
-		return getPersistence().filterFindByUserId(userId);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByUserId(
-		long userId, int start, int end) {
-
-		return getPersistence().filterFindByUserId(userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas that the user has permissions to view where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -884,19 +578,6 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns the o auth client as local metadata where companyId = &#63; and issuer = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param issuer the issuer
-	 * @return the matching o auth client as local metadata, or <code>null</code> if a matching o auth client as local metadata could not be found
-	 */
-	public static OAuthClientASLocalMetadata fetchByC_I(
-		long companyId, String issuer) {
-
-		return getPersistence().fetchByC_I(companyId, issuer);
-	}
-
-	/**
 	 * Returns the o auth client as local metadata where companyId = &#63; and issuer = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -937,65 +618,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas where companyId = &#63; and localWellKnownEnabled = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param localWellKnownEnabled the local well known enabled
-	 * @return the matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByC_L(
-		long companyId, boolean localWellKnownEnabled) {
-
-		return getPersistence().findByC_L(companyId, localWellKnownEnabled);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas where companyId = &#63; and localWellKnownEnabled = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param localWellKnownEnabled the local well known enabled
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByC_L(
-		long companyId, boolean localWellKnownEnabled, int start, int end) {
-
-		return getPersistence().findByC_L(
-			companyId, localWellKnownEnabled, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas where companyId = &#63; and localWellKnownEnabled = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param localWellKnownEnabled the local well known enabled
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching o auth client as local metadatas
-	 */
-	public static List<OAuthClientASLocalMetadata> findByC_L(
-		long companyId, boolean localWellKnownEnabled, int start, int end,
-		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
-
-		return getPersistence().findByC_L(
-			companyId, localWellKnownEnabled, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the o auth client as local metadatas where companyId = &#63; and localWellKnownEnabled = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1052,44 +678,10 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas that the user has permission to view where companyId = &#63; and localWellKnownEnabled = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param localWellKnownEnabled the local well known enabled
-	 * @return the matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByC_L(
-		long companyId, boolean localWellKnownEnabled) {
-
-		return getPersistence().filterFindByC_L(
-			companyId, localWellKnownEnabled);
-	}
-
-	/**
-	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where companyId = &#63; and localWellKnownEnabled = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param localWellKnownEnabled the local well known enabled
-	 * @param start the lower bound of the range of o auth client as local metadatas
-	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of matching o auth client as local metadatas that the user has permission to view
-	 */
-	public static List<OAuthClientASLocalMetadata> filterFindByC_L(
-		long companyId, boolean localWellKnownEnabled, int start, int end) {
-
-		return getPersistence().filterFindByC_L(
-			companyId, localWellKnownEnabled, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the o auth client as local metadatas that the user has permissions to view where companyId = &#63; and localWellKnownEnabled = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1163,19 +755,6 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns the o auth client as local metadata where companyId = &#63; and localWellKnownURI = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param localWellKnownURI the local well known uri
-	 * @return the matching o auth client as local metadata, or <code>null</code> if a matching o auth client as local metadata could not be found
-	 */
-	public static OAuthClientASLocalMetadata fetchByC_LWKURI(
-		long companyId, String localWellKnownURI) {
-
-		return getPersistence().fetchByC_LWKURI(companyId, localWellKnownURI);
-	}
-
-	/**
 	 * Returns the o auth client as local metadata where companyId = &#63; and localWellKnownURI = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -1232,19 +811,6 @@ public class OAuthClientASLocalMetadataUtil {
 			NoSuchOAuthClientASLocalMetadataException {
 
 		return getPersistence().findByC_O(companyId, oAuthASLocalWellKnownURI);
-	}
-
-	/**
-	 * Returns the o auth client as local metadata where companyId = &#63; and oAuthASLocalWellKnownURI = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param oAuthASLocalWellKnownURI the o auth as local well known uri
-	 * @return the matching o auth client as local metadata, or <code>null</code> if a matching o auth client as local metadata could not be found
-	 */
-	public static OAuthClientASLocalMetadata fetchByC_O(
-		long companyId, String oAuthASLocalWellKnownURI) {
-
-		return getPersistence().fetchByC_O(companyId, oAuthASLocalWellKnownURI);
 	}
 
 	/**
@@ -1309,19 +875,6 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns the o auth client as local metadata where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching o auth client as local metadata, or <code>null</code> if a matching o auth client as local metadata could not be found
-	 */
-	public static OAuthClientASLocalMetadata fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
 	 * Returns the o auth client as local metadata where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -1362,28 +915,6 @@ public class OAuthClientASLocalMetadataUtil {
 		String externalReferenceCode, long companyId) {
 
 		return getPersistence().countByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
-	 * Caches the o auth client as local metadata in the entity cache if it is enabled.
-	 *
-	 * @param oAuthClientASLocalMetadata the o auth client as local metadata
-	 */
-	public static void cacheResult(
-		OAuthClientASLocalMetadata oAuthClientASLocalMetadata) {
-
-		getPersistence().cacheResult(oAuthClientASLocalMetadata);
-	}
-
-	/**
-	 * Caches the o auth client as local metadatas in the entity cache if it is enabled.
-	 *
-	 * @param oAuthClientASLocalMetadatas the o auth client as local metadatas
-	 */
-	public static void cacheResult(
-		List<OAuthClientASLocalMetadata> oAuthClientASLocalMetadatas) {
-
-		getPersistence().cacheResult(oAuthClientASLocalMetadatas);
 	}
 
 	/**
@@ -1447,84 +978,468 @@ public class OAuthClientASLocalMetadataUtil {
 	}
 
 	/**
-	 * Returns all the o auth client as local metadatas.
+	 * Returns the o auth client as local metadata where companyId = &#63; and issuer = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the o auth client as local metadatas
+	 * @param companyId the company ID
+	 * @param issuer the issuer
+	 * @return the matching o auth client as local metadata, or <code>null</code> if a matching o auth client as local metadata could not be found
 	 */
-	public static List<OAuthClientASLocalMetadata> findAll() {
-		return getPersistence().findAll();
+	public static OAuthClientASLocalMetadata fetchByC_I(
+		long companyId, String issuer) {
+
+		return getPersistence().fetchByC_I(companyId, issuer);
 	}
 
 	/**
-	 * Returns a range of all the o auth client as local metadatas.
+	 * Returns the o auth client as local metadata where companyId = &#63; and localWellKnownURI = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param localWellKnownURI the local well known uri
+	 * @return the matching o auth client as local metadata, or <code>null</code> if a matching o auth client as local metadata could not be found
+	 */
+	public static OAuthClientASLocalMetadata fetchByC_LWKURI(
+		long companyId, String localWellKnownURI) {
+
+		return getPersistence().fetchByC_LWKURI(companyId, localWellKnownURI);
+	}
+
+	/**
+	 * Returns the o auth client as local metadata where companyId = &#63; and oAuthASLocalWellKnownURI = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param oAuthASLocalWellKnownURI the o auth as local well known uri
+	 * @return the matching o auth client as local metadata, or <code>null</code> if a matching o auth client as local metadata could not be found
+	 */
+	public static OAuthClientASLocalMetadata fetchByC_O(
+		long companyId, String oAuthASLocalWellKnownURI) {
+
+		return getPersistence().fetchByC_O(companyId, oAuthASLocalWellKnownURI);
+	}
+
+	/**
+	 * Returns the o auth client as local metadata where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching o auth client as local metadata, or <code>null</code> if a matching o auth client as local metadata could not be found
+	 */
+	public static OAuthClientASLocalMetadata fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
+	}
+
+	/**
+	 * Returns all the o auth client as local metadatas where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of o auth client as local metadatas
 	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
-	 * @return the range of o auth client as local metadatas
+	 * @return the range of matching o auth client as local metadatas
 	 */
-	public static List<OAuthClientASLocalMetadata> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<OAuthClientASLocalMetadata> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the o auth client as local metadatas.
+	 * Returns an ordered range of all the o auth client as local metadatas where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of o auth client as local metadatas
 	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of o auth client as local metadatas
+	 * @return the ordered range of matching o auth client as local metadatas
 	 */
-	public static List<OAuthClientASLocalMetadata> findAll(
-		int start, int end,
+	public static List<OAuthClientASLocalMetadata> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the o auth client as local metadatas.
+	 * Returns all the o auth client as local metadatas that the user has permission to view where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByUuid(
+		String uuid) {
+
+		return getPersistence().filterFindByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuthClientASLocalMetadataModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().filterFindByUuid(uuid, start, end);
+	}
+
+	/**
+	 * Returns all the o auth client as local metadatas where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the o auth client as local metadatas where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of o auth client as local metadatas
 	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of o auth client as local metadatas
+	 * @return the ordered range of matching o auth client as local metadatas
 	 */
-	public static List<OAuthClientASLocalMetadata> findAll(
-		int start, int end,
-		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator,
-		boolean useFinderCache) {
+	public static List<OAuthClientASLocalMetadata> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the o auth client as local metadatas from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of o auth client as local metadatas.
+	 * Returns all the o auth client as local metadatas that the user has permission to view where uuid = &#63; and companyId = &#63;.
 	 *
-	 * @return the number of o auth client as local metadatas
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching o auth client as local metadatas that the user has permission to view
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<OAuthClientASLocalMetadata> filterFindByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns all the o auth client as local metadatas where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByCompanyId(
+		long companyId) {
+
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the o auth client as local metadatas where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the o auth client as local metadatas that the user has permission to view where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByCompanyId(
+		long companyId) {
+
+		return getPersistence().filterFindByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().filterFindByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns all the o auth client as local metadatas where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByUserId(long userId) {
+		return getPersistence().findByUserId(userId);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByUserId(
+		long userId, int start, int end) {
+
+		return getPersistence().findByUserId(userId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the o auth client as local metadatas where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByUserId(
+		long userId, int start, int end,
+		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
+
+		return getPersistence().findByUserId(
+			userId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the o auth client as local metadatas that the user has permission to view where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByUserId(
+		long userId) {
+
+		return getPersistence().filterFindByUserId(userId);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByUserId(
+		long userId, int start, int end) {
+
+		return getPersistence().filterFindByUserId(userId, start, end);
+	}
+
+	/**
+	 * Returns all the o auth client as local metadatas where companyId = &#63; and localWellKnownEnabled = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param localWellKnownEnabled the local well known enabled
+	 * @return the matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByC_L(
+		long companyId, boolean localWellKnownEnabled) {
+
+		return getPersistence().findByC_L(companyId, localWellKnownEnabled);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas where companyId = &#63; and localWellKnownEnabled = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param localWellKnownEnabled the local well known enabled
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByC_L(
+		long companyId, boolean localWellKnownEnabled, int start, int end) {
+
+		return getPersistence().findByC_L(
+			companyId, localWellKnownEnabled, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the o auth client as local metadatas where companyId = &#63; and localWellKnownEnabled = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param localWellKnownEnabled the local well known enabled
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching o auth client as local metadatas
+	 */
+	public static List<OAuthClientASLocalMetadata> findByC_L(
+		long companyId, boolean localWellKnownEnabled, int start, int end,
+		OrderByComparator<OAuthClientASLocalMetadata> orderByComparator) {
+
+		return getPersistence().findByC_L(
+			companyId, localWellKnownEnabled, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the o auth client as local metadatas that the user has permission to view where companyId = &#63; and localWellKnownEnabled = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param localWellKnownEnabled the local well known enabled
+	 * @return the matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByC_L(
+		long companyId, boolean localWellKnownEnabled) {
+
+		return getPersistence().filterFindByC_L(
+			companyId, localWellKnownEnabled);
+	}
+
+	/**
+	 * Returns a range of all the o auth client as local metadatas that the user has permission to view where companyId = &#63; and localWellKnownEnabled = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.oauth.client.persistence.model.impl.OAuthClientASLocalMetadataModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param localWellKnownEnabled the local well known enabled
+	 * @param start the lower bound of the range of o auth client as local metadatas
+	 * @param end the upper bound of the range of o auth client as local metadatas (not inclusive)
+	 * @return the range of matching o auth client as local metadatas that the user has permission to view
+	 */
+	public static List<OAuthClientASLocalMetadata> filterFindByC_L(
+		long companyId, boolean localWellKnownEnabled, int start, int end) {
+
+		return getPersistence().filterFindByC_L(
+			companyId, localWellKnownEnabled, start, end);
 	}
 
 	public static OAuthClientASLocalMetadataPersistence getPersistence() {
@@ -1540,4 +1455,4 @@ public class OAuthClientASLocalMetadataUtil {
 	private static volatile OAuthClientASLocalMetadataPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:930529754
+// LIFERAY-SERVICE-BUILDER-HASH:1730592081

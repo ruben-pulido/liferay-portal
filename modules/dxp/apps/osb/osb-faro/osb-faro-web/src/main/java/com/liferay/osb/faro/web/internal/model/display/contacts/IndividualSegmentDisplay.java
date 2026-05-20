@@ -52,6 +52,7 @@ public class IndividualSegmentDisplay implements FaroEntityDisplay {
 		_channelId = individualSegment.getChannelId();
 		_dateCreated = individualSegment.getDateCreated();
 		_dateModified = individualSegment.getDateModified();
+		_externalReferenceCode = individualSegment.getExternalReferenceCode();
 		_filterString = individualSegment.getFilterString();
 		_id = individualSegment.getId();
 		_includeAnonymousUsers = individualSegment.isIncludeAnonymousUsers();
@@ -137,6 +138,7 @@ public class IndividualSegmentDisplay implements FaroEntityDisplay {
 			individualSegment.getLastMembershipUpdateDate();
 		_name = individualSegment.getName();
 		_segmentType = individualSegment.getSegmentType();
+		_sequential = individualSegment.isSequential();
 		_state = individualSegment.getState();
 		_status = individualSegment.getStatus();
 		_type = FaroConstants.TYPE_SEGMENT_INDIVIDUALS;
@@ -226,6 +228,7 @@ public class IndividualSegmentDisplay implements FaroEntityDisplay {
 	private String _channelId;
 	private Date _dateCreated;
 	private Date _dateModified;
+	private String _externalReferenceCode;
 
 	@JsonProperty("filter")
 	private String _filterString;
@@ -248,6 +251,7 @@ public class IndividualSegmentDisplay implements FaroEntityDisplay {
 	private String _name;
 	private final Map<String, Object> _referencedObjects = new HashMap<>();
 	private String _segmentType;
+	private boolean _sequential;
 	private String _state;
 	private String _status;
 	private int _type;

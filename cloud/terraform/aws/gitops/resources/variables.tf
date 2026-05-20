@@ -1,3 +1,11 @@
+variable "argocd_additional_allowed_cidr_blocks" {
+	default=[]
+	type=list(string)
+	validation {
+		condition=alltrue([for cidr in var.argocd_additional_allowed_cidr_blocks : can(cidrhost(cidr, 0))])
+		error_message="The variable \"argocd_additional_allowed_cidr_blocks\" must contain valid CIDR blocks."
+	}
+}
 variable "argocd_domain_config" {
 	default={}
 	type=object({
@@ -7,9 +15,18 @@ variable "argocd_domain_config" {
 }
 variable "argocd_namespace" {
 	default="argocd-system"
+	type=string
+}
+variable "argocd_sso_config" {
+	default={}
+	type=object({
+		credentials_secret_name=optional(string, "liferay/credentials/argocd-sso")
+		enable_saml_sso=optional(bool, false)
+	})
 }
 variable "crossplane_namespace" {
 	default="crossplane-system"
+	type=string
 }
 variable "deployment_name" {
 	type=string
@@ -24,9 +41,11 @@ variable "external_secret_store_provider_hcl" {
 }
 variable "external_secrets_namespace" {
 	default="external-secrets-system"
+	type=string
 }
 variable "gateway_namespace" {
 	default="envoy-gateway-system"
+	type=string
 }
 variable "infrastructure_git_repo_config" {
 	default={
@@ -91,6 +110,14 @@ variable "infrastructure_provider_helm_chart_config" {
 		})
 }
 variable "infrastructure_provider_helm_chart_version" {
+	type=string
+}
+variable "keda_enabled" {
+	default=false
+	type=bool
+}
+variable "keda_namespace" {
+	default="keda-system"
 	type=string
 }
 variable "liferay_git_repo_config" {

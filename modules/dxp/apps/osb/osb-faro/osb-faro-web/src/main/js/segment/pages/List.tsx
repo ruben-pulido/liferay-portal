@@ -13,6 +13,7 @@ import NoResultsDisplay from 'shared/components/NoResultsDisplay';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import RowActions from 'shared/components/RowActions';
 import SearchableEntityTable from 'shared/components/SearchableEntityTable';
+import SequentialEventOrderPopover from 'shared/components/SequentialEventOrderPopover';
 import ToThousandsCell from 'shared/components/table/cell-components/ToThousandsCell';
 import URLConstants from 'shared/util/url-constants';
 import UserCell from 'shared/components/table/cell-components/UserCell';
@@ -188,7 +189,7 @@ export const List: React.FC<IListProps> = ({
 		};
 	}, []);
 
-	const selectedSegmentTypes = filterBy.get(SEGMENT_TYPE)?.toArray() || [];
+	const selectedSegmentTypes = filterBy?.get(SEGMENT_TYPE)?.toArray() || [];
 
 	const {data, error, loading, refetch} = useRequest({
 		dataSourceFn: API.individualSegment.search,
@@ -262,12 +263,12 @@ export const List: React.FC<IListProps> = ({
 
 	const getDisabledSegmentsAlert = (abortSignal: AbortSignal) =>
 		fetchDisabledSegments(channelId, groupId, orderIOMap).then(
-			({total}) => {
+			({total}: {total: number}) => {
 				if (abortSignal.aborted) {
 					return;
 				}
 				if (total) {
-					setAlerts(() => handleDisabledSegmentsAlert());
+					setAlerts(handleDisabledSegmentsAlert() as any);
 				}
 			}
 		);
@@ -336,12 +337,22 @@ export const List: React.FC<IListProps> = ({
 				false
 			),
 			onClose: () =>
-				unassignedSegmentsDispatch({type: ActionType.updateShowAlert}),
+				unassignedSegmentsDispatch?.({
+					type: ActionType.updateShowAlert
+				}),
 			...ALERT_CONFIG_MAP[AlertTypes.Warning]
 		};
 	};
 
-	const handleDeleteSegments = ({ids, items, name = undefined}) => {
+	const handleDeleteSegments = ({
+		ids,
+		items,
+		name = undefined
+	}: {
+		ids: string[];
+		items: unknown[];
+		name?: string;
+	}) => {
 		const isMultiple = ids.length > 1;
 
 		const MODAL_MESSAGES = {
@@ -401,10 +412,10 @@ export const List: React.FC<IListProps> = ({
 								)
 							);
 						}
-						selectionDispatch({type: ActionTypes.ClearAll});
+						selectionDispatch?.({type: ActionTypes.ClearAll});
 
-						refetch();
-						refetchUsage();
+						refetch?.();
+						refetchUsage?.();
 					})
 					.catch(() => {
 						addAlert({
@@ -419,7 +430,13 @@ export const List: React.FC<IListProps> = ({
 		});
 	};
 
-	const renderRowActions = ({data: {id, name}, items}) => {
+	const renderRowActions = ({
+		data: {id, name},
+		items
+	}: {
+		data: {id: string; name: string};
+		items: unknown[];
+	}) => {
 		const commonActions = [
 			{
 				href: toRoute(Routes.CONTACTS_SEGMENT, {
@@ -624,7 +641,7 @@ export const List: React.FC<IListProps> = ({
 									accessor: 'name',
 									cellRenderer: LinkCell,
 									cellRendererProps: {
-										hrefFormatter: data =>
+										hrefFormatter: (data: {id: string}) =>
 											toRoute(Routes.CONTACTS_SEGMENT, {
 												channelId,
 												groupId,
@@ -638,14 +655,20 @@ export const List: React.FC<IListProps> = ({
 								},
 								{
 									accessor: 'segmentType',
-									cellRenderer: item => {
+									cellRenderer: (item: {
+										data: {
+											segmentType: 'BATCH' | 'REAL_TIME';
+											sequential: boolean;
+										};
+									}) => {
 										const segmentTypeMap = {
 											BATCH: Liferay.Language.get(
 												'batch'
 											),
-											REAL_TIME: Liferay.Language.get(
-												'real-time'
-											)
+											REAL_TIME:
+												Liferay.Language.get(
+													'real-time'
+												)
 										};
 
 										return (
@@ -655,6 +678,12 @@ export const List: React.FC<IListProps> = ({
 														item.data.segmentType
 													]
 												}
+
+												{item.data.segmentType ===
+													SegmentTypes.RealTime &&
+													item.data.sequential && (
+														<SequentialEventOrderPopover />
+													)}
 											</td>
 										);
 									},
@@ -671,8 +700,9 @@ export const List: React.FC<IListProps> = ({
 									accessor: 'lastMembershipUpdateDate',
 									cellRenderer: DateCell,
 									cellRendererProps: {
-										dateFormatter: date =>
-											formatDateToTimeZone(date, 'lll'),
+										dateFormatter: (
+											date: string | number
+										) => formatDateToTimeZone(date, 'lll'),
 										datePath: 'lastMembershipUpdateDate'
 									},
 									className: 'table-column-text-start',
@@ -691,8 +721,9 @@ export const List: React.FC<IListProps> = ({
 									accessor: 'dateModified',
 									cellRenderer: DateCell,
 									cellRendererProps: {
-										dateFormatter: date =>
-											formatDateToTimeZone(date, 'll'),
+										dateFormatter: (
+											date: string | number
+										) => formatDateToTimeZone(date, 'll'),
 										datePath: 'dateModified'
 									},
 									className: 'table-column-text-start',

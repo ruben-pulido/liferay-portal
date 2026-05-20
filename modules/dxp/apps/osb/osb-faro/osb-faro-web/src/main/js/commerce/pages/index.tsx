@@ -11,7 +11,7 @@ import {Routes, toRoute} from 'shared/util/router';
 import {Switch, useParams} from 'react-router-dom';
 import {useChannelContext} from 'shared/context/channel';
 import {useCurrentUser} from 'shared/hooks/useCurrentUser';
-import {useDataSource} from 'shared/hooks/useDataSource';
+import {useDataSources} from 'shared/context/dataSources';
 
 const Overview = lazy(
 	() =>
@@ -41,8 +41,8 @@ interface ICommerceDashboardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const CommerceDashboard: React.FC<ICommerceDashboardProps> = ({router}) => {
-	const {channelId, groupId} = useParams();
-	const dataSourceStates = useDataSource();
+	const {channelId, groupId} = useParams<RouterParams>();
+	const dataSourceStates = useDataSources();
 	const {selectedChannel} = useChannelContext();
 	const currentUser = useCurrentUser();
 

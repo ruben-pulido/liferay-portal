@@ -32,20 +32,6 @@ public interface EntryPersistence extends BasePersistence<Entry> {
 	 */
 
 	/**
-	 * Caches the entry in the entity cache if it is enabled.
-	 *
-	 * @param entry the entry
-	 */
-	public void cacheResult(Entry entry);
-
-	/**
-	 * Caches the entries in the entity cache if it is enabled.
-	 *
-	 * @param entries the entries
-	 */
-	public void cacheResult(java.util.List<Entry> entries);
-
-	/**
 	 * Creates a new entry with the primary key. Does not add the entry to the database.
 	 *
 	 * @param entryId the primary key for the new entry
@@ -81,73 +67,5 @@ public interface EntryPersistence extends BasePersistence<Entry> {
 	 */
 	public Entry fetchByPrimaryKey(long entryId);
 
-	/**
-	 * Returns all the entries.
-	 *
-	 * @return the entries
-	 */
-	public java.util.List<Entry> findAll();
-
-	/**
-	 * Returns a range of all the entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of entries
-	 * @param end the upper bound of the range of entries (not inclusive)
-	 * @return the range of entries
-	 */
-	public java.util.List<Entry> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of entries
-	 * @param end the upper bound of the range of entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of entries
-	 */
-	public java.util.List<Entry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Entry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of entries
-	 * @param end the upper bound of the range of entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of entries
-	 */
-	public java.util.List<Entry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Entry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of entries.
-	 *
-	 * @return the number of entries
-	 */
-	public int countAll();
-
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1936803907
+// LIFERAY-SERVICE-BUILDER-HASH:627224203

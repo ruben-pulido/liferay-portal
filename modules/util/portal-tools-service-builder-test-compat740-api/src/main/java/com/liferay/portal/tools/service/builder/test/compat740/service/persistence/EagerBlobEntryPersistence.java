@@ -33,51 +33,10 @@ public interface EagerBlobEntryPersistence
 	 */
 
 	/**
-	 * Returns all the eager blob entries where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching eager blob entries
-	 */
-	public java.util.List<EagerBlobEntry> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the eager blob entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of eager blob entries
-	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @return the range of matching eager blob entries
-	 */
-	public java.util.List<EagerBlobEntry> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the eager blob entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of eager blob entries
-	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching eager blob entries
-	 */
-	public java.util.List<EagerBlobEntry> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<EagerBlobEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the eager blob entries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.EagerBlobEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -146,15 +105,6 @@ public interface EagerBlobEntryPersistence
 		throws NoSuchEagerBlobEntryException;
 
 	/**
-	 * Returns the eager blob entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching eager blob entry, or <code>null</code> if a matching eager blob entry could not be found
-	 */
-	public EagerBlobEntry fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the eager blob entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -183,20 +133,6 @@ public interface EagerBlobEntryPersistence
 	 * @return the number of matching eager blob entries
 	 */
 	public int countByUUID_G(String uuid, long groupId);
-
-	/**
-	 * Caches the eager blob entry in the entity cache if it is enabled.
-	 *
-	 * @param eagerBlobEntry the eager blob entry
-	 */
-	public void cacheResult(EagerBlobEntry eagerBlobEntry);
-
-	/**
-	 * Caches the eager blob entries in the entity cache if it is enabled.
-	 *
-	 * @param eagerBlobEntries the eager blob entries
-	 */
-	public void cacheResult(java.util.List<EagerBlobEntry> eagerBlobEntries);
 
 	/**
 	 * Creates a new eager blob entry with the primary key. Does not add the eager blob entry to the database.
@@ -237,72 +173,66 @@ public interface EagerBlobEntryPersistence
 	public EagerBlobEntry fetchByPrimaryKey(long eagerBlobEntryId);
 
 	/**
-	 * Returns all the eager blob entries.
+	 * Returns the eager blob entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the eager blob entries
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching eager blob entry, or <code>null</code> if a matching eager blob entry could not be found
 	 */
-	public java.util.List<EagerBlobEntry> findAll();
+	public default EagerBlobEntry fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the eager blob entries.
+	 * Returns all the eager blob entries where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching eager blob entries
+	 */
+	public default java.util.List<EagerBlobEntry> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the eager blob entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.EagerBlobEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of eager blob entries
 	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @return the range of eager blob entries
+	 * @return the range of matching eager blob entries
 	 */
-	public java.util.List<EagerBlobEntry> findAll(int start, int end);
+	public default java.util.List<EagerBlobEntry> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the eager blob entries.
+	 * Returns an ordered range of all the eager blob entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.EagerBlobEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of eager blob entries
 	 * @param end the upper bound of the range of eager blob entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of eager blob entries
+	 * @return the ordered range of matching eager blob entries
 	 */
-	public java.util.List<EagerBlobEntry> findAll(
-		int start, int end,
+	public default java.util.List<EagerBlobEntry> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<EagerBlobEntry>
-			orderByComparator);
+			orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the eager blob entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EagerBlobEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of eager blob entries
-	 * @param end the upper bound of the range of eager blob entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of eager blob entries
-	 */
-	public java.util.List<EagerBlobEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<EagerBlobEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the eager blob entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of eager blob entries.
-	 *
-	 * @return the number of eager blob entries
-	 */
-	public int countAll();
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1992006532
+// LIFERAY-SERVICE-BUILDER-HASH:986736565

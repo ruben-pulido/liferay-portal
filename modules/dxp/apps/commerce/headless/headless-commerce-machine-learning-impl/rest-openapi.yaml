@@ -210,6 +210,9 @@ components:
                     type: number
         Order:
             properties:
+                accountExternalReferenceCode:
+                    example: AAB-34098-789-N
+                    type: string
                 accountId:
                     example: 30130
                     format: int64
@@ -720,7 +723,7 @@ info:
         name: Commerce Team
     description:
         "Liferay Commerce ML API. A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.commerce.machine.learning.client', and version '1.0.32'."
+        'com.liferay.headless.commerce.machine.learning.client', and version '1.0.33'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

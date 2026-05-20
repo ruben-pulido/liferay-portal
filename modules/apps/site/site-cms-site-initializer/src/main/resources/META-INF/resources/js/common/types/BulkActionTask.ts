@@ -123,6 +123,7 @@ export interface IBulkActionType {
 	DueDateObjectBulkSelectionAction: {
 		dueDate?: string;
 	};
+	DuplicateObjectBulkSelectionAction: {};
 	EditObjectCategoriesBulkSelectionAction: {
 		append?: boolean;
 		taxonomyCategoryIdsToAdd?: number[];
@@ -147,6 +148,7 @@ export interface IBulkActionType {
 		roleKey?: string;
 	};
 	ResetPermissionObjectBulkSelectionAction: {};
+	RestoreObjectBulkSelectionAction: {};
 	StatusObjectBulkSelectionAction: {
 		status?: string;
 	};
@@ -165,6 +167,7 @@ export interface IBulkActionTaskType {
 	DeleteTaskBulkAction: string;
 	DownloadBulkAction: string;
 	DueDateObjectBulkSelectionAction: string;
+	DuplicateObjectBulkSelectionAction: string;
 	EditObjectCategoriesBulkSelectionAction: string;
 	EditObjectTagsBulkSelectionAction: string;
 	ExpireObjectBulkSelectionAction: string;
@@ -172,6 +175,7 @@ export interface IBulkActionTaskType {
 	MoveObjectBulkSelectionAction: string;
 	PermissionObjectBulkSelectionAction: string;
 	ResetPermissionObjectBulkSelectionAction: string;
+	RestoreObjectBulkSelectionAction: string;
 	StatusObjectBulkSelectionAction: string;
 	UpdateObjectValuesBulkSelectionAction: string;
 }

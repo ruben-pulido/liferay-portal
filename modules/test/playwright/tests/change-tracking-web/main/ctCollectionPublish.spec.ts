@@ -7,7 +7,6 @@ import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {changeTrackingPagesTest} from '../../../fixtures/changeTrackingPagesTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {globalMenuPagesTest} from '../../../fixtures/globalMenuPagesTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
@@ -24,9 +23,6 @@ export const test = mergeTests(
 	apiHelpersTest,
 	blogsPagesTest,
 	changeTrackingPagesTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	globalMenuPagesTest,
 	isolatedSiteTest,
 	journalPagesTest,
@@ -216,13 +212,18 @@ test('Publish Parallel Publications', async ({
 
 	await waitForAlert(page, `Success:${title2} was created successfully.`);
 
-	await apiHelpers.headlessChangeTracking.publishCTCollection(
-		ctCollection.body.id
-	);
+	await Promise.all([
+		apiHelpers.headlessChangeTracking.publishCTCollection(
+			ctCollection.body.id
+		),
+		apiHelpers.headlessChangeTracking.publishCTCollection(
+			ctCollection2.body.id
+		),
+	]);
 
-	await apiHelpers.headlessChangeTracking.publishCTCollection(
-		ctCollection2.body.id
-	);
+	await changeTrackingPage.assertStatus('Published', ctCollection.body.name);
+
+	await changeTrackingPage.assertStatus('Published', ctCollection2.body.name);
 
 	await journalPage.goto(site.friendlyUrlPath);
 

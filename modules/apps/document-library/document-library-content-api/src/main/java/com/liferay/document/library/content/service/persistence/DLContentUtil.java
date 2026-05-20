@@ -36,6 +36,20 @@ public class DLContentUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<DLContent> dlContents) {
+		getPersistence().cacheResult(dlContents);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(DLContent dlContent) {
+		getPersistence().cacheResult(dlContent);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,62 +125,10 @@ public class DLContentUtil {
 	}
 
 	/**
-	 * Returns all the document library contents where companyId = &#63; and repositoryId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param repositoryId the repository ID
-	 * @return the matching document library contents
-	 */
-	public static List<DLContent> findByC_R(long companyId, long repositoryId) {
-		return getPersistence().findByC_R(companyId, repositoryId);
-	}
-
-	/**
-	 * Returns a range of all the document library contents where companyId = &#63; and repositoryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param repositoryId the repository ID
-	 * @param start the lower bound of the range of document library contents
-	 * @param end the upper bound of the range of document library contents (not inclusive)
-	 * @return the range of matching document library contents
-	 */
-	public static List<DLContent> findByC_R(
-		long companyId, long repositoryId, int start, int end) {
-
-		return getPersistence().findByC_R(companyId, repositoryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param repositoryId the repository ID
-	 * @param start the lower bound of the range of document library contents
-	 * @param end the upper bound of the range of document library contents (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching document library contents
-	 */
-	public static List<DLContent> findByC_R(
-		long companyId, long repositoryId, int start, int end,
-		OrderByComparator<DLContent> orderByComparator) {
-
-		return getPersistence().findByC_R(
-			companyId, repositoryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -244,68 +206,10 @@ public class DLContentUtil {
 	}
 
 	/**
-	 * Returns all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param repositoryId the repository ID
-	 * @param path the path
-	 * @return the matching document library contents
-	 */
-	public static List<DLContent> findByC_R_P(
-		long companyId, long repositoryId, String path) {
-
-		return getPersistence().findByC_R_P(companyId, repositoryId, path);
-	}
-
-	/**
-	 * Returns a range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param repositoryId the repository ID
-	 * @param path the path
-	 * @param start the lower bound of the range of document library contents
-	 * @param end the upper bound of the range of document library contents (not inclusive)
-	 * @return the range of matching document library contents
-	 */
-	public static List<DLContent> findByC_R_P(
-		long companyId, long repositoryId, String path, int start, int end) {
-
-		return getPersistence().findByC_R_P(
-			companyId, repositoryId, path, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param repositoryId the repository ID
-	 * @param path the path
-	 * @param start the lower bound of the range of document library contents
-	 * @param end the upper bound of the range of document library contents (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching document library contents
-	 */
-	public static List<DLContent> findByC_R_P(
-		long companyId, long repositoryId, String path, int start, int end,
-		OrderByComparator<DLContent> orderByComparator) {
-
-		return getPersistence().findByC_R_P(
-			companyId, repositoryId, path, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -409,7 +313,7 @@ public class DLContentUtil {
 	 * Returns a range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -430,7 +334,7 @@ public class DLContentUtil {
 	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -453,7 +357,7 @@ public class DLContentUtil {
 	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -559,22 +463,6 @@ public class DLContentUtil {
 	}
 
 	/**
-	 * Returns the document library content where companyId = &#63; and repositoryId = &#63; and path = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param repositoryId the repository ID
-	 * @param path the path
-	 * @param version the version
-	 * @return the matching document library content, or <code>null</code> if a matching document library content could not be found
-	 */
-	public static DLContent fetchByC_R_P_V(
-		long companyId, long repositoryId, String path, String version) {
-
-		return getPersistence().fetchByC_R_P_V(
-			companyId, repositoryId, path, version);
-	}
-
-	/**
 	 * Returns the document library content where companyId = &#63; and repositoryId = &#63; and path = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -624,24 +512,6 @@ public class DLContentUtil {
 
 		return getPersistence().countByC_R_P_V(
 			companyId, repositoryId, path, version);
-	}
-
-	/**
-	 * Caches the document library content in the entity cache if it is enabled.
-	 *
-	 * @param dlContent the document library content
-	 */
-	public static void cacheResult(DLContent dlContent) {
-		getPersistence().cacheResult(dlContent);
-	}
-
-	/**
-	 * Caches the document library contents in the entity cache if it is enabled.
-	 *
-	 * @param dlContents the document library contents
-	 */
-	public static void cacheResult(List<DLContent> dlContents) {
-		getPersistence().cacheResult(dlContents);
 	}
 
 	/**
@@ -697,82 +567,129 @@ public class DLContentUtil {
 	}
 
 	/**
-	 * Returns all the document library contents.
+	 * Returns the document library content where companyId = &#63; and repositoryId = &#63; and path = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the document library contents
+	 * @param companyId the company ID
+	 * @param repositoryId the repository ID
+	 * @param path the path
+	 * @param version the version
+	 * @return the matching document library content, or <code>null</code> if a matching document library content could not be found
 	 */
-	public static List<DLContent> findAll() {
-		return getPersistence().findAll();
+	public static DLContent fetchByC_R_P_V(
+		long companyId, long repositoryId, String path, String version) {
+
+		return getPersistence().fetchByC_R_P_V(
+			companyId, repositoryId, path, version);
 	}
 
 	/**
-	 * Returns a range of all the document library contents.
+	 * Returns all the document library contents where companyId = &#63; and repositoryId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param repositoryId the repository ID
+	 * @return the matching document library contents
+	 */
+	public static List<DLContent> findByC_R(long companyId, long repositoryId) {
+		return getPersistence().findByC_R(companyId, repositoryId);
+	}
+
+	/**
+	 * Returns a range of all the document library contents where companyId = &#63; and repositoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param repositoryId the repository ID
 	 * @param start the lower bound of the range of document library contents
 	 * @param end the upper bound of the range of document library contents (not inclusive)
-	 * @return the range of document library contents
+	 * @return the range of matching document library contents
 	 */
-	public static List<DLContent> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<DLContent> findByC_R(
+		long companyId, long repositoryId, int start, int end) {
+
+		return getPersistence().findByC_R(companyId, repositoryId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the document library contents.
+	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param repositoryId the repository ID
 	 * @param start the lower bound of the range of document library contents
 	 * @param end the upper bound of the range of document library contents (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of document library contents
+	 * @return the ordered range of matching document library contents
 	 */
-	public static List<DLContent> findAll(
-		int start, int end, OrderByComparator<DLContent> orderByComparator) {
+	public static List<DLContent> findByC_R(
+		long companyId, long repositoryId, int start, int end,
+		OrderByComparator<DLContent> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByC_R(
+			companyId, repositoryId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the document library contents.
+	 * Returns all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param repositoryId the repository ID
+	 * @param path the path
+	 * @return the matching document library contents
+	 */
+	public static List<DLContent> findByC_R_P(
+		long companyId, long repositoryId, String path) {
+
+		return getPersistence().findByC_R_P(companyId, repositoryId, path);
+	}
+
+	/**
+	 * Returns a range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DLContentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param repositoryId the repository ID
+	 * @param path the path
+	 * @param start the lower bound of the range of document library contents
+	 * @param end the upper bound of the range of document library contents (not inclusive)
+	 * @return the range of matching document library contents
+	 */
+	public static List<DLContent> findByC_R_P(
+		long companyId, long repositoryId, String path, int start, int end) {
+
+		return getPersistence().findByC_R_P(
+			companyId, repositoryId, path, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.document.library.content.model.impl.DLContentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param repositoryId the repository ID
+	 * @param path the path
 	 * @param start the lower bound of the range of document library contents
 	 * @param end the upper bound of the range of document library contents (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of document library contents
+	 * @return the ordered range of matching document library contents
 	 */
-	public static List<DLContent> findAll(
-		int start, int end, OrderByComparator<DLContent> orderByComparator,
-		boolean useFinderCache) {
+	public static List<DLContent> findByC_R_P(
+		long companyId, long repositoryId, String path, int start, int end,
+		OrderByComparator<DLContent> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the document library contents from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of document library contents.
-	 *
-	 * @return the number of document library contents
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByC_R_P(
+			companyId, repositoryId, path, start, end, orderByComparator);
 	}
 
 	public static DLContentPersistence getPersistence() {
@@ -786,4 +703,4 @@ public class DLContentUtil {
 	private static volatile DLContentPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:365833791
+// LIFERAY-SERVICE-BUILDER-HASH:-1637564714

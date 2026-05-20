@@ -63,6 +63,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -109,7 +110,8 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 	}
 
 	public static List<InfoFieldValue<Object>> getInfoFieldValues(
-			DLAppLocalService dlAppLocalService, DLURLHelper dlURLHelper,
+			String defaultLanguageId, DLAppLocalService dlAppLocalService,
+			DLURLHelper dlURLHelper,
 			FriendlyURLEntryLocalService friendlyURLEntryLocalService,
 			ListTypeEntryLocalService listTypeEntryLocalService,
 			ObjectActionLocalService objectActionLocalService,
@@ -140,8 +142,9 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 			}
 
 			_addInfoFieldValue(
-				dlAppLocalService, dlURLHelper, infoFieldValues,
-				listTypeEntryLocalService, objectEntryLocalService, objectField,
+				defaultLanguageId, dlAppLocalService, dlURLHelper,
+				infoFieldValues, listTypeEntryLocalService,
+				objectEntryLocalService, objectField,
 				objectFieldInfoFieldConverter,
 				ObjectField.class.getSimpleName(),
 				objectRelationshipLocalService, themeDisplay, value);
@@ -151,8 +154,6 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 
 				continue;
 			}
-
-			Map<String, Object> properties = new HashMap<>();
 
 			ObjectRelationship objectRelationship =
 				objectRelationshipLocalService.
@@ -170,8 +171,13 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 					GetterUtil.getLong(values.get(objectField.getName()))),
 				themeDisplay);
 
+			Map<String, Object> properties = new HashMap<>();
+			String relatedObjectEntryDefaultLanguageId = defaultLanguageId;
+
 			if (objectEntry != null) {
 				properties = objectEntry.getProperties();
+				relatedObjectEntryDefaultLanguageId =
+					objectEntry.getDefaultLanguageId();
 			}
 
 			for (ObjectField relatedObjectField :
@@ -194,11 +200,11 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 				}
 
 				_addInfoFieldValue(
-					dlAppLocalService, dlURLHelper, infoFieldValues,
-					listTypeEntryLocalService, objectEntryLocalService,
-					relatedObjectField, objectFieldInfoFieldConverter,
-					namespace, objectRelationshipLocalService, themeDisplay,
-					value);
+					relatedObjectEntryDefaultLanguageId, dlAppLocalService,
+					dlURLHelper, infoFieldValues, listTypeEntryLocalService,
+					objectEntryLocalService, relatedObjectField,
+					objectFieldInfoFieldConverter, namespace,
+					objectRelationshipLocalService, themeDisplay, value);
 
 				infoFieldValues.add(
 					new InfoFieldValue<>(
@@ -302,7 +308,8 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 	}
 
 	private static void _addInfoFieldValue(
-			DLAppLocalService dlAppLocalService, DLURLHelper dlURLHelper,
+			String defaultLanguageId, DLAppLocalService dlAppLocalService,
+			DLURLHelper dlURLHelper,
 			List<InfoFieldValue<Object>> infoFieldValues,
 			ListTypeEntryLocalService listTypeEntryLocalService,
 			ObjectEntryLocalService objectEntryLocalService,
@@ -334,9 +341,15 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 		if (objectField.isLocalized() && (value instanceof Map)) {
 			Map<String, Object> map = (Map<String, Object>)value;
 
+			Locale defaultLocale = null;
+
+			if (Validator.isNotNull(defaultLanguageId)) {
+				defaultLocale = LocaleUtil.fromLanguageId(defaultLanguageId);
+			}
+
 			infoFieldValue = InfoLocalizedValue.builder(
 			).defaultLocale(
-				LocaleUtil.fromLanguageId(objectField.getDefaultLanguageId())
+				defaultLocale
 			).value(
 				consumer -> {
 					for (Map.Entry<String, Object> entry : map.entrySet()) {

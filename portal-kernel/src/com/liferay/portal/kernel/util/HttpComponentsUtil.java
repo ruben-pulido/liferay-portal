@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author Tina Tian
@@ -626,7 +627,20 @@ public class HttpComponentsUtil {
 	public static Map<String, String[]> parameterMapFromString(
 		String queryString) {
 
-		Map<String, String[]> parameterMap = new LinkedHashMap<>();
+		return parameterMapFromString(queryString, false);
+	}
+
+	public static Map<String, String[]> parameterMapFromString(
+		String queryString, boolean sort) {
+
+		Map<String, String[]> parameterMap = null;
+
+		if (sort) {
+			parameterMap = new TreeMap<>();
+		}
+		else {
+			parameterMap = new LinkedHashMap<>();
+		}
 
 		if (Validator.isNull(queryString)) {
 			return parameterMap;
@@ -969,6 +983,35 @@ public class HttpComponentsUtil {
 		return _shortenURL(
 			url, 0, StringPool.QUESTION, StringPool.AMPERSAND,
 			StringPool.EQUAL);
+	}
+
+	public static String sortParameters(String url) {
+		if (Validator.isNull(url)) {
+			return url;
+		}
+
+		int pos = url.indexOf(CharPool.QUESTION);
+
+		if (pos == -1) {
+			return url;
+		}
+
+		String[] array = PortalUtil.stripURLAnchor(url, StringPool.POUND);
+
+		url = array[0];
+
+		String anchor = array[1];
+
+		String queryString = url.substring(pos + 1);
+
+		if (Validator.isNull(queryString)) {
+			return url + anchor;
+		}
+
+		String sortedQueryString = parameterMapToString(
+			parameterMapFromString(queryString, true), false);
+
+		return url.substring(0, pos + 1) + sortedQueryString + anchor;
 	}
 
 	private static String _shortenURL(

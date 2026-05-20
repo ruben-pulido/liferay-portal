@@ -120,6 +120,8 @@ public class DDLRecordSetModelImpl
 
 	public static final String TABLE_SQL_DROP = "drop table DDLRecordSet";
 
+	public static final String ENTITY_ALIAS = "ddlRecordSet";
+
 	public static final String ORDER_BY_JPQL =
 		" ORDER BY ddlRecordSet.recordSetId ASC";
 
@@ -1277,6 +1279,13 @@ public class DDLRecordSetModelImpl
 	}
 
 	@Override
+	public void copyCacheFields(DDLRecordSet source) {
+		DDLRecordSetModelImpl sourceModelImpl = (DDLRecordSetModelImpl)source;
+
+		setSettingsDDMFormValues(sourceModelImpl.getSettingsDDMFormValues());
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -1704,4 +1713,4 @@ public class DDLRecordSetModelImpl
 	private DDLRecordSet _escapedModel;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1285127865
+// LIFERAY-SERVICE-BUILDER-HASH:-189655683

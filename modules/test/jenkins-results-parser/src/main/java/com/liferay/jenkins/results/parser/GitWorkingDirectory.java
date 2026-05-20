@@ -19,8 +19,10 @@ import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -461,7 +463,7 @@ public class GitWorkingDirectory {
 					"title", title
 				);
 
-				String url = JenkinsResultsParserUtil.getGitHubApiUrl(
+				String url = JenkinsResultsParserUtil.getGitHubAPIURL(
 					_gitRepositoryName, receiverUserName, "pulls");
 
 				JSONObject responseJSONObject;
@@ -695,6 +697,13 @@ public class GitWorkingDirectory {
 		LocalGitBranch localGitBranch, boolean noTags,
 		RemoteGitRef remoteGitRef, int retries) {
 
+		return fetch(localGitBranch, noTags, remoteGitRef, retries, null);
+	}
+
+	public LocalGitBranch fetch(
+		LocalGitBranch localGitBranch, boolean noTags,
+		RemoteGitRef remoteGitRef, int retries, Date shallowSinceDate) {
+
 		if (remoteGitRef == null) {
 			throw new GitWorkingDirectoryIllegalArgumentException(
 				this, "Remote Git reference is null");
@@ -702,7 +711,7 @@ public class GitWorkingDirectory {
 
 		String remoteGitRefSHA = remoteGitRef.getSHA();
 
-		if (localSHAExists(remoteGitRefSHA)) {
+		if ((shallowSinceDate == null) && localSHAExists(remoteGitRefSHA)) {
 			System.out.println(
 				remoteGitRefSHA + " already exists in Git repository");
 
@@ -768,6 +777,16 @@ public class GitWorkingDirectory {
 		}
 		else {
 			sb.append("--tags ");
+		}
+
+		if (shallowSinceDate != null) {
+			String shallowSinceDateString =
+				JenkinsResultsParserUtil.toDateString(
+					shallowSinceDate, "yyyy-MM-dd'T'HH:mm:ss'Z'", "UTC");
+
+			sb.append("--shallow-since=\"");
+			sb.append(shallowSinceDateString);
+			sb.append("\" ");
 		}
 
 		sb.append(remoteURL);
@@ -888,6 +907,12 @@ public class GitWorkingDirectory {
 
 	public LocalGitBranch fetch(RemoteGitRef remoteGitRef) {
 		return fetch(null, true, remoteGitRef);
+	}
+
+	public LocalGitBranch fetch(
+		RemoteGitRef remoteGitRef, Date shallowSinceDate) {
+
+		return fetch(null, true, remoteGitRef, 3, shallowSinceDate);
 	}
 
 	public LocalGitBranch fetch(RemoteGitRef remoteGitRef, int retries) {
@@ -2340,17 +2365,17 @@ public class GitWorkingDirectory {
 		return _log(start, num, null, sha);
 	}
 
-	public List<LocalGitCommit> log(String branch1, String branch2)
+	public List<LocalGitCommit> log(String startingRef, String endingRef)
 		throws IOException {
 
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("git log");
-		sb.append(" --oneline ");
-		sb.append(branch1);
-		sb.append(" ^");
-		sb.append(branch2);
-		sb.append(" | wc -l");
+		sb.append("git log ");
+		sb.append(startingRef);
+		sb.append("..");
+		sb.append(endingRef);
+		sb.append(" --patch --stat");
+		sb.append(" --pretty=format:'%x00%H %ct %ae %s%n'");
 
 		GitUtil.ExecutionResult result = executeBashCommands(
 			5, 1000, 30 * 1000, sb.toString());
@@ -2358,11 +2383,55 @@ public class GitWorkingDirectory {
 		if (result.getExitValue() != 0) {
 			throw new IOException(
 				JenkinsResultsParserUtil.combine(
-					"Unable to find log between ", branch1, " and ", branch2,
-					":\n\n", result.getStandardError()));
+					"Unable to find log between ", startingRef, " and ",
+					endingRef));
 		}
 
-		return log(Integer.parseInt(result.getStandardOut()));
+		List<LocalGitCommit> localGitCommits = new ArrayList<>();
+
+		String gitLog = result.getStandardOut();
+
+		gitLog = gitLog.replaceAll("Finished executing Bash commands.", "");
+
+		for (String commitSection : gitLog.split(_GIT_COMMIT_LOG_SEPARATOR)) {
+			if (commitSection.isEmpty()) {
+				continue;
+			}
+
+			int newlineIndex = commitSection.indexOf('\n');
+
+			String gitLogEntity;
+			String patch;
+
+			if (newlineIndex == -1) {
+				gitLogEntity = commitSection.trim();
+				patch = "";
+			}
+			else {
+				gitLogEntity = commitSection.substring(0, newlineIndex);
+
+				gitLogEntity = gitLogEntity.trim();
+
+				patch = commitSection.substring(newlineIndex + 1);
+			}
+
+			localGitCommits.add(getLocalGitCommit(gitLogEntity, patch));
+		}
+
+		Collections.reverse(localGitCommits);
+
+		return localGitCommits;
+	}
+
+	public Map<String, List<LocalGitCommit>> logByTicketId(int number) {
+		return _groupLocalGitCommits(log(number));
+	}
+
+	public Map<String, List<LocalGitCommit>> logByTicketId(
+			String branch1, String branch2)
+		throws IOException {
+
+		return _groupLocalGitCommits(log(branch1, branch2));
 	}
 
 	public List<RemoteGitBranch> pushBranchesToRemoteGitRepository(
@@ -2844,6 +2913,12 @@ public class GitWorkingDirectory {
 	}
 
 	protected LocalGitCommit getLocalGitCommit(String gitLogEntity) {
+		return getLocalGitCommit(gitLogEntity, null);
+	}
+
+	protected LocalGitCommit getLocalGitCommit(
+		String gitLogEntity, String patch) {
+
 		Matcher matcher = _gitLogEntityPattern.matcher(gitLogEntity);
 
 		if (!matcher.matches()) {
@@ -2854,6 +2929,12 @@ public class GitWorkingDirectory {
 		int unixTimestamp = Integer.valueOf(matcher.group("commitTime"));
 
 		long epochTimestamp = (long)unixTimestamp * 1000;
+
+		if (patch != null) {
+			return GitCommitFactory.newLocalGitCommit(
+				matcher.group("email"), this, matcher.group("message"), patch,
+				matcher.group("sha"), epochTimestamp);
+		}
 
 		return GitCommitFactory.newLocalGitCommit(
 			matcher.group("email"), this, matcher.group("message"),
@@ -3337,6 +3418,23 @@ public class GitWorkingDirectory {
 		return GitUtil.getPrivateRepositoryName(gitRepositoryName);
 	}
 
+	private Map<String, List<LocalGitCommit>> _groupLocalGitCommits(
+		List<LocalGitCommit> localGitCommits) {
+
+		Map<String, List<LocalGitCommit>> localGitCommitsMap =
+			new LinkedHashMap<>();
+
+		for (LocalGitCommit localGitCommit : localGitCommits) {
+			List<LocalGitCommit> localGitCommitsEntry =
+				localGitCommitsMap.computeIfAbsent(
+					localGitCommit.getTicketId(), k -> new ArrayList<>());
+
+			localGitCommitsEntry.add(localGitCommit);
+		}
+
+		return localGitCommitsMap;
+	}
+
 	private String _loadGitRepositoryName() {
 		String gitRepositoryName = _getGitRepositoryName(_getOriginGitRemote());
 
@@ -3352,14 +3450,35 @@ public class GitWorkingDirectory {
 
 		List<LocalGitCommit> localGitCommits = new ArrayList<>(num);
 
-		String gitLog = _log(start, num, file, "%H %ct %ae %s", sha);
+		String gitLog = _log(
+			start, num, file,
+			_GIT_COMMIT_LOG_SEPARATOR_FORMAT + "%H %ct %ae %s%n", sha);
 
 		gitLog = gitLog.replaceAll("Finished executing Bash commands.", "");
 
-		String[] gitLogEntities = gitLog.split("\n");
+		for (String commitSection : gitLog.split(_GIT_COMMIT_LOG_SEPARATOR)) {
+			if (commitSection.isEmpty()) {
+				continue;
+			}
 
-		for (String gitLogEntity : gitLogEntities) {
-			localGitCommits.add(getLocalGitCommit(gitLogEntity));
+			int newlineIndex = commitSection.indexOf('\n');
+
+			String gitLogEntity = null;
+			String patch = null;
+
+			if (newlineIndex == -1) {
+				gitLogEntity = commitSection.trim();
+				patch = "";
+			}
+			else {
+				gitLogEntity = commitSection.substring(0, newlineIndex);
+
+				gitLogEntity = gitLogEntity.trim();
+
+				patch = commitSection.substring(newlineIndex + 1);
+			}
+
+			localGitCommits.add(getLocalGitCommit(gitLogEntity, patch));
 		}
 
 		return localGitCommits;
@@ -3391,9 +3510,10 @@ public class GitWorkingDirectory {
 			sb.append(start);
 		}
 
-		sb.append(" --pretty=format:'");
+		sb.append(" --patch --pretty=format:'");
 		sb.append(format);
 		sb.append("'");
+		sb.append(" --stat");
 
 		if (file != null) {
 			sb.append(" ");
@@ -3427,6 +3547,10 @@ public class GitWorkingDirectory {
 	}
 
 	private static final int _BRANCHES_DELETE_BATCH_SIZE = 5;
+
+	private static final String _GIT_COMMIT_LOG_SEPARATOR = "\u0000";
+
+	private static final String _GIT_COMMIT_LOG_SEPARATOR_FORMAT = "%x00";
 
 	private static final Pattern _badRefPattern = Pattern.compile(
 		"fatal: bad object (?<badRef>.+/HEAD)");

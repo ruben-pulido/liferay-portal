@@ -124,6 +124,8 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 
 	public static final String TABLE_SQL_DROP = "drop table Group_";
 
+	public static final String ENTITY_ALIAS = "group_";
+
 	public static final String ORDER_BY_JPQL = " ORDER BY group_.name ASC";
 
 	public static final String ORDER_BY_SQL = " ORDER BY Group_.name ASC";
@@ -1562,6 +1564,13 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	}
 
 	@Override
+	public void copyCacheFields(Group source) {
+		GroupModelImpl sourceModelImpl = (GroupModelImpl)source;
+
+		setClassName(sourceModelImpl.getClassName());
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -1990,4 +1999,4 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	private Group _escapedModel;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1919400488
+// LIFERAY-SERVICE-BUILDER-HASH:-758322397

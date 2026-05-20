@@ -9,8 +9,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.exportimport.test.util.lar.BaseStagedModelDataHandlerTestCase;
 import com.liferay.message.boards.constants.MBCategoryConstants;
 import com.liferay.message.boards.model.MBCategory;
-import com.liferay.message.boards.service.MBCategoryLocalServiceUtil;
-import com.liferay.message.boards.service.MBCategoryServiceUtil;
+import com.liferay.message.boards.service.MBCategoryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
@@ -19,6 +18,7 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.HashMap;
@@ -50,7 +50,7 @@ public class MBCategoryStagedModelDataHandlerTest
 		Map<String, List<StagedModel>> dependentStagedModelsMap =
 			new HashMap<>();
 
-		MBCategory category = MBCategoryServiceUtil.addCategory(
+		MBCategory category = _mbCategoryLocalService.addCategory(
 			null, TestPropsValues.getUserId(),
 			MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
 			RandomTestUtil.randomString(), StringPool.BLANK,
@@ -74,7 +74,7 @@ public class MBCategoryStagedModelDataHandlerTest
 
 		MBCategory category = (MBCategory)dependentStagedModels.get(0);
 
-		return MBCategoryServiceUtil.addCategory(
+		return _mbCategoryLocalService.addCategory(
 			null, TestPropsValues.getUserId(), category.getCategoryId(),
 			RandomTestUtil.randomString(), StringPool.BLANK,
 			ServiceContextTestUtil.getServiceContext(
@@ -85,7 +85,7 @@ public class MBCategoryStagedModelDataHandlerTest
 	protected StagedModel getStagedModel(String uuid, Group group)
 		throws PortalException {
 
-		return MBCategoryLocalServiceUtil.getMBCategoryByUuidAndGroupId(
+		return _mbCategoryLocalService.getMBCategoryByUuidAndGroupId(
 			uuid, group.getGroupId());
 	}
 
@@ -108,7 +108,7 @@ public class MBCategoryStagedModelDataHandlerTest
 
 		MBCategory category = (MBCategory)dependentStagedModels.get(0);
 
-		MBCategoryLocalServiceUtil.getMBCategoryByUuidAndGroupId(
+		_mbCategoryLocalService.getMBCategoryByUuidAndGroupId(
 			category.getUuid(), group.getGroupId());
 	}
 
@@ -132,5 +132,8 @@ public class MBCategoryStagedModelDataHandlerTest
 		Assert.assertEquals(
 			category.getMessageCount(), importedCategory.getMessageCount());
 	}
+
+	@Inject
+	private MBCategoryLocalService _mbCategoryLocalService;
 
 }

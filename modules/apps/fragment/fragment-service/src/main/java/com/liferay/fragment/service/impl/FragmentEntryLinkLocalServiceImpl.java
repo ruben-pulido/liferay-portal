@@ -20,15 +20,15 @@ import com.liferay.fragment.service.base.FragmentEntryLinkLocalServiceBaseImpl;
 import com.liferay.fragment.service.persistence.FragmentCollectionPersistence;
 import com.liferay.fragment.service.persistence.FragmentEntryPersistence;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntryTable;
+import com.liferay.layout.page.template.util.CheckUnlockedLayoutThreadLocal;
 import com.liferay.layout.util.CheckNoninstanceablePortletThreadLocal;
 import com.liferay.layout.util.UpdateLayoutStatusThreadLocal;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
-import com.liferay.petra.sql.dsl.Table;
-import com.liferay.petra.sql.dsl.expression.Expression;
 import com.liferay.petra.sql.dsl.expression.Predicate;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.petra.sql.dsl.query.FromStep;
 import com.liferay.petra.sql.dsl.query.GroupByStep;
 import com.liferay.petra.sql.dsl.query.LimitStep;
@@ -331,16 +331,15 @@ public class FragmentEntryLinkLocalServiceImpl
 			OrderByComparator<FragmentEntryLink> orderByComparator)
 		throws PortalException {
 
-		Predicate predicate = _getAllFragmentEntryLinksByFragmentEntryPredicate(
-			fragmentEntry, FragmentEntryLinkTable.INSTANCE);
-
 		return fragmentEntryLinkPersistence.dslQuery(
 			DSLQueryFactoryUtil.select(
 				FragmentEntryLinkTable.INSTANCE
 			).from(
 				FragmentEntryLinkTable.INSTANCE
 			).where(
-				predicate.and(_getMaxCreateDatePredicate(fragmentEntry))
+				_getLatestFragmentEntryLinkPredicate(
+					_getAllFragmentEntryLinksByFragmentEntryPredicate(
+						fragmentEntry, FragmentEntryLinkTable.INSTANCE))
 			).orderBy(
 				_getOrderByStepLimitStepFunction(orderByComparator)
 			).limit(
@@ -766,9 +765,14 @@ public class FragmentEntryLinkLocalServiceImpl
 		FragmentEntry fragmentEntry = fragmentEntryLink.fetchFragmentEntry();
 
 		if (fragmentEntry == null) {
-			throw new UnsupportedOperationException(
-				"Unable to propagate fragment entry link " +
-					fragmentEntryLinkId);
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to propagate fragment entry link " +
+						fragmentEntryLinkId +
+							" because its fragment entry is missing");
+			}
+
+			return;
 		}
 
 		updateLatestChanges(
@@ -779,6 +783,10 @@ public class FragmentEntryLinkLocalServiceImpl
 
 	private void _checkUnlockedLayout(long plid, long userId)
 		throws PortalException {
+
+		if (!CheckUnlockedLayoutThreadLocal.isCheckUnlockedLayout()) {
+			return;
+		}
 
 		Layout layout = _layoutLocalService.fetchLayout(plid);
 
@@ -814,7 +822,7 @@ public class FragmentEntryLinkLocalServiceImpl
 	}
 
 	private Predicate _getFragmentEntryLinksByFragmentEntryPredicate(
-			FragmentEntry fragmentEntry, long scopeGroupId)
+			FragmentEntry fragmentEntry, Predicate predicate, long scopeGroupId)
 		throws PortalException {
 
 		String fragmentEntryScopeERC =
@@ -832,6 +840,8 @@ public class FragmentEntryLinkLocalServiceImpl
 					fragmentEntryScopeERC)
 			).and(
 				FragmentEntryLinkTable.INSTANCE.deleted.eq(false)
+			).and(
+				predicate
 			);
 		}
 
@@ -844,46 +854,47 @@ public class FragmentEntryLinkLocalServiceImpl
 			FragmentEntryLinkTable.INSTANCE.fragmentEntryScopeERC.isNull()
 		).and(
 			FragmentEntryLinkTable.INSTANCE.deleted.eq(false)
+		).and(
+			predicate
 		);
 	}
 
+	private Predicate _getLatestFragmentEntryLinkPredicate(
+		Predicate predicate) {
+
+		return FragmentEntryLinkTable.INSTANCE.fragmentEntryLinkId.in(
+			DSLQueryFactoryUtil.select(
+				DSLFunctionFactoryUtil.max(
+					FragmentEntryLinkTable.INSTANCE.fragmentEntryLinkId)
+			).from(
+				FragmentEntryLinkTable.INSTANCE
+			).where(
+				predicate
+			).groupBy(
+				FragmentEntryLinkTable.INSTANCE.plid
+			));
+	}
+
 	private GroupByStep _getLayoutFragmentEntryLinksByFragmentEntryGroupByStep(
-			FragmentEntry fragmentEntry, FromStep fromStep,
-			boolean maxCreateDatePredicate, long scopeGroupId)
+			FragmentEntry fragmentEntry, FromStep fromStep, boolean latest,
+			long scopeGroupId)
 		throws PortalException {
 
-		Table<LayoutTable> tempLayoutTableTable = DSLQueryFactoryUtil.select(
-			LayoutTable.INSTANCE.plid
-		).from(
-			LayoutTable.INSTANCE
-		).leftJoinOn(
-			LayoutPageTemplateEntryTable.INSTANCE,
-			LayoutTable.INSTANCE.plid.eq(
-				LayoutPageTemplateEntryTable.INSTANCE.plid
-			).or(
-				LayoutTable.INSTANCE.classPK.eq(
-					LayoutPageTemplateEntryTable.INSTANCE.plid)
-			)
-		).where(
-			LayoutPageTemplateEntryTable.INSTANCE.plid.isNull()
-		).as(
-			"tempLayoutTable", LayoutTable.INSTANCE
-		);
-
 		Predicate predicate = _getFragmentEntryLinksByFragmentEntryPredicate(
-			fragmentEntry, scopeGroupId);
+			fragmentEntry,
+			FragmentEntryLinkTable.INSTANCE.plid.notIn(_getPlidsDSLQuery(null)),
+			scopeGroupId);
 
-		if (maxCreateDatePredicate) {
-			predicate = predicate.and(
-				_getMaxCreateDatePredicate(fragmentEntry));
+		if (latest) {
+			return fromStep.from(
+				FragmentEntryLinkTable.INSTANCE
+			).where(
+				_getLatestFragmentEntryLinkPredicate(predicate)
+			);
 		}
 
 		return fromStep.from(
 			FragmentEntryLinkTable.INSTANCE
-		).innerJoinON(
-			tempLayoutTableTable,
-			FragmentEntryLinkTable.INSTANCE.plid.eq(
-				(Expression<Long>)tempLayoutTableTable.getColumn("plid"))
 		).where(
 			predicate
 		);
@@ -892,75 +903,30 @@ public class FragmentEntryLinkLocalServiceImpl
 	private GroupByStep
 			_getLayoutPageTemplateFragmentEntryLinksByFragmentEntryGroupByStep(
 				FragmentEntry fragmentEntry, FromStep fromStep,
-				int layoutPageTemplateType, boolean maxCreateDatePredicate,
-				long scopeGroupId)
+				int layoutPageTemplateType, boolean latest, long scopeGroupId)
 		throws PortalException {
 
-		Table<LayoutTable> tempLayoutTableTable = DSLQueryFactoryUtil.select(
-			LayoutTable.INSTANCE.plid
-		).from(
-			LayoutTable.INSTANCE
-		).innerJoinON(
-			LayoutPageTemplateEntryTable.INSTANCE,
-			LayoutTable.INSTANCE.plid.eq(
-				LayoutPageTemplateEntryTable.INSTANCE.plid
-			).or(
-				LayoutTable.INSTANCE.classPK.eq(
-					LayoutPageTemplateEntryTable.INSTANCE.plid)
-			)
-		).where(
-			LayoutPageTemplateEntryTable.INSTANCE.type.eq(
-				layoutPageTemplateType)
-		).as(
-			"tempLayoutTable", LayoutTable.INSTANCE
-		);
-
 		Predicate predicate = _getFragmentEntryLinksByFragmentEntryPredicate(
-			fragmentEntry, scopeGroupId);
+			fragmentEntry,
+			FragmentEntryLinkTable.INSTANCE.plid.in(
+				_getPlidsDSLQuery(
+					LayoutPageTemplateEntryTable.INSTANCE.type.eq(
+						layoutPageTemplateType))),
+			scopeGroupId);
 
-		if (maxCreateDatePredicate) {
-			predicate = predicate.and(
-				_getMaxCreateDatePredicate(fragmentEntry));
+		if (latest) {
+			return fromStep.from(
+				FragmentEntryLinkTable.INSTANCE
+			).where(
+				_getLatestFragmentEntryLinkPredicate(predicate)
+			);
 		}
 
 		return fromStep.from(
 			FragmentEntryLinkTable.INSTANCE
-		).innerJoinON(
-			tempLayoutTableTable,
-			FragmentEntryLinkTable.INSTANCE.plid.eq(
-				(Expression<Long>)tempLayoutTableTable.getColumn("plid"))
 		).where(
 			predicate
 		);
-	}
-
-	private Predicate _getMaxCreateDatePredicate(FragmentEntry fragmentEntry)
-		throws PortalException {
-
-		FragmentEntryLinkTable tempFragmentEntryLinkTable =
-			FragmentEntryLinkTable.INSTANCE.as("tempFragmentEntryLinkTable");
-
-		Predicate predicate = _getAllFragmentEntryLinksByFragmentEntryPredicate(
-			fragmentEntry, tempFragmentEntryLinkTable);
-
-		return FragmentEntryLinkTable.INSTANCE.createDate.in(
-			DSLQueryFactoryUtil.select(
-				DSLFunctionFactoryUtil.max(
-					tempFragmentEntryLinkTable.createDate)
-			).from(
-				tempFragmentEntryLinkTable
-			).where(
-				predicate.and(
-					tempFragmentEntryLinkTable.groupId.eq(
-						FragmentEntryLinkTable.INSTANCE.groupId)
-				).and(
-					tempFragmentEntryLinkTable.classNameId.eq(
-						FragmentEntryLinkTable.INSTANCE.classNameId)
-				).and(
-					tempFragmentEntryLinkTable.classPK.eq(
-						FragmentEntryLinkTable.INSTANCE.classPK)
-				)
-			));
 	}
 
 	private Function<OrderByStep, LimitStep> _getOrderByStepLimitStepFunction(
@@ -976,6 +942,24 @@ public class FragmentEntryLinkLocalServiceImpl
 			return orderByStep.orderBy(
 				FragmentEntryLinkTable.INSTANCE, orderByComparator);
 		};
+	}
+
+	private DSLQuery _getPlidsDSLQuery(Predicate predicate) {
+		return DSLQueryFactoryUtil.select(
+			LayoutTable.INSTANCE.plid
+		).from(
+			LayoutTable.INSTANCE
+		).innerJoinON(
+			LayoutPageTemplateEntryTable.INSTANCE,
+			LayoutTable.INSTANCE.plid.eq(
+				LayoutPageTemplateEntryTable.INSTANCE.plid
+			).or(
+				LayoutTable.INSTANCE.classPK.eq(
+					LayoutPageTemplateEntryTable.INSTANCE.plid)
+			)
+		).where(
+			predicate
+		);
 	}
 
 	private String _getProcessedHTML(

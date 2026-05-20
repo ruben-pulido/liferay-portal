@@ -14,17 +14,11 @@ import com.liferay.commerce.shop.by.diagram.model.impl.CSDiagramEntryModelImpl;
 import com.liferay.commerce.shop.by.diagram.service.persistence.CSDiagramEntryPersistence;
 import com.liferay.commerce.shop.by.diagram.service.persistence.CSDiagramEntryUtil;
 import com.liferay.commerce.shop.by.diagram.service.persistence.impl.constants.CommercePersistenceConstants;
-import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -39,11 +33,12 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -55,9 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -82,7 +75,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CSDiagramEntryPersistence.class)
 public class CSDiagramEntryPersistenceImpl
-	extends BasePersistenceImpl<CSDiagramEntry>
+	extends BasePersistenceImpl<CSDiagramEntry, NoSuchCSDiagramEntryException>
 	implements CSDiagramEntryPersistence {
 
 	/*
@@ -99,71 +92,14 @@ public class CSDiagramEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByCPDefinitionId;
-	private FinderPath _finderPathWithoutPaginationFindByCPDefinitionId;
-	private FinderPath _finderPathCountByCPDefinitionId;
-
-	/**
-	 * Returns all the cs diagram entries where CPDefinitionId = &#63;.
-	 *
-	 * @param CPDefinitionId the cp definition ID
-	 * @return the matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCPDefinitionId(long CPDefinitionId) {
-		return findByCPDefinitionId(
-			CPDefinitionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cs diagram entries where CPDefinitionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPDefinitionId the cp definition ID
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @return the range of matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCPDefinitionId(
-		long CPDefinitionId, int start, int end) {
-
-		return findByCPDefinitionId(CPDefinitionId, start, end, null);
-	}
+	private CollectionPersistenceFinder<CSDiagramEntry>
+		_collectionPersistenceFinderByCPDefinitionId;
 
 	/**
 	 * Returns an ordered range of all the cs diagram entries where CPDefinitionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPDefinitionId the cp definition ID
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCPDefinitionId(
-		long CPDefinitionId, int start, int end,
-		OrderByComparator<CSDiagramEntry> orderByComparator) {
-
-		return findByCPDefinitionId(
-			CPDefinitionId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cs diagram entries where CPDefinitionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param CPDefinitionId the cp definition ID
@@ -179,103 +115,9 @@ public class CSDiagramEntryPersistenceImpl
 		OrderByComparator<CSDiagramEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath =
-						_finderPathWithoutPaginationFindByCPDefinitionId;
-					finderArgs = new Object[] {CPDefinitionId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByCPDefinitionId;
-				finderArgs = new Object[] {
-					CPDefinitionId, start, end, orderByComparator
-				};
-			}
-
-			List<CSDiagramEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<CSDiagramEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CSDiagramEntry csDiagramEntry : list) {
-						if (CPDefinitionId !=
-								csDiagramEntry.getCPDefinitionId()) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_CSDIAGRAMENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_CPDEFINITIONID_CPDEFINITIONID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CSDiagramEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(CPDefinitionId);
-
-					list = (List<CSDiagramEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByCPDefinitionId.find(
+			finderCache, new Object[] {CPDefinitionId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -299,16 +141,9 @@ public class CSDiagramEntryPersistenceImpl
 			return csDiagramEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("CPDefinitionId=");
-		sb.append(CPDefinitionId);
-
-		sb.append("}");
-
-		throw new NoSuchCSDiagramEntryException(sb.toString());
+		throw new NoSuchCSDiagramEntryException(
+			_collectionPersistenceFinderByCPDefinitionId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPDefinitionId}));
 	}
 
 	/**
@@ -323,14 +158,8 @@ public class CSDiagramEntryPersistenceImpl
 		long CPDefinitionId,
 		OrderByComparator<CSDiagramEntry> orderByComparator) {
 
-		List<CSDiagramEntry> list = findByCPDefinitionId(
-			CPDefinitionId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCPDefinitionId.fetchFirst(
+			finderCache, new Object[] {CPDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -340,13 +169,8 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByCPDefinitionId(long CPDefinitionId) {
-		for (CSDiagramEntry csDiagramEntry :
-				findByCPDefinitionId(
-					CPDefinitionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(csDiagramEntry);
-		}
+		_collectionPersistenceFinderByCPDefinitionId.remove(
+			finderCache, new Object[] {CPDefinitionId});
 	}
 
 	/**
@@ -357,118 +181,18 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Override
 	public int countByCPDefinitionId(long CPDefinitionId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			FinderPath finderPath = _finderPathCountByCPDefinitionId;
-
-			Object[] finderArgs = new Object[] {CPDefinitionId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_CSDIAGRAMENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_CPDEFINITIONID_CPDEFINITIONID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(CPDefinitionId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByCPDefinitionId.count(
+			finderCache, new Object[] {CPDefinitionId});
 	}
 
-	private static final String _FINDER_COLUMN_CPDEFINITIONID_CPDEFINITIONID_2 =
-		"csDiagramEntry.CPDefinitionId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByCPInstanceId;
-	private FinderPath _finderPathWithoutPaginationFindByCPInstanceId;
-	private FinderPath _finderPathCountByCPInstanceId;
-
-	/**
-	 * Returns all the cs diagram entries where CPInstanceId = &#63;.
-	 *
-	 * @param CPInstanceId the cp instance ID
-	 * @return the matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCPInstanceId(long CPInstanceId) {
-		return findByCPInstanceId(
-			CPInstanceId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cs diagram entries where CPInstanceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPInstanceId the cp instance ID
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @return the range of matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCPInstanceId(
-		long CPInstanceId, int start, int end) {
-
-		return findByCPInstanceId(CPInstanceId, start, end, null);
-	}
+	private CollectionPersistenceFinder<CSDiagramEntry>
+		_collectionPersistenceFinderByCPInstanceId;
 
 	/**
 	 * Returns an ordered range of all the cs diagram entries where CPInstanceId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPInstanceId the cp instance ID
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCPInstanceId(
-		long CPInstanceId, int start, int end,
-		OrderByComparator<CSDiagramEntry> orderByComparator) {
-
-		return findByCPInstanceId(
-			CPInstanceId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cs diagram entries where CPInstanceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param CPInstanceId the cp instance ID
@@ -484,100 +208,9 @@ public class CSDiagramEntryPersistenceImpl
 		OrderByComparator<CSDiagramEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByCPInstanceId;
-					finderArgs = new Object[] {CPInstanceId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByCPInstanceId;
-				finderArgs = new Object[] {
-					CPInstanceId, start, end, orderByComparator
-				};
-			}
-
-			List<CSDiagramEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<CSDiagramEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CSDiagramEntry csDiagramEntry : list) {
-						if (CPInstanceId != csDiagramEntry.getCPInstanceId()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_CSDIAGRAMENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_CPINSTANCEID_CPINSTANCEID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CSDiagramEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(CPInstanceId);
-
-					list = (List<CSDiagramEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByCPInstanceId.find(
+			finderCache, new Object[] {CPInstanceId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -601,16 +234,9 @@ public class CSDiagramEntryPersistenceImpl
 			return csDiagramEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("CPInstanceId=");
-		sb.append(CPInstanceId);
-
-		sb.append("}");
-
-		throw new NoSuchCSDiagramEntryException(sb.toString());
+		throw new NoSuchCSDiagramEntryException(
+			_collectionPersistenceFinderByCPInstanceId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPInstanceId}));
 	}
 
 	/**
@@ -625,14 +251,8 @@ public class CSDiagramEntryPersistenceImpl
 		long CPInstanceId,
 		OrderByComparator<CSDiagramEntry> orderByComparator) {
 
-		List<CSDiagramEntry> list = findByCPInstanceId(
-			CPInstanceId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCPInstanceId.fetchFirst(
+			finderCache, new Object[] {CPInstanceId}, orderByComparator);
 	}
 
 	/**
@@ -642,12 +262,8 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByCPInstanceId(long CPInstanceId) {
-		for (CSDiagramEntry csDiagramEntry :
-				findByCPInstanceId(
-					CPInstanceId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(csDiagramEntry);
-		}
+		_collectionPersistenceFinderByCPInstanceId.remove(
+			finderCache, new Object[] {CPInstanceId});
 	}
 
 	/**
@@ -658,118 +274,18 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Override
 	public int countByCPInstanceId(long CPInstanceId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			FinderPath finderPath = _finderPathCountByCPInstanceId;
-
-			Object[] finderArgs = new Object[] {CPInstanceId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_CSDIAGRAMENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_CPINSTANCEID_CPINSTANCEID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(CPInstanceId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByCPInstanceId.count(
+			finderCache, new Object[] {CPInstanceId});
 	}
 
-	private static final String _FINDER_COLUMN_CPINSTANCEID_CPINSTANCEID_2 =
-		"csDiagramEntry.CPInstanceId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByCProductId;
-	private FinderPath _finderPathWithoutPaginationFindByCProductId;
-	private FinderPath _finderPathCountByCProductId;
-
-	/**
-	 * Returns all the cs diagram entries where CProductId = &#63;.
-	 *
-	 * @param CProductId the c product ID
-	 * @return the matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCProductId(long CProductId) {
-		return findByCProductId(
-			CProductId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cs diagram entries where CProductId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CProductId the c product ID
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @return the range of matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCProductId(
-		long CProductId, int start, int end) {
-
-		return findByCProductId(CProductId, start, end, null);
-	}
+	private CollectionPersistenceFinder<CSDiagramEntry>
+		_collectionPersistenceFinderByCProductId;
 
 	/**
 	 * Returns an ordered range of all the cs diagram entries where CProductId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CProductId the c product ID
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findByCProductId(
-		long CProductId, int start, int end,
-		OrderByComparator<CSDiagramEntry> orderByComparator) {
-
-		return findByCProductId(
-			CProductId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cs diagram entries where CProductId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param CProductId the c product ID
@@ -785,100 +301,9 @@ public class CSDiagramEntryPersistenceImpl
 		OrderByComparator<CSDiagramEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByCProductId;
-					finderArgs = new Object[] {CProductId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByCProductId;
-				finderArgs = new Object[] {
-					CProductId, start, end, orderByComparator
-				};
-			}
-
-			List<CSDiagramEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<CSDiagramEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CSDiagramEntry csDiagramEntry : list) {
-						if (CProductId != csDiagramEntry.getCProductId()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_CSDIAGRAMENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_CPRODUCTID_CPRODUCTID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CSDiagramEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(CProductId);
-
-					list = (List<CSDiagramEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByCProductId.find(
+			finderCache, new Object[] {CProductId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -902,16 +327,9 @@ public class CSDiagramEntryPersistenceImpl
 			return csDiagramEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("CProductId=");
-		sb.append(CProductId);
-
-		sb.append("}");
-
-		throw new NoSuchCSDiagramEntryException(sb.toString());
+		throw new NoSuchCSDiagramEntryException(
+			_collectionPersistenceFinderByCProductId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CProductId}));
 	}
 
 	/**
@@ -925,14 +343,8 @@ public class CSDiagramEntryPersistenceImpl
 	public CSDiagramEntry fetchByCProductId_First(
 		long CProductId, OrderByComparator<CSDiagramEntry> orderByComparator) {
 
-		List<CSDiagramEntry> list = findByCProductId(
-			CProductId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCProductId.fetchFirst(
+			finderCache, new Object[] {CProductId}, orderByComparator);
 	}
 
 	/**
@@ -942,12 +354,8 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByCProductId(long CProductId) {
-		for (CSDiagramEntry csDiagramEntry :
-				findByCProductId(
-					CProductId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(csDiagramEntry);
-		}
+		_collectionPersistenceFinderByCProductId.remove(
+			finderCache, new Object[] {CProductId});
 	}
 
 	/**
@@ -958,57 +366,12 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Override
 	public int countByCProductId(long CProductId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			FinderPath finderPath = _finderPathCountByCProductId;
-
-			Object[] finderArgs = new Object[] {CProductId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_CSDIAGRAMENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_CPRODUCTID_CPRODUCTID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(CProductId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByCProductId.count(
+			finderCache, new Object[] {CProductId});
 	}
 
-	private static final String _FINDER_COLUMN_CPRODUCTID_CPRODUCTID_2 =
-		"csDiagramEntry.CProductId = ?";
-
-	private FinderPath _finderPathFetchByCPDI_S;
+	private UniquePersistenceFinder<CSDiagramEntry>
+		_uniquePersistenceFinderByCPDI_S;
 
 	/**
 	 * Returns the cs diagram entry where CPDefinitionId = &#63; and sequence = &#63; or throws a <code>NoSuchCSDiagramEntryException</code> if it could not be found.
@@ -1025,38 +388,19 @@ public class CSDiagramEntryPersistenceImpl
 		CSDiagramEntry csDiagramEntry = fetchByCPDI_S(CPDefinitionId, sequence);
 
 		if (csDiagramEntry == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("CPDefinitionId=");
-			sb.append(CPDefinitionId);
-
-			sb.append(", sequence=");
-			sb.append(sequence);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByCPDI_S.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {CPDefinitionId, sequence});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCSDiagramEntryException(sb.toString());
+			throw new NoSuchCSDiagramEntryException(message);
 		}
 
 		return csDiagramEntry;
-	}
-
-	/**
-	 * Returns the cs diagram entry where CPDefinitionId = &#63; and sequence = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param CPDefinitionId the cp definition ID
-	 * @param sequence the sequence
-	 * @return the matching cs diagram entry, or <code>null</code> if a matching cs diagram entry could not be found
-	 */
-	@Override
-	public CSDiagramEntry fetchByCPDI_S(long CPDefinitionId, String sequence) {
-		return fetchByCPDI_S(CPDefinitionId, sequence, true);
 	}
 
 	/**
@@ -1071,101 +415,9 @@ public class CSDiagramEntryPersistenceImpl
 	public CSDiagramEntry fetchByCPDI_S(
 		long CPDefinitionId, String sequence, boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			sequence = Objects.toString(sequence, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {CPDefinitionId, sequence};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByCPDI_S, finderArgs, this);
-			}
-
-			if (result instanceof CSDiagramEntry) {
-				CSDiagramEntry csDiagramEntry = (CSDiagramEntry)result;
-
-				if ((CPDefinitionId != csDiagramEntry.getCPDefinitionId()) ||
-					!Objects.equals(sequence, csDiagramEntry.getSequence())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_CSDIAGRAMENTRY_WHERE);
-
-				sb.append(_FINDER_COLUMN_CPDI_S_CPDEFINITIONID_2);
-
-				boolean bindSequence = false;
-
-				if (sequence.isEmpty()) {
-					sb.append(_FINDER_COLUMN_CPDI_S_SEQUENCE_3);
-				}
-				else {
-					bindSequence = true;
-
-					sb.append(_FINDER_COLUMN_CPDI_S_SEQUENCE_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(CPDefinitionId);
-
-					if (bindSequence) {
-						queryPos.add(sequence);
-					}
-
-					List<CSDiagramEntry> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByCPDI_S, finderArgs, list);
-						}
-					}
-					else {
-						CSDiagramEntry csDiagramEntry = list.get(0);
-
-						result = csDiagramEntry;
-
-						cacheResult(csDiagramEntry);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (CSDiagramEntry)result;
-			}
-		}
+		return _uniquePersistenceFinderByCPDI_S.fetch(
+			finderCache, new Object[] {CPDefinitionId, sequence},
+			useFinderCache);
 	}
 
 	/**
@@ -1193,25 +445,12 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Override
 	public int countByCPDI_S(long CPDefinitionId, String sequence) {
-		CSDiagramEntry csDiagramEntry = fetchByCPDI_S(CPDefinitionId, sequence);
-
-		if (csDiagramEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByCPDI_S.count(
+			finderCache, new Object[] {CPDefinitionId, sequence});
 	}
 
-	private static final String _FINDER_COLUMN_CPDI_S_CPDEFINITIONID_2 =
-		"csDiagramEntry.CPDefinitionId = ? AND ";
-
-	private static final String _FINDER_COLUMN_CPDI_S_SEQUENCE_2 =
-		"csDiagramEntry.sequence = ?";
-
-	private static final String _FINDER_COLUMN_CPDI_S_SEQUENCE_3 =
-		"(csDiagramEntry.sequence IS NULL OR csDiagramEntry.sequence = '')";
-
-	private FinderPath _finderPathFetchByERC_C;
+	private UniquePersistenceFinder<CSDiagramEntry>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the cs diagram entry where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCSDiagramEntryException</code> if it could not be found.
@@ -1230,40 +469,19 @@ public class CSDiagramEntryPersistenceImpl
 			externalReferenceCode, companyId);
 
 		if (csDiagramEntry == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("externalReferenceCode=");
-			sb.append(externalReferenceCode);
-
-			sb.append(", companyId=");
-			sb.append(companyId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {externalReferenceCode, companyId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCSDiagramEntryException(sb.toString());
+			throw new NoSuchCSDiagramEntryException(message);
 		}
 
 		return csDiagramEntry;
-	}
-
-	/**
-	 * Returns the cs diagram entry where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching cs diagram entry, or <code>null</code> if a matching cs diagram entry could not be found
-	 */
-	@Override
-	public CSDiagramEntry fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return fetchByERC_C(externalReferenceCode, companyId, true);
 	}
 
 	/**
@@ -1278,103 +496,9 @@ public class CSDiagramEntryPersistenceImpl
 	public CSDiagramEntry fetchByERC_C(
 		String externalReferenceCode, long companyId, boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {externalReferenceCode, companyId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByERC_C, finderArgs, this);
-			}
-
-			if (result instanceof CSDiagramEntry) {
-				CSDiagramEntry csDiagramEntry = (CSDiagramEntry)result;
-
-				if (!Objects.equals(
-						externalReferenceCode,
-						csDiagramEntry.getExternalReferenceCode()) ||
-					(companyId != csDiagramEntry.getCompanyId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_CSDIAGRAMENTRY_WHERE);
-
-				boolean bindExternalReferenceCode = false;
-
-				if (externalReferenceCode.isEmpty()) {
-					sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3);
-				}
-				else {
-					bindExternalReferenceCode = true;
-
-					sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2);
-				}
-
-				sb.append(_FINDER_COLUMN_ERC_C_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindExternalReferenceCode) {
-						queryPos.add(externalReferenceCode);
-					}
-
-					queryPos.add(companyId);
-
-					List<CSDiagramEntry> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByERC_C, finderArgs, list);
-						}
-					}
-					else {
-						CSDiagramEntry csDiagramEntry = list.get(0);
-
-						result = csDiagramEntry;
-
-						cacheResult(csDiagramEntry);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (CSDiagramEntry)result;
-			}
-		}
+		return _uniquePersistenceFinderByERC_C.fetch(
+			finderCache, new Object[] {externalReferenceCode, companyId},
+			useFinderCache);
 	}
 
 	/**
@@ -1404,24 +528,9 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Override
 	public int countByERC_C(String externalReferenceCode, long companyId) {
-		CSDiagramEntry csDiagramEntry = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (csDiagramEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByERC_C.count(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2 =
-		"csDiagramEntry.externalReferenceCode = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3 =
-		"(csDiagramEntry.externalReferenceCode IS NULL OR csDiagramEntry.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_COMPANYID_2 =
-		"csDiagramEntry.companyId = ?";
 
 	public CSDiagramEntryPersistenceImpl() {
 		setModelClass(CSDiagramEntry.class);
@@ -1430,138 +539,6 @@ public class CSDiagramEntryPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(CSDiagramEntryTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the cs diagram entry in the entity cache if it is enabled.
-	 *
-	 * @param csDiagramEntry the cs diagram entry
-	 */
-	@Override
-	public void cacheResult(CSDiagramEntry csDiagramEntry) {
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					csDiagramEntry.getCtCollectionId())) {
-
-			entityCache.putResult(
-				CSDiagramEntryImpl.class, csDiagramEntry.getPrimaryKey(),
-				csDiagramEntry);
-
-			finderCache.putResult(
-				_finderPathFetchByCPDI_S,
-				new Object[] {
-					csDiagramEntry.getCPDefinitionId(),
-					csDiagramEntry.getSequence()
-				},
-				csDiagramEntry);
-
-			finderCache.putResult(
-				_finderPathFetchByERC_C,
-				new Object[] {
-					csDiagramEntry.getExternalReferenceCode(),
-					csDiagramEntry.getCompanyId()
-				},
-				csDiagramEntry);
-		}
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the cs diagram entries in the entity cache if it is enabled.
-	 *
-	 * @param csDiagramEntries the cs diagram entries
-	 */
-	@Override
-	public void cacheResult(List<CSDiagramEntry> csDiagramEntries) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (csDiagramEntries.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (CSDiagramEntry csDiagramEntry : csDiagramEntries) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-						csDiagramEntry.getCtCollectionId())) {
-
-				if (entityCache.getResult(
-						CSDiagramEntryImpl.class,
-						csDiagramEntry.getPrimaryKey()) == null) {
-
-					cacheResult(csDiagramEntry);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all cs diagram entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(CSDiagramEntryImpl.class);
-
-		finderCache.clearCache(CSDiagramEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the cs diagram entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(CSDiagramEntry csDiagramEntry) {
-		entityCache.removeResult(CSDiagramEntryImpl.class, csDiagramEntry);
-	}
-
-	@Override
-	public void clearCache(List<CSDiagramEntry> csDiagramEntries) {
-		for (CSDiagramEntry csDiagramEntry : csDiagramEntries) {
-			entityCache.removeResult(CSDiagramEntryImpl.class, csDiagramEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(CSDiagramEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(CSDiagramEntryImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		CSDiagramEntryModelImpl csDiagramEntryModelImpl) {
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					csDiagramEntryModelImpl.getCtCollectionId())) {
-
-			Object[] args = new Object[] {
-				csDiagramEntryModelImpl.getCPDefinitionId(),
-				csDiagramEntryModelImpl.getSequence()
-			};
-
-			finderCache.putResult(
-				_finderPathFetchByCPDI_S, args, csDiagramEntryModelImpl);
-
-			args = new Object[] {
-				csDiagramEntryModelImpl.getExternalReferenceCode(),
-				csDiagramEntryModelImpl.getCompanyId()
-			};
-
-			finderCache.putResult(
-				_finderPathFetchByERC_C, args, csDiagramEntryModelImpl);
-		}
 	}
 
 	/**
@@ -1594,47 +571,6 @@ public class CSDiagramEntryPersistenceImpl
 		throws NoSuchCSDiagramEntryException {
 
 		return remove((Serializable)CSDiagramEntryId);
-	}
-
-	/**
-	 * Removes the cs diagram entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the cs diagram entry
-	 * @return the cs diagram entry that was removed
-	 * @throws NoSuchCSDiagramEntryException if a cs diagram entry with the primary key could not be found
-	 */
-	@Override
-	public CSDiagramEntry remove(Serializable primaryKey)
-		throws NoSuchCSDiagramEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			CSDiagramEntry csDiagramEntry = (CSDiagramEntry)session.get(
-				CSDiagramEntryImpl.class, primaryKey);
-
-			if (csDiagramEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchCSDiagramEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(csDiagramEntry);
-		}
-		catch (NoSuchCSDiagramEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1810,41 +746,13 @@ public class CSDiagramEntryPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			CSDiagramEntryImpl.class, csDiagramEntryModelImpl, false, true);
-
-		cacheUniqueFindersCache(csDiagramEntryModelImpl);
+		cacheUniqueFindersResult(csDiagramEntry, false);
 
 		if (isNew) {
 			csDiagramEntry.setNew(false);
 		}
 
 		csDiagramEntry.resetOriginalValues();
-
-		return csDiagramEntry;
-	}
-
-	/**
-	 * Returns the cs diagram entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the cs diagram entry
-	 * @return the cs diagram entry
-	 * @throws NoSuchCSDiagramEntryException if a cs diagram entry with the primary key could not be found
-	 */
-	@Override
-	public CSDiagramEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchCSDiagramEntryException {
-
-		CSDiagramEntry csDiagramEntry = fetchByPrimaryKey(primaryKey);
-
-		if (csDiagramEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchCSDiagramEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return csDiagramEntry;
 	}
@@ -1863,52 +771,9 @@ public class CSDiagramEntryPersistenceImpl
 		return findByPrimaryKey((Serializable)CSDiagramEntryId);
 	}
 
-	/**
-	 * Returns the cs diagram entry with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the cs diagram entry
-	 * @return the cs diagram entry, or <code>null</code> if a cs diagram entry with the primary key could not be found
-	 */
 	@Override
-	public CSDiagramEntry fetchByPrimaryKey(Serializable primaryKey) {
-		if (ctPersistenceHelper.isProductionMode(
-				CSDiagramEntry.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		CSDiagramEntry csDiagramEntry = (CSDiagramEntry)entityCache.getResult(
-			CSDiagramEntryImpl.class, primaryKey);
-
-		if (csDiagramEntry != null) {
-			return csDiagramEntry;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			csDiagramEntry = (CSDiagramEntry)session.get(
-				CSDiagramEntryImpl.class, primaryKey);
-
-			if (csDiagramEntry != null) {
-				cacheResult(csDiagramEntry);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return csDiagramEntry;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return ctPersistenceHelper;
 	}
 
 	/**
@@ -1920,323 +785,6 @@ public class CSDiagramEntryPersistenceImpl
 	@Override
 	public CSDiagramEntry fetchByPrimaryKey(long CSDiagramEntryId) {
 		return fetchByPrimaryKey((Serializable)CSDiagramEntryId);
-	}
-
-	@Override
-	public Map<Serializable, CSDiagramEntry> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (ctPersistenceHelper.isProductionMode(CSDiagramEntry.class)) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, CSDiagramEntry> map =
-			new HashMap<Serializable, CSDiagramEntry>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			CSDiagramEntry csDiagramEntry = fetchByPrimaryKey(primaryKey);
-
-			if (csDiagramEntry != null) {
-				map.put(primaryKey, csDiagramEntry);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-						CSDiagramEntry.class, primaryKey)) {
-
-				CSDiagramEntry csDiagramEntry =
-					(CSDiagramEntry)entityCache.getResult(
-						CSDiagramEntryImpl.class, primaryKey);
-
-				if (csDiagramEntry == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, csDiagramEntry);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (CSDiagramEntry csDiagramEntry :
-					(List<CSDiagramEntry>)query.list()) {
-
-				map.put(csDiagramEntry.getPrimaryKeyObj(), csDiagramEntry);
-
-				cacheResult(csDiagramEntry);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the cs diagram entries.
-	 *
-	 * @return the cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cs diagram entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @return the range of cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the cs diagram entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findAll(
-		int start, int end,
-		OrderByComparator<CSDiagramEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cs diagram entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CSDiagramEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cs diagram entries
-	 * @param end the upper bound of the range of cs diagram entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cs diagram entries
-	 */
-	@Override
-	public List<CSDiagramEntry> findAll(
-		int start, int end, OrderByComparator<CSDiagramEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<CSDiagramEntry> list = null;
-
-			if (useFinderCache) {
-				list = (List<CSDiagramEntry>)finderCache.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_CSDIAGRAMENTRY);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_CSDIAGRAMENTRY;
-
-					sql = sql.concat(CSDiagramEntryModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<CSDiagramEntry>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the cs diagram entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (CSDiagramEntry csDiagramEntry : findAll()) {
-			remove(csDiagramEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of cs diagram entries.
-	 *
-	 * @return the number of cs diagram entries
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CSDiagramEntry.class)) {
-
-			Long count = (Long)finderCache.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(
-						_SQL_COUNT_CSDIAGRAMENTRY);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -2335,84 +883,120 @@ public class CSDiagramEntryPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByCPDefinitionId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByCPDefinitionId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"CPDefinitionId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByCPDefinitionId", new String[] {Long.class.getName()},
+					new String[] {"CPDefinitionId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByCPDefinitionId",
+					new String[] {Long.class.getName()},
+					new String[] {"CPDefinitionId"}, false),
+				_SQL_SELECT_CSDIAGRAMENTRY_WHERE,
+				_SQL_COUNT_CSDIAGRAMENTRY_WHERE,
+				CSDiagramEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"csDiagramEntry.", "CPDefinitionId", FinderColumn.Type.LONG,
+					"=", true, true, CSDiagramEntry::getCPDefinitionId));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByCPInstanceId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByCPInstanceId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"CPInstanceId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByCPInstanceId", new String[] {Long.class.getName()},
+					new String[] {"CPInstanceId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByCPInstanceId", new String[] {Long.class.getName()},
+					new String[] {"CPInstanceId"}, false),
+				_SQL_SELECT_CSDIAGRAMENTRY_WHERE,
+				_SQL_COUNT_CSDIAGRAMENTRY_WHERE,
+				CSDiagramEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"csDiagramEntry.", "CPInstanceId", FinderColumn.Type.LONG,
+					"=", true, true, CSDiagramEntry::getCPInstanceId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByCProductId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCProductId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"CProductId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByCProductId", new String[] {Long.class.getName()},
+					new String[] {"CProductId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByCProductId", new String[] {Long.class.getName()},
+					new String[] {"CProductId"}, false),
+				_SQL_SELECT_CSDIAGRAMENTRY_WHERE,
+				_SQL_COUNT_CSDIAGRAMENTRY_WHERE,
+				CSDiagramEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"csDiagramEntry.", "CProductId", FinderColumn.Type.LONG,
+					"=", true, true, CSDiagramEntry::getCProductId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_uniquePersistenceFinderByCPDI_S = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByCPDI_S",
+				new String[] {Long.class.getName(), String.class.getName()},
+				new String[] {"CPDefinitionId", "sequence"}, 0, 2, false,
+				CSDiagramEntry::getCPDefinitionId,
+				convertNullFunction(CSDiagramEntry::getSequence)),
+			_SQL_SELECT_CSDIAGRAMENTRY_WHERE, "",
+			new FinderColumn<>(
+				"csDiagramEntry.", "CPDefinitionId", FinderColumn.Type.LONG,
+				"=", true, true, CSDiagramEntry::getCPDefinitionId),
+			new FinderColumn<>(
+				"csDiagramEntry.", "sequence", FinderColumn.Type.STRING, "=",
+				true, true, CSDiagramEntry::getSequence));
 
-		_finderPathWithPaginationFindByCPDefinitionId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCPDefinitionId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"CPDefinitionId"}, true);
-
-		_finderPathWithoutPaginationFindByCPDefinitionId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByCPDefinitionId",
-			new String[] {Long.class.getName()},
-			new String[] {"CPDefinitionId"}, true);
-
-		_finderPathCountByCPDefinitionId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCPDefinitionId",
-			new String[] {Long.class.getName()},
-			new String[] {"CPDefinitionId"}, false);
-
-		_finderPathWithPaginationFindByCPInstanceId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCPInstanceId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"CPInstanceId"}, true);
-
-		_finderPathWithoutPaginationFindByCPInstanceId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByCPInstanceId",
-			new String[] {Long.class.getName()}, new String[] {"CPInstanceId"},
-			true);
-
-		_finderPathCountByCPInstanceId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCPInstanceId",
-			new String[] {Long.class.getName()}, new String[] {"CPInstanceId"},
-			false);
-
-		_finderPathWithPaginationFindByCProductId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCProductId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"CProductId"}, true);
-
-		_finderPathWithoutPaginationFindByCProductId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByCProductId",
-			new String[] {Long.class.getName()}, new String[] {"CProductId"},
-			true);
-
-		_finderPathCountByCProductId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCProductId",
-			new String[] {Long.class.getName()}, new String[] {"CProductId"},
-			false);
-
-		_finderPathFetchByCPDI_S = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByCPDI_S",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"CPDefinitionId", "sequence"}, true);
-
-		_finderPathFetchByERC_C = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByERC_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"externalReferenceCode", "companyId"}, true);
+		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByERC_C",
+				new String[] {String.class.getName(), Long.class.getName()},
+				new String[] {"externalReferenceCode", "companyId"}, 0, 1,
+				false,
+				convertNullFunction(CSDiagramEntry::getExternalReferenceCode),
+				CSDiagramEntry::getCompanyId),
+			_SQL_SELECT_CSDIAGRAMENTRY_WHERE, "",
+			new FinderColumn<>(
+				"csDiagramEntry.", "externalReferenceCode",
+				FinderColumn.Type.STRING, "=", true, true,
+				CSDiagramEntry::getExternalReferenceCode),
+			new FinderColumn<>(
+				"csDiagramEntry.", "companyId", FinderColumn.Type.LONG, "=",
+				true, true, CSDiagramEntry::getCompanyId));
 
 		CSDiagramEntryUtil.setPersistence(this);
 	}
@@ -2459,22 +1043,17 @@ public class CSDiagramEntryPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		CSDiagramEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_CSDIAGRAMENTRY =
 		"SELECT csDiagramEntry FROM CSDiagramEntry csDiagramEntry";
 
 	private static final String _SQL_SELECT_CSDIAGRAMENTRY_WHERE =
 		"SELECT csDiagramEntry FROM CSDiagramEntry csDiagramEntry WHERE ";
 
-	private static final String _SQL_COUNT_CSDIAGRAMENTRY =
-		"SELECT COUNT(csDiagramEntry) FROM CSDiagramEntry csDiagramEntry";
-
 	private static final String _SQL_COUNT_CSDIAGRAMENTRY_WHERE =
 		"SELECT COUNT(csDiagramEntry) FROM CSDiagramEntry csDiagramEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "csDiagramEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No CSDiagramEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No CSDiagramEntry exists with the key {";
@@ -2488,4 +1067,4 @@ public class CSDiagramEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:403741516
+// LIFERAY-SERVICE-BUILDER-HASH:-979963801

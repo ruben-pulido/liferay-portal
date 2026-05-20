@@ -8,17 +8,19 @@ const {
 	pagination: {cur: DEFAULT_PAGE, delta: DEFAULT_DELTA}
 } = FaroConstants;
 
-export function fetch({accountId, groupId}) {
+export function fetch({accountId, channelId, groupId}) {
 	return sendRequest({
+		data: {channelId},
 		method: 'GET',
-		path: `faro/contacts/${groupId}/account/${accountId}`
+		path: `contacts/${groupId}/account/${accountId}`
 	});
 }
 
-export function fetchDetails({accountId, groupId}) {
+export function fetchDetails({accountId, channelId, groupId}) {
 	return sendRequest({
+		data: {channelId},
 		method: 'GET',
-		path: `faro/contacts/${groupId}/account/${accountId}/details`
+		path: `contacts/${groupId}/account/${accountId}/details`
 	});
 }
 
@@ -36,14 +38,25 @@ export function fetchFieldValues({
 			query: escapeSingleQuotes(query)
 		},
 		method: 'GET',
-		path: `faro/contacts/${groupId}/account/field_values`
+		path: `contacts/${groupId}/account/field_values`
+	});
+}
+
+export async function fetchLifecycleStatus({
+	accountId,
+	accountLifecycleId,
+	groupId
+}) {
+	return sendRequest({
+		method: 'GET',
+		path: `contacts/${groupId}/account/${accountId}/account-lifecycles/${accountLifecycleId}`
 	});
 }
 
 export function fetchMetrics({groupId}) {
 	return sendRequest({
 		method: 'GET',
-		path: `faro/contacts/${groupId}/account/metrics`
+		path: `contacts/${groupId}/account/metrics`
 	});
 }
 

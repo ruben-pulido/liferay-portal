@@ -37,6 +37,20 @@ public class KBArticleUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<KBArticle> kbArticles) {
+		getPersistence().cacheResult(kbArticles);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(KBArticle kbArticle) {
+		getPersistence().cacheResult(kbArticle);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -112,60 +126,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByResourcePrimKey(long resourcePrimKey) {
-		return getPersistence().findByResourcePrimKey(resourcePrimKey);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByResourcePrimKey(
-		long resourcePrimKey, int start, int end) {
-
-		return getPersistence().findByResourcePrimKey(
-			resourcePrimKey, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByResourcePrimKey(
-		long resourcePrimKey, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByResourcePrimKey(
-			resourcePrimKey, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -235,56 +199,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByUuid(String uuid, int start, int end) {
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -365,17 +283,6 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns the kb article where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching kb article, or <code>null</code> if a matching kb article could not be found
-	 */
-	public static KBArticle fetchByUUID_G(String uuid, long groupId) {
-		return getPersistence().fetchByUUID_G(uuid, groupId);
-	}
-
-	/**
 	 * Returns the kb article where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -414,62 +321,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByUuid_C(String uuid, long companyId) {
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -545,64 +400,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = &#63; and groupId = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_G(
-		long resourcePrimKey, long groupId) {
-
-		return getPersistence().findByR_G(resourcePrimKey, groupId);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G(
-		long resourcePrimKey, long groupId, int start, int end) {
-
-		return getPersistence().findByR_G(resourcePrimKey, groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G(
-		long resourcePrimKey, long groupId, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_G(
-			resourcePrimKey, groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -658,43 +459,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G(
-		long resourcePrimKey, long groupId) {
-
-		return getPersistence().filterFindByR_G(resourcePrimKey, groupId);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G(
-		long resourcePrimKey, long groupId, int start, int end) {
-
-		return getPersistence().filterFindByR_G(
-			resourcePrimKey, groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where resourcePrimKey = &#63; and groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -759,17 +527,6 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns the kb article where resourcePrimKey = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param version the version
-	 * @return the matching kb article, or <code>null</code> if a matching kb article could not be found
-	 */
-	public static KBArticle fetchByR_V(long resourcePrimKey, int version) {
-		return getPersistence().fetchByR_V(resourcePrimKey, version);
-	}
-
-	/**
 	 * Returns the kb article where resourcePrimKey = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -809,64 +566,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_L(
-		long resourcePrimKey, boolean latest) {
-
-		return getPersistence().findByR_L(resourcePrimKey, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_L(
-		long resourcePrimKey, boolean latest, int start, int end) {
-
-		return getPersistence().findByR_L(resourcePrimKey, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_L(
-		long resourcePrimKey, boolean latest, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_L(
-			resourcePrimKey, latest, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -922,68 +625,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_L(
-		long[] resourcePrimKeys, boolean latest) {
-
-		return getPersistence().findByR_L(resourcePrimKeys, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_L(
-		long[] resourcePrimKeys, boolean latest, int start, int end) {
-
-		return getPersistence().findByR_L(resourcePrimKeys, latest, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_L(
-		long[] resourcePrimKeys, boolean latest, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_L(
-			resourcePrimKeys, latest, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and latest = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -1037,64 +682,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_M(
-		long resourcePrimKey, boolean main) {
-
-		return getPersistence().findByR_M(resourcePrimKey, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_M(
-		long resourcePrimKey, boolean main, int start, int end) {
-
-		return getPersistence().findByR_M(resourcePrimKey, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_M(
-		long resourcePrimKey, boolean main, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_M(
-			resourcePrimKey, main, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -1150,68 +741,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_M(
-		long[] resourcePrimKeys, boolean main) {
-
-		return getPersistence().findByR_M(resourcePrimKeys, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_M(
-		long[] resourcePrimKeys, boolean main, int start, int end) {
-
-		return getPersistence().findByR_M(resourcePrimKeys, main, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_M(
-		long[] resourcePrimKeys, boolean main, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_M(
-			resourcePrimKeys, main, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and main = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -1265,62 +798,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_S(long resourcePrimKey, int status) {
-		return getPersistence().findByR_S(resourcePrimKey, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_S(
-		long resourcePrimKey, int status, int start, int end) {
-
-		return getPersistence().findByR_S(resourcePrimKey, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_S(
-		long resourcePrimKey, int status, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_S(
-			resourcePrimKey, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -1376,69 +857,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = any &#63; and status = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param statuses the statuses
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_S(
-		long[] resourcePrimKeys, int[] statuses) {
-
-		return getPersistence().findByR_S(resourcePrimKeys, statuses);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and status = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param statuses the statuses
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_S(
-		long[] resourcePrimKeys, int[] statuses, int start, int end) {
-
-		return getPersistence().findByR_S(
-			resourcePrimKeys, statuses, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and status = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param statuses the statuses
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_S(
-		long[] resourcePrimKeys, int[] statuses, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_S(
-			resourcePrimKeys, statuses, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -1492,65 +914,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and externalReferenceCode = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_ERC(
-		long groupId, String externalReferenceCode) {
-
-		return getPersistence().findByG_ERC(groupId, externalReferenceCode);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_ERC(
-		long groupId, String externalReferenceCode, int start, int end) {
-
-		return getPersistence().findByG_ERC(
-			groupId, externalReferenceCode, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_ERC(
-		long groupId, String externalReferenceCode, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_ERC(
-			groupId, externalReferenceCode, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1606,44 +973,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and externalReferenceCode = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_ERC(
-		long groupId, String externalReferenceCode) {
-
-		return getPersistence().filterFindByG_ERC(
-			groupId, externalReferenceCode);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and externalReferenceCode = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_ERC(
-		long groupId, String externalReferenceCode, int start, int end) {
-
-		return getPersistence().filterFindByG_ERC(
-			groupId, externalReferenceCode, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and externalReferenceCode = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1699,62 +1032,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and latest = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_L(long groupId, boolean latest) {
-		return getPersistence().findByG_L(groupId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_L(
-		long groupId, boolean latest, int start, int end) {
-
-		return getPersistence().findByG_L(groupId, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_L(
-		long groupId, boolean latest, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_L(
-			groupId, latest, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1809,42 +1090,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and latest = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_L(
-		long groupId, boolean latest) {
-
-		return getPersistence().filterFindByG_L(groupId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_L(
-		long groupId, boolean latest, int start, int end) {
-
-		return getPersistence().filterFindByG_L(groupId, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1895,62 +1144,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and main = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_M(long groupId, boolean main) {
-		return getPersistence().findByG_M(groupId, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_M(
-		long groupId, boolean main, int start, int end) {
-
-		return getPersistence().findByG_M(groupId, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_M(
-		long groupId, boolean main, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_M(
-			groupId, main, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2005,40 +1202,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and main = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_M(long groupId, boolean main) {
-		return getPersistence().filterFindByG_M(groupId, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_M(
-		long groupId, boolean main, int start, int end) {
-
-		return getPersistence().filterFindByG_M(groupId, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2089,62 +1256,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_S(long groupId, int status) {
-		return getPersistence().findByG_S(groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_S(
-		long groupId, int status, int start, int end) {
-
-		return getPersistence().findByG_S(groupId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_S(
-		long groupId, int status, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_S(
-			groupId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2199,40 +1314,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_S(long groupId, int status) {
-		return getPersistence().filterFindByG_S(groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_S(
-		long groupId, int status, int start, int end) {
-
-		return getPersistence().filterFindByG_S(groupId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2283,62 +1368,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where companyId = &#63; and latest = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByC_L(long companyId, boolean latest) {
-		return getPersistence().findByC_L(companyId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where companyId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByC_L(
-		long companyId, boolean latest, int start, int end) {
-
-		return getPersistence().findByC_L(companyId, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where companyId = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByC_L(
-		long companyId, boolean latest, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByC_L(
-			companyId, latest, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where companyId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2414,62 +1447,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where companyId = &#63; and main = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByC_M(long companyId, boolean main) {
-		return getPersistence().findByC_M(companyId, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where companyId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByC_M(
-		long companyId, boolean main, int start, int end) {
-
-		return getPersistence().findByC_M(companyId, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where companyId = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByC_M(
-		long companyId, boolean main, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByC_M(
-			companyId, main, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where companyId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2545,62 +1526,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where companyId = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByC_S(long companyId, int status) {
-		return getPersistence().findByC_S(companyId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByC_S(
-		long companyId, int status, int start, int end) {
-
-		return getPersistence().findByC_S(companyId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where companyId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByC_S(
-		long companyId, int status, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByC_S(
-			companyId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2676,65 +1605,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where parentResourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByP_L(
-		long parentResourcePrimKey, boolean latest) {
-
-		return getPersistence().findByP_L(parentResourcePrimKey, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_L(
-		long parentResourcePrimKey, boolean latest, int start, int end) {
-
-		return getPersistence().findByP_L(
-			parentResourcePrimKey, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_L(
-		long parentResourcePrimKey, boolean latest, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByP_L(
-			parentResourcePrimKey, latest, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -2790,69 +1664,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByP_L(
-		long[] parentResourcePrimKeys, boolean latest) {
-
-		return getPersistence().findByP_L(parentResourcePrimKeys, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_L(
-		long[] parentResourcePrimKeys, boolean latest, int start, int end) {
-
-		return getPersistence().findByP_L(
-			parentResourcePrimKeys, latest, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_L(
-		long[] parentResourcePrimKeys, boolean latest, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByP_L(
-			parentResourcePrimKeys, latest, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -2908,65 +1723,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where parentResourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByP_M(
-		long parentResourcePrimKey, boolean main) {
-
-		return getPersistence().findByP_M(parentResourcePrimKey, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_M(
-		long parentResourcePrimKey, boolean main, int start, int end) {
-
-		return getPersistence().findByP_M(
-			parentResourcePrimKey, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_M(
-		long parentResourcePrimKey, boolean main, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByP_M(
-			parentResourcePrimKey, main, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -3022,69 +1782,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where parentResourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByP_M(
-		long[] parentResourcePrimKeys, boolean main) {
-
-		return getPersistence().findByP_M(parentResourcePrimKeys, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where parentResourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_M(
-		long[] parentResourcePrimKeys, boolean main, int start, int end) {
-
-		return getPersistence().findByP_M(
-			parentResourcePrimKeys, main, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_M(
-		long[] parentResourcePrimKeys, boolean main, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByP_M(
-			parentResourcePrimKeys, main, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -3138,65 +1839,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where parentResourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByP_S(
-		long parentResourcePrimKey, int status) {
-
-		return getPersistence().findByP_S(parentResourcePrimKey, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where parentResourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_S(
-		long parentResourcePrimKey, int status, int start, int end) {
-
-		return getPersistence().findByP_S(
-			parentResourcePrimKey, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_S(
-		long parentResourcePrimKey, int status, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByP_S(
-			parentResourcePrimKey, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -3252,69 +1898,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where parentResourcePrimKey = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByP_S(
-		long[] parentResourcePrimKeys, int status) {
-
-		return getPersistence().findByP_S(parentResourcePrimKeys, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where parentResourcePrimKey = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_S(
-		long[] parentResourcePrimKeys, int status, int start, int end) {
-
-		return getPersistence().findByP_S(
-			parentResourcePrimKeys, status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByP_S(
-		long[] parentResourcePrimKeys, int status, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByP_S(
-			parentResourcePrimKeys, status, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -3382,7 +1969,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where displayDate &lt; &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param displayDate the display date
@@ -3401,7 +1988,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where displayDate &lt; &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param displayDate the display date
@@ -3423,7 +2010,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where displayDate &lt; &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param displayDate the display date
@@ -3515,20 +2102,6 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns the kb article where resourcePrimKey = &#63; and groupId = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param version the version
-	 * @return the matching kb article, or <code>null</code> if a matching kb article could not be found
-	 */
-	public static KBArticle fetchByR_G_V(
-		long resourcePrimKey, long groupId, int version) {
-
-		return getPersistence().fetchByR_G_V(resourcePrimKey, groupId, version);
-	}
-
-	/**
 	 * Returns the kb article where resourcePrimKey = &#63; and groupId = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -3576,69 +2149,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_L(
-		long resourcePrimKey, long groupId, boolean latest) {
-
-		return getPersistence().findByR_G_L(resourcePrimKey, groupId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_L(
-		long resourcePrimKey, long groupId, boolean latest, int start,
-		int end) {
-
-		return getPersistence().findByR_G_L(
-			resourcePrimKey, groupId, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_L(
-		long resourcePrimKey, long groupId, boolean latest, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_G_L(
-			resourcePrimKey, groupId, latest, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -3697,47 +2211,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_L(
-		long resourcePrimKey, long groupId, boolean latest) {
-
-		return getPersistence().filterFindByR_G_L(
-			resourcePrimKey, groupId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_L(
-		long resourcePrimKey, long groupId, boolean latest, int start,
-		int end) {
-
-		return getPersistence().filterFindByR_G_L(
-			resourcePrimKey, groupId, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -3757,47 +2234,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_L(
-		long[] resourcePrimKeys, long groupId, boolean latest) {
-
-		return getPersistence().filterFindByR_G_L(
-			resourcePrimKeys, groupId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_L(
-		long[] resourcePrimKeys, long groupId, boolean latest, int start,
-		int end) {
-
-		return getPersistence().filterFindByR_G_L(
-			resourcePrimKeys, groupId, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -3817,73 +2257,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_L(
-		long[] resourcePrimKeys, long groupId, boolean latest) {
-
-		return getPersistence().findByR_G_L(resourcePrimKeys, groupId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_L(
-		long[] resourcePrimKeys, long groupId, boolean latest, int start,
-		int end) {
-
-		return getPersistence().findByR_G_L(
-			resourcePrimKeys, groupId, latest, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_L(
-		long[] resourcePrimKeys, long groupId, boolean latest, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_G_L(
-			resourcePrimKeys, groupId, latest, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -3977,68 +2354,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_M(
-		long resourcePrimKey, long groupId, boolean main) {
-
-		return getPersistence().findByR_G_M(resourcePrimKey, groupId, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_M(
-		long resourcePrimKey, long groupId, boolean main, int start, int end) {
-
-		return getPersistence().findByR_G_M(
-			resourcePrimKey, groupId, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_M(
-		long resourcePrimKey, long groupId, boolean main, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_G_M(
-			resourcePrimKey, groupId, main, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -4097,46 +2416,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_M(
-		long resourcePrimKey, long groupId, boolean main) {
-
-		return getPersistence().filterFindByR_G_M(
-			resourcePrimKey, groupId, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_M(
-		long resourcePrimKey, long groupId, boolean main, int start, int end) {
-
-		return getPersistence().filterFindByR_G_M(
-			resourcePrimKey, groupId, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -4156,47 +2439,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_M(
-		long[] resourcePrimKeys, long groupId, boolean main) {
-
-		return getPersistence().filterFindByR_G_M(
-			resourcePrimKeys, groupId, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_M(
-		long[] resourcePrimKeys, long groupId, boolean main, int start,
-		int end) {
-
-		return getPersistence().filterFindByR_G_M(
-			resourcePrimKeys, groupId, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -4216,73 +2462,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_M(
-		long[] resourcePrimKeys, long groupId, boolean main) {
-
-		return getPersistence().findByR_G_M(resourcePrimKeys, groupId, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_M(
-		long[] resourcePrimKeys, long groupId, boolean main, int start,
-		int end) {
-
-		return getPersistence().findByR_G_M(
-			resourcePrimKeys, groupId, main, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_M(
-		long[] resourcePrimKeys, long groupId, boolean main, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_G_M(
-			resourcePrimKeys, groupId, main, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -4376,68 +2559,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_S(
-		long resourcePrimKey, long groupId, int status) {
-
-		return getPersistence().findByR_G_S(resourcePrimKey, groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_S(
-		long resourcePrimKey, long groupId, int status, int start, int end) {
-
-		return getPersistence().findByR_G_S(
-			resourcePrimKey, groupId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_S(
-		long resourcePrimKey, long groupId, int status, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_G_S(
-			resourcePrimKey, groupId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -4496,46 +2621,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_S(
-		long resourcePrimKey, long groupId, int status) {
-
-		return getPersistence().filterFindByR_G_S(
-			resourcePrimKey, groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKey the resource prim key
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_S(
-		long resourcePrimKey, long groupId, int status, int start, int end) {
-
-		return getPersistence().filterFindByR_G_S(
-			resourcePrimKey, groupId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -4555,46 +2644,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_S(
-		long[] resourcePrimKeys, long groupId, int status) {
-
-		return getPersistence().filterFindByR_G_S(
-			resourcePrimKeys, groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByR_G_S(
-		long[] resourcePrimKeys, long groupId, int status, int start, int end) {
-
-		return getPersistence().filterFindByR_G_S(
-			resourcePrimKeys, groupId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -4614,72 +2667,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_S(
-		long[] resourcePrimKeys, long groupId, int status) {
-
-		return getPersistence().findByR_G_S(resourcePrimKeys, groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_S(
-		long[] resourcePrimKeys, long groupId, int status, int start, int end) {
-
-		return getPersistence().findByR_G_S(
-			resourcePrimKeys, groupId, status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param resourcePrimKeys the resource prim keys
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByR_G_S(
-		long[] resourcePrimKeys, long groupId, int status, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByR_G_S(
-			resourcePrimKeys, groupId, status, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -4791,7 +2782,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -4812,7 +2803,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -4835,7 +2826,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -4912,7 +2903,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -4933,7 +2924,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where resourcePrimKey = &#63; and groupId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -5013,7 +3004,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -5034,7 +3025,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -5057,7 +3048,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -5119,7 +3110,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where resourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -5138,7 +3129,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -5160,7 +3151,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -5183,7 +3174,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -5266,7 +3257,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -5287,7 +3278,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -5310,7 +3301,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -5372,7 +3363,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where resourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -5390,7 +3381,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -5411,7 +3402,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -5434,7 +3425,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and main = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -5515,21 +3506,6 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns the kb article where groupId = &#63; and externalReferenceCode = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param version the version
-	 * @return the matching kb article, or <code>null</code> if a matching kb article could not be found
-	 */
-	public static KBArticle fetchByG_ERC_V(
-		long groupId, String externalReferenceCode, int version) {
-
-		return getPersistence().fetchByG_ERC_V(
-			groupId, externalReferenceCode, version);
-	}
-
-	/**
 	 * Returns the kb article where groupId = &#63; and externalReferenceCode = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -5578,71 +3554,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_ERC_S(
-		long groupId, String externalReferenceCode, int status) {
-
-		return getPersistence().findByG_ERC_S(
-			groupId, externalReferenceCode, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_ERC_S(
-		long groupId, String externalReferenceCode, int status, int start,
-		int end) {
-
-		return getPersistence().findByG_ERC_S(
-			groupId, externalReferenceCode, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_ERC_S(
-		long groupId, String externalReferenceCode, int status, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_ERC_S(
-			groupId, externalReferenceCode, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -5701,47 +3616,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_ERC_S(
-		long groupId, String externalReferenceCode, int status) {
-
-		return getPersistence().filterFindByG_ERC_S(
-			groupId, externalReferenceCode, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param externalReferenceCode the external reference code
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_ERC_S(
-		long groupId, String externalReferenceCode, int status, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_ERC_S(
-			groupId, externalReferenceCode, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -5806,71 +3684,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L(
-		long groupId, long parentResourcePrimKey, boolean latest) {
-
-		return getPersistence().findByG_P_L(
-			groupId, parentResourcePrimKey, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L(
-		long groupId, long parentResourcePrimKey, boolean latest, int start,
-		int end) {
-
-		return getPersistence().findByG_P_L(
-			groupId, parentResourcePrimKey, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L(
-		long groupId, long parentResourcePrimKey, boolean latest, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_L(
-			groupId, parentResourcePrimKey, latest, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -5929,47 +3746,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_L(
-		long groupId, long parentResourcePrimKey, boolean latest) {
-
-		return getPersistence().filterFindByG_P_L(
-			groupId, parentResourcePrimKey, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_L(
-		long groupId, long parentResourcePrimKey, boolean latest, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_P_L(
-			groupId, parentResourcePrimKey, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -5990,47 +3770,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_L(
-		long groupId, long[] parentResourcePrimKeys, boolean latest) {
-
-		return getPersistence().filterFindByG_P_L(
-			groupId, parentResourcePrimKeys, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_L(
-		long groupId, long[] parentResourcePrimKeys, boolean latest, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_P_L(
-			groupId, parentResourcePrimKeys, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6051,75 +3794,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L(
-		long groupId, long[] parentResourcePrimKeys, boolean latest) {
-
-		return getPersistence().findByG_P_L(
-			groupId, parentResourcePrimKeys, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L(
-		long groupId, long[] parentResourcePrimKeys, boolean latest, int start,
-		int end) {
-
-		return getPersistence().findByG_P_L(
-			groupId, parentResourcePrimKeys, latest, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L(
-		long groupId, long[] parentResourcePrimKeys, boolean latest, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_L(
-			groupId, parentResourcePrimKeys, latest, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6215,71 +3893,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M(
-		long groupId, long parentResourcePrimKey, boolean main) {
-
-		return getPersistence().findByG_P_M(
-			groupId, parentResourcePrimKey, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M(
-		long groupId, long parentResourcePrimKey, boolean main, int start,
-		int end) {
-
-		return getPersistence().findByG_P_M(
-			groupId, parentResourcePrimKey, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M(
-		long groupId, long parentResourcePrimKey, boolean main, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_M(
-			groupId, parentResourcePrimKey, main, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6338,47 +3955,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_M(
-		long groupId, long parentResourcePrimKey, boolean main) {
-
-		return getPersistence().filterFindByG_P_M(
-			groupId, parentResourcePrimKey, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_M(
-		long groupId, long parentResourcePrimKey, boolean main, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_P_M(
-			groupId, parentResourcePrimKey, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6399,47 +3979,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_M(
-		long groupId, long[] parentResourcePrimKeys, boolean main) {
-
-		return getPersistence().filterFindByG_P_M(
-			groupId, parentResourcePrimKeys, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_M(
-		long groupId, long[] parentResourcePrimKeys, boolean main, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_P_M(
-			groupId, parentResourcePrimKeys, main, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6460,75 +4003,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M(
-		long groupId, long[] parentResourcePrimKeys, boolean main) {
-
-		return getPersistence().findByG_P_M(
-			groupId, parentResourcePrimKeys, main);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M(
-		long groupId, long[] parentResourcePrimKeys, boolean main, int start,
-		int end) {
-
-		return getPersistence().findByG_P_M(
-			groupId, parentResourcePrimKeys, main, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M(
-		long groupId, long[] parentResourcePrimKeys, boolean main, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_M(
-			groupId, parentResourcePrimKeys, main, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6624,71 +4102,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_S(
-		long groupId, long parentResourcePrimKey, int status) {
-
-		return getPersistence().findByG_P_S(
-			groupId, parentResourcePrimKey, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_S(
-		long groupId, long parentResourcePrimKey, int status, int start,
-		int end) {
-
-		return getPersistence().findByG_P_S(
-			groupId, parentResourcePrimKey, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_S(
-		long groupId, long parentResourcePrimKey, int status, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_S(
-			groupId, parentResourcePrimKey, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6747,47 +4164,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_S(
-		long groupId, long parentResourcePrimKey, int status) {
-
-		return getPersistence().filterFindByG_P_S(
-			groupId, parentResourcePrimKey, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_S(
-		long groupId, long parentResourcePrimKey, int status, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_P_S(
-			groupId, parentResourcePrimKey, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6808,47 +4188,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_S(
-		long groupId, long[] parentResourcePrimKeys, int status) {
-
-		return getPersistence().filterFindByG_P_S(
-			groupId, parentResourcePrimKeys, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_S(
-		long groupId, long[] parentResourcePrimKeys, int status, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_P_S(
-			groupId, parentResourcePrimKeys, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -6869,75 +4212,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_S(
-		long groupId, long[] parentResourcePrimKeys, int status) {
-
-		return getPersistence().findByG_P_S(
-			groupId, parentResourcePrimKeys, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_S(
-		long groupId, long[] parentResourcePrimKeys, int status, int start,
-		int end) {
-
-		return getPersistence().findByG_P_S(
-			groupId, parentResourcePrimKeys, status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_S(
-		long groupId, long[] parentResourcePrimKeys, int status, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_S(
-			groupId, parentResourcePrimKeys, status, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7033,68 +4311,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT(
-		long groupId, long kbFolderId, String urlTitle) {
-
-		return getPersistence().findByG_KBFI_UT(groupId, kbFolderId, urlTitle);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT(
-		long groupId, long kbFolderId, String urlTitle, int start, int end) {
-
-		return getPersistence().findByG_KBFI_UT(
-			groupId, kbFolderId, urlTitle, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT(
-		long groupId, long kbFolderId, String urlTitle, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_KBFI_UT(
-			groupId, kbFolderId, urlTitle, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7153,46 +4373,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_UT(
-		long groupId, long kbFolderId, String urlTitle) {
-
-		return getPersistence().filterFindByG_KBFI_UT(
-			groupId, kbFolderId, urlTitle);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_UT(
-		long groupId, long kbFolderId, String urlTitle, int start, int end) {
-
-		return getPersistence().filterFindByG_KBFI_UT(
-			groupId, kbFolderId, urlTitle, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7254,68 +4438,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param latest the latest
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_L(
-		long groupId, long kbFolderId, boolean latest) {
-
-		return getPersistence().findByG_KBFI_L(groupId, kbFolderId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_L(
-		long groupId, long kbFolderId, boolean latest, int start, int end) {
-
-		return getPersistence().findByG_KBFI_L(
-			groupId, kbFolderId, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_L(
-		long groupId, long kbFolderId, boolean latest, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_KBFI_L(
-			groupId, kbFolderId, latest, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7374,46 +4500,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param latest the latest
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_L(
-		long groupId, long kbFolderId, boolean latest) {
-
-		return getPersistence().filterFindByG_KBFI_L(
-			groupId, kbFolderId, latest);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param latest the latest
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_L(
-		long groupId, long kbFolderId, boolean latest, int start, int end) {
-
-		return getPersistence().filterFindByG_KBFI_L(
-			groupId, kbFolderId, latest, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7475,68 +4565,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_S(
-		long groupId, long kbFolderId, int status) {
-
-		return getPersistence().findByG_KBFI_S(groupId, kbFolderId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_S(
-		long groupId, long kbFolderId, int status, int start, int end) {
-
-		return getPersistence().findByG_KBFI_S(
-			groupId, kbFolderId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_S(
-		long groupId, long kbFolderId, int status, int start, int end,
-		OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_KBFI_S(
-			groupId, kbFolderId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7595,46 +4627,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_S(
-		long groupId, long kbFolderId, int status) {
-
-		return getPersistence().filterFindByG_KBFI_S(
-			groupId, kbFolderId, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_S(
-		long groupId, long kbFolderId, int status, int start, int end) {
-
-		return getPersistence().filterFindByG_KBFI_S(
-			groupId, kbFolderId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7713,7 +4709,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7734,7 +4730,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7757,7 +4753,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7834,7 +4830,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7855,7 +4851,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and sections LIKE &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7893,7 +4889,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7914,7 +4910,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7937,7 +4933,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where groupId = &#63; and sections LIKE any &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7955,7 +4951,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7976,7 +4972,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and latest = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -7999,7 +4995,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and latest = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8110,7 +5106,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8131,7 +5127,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8154,7 +5150,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8230,7 +5226,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8251,7 +5247,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and sections LIKE &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8289,7 +5285,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8310,7 +5306,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8333,7 +5329,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where groupId = &#63; and sections LIKE any &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8351,7 +5347,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8372,7 +5368,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and main = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8395,7 +5391,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and main = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8505,7 +5501,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8526,7 +5522,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8549,7 +5545,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8626,7 +5622,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8647,7 +5643,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and sections LIKE &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8685,7 +5681,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8706,7 +5702,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8729,7 +5725,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where groupId = &#63; and sections LIKE any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8747,7 +5743,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8768,7 +5764,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8791,7 +5787,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8902,7 +5898,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8923,7 +5919,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -8946,7 +5942,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -9022,7 +6018,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -9043,7 +6039,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -9121,7 +6117,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -9142,7 +6138,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -9165,7 +6161,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -9241,7 +6237,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -9262,7 +6258,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -9338,7 +6334,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where companyId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -9359,7 +6355,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where companyId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -9382,7 +6378,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where companyId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -9485,7 +6481,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where companyId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -9506,7 +6502,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where companyId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -9529,7 +6525,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where companyId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -9633,7 +6629,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -9655,7 +6651,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -9679,7 +6675,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -9741,7 +6737,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -9760,7 +6756,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -9782,7 +6778,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -9806,7 +6802,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -9891,7 +6887,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -9913,7 +6909,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -9936,7 +6932,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKey the parent resource prim key
@@ -9998,7 +6994,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where parentResourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -10017,7 +7013,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where parentResourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -10039,7 +7035,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -10063,7 +7059,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentResourcePrimKeys the parent resource prim keys
@@ -10148,7 +7144,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10171,7 +7167,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10196,7 +7192,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10277,7 +7273,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10300,7 +7296,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10341,7 +7337,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10364,7 +7360,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10389,7 +7385,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10409,7 +7405,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10432,7 +7428,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10457,7 +7453,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10579,7 +7575,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10602,7 +7598,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10627,7 +7623,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10708,7 +7704,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10731,7 +7727,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where resourcePrimKey = &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKey the resource prim key
@@ -10772,7 +7768,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10795,7 +7791,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10820,7 +7816,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10840,7 +7836,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10863,7 +7859,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10888,7 +7884,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param resourcePrimKeys the resource prim keys
@@ -10991,74 +7987,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L_S(
-		long groupId, long parentResourcePrimKey, boolean latest, int status) {
-
-		return getPersistence().findByG_P_L_S(
-			groupId, parentResourcePrimKey, latest, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L_S(
-		long groupId, long parentResourcePrimKey, boolean latest, int status,
-		int start, int end) {
-
-		return getPersistence().findByG_P_L_S(
-			groupId, parentResourcePrimKey, latest, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L_S(
-		long groupId, long parentResourcePrimKey, boolean latest, int status,
-		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_L_S(
-			groupId, parentResourcePrimKey, latest, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11120,49 +8052,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_L_S(
-		long groupId, long parentResourcePrimKey, boolean latest, int status) {
-
-		return getPersistence().filterFindByG_P_L_S(
-			groupId, parentResourcePrimKey, latest, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param latest the latest
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_L_S(
-		long groupId, long parentResourcePrimKey, boolean latest, int status,
-		int start, int end) {
-
-		return getPersistence().filterFindByG_P_L_S(
-			groupId, parentResourcePrimKey, latest, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11184,50 +8077,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_L_S(
-		long groupId, long[] parentResourcePrimKeys, boolean latest,
-		int status) {
-
-		return getPersistence().filterFindByG_P_L_S(
-			groupId, parentResourcePrimKeys, latest, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_L_S(
-		long groupId, long[] parentResourcePrimKeys, boolean latest, int status,
-		int start, int end) {
-
-		return getPersistence().filterFindByG_P_L_S(
-			groupId, parentResourcePrimKeys, latest, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11249,79 +8102,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L_S(
-		long groupId, long[] parentResourcePrimKeys, boolean latest,
-		int status) {
-
-		return getPersistence().findByG_P_L_S(
-			groupId, parentResourcePrimKeys, latest, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L_S(
-		long groupId, long[] parentResourcePrimKeys, boolean latest, int status,
-		int start, int end) {
-
-		return getPersistence().findByG_P_L_S(
-			groupId, parentResourcePrimKeys, latest, status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param latest the latest
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_L_S(
-		long groupId, long[] parentResourcePrimKeys, boolean latest, int status,
-		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_L_S(
-			groupId, parentResourcePrimKeys, latest, status, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11445,7 +8229,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11468,7 +8252,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11493,7 +8277,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11574,7 +8358,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11597,7 +8381,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11639,7 +8423,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11662,7 +8446,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11687,7 +8471,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11708,7 +8492,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11731,7 +8515,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11756,7 +8540,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11861,74 +8645,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M_S(
-		long groupId, long parentResourcePrimKey, boolean main, int status) {
-
-		return getPersistence().findByG_P_M_S(
-			groupId, parentResourcePrimKey, main, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M_S(
-		long groupId, long parentResourcePrimKey, boolean main, int status,
-		int start, int end) {
-
-		return getPersistence().findByG_P_M_S(
-			groupId, parentResourcePrimKey, main, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M_S(
-		long groupId, long parentResourcePrimKey, boolean main, int status,
-		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_M_S(
-			groupId, parentResourcePrimKey, main, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -11990,49 +8710,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_M_S(
-		long groupId, long parentResourcePrimKey, boolean main, int status) {
-
-		return getPersistence().filterFindByG_P_M_S(
-			groupId, parentResourcePrimKey, main, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKey the parent resource prim key
-	 * @param main the main
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_M_S(
-		long groupId, long parentResourcePrimKey, boolean main, int status,
-		int start, int end) {
-
-		return getPersistence().filterFindByG_P_M_S(
-			groupId, parentResourcePrimKey, main, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12054,49 +8735,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_M_S(
-		long groupId, long[] parentResourcePrimKeys, boolean main, int status) {
-
-		return getPersistence().filterFindByG_P_M_S(
-			groupId, parentResourcePrimKeys, main, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_P_M_S(
-		long groupId, long[] parentResourcePrimKeys, boolean main, int status,
-		int start, int end) {
-
-		return getPersistence().filterFindByG_P_M_S(
-			groupId, parentResourcePrimKeys, main, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12118,78 +8760,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M_S(
-		long groupId, long[] parentResourcePrimKeys, boolean main, int status) {
-
-		return getPersistence().findByG_P_M_S(
-			groupId, parentResourcePrimKeys, main, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M_S(
-		long groupId, long[] parentResourcePrimKeys, boolean main, int status,
-		int start, int end) {
-
-		return getPersistence().findByG_P_M_S(
-			groupId, parentResourcePrimKeys, main, status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimKeys the parent resource prim keys
-	 * @param main the main
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_P_M_S(
-		long groupId, long[] parentResourcePrimKeys, boolean main, int status,
-		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_P_M_S(
-			groupId, parentResourcePrimKeys, main, status, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12311,7 +8885,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12334,7 +8908,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12359,7 +8933,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12440,7 +9014,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12463,7 +9037,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12504,7 +9078,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12527,7 +9101,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12552,7 +9126,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12572,7 +9146,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12595,7 +9169,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12620,7 +9194,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12723,74 +9297,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param status the status
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int status) {
-
-		return getPersistence().findByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int status, int start,
-		int end) {
-
-		return getPersistence().findByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int status, int start,
-		int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12852,49 +9362,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param status the status
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int status) {
-
-		return getPersistence().filterFindByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, status);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param status the status
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int status, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12916,49 +9387,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param statuses the statuses
-	 * @return the matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int[] statuses) {
-
-		return getPersistence().filterFindByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, statuses);
-	}
-
-	/**
-	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param statuses the statuses
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles that the user has permission to view
-	 */
-	public static List<KBArticle> filterFindByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int[] statuses,
-		int start, int end) {
-
-		return getPersistence().filterFindByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, statuses, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -12980,78 +9412,10 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param statuses the statuses
-	 * @return the matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int[] statuses) {
-
-		return getPersistence().findByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, statuses);
-	}
-
-	/**
-	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param statuses the statuses
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int[] statuses,
-		int start, int end) {
-
-		return getPersistence().findByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, statuses, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param kbFolderId the kb folder ID
-	 * @param urlTitle the url title
-	 * @param statuses the statuses
-	 * @param start the lower bound of the range of kb articles
-	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kb articles
-	 */
-	public static List<KBArticle> findByG_KBFI_UT_S(
-		long groupId, long kbFolderId, String urlTitle, int[] statuses,
-		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
-
-		return getPersistence().findByG_KBFI_UT_S(
-			groupId, kbFolderId, urlTitle, statuses, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13173,7 +9537,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13196,7 +9560,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13221,7 +9585,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13302,7 +9666,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13325,7 +9689,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13413,7 +9777,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13436,7 +9800,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13460,7 +9824,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13541,7 +9905,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13564,7 +9928,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and kbFolderId = &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13651,7 +10015,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13674,7 +10038,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13698,7 +10062,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13779,7 +10143,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13802,7 +10166,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and sections LIKE &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13842,7 +10206,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13865,7 +10229,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13889,7 +10253,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where groupId = &#63; and sections LIKE any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13909,7 +10273,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13932,7 +10296,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and latest = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -13956,7 +10320,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and latest = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14078,7 +10442,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14101,7 +10465,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14125,7 +10489,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14206,7 +10570,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14229,7 +10593,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permissions to view where groupId = &#63; and sections LIKE &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14269,7 +10633,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14292,7 +10656,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles that the user has permission to view where groupId = &#63; and sections LIKE any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14316,7 +10680,7 @@ public class KBArticleUtil {
 	 * Returns all the kb articles where groupId = &#63; and sections LIKE any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14336,7 +10700,7 @@ public class KBArticleUtil {
 	 * Returns a range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14359,7 +10723,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE any &#63; and main = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14383,7 +10747,7 @@ public class KBArticleUtil {
 	 * Returns an ordered range of all the kb articles where groupId = &#63; and sections LIKE &#63; and main = &#63; and status &ne; &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -14486,24 +10850,6 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Caches the kb article in the entity cache if it is enabled.
-	 *
-	 * @param kbArticle the kb article
-	 */
-	public static void cacheResult(KBArticle kbArticle) {
-		getPersistence().cacheResult(kbArticle);
-	}
-
-	/**
-	 * Caches the kb articles in the entity cache if it is enabled.
-	 *
-	 * @param kbArticles the kb articles
-	 */
-	public static void cacheResult(List<KBArticle> kbArticles) {
-		getPersistence().cacheResult(kbArticles);
-	}
-
-	/**
 	 * Creates a new kb article with the primary key. Does not add the kb article to the database.
 	 *
 	 * @param kbArticleId the primary key for the new kb article
@@ -14554,82 +10900,3593 @@ public class KBArticleUtil {
 	}
 
 	/**
-	 * Returns all the kb articles.
+	 * Returns the kb article where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the kb articles
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching kb article, or <code>null</code> if a matching kb article could not be found
 	 */
-	public static List<KBArticle> findAll() {
-		return getPersistence().findAll();
+	public static KBArticle fetchByUUID_G(String uuid, long groupId) {
+		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
-	 * Returns a range of all the kb articles.
+	 * Returns the kb article where resourcePrimKey = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param version the version
+	 * @return the matching kb article, or <code>null</code> if a matching kb article could not be found
+	 */
+	public static KBArticle fetchByR_V(long resourcePrimKey, int version) {
+		return getPersistence().fetchByR_V(resourcePrimKey, version);
+	}
+
+	/**
+	 * Returns the kb article where resourcePrimKey = &#63; and groupId = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param version the version
+	 * @return the matching kb article, or <code>null</code> if a matching kb article could not be found
+	 */
+	public static KBArticle fetchByR_G_V(
+		long resourcePrimKey, long groupId, int version) {
+
+		return getPersistence().fetchByR_G_V(resourcePrimKey, groupId, version);
+	}
+
+	/**
+	 * Returns the kb article where groupId = &#63; and externalReferenceCode = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param version the version
+	 * @return the matching kb article, or <code>null</code> if a matching kb article could not be found
+	 */
+	public static KBArticle fetchByG_ERC_V(
+		long groupId, String externalReferenceCode, int version) {
+
+		return getPersistence().fetchByG_ERC_V(
+			groupId, externalReferenceCode, version);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByResourcePrimKey(long resourcePrimKey) {
+		return getPersistence().findByResourcePrimKey(resourcePrimKey);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
+	 * @param resourcePrimKey the resource prim key
 	 * @param start the lower bound of the range of kb articles
 	 * @param end the upper bound of the range of kb articles (not inclusive)
-	 * @return the range of kb articles
+	 * @return the range of matching kb articles
 	 */
-	public static List<KBArticle> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<KBArticle> findByResourcePrimKey(
+		long resourcePrimKey, int start, int end) {
+
+		return getPersistence().findByResourcePrimKey(
+			resourcePrimKey, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the kb articles.
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
+	 * @param resourcePrimKey the resource prim key
 	 * @param start the lower bound of the range of kb articles
 	 * @param end the upper bound of the range of kb articles (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of kb articles
+	 * @return the ordered range of matching kb articles
 	 */
-	public static List<KBArticle> findAll(
+	public static List<KBArticle> findByResourcePrimKey(
+		long resourcePrimKey, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByResourcePrimKey(
+			resourcePrimKey, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where uuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByUuid(String uuid, int start, int end) {
+		return getPersistence().findByUuid(uuid, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where uuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByUuid_C(String uuid, long companyId) {
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = &#63; and groupId = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_G(
+		long resourcePrimKey, long groupId) {
+
+		return getPersistence().findByR_G(resourcePrimKey, groupId);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G(
+		long resourcePrimKey, long groupId, int start, int end) {
+
+		return getPersistence().findByR_G(resourcePrimKey, groupId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G(
+		long resourcePrimKey, long groupId, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_G(
+			resourcePrimKey, groupId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G(
+		long resourcePrimKey, long groupId) {
+
+		return getPersistence().filterFindByR_G(resourcePrimKey, groupId);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G(
+		long resourcePrimKey, long groupId, int start, int end) {
+
+		return getPersistence().filterFindByR_G(
+			resourcePrimKey, groupId, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_L(
+		long resourcePrimKey, boolean latest) {
+
+		return getPersistence().findByR_L(resourcePrimKey, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_L(
+		long resourcePrimKey, boolean latest, int start, int end) {
+
+		return getPersistence().findByR_L(resourcePrimKey, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_L(
+		long resourcePrimKey, boolean latest, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_L(
+			resourcePrimKey, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_L(
+		long[] resourcePrimKeys, boolean latest) {
+
+		return getPersistence().findByR_L(resourcePrimKeys, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_L(
+		long[] resourcePrimKeys, boolean latest, int start, int end) {
+
+		return getPersistence().findByR_L(resourcePrimKeys, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_L(
+		long[] resourcePrimKeys, boolean latest, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_L(
+			resourcePrimKeys, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_M(
+		long resourcePrimKey, boolean main) {
+
+		return getPersistence().findByR_M(resourcePrimKey, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_M(
+		long resourcePrimKey, boolean main, int start, int end) {
+
+		return getPersistence().findByR_M(resourcePrimKey, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_M(
+		long resourcePrimKey, boolean main, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_M(
+			resourcePrimKey, main, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_M(
+		long[] resourcePrimKeys, boolean main) {
+
+		return getPersistence().findByR_M(resourcePrimKeys, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_M(
+		long[] resourcePrimKeys, boolean main, int start, int end) {
+
+		return getPersistence().findByR_M(resourcePrimKeys, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_M(
+		long[] resourcePrimKeys, boolean main, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_M(
+			resourcePrimKeys, main, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_S(long resourcePrimKey, int status) {
+		return getPersistence().findByR_S(resourcePrimKey, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_S(
+		long resourcePrimKey, int status, int start, int end) {
+
+		return getPersistence().findByR_S(resourcePrimKey, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_S(
+		long resourcePrimKey, int status, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_S(
+			resourcePrimKey, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = any &#63; and status = any &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param statuses the statuses
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_S(
+		long[] resourcePrimKeys, int[] statuses) {
+
+		return getPersistence().findByR_S(resourcePrimKeys, statuses);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and status = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param statuses the statuses
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_S(
+		long[] resourcePrimKeys, int[] statuses, int start, int end) {
+
+		return getPersistence().findByR_S(
+			resourcePrimKeys, statuses, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and status = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param statuses the statuses
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_S(
+		long[] resourcePrimKeys, int[] statuses, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_S(
+			resourcePrimKeys, statuses, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and externalReferenceCode = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_ERC(
+		long groupId, String externalReferenceCode) {
+
+		return getPersistence().findByG_ERC(groupId, externalReferenceCode);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_ERC(
+		long groupId, String externalReferenceCode, int start, int end) {
+
+		return getPersistence().findByG_ERC(
+			groupId, externalReferenceCode, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_ERC(
+		long groupId, String externalReferenceCode, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_ERC(
+			groupId, externalReferenceCode, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and externalReferenceCode = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_ERC(
+		long groupId, String externalReferenceCode) {
+
+		return getPersistence().filterFindByG_ERC(
+			groupId, externalReferenceCode);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and externalReferenceCode = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_ERC(
+		long groupId, String externalReferenceCode, int start, int end) {
+
+		return getPersistence().filterFindByG_ERC(
+			groupId, externalReferenceCode, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and latest = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_L(long groupId, boolean latest) {
+		return getPersistence().findByG_L(groupId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_L(
+		long groupId, boolean latest, int start, int end) {
+
+		return getPersistence().findByG_L(groupId, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_L(
+		long groupId, boolean latest, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_L(
+			groupId, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and latest = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_L(
+		long groupId, boolean latest) {
+
+		return getPersistence().filterFindByG_L(groupId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_L(
+		long groupId, boolean latest, int start, int end) {
+
+		return getPersistence().filterFindByG_L(groupId, latest, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and main = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_M(long groupId, boolean main) {
+		return getPersistence().findByG_M(groupId, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_M(
+		long groupId, boolean main, int start, int end) {
+
+		return getPersistence().findByG_M(groupId, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_M(
+		long groupId, boolean main, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_M(
+			groupId, main, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and main = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_M(long groupId, boolean main) {
+		return getPersistence().filterFindByG_M(groupId, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_M(
+		long groupId, boolean main, int start, int end) {
+
+		return getPersistence().filterFindByG_M(groupId, main, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_S(long groupId, int status) {
+		return getPersistence().findByG_S(groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_S(
+		long groupId, int status, int start, int end) {
+
+		return getPersistence().findByG_S(groupId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_S(
+		long groupId, int status, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_S(
+			groupId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_S(long groupId, int status) {
+		return getPersistence().filterFindByG_S(groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_S(
+		long groupId, int status, int start, int end) {
+
+		return getPersistence().filterFindByG_S(groupId, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where companyId = &#63; and latest = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByC_L(long companyId, boolean latest) {
+		return getPersistence().findByC_L(companyId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where companyId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByC_L(
+		long companyId, boolean latest, int start, int end) {
+
+		return getPersistence().findByC_L(companyId, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where companyId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByC_L(
+		long companyId, boolean latest, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByC_L(
+			companyId, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where companyId = &#63; and main = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByC_M(long companyId, boolean main) {
+		return getPersistence().findByC_M(companyId, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where companyId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByC_M(
+		long companyId, boolean main, int start, int end) {
+
+		return getPersistence().findByC_M(companyId, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where companyId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByC_M(
+		long companyId, boolean main, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByC_M(
+			companyId, main, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where companyId = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByC_S(long companyId, int status) {
+		return getPersistence().findByC_S(companyId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByC_S(
+		long companyId, int status, int start, int end) {
+
+		return getPersistence().findByC_S(companyId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByC_S(
+		long companyId, int status, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByC_S(
+			companyId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where parentResourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByP_L(
+		long parentResourcePrimKey, boolean latest) {
+
+		return getPersistence().findByP_L(parentResourcePrimKey, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_L(
+		long parentResourcePrimKey, boolean latest, int start, int end) {
+
+		return getPersistence().findByP_L(
+			parentResourcePrimKey, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_L(
+		long parentResourcePrimKey, boolean latest, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByP_L(
+			parentResourcePrimKey, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByP_L(
+		long[] parentResourcePrimKeys, boolean latest) {
+
+		return getPersistence().findByP_L(parentResourcePrimKeys, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_L(
+		long[] parentResourcePrimKeys, boolean latest, int start, int end) {
+
+		return getPersistence().findByP_L(
+			parentResourcePrimKeys, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_L(
+		long[] parentResourcePrimKeys, boolean latest, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByP_L(
+			parentResourcePrimKeys, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where parentResourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByP_M(
+		long parentResourcePrimKey, boolean main) {
+
+		return getPersistence().findByP_M(parentResourcePrimKey, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_M(
+		long parentResourcePrimKey, boolean main, int start, int end) {
+
+		return getPersistence().findByP_M(
+			parentResourcePrimKey, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_M(
+		long parentResourcePrimKey, boolean main, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByP_M(
+			parentResourcePrimKey, main, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where parentResourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByP_M(
+		long[] parentResourcePrimKeys, boolean main) {
+
+		return getPersistence().findByP_M(parentResourcePrimKeys, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where parentResourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_M(
+		long[] parentResourcePrimKeys, boolean main, int start, int end) {
+
+		return getPersistence().findByP_M(
+			parentResourcePrimKeys, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_M(
+		long[] parentResourcePrimKeys, boolean main, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByP_M(
+			parentResourcePrimKeys, main, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where parentResourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByP_S(
+		long parentResourcePrimKey, int status) {
+
+		return getPersistence().findByP_S(parentResourcePrimKey, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where parentResourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_S(
+		long parentResourcePrimKey, int status, int start, int end) {
+
+		return getPersistence().findByP_S(
+			parentResourcePrimKey, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_S(
+		long parentResourcePrimKey, int status, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByP_S(
+			parentResourcePrimKey, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where parentResourcePrimKey = any &#63; and status = &#63;.
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByP_S(
+		long[] parentResourcePrimKeys, int status) {
+
+		return getPersistence().findByP_S(parentResourcePrimKeys, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where parentResourcePrimKey = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_S(
+		long[] parentResourcePrimKeys, int status, int start, int end) {
+
+		return getPersistence().findByP_S(
+			parentResourcePrimKeys, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where parentResourcePrimKey = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByP_S(
+		long[] parentResourcePrimKeys, int status, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByP_S(
+			parentResourcePrimKeys, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_L(
+		long resourcePrimKey, long groupId, boolean latest) {
+
+		return getPersistence().findByR_G_L(resourcePrimKey, groupId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_L(
+		long resourcePrimKey, long groupId, boolean latest, int start,
+		int end) {
+
+		return getPersistence().findByR_G_L(
+			resourcePrimKey, groupId, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_L(
+		long resourcePrimKey, long groupId, boolean latest, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_G_L(
+			resourcePrimKey, groupId, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_L(
+		long[] resourcePrimKeys, long groupId, boolean latest) {
+
+		return getPersistence().findByR_G_L(resourcePrimKeys, groupId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_L(
+		long[] resourcePrimKeys, long groupId, boolean latest, int start,
+		int end) {
+
+		return getPersistence().findByR_G_L(
+			resourcePrimKeys, groupId, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_L(
+		long[] resourcePrimKeys, long groupId, boolean latest, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_G_L(
+			resourcePrimKeys, groupId, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_L(
+		long resourcePrimKey, long groupId, boolean latest) {
+
+		return getPersistence().filterFindByR_G_L(
+			resourcePrimKey, groupId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_L(
+		long resourcePrimKey, long groupId, boolean latest, int start,
+		int end) {
+
+		return getPersistence().filterFindByR_G_L(
+			resourcePrimKey, groupId, latest, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_L(
+		long[] resourcePrimKeys, long groupId, boolean latest) {
+
+		return getPersistence().filterFindByR_G_L(
+			resourcePrimKeys, groupId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_L(
+		long[] resourcePrimKeys, long groupId, boolean latest, int start,
+		int end) {
+
+		return getPersistence().filterFindByR_G_L(
+			resourcePrimKeys, groupId, latest, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_M(
+		long resourcePrimKey, long groupId, boolean main) {
+
+		return getPersistence().findByR_G_M(resourcePrimKey, groupId, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_M(
+		long resourcePrimKey, long groupId, boolean main, int start, int end) {
+
+		return getPersistence().findByR_G_M(
+			resourcePrimKey, groupId, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_M(
+		long resourcePrimKey, long groupId, boolean main, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_G_M(
+			resourcePrimKey, groupId, main, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_M(
+		long[] resourcePrimKeys, long groupId, boolean main) {
+
+		return getPersistence().findByR_G_M(resourcePrimKeys, groupId, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_M(
+		long[] resourcePrimKeys, long groupId, boolean main, int start,
+		int end) {
+
+		return getPersistence().findByR_G_M(
+			resourcePrimKeys, groupId, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_M(
+		long[] resourcePrimKeys, long groupId, boolean main, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_G_M(
+			resourcePrimKeys, groupId, main, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_M(
+		long resourcePrimKey, long groupId, boolean main) {
+
+		return getPersistence().filterFindByR_G_M(
+			resourcePrimKey, groupId, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_M(
+		long resourcePrimKey, long groupId, boolean main, int start, int end) {
+
+		return getPersistence().filterFindByR_G_M(
+			resourcePrimKey, groupId, main, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_M(
+		long[] resourcePrimKeys, long groupId, boolean main) {
+
+		return getPersistence().filterFindByR_G_M(
+			resourcePrimKeys, groupId, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_M(
+		long[] resourcePrimKeys, long groupId, boolean main, int start,
+		int end) {
+
+		return getPersistence().filterFindByR_G_M(
+			resourcePrimKeys, groupId, main, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_S(
+		long resourcePrimKey, long groupId, int status) {
+
+		return getPersistence().findByR_G_S(resourcePrimKey, groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_S(
+		long resourcePrimKey, long groupId, int status, int start, int end) {
+
+		return getPersistence().findByR_G_S(
+			resourcePrimKey, groupId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_S(
+		long resourcePrimKey, long groupId, int status, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_G_S(
+			resourcePrimKey, groupId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_S(
+		long[] resourcePrimKeys, long groupId, int status) {
+
+		return getPersistence().findByR_G_S(resourcePrimKeys, groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_S(
+		long[] resourcePrimKeys, long groupId, int status, int start, int end) {
+
+		return getPersistence().findByR_G_S(
+			resourcePrimKeys, groupId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByR_G_S(
+		long[] resourcePrimKeys, long groupId, int status, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByR_G_S(
+			resourcePrimKeys, groupId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_S(
+		long resourcePrimKey, long groupId, int status) {
+
+		return getPersistence().filterFindByR_G_S(
+			resourcePrimKey, groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKey the resource prim key
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_S(
+		long resourcePrimKey, long groupId, int status, int start, int end) {
+
+		return getPersistence().filterFindByR_G_S(
+			resourcePrimKey, groupId, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_S(
+		long[] resourcePrimKeys, long groupId, int status) {
+
+		return getPersistence().filterFindByR_G_S(
+			resourcePrimKeys, groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where resourcePrimKey = any &#63; and groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param resourcePrimKeys the resource prim keys
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByR_G_S(
+		long[] resourcePrimKeys, long groupId, int status, int start, int end) {
+
+		return getPersistence().filterFindByR_G_S(
+			resourcePrimKeys, groupId, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_ERC_S(
+		long groupId, String externalReferenceCode, int status) {
+
+		return getPersistence().findByG_ERC_S(
+			groupId, externalReferenceCode, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_ERC_S(
+		long groupId, String externalReferenceCode, int status, int start,
+		int end) {
+
+		return getPersistence().findByG_ERC_S(
+			groupId, externalReferenceCode, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_ERC_S(
+		long groupId, String externalReferenceCode, int status, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_ERC_S(
+			groupId, externalReferenceCode, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_ERC_S(
+		long groupId, String externalReferenceCode, int status) {
+
+		return getPersistence().filterFindByG_ERC_S(
+			groupId, externalReferenceCode, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and externalReferenceCode = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param externalReferenceCode the external reference code
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_ERC_S(
+		long groupId, String externalReferenceCode, int status, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_ERC_S(
+			groupId, externalReferenceCode, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L(
+		long groupId, long parentResourcePrimKey, boolean latest) {
+
+		return getPersistence().findByG_P_L(
+			groupId, parentResourcePrimKey, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L(
+		long groupId, long parentResourcePrimKey, boolean latest, int start,
+		int end) {
+
+		return getPersistence().findByG_P_L(
+			groupId, parentResourcePrimKey, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L(
+		long groupId, long parentResourcePrimKey, boolean latest, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_P_L(
+			groupId, parentResourcePrimKey, latest, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L(
+		long groupId, long[] parentResourcePrimKeys, boolean latest) {
+
+		return getPersistence().findByG_P_L(
+			groupId, parentResourcePrimKeys, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L(
+		long groupId, long[] parentResourcePrimKeys, boolean latest, int start,
+		int end) {
+
+		return getPersistence().findByG_P_L(
+			groupId, parentResourcePrimKeys, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L(
+		long groupId, long[] parentResourcePrimKeys, boolean latest, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_P_L(
+			groupId, parentResourcePrimKeys, latest, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_L(
+		long groupId, long parentResourcePrimKey, boolean latest) {
+
+		return getPersistence().filterFindByG_P_L(
+			groupId, parentResourcePrimKey, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_L(
+		long groupId, long parentResourcePrimKey, boolean latest, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_P_L(
+			groupId, parentResourcePrimKey, latest, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_L(
+		long groupId, long[] parentResourcePrimKeys, boolean latest) {
+
+		return getPersistence().filterFindByG_P_L(
+			groupId, parentResourcePrimKeys, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_L(
+		long groupId, long[] parentResourcePrimKeys, boolean latest, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_P_L(
+			groupId, parentResourcePrimKeys, latest, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M(
+		long groupId, long parentResourcePrimKey, boolean main) {
+
+		return getPersistence().findByG_P_M(
+			groupId, parentResourcePrimKey, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M(
+		long groupId, long parentResourcePrimKey, boolean main, int start,
+		int end) {
+
+		return getPersistence().findByG_P_M(
+			groupId, parentResourcePrimKey, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M(
+		long groupId, long parentResourcePrimKey, boolean main, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_P_M(
+			groupId, parentResourcePrimKey, main, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M(
+		long groupId, long[] parentResourcePrimKeys, boolean main) {
+
+		return getPersistence().findByG_P_M(
+			groupId, parentResourcePrimKeys, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M(
+		long groupId, long[] parentResourcePrimKeys, boolean main, int start,
+		int end) {
+
+		return getPersistence().findByG_P_M(
+			groupId, parentResourcePrimKeys, main, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M(
+		long groupId, long[] parentResourcePrimKeys, boolean main, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_P_M(
+			groupId, parentResourcePrimKeys, main, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_M(
+		long groupId, long parentResourcePrimKey, boolean main) {
+
+		return getPersistence().filterFindByG_P_M(
+			groupId, parentResourcePrimKey, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_M(
+		long groupId, long parentResourcePrimKey, boolean main, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_P_M(
+			groupId, parentResourcePrimKey, main, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_M(
+		long groupId, long[] parentResourcePrimKeys, boolean main) {
+
+		return getPersistence().filterFindByG_P_M(
+			groupId, parentResourcePrimKeys, main);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_M(
+		long groupId, long[] parentResourcePrimKeys, boolean main, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_P_M(
+			groupId, parentResourcePrimKeys, main, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_S(
+		long groupId, long parentResourcePrimKey, int status) {
+
+		return getPersistence().findByG_P_S(
+			groupId, parentResourcePrimKey, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_S(
+		long groupId, long parentResourcePrimKey, int status, int start,
+		int end) {
+
+		return getPersistence().findByG_P_S(
+			groupId, parentResourcePrimKey, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_S(
+		long groupId, long parentResourcePrimKey, int status, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_P_S(
+			groupId, parentResourcePrimKey, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_S(
+		long groupId, long[] parentResourcePrimKeys, int status) {
+
+		return getPersistence().findByG_P_S(
+			groupId, parentResourcePrimKeys, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_S(
+		long groupId, long[] parentResourcePrimKeys, int status, int start,
+		int end) {
+
+		return getPersistence().findByG_P_S(
+			groupId, parentResourcePrimKeys, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_S(
+		long groupId, long[] parentResourcePrimKeys, int status, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_P_S(
+			groupId, parentResourcePrimKeys, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_S(
+		long groupId, long parentResourcePrimKey, int status) {
+
+		return getPersistence().filterFindByG_P_S(
+			groupId, parentResourcePrimKey, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_S(
+		long groupId, long parentResourcePrimKey, int status, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_P_S(
+			groupId, parentResourcePrimKey, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_S(
+		long groupId, long[] parentResourcePrimKeys, int status) {
+
+		return getPersistence().filterFindByG_P_S(
+			groupId, parentResourcePrimKeys, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_S(
+		long groupId, long[] parentResourcePrimKeys, int status, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_P_S(
+			groupId, parentResourcePrimKeys, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT(
+		long groupId, long kbFolderId, String urlTitle) {
+
+		return getPersistence().findByG_KBFI_UT(groupId, kbFolderId, urlTitle);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT(
+		long groupId, long kbFolderId, String urlTitle, int start, int end) {
+
+		return getPersistence().findByG_KBFI_UT(
+			groupId, kbFolderId, urlTitle, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT(
+		long groupId, long kbFolderId, String urlTitle, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_KBFI_UT(
+			groupId, kbFolderId, urlTitle, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_UT(
+		long groupId, long kbFolderId, String urlTitle) {
+
+		return getPersistence().filterFindByG_KBFI_UT(
+			groupId, kbFolderId, urlTitle);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_UT(
+		long groupId, long kbFolderId, String urlTitle, int start, int end) {
+
+		return getPersistence().filterFindByG_KBFI_UT(
+			groupId, kbFolderId, urlTitle, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param latest the latest
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_L(
+		long groupId, long kbFolderId, boolean latest) {
+
+		return getPersistence().findByG_KBFI_L(groupId, kbFolderId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_L(
+		long groupId, long kbFolderId, boolean latest, int start, int end) {
+
+		return getPersistence().findByG_KBFI_L(
+			groupId, kbFolderId, latest, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_L(
+		long groupId, long kbFolderId, boolean latest, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_KBFI_L(
+			groupId, kbFolderId, latest, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param latest the latest
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_L(
+		long groupId, long kbFolderId, boolean latest) {
+
+		return getPersistence().filterFindByG_KBFI_L(
+			groupId, kbFolderId, latest);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and latest = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param latest the latest
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_L(
+		long groupId, long kbFolderId, boolean latest, int start, int end) {
+
+		return getPersistence().filterFindByG_KBFI_L(
+			groupId, kbFolderId, latest, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_S(
+		long groupId, long kbFolderId, int status) {
+
+		return getPersistence().findByG_KBFI_S(groupId, kbFolderId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_S(
+		long groupId, long kbFolderId, int status, int start, int end) {
+
+		return getPersistence().findByG_KBFI_S(
+			groupId, kbFolderId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_S(
+		long groupId, long kbFolderId, int status, int start, int end,
+		OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_KBFI_S(
+			groupId, kbFolderId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_S(
+		long groupId, long kbFolderId, int status) {
+
+		return getPersistence().filterFindByG_KBFI_S(
+			groupId, kbFolderId, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_S(
+		long groupId, long kbFolderId, int status, int start, int end) {
+
+		return getPersistence().filterFindByG_KBFI_S(
+			groupId, kbFolderId, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L_S(
+		long groupId, long parentResourcePrimKey, boolean latest, int status) {
+
+		return getPersistence().findByG_P_L_S(
+			groupId, parentResourcePrimKey, latest, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L_S(
+		long groupId, long parentResourcePrimKey, boolean latest, int status,
+		int start, int end) {
+
+		return getPersistence().findByG_P_L_S(
+			groupId, parentResourcePrimKey, latest, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L_S(
+		long groupId, long parentResourcePrimKey, boolean latest, int status,
 		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByG_P_L_S(
+			groupId, parentResourcePrimKey, latest, status, start, end,
+			orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the kb articles.
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L_S(
+		long groupId, long[] parentResourcePrimKeys, boolean latest,
+		int status) {
+
+		return getPersistence().findByG_P_L_S(
+			groupId, parentResourcePrimKeys, latest, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KBArticleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_L_S(
+		long groupId, long[] parentResourcePrimKeys, boolean latest, int status,
+		int start, int end) {
+
+		return getPersistence().findByG_P_L_S(
+			groupId, parentResourcePrimKeys, latest, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param status the status
 	 * @param start the lower bound of the range of kb articles
 	 * @param end the upper bound of the range of kb articles (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of kb articles
+	 * @return the ordered range of matching kb articles
 	 */
-	public static List<KBArticle> findAll(
-		int start, int end, OrderByComparator<KBArticle> orderByComparator,
-		boolean useFinderCache) {
+	public static List<KBArticle> findByG_P_L_S(
+		long groupId, long[] parentResourcePrimKeys, boolean latest, int status,
+		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByG_P_L_S(
+			groupId, parentResourcePrimKeys, latest, status, start, end,
+			orderByComparator);
 	}
 
 	/**
-	 * Removes all the kb articles from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of kb articles.
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
 	 *
-	 * @return the number of kb articles
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<KBArticle> filterFindByG_P_L_S(
+		long groupId, long parentResourcePrimKey, boolean latest, int status) {
+
+		return getPersistence().filterFindByG_P_L_S(
+			groupId, parentResourcePrimKey, latest, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and latest = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param latest the latest
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_L_S(
+		long groupId, long parentResourcePrimKey, boolean latest, int status,
+		int start, int end) {
+
+		return getPersistence().filterFindByG_P_L_S(
+			groupId, parentResourcePrimKey, latest, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_L_S(
+		long groupId, long[] parentResourcePrimKeys, boolean latest,
+		int status) {
+
+		return getPersistence().filterFindByG_P_L_S(
+			groupId, parentResourcePrimKeys, latest, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and latest = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param latest the latest
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_L_S(
+		long groupId, long[] parentResourcePrimKeys, boolean latest, int status,
+		int start, int end) {
+
+		return getPersistence().filterFindByG_P_L_S(
+			groupId, parentResourcePrimKeys, latest, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M_S(
+		long groupId, long parentResourcePrimKey, boolean main, int status) {
+
+		return getPersistence().findByG_P_M_S(
+			groupId, parentResourcePrimKey, main, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M_S(
+		long groupId, long parentResourcePrimKey, boolean main, int status,
+		int start, int end) {
+
+		return getPersistence().findByG_P_M_S(
+			groupId, parentResourcePrimKey, main, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M_S(
+		long groupId, long parentResourcePrimKey, boolean main, int status,
+		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_P_M_S(
+			groupId, parentResourcePrimKey, main, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M_S(
+		long groupId, long[] parentResourcePrimKeys, boolean main, int status) {
+
+		return getPersistence().findByG_P_M_S(
+			groupId, parentResourcePrimKeys, main, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M_S(
+		long groupId, long[] parentResourcePrimKeys, boolean main, int status,
+		int start, int end) {
+
+		return getPersistence().findByG_P_M_S(
+			groupId, parentResourcePrimKeys, main, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_P_M_S(
+		long groupId, long[] parentResourcePrimKeys, boolean main, int status,
+		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_P_M_S(
+			groupId, parentResourcePrimKeys, main, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_M_S(
+		long groupId, long parentResourcePrimKey, boolean main, int status) {
+
+		return getPersistence().filterFindByG_P_M_S(
+			groupId, parentResourcePrimKey, main, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = &#63; and main = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKey the parent resource prim key
+	 * @param main the main
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_M_S(
+		long groupId, long parentResourcePrimKey, boolean main, int status,
+		int start, int end) {
+
+		return getPersistence().filterFindByG_P_M_S(
+			groupId, parentResourcePrimKey, main, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_M_S(
+		long groupId, long[] parentResourcePrimKeys, boolean main, int status) {
+
+		return getPersistence().filterFindByG_P_M_S(
+			groupId, parentResourcePrimKeys, main, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and parentResourcePrimKey = any &#63; and main = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentResourcePrimKeys the parent resource prim keys
+	 * @param main the main
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_P_M_S(
+		long groupId, long[] parentResourcePrimKeys, boolean main, int status,
+		int start, int end) {
+
+		return getPersistence().filterFindByG_P_M_S(
+			groupId, parentResourcePrimKeys, main, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param status the status
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int status) {
+
+		return getPersistence().findByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int status, int start,
+		int end) {
+
+		return getPersistence().findByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int status, int start,
+		int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param statuses the statuses
+	 * @return the matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int[] statuses) {
+
+		return getPersistence().findByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, statuses);
+	}
+
+	/**
+	 * Returns a range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param statuses the statuses
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int[] statuses,
+		int start, int end) {
+
+		return getPersistence().findByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, statuses, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kb articles where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param statuses the statuses
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching kb articles
+	 */
+	public static List<KBArticle> findByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int[] statuses,
+		int start, int end, OrderByComparator<KBArticle> orderByComparator) {
+
+		return getPersistence().findByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, statuses, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param status the status
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int status) {
+
+		return getPersistence().filterFindByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, status);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param status the status
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int status, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, status, start, end);
+	}
+
+	/**
+	 * Returns all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param statuses the statuses
+	 * @return the matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int[] statuses) {
+
+		return getPersistence().filterFindByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, statuses);
+	}
+
+	/**
+	 * Returns a range of all the kb articles that the user has permission to view where groupId = &#63; and kbFolderId = &#63; and urlTitle = &#63; and status = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.knowledge.base.model.impl.KBArticleModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param kbFolderId the kb folder ID
+	 * @param urlTitle the url title
+	 * @param statuses the statuses
+	 * @param start the lower bound of the range of kb articles
+	 * @param end the upper bound of the range of kb articles (not inclusive)
+	 * @return the range of matching kb articles that the user has permission to view
+	 */
+	public static List<KBArticle> filterFindByG_KBFI_UT_S(
+		long groupId, long kbFolderId, String urlTitle, int[] statuses,
+		int start, int end) {
+
+		return getPersistence().filterFindByG_KBFI_UT_S(
+			groupId, kbFolderId, urlTitle, statuses, start, end);
 	}
 
 	public static KBArticlePersistence getPersistence() {
@@ -14643,4 +14500,4 @@ public class KBArticleUtil {
 	private static volatile KBArticlePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:110148250
+// LIFERAY-SERVICE-BUILDER-HASH:1773488571

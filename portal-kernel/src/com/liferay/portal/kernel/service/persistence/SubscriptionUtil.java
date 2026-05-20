@@ -38,6 +38,20 @@ public class SubscriptionUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<Subscription> subscriptions) {
+		getPersistence().cacheResult(subscriptions);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(Subscription subscription) {
+		getPersistence().cacheResult(subscription);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -113,59 +127,10 @@ public class SubscriptionUtil {
 	}
 
 	/**
-	 * Returns all the subscriptions where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching subscriptions
-	 */
-	public static List<Subscription> findByUserId(long userId) {
-		return getPersistence().findByUserId(userId);
-	}
-
-	/**
-	 * Returns a range of all the subscriptions where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @return the range of matching subscriptions
-	 */
-	public static List<Subscription> findByUserId(
-		long userId, int start, int end) {
-
-		return getPersistence().findByUserId(userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the subscriptions where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching subscriptions
-	 */
-	public static List<Subscription> findByUserId(
-		long userId, int start, int end,
-		OrderByComparator<Subscription> orderByComparator) {
-
-		return getPersistence().findByUserId(
-			userId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the subscriptions where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -232,62 +197,10 @@ public class SubscriptionUtil {
 	}
 
 	/**
-	 * Returns all the subscriptions where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @return the matching subscriptions
-	 */
-	public static List<Subscription> findByG_U(long groupId, long userId) {
-		return getPersistence().findByG_U(groupId, userId);
-	}
-
-	/**
-	 * Returns a range of all the subscriptions where groupId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @return the range of matching subscriptions
-	 */
-	public static List<Subscription> findByG_U(
-		long groupId, long userId, int start, int end) {
-
-		return getPersistence().findByG_U(groupId, userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the subscriptions where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching subscriptions
-	 */
-	public static List<Subscription> findByG_U(
-		long groupId, long userId, int start, int end,
-		OrderByComparator<Subscription> orderByComparator) {
-
-		return getPersistence().findByG_U(
-			groupId, userId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the subscriptions where groupId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -363,62 +276,10 @@ public class SubscriptionUtil {
 	}
 
 	/**
-	 * Returns all the subscriptions where userId = &#63; and classNameId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @return the matching subscriptions
-	 */
-	public static List<Subscription> findByU_C(long userId, long classNameId) {
-		return getPersistence().findByU_C(userId, classNameId);
-	}
-
-	/**
-	 * Returns a range of all the subscriptions where userId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @return the range of matching subscriptions
-	 */
-	public static List<Subscription> findByU_C(
-		long userId, long classNameId, int start, int end) {
-
-		return getPersistence().findByU_C(userId, classNameId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the subscriptions where userId = &#63; and classNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching subscriptions
-	 */
-	public static List<Subscription> findByU_C(
-		long userId, long classNameId, int start, int end,
-		OrderByComparator<Subscription> orderByComparator) {
-
-		return getPersistence().findByU_C(
-			userId, classNameId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the subscriptions where userId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -494,68 +355,10 @@ public class SubscriptionUtil {
 	}
 
 	/**
-	 * Returns all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching subscriptions
-	 */
-	public static List<Subscription> findByC_C_C(
-		long companyId, long classNameId, long classPK) {
-
-		return getPersistence().findByC_C_C(companyId, classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @return the range of matching subscriptions
-	 */
-	public static List<Subscription> findByC_C_C(
-		long companyId, long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByC_C_C(
-			companyId, classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching subscriptions
-	 */
-	public static List<Subscription> findByC_C_C(
-		long companyId, long classNameId, long classPK, int start, int end,
-		OrderByComparator<Subscription> orderByComparator) {
-
-		return getPersistence().findByC_C_C(
-			companyId, classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -641,78 +444,10 @@ public class SubscriptionUtil {
 	}
 
 	/**
-	 * Returns all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPKs the class pks
-	 * @return the matching subscriptions
-	 */
-	public static List<Subscription> findByC_U_C_C(
-		long companyId, long userId, long classNameId, long[] classPKs) {
-
-		return getPersistence().findByC_U_C_C(
-			companyId, userId, classNameId, classPKs);
-	}
-
-	/**
-	 * Returns a range of all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPKs the class pks
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @return the range of matching subscriptions
-	 */
-	public static List<Subscription> findByC_U_C_C(
-		long companyId, long userId, long classNameId, long[] classPKs,
-		int start, int end) {
-
-		return getPersistence().findByC_U_C_C(
-			companyId, userId, classNameId, classPKs, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPKs the class pks
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching subscriptions
-	 */
-	public static List<Subscription> findByC_U_C_C(
-		long companyId, long userId, long classNameId, long[] classPKs,
-		int start, int end, OrderByComparator<Subscription> orderByComparator) {
-
-		return getPersistence().findByC_U_C_C(
-			companyId, userId, classNameId, classPKs, start, end,
-			orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -750,22 +485,6 @@ public class SubscriptionUtil {
 		throws com.liferay.portal.kernel.exception.NoSuchSubscriptionException {
 
 		return getPersistence().findByC_U_C_C(
-			companyId, userId, classNameId, classPK);
-	}
-
-	/**
-	 * Returns the subscription where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching subscription, or <code>null</code> if a matching subscription could not be found
-	 */
-	public static Subscription fetchByC_U_C_C(
-		long companyId, long userId, long classNameId, long classPK) {
-
-		return getPersistence().fetchByC_U_C_C(
 			companyId, userId, classNameId, classPK);
 	}
 
@@ -837,24 +556,6 @@ public class SubscriptionUtil {
 	}
 
 	/**
-	 * Caches the subscription in the entity cache if it is enabled.
-	 *
-	 * @param subscription the subscription
-	 */
-	public static void cacheResult(Subscription subscription) {
-		getPersistence().cacheResult(subscription);
-	}
-
-	/**
-	 * Caches the subscriptions in the entity cache if it is enabled.
-	 *
-	 * @param subscriptions the subscriptions
-	 */
-	public static void cacheResult(List<Subscription> subscriptions) {
-		getPersistence().cacheResult(subscriptions);
-	}
-
-	/**
 	 * Creates a new subscription with the primary key. Does not add the subscription to the database.
 	 *
 	 * @param subscriptionId the primary key for the new subscription
@@ -905,82 +606,294 @@ public class SubscriptionUtil {
 	}
 
 	/**
-	 * Returns all the subscriptions.
+	 * Returns the subscription where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the subscriptions
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching subscription, or <code>null</code> if a matching subscription could not be found
 	 */
-	public static List<Subscription> findAll() {
-		return getPersistence().findAll();
+	public static Subscription fetchByC_U_C_C(
+		long companyId, long userId, long classNameId, long classPK) {
+
+		return getPersistence().fetchByC_U_C_C(
+			companyId, userId, classNameId, classPK);
 	}
 
 	/**
-	 * Returns a range of all the subscriptions.
+	 * Returns all the subscriptions where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching subscriptions
+	 */
+	public static List<Subscription> findByUserId(long userId) {
+		return getPersistence().findByUserId(userId);
+	}
+
+	/**
+	 * Returns a range of all the subscriptions where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of subscriptions
 	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @return the range of subscriptions
+	 * @return the range of matching subscriptions
 	 */
-	public static List<Subscription> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<Subscription> findByUserId(
+		long userId, int start, int end) {
+
+		return getPersistence().findByUserId(userId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the subscriptions.
+	 * Returns an ordered range of all the subscriptions where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of subscriptions
 	 * @param end the upper bound of the range of subscriptions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of subscriptions
+	 * @return the ordered range of matching subscriptions
 	 */
-	public static List<Subscription> findAll(
+	public static List<Subscription> findByUserId(
+		long userId, int start, int end,
+		OrderByComparator<Subscription> orderByComparator) {
+
+		return getPersistence().findByUserId(
+			userId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the subscriptions where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @return the matching subscriptions
+	 */
+	public static List<Subscription> findByG_U(long groupId, long userId) {
+		return getPersistence().findByG_U(groupId, userId);
+	}
+
+	/**
+	 * Returns a range of all the subscriptions where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of subscriptions
+	 * @param end the upper bound of the range of subscriptions (not inclusive)
+	 * @return the range of matching subscriptions
+	 */
+	public static List<Subscription> findByG_U(
+		long groupId, long userId, int start, int end) {
+
+		return getPersistence().findByG_U(groupId, userId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the subscriptions where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of subscriptions
+	 * @param end the upper bound of the range of subscriptions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching subscriptions
+	 */
+	public static List<Subscription> findByG_U(
+		long groupId, long userId, int start, int end,
+		OrderByComparator<Subscription> orderByComparator) {
+
+		return getPersistence().findByG_U(
+			groupId, userId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the subscriptions where userId = &#63; and classNameId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @return the matching subscriptions
+	 */
+	public static List<Subscription> findByU_C(long userId, long classNameId) {
+		return getPersistence().findByU_C(userId, classNameId);
+	}
+
+	/**
+	 * Returns a range of all the subscriptions where userId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of subscriptions
+	 * @param end the upper bound of the range of subscriptions (not inclusive)
+	 * @return the range of matching subscriptions
+	 */
+	public static List<Subscription> findByU_C(
+		long userId, long classNameId, int start, int end) {
+
+		return getPersistence().findByU_C(userId, classNameId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the subscriptions where userId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of subscriptions
+	 * @param end the upper bound of the range of subscriptions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching subscriptions
+	 */
+	public static List<Subscription> findByU_C(
+		long userId, long classNameId, int start, int end,
+		OrderByComparator<Subscription> orderByComparator) {
+
+		return getPersistence().findByU_C(
+			userId, classNameId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching subscriptions
+	 */
+	public static List<Subscription> findByC_C_C(
+		long companyId, long classNameId, long classPK) {
+
+		return getPersistence().findByC_C_C(companyId, classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of subscriptions
+	 * @param end the upper bound of the range of subscriptions (not inclusive)
+	 * @return the range of matching subscriptions
+	 */
+	public static List<Subscription> findByC_C_C(
+		long companyId, long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByC_C_C(
+			companyId, classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of subscriptions
+	 * @param end the upper bound of the range of subscriptions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching subscriptions
+	 */
+	public static List<Subscription> findByC_C_C(
+		long companyId, long classNameId, long classPK, int start, int end,
+		OrderByComparator<Subscription> orderByComparator) {
+
+		return getPersistence().findByC_C_C(
+			companyId, classNameId, classPK, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPKs the class pks
+	 * @return the matching subscriptions
+	 */
+	public static List<Subscription> findByC_U_C_C(
+		long companyId, long userId, long classNameId, long[] classPKs) {
+
+		return getPersistence().findByC_U_C_C(
+			companyId, userId, classNameId, classPKs);
+	}
+
+	/**
+	 * Returns a range of all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPKs the class pks
+	 * @param start the lower bound of the range of subscriptions
+	 * @param end the upper bound of the range of subscriptions (not inclusive)
+	 * @return the range of matching subscriptions
+	 */
+	public static List<Subscription> findByC_U_C_C(
+		long companyId, long userId, long classNameId, long[] classPKs,
+		int start, int end) {
+
+		return getPersistence().findByC_U_C_C(
+			companyId, userId, classNameId, classPKs, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.SubscriptionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPKs the class pks
+	 * @param start the lower bound of the range of subscriptions
+	 * @param end the upper bound of the range of subscriptions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching subscriptions
+	 */
+	public static List<Subscription> findByC_U_C_C(
+		long companyId, long userId, long classNameId, long[] classPKs,
 		int start, int end, OrderByComparator<Subscription> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the subscriptions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SubscriptionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of subscriptions
-	 * @param end the upper bound of the range of subscriptions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of subscriptions
-	 */
-	public static List<Subscription> findAll(
-		int start, int end, OrderByComparator<Subscription> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the subscriptions from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of subscriptions.
-	 *
-	 * @return the number of subscriptions
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByC_U_C_C(
+			companyId, userId, classNameId, classPKs, start, end,
+			orderByComparator);
 	}
 
 	public static SubscriptionPersistence getPersistence() {
@@ -994,4 +907,4 @@ public class SubscriptionUtil {
 	private static volatile SubscriptionPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1027653563
+// LIFERAY-SERVICE-BUILDER-HASH:-759664246

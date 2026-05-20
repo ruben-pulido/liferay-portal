@@ -33,20 +33,6 @@ public interface DataLimitEntryPersistence
 	 */
 
 	/**
-	 * Caches the data limit entry in the entity cache if it is enabled.
-	 *
-	 * @param dataLimitEntry the data limit entry
-	 */
-	public void cacheResult(DataLimitEntry dataLimitEntry);
-
-	/**
-	 * Caches the data limit entries in the entity cache if it is enabled.
-	 *
-	 * @param dataLimitEntries the data limit entries
-	 */
-	public void cacheResult(java.util.List<DataLimitEntry> dataLimitEntries);
-
-	/**
 	 * Creates a new data limit entry with the primary key. Does not add the data limit entry to the database.
 	 *
 	 * @param dataLimitEntryId the primary key for the new data limit entry
@@ -84,73 +70,5 @@ public interface DataLimitEntryPersistence
 	 */
 	public DataLimitEntry fetchByPrimaryKey(long dataLimitEntryId);
 
-	/**
-	 * Returns all the data limit entries.
-	 *
-	 * @return the data limit entries
-	 */
-	public java.util.List<DataLimitEntry> findAll();
-
-	/**
-	 * Returns a range of all the data limit entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DataLimitEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of data limit entries
-	 * @param end the upper bound of the range of data limit entries (not inclusive)
-	 * @return the range of data limit entries
-	 */
-	public java.util.List<DataLimitEntry> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the data limit entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DataLimitEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of data limit entries
-	 * @param end the upper bound of the range of data limit entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of data limit entries
-	 */
-	public java.util.List<DataLimitEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataLimitEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the data limit entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DataLimitEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of data limit entries
-	 * @param end the upper bound of the range of data limit entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of data limit entries
-	 */
-	public java.util.List<DataLimitEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataLimitEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the data limit entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of data limit entries.
-	 *
-	 * @return the number of data limit entries
-	 */
-	public int countAll();
-
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2043081632
+// LIFERAY-SERVICE-BUILDER-HASH:303779450

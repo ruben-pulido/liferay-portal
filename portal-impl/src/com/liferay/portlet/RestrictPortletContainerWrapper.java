@@ -90,18 +90,11 @@ public class RestrictPortletContainerWrapper implements PortletContainer {
 
 	@Override
 	public void processPublicRenderParameters(
-		HttpServletRequest httpServletRequest, Layout layout) {
+		HttpServletRequest httpServletRequest, Layout layout,
+		List<Portlet> portlets) {
 
 		_portletContainer.processPublicRenderParameters(
-			httpServletRequest, layout);
-	}
-
-	@Override
-	public void processPublicRenderParameters(
-		HttpServletRequest httpServletRequest, Layout layout, Portlet portlet) {
-
-		_portletContainer.processPublicRenderParameters(
-			httpServletRequest, layout, portlet);
+			httpServletRequest, layout, portlets);
 	}
 
 	@Override
@@ -176,14 +169,6 @@ public class RestrictPortletContainerWrapper implements PortletContainer {
 			renderable.render();
 		}
 		finally {
-			restrictPortletServletRequest.removeAttribute(WebKeys.RENDER_PATH);
-			restrictPortletServletRequest.removeAttribute(
-				WebKeys.RENDER_PORTLET_COLUMN_COUNT);
-			restrictPortletServletRequest.removeAttribute(
-				WebKeys.RENDER_PORTLET_COLUMN_ID);
-			restrictPortletServletRequest.removeAttribute(
-				WebKeys.RENDER_PORTLET_COLUMN_POS);
-
 			restrictPortletServletRequest.mergeSharedAttributes();
 		}
 	}

@@ -36,6 +36,20 @@ public class PatcherBuildRelUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<PatcherBuildRel> patcherBuildRels) {
+		getPersistence().cacheResult(patcherBuildRels);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(PatcherBuildRel patcherBuildRel) {
+		getPersistence().cacheResult(patcherBuildRel);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,62 +125,10 @@ public class PatcherBuildRelUtil {
 	}
 
 	/**
-	 * Returns all the patcher build rels where childPatcherBuildId = &#63;.
-	 *
-	 * @param childPatcherBuildId the child patcher build ID
-	 * @return the matching patcher build rels
-	 */
-	public static List<PatcherBuildRel> findByChildPatcherBuildId(
-		long childPatcherBuildId) {
-
-		return getPersistence().findByChildPatcherBuildId(childPatcherBuildId);
-	}
-
-	/**
-	 * Returns a range of all the patcher build rels where childPatcherBuildId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param childPatcherBuildId the child patcher build ID
-	 * @param start the lower bound of the range of patcher build rels
-	 * @param end the upper bound of the range of patcher build rels (not inclusive)
-	 * @return the range of matching patcher build rels
-	 */
-	public static List<PatcherBuildRel> findByChildPatcherBuildId(
-		long childPatcherBuildId, int start, int end) {
-
-		return getPersistence().findByChildPatcherBuildId(
-			childPatcherBuildId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher build rels where childPatcherBuildId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param childPatcherBuildId the child patcher build ID
-	 * @param start the lower bound of the range of patcher build rels
-	 * @param end the upper bound of the range of patcher build rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher build rels
-	 */
-	public static List<PatcherBuildRel> findByChildPatcherBuildId(
-		long childPatcherBuildId, int start, int end,
-		OrderByComparator<PatcherBuildRel> orderByComparator) {
-
-		return getPersistence().findByChildPatcherBuildId(
-			childPatcherBuildId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher build rels where childPatcherBuildId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherBuildRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param childPatcherBuildId the child patcher build ID
@@ -238,63 +200,10 @@ public class PatcherBuildRelUtil {
 	}
 
 	/**
-	 * Returns all the patcher build rels where parentPatcherBuildId = &#63;.
-	 *
-	 * @param parentPatcherBuildId the parent patcher build ID
-	 * @return the matching patcher build rels
-	 */
-	public static List<PatcherBuildRel> findByParentPatcherBuildId(
-		long parentPatcherBuildId) {
-
-		return getPersistence().findByParentPatcherBuildId(
-			parentPatcherBuildId);
-	}
-
-	/**
-	 * Returns a range of all the patcher build rels where parentPatcherBuildId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentPatcherBuildId the parent patcher build ID
-	 * @param start the lower bound of the range of patcher build rels
-	 * @param end the upper bound of the range of patcher build rels (not inclusive)
-	 * @return the range of matching patcher build rels
-	 */
-	public static List<PatcherBuildRel> findByParentPatcherBuildId(
-		long parentPatcherBuildId, int start, int end) {
-
-		return getPersistence().findByParentPatcherBuildId(
-			parentPatcherBuildId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher build rels where parentPatcherBuildId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentPatcherBuildId the parent patcher build ID
-	 * @param start the lower bound of the range of patcher build rels
-	 * @param end the upper bound of the range of patcher build rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher build rels
-	 */
-	public static List<PatcherBuildRel> findByParentPatcherBuildId(
-		long parentPatcherBuildId, int start, int end,
-		OrderByComparator<PatcherBuildRel> orderByComparator) {
-
-		return getPersistence().findByParentPatcherBuildId(
-			parentPatcherBuildId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher build rels where parentPatcherBuildId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherBuildRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentPatcherBuildId the parent patcher build ID
@@ -368,24 +277,6 @@ public class PatcherBuildRelUtil {
 	}
 
 	/**
-	 * Caches the patcher build rel in the entity cache if it is enabled.
-	 *
-	 * @param patcherBuildRel the patcher build rel
-	 */
-	public static void cacheResult(PatcherBuildRel patcherBuildRel) {
-		getPersistence().cacheResult(patcherBuildRel);
-	}
-
-	/**
-	 * Caches the patcher build rels in the entity cache if it is enabled.
-	 *
-	 * @param patcherBuildRels the patcher build rels
-	 */
-	public static void cacheResult(List<PatcherBuildRel> patcherBuildRels) {
-		getPersistence().cacheResult(patcherBuildRels);
-	}
-
-	/**
 	 * Creates a new patcher build rel with the primary key. Does not add the patcher build rel to the database.
 	 *
 	 * @param patcherBuildRelId the primary key for the new patcher build rel
@@ -438,84 +329,108 @@ public class PatcherBuildRelUtil {
 	}
 
 	/**
-	 * Returns all the patcher build rels.
+	 * Returns all the patcher build rels where childPatcherBuildId = &#63;.
 	 *
-	 * @return the patcher build rels
+	 * @param childPatcherBuildId the child patcher build ID
+	 * @return the matching patcher build rels
 	 */
-	public static List<PatcherBuildRel> findAll() {
-		return getPersistence().findAll();
+	public static List<PatcherBuildRel> findByChildPatcherBuildId(
+		long childPatcherBuildId) {
+
+		return getPersistence().findByChildPatcherBuildId(childPatcherBuildId);
 	}
 
 	/**
-	 * Returns a range of all the patcher build rels.
+	 * Returns a range of all the patcher build rels where childPatcherBuildId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherBuildRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param childPatcherBuildId the child patcher build ID
 	 * @param start the lower bound of the range of patcher build rels
 	 * @param end the upper bound of the range of patcher build rels (not inclusive)
-	 * @return the range of patcher build rels
+	 * @return the range of matching patcher build rels
 	 */
-	public static List<PatcherBuildRel> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<PatcherBuildRel> findByChildPatcherBuildId(
+		long childPatcherBuildId, int start, int end) {
+
+		return getPersistence().findByChildPatcherBuildId(
+			childPatcherBuildId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the patcher build rels.
+	 * Returns an ordered range of all the patcher build rels where childPatcherBuildId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherBuildRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param childPatcherBuildId the child patcher build ID
 	 * @param start the lower bound of the range of patcher build rels
 	 * @param end the upper bound of the range of patcher build rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of patcher build rels
+	 * @return the ordered range of matching patcher build rels
 	 */
-	public static List<PatcherBuildRel> findAll(
-		int start, int end,
+	public static List<PatcherBuildRel> findByChildPatcherBuildId(
+		long childPatcherBuildId, int start, int end,
 		OrderByComparator<PatcherBuildRel> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByChildPatcherBuildId(
+			childPatcherBuildId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the patcher build rels.
+	 * Returns all the patcher build rels where parentPatcherBuildId = &#63;.
+	 *
+	 * @param parentPatcherBuildId the parent patcher build ID
+	 * @return the matching patcher build rels
+	 */
+	public static List<PatcherBuildRel> findByParentPatcherBuildId(
+		long parentPatcherBuildId) {
+
+		return getPersistence().findByParentPatcherBuildId(
+			parentPatcherBuildId);
+	}
+
+	/**
+	 * Returns a range of all the patcher build rels where parentPatcherBuildId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherBuildRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherBuildRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param parentPatcherBuildId the parent patcher build ID
+	 * @param start the lower bound of the range of patcher build rels
+	 * @param end the upper bound of the range of patcher build rels (not inclusive)
+	 * @return the range of matching patcher build rels
+	 */
+	public static List<PatcherBuildRel> findByParentPatcherBuildId(
+		long parentPatcherBuildId, int start, int end) {
+
+		return getPersistence().findByParentPatcherBuildId(
+			parentPatcherBuildId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the patcher build rels where parentPatcherBuildId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherBuildRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentPatcherBuildId the parent patcher build ID
 	 * @param start the lower bound of the range of patcher build rels
 	 * @param end the upper bound of the range of patcher build rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of patcher build rels
+	 * @return the ordered range of matching patcher build rels
 	 */
-	public static List<PatcherBuildRel> findAll(
-		int start, int end,
-		OrderByComparator<PatcherBuildRel> orderByComparator,
-		boolean useFinderCache) {
+	public static List<PatcherBuildRel> findByParentPatcherBuildId(
+		long parentPatcherBuildId, int start, int end,
+		OrderByComparator<PatcherBuildRel> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the patcher build rels from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of patcher build rels.
-	 *
-	 * @return the number of patcher build rels
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByParentPatcherBuildId(
+			parentPatcherBuildId, start, end, orderByComparator);
 	}
 
 	public static PatcherBuildRelPersistence getPersistence() {
@@ -529,4 +444,4 @@ public class PatcherBuildRelUtil {
 	private static volatile PatcherBuildRelPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1913294968
+// LIFERAY-SERVICE-BUILDER-HASH:1117236506

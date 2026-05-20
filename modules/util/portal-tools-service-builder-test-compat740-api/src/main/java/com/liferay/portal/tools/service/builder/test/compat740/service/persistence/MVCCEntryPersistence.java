@@ -32,51 +32,10 @@ public interface MVCCEntryPersistence extends BasePersistence<MVCCEntry> {
 	 */
 
 	/**
-	 * Returns all the mvcc entries where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching mvcc entries
-	 */
-	public java.util.List<MVCCEntry> findByCompanyId(long companyId);
-
-	/**
-	 * Returns a range of all the mvcc entries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MVCCEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of mvcc entries
-	 * @param end the upper bound of the range of mvcc entries (not inclusive)
-	 * @return the range of matching mvcc entries
-	 */
-	public java.util.List<MVCCEntry> findByCompanyId(
-		long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the mvcc entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MVCCEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of mvcc entries
-	 * @param end the upper bound of the range of mvcc entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching mvcc entries
-	 */
-	public java.util.List<MVCCEntry> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MVCCEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the mvcc entries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MVCCEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.MVCCEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -145,15 +104,6 @@ public interface MVCCEntryPersistence extends BasePersistence<MVCCEntry> {
 		throws NoSuchMVCCEntryException;
 
 	/**
-	 * Returns the mvcc entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param name the name
-	 * @return the matching mvcc entry, or <code>null</code> if a matching mvcc entry could not be found
-	 */
-	public MVCCEntry fetchByC_N(long companyId, String name);
-
-	/**
 	 * Returns the mvcc entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -182,20 +132,6 @@ public interface MVCCEntryPersistence extends BasePersistence<MVCCEntry> {
 	 * @return the number of matching mvcc entries
 	 */
 	public int countByC_N(long companyId, String name);
-
-	/**
-	 * Caches the mvcc entry in the entity cache if it is enabled.
-	 *
-	 * @param mvccEntry the mvcc entry
-	 */
-	public void cacheResult(MVCCEntry mvccEntry);
-
-	/**
-	 * Caches the mvcc entries in the entity cache if it is enabled.
-	 *
-	 * @param mvccEntries the mvcc entries
-	 */
-	public void cacheResult(java.util.List<MVCCEntry> mvccEntries);
 
 	/**
 	 * Creates a new mvcc entry with the primary key. Does not add the mvcc entry to the database.
@@ -235,72 +171,66 @@ public interface MVCCEntryPersistence extends BasePersistence<MVCCEntry> {
 	public MVCCEntry fetchByPrimaryKey(long mvccEntryId);
 
 	/**
-	 * Returns all the mvcc entries.
+	 * Returns the mvcc entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the mvcc entries
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching mvcc entry, or <code>null</code> if a matching mvcc entry could not be found
 	 */
-	public java.util.List<MVCCEntry> findAll();
+	public default MVCCEntry fetchByC_N(long companyId, String name) {
+		return fetchByC_N(companyId, name, true);
+	}
 
 	/**
-	 * Returns a range of all the mvcc entries.
+	 * Returns all the mvcc entries where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching mvcc entries
+	 */
+	public default java.util.List<MVCCEntry> findByCompanyId(long companyId) {
+		return findByCompanyId(
+			companyId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the mvcc entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MVCCEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.MVCCEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of mvcc entries
 	 * @param end the upper bound of the range of mvcc entries (not inclusive)
-	 * @return the range of mvcc entries
+	 * @return the range of matching mvcc entries
 	 */
-	public java.util.List<MVCCEntry> findAll(int start, int end);
+	public default java.util.List<MVCCEntry> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return findByCompanyId(companyId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the mvcc entries.
+	 * Returns an ordered range of all the mvcc entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MVCCEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.compat740.model.impl.MVCCEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of mvcc entries
 	 * @param end the upper bound of the range of mvcc entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of mvcc entries
+	 * @return the ordered range of matching mvcc entries
 	 */
-	public java.util.List<MVCCEntry> findAll(
-		int start, int end,
+	public default java.util.List<MVCCEntry> findByCompanyId(
+		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<MVCCEntry>
-			orderByComparator);
+			orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the mvcc entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MVCCEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mvcc entries
-	 * @param end the upper bound of the range of mvcc entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of mvcc entries
-	 */
-	public java.util.List<MVCCEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MVCCEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the mvcc entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of mvcc entries.
-	 *
-	 * @return the number of mvcc entries
-	 */
-	public int countAll();
+		return findByCompanyId(companyId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:399488477
+// LIFERAY-SERVICE-BUILDER-HASH:-1346287691

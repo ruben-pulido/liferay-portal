@@ -39,7 +39,6 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,24 +92,17 @@ public class ViewRelatedAssetsSectionDisplayContextTest
 	}
 
 	@Test
-	public void testGetAdditionalProps() throws Exception {
-		HashMap<String, Object> additionalProps = ReflectionTestUtil.invoke(
+	public void testGetAdditionalAPIURLParameters() throws Exception {
+		String additionalAPIURLParameters = ReflectionTestUtil.invoke(
 			_getViewRelatedAssetsSectionDisplayContext(mockHttpServletRequest),
-			"getAdditionalProps", new Class<?>[0]);
-
-		Assert.assertEquals(
-			_objectDefinition.getExternalReferenceCode() + _KEYWORD_SUFFIX,
-			additionalProps.get("keywords"));
-	}
-
-	@Test
-	public void testGetAPIURL() throws Exception {
-		String apiURL = ReflectionTestUtil.invoke(
-			_getViewRelatedAssetsSectionDisplayContext(mockHttpServletRequest),
-			"getAPIURL", new Class<?>[0]);
+			"getAdditionalAPIURLParameters", new Class<?>[0]);
 
 		Assert.assertTrue(
-			apiURL.contains(
+			additionalAPIURLParameters,
+			additionalAPIURLParameters.contains("sort=dateModified:desc"));
+		Assert.assertTrue(
+			additionalAPIURLParameters,
+			additionalAPIURLParameters.contains(
 				StringBundler.concat(
 					"(cmsSection eq 'contents' or cmsSection eq 'files') and ",
 					"keywords/any(k:k in ('",
@@ -122,14 +114,26 @@ public class ViewRelatedAssetsSectionDisplayContextTest
 			_objectDefinition.getObjectDefinitionId(), 0, null,
 			Collections.emptyMap(), ServiceContextTestUtil.getServiceContext());
 
-		apiURL = ReflectionTestUtil.invoke(
+		additionalAPIURLParameters = ReflectionTestUtil.invoke(
 			_getViewRelatedAssetsSectionDisplayContext(mockHttpServletRequest),
-			"getAPIURL", new Class<?>[0]);
+			"getAdditionalAPIURLParameters", new Class<?>[0]);
 
 		Assert.assertTrue(
-			apiURL.contains(
+			additionalAPIURLParameters,
+			additionalAPIURLParameters.contains(
 				"(cmsSection eq 'contents' or cmsSection eq 'files') and " +
 					"keywords/any(k:k in (''))"));
+	}
+
+	@Test
+	public void testGetAdditionalProps() throws Exception {
+		Map<String, Object> additionalProps = ReflectionTestUtil.invoke(
+			_getViewRelatedAssetsSectionDisplayContext(mockHttpServletRequest),
+			"getAdditionalProps", new Class<?>[0]);
+
+		Assert.assertEquals(
+			_objectDefinition.getExternalReferenceCode() + _KEYWORD_SUFFIX,
+			additionalProps.get("keywords"));
 	}
 
 	@Test

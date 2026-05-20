@@ -6,15 +6,18 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../../../fixtures/apiHelpersTest';
+import {dataSetManagerApiHelpersTest} from '../../../../../fixtures/dataSetManagerApiHelpersTest';
 import {featureFlagsTest} from '../../../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../../../fixtures/loginTest';
+import getDataSetResourceURL from '../../../../../utils/getDataSetResourceURL';
 import getRandomString from '../../../../../utils/getRandomString';
 import {waitForFDS} from '../../../../../utils/waitFor';
 import {fdsSamplePageTest} from '../../fixtures/fdsSamplePageTest';
 
 const test = mergeTests(
 	apiHelpersTest,
+	dataSetManagerApiHelpersTest,
 	fdsSamplePageTest,
 	featureFlagsTest({
 		'LPS-178052': {enabled: true},
@@ -247,3 +250,55 @@ test(
 		});
 	}
 );
+
+test('Search Bar is shown/hidden according to FDS configuration', async ({
+	dataSetManagerApiHelpers,
+	fdsSamplePage,
+	page,
+}) => {
+	const erc =
+		'com_liferay_frontend_data_set_sample_web_internal_portlet_FDSSamplePortlet-advanced';
+
+	await test.step('Check that the search bar is shown by default', async () => {
+		await expect(fdsSamplePage.managementToolbar.searchInput).toBeVisible();
+	});
+
+	await test.step('If exists, update Advanced Sample DataSet to disable search bar. Otherwise, create it with disabled search bar', async () => {
+		const response = await dataSetManagerApiHelpers.getResponse(
+			getDataSetResourceURL({dataSetERC: erc})
+		);
+
+		if (response.ok()) {
+			await dataSetManagerApiHelpers.updateDataSet({
+				erc,
+				showSearch: false,
+			});
+		}
+		else {
+			await dataSetManagerApiHelpers.createDataSet({
+				erc,
+				label: 'Advanced Sample',
+				restApplication: '/c/fdssamples',
+				restEndpoint: '/',
+				restSchema: 'FDSSample',
+				showSearch: false,
+				snapshotsEnabled: true,
+			});
+		}
+	});
+
+	await test.step('Check search bar is not shown anymore', async () => {
+		await page.reload();
+
+		await expect(
+			fdsSamplePage.managementToolbar.searchInput
+		).not.toBeVisible();
+	});
+
+	await test.step('Reset FDS configuration', async () => {
+		await dataSetManagerApiHelpers.updateDataSet({
+			erc,
+			showSearch: true,
+		});
+	});
+});

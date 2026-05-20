@@ -18,11 +18,19 @@ import {SegmentTypes} from 'shared/util/constants';
 import {sub} from 'shared/util/lang';
 
 const MessageKeys = {
+	ExternalReferenceCodeIsAlreadyUsed:
+		'external-reference-code-is-already-used',
 	NameCannotBeBlank: 'name-cannot-be-blank',
 	NameIsAlreadyUsed: 'name-is-already-used'
 };
 
 const ERRORS = {
+	[MessageKeys.ExternalReferenceCodeIsAlreadyUsed]: {
+		alertType: Alert.Types.Warning,
+		message: Liferay.Language.get(
+			'this-segment-erc-is-currently-in-use.-please-try-a-different-one'
+		)
+	},
 	[MessageKeys.NameCannotBeBlank]: {
 		alertType: Alert.Types.Error,
 		message: Liferay.Language.get('name-cannot-be-blank')
@@ -60,15 +68,8 @@ export default WrappedComponent => {
 
 		@autobind
 		deleteSegment() {
-			const {
-				addAlert,
-				channelId,
-				close,
-				groupId,
-				history,
-				id,
-				open
-			} = this.props;
+			const {addAlert, channelId, close, groupId, history, id, open} =
+				this.props;
 
 			open(modalTypes.CONFIRMATION_MODAL, {
 				message: (
@@ -94,7 +95,7 @@ export default WrappedComponent => {
 					return API.individualSegment
 						.delete({
 							groupId,
-							id
+							ids: [id]
 						})
 						.then(() => {
 							addAlert({
@@ -139,17 +140,10 @@ export default WrappedComponent => {
 
 		@autobind
 		handleSubmit(form, formRef, submitFn) {
-			const {
-				addAlert,
-				channelId,
-				close,
-				groupId,
-				history,
-				id,
-				open
-			} = this.props;
+			const {addAlert, channelId, close, groupId, history, id, open} =
+				this.props;
 
-			const {setSubmitting} = formRef.current.getFormikActions();
+			const {setSubmitting} = formRef.current;
 
 			open(
 				modalTypes.LOADING_MODAL,
@@ -293,8 +287,8 @@ export default WrappedComponent => {
 														label: Liferay.Language.get(
 															'delete-segment'
 														),
-														onClick: this
-															.deleteSegment
+														onClick:
+															this.deleteSegment
 													}
 											  ]
 											: []

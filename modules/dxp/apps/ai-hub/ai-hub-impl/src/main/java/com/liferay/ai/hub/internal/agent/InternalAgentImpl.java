@@ -7,6 +7,9 @@ package com.liferay.ai.hub.internal.agent;
 
 import com.liferay.ai.hub.agent.AgentContext;
 import com.liferay.ai.hub.internal.agent.util.AgentUtil;
+import com.liferay.portal.kernel.encryptor.EncryptorUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -84,12 +87,13 @@ public class InternalAgentImpl implements InternalAgent, InvocationHandler {
 		}
 
 		try {
+			Company company = CompanyLocalServiceUtil.getCompany(
+				_agentContext.getCompanyId());
+
 			Map<String, Serializable> workflowContext =
 				HashMapBuilder.<String, Serializable>put(
 					WorkflowConstants.CONTEXT_SERVICE_CONTEXT,
 					_agentContext.getServiceContext()
-				).put(
-					"accessToken", _agentContext.getAccessToken()
 				).put(
 					"agentDefinitionExternalReferenceCode", _name
 				).put(
@@ -98,7 +102,14 @@ public class InternalAgentImpl implements InternalAgent, InvocationHandler {
 				).put(
 					"memoryId", _agentContext.getSseEventSinkKey()
 				).put(
-					"userToken", _agentContext.getUserToken()
+					"oAuth2ApplicationId",
+					_agentContext.getOAuth2ApplicationId()
+				).put(
+					"sseEventSinkKey", _agentContext.getSseEventSinkKey()
+				).put(
+					"userToken",
+					EncryptorUtil.encrypt(
+						company.getKeyObj(), _agentContext.getUserToken())
 				).build();
 
 			for (AgentArgument agentArgument : arguments()) {
@@ -122,6 +133,9 @@ public class InternalAgentImpl implements InternalAgent, InvocationHandler {
 					_agentContext.getCompanyId(), _agentContext.getGroupId(),
 					_agentContext.getUserId(), _workflowDefinitionName,
 					workflowDefinition.getVersion(), null, workflowContext));
+		}
+		catch (UnsupportedOperationException unsupportedOperationException) {
+			throw unsupportedOperationException;
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);

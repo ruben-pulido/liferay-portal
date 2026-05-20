@@ -6,6 +6,7 @@
 import {openToast} from 'frontend-js-components-web';
 
 import CollaboratorService from '../../../common/services/CollaboratorService';
+import {COLLABORATOR_TYPE} from '../../../common/utils/constants';
 import {openCMSModal} from '../../../common/utils/openCMSModal';
 import ShareModalContent, {
 	Collaborator,
@@ -13,6 +14,7 @@ import ShareModalContent, {
 
 export default async function shareAction({
 	autocompleteURL,
+	canManageCollaborators = true,
 	collaboratorURL,
 	creator,
 	entryClassName,
@@ -20,6 +22,7 @@ export default async function shareAction({
 	title,
 }: {
 	autocompleteURL: string;
+	canManageCollaborators?: boolean;
 	collaboratorURL: string;
 	creator: {
 		contentType: string;
@@ -32,35 +35,72 @@ export default async function shareAction({
 	title: string;
 }) {
 	try {
+		const externalUserSharingEnabled = !!Liferay.FeatureFlags['LPD-52006'];
+
 		const items = await CollaboratorService.getCollaborators(
 			collaboratorURL,
 			itemId
 		);
 
-		const initialCollaborators: Collaborator[] = items.reverse().map(
-			({actionIds, dateExpired, id, name, portrait, share, type}) =>
+		const initialCollaborators: Collaborator[] = items
+			.reverse()
+			.filter(
+				({type}) =>
+					externalUserSharingEnabled ||
+					type !== COLLABORATOR_TYPE.EXTERNAL_USER
+			)
+			.map(
 				({
-					actionIds: actionIds.sort().join(','),
+					actionIds,
 					dateExpired,
+					emailAddress,
+					id,
+					name,
+					portrait,
 					share,
 					type,
-					user: {
-						id: id.toString(),
-						image: portrait,
-						name,
-					},
-				}) as Collaborator
-		);
+				}) => {
+					const isExternalUser =
+						type === COLLABORATOR_TYPE.EXTERNAL_USER;
+
+					return {
+						actionIds: isExternalUser
+							? 'VIEW'
+							: actionIds
+									.filter(
+										(actionId) => actionId !== 'DOWNLOAD'
+									)
+									.sort()
+									.join(','),
+						dateExpired,
+						share,
+						type,
+						user: isExternalUser
+							? {
+									emailAddress: emailAddress ?? '',
+									id: emailAddress ?? '',
+									name: emailAddress ?? name,
+								}
+							: {
+									id: id?.toString() ?? '',
+									image: portrait,
+									name,
+								},
+					} as Collaborator;
+				}
+			);
 
 		openCMSModal({
 			className: 'share-modal',
 			contentComponent: ({closeModal}: {closeModal: () => void}) =>
 				ShareModalContent({
 					autocompleteURL,
+					canManageCollaborators,
 					closeModal,
 					collaboratorURL,
 					creator: {...creator, id: creator.id.toString()},
 					entryClassName,
+					externalUserSharingEnabled,
 					initialCollaborators,
 					itemId,
 					title,

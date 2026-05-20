@@ -10,9 +10,6 @@ import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -20,14 +17,14 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.impl.ArrayableFinderColumn;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.push.notifications.exception.NoSuchDeviceException;
 import com.liferay.push.notifications.model.PushNotificationsDevice;
 import com.liferay.push.notifications.model.PushNotificationsDeviceTable;
@@ -44,8 +41,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -66,7 +61,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = PushNotificationsDevicePersistence.class)
 public class PushNotificationsDevicePersistenceImpl
-	extends BasePersistenceImpl<PushNotificationsDevice>
+	extends BasePersistenceImpl<PushNotificationsDevice, NoSuchDeviceException>
 	implements PushNotificationsDevicePersistence {
 
 	/*
@@ -83,10 +78,8 @@ public class PushNotificationsDevicePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathFetchByToken;
+	private UniquePersistenceFinder<PushNotificationsDevice>
+		_uniquePersistenceFinderByToken;
 
 	/**
 	 * Returns the push notifications device where token = &#63; or throws a <code>NoSuchDeviceException</code> if it could not be found.
@@ -102,34 +95,18 @@ public class PushNotificationsDevicePersistenceImpl
 		PushNotificationsDevice pushNotificationsDevice = fetchByToken(token);
 
 		if (pushNotificationsDevice == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("token=");
-			sb.append(token);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByToken.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {token});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchDeviceException(sb.toString());
+			throw new NoSuchDeviceException(message);
 		}
 
 		return pushNotificationsDevice;
-	}
-
-	/**
-	 * Returns the push notifications device where token = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param token the token
-	 * @return the matching push notifications device, or <code>null</code> if a matching push notifications device could not be found
-	 */
-	@Override
-	public PushNotificationsDevice fetchByToken(String token) {
-		return fetchByToken(token, true);
 	}
 
 	/**
@@ -143,92 +120,8 @@ public class PushNotificationsDevicePersistenceImpl
 	public PushNotificationsDevice fetchByToken(
 		String token, boolean useFinderCache) {
 
-		token = Objects.toString(token, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {token};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByToken, finderArgs, this);
-		}
-
-		if (result instanceof PushNotificationsDevice) {
-			PushNotificationsDevice pushNotificationsDevice =
-				(PushNotificationsDevice)result;
-
-			if (!Objects.equals(token, pushNotificationsDevice.getToken())) {
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_SELECT_PUSHNOTIFICATIONSDEVICE_WHERE);
-
-			boolean bindToken = false;
-
-			if (token.isEmpty()) {
-				sb.append(_FINDER_COLUMN_TOKEN_TOKEN_3);
-			}
-			else {
-				bindToken = true;
-
-				sb.append(_FINDER_COLUMN_TOKEN_TOKEN_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindToken) {
-					queryPos.add(token);
-				}
-
-				List<PushNotificationsDevice> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByToken, finderArgs, list);
-					}
-				}
-				else {
-					PushNotificationsDevice pushNotificationsDevice = list.get(
-						0);
-
-					result = pushNotificationsDevice;
-
-					cacheResult(pushNotificationsDevice);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (PushNotificationsDevice)result;
-		}
+		return _uniquePersistenceFinderByToken.fetch(
+			finderCache, new Object[] {token}, useFinderCache);
 	}
 
 	/**
@@ -254,88 +147,18 @@ public class PushNotificationsDevicePersistenceImpl
 	 */
 	@Override
 	public int countByToken(String token) {
-		PushNotificationsDevice pushNotificationsDevice = fetchByToken(token);
-
-		if (pushNotificationsDevice == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByToken.count(
+			finderCache, new Object[] {token});
 	}
 
-	private static final String _FINDER_COLUMN_TOKEN_TOKEN_2 =
-		"pushNotificationsDevice.token = ?";
-
-	private static final String _FINDER_COLUMN_TOKEN_TOKEN_3 =
-		"(pushNotificationsDevice.token IS NULL OR pushNotificationsDevice.token = '')";
-
-	private FinderPath _finderPathWithPaginationFindByU_P;
-	private FinderPath _finderPathWithoutPaginationFindByU_P;
-	private FinderPath _finderPathCountByU_P;
-	private FinderPath _finderPathWithPaginationCountByU_P;
-
-	/**
-	 * Returns all the push notifications devices where userId = &#63; and platform = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param platform the platform
-	 * @return the matching push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findByU_P(
-		long userId, String platform) {
-
-		return findByU_P(
-			userId, platform, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the push notifications devices where userId = &#63; and platform = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param platform the platform
-	 * @param start the lower bound of the range of push notifications devices
-	 * @param end the upper bound of the range of push notifications devices (not inclusive)
-	 * @return the range of matching push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findByU_P(
-		long userId, String platform, int start, int end) {
-
-		return findByU_P(userId, platform, start, end, null);
-	}
+	private CollectionPersistenceFinder<PushNotificationsDevice>
+		_collectionPersistenceFinderByU_P;
 
 	/**
 	 * Returns an ordered range of all the push notifications devices where userId = &#63; and platform = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param platform the platform
-	 * @param start the lower bound of the range of push notifications devices
-	 * @param end the upper bound of the range of push notifications devices (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findByU_P(
-		long userId, String platform, int start, int end,
-		OrderByComparator<PushNotificationsDevice> orderByComparator) {
-
-		return findByU_P(userId, platform, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the push notifications devices where userId = &#63; and platform = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -352,115 +175,9 @@ public class PushNotificationsDevicePersistenceImpl
 		OrderByComparator<PushNotificationsDevice> orderByComparator,
 		boolean useFinderCache) {
 
-		platform = Objects.toString(platform, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByU_P;
-				finderArgs = new Object[] {userId, platform};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByU_P;
-			finderArgs = new Object[] {
-				userId, platform, start, end, orderByComparator
-			};
-		}
-
-		List<PushNotificationsDevice> list = null;
-
-		if (useFinderCache) {
-			list = (List<PushNotificationsDevice>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (PushNotificationsDevice pushNotificationsDevice : list) {
-					if ((userId != pushNotificationsDevice.getUserId()) ||
-						!platform.equals(
-							pushNotificationsDevice.getPlatform())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_PUSHNOTIFICATIONSDEVICE_WHERE);
-
-			sb.append(_FINDER_COLUMN_U_P_USERID_2);
-
-			boolean bindPlatform = false;
-
-			if (platform.isEmpty()) {
-				sb.append(_FINDER_COLUMN_U_P_PLATFORM_3);
-			}
-			else {
-				bindPlatform = true;
-
-				sb.append(_FINDER_COLUMN_U_P_PLATFORM_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(PushNotificationsDeviceModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(userId);
-
-				if (bindPlatform) {
-					queryPos.add(platform);
-				}
-
-				list = (List<PushNotificationsDevice>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByU_P.find(
+			finderCache, new Object[] {new long[] {userId}, platform}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -513,83 +230,16 @@ public class PushNotificationsDevicePersistenceImpl
 		long userId, String platform,
 		OrderByComparator<PushNotificationsDevice> orderByComparator) {
 
-		List<PushNotificationsDevice> list = findByU_P(
-			userId, platform, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns all the push notifications devices where userId = any &#63; and platform = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userIds the user IDs
-	 * @param platform the platform
-	 * @return the matching push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findByU_P(
-		long[] userIds, String platform) {
-
-		return findByU_P(
-			userIds, platform, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the push notifications devices where userId = any &#63; and platform = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userIds the user IDs
-	 * @param platform the platform
-	 * @param start the lower bound of the range of push notifications devices
-	 * @param end the upper bound of the range of push notifications devices (not inclusive)
-	 * @return the range of matching push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findByU_P(
-		long[] userIds, String platform, int start, int end) {
-
-		return findByU_P(userIds, platform, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the push notifications devices where userId = any &#63; and platform = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userIds the user IDs
-	 * @param platform the platform
-	 * @param start the lower bound of the range of push notifications devices
-	 * @param end the upper bound of the range of push notifications devices (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findByU_P(
-		long[] userIds, String platform, int start, int end,
-		OrderByComparator<PushNotificationsDevice> orderByComparator) {
-
-		return findByU_P(
-			userIds, platform, start, end, orderByComparator, true);
+		return _collectionPersistenceFinderByU_P.fetchFirst(
+			finderCache, new Object[] {new long[] {userId}, platform},
+			orderByComparator);
 	}
 
 	/**
 	 * Returns an ordered range of all the push notifications devices where userId = &#63; and platform = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userIds the user IDs
@@ -606,132 +256,10 @@ public class PushNotificationsDevicePersistenceImpl
 		OrderByComparator<PushNotificationsDevice> orderByComparator,
 		boolean useFinderCache) {
 
-		if (userIds == null) {
-			userIds = new long[0];
-		}
-		else if (userIds.length > 1) {
-			userIds = ArrayUtil.sortedUnique(userIds);
-		}
-
-		platform = Objects.toString(platform, "");
-
-		if (userIds.length == 1) {
-			return findByU_P(
-				userIds[0], platform, start, end, orderByComparator);
-		}
-
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {StringUtil.merge(userIds), platform};
-			}
-		}
-		else if (useFinderCache) {
-			finderArgs = new Object[] {
-				StringUtil.merge(userIds), platform, start, end,
-				orderByComparator
-			};
-		}
-
-		List<PushNotificationsDevice> list = null;
-
-		if (useFinderCache) {
-			list = (List<PushNotificationsDevice>)finderCache.getResult(
-				_finderPathWithPaginationFindByU_P, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (PushNotificationsDevice pushNotificationsDevice : list) {
-					if (!ArrayUtil.contains(
-							userIds, pushNotificationsDevice.getUserId()) ||
-						!platform.equals(
-							pushNotificationsDevice.getPlatform())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = new StringBundler();
-
-			sb.append(_SQL_SELECT_PUSHNOTIFICATIONSDEVICE_WHERE);
-
-			if (userIds.length > 0) {
-				sb.append("(");
-
-				sb.append(_FINDER_COLUMN_U_P_USERID_7);
-
-				sb.append(StringUtil.merge(userIds));
-
-				sb.append(")");
-
-				sb.append(")");
-
-				sb.append(WHERE_AND);
-			}
-
-			boolean bindPlatform = false;
-
-			if (platform.isEmpty()) {
-				sb.append(_FINDER_COLUMN_U_P_PLATFORM_3);
-			}
-			else {
-				bindPlatform = true;
-
-				sb.append(_FINDER_COLUMN_U_P_PLATFORM_2);
-			}
-
-			sb.setStringAt(
-				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(PushNotificationsDeviceModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindPlatform) {
-					queryPos.add(platform);
-				}
-
-				list = (List<PushNotificationsDevice>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(
-						_finderPathWithPaginationFindByU_P, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByU_P.find(
+			finderCache,
+			new Object[] {ArrayUtil.sortedUnique(userIds), platform}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -742,13 +270,8 @@ public class PushNotificationsDevicePersistenceImpl
 	 */
 	@Override
 	public void removeByU_P(long userId, String platform) {
-		for (PushNotificationsDevice pushNotificationsDevice :
-				findByU_P(
-					userId, platform, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(pushNotificationsDevice);
-		}
+		_collectionPersistenceFinderByU_P.remove(
+			finderCache, new Object[] {new long[] {userId}, platform});
 	}
 
 	/**
@@ -760,62 +283,8 @@ public class PushNotificationsDevicePersistenceImpl
 	 */
 	@Override
 	public int countByU_P(long userId, String platform) {
-		platform = Objects.toString(platform, "");
-
-		FinderPath finderPath = _finderPathCountByU_P;
-
-		Object[] finderArgs = new Object[] {userId, platform};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_PUSHNOTIFICATIONSDEVICE_WHERE);
-
-			sb.append(_FINDER_COLUMN_U_P_USERID_2);
-
-			boolean bindPlatform = false;
-
-			if (platform.isEmpty()) {
-				sb.append(_FINDER_COLUMN_U_P_PLATFORM_3);
-			}
-			else {
-				bindPlatform = true;
-
-				sb.append(_FINDER_COLUMN_U_P_PLATFORM_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(userId);
-
-				if (bindPlatform) {
-					queryPos.add(platform);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByU_P.count(
+			finderCache, new Object[] {new long[] {userId}, platform});
 	}
 
 	/**
@@ -827,97 +296,10 @@ public class PushNotificationsDevicePersistenceImpl
 	 */
 	@Override
 	public int countByU_P(long[] userIds, String platform) {
-		if (userIds == null) {
-			userIds = new long[0];
-		}
-		else if (userIds.length > 1) {
-			userIds = ArrayUtil.sortedUnique(userIds);
-		}
-
-		platform = Objects.toString(platform, "");
-
-		Object[] finderArgs = new Object[] {
-			StringUtil.merge(userIds), platform
-		};
-
-		Long count = (Long)finderCache.getResult(
-			_finderPathWithPaginationCountByU_P, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler();
-
-			sb.append(_SQL_COUNT_PUSHNOTIFICATIONSDEVICE_WHERE);
-
-			if (userIds.length > 0) {
-				sb.append("(");
-
-				sb.append(_FINDER_COLUMN_U_P_USERID_7);
-
-				sb.append(StringUtil.merge(userIds));
-
-				sb.append(")");
-
-				sb.append(")");
-
-				sb.append(WHERE_AND);
-			}
-
-			boolean bindPlatform = false;
-
-			if (platform.isEmpty()) {
-				sb.append(_FINDER_COLUMN_U_P_PLATFORM_3);
-			}
-			else {
-				bindPlatform = true;
-
-				sb.append(_FINDER_COLUMN_U_P_PLATFORM_2);
-			}
-
-			sb.setStringAt(
-				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindPlatform) {
-					queryPos.add(platform);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathWithPaginationCountByU_P, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByU_P.count(
+			finderCache,
+			new Object[] {ArrayUtil.sortedUnique(userIds), platform});
 	}
-
-	private static final String _FINDER_COLUMN_U_P_USERID_2 =
-		"pushNotificationsDevice.userId = ? AND ";
-
-	private static final String _FINDER_COLUMN_U_P_USERID_7 =
-		"pushNotificationsDevice.userId IN (";
-
-	private static final String _FINDER_COLUMN_U_P_PLATFORM_2 =
-		"pushNotificationsDevice.platform = ?";
-
-	private static final String _FINDER_COLUMN_U_P_PLATFORM_3 =
-		"(pushNotificationsDevice.platform IS NULL OR pushNotificationsDevice.platform = '')";
 
 	public PushNotificationsDevicePersistenceImpl() {
 		setModelClass(PushNotificationsDevice.class);
@@ -926,114 +308,6 @@ public class PushNotificationsDevicePersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(PushNotificationsDeviceTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the push notifications device in the entity cache if it is enabled.
-	 *
-	 * @param pushNotificationsDevice the push notifications device
-	 */
-	@Override
-	public void cacheResult(PushNotificationsDevice pushNotificationsDevice) {
-		entityCache.putResult(
-			PushNotificationsDeviceImpl.class,
-			pushNotificationsDevice.getPrimaryKey(), pushNotificationsDevice);
-
-		finderCache.putResult(
-			_finderPathFetchByToken,
-			new Object[] {pushNotificationsDevice.getToken()},
-			pushNotificationsDevice);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the push notifications devices in the entity cache if it is enabled.
-	 *
-	 * @param pushNotificationsDevices the push notifications devices
-	 */
-	@Override
-	public void cacheResult(
-		List<PushNotificationsDevice> pushNotificationsDevices) {
-
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (pushNotificationsDevices.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (PushNotificationsDevice pushNotificationsDevice :
-				pushNotificationsDevices) {
-
-			if (entityCache.getResult(
-					PushNotificationsDeviceImpl.class,
-					pushNotificationsDevice.getPrimaryKey()) == null) {
-
-				cacheResult(pushNotificationsDevice);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all push notifications devices.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(PushNotificationsDeviceImpl.class);
-
-		finderCache.clearCache(PushNotificationsDeviceImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the push notifications device.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(PushNotificationsDevice pushNotificationsDevice) {
-		entityCache.removeResult(
-			PushNotificationsDeviceImpl.class, pushNotificationsDevice);
-	}
-
-	@Override
-	public void clearCache(
-		List<PushNotificationsDevice> pushNotificationsDevices) {
-
-		for (PushNotificationsDevice pushNotificationsDevice :
-				pushNotificationsDevices) {
-
-			entityCache.removeResult(
-				PushNotificationsDeviceImpl.class, pushNotificationsDevice);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(PushNotificationsDeviceImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				PushNotificationsDeviceImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		PushNotificationsDeviceModelImpl pushNotificationsDeviceModelImpl) {
-
-		Object[] args = new Object[] {
-			pushNotificationsDeviceModelImpl.getToken()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByToken, args, pushNotificationsDeviceModelImpl);
 	}
 
 	/**
@@ -1067,48 +341,6 @@ public class PushNotificationsDevicePersistenceImpl
 		throws NoSuchDeviceException {
 
 		return remove((Serializable)pushNotificationsDeviceId);
-	}
-
-	/**
-	 * Removes the push notifications device with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the push notifications device
-	 * @return the push notifications device that was removed
-	 * @throws NoSuchDeviceException if a push notifications device with the primary key could not be found
-	 */
-	@Override
-	public PushNotificationsDevice remove(Serializable primaryKey)
-		throws NoSuchDeviceException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			PushNotificationsDevice pushNotificationsDevice =
-				(PushNotificationsDevice)session.get(
-					PushNotificationsDeviceImpl.class, primaryKey);
-
-			if (pushNotificationsDevice == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchDeviceException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(pushNotificationsDevice);
-		}
-		catch (NoSuchDeviceException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1208,43 +440,13 @@ public class PushNotificationsDevicePersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			PushNotificationsDeviceImpl.class, pushNotificationsDeviceModelImpl,
-			false, true);
-
-		cacheUniqueFindersCache(pushNotificationsDeviceModelImpl);
+		cacheUniqueFindersResult(pushNotificationsDevice, false);
 
 		if (isNew) {
 			pushNotificationsDevice.setNew(false);
 		}
 
 		pushNotificationsDevice.resetOriginalValues();
-
-		return pushNotificationsDevice;
-	}
-
-	/**
-	 * Returns the push notifications device with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the push notifications device
-	 * @return the push notifications device
-	 * @throws NoSuchDeviceException if a push notifications device with the primary key could not be found
-	 */
-	@Override
-	public PushNotificationsDevice findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchDeviceException {
-
-		PushNotificationsDevice pushNotificationsDevice = fetchByPrimaryKey(
-			primaryKey);
-
-		if (pushNotificationsDevice == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchDeviceException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return pushNotificationsDevice;
 	}
@@ -1277,189 +479,6 @@ public class PushNotificationsDevicePersistenceImpl
 		return fetchByPrimaryKey((Serializable)pushNotificationsDeviceId);
 	}
 
-	/**
-	 * Returns all the push notifications devices.
-	 *
-	 * @return the push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the push notifications devices.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of push notifications devices
-	 * @param end the upper bound of the range of push notifications devices (not inclusive)
-	 * @return the range of push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the push notifications devices.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of push notifications devices
-	 * @param end the upper bound of the range of push notifications devices (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findAll(
-		int start, int end,
-		OrderByComparator<PushNotificationsDevice> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the push notifications devices.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PushNotificationsDeviceModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of push notifications devices
-	 * @param end the upper bound of the range of push notifications devices (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of push notifications devices
-	 */
-	@Override
-	public List<PushNotificationsDevice> findAll(
-		int start, int end,
-		OrderByComparator<PushNotificationsDevice> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<PushNotificationsDevice> list = null;
-
-		if (useFinderCache) {
-			list = (List<PushNotificationsDevice>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_PUSHNOTIFICATIONSDEVICE);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_PUSHNOTIFICATIONSDEVICE;
-
-				sql = sql.concat(
-					PushNotificationsDeviceModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<PushNotificationsDevice>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the push notifications devices from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (PushNotificationsDevice pushNotificationsDevice : findAll()) {
-			remove(pushNotificationsDevice);
-		}
-	}
-
-	/**
-	 * Returns the number of push notifications devices.
-	 *
-	 * @return the number of push notifications devices
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_PUSHNOTIFICATIONSDEVICE);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
 	@Override
 	protected EntityCache getEntityCache() {
 		return entityCache;
@@ -1485,49 +504,47 @@ public class PushNotificationsDevicePersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_uniquePersistenceFinderByToken = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByToken",
+				new String[] {String.class.getName()}, new String[] {"token"},
+				0, 1, false,
+				convertNullFunction(PushNotificationsDevice::getToken)),
+			_SQL_SELECT_PUSHNOTIFICATIONSDEVICE_WHERE, "",
+			new FinderColumn<>(
+				"pushNotificationsDevice.", "token", FinderColumn.Type.STRING,
+				"=", true, true, PushNotificationsDevice::getToken));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathFetchByToken = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByToken",
-			new String[] {String.class.getName()}, new String[] {"token"},
-			true);
-
-		_finderPathWithPaginationFindByU_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU_P",
-			new String[] {
-				Long.class.getName(), String.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"userId", "platform"}, true);
-
-		_finderPathWithoutPaginationFindByU_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByU_P",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"userId", "platform"}, true);
-
-		_finderPathCountByU_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByU_P",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"userId", "platform"}, false);
-
-		_finderPathWithPaginationCountByU_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByU_P",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"userId", "platform"}, false);
+		_collectionPersistenceFinderByU_P = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU_P",
+				new String[] {
+					Long.class.getName(), String.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"userId", "platform"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByU_P",
+				new String[] {Long.class.getName(), String.class.getName()},
+				new String[] {"userId", "platform"}, 0, 2, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByU_P",
+				new String[] {Long.class.getName(), String.class.getName()},
+				new String[] {"userId", "platform"}, 0, 2, false, null),
+			_SQL_SELECT_PUSHNOTIFICATIONSDEVICE_WHERE,
+			_SQL_COUNT_PUSHNOTIFICATIONSDEVICE_WHERE,
+			PushNotificationsDeviceModelImpl.ORDER_BY_JPQL,
+			_ENTITY_ALIAS_PREFIX, "",
+			new ArrayableFinderColumn<>(
+				"pushNotificationsDevice.", "userId", FinderColumn.Type.LONG,
+				"=", false, true, true, PushNotificationsDevice::getUserId),
+			new FinderColumn<>(
+				"pushNotificationsDevice.", "platform",
+				FinderColumn.Type.STRING, "=", true, true,
+				PushNotificationsDevice::getPlatform));
 
 		PushNotificationsDeviceUtil.setPersistence(this);
 	}
@@ -1571,23 +588,17 @@ public class PushNotificationsDevicePersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		PushNotificationsDeviceModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_PUSHNOTIFICATIONSDEVICE =
 		"SELECT pushNotificationsDevice FROM PushNotificationsDevice pushNotificationsDevice";
 
 	private static final String _SQL_SELECT_PUSHNOTIFICATIONSDEVICE_WHERE =
 		"SELECT pushNotificationsDevice FROM PushNotificationsDevice pushNotificationsDevice WHERE ";
 
-	private static final String _SQL_COUNT_PUSHNOTIFICATIONSDEVICE =
-		"SELECT COUNT(pushNotificationsDevice) FROM PushNotificationsDevice pushNotificationsDevice";
-
 	private static final String _SQL_COUNT_PUSHNOTIFICATIONSDEVICE_WHERE =
 		"SELECT COUNT(pushNotificationsDevice) FROM PushNotificationsDevice pushNotificationsDevice WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"pushNotificationsDevice.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No PushNotificationsDevice exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No PushNotificationsDevice exists with the key {";
@@ -1601,4 +612,4 @@ public class PushNotificationsDevicePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-667427602
+// LIFERAY-SERVICE-BUILDER-HASH:-1869823255

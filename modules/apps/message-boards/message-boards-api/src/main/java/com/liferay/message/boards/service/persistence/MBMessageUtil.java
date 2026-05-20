@@ -36,6 +36,20 @@ public class MBMessageUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<MBMessage> mbMessages) {
+		getPersistence().cacheResult(mbMessages);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(MBMessage mbMessage) {
+		getPersistence().cacheResult(mbMessage);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,56 +125,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByUuid(String uuid, int start, int end) {
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -241,17 +209,6 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns the message-boards message where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching message-boards message, or <code>null</code> if a matching message-boards message could not be found
-	 */
-	public static MBMessage fetchByUUID_G(String uuid, long groupId) {
-		return getPersistence().fetchByUUID_G(uuid, groupId);
-	}
-
-	/**
 	 * Returns the message-boards message where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -290,62 +247,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByUuid_C(String uuid, long companyId) {
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -421,59 +326,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByGroupId(long groupId) {
-		return getPersistence().findByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().findByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByGroupId(
-		long groupId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -522,38 +378,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByGroupId(long groupId) {
-		return getPersistence().filterFindByGroupId(groupId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByGroupId(
-		long groupId, int start, int end) {
-
-		return getPersistence().filterFindByGroupId(groupId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -600,59 +428,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -721,59 +500,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByUserId(long userId) {
-		return getPersistence().findByUserId(userId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByUserId(
-		long userId, int start, int end) {
-
-		return getPersistence().findByUserId(userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByUserId(
-		long userId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByUserId(
-			userId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -840,59 +570,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where threadId = &#63;.
-	 *
-	 * @param threadId the thread ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByThreadId(long threadId) {
-		return getPersistence().findByThreadId(threadId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByThreadId(
-		long threadId, int start, int end) {
-
-		return getPersistence().findByThreadId(threadId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where threadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByThreadId(
-		long threadId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByThreadId(
-			threadId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -961,59 +642,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where threadId = &#63;.
-	 *
-	 * @param threadId the thread ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByThreadIdReplies(long threadId) {
-		return getPersistence().findByThreadIdReplies(threadId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByThreadIdReplies(
-		long threadId, int start, int end) {
-
-		return getPersistence().findByThreadIdReplies(threadId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where threadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByThreadIdReplies(
-		long threadId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByThreadIdReplies(
-			threadId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -1082,60 +714,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where parentMessageId = &#63;.
-	 *
-	 * @param parentMessageId the parent message ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByParentMessageId(long parentMessageId) {
-		return getPersistence().findByParentMessageId(parentMessageId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where parentMessageId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentMessageId the parent message ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByParentMessageId(
-		long parentMessageId, int start, int end) {
-
-		return getPersistence().findByParentMessageId(
-			parentMessageId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where parentMessageId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentMessageId the parent message ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByParentMessageId(
-		long parentMessageId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByParentMessageId(
-			parentMessageId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where parentMessageId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentMessageId the parent message ID
@@ -1205,62 +787,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_U(long groupId, long userId) {
-		return getPersistence().findByG_U(groupId, userId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_U(
-		long groupId, long userId, int start, int end) {
-
-		return getPersistence().findByG_U(groupId, userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_U(
-		long groupId, long userId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByG_U(
-			groupId, userId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1315,40 +845,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_U(long groupId, long userId) {
-		return getPersistence().filterFindByG_U(groupId, userId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_U(
-		long groupId, long userId, int start, int end) {
-
-		return getPersistence().filterFindByG_U(groupId, userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1399,62 +899,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C(long groupId, long categoryId) {
-		return getPersistence().findByG_C(groupId, categoryId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C(
-		long groupId, long categoryId, int start, int end) {
-
-		return getPersistence().findByG_C(groupId, categoryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C(
-		long groupId, long categoryId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByG_C(
-			groupId, categoryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1509,43 +957,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C(
-		long groupId, long categoryId) {
-
-		return getPersistence().filterFindByG_C(groupId, categoryId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C(
-		long groupId, long categoryId, int start, int end) {
-
-		return getPersistence().filterFindByG_C(
-			groupId, categoryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63; and categoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1610,17 +1025,6 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns the message-boards message where groupId = &#63; and urlSubject = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param urlSubject the url subject
-	 * @return the matching message-boards message, or <code>null</code> if a matching message-boards message could not be found
-	 */
-	public static MBMessage fetchByG_US(long groupId, String urlSubject) {
-		return getPersistence().fetchByG_US(groupId, urlSubject);
-	}
-
-	/**
 	 * Returns the message-boards message where groupId = &#63; and urlSubject = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -1660,62 +1064,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_S(long groupId, int status) {
-		return getPersistence().findByG_S(groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_S(
-		long groupId, int status, int start, int end) {
-
-		return getPersistence().findByG_S(groupId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_S(
-		long groupId, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByG_S(
-			groupId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1770,40 +1122,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_S(long groupId, int status) {
-		return getPersistence().filterFindByG_S(groupId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_S(
-		long groupId, int status, int start, int end) {
-
-		return getPersistence().filterFindByG_S(groupId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1854,62 +1176,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where companyId = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_S(long companyId, int status) {
-		return getPersistence().findByC_S(companyId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_S(
-		long companyId, int status, int start, int end) {
-
-		return getPersistence().findByC_S(companyId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where companyId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_S(
-		long companyId, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByC_S(
-			companyId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1985,62 +1255,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where userId = &#63; and classNameId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C(long userId, long classNameId) {
-		return getPersistence().findByU_C(userId, classNameId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C(
-		long userId, long classNameId, int start, int end) {
-
-		return getPersistence().findByU_C(userId, classNameId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C(
-		long userId, long classNameId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByU_C(
-			userId, classNameId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2095,66 +1313,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where userId = &#63; and classNameId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameIds the class name IDs
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C(long userId, long[] classNameIds) {
-		return getPersistence().findByU_C(userId, classNameIds);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameIds the class name IDs
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C(
-		long userId, long[] classNameIds, int start, int end) {
-
-		return getPersistence().findByU_C(userId, classNameIds, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = any &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameIds the class name IDs
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C(
-		long userId, long[] classNameIds, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByU_C(
-			userId, classNameIds, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2208,62 +1370,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_C(long classNameId, long classPK) {
-		return getPersistence().findByC_C(classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_C(
-		long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByC_C(classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_C(
-		long classNameId, long classPK, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByC_C(
-			classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -2340,65 +1450,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where threadId = &#63; and parentMessageId = &#63;.
-	 *
-	 * @param threadId the thread ID
-	 * @param parentMessageId the parent message ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_P(
-		long threadId, long parentMessageId) {
-
-		return getPersistence().findByT_P(threadId, parentMessageId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where threadId = &#63; and parentMessageId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param parentMessageId the parent message ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_P(
-		long threadId, long parentMessageId, int start, int end) {
-
-		return getPersistence().findByT_P(
-			threadId, parentMessageId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and parentMessageId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param parentMessageId the parent message ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_P(
-		long threadId, long parentMessageId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByT_P(
-			threadId, parentMessageId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and parentMessageId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -2475,62 +1530,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where threadId = &#63; and answer = &#63;.
-	 *
-	 * @param threadId the thread ID
-	 * @param answer the answer
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_A(long threadId, boolean answer) {
-		return getPersistence().findByT_A(threadId, answer);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where threadId = &#63; and answer = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param answer the answer
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_A(
-		long threadId, boolean answer, int start, int end) {
-
-		return getPersistence().findByT_A(threadId, answer, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and answer = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param answer the answer
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_A(
-		long threadId, boolean answer, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByT_A(
-			threadId, answer, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and answer = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -2606,62 +1609,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where threadId = &#63; and status = &#63;.
-	 *
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_S(long threadId, int status) {
-		return getPersistence().findByT_S(threadId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where threadId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_S(
-		long threadId, int status, int start, int end) {
-
-		return getPersistence().findByT_S(threadId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByT_S(
-		long threadId, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByT_S(
-			threadId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -2751,7 +1702,7 @@ public class MBMessageUtil {
 	 * Returns a range of all the message-boards messages where threadId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -2770,7 +1721,7 @@ public class MBMessageUtil {
 	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -2792,7 +1743,7 @@ public class MBMessageUtil {
 	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -2868,62 +1819,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where threadId = &#63; and status = &#63;.
-	 *
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByTR_S(long threadId, int status) {
-		return getPersistence().findByTR_S(threadId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where threadId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByTR_S(
-		long threadId, int status, int start, int end) {
-
-		return getPersistence().findByTR_S(threadId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByTR_S(
-		long threadId, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByTR_S(
-			threadId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param threadId the thread ID
@@ -2999,62 +1898,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where parentMessageId = &#63; and status = &#63;.
-	 *
-	 * @param parentMessageId the parent message ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByP_S(long parentMessageId, int status) {
-		return getPersistence().findByP_S(parentMessageId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where parentMessageId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentMessageId the parent message ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByP_S(
-		long parentMessageId, int status, int start, int end) {
-
-		return getPersistence().findByP_S(parentMessageId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where parentMessageId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param parentMessageId the parent message ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByP_S(
-		long parentMessageId, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByP_S(
-			parentMessageId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where parentMessageId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param parentMessageId the parent message ID
@@ -3131,68 +1978,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63; and userId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_U_S(
-		long groupId, long userId, int status) {
-
-		return getPersistence().findByG_U_S(groupId, userId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63; and userId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_U_S(
-		long groupId, long userId, int status, int start, int end) {
-
-		return getPersistence().findByG_U_S(
-			groupId, userId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and userId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_U_S(
-		long groupId, long userId, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByG_U_S(
-			groupId, userId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and userId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3251,45 +2040,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and userId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param status the status
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_U_S(
-		long groupId, long userId, int status) {
-
-		return getPersistence().filterFindByG_U_S(groupId, userId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and userId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_U_S(
-		long groupId, long userId, int status, int start, int end) {
-
-		return getPersistence().filterFindByG_U_S(
-			groupId, userId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63; and userId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3346,68 +2100,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T(
-		long groupId, long categoryId, long threadId) {
-
-		return getPersistence().findByG_C_T(groupId, categoryId, threadId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T(
-		long groupId, long categoryId, long threadId, int start, int end) {
-
-		return getPersistence().findByG_C_T(
-			groupId, categoryId, threadId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T(
-		long groupId, long categoryId, long threadId, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByG_C_T(
-			groupId, categoryId, threadId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3466,46 +2162,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C_T(
-		long groupId, long categoryId, long threadId) {
-
-		return getPersistence().filterFindByG_C_T(
-			groupId, categoryId, threadId);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C_T(
-		long groupId, long categoryId, long threadId, int start, int end) {
-
-		return getPersistence().filterFindByG_C_T(
-			groupId, categoryId, threadId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3567,68 +2227,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_S(
-		long groupId, long categoryId, int status) {
-
-		return getPersistence().findByG_C_S(groupId, categoryId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_S(
-		long groupId, long categoryId, int status, int start, int end) {
-
-		return getPersistence().findByG_C_S(
-			groupId, categoryId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_S(
-		long groupId, long categoryId, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByG_C_S(
-			groupId, categoryId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3687,45 +2289,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param status the status
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C_S(
-		long groupId, long categoryId, int status) {
-
-		return getPersistence().filterFindByG_C_S(groupId, categoryId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C_S(
-		long groupId, long categoryId, int status, int start, int end) {
-
-		return getPersistence().filterFindByG_C_S(
-			groupId, categoryId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63; and categoryId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3784,68 +2351,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_C(
-		long userId, long classNameId, long classPK) {
-
-		return getPersistence().findByU_C_C(userId, classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_C(
-		long userId, long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByU_C_C(
-			userId, classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_C(
-		long userId, long classNameId, long classPK, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByU_C_C(
-			userId, classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -3931,68 +2440,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where userId = &#63; and classNameId = &#63; and status = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_S(
-		long userId, long classNameId, int status) {
-
-		return getPersistence().findByU_C_S(userId, classNameId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_S(
-		long userId, long classNameId, int status, int start, int end) {
-
-		return getPersistence().findByU_C_S(
-			userId, classNameId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_S(
-		long userId, long classNameId, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByU_C_S(
-			userId, classNameId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -4051,72 +2502,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where userId = &#63; and classNameId = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameIds the class name IDs
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_S(
-		long userId, long[] classNameIds, int status) {
-
-		return getPersistence().findByU_C_S(userId, classNameIds, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameIds the class name IDs
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_S(
-		long userId, long[] classNameIds, int status, int start, int end) {
-
-		return getPersistence().findByU_C_S(
-			userId, classNameIds, status, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = any &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameIds the class name IDs
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_S(
-		long userId, long[] classNameIds, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByU_C_S(
-			userId, classNameIds, status, start, end, orderByComparator);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and status = &#63;, optionally using the finder cache.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -4178,68 +2567,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where classNameId = &#63; and classPK = &#63; and status = &#63;.
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_C_S(
-		long classNameId, long classPK, int status) {
-
-		return getPersistence().findByC_C_S(classNameId, classPK, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where classNameId = &#63; and classPK = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_C_S(
-		long classNameId, long classPK, int status, int start, int end) {
-
-		return getPersistence().findByC_C_S(
-			classNameId, classPK, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where classNameId = &#63; and classPK = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByC_C_S(
-		long classNameId, long classPK, int status, int start, int end,
-		OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByC_C_S(
-			classNameId, classPK, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where classNameId = &#63; and classPK = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -4323,74 +2654,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param answer the answer
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T_A(
-		long groupId, long categoryId, long threadId, boolean answer) {
-
-		return getPersistence().findByG_C_T_A(
-			groupId, categoryId, threadId, answer);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param answer the answer
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T_A(
-		long groupId, long categoryId, long threadId, boolean answer, int start,
-		int end) {
-
-		return getPersistence().findByG_C_T_A(
-			groupId, categoryId, threadId, answer, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param answer the answer
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T_A(
-		long groupId, long categoryId, long threadId, boolean answer, int start,
-		int end, OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByG_C_T_A(
-			groupId, categoryId, threadId, answer, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4452,49 +2719,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param answer the answer
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C_T_A(
-		long groupId, long categoryId, long threadId, boolean answer) {
-
-		return getPersistence().filterFindByG_C_T_A(
-			groupId, categoryId, threadId, answer);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param answer the answer
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C_T_A(
-		long groupId, long categoryId, long threadId, boolean answer, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_C_T_A(
-			groupId, categoryId, threadId, answer, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4562,74 +2790,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T_S(
-		long groupId, long categoryId, long threadId, int status) {
-
-		return getPersistence().findByG_C_T_S(
-			groupId, categoryId, threadId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T_S(
-		long groupId, long categoryId, long threadId, int status, int start,
-		int end) {
-
-		return getPersistence().findByG_C_T_S(
-			groupId, categoryId, threadId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByG_C_T_S(
-		long groupId, long categoryId, long threadId, int status, int start,
-		int end, OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByG_C_T_S(
-			groupId, categoryId, threadId, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4691,49 +2855,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @return the matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C_T_S(
-		long groupId, long categoryId, long threadId, int status) {
-
-		return getPersistence().filterFindByG_C_T_S(
-			groupId, categoryId, threadId, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param categoryId the category ID
-	 * @param threadId the thread ID
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages that the user has permission to view
-	 */
-	public static List<MBMessage> filterFindByG_C_T_S(
-		long groupId, long categoryId, long threadId, int status, int start,
-		int end) {
-
-		return getPersistence().filterFindByG_C_T_S(
-			groupId, categoryId, threadId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages that the user has permissions to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4801,74 +2926,10 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63; and status = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param status the status
-	 * @return the matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_C_S(
-		long userId, long classNameId, long classPK, int status) {
-
-		return getPersistence().findByU_C_C_S(
-			userId, classNameId, classPK, status);
-	}
-
-	/**
-	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_C_S(
-		long userId, long classNameId, long classPK, int status, int start,
-		int end) {
-
-		return getPersistence().findByU_C_C_S(
-			userId, classNameId, classPK, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param status the status
-	 * @param start the lower bound of the range of message-boards messages
-	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching message-boards messages
-	 */
-	public static List<MBMessage> findByU_C_C_S(
-		long userId, long classNameId, long classPK, int status, int start,
-		int end, OrderByComparator<MBMessage> orderByComparator) {
-
-		return getPersistence().findByU_C_C_S(
-			userId, classNameId, classPK, status, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -4975,19 +3036,6 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns the message-boards message where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param groupId the group ID
-	 * @return the matching message-boards message, or <code>null</code> if a matching message-boards message could not be found
-	 */
-	public static MBMessage fetchByERC_G(
-		String externalReferenceCode, long groupId) {
-
-		return getPersistence().fetchByERC_G(externalReferenceCode, groupId);
-	}
-
-	/**
 	 * Returns the message-boards message where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -5025,24 +3073,6 @@ public class MBMessageUtil {
 	 */
 	public static int countByERC_G(String externalReferenceCode, long groupId) {
 		return getPersistence().countByERC_G(externalReferenceCode, groupId);
-	}
-
-	/**
-	 * Caches the message-boards message in the entity cache if it is enabled.
-	 *
-	 * @param mbMessage the message-boards message
-	 */
-	public static void cacheResult(MBMessage mbMessage) {
-		getPersistence().cacheResult(mbMessage);
-	}
-
-	/**
-	 * Caches the message-boards messages in the entity cache if it is enabled.
-	 *
-	 * @param mbMessages the message-boards messages
-	 */
-	public static void cacheResult(List<MBMessage> mbMessages) {
-		getPersistence().cacheResult(mbMessages);
 	}
 
 	/**
@@ -5096,82 +3126,1961 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * Returns all the message-boards messages.
+	 * Returns the message-boards message where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the message-boards messages
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching message-boards message, or <code>null</code> if a matching message-boards message could not be found
 	 */
-	public static List<MBMessage> findAll() {
-		return getPersistence().findAll();
+	public static MBMessage fetchByUUID_G(String uuid, long groupId) {
+		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
-	 * Returns a range of all the message-boards messages.
+	 * Returns the message-boards message where groupId = &#63; and urlSubject = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param urlSubject the url subject
+	 * @return the matching message-boards message, or <code>null</code> if a matching message-boards message could not be found
+	 */
+	public static MBMessage fetchByG_US(long groupId, String urlSubject) {
+		return getPersistence().fetchByG_US(groupId, urlSubject);
+	}
+
+	/**
+	 * Returns the message-boards message where externalReferenceCode = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param groupId the group ID
+	 * @return the matching message-boards message, or <code>null</code> if a matching message-boards message could not be found
+	 */
+	public static MBMessage fetchByERC_G(
+		String externalReferenceCode, long groupId) {
+
+		return getPersistence().fetchByERC_G(externalReferenceCode, groupId);
+	}
+
+	/**
+	 * Returns all the message-boards messages where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of message-boards messages
 	 * @param end the upper bound of the range of message-boards messages (not inclusive)
-	 * @return the range of message-boards messages
+	 * @return the range of matching message-boards messages
 	 */
-	public static List<MBMessage> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<MBMessage> findByUuid(String uuid, int start, int end) {
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the message-boards messages.
+	 * Returns an ordered range of all the message-boards messages where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of message-boards messages
 	 * @param end the upper bound of the range of message-boards messages (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of message-boards messages
+	 * @return the ordered range of matching message-boards messages
 	 */
-	public static List<MBMessage> findAll(
-		int start, int end, OrderByComparator<MBMessage> orderByComparator) {
+	public static List<MBMessage> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the message-boards messages.
+	 * Returns all the message-boards messages where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByUuid_C(String uuid, long companyId) {
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MBMessageModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of message-boards messages
 	 * @param end the upper bound of the range of message-boards messages (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of message-boards messages
+	 * @return the ordered range of matching message-boards messages
 	 */
-	public static List<MBMessage> findAll(
-		int start, int end, OrderByComparator<MBMessage> orderByComparator,
-		boolean useFinderCache) {
+	public static List<MBMessage> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the message-boards messages from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of message-boards messages.
+	 * Returns all the message-boards messages where groupId = &#63;.
 	 *
-	 * @return the number of message-boards messages
+	 * @param groupId the group ID
+	 * @return the matching message-boards messages
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<MBMessage> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().findByGroupId(groupId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByGroupId(
+			groupId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByGroupId(long groupId) {
+		return getPersistence().filterFindByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().filterFindByGroupId(groupId, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByUserId(long userId) {
+		return getPersistence().findByUserId(userId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByUserId(
+		long userId, int start, int end) {
+
+		return getPersistence().findByUserId(userId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByUserId(
+		long userId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByUserId(
+			userId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where threadId = &#63;.
+	 *
+	 * @param threadId the thread ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByThreadId(long threadId) {
+		return getPersistence().findByThreadId(threadId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where threadId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByThreadId(
+		long threadId, int start, int end) {
+
+		return getPersistence().findByThreadId(threadId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where threadId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByThreadId(
+		long threadId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByThreadId(
+			threadId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where threadId = &#63;.
+	 *
+	 * @param threadId the thread ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByThreadIdReplies(long threadId) {
+		return getPersistence().findByThreadIdReplies(threadId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where threadId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByThreadIdReplies(
+		long threadId, int start, int end) {
+
+		return getPersistence().findByThreadIdReplies(threadId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where threadId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByThreadIdReplies(
+		long threadId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByThreadIdReplies(
+			threadId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where parentMessageId = &#63;.
+	 *
+	 * @param parentMessageId the parent message ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByParentMessageId(long parentMessageId) {
+		return getPersistence().findByParentMessageId(parentMessageId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where parentMessageId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentMessageId the parent message ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByParentMessageId(
+		long parentMessageId, int start, int end) {
+
+		return getPersistence().findByParentMessageId(
+			parentMessageId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where parentMessageId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentMessageId the parent message ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByParentMessageId(
+		long parentMessageId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByParentMessageId(
+			parentMessageId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_U(long groupId, long userId) {
+		return getPersistence().findByG_U(groupId, userId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_U(
+		long groupId, long userId, int start, int end) {
+
+		return getPersistence().findByG_U(groupId, userId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_U(
+		long groupId, long userId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByG_U(
+			groupId, userId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_U(long groupId, long userId) {
+		return getPersistence().filterFindByG_U(groupId, userId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_U(
+		long groupId, long userId, int start, int end) {
+
+		return getPersistence().filterFindByG_U(groupId, userId, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C(long groupId, long categoryId) {
+		return getPersistence().findByG_C(groupId, categoryId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C(
+		long groupId, long categoryId, int start, int end) {
+
+		return getPersistence().findByG_C(groupId, categoryId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C(
+		long groupId, long categoryId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByG_C(
+			groupId, categoryId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C(
+		long groupId, long categoryId) {
+
+		return getPersistence().filterFindByG_C(groupId, categoryId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C(
+		long groupId, long categoryId, int start, int end) {
+
+		return getPersistence().filterFindByG_C(
+			groupId, categoryId, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_S(long groupId, int status) {
+		return getPersistence().findByG_S(groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_S(
+		long groupId, int status, int start, int end) {
+
+		return getPersistence().findByG_S(groupId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_S(
+		long groupId, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByG_S(
+			groupId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_S(long groupId, int status) {
+		return getPersistence().filterFindByG_S(groupId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_S(
+		long groupId, int status, int start, int end) {
+
+		return getPersistence().filterFindByG_S(groupId, status, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where companyId = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_S(long companyId, int status) {
+		return getPersistence().findByC_S(companyId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_S(
+		long companyId, int status, int start, int end) {
+
+		return getPersistence().findByC_S(companyId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_S(
+		long companyId, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByC_S(
+			companyId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where userId = &#63; and classNameId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C(long userId, long classNameId) {
+		return getPersistence().findByU_C(userId, classNameId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C(
+		long userId, long classNameId, int start, int end) {
+
+		return getPersistence().findByU_C(userId, classNameId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C(
+		long userId, long classNameId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByU_C(
+			userId, classNameId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where userId = &#63; and classNameId = any &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param classNameIds the class name IDs
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C(long userId, long[] classNameIds) {
+		return getPersistence().findByU_C(userId, classNameIds);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameIds the class name IDs
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C(
+		long userId, long[] classNameIds, int start, int end) {
+
+		return getPersistence().findByU_C(userId, classNameIds, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameIds the class name IDs
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C(
+		long userId, long[] classNameIds, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByU_C(
+			userId, classNameIds, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_C(long classNameId, long classPK) {
+		return getPersistence().findByC_C(classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_C(
+		long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByC_C(classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_C(
+		long classNameId, long classPK, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByC_C(
+			classNameId, classPK, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where threadId = &#63; and parentMessageId = &#63;.
+	 *
+	 * @param threadId the thread ID
+	 * @param parentMessageId the parent message ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_P(
+		long threadId, long parentMessageId) {
+
+		return getPersistence().findByT_P(threadId, parentMessageId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where threadId = &#63; and parentMessageId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param parentMessageId the parent message ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_P(
+		long threadId, long parentMessageId, int start, int end) {
+
+		return getPersistence().findByT_P(
+			threadId, parentMessageId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and parentMessageId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param parentMessageId the parent message ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_P(
+		long threadId, long parentMessageId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByT_P(
+			threadId, parentMessageId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where threadId = &#63; and answer = &#63;.
+	 *
+	 * @param threadId the thread ID
+	 * @param answer the answer
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_A(long threadId, boolean answer) {
+		return getPersistence().findByT_A(threadId, answer);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where threadId = &#63; and answer = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param answer the answer
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_A(
+		long threadId, boolean answer, int start, int end) {
+
+		return getPersistence().findByT_A(threadId, answer, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and answer = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param answer the answer
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_A(
+		long threadId, boolean answer, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByT_A(
+			threadId, answer, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where threadId = &#63; and status = &#63;.
+	 *
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_S(long threadId, int status) {
+		return getPersistence().findByT_S(threadId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where threadId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_S(
+		long threadId, int status, int start, int end) {
+
+		return getPersistence().findByT_S(threadId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByT_S(
+		long threadId, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByT_S(
+			threadId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where threadId = &#63; and status = &#63;.
+	 *
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByTR_S(long threadId, int status) {
+		return getPersistence().findByTR_S(threadId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where threadId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByTR_S(
+		long threadId, int status, int start, int end) {
+
+		return getPersistence().findByTR_S(threadId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where threadId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByTR_S(
+		long threadId, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByTR_S(
+			threadId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where parentMessageId = &#63; and status = &#63;.
+	 *
+	 * @param parentMessageId the parent message ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByP_S(long parentMessageId, int status) {
+		return getPersistence().findByP_S(parentMessageId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where parentMessageId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentMessageId the parent message ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByP_S(
+		long parentMessageId, int status, int start, int end) {
+
+		return getPersistence().findByP_S(parentMessageId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where parentMessageId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentMessageId the parent message ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByP_S(
+		long parentMessageId, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByP_S(
+			parentMessageId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_U_S(
+		long groupId, long userId, int status) {
+
+		return getPersistence().findByG_U_S(groupId, userId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_U_S(
+		long groupId, long userId, int status, int start, int end) {
+
+		return getPersistence().findByG_U_S(
+			groupId, userId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_U_S(
+		long groupId, long userId, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByG_U_S(
+			groupId, userId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_U_S(
+		long groupId, long userId, int status) {
+
+		return getPersistence().filterFindByG_U_S(groupId, userId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_U_S(
+		long groupId, long userId, int status, int start, int end) {
+
+		return getPersistence().filterFindByG_U_S(
+			groupId, userId, status, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T(
+		long groupId, long categoryId, long threadId) {
+
+		return getPersistence().findByG_C_T(groupId, categoryId, threadId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T(
+		long groupId, long categoryId, long threadId, int start, int end) {
+
+		return getPersistence().findByG_C_T(
+			groupId, categoryId, threadId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T(
+		long groupId, long categoryId, long threadId, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByG_C_T(
+			groupId, categoryId, threadId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C_T(
+		long groupId, long categoryId, long threadId) {
+
+		return getPersistence().filterFindByG_C_T(
+			groupId, categoryId, threadId);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C_T(
+		long groupId, long categoryId, long threadId, int start, int end) {
+
+		return getPersistence().filterFindByG_C_T(
+			groupId, categoryId, threadId, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_S(
+		long groupId, long categoryId, int status) {
+
+		return getPersistence().findByG_C_S(groupId, categoryId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_S(
+		long groupId, long categoryId, int status, int start, int end) {
+
+		return getPersistence().findByG_C_S(
+			groupId, categoryId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_S(
+		long groupId, long categoryId, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByG_C_S(
+			groupId, categoryId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param status the status
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C_S(
+		long groupId, long categoryId, int status) {
+
+		return getPersistence().filterFindByG_C_S(groupId, categoryId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C_S(
+		long groupId, long categoryId, int status, int start, int end) {
+
+		return getPersistence().filterFindByG_C_S(
+			groupId, categoryId, status, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_C(
+		long userId, long classNameId, long classPK) {
+
+		return getPersistence().findByU_C_C(userId, classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_C(
+		long userId, long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByU_C_C(
+			userId, classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_C(
+		long userId, long classNameId, long classPK, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByU_C_C(
+			userId, classNameId, classPK, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where userId = &#63; and classNameId = &#63; and status = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_S(
+		long userId, long classNameId, int status) {
+
+		return getPersistence().findByU_C_S(userId, classNameId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_S(
+		long userId, long classNameId, int status, int start, int end) {
+
+		return getPersistence().findByU_C_S(
+			userId, classNameId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_S(
+		long userId, long classNameId, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByU_C_S(
+			userId, classNameId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where userId = &#63; and classNameId = any &#63; and status = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param classNameIds the class name IDs
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_S(
+		long userId, long[] classNameIds, int status) {
+
+		return getPersistence().findByU_C_S(userId, classNameIds, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameIds the class name IDs
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_S(
+		long userId, long[] classNameIds, int status, int start, int end) {
+
+		return getPersistence().findByU_C_S(
+			userId, classNameIds, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = any &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameIds the class name IDs
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_S(
+		long userId, long[] classNameIds, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByU_C_S(
+			userId, classNameIds, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where classNameId = &#63; and classPK = &#63; and status = &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_C_S(
+		long classNameId, long classPK, int status) {
+
+		return getPersistence().findByC_C_S(classNameId, classPK, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where classNameId = &#63; and classPK = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_C_S(
+		long classNameId, long classPK, int status, int start, int end) {
+
+		return getPersistence().findByC_C_S(
+			classNameId, classPK, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where classNameId = &#63; and classPK = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByC_C_S(
+		long classNameId, long classPK, int status, int start, int end,
+		OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByC_C_S(
+			classNameId, classPK, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param answer the answer
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T_A(
+		long groupId, long categoryId, long threadId, boolean answer) {
+
+		return getPersistence().findByG_C_T_A(
+			groupId, categoryId, threadId, answer);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param answer the answer
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T_A(
+		long groupId, long categoryId, long threadId, boolean answer, int start,
+		int end) {
+
+		return getPersistence().findByG_C_T_A(
+			groupId, categoryId, threadId, answer, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param answer the answer
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T_A(
+		long groupId, long categoryId, long threadId, boolean answer, int start,
+		int end, OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByG_C_T_A(
+			groupId, categoryId, threadId, answer, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param answer the answer
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C_T_A(
+		long groupId, long categoryId, long threadId, boolean answer) {
+
+		return getPersistence().filterFindByG_C_T_A(
+			groupId, categoryId, threadId, answer);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and answer = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param answer the answer
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C_T_A(
+		long groupId, long categoryId, long threadId, boolean answer, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_C_T_A(
+			groupId, categoryId, threadId, answer, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T_S(
+		long groupId, long categoryId, long threadId, int status) {
+
+		return getPersistence().findByG_C_T_S(
+			groupId, categoryId, threadId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T_S(
+		long groupId, long categoryId, long threadId, int status, int start,
+		int end) {
+
+		return getPersistence().findByG_C_T_S(
+			groupId, categoryId, threadId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByG_C_T_S(
+		long groupId, long categoryId, long threadId, int status, int start,
+		int end, OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByG_C_T_S(
+			groupId, categoryId, threadId, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @return the matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C_T_S(
+		long groupId, long categoryId, long threadId, int status) {
+
+		return getPersistence().filterFindByG_C_T_S(
+			groupId, categoryId, threadId, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages that the user has permission to view where groupId = &#63; and categoryId = &#63; and threadId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param categoryId the category ID
+	 * @param threadId the thread ID
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages that the user has permission to view
+	 */
+	public static List<MBMessage> filterFindByG_C_T_S(
+		long groupId, long categoryId, long threadId, int status, int start,
+		int end) {
+
+		return getPersistence().filterFindByG_C_T_S(
+			groupId, categoryId, threadId, status, start, end);
+	}
+
+	/**
+	 * Returns all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63; and status = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param status the status
+	 * @return the matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_C_S(
+		long userId, long classNameId, long classPK, int status) {
+
+		return getPersistence().findByU_C_C_S(
+			userId, classNameId, classPK, status);
+	}
+
+	/**
+	 * Returns a range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @return the range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_C_S(
+		long userId, long classNameId, long classPK, int status, int start,
+		int end) {
+
+		return getPersistence().findByU_C_C_S(
+			userId, classNameId, classPK, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the message-boards messages where userId = &#63; and classNameId = &#63; and classPK = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.message.boards.model.impl.MBMessageModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param status the status
+	 * @param start the lower bound of the range of message-boards messages
+	 * @param end the upper bound of the range of message-boards messages (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching message-boards messages
+	 */
+	public static List<MBMessage> findByU_C_C_S(
+		long userId, long classNameId, long classPK, int status, int start,
+		int end, OrderByComparator<MBMessage> orderByComparator) {
+
+		return getPersistence().findByU_C_C_S(
+			userId, classNameId, classPK, status, start, end,
+			orderByComparator);
 	}
 
 	public static MBMessagePersistence getPersistence() {
@@ -5185,4 +5094,4 @@ public class MBMessageUtil {
 	private static volatile MBMessagePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1067337502
+// LIFERAY-SERVICE-BUILDER-HASH:135123066

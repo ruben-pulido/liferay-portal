@@ -1,307 +1,239 @@
-import * as API from 'shared/api';
-import * as data from 'test/data';
-import * as NotificationAlertList from 'shared/components/NotificationAlertList';
-import DataSourceList, {
+import React from 'react';
+import {
 	DataSourceName,
 	disableRow,
+	isDataSourceVisible,
 	StatusRenderer
 } from '../DataSourceList';
-import mockStore, {mockStoreData} from 'test/mock-store';
-import React from 'react';
-import {cleanup, fireEvent, render} from '@testing-library/react';
-import {DataSourceStates} from 'shared/util/constants';
-import {MemoryRouter, Route} from 'react-router-dom';
-import {Provider} from 'react-redux';
-import {RemoteData} from 'shared/util/records';
-import {Routes} from 'shared/util/router';
-import {waitForLoadingToBeRemoved} from 'test/helpers';
+import {DataSourceStates, DataSourceTypes} from 'shared/util/constants';
+import {MemoryRouter} from 'react-router-dom';
+import {render} from '@testing-library/react';
+import {SubscriptionNames} from 'shared/util/subscriptions';
 
 jest.unmock('react-dom');
 
-const mockNotificationAlertList = NotificationAlertList;
+describe('DataSourceList exports', () => {
+	describe('disableRow', () => {
+		it('returns true when the data source is being deleted', () => {
+			expect(
+				disableRow({state: DataSourceStates.InProgressDeleting})
+			).toBe(true);
+		});
 
-const defaultProps = {
-	groupId: '23'
-};
-
-const DefaultComponent = ({queryString = '', ...otherProps}) => (
-	<Provider store={mockStore(mockStoreData)}>
-		<MemoryRouter
-			initialEntries={[
-				`/workspace/23/settings/data-source${queryString}`
-			]}
-		>
-			<Route path={Routes.SETTINGS_DATA_SOURCE_LIST}>
-				<DataSourceList {...defaultProps} {...otherProps} />
-			</Route>
-		</MemoryRouter>
-	</Provider>
-);
-
-const DefaultUserComponent = () => (
-	<Provider
-		store={mockStore(
-			mockStoreData.setIn(
-				['currentUser'],
-				new RemoteData({data: '24', loading: false})
-			)
-		)}
-	>
-		<MemoryRouter initialEntries={['/workspace/23/settings/data-source']}>
-			<Route path={Routes.SETTINGS_DATA_SOURCE_LIST}>
-				<DataSourceList {...defaultProps} />
-			</Route>
-		</MemoryRouter>
-	</Provider>
-);
-
-describe('DataSourceList', () => {
-	afterEach(() => {
-		jest.runAllTimers();
-
-		API.dataSource.search.mockClear();
-
-		cleanup();
+		it('returns false for any other state', () => {
+			expect(disableRow({state: DataSourceStates.Ready})).toBe(false);
+			expect(disableRow({state: DataSourceStates.CredentialsValid})).toBe(
+				false
+			);
+			expect(disableRow({state: DataSourceStates.Disconnected})).toBe(
+				false
+			);
+		});
 	});
 
-	mockNotificationAlertList.useNotificationsAPI = jest.fn(() => ({
-		data: [{}],
-		loading: false,
-		refetch: () => {}
-	}));
+	describe('isDataSourceVisible', () => {
+		it('always shows data source types with no subscription rule', () => {
+			expect(
+				isDataSourceVisible(
+					DataSourceTypes.Liferay,
+					SubscriptionNames.LiferayDataPlatform
+				)
+			).toBe(true);
+			expect(
+				isDataSourceVisible(
+					DataSourceTypes.Csv,
+					SubscriptionNames.LiferayAnalyticsCloudEnterprise
+				)
+			).toBe(true);
+		});
 
-	it('should render', async () => {
-		const {container} = render(<DefaultComponent />);
+		it('returns true when the subscription name is null', () => {
+			expect(isDataSourceVisible(DataSourceTypes.Demandbase, null)).toBe(
+				true
+			);
+		});
 
-		await waitForLoadingToBeRemoved(container);
+		it.each([
+			DataSourceTypes.Demandbase,
+			DataSourceTypes.Hubspot,
+			DataSourceTypes.Salesforce
+		])('shows %s when the subscription is Liferay Data Platform', type => {
+			expect(
+				isDataSourceVisible(type, SubscriptionNames.LiferayDataPlatform)
+			).toBe(true);
+		});
 
-		expect(container).toMatchSnapshot();
+		it.each([
+			[
+				DataSourceTypes.Demandbase,
+				SubscriptionNames.LiferayAnalyticsCloudBasic
+			],
+			[
+				DataSourceTypes.Hubspot,
+				SubscriptionNames.LiferayAnalyticsCloudBusiness
+			],
+			[
+				DataSourceTypes.Salesforce,
+				SubscriptionNames.LiferayAnalyticsCloudEnterprise
+			],
+			[
+				DataSourceTypes.Demandbase,
+				SubscriptionNames.LiferaySaasEnterprisePlan
+			],
+			[DataSourceTypes.Hubspot, SubscriptionNames.LxcBusinessPlan]
+		])('hides %s for non-LDP subscription %s', (type, subscription) => {
+			expect(isDataSourceVisible(type, subscription)).toBe(false);
+		});
 	});
 
-	it('should render with an empty state', async () => {
-		API.dataSource.search.mockReturnValueOnce(
-			Promise.resolve({items: [], total: 0})
-		);
+	describe('StatusRenderer', () => {
+		it('renders Not Configured when the data source has no state', () => {
+			const {getByText} = render(<StatusRenderer data={{state: null}} />);
 
-		API.dataSource.search.mockReturnValueOnce(
-			Promise.resolve({items: [], total: 0})
-		);
+			expect(getByText(/Not Configured/)).toBeInTheDocument();
+		});
 
-		const {container} = render(
-			<DefaultComponent queryString='?query=foo' />
-		);
+		describe('3rd-party connector framework', () => {
+			it.each([
+				['Demandbase', DataSourceTypes.Demandbase],
+				['Hubspot', DataSourceTypes.Hubspot]
+			])(
+				'renders Active for a %s connector with status ACTIVE',
+				(_, providerType) => {
+					const {getByText} = render(
+						<StatusRenderer
+							data={{
+								providerType,
+								state: DataSourceStates.CredentialsValid,
+								status: 'ACTIVE'
+							}}
+						/>
+					);
 
-		await waitForLoadingToBeRemoved(container);
+					expect(getByText(/Active/)).toBeInTheDocument();
+				}
+			);
 
-		expect(container.querySelector('.no-results-root')).toMatchSnapshot();
+			it.each([
+				['Demandbase', DataSourceTypes.Demandbase],
+				['Hubspot', DataSourceTypes.Hubspot]
+			])(
+				'renders Inactive for a %s connector with status INACTIVE',
+				(_, providerType) => {
+					const {getByText} = render(
+						<StatusRenderer
+							data={{
+								providerType,
+								state: DataSourceStates.CredentialsValid,
+								status: 'INACTIVE'
+							}}
+						/>
+					);
+
+					expect(getByText(/Inactive/)).toBeInTheDocument();
+				}
+			);
+
+			it.each([
+				['Demandbase', DataSourceTypes.Demandbase],
+				['Hubspot', DataSourceTypes.Hubspot]
+			])(
+				'renders Disconnected for a manually disconnected %s connector (state=DISCONNECTED takes precedence over status=INACTIVE)',
+				(_, providerType) => {
+					const {getByText, queryByText} = render(
+						<StatusRenderer
+							data={{
+								providerType,
+								state: DataSourceStates.Disconnected,
+								status: 'INACTIVE'
+							}}
+						/>
+					);
+
+					expect(getByText(/Disconnected/)).toBeInTheDocument();
+					expect(queryByText(/^Inactive$/)).toBeNull();
+				}
+			);
+		});
+
+		describe('legacy data sources', () => {
+			it('falls back to the legacy display object for Liferay DXP data sources', () => {
+				const {getByText} = render(
+					<StatusRenderer
+						data={{
+							providerType: DataSourceTypes.Liferay,
+							state: DataSourceStates.Disconnected
+						}}
+					/>
+				);
+
+				expect(getByText(/Disconnected/)).toBeInTheDocument();
+			});
+
+			it('falls back to the legacy display object for Salesforce data sources', () => {
+				const {getByText} = render(
+					<StatusRenderer
+						data={{
+							providerType: DataSourceTypes.Salesforce,
+							state: DataSourceStates.CredentialsInvalid
+						}}
+					/>
+				);
+
+				expect(getByText(/Invalid Credentials/)).toBeInTheDocument();
+			});
+
+			it('falls back to the legacy display object when the providerType is unknown', () => {
+				const {getByText} = render(
+					<StatusRenderer
+						data={{
+							providerType: 'NOT_A_REGISTERED_CONNECTOR',
+							state: DataSourceStates.Ready
+						}}
+					/>
+				);
+
+				expect(getByText(/Active/)).toBeInTheDocument();
+			});
+		});
 	});
 
-	it('should render with a message to connect datasources if there are none', async () => {
-		API.dataSource.search.mockReturnValueOnce(
-			Promise.resolve({items: [], total: 0})
-		);
+	describe('DataSourceName', () => {
+		const renderInRouter = ui => render(<MemoryRouter>{ui}</MemoryRouter>);
 
-		API.dataSource.search.mockReturnValueOnce(
-			Promise.resolve({items: [], total: 0})
-		);
+		it('renders a link to the data source when not being deleted', () => {
+			const {container, getByText} = renderInRouter(
+				<DataSourceName
+					data={{
+						id: 'ds-1',
+						name: 'My Data Source',
+						state: DataSourceStates.Ready
+					}}
+					hrefFormatter={({id}) => `/ds/${id}`}
+				/>
+			);
 
-		const {container} = render(<DefaultComponent />);
+			const link = container.querySelector('a');
 
-		await waitForLoadingToBeRemoved(container);
+			expect(link).not.toBeNull();
+			expect(link.getAttribute('href')).toBe('/ds/ds-1');
+			expect(getByText('My Data Source')).toBeInTheDocument();
+		});
 
-		expect(container.querySelector('.no-results-root')).toMatchSnapshot();
-	});
+		it('renders the name as plain text (no link) while the data source is being deleted', () => {
+			const {container, getByText} = renderInRouter(
+				<DataSourceName
+					data={{
+						id: 'ds-1',
+						name: 'Deleting Data Source',
+						state: DataSourceStates.InProgressDeleting
+					}}
+					hrefFormatter={() => '/should-not-be-used'}
+				/>
+			);
 
-	it('should open a dropdown with "Liferay DXP" and "Salesforce" when clicking the "Add Data Source" button', async () => {
-		const {container, getByText} = render(<DefaultComponent />);
-
-		await waitForLoadingToBeRemoved(container);
-
-		fireEvent.click(getByText('Add Data Source'));
-
-		expect(getByText('Liferay DXP')).toBeTruthy();
-		expect(getByText('Salesforce')).toBeTruthy();
-	});
-
-	it('should render toast for one data source with invalid credentials', async () => {
-		API.dataSource.search.mockReturnValueOnce(
-			Promise.resolve({
-				items: [
-					data.mockLiferayDataSource(1, {
-						credentials: {
-							oAuthOwner: {emailAddress: 'test@liferay.com'}
-						},
-						state: DataSourceStates.CredentialsInvalid
-					})
-				],
-				total: 1
-			})
-		);
-
-		API.dataSource.search.mockReturnValueOnce(
-			Promise.resolve({
-				items: [
-					data.mockLiferayDataSource(1, {
-						credentials: {
-							oAuthOwner: {emailAddress: 'test@liferay.com'}
-						},
-						state: DataSourceStates.CredentialsInvalid
-					})
-				],
-				total: 1
-			})
-		);
-
-		const {container} = render(<DefaultComponent />);
-
-		await waitForLoadingToBeRemoved(container);
-
-		expect(
-			container.querySelectorAll('.embedded-alert-list-root')[1]
-		).toMatchSnapshot();
-	});
-
-	it('should render without an "add data source" button if the user role is member', () => {
-		API.user.fetchCurrentUser.mockReturnValueOnce(
-			Promise.resolve(data.mockMemberUser('24'))
-		);
-
-		const {queryByText} = render(<DefaultUserComponent />);
-
-		jest.runAllTimers();
-
-		expect(queryByText('Add Data Source')).toBeNull();
-	});
-
-	it('should render with a member-specific message to connect datasources if there are none', async () => {
-		API.user.fetchCurrentUser.mockReturnValueOnce(
-			Promise.resolve(data.mockMemberUser('24'))
-		);
-
-		API.dataSource.search.mockReturnValueOnce(
-			Promise.resolve({items: [], total: 0})
-		);
-
-		API.dataSource.search.mockReturnValueOnce(
-			Promise.resolve({items: [], total: 0})
-		);
-
-		const {container} = render(<DefaultUserComponent />);
-
-		await waitForLoadingToBeRemoved(container);
-
-		expect(container.querySelector('.no-results-root')).toMatchSnapshot();
-	});
-
-	it("should render toast for one data source with invalid credentials for a member's view", async () => {
-		API.user.fetchCurrentUser.mockReturnValueOnce(
-			Promise.resolve(data.mockMemberUser('24'))
-		);
-
-		API.dataSource.search.mockReturnValue(
-			Promise.resolve({
-				items: [
-					data.mockLiferayDataSource(1, {
-						credentials: {
-							oAuthOwner: {emailAddress: 'test@liferay.com'}
-						},
-						state: DataSourceStates.CredentialsInvalid
-					})
-				],
-				total: 1
-			})
-		);
-
-		const {container} = render(<DefaultUserComponent />);
-
-		await waitForLoadingToBeRemoved(container);
-
-		expect(
-			container.querySelectorAll('.embedded-alert-list-root')[1]
-		).toMatchSnapshot();
-	});
-
-	it('should render toast for multiple data sources with invalid credentials', async () => {
-		API.dataSource.search.mockReturnValue(
-			Promise.resolve({
-				items: [
-					data.mockLiferayDataSource(1, {
-						credentials: {
-							oAuthOwner: {emailAddress: 'test@liferay.com'}
-						},
-						state: DataSourceStates.CredentialsInvalid
-					})
-				],
-				total: 2
-			})
-		);
-
-		const {container} = render(<DefaultComponent />);
-
-		await waitForLoadingToBeRemoved(container);
-
-		expect(
-			container.querySelectorAll('.embedded-alert-list-root')[1]
-		).toMatchSnapshot();
-	});
-
-	it("should render toast for multiple data sources with invalid credentials for a member's view", async () => {
-		API.user.fetchCurrentUser.mockReturnValueOnce(
-			Promise.resolve(data.mockMemberUser('24'))
-		);
-
-		API.dataSource.search.mockReturnValue(
-			Promise.resolve({
-				items: [
-					data.mockLiferayDataSource(1, {
-						credentials: {
-							oAuthOwner: {emailAddress: 'test@liferay.com'}
-						},
-						state: DataSourceStates.CredentialsInvalid
-					})
-				],
-				total: 2
-			})
-		);
-
-		const {container} = render(<DefaultUserComponent />);
-
-		await waitForLoadingToBeRemoved(container);
-
-		expect(
-			container.querySelectorAll('.embedded-alert-list-root')[1]
-		).toMatchSnapshot();
-	});
-});
-
-describe('CellRenderers', () => {
-	afterEach(cleanup);
-
-	it('should show data-source as not configured', () => {
-		const {getByText} = render(<StatusRenderer data={{state: null}} />);
-
-		expect(getByText(/Not Configured/)).toBeTruthy();
-	});
-
-	it('should render as disabled if the datasource is in the process of being deleted', () => {
-		const {container} = render(
-			<DataSourceName
-				data={{state: DataSourceStates.InProgressDeleting}}
-			/>
-		);
-
-		expect(container.querySelector('a')).toBeNull();
-	});
-});
-
-describe('disableRow', () => {
-	it('should return true if datasource state is inProgressDeleting', () => {
-		expect(disableRow({state: DataSourceStates.InProgressDeleting})).toBe(
-			true
-		);
-	});
-
-	it('should return false if datasource state is NOT inProgressDeleting', () => {
-		expect(disableRow({state: DataSourceStates.Ready})).toBe(false);
+			expect(container.querySelector('a')).toBeNull();
+			expect(getByText('Deleting Data Source')).toBeInTheDocument();
+		});
 	});
 });

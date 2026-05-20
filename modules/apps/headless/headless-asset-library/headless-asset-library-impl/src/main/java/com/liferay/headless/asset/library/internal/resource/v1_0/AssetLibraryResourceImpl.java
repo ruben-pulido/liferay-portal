@@ -408,7 +408,7 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 			_updateDLSizeLimitConfiguration(
 				assetLibrary, group.getGroupId(), mimeTypeSizeLimits);
 
-			return _depotEntryService.updateDepotEntry(
+			DepotEntry updatedDepotEntry = _depotEntryService.updateDepotEntry(
 				depotEntry.getDepotEntryId(), nameMap, descriptionMap,
 				_getDepotAppCustomizationMap(
 					depotEntry.getCompanyId(), externalReferenceCode),
@@ -418,6 +418,10 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 					unicodeProperties
 				).build(),
 				serviceContext);
+
+			_updateFriendlyURL(assetLibrary, group.getGroupId());
+
+			return updatedDepotEntry;
 		}
 
 		DepotEntry depotEntry = _depotEntryService.addDepotEntry(
@@ -449,6 +453,8 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 			group = _groupLocalService.updateGroup(group);
 		}
 
+		_updateFriendlyURL(assetLibrary, group.getGroupId());
+
 		_updateDLSizeLimitConfiguration(
 			assetLibrary, group.getGroupId(), mimeTypeSizeLimits);
 
@@ -460,10 +466,11 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 
 			if (!expandoBridge.hasAttribute("cmsFirstTimeAccess")) {
 				expandoBridge.addAttribute(
-					"cmsFirstTimeAccess", ExpandoColumnConstants.BOOLEAN,
+					"cmsFirstTimeAccess", ExpandoColumnConstants.BOOLEAN, false,
 					false);
 
-				expandoBridge.setAttribute("cmsFirstTimeAccess", Boolean.FALSE);
+				expandoBridge.setAttribute(
+					"cmsFirstTimeAccess", Boolean.FALSE, false);
 			}
 		}
 
@@ -798,6 +805,16 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 
 		_dlSizeLimitConfigurationProvider.updateGroupSizeLimit(
 			groupId, 0L, 0L, mimeTypeSizeLimits);
+	}
+
+	private void _updateFriendlyURL(AssetLibrary assetLibrary, long groupId)
+		throws Exception {
+
+		String friendlyURL = assetLibrary.getFriendlyURL();
+
+		if (Validator.isNotNull(friendlyURL)) {
+			_groupLocalService.updateFriendlyURL(groupId, friendlyURL);
+		}
 	}
 
 	private static final AssetLibraryEntityModel _assetLibraryEntityModel =

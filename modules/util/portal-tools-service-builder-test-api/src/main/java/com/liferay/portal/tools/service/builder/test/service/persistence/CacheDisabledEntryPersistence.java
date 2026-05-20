@@ -43,14 +43,6 @@ public interface CacheDisabledEntryPersistence
 		throws NoSuchCacheDisabledEntryException;
 
 	/**
-	 * Returns the cache disabled entry where name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param name the name
-	 * @return the matching cache disabled entry, or <code>null</code> if a matching cache disabled entry could not be found
-	 */
-	public CacheDisabledEntry fetchByName(String name);
-
-	/**
 	 * Returns the cache disabled entry where name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param name the name
@@ -75,21 +67,6 @@ public interface CacheDisabledEntryPersistence
 	 * @return the number of matching cache disabled entries
 	 */
 	public int countByName(String name);
-
-	/**
-	 * Caches the cache disabled entry in the entity cache if it is enabled.
-	 *
-	 * @param cacheDisabledEntry the cache disabled entry
-	 */
-	public void cacheResult(CacheDisabledEntry cacheDisabledEntry);
-
-	/**
-	 * Caches the cache disabled entries in the entity cache if it is enabled.
-	 *
-	 * @param cacheDisabledEntries the cache disabled entries
-	 */
-	public void cacheResult(
-		java.util.List<CacheDisabledEntry> cacheDisabledEntries);
 
 	/**
 	 * Creates a new cache disabled entry with the primary key. Does not add the cache disabled entry to the database.
@@ -130,72 +107,14 @@ public interface CacheDisabledEntryPersistence
 	public CacheDisabledEntry fetchByPrimaryKey(long cacheDisabledEntryId);
 
 	/**
-	 * Returns all the cache disabled entries.
+	 * Returns the cache disabled entry where name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the cache disabled entries
+	 * @param name the name
+	 * @return the matching cache disabled entry, or <code>null</code> if a matching cache disabled entry could not be found
 	 */
-	public java.util.List<CacheDisabledEntry> findAll();
-
-	/**
-	 * Returns a range of all the cache disabled entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CacheDisabledEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cache disabled entries
-	 * @param end the upper bound of the range of cache disabled entries (not inclusive)
-	 * @return the range of cache disabled entries
-	 */
-	public java.util.List<CacheDisabledEntry> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the cache disabled entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CacheDisabledEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cache disabled entries
-	 * @param end the upper bound of the range of cache disabled entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cache disabled entries
-	 */
-	public java.util.List<CacheDisabledEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CacheDisabledEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cache disabled entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CacheDisabledEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cache disabled entries
-	 * @param end the upper bound of the range of cache disabled entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cache disabled entries
-	 */
-	public java.util.List<CacheDisabledEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CacheDisabledEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the cache disabled entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of cache disabled entries.
-	 *
-	 * @return the number of cache disabled entries
-	 */
-	public int countAll();
+	public default CacheDisabledEntry fetchByName(String name) {
+		return fetchByName(name, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-665633772
+// LIFERAY-SERVICE-BUILDER-HASH:775664026

@@ -154,4 +154,13 @@ export async function performUserSwitch(
 	await performLogin(page, screenName);
 }
 
+export async function performUserSwitchViaApi(
+	page: Page,
+	screenName: LoginScreenName | string
+) {
+	await page.waitForURL((url) => !url.pathname.endsWith('/c/portal/logout'));
+
+	await performLoginViaApi({page, screenName});
+}
+
 export default performLogin;

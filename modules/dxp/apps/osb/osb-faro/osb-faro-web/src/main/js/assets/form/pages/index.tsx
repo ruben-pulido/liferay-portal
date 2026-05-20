@@ -17,7 +17,7 @@ import {Router} from 'shared/types';
 import {sub} from 'shared/util/lang';
 import {Switch} from 'react-router-dom';
 import {useChannelContext} from 'shared/context/channel';
-import {useDataSource} from 'shared/hooks/useDataSource';
+import {useDataSources} from 'shared/context/dataSources';
 import {useQueryRangeSelectors} from 'shared/hooks/useQueryRangeSelectors';
 
 const Overview = lazy(
@@ -48,14 +48,22 @@ const Form: React.FC<{
 	router: Router;
 }> = ({className, router}) => {
 	const {
-		params: {assetId, channelId, groupId, title, touchpoint}
+		params: {
+			assetId,
+			channelId = '',
+			groupId = '',
+			title = '',
+			touchpoint,
+			type = ''
+		}
 	} = router;
 
 	const [filters, setFilters] = useState({});
 
-	const dataSourceStates = useDataSource();
+	const dataSourceStates = useDataSources();
 
 	const decodedTitle = getSafeDecodedURIComponent(title);
+	const decodedType = getSafeDecodedURIComponent(type);
 
 	const rangeSelectorsFromQuery = useQueryRangeSelectors();
 
@@ -78,7 +86,13 @@ const Form: React.FC<{
 				]}
 				groupId={groupId}
 			>
-				<BasePage.Header.TitleSection title={decodedTitle} />
+				{type && (
+					<BasePage.Header.TitleSection
+						label
+						subtitle={decodedType}
+						title={decodedTitle}
+					/>
+				)}
 
 				<BasePage.Header.NavBar
 					items={NAV_ITEMS}
@@ -87,7 +101,8 @@ const Form: React.FC<{
 						channelId,
 						groupId,
 						title,
-						touchpoint
+						touchpoint,
+						type
 					}}
 					routeQueries={pickBy(rangeSelectorsFromQuery)}
 				/>
@@ -97,7 +112,7 @@ const Form: React.FC<{
 				<BasePage.SubHeader>
 					<div className='d-flex justify-content-end w-100'>
 						<DownloadPDFReport
-							disabled={dataSourceStates.empty}
+							disabled={!!dataSourceStates.empty}
 							subtitle={selectedChannel?.name}
 							title={
 								sub(Liferay.Language.get('x-dashboard'), [
@@ -116,7 +131,7 @@ const Form: React.FC<{
 						<DownloadCSVReport
 							assetId={assetId}
 							assetType='form'
-							disabled={dataSourceStates.empty}
+							disabled={!!dataSourceStates.empty}
 							type={CSVType.Individual}
 							typeLang={Liferay.Language.get('known-individuals')}
 						/>

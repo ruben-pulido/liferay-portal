@@ -1,4 +1,4 @@
-import * as useDataSource from 'shared/hooks/useDataSource';
+import * as useDataSources from 'shared/context/dataSources';
 import KnownIndividuals from '../KnownIndividuals';
 import mockStore from 'test/mock-store';
 import React from 'react';
@@ -11,7 +11,7 @@ import {waitForLoadingToBeRemoved} from 'test/helpers';
 
 jest.unmock('react-dom');
 
-const mockUseDataSource = useDataSource;
+const mockUseDataSource = useDataSources;
 
 const WrappedComponent = () => (
 	<Provider store={mockStore()}>
@@ -31,7 +31,7 @@ describe('Individuals Dashboard KnownIndividuals List', () => {
 	afterEach(cleanup);
 
 	it('renders', async () => {
-		mockUseDataSource.useDataSource = jest.fn(() => mockSuccessState);
+		mockUseDataSource.useDataSources = jest.fn(() => mockSuccessState);
 
 		const {container} = render(<WrappedComponent />);
 
@@ -39,14 +39,18 @@ describe('Individuals Dashboard KnownIndividuals List', () => {
 
 		jest.runAllTimers();
 
-		expect(container).toMatchSnapshot();
+		expect(
+			container.querySelector(
+				'.individuals-dashboard-known-individuals-root'
+			)
+		).toBeInTheDocument();
 	});
 
 	it('renders with data source empty state', () => {
-		mockUseDataSource.useDataSource = jest.fn(() => mockEmptyState);
+		mockUseDataSource.useDataSources = jest.fn(() => mockEmptyState);
 
-		const {container} = render(<WrappedComponent />);
+		const {getByText} = render(<WrappedComponent />);
 
-		expect(container).toMatchSnapshot();
+		expect(getByText('No Data Sources Connected')).toBeInTheDocument();
 	});
 });

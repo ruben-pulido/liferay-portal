@@ -60,8 +60,6 @@ public class AssetListEntrySegmentsEntryRelLocalServiceImpl
 		assetListEntrySegmentsEntryRel.setCompanyId(user.getCompanyId());
 		assetListEntrySegmentsEntryRel.setUserId(userId);
 		assetListEntrySegmentsEntryRel.setUserName(user.getFullName());
-		assetListEntrySegmentsEntryRel.setCreateDate(new Date());
-		assetListEntrySegmentsEntryRel.setModifiedDate(new Date());
 		assetListEntrySegmentsEntryRel.setAssetListEntryId(assetListEntryId);
 		assetListEntrySegmentsEntryRel.setPriority(priority);
 		assetListEntrySegmentsEntryRel.setSegmentsEntryId(segmentsEntryId);

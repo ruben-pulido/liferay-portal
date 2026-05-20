@@ -3,20 +3,71 @@ defaults:
         shell: bash
 jobs:
     test-cloud-helm-chart:
-        if: ${{github.repository == 'liferay/liferay-portal'}}
+        if: ${{github.repository == 'cloudnative-team/liferay-portal'}}
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout code
                 uses: actions/checkout@v4
-            -   name: Create Kind cluster
-                run: kind create cluster
-            -   name: Run Helm test
+            -   name: Install Helm
+                uses: azure/setup-helm@v4
+            -   name: Install helm-unittest plugin
+                run: helm plugin install --verify=false --version 1.0.3 https://github.com/helm-unittest/helm-unittest
+            -   name: Set up Kubeconform
+                uses: bmuschko/setup-kubeconform@v1
+                with:
+                    kubeconform-version: 0.7.0
+            -   name: Update Helm dependencies
+                run: helm dependency update --skip-refresh
+                working-directory: ./cloud/helm/${{matrix.chart}}
+            -   name: Lint Helm chart
+                run: helm lint .
+                working-directory: ./cloud/helm/${{matrix.chart}}
+            -   name: Run Helm chart tests
+                run: helm unittest .
+                working-directory: ./cloud/helm/${{matrix.chart}}
+            -   name: Run Bash tests
                 run: |
-                    helm upgrade -i liferay --wait .
+                    set -o errexit
 
-                    helm test liferay
-                working-directory: ./cloud/helm
+                    function main {
+                        local test
+
+                        for test in scripts/tests/*-test.sh tests/*_test.sh
+                        do
+                            if [ -f "${test}" ]
+                            then
+                                bash "${test}"
+                            fi
+                        done
+                    }
+
+                    main
+                working-directory: ./cloud/helm/${{matrix.chart}}
+            -   name: Render and validate Helm chart
+                run: |
+                    set -o pipefail
+
+                    helm template liferay . | kubeconform --strict --summary \
+                        -schema-location default \
+                        -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+                        -skip ClusterProviderConfig,LiferayInfrastructure
+                working-directory: ./cloud/helm/${{matrix.chart}}
+        strategy:
+            fail-fast: false
+            matrix:
+                chart:
+                    -   aws
+                    -   aws-infrastructure
+                    -   aws-infrastructure-provider
+                    -   aws-marketplace
+                    -   default
+                    -   gcp
+                    -   gcp-infrastructure
+                    -   gcp-infrastructure-provider
 on:
+    pull_request:
+        paths:
+            -   cloud/helm/**
     push:
         branches:
             -   master

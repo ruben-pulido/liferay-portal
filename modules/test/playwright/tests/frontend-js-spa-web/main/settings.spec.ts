@@ -5,7 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedLayoutTest} from '../../../fixtures/isolatedLayoutTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
@@ -13,9 +12,6 @@ import isSPAEnabled from '../../../utils/isSPAEnabled';
 import {waitForAlert} from '../../../utils/waitForAlert';
 
 export const test = mergeTests(
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	isolatedLayoutTest({publish: false}),
 	loginTest(),
 	systemSettingsPageTest
@@ -107,21 +103,13 @@ test(
 
 			await userNotificationTimeoutInput.waitFor({state: 'visible'});
 
-			let warningWasDisplayed = false;
-
-			page.on('request', () => {
-				if (
-					page.getByText(
-						'It looks like this is taking longer than expected.'
-					)
-				) {
-					warningWasDisplayed = true;
-				}
-			});
-
 			await saveButton.click();
 
-			expect(warningWasDisplayed).toBe(true);
+			await expect(
+				page.getByText(
+					'It looks like this is taking longer than expected.'
+				)
+			).toBeVisible();
 		});
 
 		await test.step('Change the timeout back to 30000ms', async () => {

@@ -36,6 +36,20 @@ public class CountryUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<Country> countries) {
+		getPersistence().cacheResult(countries);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(Country country) {
+		getPersistence().cacheResult(country);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,56 +125,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching countries
-	 */
-	public static List<Country> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the countries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByUuid(String uuid, int start, int end) {
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -207,38 +175,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByUuid(String uuid) {
-		return getPersistence().filterFindByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().filterFindByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -285,62 +225,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching countries
-	 */
-	public static List<Country> findByUuid_C(String uuid, long companyId) {
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the countries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -394,42 +282,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -480,59 +336,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching countries
-	 */
-	public static List<Country> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the countries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -581,38 +388,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByCompanyId(long companyId) {
-		return getPersistence().filterFindByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().filterFindByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -659,59 +438,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where active = &#63;.
-	 *
-	 * @param active the active
-	 * @return the matching countries
-	 */
-	public static List<Country> findByActive(boolean active) {
-		return getPersistence().findByActive(active);
-	}
-
-	/**
-	 * Returns a range of all the countries where active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByActive(
-		boolean active, int start, int end) {
-
-		return getPersistence().findByActive(active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByActive(
-		boolean active, int start, int end,
-		OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByActive(
-			active, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -758,38 +488,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where active = &#63;.
-	 *
-	 * @param active the active
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByActive(boolean active) {
-		return getPersistence().filterFindByActive(active);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param active the active
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByActive(
-		boolean active, int start, int end) {
-
-		return getPersistence().filterFindByActive(active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param active the active
@@ -850,17 +552,6 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns the country where companyId = &#63; and a2 = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param a2 the a2
-	 * @return the matching country, or <code>null</code> if a matching country could not be found
-	 */
-	public static Country fetchByC_A2(long companyId, String a2) {
-		return getPersistence().fetchByC_A2(companyId, a2);
-	}
-
-	/**
 	 * Returns the country where companyId = &#63; and a2 = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -913,17 +604,6 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns the country where companyId = &#63; and a3 = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param a3 the a3
-	 * @return the matching country, or <code>null</code> if a matching country could not be found
-	 */
-	public static Country fetchByC_A3(long companyId, String a3) {
-		return getPersistence().fetchByC_A3(companyId, a3);
-	}
-
-	/**
 	 * Returns the country where companyId = &#63; and a3 = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -962,62 +642,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where companyId = &#63; and active = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @return the matching countries
-	 */
-	public static List<Country> findByC_Active(long companyId, boolean active) {
-		return getPersistence().findByC_Active(companyId, active);
-	}
-
-	/**
-	 * Returns a range of all the countries where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByC_Active(
-		long companyId, boolean active, int start, int end) {
-
-		return getPersistence().findByC_Active(companyId, active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByC_Active(
-		long companyId, boolean active, int start, int end,
-		OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByC_Active(
-			companyId, active, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1071,43 +699,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where companyId = &#63; and active = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_Active(
-		long companyId, boolean active) {
-
-		return getPersistence().filterFindByC_Active(companyId, active);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where companyId = &#63; and active = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_Active(
-		long companyId, boolean active, int start, int end) {
-
-		return getPersistence().filterFindByC_Active(
-			companyId, active, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where companyId = &#63; and active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1172,17 +767,6 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns the country where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param name the name
-	 * @return the matching country, or <code>null</code> if a matching country could not be found
-	 */
-	public static Country fetchByC_Name(long companyId, String name) {
-		return getPersistence().fetchByC_Name(companyId, name);
-	}
-
-	/**
 	 * Returns the country where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -1235,17 +819,6 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns the country where companyId = &#63; and number = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param number the number
-	 * @return the matching country, or <code>null</code> if a matching country could not be found
-	 */
-	public static Country fetchByC_Number(long companyId, String number) {
-		return getPersistence().fetchByC_Number(companyId, number);
-	}
-
-	/**
 	 * Returns the country where companyId = &#63; and number = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -1285,69 +858,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @return the matching countries
-	 */
-	public static List<Country> findByC_A_B(
-		long companyId, boolean active, boolean billingAllowed) {
-
-		return getPersistence().findByC_A_B(companyId, active, billingAllowed);
-	}
-
-	/**
-	 * Returns a range of all the countries where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByC_A_B(
-		long companyId, boolean active, boolean billingAllowed, int start,
-		int end) {
-
-		return getPersistence().findByC_A_B(
-			companyId, active, billingAllowed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByC_A_B(
-		long companyId, boolean active, boolean billingAllowed, int start,
-		int end, OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByC_A_B(
-			companyId, active, billingAllowed, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1406,47 +920,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_B(
-		long companyId, boolean active, boolean billingAllowed) {
-
-		return getPersistence().filterFindByC_A_B(
-			companyId, active, billingAllowed);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_B(
-		long companyId, boolean active, boolean billingAllowed, int start,
-		int end) {
-
-		return getPersistence().filterFindByC_A_B(
-			companyId, active, billingAllowed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1508,69 +985,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param shippingAllowed the shipping allowed
-	 * @return the matching countries
-	 */
-	public static List<Country> findByC_A_S(
-		long companyId, boolean active, boolean shippingAllowed) {
-
-		return getPersistence().findByC_A_S(companyId, active, shippingAllowed);
-	}
-
-	/**
-	 * Returns a range of all the countries where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByC_A_S(
-		long companyId, boolean active, boolean shippingAllowed, int start,
-		int end) {
-
-		return getPersistence().findByC_A_S(
-			companyId, active, shippingAllowed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByC_A_S(
-		long companyId, boolean active, boolean shippingAllowed, int start,
-		int end, OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByC_A_S(
-			companyId, active, shippingAllowed, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1629,47 +1047,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param shippingAllowed the shipping allowed
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_S(
-		long companyId, boolean active, boolean shippingAllowed) {
-
-		return getPersistence().filterFindByC_A_S(
-			companyId, active, shippingAllowed);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param active the active
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_S(
-		long companyId, boolean active, boolean shippingAllowed, int start,
-		int end) {
-
-		return getPersistence().filterFindByC_A_S(
-			companyId, active, shippingAllowed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1732,76 +1113,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @return the matching countries
-	 */
-	public static List<Country> findByC_A_B_G(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled) {
-
-		return getPersistence().findByC_A_B_G(
-			countryId, active, billingAllowed, groupFilterEnabled);
-	}
-
-	/**
-	 * Returns a range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByC_A_B_G(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled, int start, int end) {
-
-		return getPersistence().findByC_A_B_G(
-			countryId, active, billingAllowed, groupFilterEnabled, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByC_A_B_G(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled, int start, int end,
-		OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByC_A_B_G(
-			countryId, active, billingAllowed, groupFilterEnabled, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param countryId the country ID
@@ -1867,50 +1182,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_B_G(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled) {
-
-		return getPersistence().filterFindByC_A_B_G(
-			countryId, active, billingAllowed, groupFilterEnabled);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_B_G(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled, int start, int end) {
-
-		return getPersistence().filterFindByC_A_B_G(
-			countryId, active, billingAllowed, groupFilterEnabled, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param countryId the country ID
@@ -1983,76 +1258,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @return the matching countries
-	 */
-	public static List<Country> findByC_A_G_S(
-		long countryId, boolean active, boolean groupFilterEnabled,
-		boolean shippingAllowed) {
-
-		return getPersistence().findByC_A_G_S(
-			countryId, active, groupFilterEnabled, shippingAllowed);
-	}
-
-	/**
-	 * Returns a range of all the countries where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByC_A_G_S(
-		long countryId, boolean active, boolean groupFilterEnabled,
-		boolean shippingAllowed, int start, int end) {
-
-		return getPersistence().findByC_A_G_S(
-			countryId, active, groupFilterEnabled, shippingAllowed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByC_A_G_S(
-		long countryId, boolean active, boolean groupFilterEnabled,
-		boolean shippingAllowed, int start, int end,
-		OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByC_A_G_S(
-			countryId, active, groupFilterEnabled, shippingAllowed, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param countryId the country ID
@@ -2117,50 +1326,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_G_S(
-		long countryId, boolean active, boolean groupFilterEnabled,
-		boolean shippingAllowed) {
-
-		return getPersistence().filterFindByC_A_G_S(
-			countryId, active, groupFilterEnabled, shippingAllowed);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_G_S(
-		long countryId, boolean active, boolean groupFilterEnabled,
-		boolean shippingAllowed, int start, int end) {
-
-		return getPersistence().filterFindByC_A_G_S(
-			countryId, active, groupFilterEnabled, shippingAllowed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param countryId the country ID
@@ -2233,82 +1402,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @return the matching countries
-	 */
-	public static List<Country> findByC_A_B_G_S(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled, boolean shippingAllowed) {
-
-		return getPersistence().findByC_A_B_G_S(
-			countryId, active, billingAllowed, groupFilterEnabled,
-			shippingAllowed);
-	}
-
-	/**
-	 * Returns a range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries
-	 */
-	public static List<Country> findByC_A_B_G_S(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled, boolean shippingAllowed, int start,
-		int end) {
-
-		return getPersistence().findByC_A_B_G_S(
-			countryId, active, billingAllowed, groupFilterEnabled,
-			shippingAllowed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching countries
-	 */
-	public static List<Country> findByC_A_B_G_S(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled, boolean shippingAllowed, int start, int end,
-		OrderByComparator<Country> orderByComparator) {
-
-		return getPersistence().findByC_A_B_G_S(
-			countryId, active, billingAllowed, groupFilterEnabled,
-			shippingAllowed, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param countryId the country ID
@@ -2377,55 +1474,10 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries that the user has permission to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @return the matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_B_G_S(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled, boolean shippingAllowed) {
-
-		return getPersistence().filterFindByC_A_B_G_S(
-			countryId, active, billingAllowed, groupFilterEnabled,
-			shippingAllowed);
-	}
-
-	/**
-	 * Returns a range of all the countries that the user has permission to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param countryId the country ID
-	 * @param active the active
-	 * @param billingAllowed the billing allowed
-	 * @param groupFilterEnabled the group filter enabled
-	 * @param shippingAllowed the shipping allowed
-	 * @param start the lower bound of the range of countries
-	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of matching countries that the user has permission to view
-	 */
-	public static List<Country> filterFindByC_A_B_G_S(
-		long countryId, boolean active, boolean billingAllowed,
-		boolean groupFilterEnabled, boolean shippingAllowed, int start,
-		int end) {
-
-		return getPersistence().filterFindByC_A_B_G_S(
-			countryId, active, billingAllowed, groupFilterEnabled,
-			shippingAllowed, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the countries that the user has permissions to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param countryId the country ID
@@ -2505,21 +1557,60 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Caches the country in the entity cache if it is enabled.
+	 * Returns the country where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCountryException</code> if it could not be found.
 	 *
-	 * @param country the country
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching country
+	 * @throws NoSuchCountryException if a matching country could not be found
 	 */
-	public static void cacheResult(Country country) {
-		getPersistence().cacheResult(country);
+	public static Country findByERC_C(
+			String externalReferenceCode, long companyId)
+		throws com.liferay.portal.kernel.exception.NoSuchCountryException {
+
+		return getPersistence().findByERC_C(externalReferenceCode, companyId);
 	}
 
 	/**
-	 * Caches the countries in the entity cache if it is enabled.
+	 * Returns the country where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
-	 * @param countries the countries
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching country, or <code>null</code> if a matching country could not be found
 	 */
-	public static void cacheResult(List<Country> countries) {
-		getPersistence().cacheResult(countries);
+	public static Country fetchByERC_C(
+		String externalReferenceCode, long companyId, boolean useFinderCache) {
+
+		return getPersistence().fetchByERC_C(
+			externalReferenceCode, companyId, useFinderCache);
+	}
+
+	/**
+	 * Removes the country where externalReferenceCode = &#63; and companyId = &#63; from the database.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the country that was removed
+	 */
+	public static Country removeByERC_C(
+			String externalReferenceCode, long companyId)
+		throws com.liferay.portal.kernel.exception.NoSuchCountryException {
+
+		return getPersistence().removeByERC_C(externalReferenceCode, companyId);
+	}
+
+	/**
+	 * Returns the number of countries where externalReferenceCode = &#63; and companyId = &#63;.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the number of matching countries
+	 */
+	public static int countByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().countByERC_C(externalReferenceCode, companyId);
 	}
 
 	/**
@@ -2573,82 +1664,978 @@ public class CountryUtil {
 	}
 
 	/**
-	 * Returns all the countries.
+	 * Returns the country where companyId = &#63; and a2 = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the countries
+	 * @param companyId the company ID
+	 * @param a2 the a2
+	 * @return the matching country, or <code>null</code> if a matching country could not be found
 	 */
-	public static List<Country> findAll() {
-		return getPersistence().findAll();
+	public static Country fetchByC_A2(long companyId, String a2) {
+		return getPersistence().fetchByC_A2(companyId, a2);
 	}
 
 	/**
-	 * Returns a range of all the countries.
+	 * Returns the country where companyId = &#63; and a3 = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param a3 the a3
+	 * @return the matching country, or <code>null</code> if a matching country could not be found
+	 */
+	public static Country fetchByC_A3(long companyId, String a3) {
+		return getPersistence().fetchByC_A3(companyId, a3);
+	}
+
+	/**
+	 * Returns the country where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching country, or <code>null</code> if a matching country could not be found
+	 */
+	public static Country fetchByC_Name(long companyId, String name) {
+		return getPersistence().fetchByC_Name(companyId, name);
+	}
+
+	/**
+	 * Returns the country where companyId = &#63; and number = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param number the number
+	 * @return the matching country, or <code>null</code> if a matching country could not be found
+	 */
+	public static Country fetchByC_Number(long companyId, String number) {
+		return getPersistence().fetchByC_Number(companyId, number);
+	}
+
+	/**
+	 * Returns the country where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching country, or <code>null</code> if a matching country could not be found
+	 */
+	public static Country fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
+	}
+
+	/**
+	 * Returns all the countries where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching countries
+	 */
+	public static List<Country> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the countries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of countries
 	 * @param end the upper bound of the range of countries (not inclusive)
-	 * @return the range of countries
+	 * @return the range of matching countries
 	 */
-	public static List<Country> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<Country> findByUuid(String uuid, int start, int end) {
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the countries.
+	 * Returns an ordered range of all the countries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of countries
 	 * @param end the upper bound of the range of countries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of countries
+	 * @return the ordered range of matching countries
 	 */
-	public static List<Country> findAll(
-		int start, int end, OrderByComparator<Country> orderByComparator) {
+	public static List<Country> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<Country> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the countries.
+	 * Returns all the countries that the user has permission to view where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByUuid(String uuid) {
+		return getPersistence().filterFindByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CountryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().filterFindByUuid(uuid, start, end);
+	}
+
+	/**
+	 * Returns all the countries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching countries
+	 */
+	public static List<Country> findByUuid_C(String uuid, long companyId) {
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the countries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of countries
 	 * @param end the upper bound of the range of countries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of countries
+	 * @return the ordered range of matching countries
 	 */
-	public static List<Country> findAll(
-		int start, int end, OrderByComparator<Country> orderByComparator,
-		boolean useFinderCache) {
+	public static List<Country> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<Country> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the countries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of countries.
+	 * Returns all the countries that the user has permission to view where uuid = &#63; and companyId = &#63;.
 	 *
-	 * @return the number of countries
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching countries that the user has permission to view
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<Country> filterFindByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns all the countries where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching countries
+	 */
+	public static List<Country> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the countries where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching countries
+	 */
+	public static List<Country> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<Country> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the countries that the user has permission to view where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByCompanyId(long companyId) {
+		return getPersistence().filterFindByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().filterFindByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns all the countries where active = &#63;.
+	 *
+	 * @param active the active
+	 * @return the matching countries
+	 */
+	public static List<Country> findByActive(boolean active) {
+		return getPersistence().findByActive(active);
+	}
+
+	/**
+	 * Returns a range of all the countries where active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByActive(
+		boolean active, int start, int end) {
+
+		return getPersistence().findByActive(active, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching countries
+	 */
+	public static List<Country> findByActive(
+		boolean active, int start, int end,
+		OrderByComparator<Country> orderByComparator) {
+
+		return getPersistence().findByActive(
+			active, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the countries that the user has permission to view where active = &#63;.
+	 *
+	 * @param active the active
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByActive(boolean active) {
+		return getPersistence().filterFindByActive(active);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param active the active
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByActive(
+		boolean active, int start, int end) {
+
+		return getPersistence().filterFindByActive(active, start, end);
+	}
+
+	/**
+	 * Returns all the countries where companyId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @return the matching countries
+	 */
+	public static List<Country> findByC_Active(long companyId, boolean active) {
+		return getPersistence().findByC_Active(companyId, active);
+	}
+
+	/**
+	 * Returns a range of all the countries where companyId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByC_Active(
+		long companyId, boolean active, int start, int end) {
+
+		return getPersistence().findByC_Active(companyId, active, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching countries
+	 */
+	public static List<Country> findByC_Active(
+		long companyId, boolean active, int start, int end,
+		OrderByComparator<Country> orderByComparator) {
+
+		return getPersistence().findByC_Active(
+			companyId, active, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the countries that the user has permission to view where companyId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_Active(
+		long companyId, boolean active) {
+
+		return getPersistence().filterFindByC_Active(companyId, active);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where companyId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_Active(
+		long companyId, boolean active, int start, int end) {
+
+		return getPersistence().filterFindByC_Active(
+			companyId, active, start, end);
+	}
+
+	/**
+	 * Returns all the countries where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @return the matching countries
+	 */
+	public static List<Country> findByC_A_B(
+		long companyId, boolean active, boolean billingAllowed) {
+
+		return getPersistence().findByC_A_B(companyId, active, billingAllowed);
+	}
+
+	/**
+	 * Returns a range of all the countries where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByC_A_B(
+		long companyId, boolean active, boolean billingAllowed, int start,
+		int end) {
+
+		return getPersistence().findByC_A_B(
+			companyId, active, billingAllowed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching countries
+	 */
+	public static List<Country> findByC_A_B(
+		long companyId, boolean active, boolean billingAllowed, int start,
+		int end, OrderByComparator<Country> orderByComparator) {
+
+		return getPersistence().findByC_A_B(
+			companyId, active, billingAllowed, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the countries that the user has permission to view where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_B(
+		long companyId, boolean active, boolean billingAllowed) {
+
+		return getPersistence().filterFindByC_A_B(
+			companyId, active, billingAllowed);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where companyId = &#63; and active = &#63; and billingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_B(
+		long companyId, boolean active, boolean billingAllowed, int start,
+		int end) {
+
+		return getPersistence().filterFindByC_A_B(
+			companyId, active, billingAllowed, start, end);
+	}
+
+	/**
+	 * Returns all the countries where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param shippingAllowed the shipping allowed
+	 * @return the matching countries
+	 */
+	public static List<Country> findByC_A_S(
+		long companyId, boolean active, boolean shippingAllowed) {
+
+		return getPersistence().findByC_A_S(companyId, active, shippingAllowed);
+	}
+
+	/**
+	 * Returns a range of all the countries where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByC_A_S(
+		long companyId, boolean active, boolean shippingAllowed, int start,
+		int end) {
+
+		return getPersistence().findByC_A_S(
+			companyId, active, shippingAllowed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching countries
+	 */
+	public static List<Country> findByC_A_S(
+		long companyId, boolean active, boolean shippingAllowed, int start,
+		int end, OrderByComparator<Country> orderByComparator) {
+
+		return getPersistence().findByC_A_S(
+			companyId, active, shippingAllowed, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the countries that the user has permission to view where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param shippingAllowed the shipping allowed
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_S(
+		long companyId, boolean active, boolean shippingAllowed) {
+
+		return getPersistence().filterFindByC_A_S(
+			companyId, active, shippingAllowed);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where companyId = &#63; and active = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_S(
+		long companyId, boolean active, boolean shippingAllowed, int start,
+		int end) {
+
+		return getPersistence().filterFindByC_A_S(
+			companyId, active, shippingAllowed, start, end);
+	}
+
+	/**
+	 * Returns all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @return the matching countries
+	 */
+	public static List<Country> findByC_A_B_G(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled) {
+
+		return getPersistence().findByC_A_B_G(
+			countryId, active, billingAllowed, groupFilterEnabled);
+	}
+
+	/**
+	 * Returns a range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByC_A_B_G(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled, int start, int end) {
+
+		return getPersistence().findByC_A_B_G(
+			countryId, active, billingAllowed, groupFilterEnabled, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching countries
+	 */
+	public static List<Country> findByC_A_B_G(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled, int start, int end,
+		OrderByComparator<Country> orderByComparator) {
+
+		return getPersistence().findByC_A_B_G(
+			countryId, active, billingAllowed, groupFilterEnabled, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the countries that the user has permission to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_B_G(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled) {
+
+		return getPersistence().filterFindByC_A_B_G(
+			countryId, active, billingAllowed, groupFilterEnabled);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_B_G(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled, int start, int end) {
+
+		return getPersistence().filterFindByC_A_B_G(
+			countryId, active, billingAllowed, groupFilterEnabled, start, end);
+	}
+
+	/**
+	 * Returns all the countries where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @return the matching countries
+	 */
+	public static List<Country> findByC_A_G_S(
+		long countryId, boolean active, boolean groupFilterEnabled,
+		boolean shippingAllowed) {
+
+		return getPersistence().findByC_A_G_S(
+			countryId, active, groupFilterEnabled, shippingAllowed);
+	}
+
+	/**
+	 * Returns a range of all the countries where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByC_A_G_S(
+		long countryId, boolean active, boolean groupFilterEnabled,
+		boolean shippingAllowed, int start, int end) {
+
+		return getPersistence().findByC_A_G_S(
+			countryId, active, groupFilterEnabled, shippingAllowed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching countries
+	 */
+	public static List<Country> findByC_A_G_S(
+		long countryId, boolean active, boolean groupFilterEnabled,
+		boolean shippingAllowed, int start, int end,
+		OrderByComparator<Country> orderByComparator) {
+
+		return getPersistence().findByC_A_G_S(
+			countryId, active, groupFilterEnabled, shippingAllowed, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the countries that the user has permission to view where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_G_S(
+		long countryId, boolean active, boolean groupFilterEnabled,
+		boolean shippingAllowed) {
+
+		return getPersistence().filterFindByC_A_G_S(
+			countryId, active, groupFilterEnabled, shippingAllowed);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where countryId = &#63; and active = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_G_S(
+		long countryId, boolean active, boolean groupFilterEnabled,
+		boolean shippingAllowed, int start, int end) {
+
+		return getPersistence().filterFindByC_A_G_S(
+			countryId, active, groupFilterEnabled, shippingAllowed, start, end);
+	}
+
+	/**
+	 * Returns all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @return the matching countries
+	 */
+	public static List<Country> findByC_A_B_G_S(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled, boolean shippingAllowed) {
+
+		return getPersistence().findByC_A_B_G_S(
+			countryId, active, billingAllowed, groupFilterEnabled,
+			shippingAllowed);
+	}
+
+	/**
+	 * Returns a range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries
+	 */
+	public static List<Country> findByC_A_B_G_S(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled, boolean shippingAllowed, int start,
+		int end) {
+
+		return getPersistence().findByC_A_B_G_S(
+			countryId, active, billingAllowed, groupFilterEnabled,
+			shippingAllowed, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the countries where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching countries
+	 */
+	public static List<Country> findByC_A_B_G_S(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled, boolean shippingAllowed, int start, int end,
+		OrderByComparator<Country> orderByComparator) {
+
+		return getPersistence().findByC_A_B_G_S(
+			countryId, active, billingAllowed, groupFilterEnabled,
+			shippingAllowed, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the countries that the user has permission to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @return the matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_B_G_S(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled, boolean shippingAllowed) {
+
+		return getPersistence().filterFindByC_A_B_G_S(
+			countryId, active, billingAllowed, groupFilterEnabled,
+			shippingAllowed);
+	}
+
+	/**
+	 * Returns a range of all the countries that the user has permission to view where countryId = &#63; and active = &#63; and billingAllowed = &#63; and groupFilterEnabled = &#63; and shippingAllowed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CountryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param countryId the country ID
+	 * @param active the active
+	 * @param billingAllowed the billing allowed
+	 * @param groupFilterEnabled the group filter enabled
+	 * @param shippingAllowed the shipping allowed
+	 * @param start the lower bound of the range of countries
+	 * @param end the upper bound of the range of countries (not inclusive)
+	 * @return the range of matching countries that the user has permission to view
+	 */
+	public static List<Country> filterFindByC_A_B_G_S(
+		long countryId, boolean active, boolean billingAllowed,
+		boolean groupFilterEnabled, boolean shippingAllowed, int start,
+		int end) {
+
+		return getPersistence().filterFindByC_A_B_G_S(
+			countryId, active, billingAllowed, groupFilterEnabled,
+			shippingAllowed, start, end);
 	}
 
 	public static CountryPersistence getPersistence() {
@@ -2662,4 +2649,4 @@ public class CountryUtil {
 	private static volatile CountryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:198276011
+// LIFERAY-SERVICE-BUILDER-HASH:-200875222

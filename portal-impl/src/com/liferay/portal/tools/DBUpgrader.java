@@ -16,11 +16,11 @@ import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
 import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
-import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dependency.manager.DependencyManagerSyncUtil;
+import com.liferay.portal.kernel.encryptor.EncryptorUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -32,8 +32,11 @@ import com.liferay.portal.kernel.module.util.ServiceLatch;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceComponentLocalServiceUtil;
 import com.liferay.portal.kernel.service.configuration.ServiceComponentConfiguration;
+import com.liferay.portal.kernel.upgrade.recorder.UpgradeLogProgressTracker;
+import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -48,6 +51,7 @@ import com.liferay.portal.transaction.TransactionsUtil;
 import com.liferay.portal.upgrade.PortalUpgradeProcess;
 import com.liferay.portal.upgrade.data.cleanup.DataCleanupPreupgradeProcessSuite;
 import com.liferay.portal.upgrade.log.UpgradeLogContext;
+import com.liferay.portal.upgrade.monitor.UpgradeQueryMonitor;
 import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.PortalClassPathUtil;
 import com.liferay.portal.verify.PreupgradeVerifyProcessSuite;
@@ -59,9 +63,11 @@ import com.liferay.util.dao.orm.CustomSQLUtil;
 import java.io.InputStream;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.logging.log4j.core.Appender;
@@ -135,12 +141,8 @@ public class DBUpgrader {
 		return _stopWatch.getTime();
 	}
 
-	public static boolean isUpgradeClient() {
-		return _upgradeClient;
-	}
-
 	public static boolean isUpgradeDatabaseAutoRunEnabled() {
-		if (_upgradeClient) {
+		if (UpgradeProcessUtil.isUpgradeClient()) {
 			return true;
 		}
 
@@ -169,7 +171,7 @@ public class DBUpgrader {
 	public static void main(String[] args) {
 		String result = "Completed";
 
-		_upgradeClient = true;
+		UpgradeProcessUtil.setUpgradeClient(true);
 
 		try {
 			PortalClassPathUtil.initializeClassPaths(null);
@@ -228,6 +230,8 @@ public class DBUpgrader {
 				LogContext.class, UpgradeLogContext.getInstance(), null);
 		}
 
+		UpgradeLogProgressTracker.start();
+
 		_stopWatch = new StopWatch();
 
 		_stopWatch.start();
@@ -245,9 +249,15 @@ public class DBUpgrader {
 		serviceLatch.openOn(
 			() -> {
 			});
+
+		UpgradeQueryMonitor.start();
 	}
 
 	public static void stopUpgradeLogAppender() {
+		UpgradeQueryMonitor.stop();
+
+		UpgradeLogProgressTracker.stop();
+
 		if ((_appender != null) && _appender.isStarted()) {
 			_stopWatch.stop();
 
@@ -315,27 +325,29 @@ public class DBUpgrader {
 
 			};
 
+		Date buildDate = ReleaseInfo.getBuildDate();
+
 		ServiceComponentLocalServiceUtil.initServiceComponent(
 			portalServiceComponentConfiguration,
 			DBUpgrader.class.getClassLoader(),
 			ReleaseConstants.DEFAULT_SERVLET_CONTEXT_NAME,
-			ReleaseInfo.getBuildNumber(),
-			ReleaseInfo.getBuildDate(
-			).getTime());
+			ReleaseInfo.getBuildNumber(), buildDate.getTime());
 	}
 
 	public static void upgradeModules() {
 		_registerModuleServiceLifecycle(
 			moduleServiceLifecyclePortalInitialized);
 
-		if (_upgradeClient) {
+		if (UpgradeProcessUtil.isUpgradeClient()) {
 			DependencyManagerSyncUtil.sync();
 		}
 
 		PortalCacheHelperUtil.clearPortalCaches(
 			PortalCacheManagerNames.MULTI_VM);
 
-		if (_upgradeClient || StartupHelperUtil.isNewRelease()) {
+		if (UpgradeProcessUtil.isUpgradeClient() ||
+			StartupHelperUtil.isNewRelease()) {
+
 			IndexUpdaterUtil.updateAllIndexes();
 		}
 
@@ -612,9 +624,24 @@ public class DBUpgrader {
 	}
 
 	private static void _updateCompanyKey() throws Exception {
-		DB db = DBManagerUtil.getDB();
+		String sql = "update CompanyInfo set key_ = ? where companyId = ?";
 
-		db.runSQL("update CompanyInfo set key_ = null");
+		CompanyLocalServiceUtil.forEachCompany(
+			company -> {
+				try (Connection connection = DataAccess.getConnection();
+
+					PreparedStatement preparedStatement =
+						connection.prepareStatement(sql)) {
+
+					preparedStatement.setString(
+						1,
+						EncryptorUtil.serializeKey(
+							EncryptorUtil.generateKey()));
+					preparedStatement.setLong(2, company.getCompanyId());
+
+					preparedStatement.executeUpdate();
+				}
+			});
 	}
 
 	private static final String _CLASS_NAME =
@@ -628,7 +655,6 @@ public class DBUpgrader {
 	private static volatile Appender _appender;
 	private static volatile ServiceRegistration<?> _serviceRegistration;
 	private static volatile StopWatch _stopWatch;
-	private static volatile boolean _upgradeClient;
 	private static Boolean _upgradeDatabaseAutoRun;
 
 }

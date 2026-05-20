@@ -456,6 +456,19 @@ public class CloudBucketUtil {
 				"Touched ", s3Path, " in ",
 				JenkinsResultsParserUtil.toDurationString(
 					System.currentTimeMillis() - start)));
+
+		if (!s3Path.endsWith(_CHECKSUM_FILE_EXTENSION)) {
+			String s3ChecksumPath = s3Path + _CHECKSUM_FILE_EXTENSION;
+
+			try {
+				if (_exists(s3ChecksumPath)) {
+					touchS3File(s3ChecksumPath);
+				}
+			}
+			catch (TimeoutException timeoutException) {
+				throw new IOException(timeoutException);
+			}
+		}
 	}
 
 	public static void uploadS3File(String s3DestinationPath, File sourceFile)
@@ -706,10 +719,6 @@ public class CloudBucketUtil {
 			String destination, String source)
 		throws IOException {
 
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("gcloud auth activate-service-account --key-file ");
-
 		String gcpApplicationCredentialFilePath = null;
 
 		if (destination.startsWith(GCP_BUCKET_PATH_JENKINS_CI_DATA) ||
@@ -739,7 +748,22 @@ public class CloudBucketUtil {
 				gcpApplicationCredentialFilePath);
 
 			if (gcpApplicationCredentialFile.exists()) {
+				String credentialFileName =
+					gcpApplicationCredentialFile.getName();
+
+				String configurationName = credentialFileName.substring(
+					0, credentialFileName.lastIndexOf('.'));
+
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("(gcloud config configurations activate ");
+				sb.append(configurationName);
+				sb.append(" --quiet || gcloud auth login --cred-file=");
 				sb.append(gcpApplicationCredentialFilePath);
+				sb.append(" --quiet || gcloud auth activate-service-account");
+				sb.append(" --key-file=");
+				sb.append(gcpApplicationCredentialFilePath);
+				sb.append(" --quiet)");
 
 				return sb.toString();
 			}

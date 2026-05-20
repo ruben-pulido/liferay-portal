@@ -18,7 +18,7 @@ const InterestDisplay: React.FC<IDisplayComponentProps> = ({
 
 	const operatorLabel = INTEREST_BOOLEAN_OPTIONS.find(
 		({value}) => value === getPropertyValue(valueIMap, 'value', 1)
-	).label;
+	)?.label;
 
 	return (
 		<>
@@ -26,7 +26,7 @@ const InterestDisplay: React.FC<IDisplayComponentProps> = ({
 
 			<span>{operatorLabel}</span>
 
-			<span>{Liferay.Language.get('interested-in-fragment')}</span>
+			<span>{Liferay.Language.get('interested-in').toLowerCase()}</span>
 
 			<b>{maybeFormatValue(interestName, type, timeZoneId)}</b>
 		</>

@@ -32,7 +32,6 @@ export const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35013': {enabled: true},
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	loginTest({screenName: 'demo.company.admin'}),
@@ -46,7 +45,6 @@ export const testAdmin = mergeTests(
 	featureFlagsTest({
 		'LPD-11235': {enabled: true},
 		'LPD-35013': {enabled: true},
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	formsPagesTest,
@@ -91,11 +89,9 @@ testAdmin(
 
 		await performUserSwitch(page, contentUser.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		await contactsCenterPage.createPage(apiHelpers, site.id, {
 			title: 'contact',
@@ -230,11 +226,9 @@ testAdmin(
 			surname: userAccount.familyName,
 		};
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: 'Site' + getRandomInt(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const layout = await apiHelpers.headlessDelivery.createSitePage({
 			siteId: site.id,
@@ -355,11 +349,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const folder = await apiHelpers.headlessDelivery.postDocumentFolder(
 			site.id
@@ -461,11 +453,9 @@ testAdmin(
 			surname: userAccount.familyName,
 		};
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: 'Site' + getRandomInt(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const role =
 			await apiHelpers.headlessAdminUser.getRoleByName('Administrator');
@@ -578,11 +568,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: 'Site' + getRandomInt(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const folder = await apiHelpers.headlessDelivery.postDocumentFolder(
 			site.id
@@ -693,7 +681,7 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
 
@@ -701,8 +689,6 @@ testAdmin(
 			siteId: site.id,
 			title: 'Page' + getRandomInt(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const attachment1 = await apiHelpers.headlessDelivery.postDocument(
 			site.id,
@@ -872,11 +858,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const blog = await apiHelpers.headlessDelivery.postBlog(site.id, {
 			headline: 'Blog' + getRandomInt(),
@@ -1020,11 +1004,9 @@ testAdmin(
 			userAccount.id
 		);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: 'Site' + getRandomInt(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const layout = await apiHelpers.headlessDelivery.createSitePage({
 			siteId: site.id,
@@ -1128,11 +1110,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const formTitle = 'Form' + getRandomInt();
 		const textFieldLabel = 'Text Field';
@@ -1263,11 +1243,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const folder = await apiHelpers.headlessDelivery.postDocumentFolder(
 			site.id
@@ -1409,11 +1387,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: 'Site' + getRandomInt(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		await apiHelpers.headlessDelivery.postBlog(site.id, {
 			headline: getRandomString(),
@@ -1537,11 +1513,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const documentA = await apiHelpers.headlessDelivery.postDocument(
 			site.id,
@@ -1709,11 +1683,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const announcementsPage =
 			await userAssociatedDataAnnouncementPage.createAnnouncementPage(
@@ -1809,11 +1781,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const document = await apiHelpers.headlessDelivery.postDocument(
 			site.id,
@@ -2032,11 +2002,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		await apiHelpers.headlessDelivery.postBlog(site.id, {
 			headline: 'Blog' + getRandomInt(),
@@ -2164,11 +2132,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const blog1 = await apiHelpers.headlessDelivery.postBlog(site.id, {
 			headline: 'Blog' + getRandomInt(),
@@ -2244,11 +2210,9 @@ testAdmin(
 
 		await performUserSwitch(page, userAccount.alternateName);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const blog = await apiHelpers.headlessDelivery.postBlog(site.id, {
 			headline: 'Blog' + getRandomInt(),

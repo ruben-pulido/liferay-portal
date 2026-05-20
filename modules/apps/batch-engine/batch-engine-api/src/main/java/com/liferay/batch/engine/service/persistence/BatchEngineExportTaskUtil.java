@@ -36,6 +36,24 @@ public class BatchEngineExportTaskUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<BatchEngineExportTask> batchEngineExportTasks) {
+
+		getPersistence().cacheResult(batchEngineExportTasks);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		BatchEngineExportTask batchEngineExportTask) {
+
+		getPersistence().cacheResult(batchEngineExportTask);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -114,58 +132,10 @@ public class BatchEngineExportTaskUtil {
 	}
 
 	/**
-	 * Returns all the batch engine export tasks where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the batch engine export tasks where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of batch engine export tasks
-	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @return the range of matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the batch engine export tasks where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of batch engine export tasks
-	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<BatchEngineExportTask> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the batch engine export tasks where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -234,64 +204,10 @@ public class BatchEngineExportTaskUtil {
 	}
 
 	/**
-	 * Returns all the batch engine export tasks where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the batch engine export tasks where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of batch engine export tasks
-	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @return the range of matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the batch engine export tasks where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of batch engine export tasks
-	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<BatchEngineExportTask> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the batch engine export tasks where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -367,59 +283,10 @@ public class BatchEngineExportTaskUtil {
 	}
 
 	/**
-	 * Returns all the batch engine export tasks where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the batch engine export tasks where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of batch engine export tasks
-	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @return the range of matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the batch engine export tasks where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of batch engine export tasks
-	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<BatchEngineExportTask> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the batch engine export tasks where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -490,61 +357,10 @@ public class BatchEngineExportTaskUtil {
 	}
 
 	/**
-	 * Returns all the batch engine export tasks where executeStatus = &#63;.
-	 *
-	 * @param executeStatus the execute status
-	 * @return the matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByExecuteStatus(
-		String executeStatus) {
-
-		return getPersistence().findByExecuteStatus(executeStatus);
-	}
-
-	/**
-	 * Returns a range of all the batch engine export tasks where executeStatus = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param executeStatus the execute status
-	 * @param start the lower bound of the range of batch engine export tasks
-	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @return the range of matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByExecuteStatus(
-		String executeStatus, int start, int end) {
-
-		return getPersistence().findByExecuteStatus(executeStatus, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the batch engine export tasks where executeStatus = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
-	 * </p>
-	 *
-	 * @param executeStatus the execute status
-	 * @param start the lower bound of the range of batch engine export tasks
-	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching batch engine export tasks
-	 */
-	public static List<BatchEngineExportTask> findByExecuteStatus(
-		String executeStatus, int start, int end,
-		OrderByComparator<BatchEngineExportTask> orderByComparator) {
-
-		return getPersistence().findByExecuteStatus(
-			executeStatus, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the batch engine export tasks where executeStatus = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
 	 * </p>
 	 *
 	 * @param executeStatus the execute status
@@ -630,19 +446,6 @@ public class BatchEngineExportTaskUtil {
 	}
 
 	/**
-	 * Returns the batch engine export task where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching batch engine export task, or <code>null</code> if a matching batch engine export task could not be found
-	 */
-	public static BatchEngineExportTask fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
 	 * Returns the batch engine export task where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -682,28 +485,6 @@ public class BatchEngineExportTaskUtil {
 		String externalReferenceCode, long companyId) {
 
 		return getPersistence().countByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
-	 * Caches the batch engine export task in the entity cache if it is enabled.
-	 *
-	 * @param batchEngineExportTask the batch engine export task
-	 */
-	public static void cacheResult(
-		BatchEngineExportTask batchEngineExportTask) {
-
-		getPersistence().cacheResult(batchEngineExportTask);
-	}
-
-	/**
-	 * Caches the batch engine export tasks in the entity cache if it is enabled.
-	 *
-	 * @param batchEngineExportTasks the batch engine export tasks
-	 */
-	public static void cacheResult(
-		List<BatchEngineExportTask> batchEngineExportTasks) {
-
-		getPersistence().cacheResult(batchEngineExportTasks);
 	}
 
 	/**
@@ -762,84 +543,218 @@ public class BatchEngineExportTaskUtil {
 	}
 
 	/**
-	 * Returns all the batch engine export tasks.
+	 * Returns the batch engine export task where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the batch engine export tasks
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching batch engine export task, or <code>null</code> if a matching batch engine export task could not be found
 	 */
-	public static List<BatchEngineExportTask> findAll() {
-		return getPersistence().findAll();
+	public static BatchEngineExportTask fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
 	}
 
 	/**
-	 * Returns a range of all the batch engine export tasks.
+	 * Returns all the batch engine export tasks where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching batch engine export tasks
+	 */
+	public static List<BatchEngineExportTask> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the batch engine export tasks where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of batch engine export tasks
 	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
-	 * @return the range of batch engine export tasks
+	 * @return the range of matching batch engine export tasks
 	 */
-	public static List<BatchEngineExportTask> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<BatchEngineExportTask> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the batch engine export tasks.
+	 * Returns an ordered range of all the batch engine export tasks where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of batch engine export tasks
 	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of batch engine export tasks
+	 * @return the ordered range of matching batch engine export tasks
 	 */
-	public static List<BatchEngineExportTask> findAll(
-		int start, int end,
+	public static List<BatchEngineExportTask> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<BatchEngineExportTask> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the batch engine export tasks.
+	 * Returns all the batch engine export tasks where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching batch engine export tasks
+	 */
+	public static List<BatchEngineExportTask> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the batch engine export tasks where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BatchEngineExportTaskModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of batch engine export tasks
+	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
+	 * @return the range of matching batch engine export tasks
+	 */
+	public static List<BatchEngineExportTask> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the batch engine export tasks where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of batch engine export tasks
 	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of batch engine export tasks
+	 * @return the ordered range of matching batch engine export tasks
 	 */
-	public static List<BatchEngineExportTask> findAll(
-		int start, int end,
-		OrderByComparator<BatchEngineExportTask> orderByComparator,
-		boolean useFinderCache) {
+	public static List<BatchEngineExportTask> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<BatchEngineExportTask> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the batch engine export tasks from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of batch engine export tasks.
+	 * Returns all the batch engine export tasks where companyId = &#63;.
 	 *
-	 * @return the number of batch engine export tasks
+	 * @param companyId the company ID
+	 * @return the matching batch engine export tasks
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<BatchEngineExportTask> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the batch engine export tasks where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of batch engine export tasks
+	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
+	 * @return the range of matching batch engine export tasks
+	 */
+	public static List<BatchEngineExportTask> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the batch engine export tasks where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of batch engine export tasks
+	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching batch engine export tasks
+	 */
+	public static List<BatchEngineExportTask> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<BatchEngineExportTask> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the batch engine export tasks where executeStatus = &#63;.
+	 *
+	 * @param executeStatus the execute status
+	 * @return the matching batch engine export tasks
+	 */
+	public static List<BatchEngineExportTask> findByExecuteStatus(
+		String executeStatus) {
+
+		return getPersistence().findByExecuteStatus(executeStatus);
+	}
+
+	/**
+	 * Returns a range of all the batch engine export tasks where executeStatus = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param executeStatus the execute status
+	 * @param start the lower bound of the range of batch engine export tasks
+	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
+	 * @return the range of matching batch engine export tasks
+	 */
+	public static List<BatchEngineExportTask> findByExecuteStatus(
+		String executeStatus, int start, int end) {
+
+		return getPersistence().findByExecuteStatus(executeStatus, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the batch engine export tasks where executeStatus = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.batch.engine.model.impl.BatchEngineExportTaskModelImpl</code>.
+	 * </p>
+	 *
+	 * @param executeStatus the execute status
+	 * @param start the lower bound of the range of batch engine export tasks
+	 * @param end the upper bound of the range of batch engine export tasks (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching batch engine export tasks
+	 */
+	public static List<BatchEngineExportTask> findByExecuteStatus(
+		String executeStatus, int start, int end,
+		OrderByComparator<BatchEngineExportTask> orderByComparator) {
+
+		return getPersistence().findByExecuteStatus(
+			executeStatus, start, end, orderByComparator);
 	}
 
 	public static BatchEngineExportTaskPersistence getPersistence() {
@@ -855,4 +770,4 @@ public class BatchEngineExportTaskUtil {
 	private static volatile BatchEngineExportTaskPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2111400189
+// LIFERAY-SERVICE-BUILDER-HASH:1563539187

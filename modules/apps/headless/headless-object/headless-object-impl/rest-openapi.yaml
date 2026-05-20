@@ -28,6 +28,8 @@ components:
                         The expiration date to be a collaborator of the asset.
                     format: date-time
                     type: string
+                emailAddress:
+                    type: string
                 externalReferenceCode:
                     # @review
                     description:
@@ -61,6 +63,30 @@ components:
             required:
                 -   actionIds
                 -   type
+            type: object
+        CollaboratorBrief:
+            description:
+                Brief of the collaborator record for the user making the request, present only when this asset is shared
+                with them.
+            properties:
+                actionIds:
+                    description:
+                        The sharing actions granted to the user making the request (e.g. VIEW, UPDATE).
+                    items:
+                        type: string
+                    readOnly: true
+                    type: array
+                dateExpired:
+                    description:
+                        The date when the sharing access expires, or null if it never expires.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                share:
+                    description:
+                        Whether the user making the request can reshare this asset with others.
+                    readOnly: true
+                    type: boolean
             type: object
         ObjectEntryFolder:
             description:
@@ -173,6 +199,8 @@ components:
                     type: string
                 status:
                     $ref: "#/components/schemas/Status"
+                systemProperties:
+                    $ref: "#/components/schemas/SystemProperties"
                 title:
                     description:
                         The object entry folder's main title/name.
@@ -226,6 +254,11 @@ components:
                     type: string
             required:
                 -   code
+            type: object
+        SystemProperties:
+            properties:
+                collaboratorBrief:
+                    $ref: "#/components/schemas/CollaboratorBrief"
             type: object
 info:
     license:

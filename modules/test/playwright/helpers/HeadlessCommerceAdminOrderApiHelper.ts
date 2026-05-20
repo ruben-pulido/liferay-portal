@@ -140,6 +140,12 @@ export class HeadlessCommerceAdminOrderApiHelper {
 		);
 	}
 
+	async getOrderTypesPage() {
+		return this.apiHelpers.get(
+			`${this.apiHelpers.baseUrl}${this.basePath}/order-types`
+		);
+	}
+
 	async patchOrder(id: number, order: TOrder) {
 		await this.apiHelpers.patch(
 			`${this.apiHelpers.baseUrl}${this.basePath}orders/${id}?nestedFields=orderItems`,
@@ -164,6 +170,13 @@ export class HeadlessCommerceAdminOrderApiHelper {
 		}
 
 		return patchOrder;
+	}
+
+	async patchTerm(termId: number, term: Partial<TTerm>) {
+		return this.apiHelpers.patch(
+			`${this.apiHelpers.baseUrl}${this.basePath}/terms/${termId}`,
+			term
+		);
 	}
 
 	async postOrder(order: TOrder): Promise<TOrder> {

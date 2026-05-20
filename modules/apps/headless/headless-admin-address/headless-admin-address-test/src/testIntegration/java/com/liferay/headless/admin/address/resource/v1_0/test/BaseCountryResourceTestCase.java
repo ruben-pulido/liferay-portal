@@ -48,6 +48,7 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -139,7 +140,8 @@ public abstract class BaseCountryResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -149,7 +151,8 @@ public abstract class BaseCountryResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -250,6 +253,7 @@ public abstract class BaseCountryResourceTestCase {
 
 		// No namespace
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		Country country1 = testGraphQLDeleteCountry_addCountry();
 
 		Assert.assertTrue(
@@ -280,6 +284,7 @@ public abstract class BaseCountryResourceTestCase {
 
 		// Using the namespace headlessAdminAddress_v1_0
 
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		Country country2 = testGraphQLDeleteCountry_addCountry();
 
 		Assert.assertTrue(
@@ -729,8 +734,9 @@ public abstract class BaseCountryResourceTestCase {
 			public StringBuffer getRequestURL() {
 				return new StringBuffer(
 					StringBundler.concat(
-						"http://localhost:8080/o/v1.0/",
-						RandomTestUtil.randomString(), "/",
+						"http://localhost:",
+						String.valueOf(PortalUtil.getPortalServerPort(false)),
+						"/o/v1.0/", RandomTestUtil.randomString(), "/",
 						RandomTestUtil.randomString()));
 			}
 
@@ -766,8 +772,10 @@ public abstract class BaseCountryResourceTestCase {
 			@Override
 			public URI getRequestUri() {
 				return URI.create(
-					"http://localhost:8080/o/" + applicationPath +
-						resourcePath);
+					StringBundler.concat(
+						"http://localhost:",
+						PortalUtil.getPortalServerPort(false), "/o/",
+						applicationPath, resourcePath));
 			}
 
 			@Override
@@ -787,7 +795,11 @@ public abstract class BaseCountryResourceTestCase {
 
 			@Override
 			public URI getBaseUri() {
-				return URI.create("http://localhost:8080/o/" + applicationPath);
+				return URI.create(
+					StringBundler.concat(
+						"http://localhost:",
+						PortalUtil.getPortalServerPort(false), "/o/",
+						applicationPath));
 			}
 
 			@Override
@@ -1490,7 +1502,8 @@ public abstract class BaseCountryResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).parameters(
 			parameters
 		).build();
@@ -1565,16 +1578,22 @@ public abstract class BaseCountryResourceTestCase {
 		else if (value instanceof Boolean || value instanceof Number) {
 			return value.toString();
 		}
-		else if (value instanceof Date date) {
+		else if (value instanceof Date) {
+			Date date = (Date)value;
+
 			return "\"" +
 				DateUtil.getDate(
 					date, "yyyy-MM-dd'T'HH:mm:ss'Z'", LocaleUtil.getDefault(),
 					TimeZone.getTimeZone("UTC")) + "\"";
 		}
-		else if (value instanceof Enum<?> enm) {
+		else if (value instanceof Enum) {
+			Enum<?> enm = (Enum<?>)value;
+
 			return enm.name();
 		}
-		else if (value instanceof Map<?, ?> map) {
+		else if (value instanceof Map) {
+			Map<?, ?> map = (Map<?, ?>)value;
+
 			List<String> entries = new ArrayList<>();
 
 			for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -1587,7 +1606,9 @@ public abstract class BaseCountryResourceTestCase {
 
 			return "{" + String.join(", ", entries) + "}";
 		}
-		else if (value instanceof Object[] array) {
+		else if (value instanceof Object[]) {
+			Object[] array = (Object[])value;
+
 			List<String> entries = new ArrayList<>();
 
 			for (Object entry : array) {
@@ -2399,7 +2420,9 @@ public abstract class BaseCountryResourceTestCase {
 			).toString(),
 			"application/json");
 		httpInvoker.httpMethod(HttpInvoker.HttpMethod.POST);
-		httpInvoker.path("http://localhost:8080/o/graphql");
+		httpInvoker.path(
+			"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/o/graphql");
 		httpInvoker.userNameAndPassword(
 			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
 
@@ -2713,4 +2736,4 @@ public abstract class BaseCountryResourceTestCase {
 		_vulcanCRUDItemDelegateBuilderRegistry;
 
 }
-// LIFERAY-REST-BUILDER-HASH:2069296688
+// LIFERAY-REST-BUILDER-HASH:578009198

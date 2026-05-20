@@ -14,7 +14,6 @@ import {
 	FDS_INTERNAL_RENDERERS,
 	IClientExtensionRenderer,
 	IInternalRenderer,
-	getFDSInternalRenderer,
 } from '@liferay/frontend-data-set-web';
 import {InputLocalized, openModal} from 'frontend-js-components-web';
 import {fetch} from 'frontend-js-web';
@@ -62,7 +61,11 @@ const getRendererLabel = ({
 }): string => {
 	let clientExtensionRenderer;
 
-	const internalRenderer = getFDSInternalRenderer(rendererName);
+	const internalRenderer = FDS_INTERNAL_RENDERERS.find(
+		(renderer: IInternalRenderer) => {
+			return renderer.name === rendererName;
+		}
+	);
 
 	if (internalRenderer?.label) {
 		return internalRenderer.label;
@@ -672,15 +675,17 @@ function Table(props: IDataSetSectionProps & {title?: string}) {
 
 	return tableSections ? (
 		<ClayLayout.ContentCol className="c-gap-4 table-visualization-mode">
-			<ClayAlert
-				displayType="info"
-				title={`${Liferay.Language.get('info')}:`}
-				variant="stripe"
-			>
-				{Liferay.Language.get(
-					'this-visualization-mode-will-not-be-shown-until-you-assign-at-least-one-field'
-				)}
-			</ClayAlert>
+			{!tableSections.length && (
+				<ClayAlert
+					displayType="info"
+					title={`${Liferay.Language.get('info')}:`}
+					variant="stripe"
+				>
+					{Liferay.Language.get(
+						'this-visualization-mode-will-not-be-shown-until-you-assign-at-least-one-field'
+					)}
+				</ClayAlert>
+			)}
 
 			<OrderableTable
 				actions={[

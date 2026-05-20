@@ -47,6 +47,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
@@ -508,7 +509,8 @@ public class DDMStructureStagedModelDataHandlerTest
 		ddmFormValues.addDDMFormFieldValue(
 			DDMFormValuesTestUtil.createUnlocalizedDDMFormFieldValue(
 				"url",
-				"http://localhost:8080/api/jsonws/country/get-countries"));
+				"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+					"/api/jsonws/country/get-countries"));
 		ddmFormValues.addDDMFormFieldValue(
 			DDMFormValuesTestUtil.createUnlocalizedDDMFormFieldValue(
 				"username", "test@liferay.com"));
@@ -560,14 +562,15 @@ public class DDMStructureStagedModelDataHandlerTest
 	private static final String _CLASS_NAME =
 		"com.liferay.dynamic.data.lists.model.DDLRecordSet";
 
-	private static Set<Locale> _availableLocales;
-	private static Locale _defaultLocale;
-
-	@Inject(filter = "ddm.form.values.deserializer.type=json")
-	private static DDMFormValuesDeserializer _jsonDDMFormValuesDeserializer;
+	private Set<Locale> _availableLocales;
 
 	@Inject(filter = "ddm.data.provider.type=rest")
 	private DDMDataProvider _ddmDataProvider;
+
+	private Locale _defaultLocale;
+
+	@Inject(filter = "ddm.form.values.deserializer.type=json")
+	private DDMFormValuesDeserializer _jsonDDMFormValuesDeserializer;
 
 	@DeleteAfterTestRun
 	private Company _targetCompany;

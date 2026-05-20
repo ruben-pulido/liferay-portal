@@ -42,6 +42,10 @@ import javax.sql.DataSource;
  */
 public interface BasePersistence<T extends BaseModel<T>> {
 
+	public void cacheResult(List<T> models);
+
+	public void cacheResult(T model);
+
 	/**
 	 * Clears the cache for all instances of this model.
 	 *
@@ -84,6 +88,8 @@ public interface BasePersistence<T extends BaseModel<T>> {
 	public void clearCache(T model);
 
 	public void closeSession(Session session);
+
+	public int countAll();
 
 	/**
 	 * Returns the number of rows that match the dynamic query.
@@ -133,6 +139,17 @@ public interface BasePersistence<T extends BaseModel<T>> {
 
 	public Map<Serializable, T> fetchByPrimaryKeys(
 		Set<Serializable> primaryKeys);
+
+	public List<T> findAll();
+
+	public List<T> findAll(int start, int end);
+
+	public List<T> findAll(
+		int start, int end, OrderByComparator<T> orderByComparator);
+
+	public List<T> findAll(
+		int start, int end, OrderByComparator<T> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns the model instance with the primary key or throws a {@link
@@ -263,6 +280,8 @@ public interface BasePersistence<T extends BaseModel<T>> {
 	 * @return the model instance that was removed
 	 */
 	public T remove(T model);
+
+	public void removeAll();
 
 	public T removeByFunction(T model, Function<T, T> function);
 

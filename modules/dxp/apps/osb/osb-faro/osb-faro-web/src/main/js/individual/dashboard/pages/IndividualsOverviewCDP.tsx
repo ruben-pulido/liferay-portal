@@ -21,9 +21,9 @@ import {sub} from 'shared/util/lang';
 import {toRounded, toThousands} from 'shared/util/numbers';
 import {TrendClassification} from 'segment/types';
 import {useCurrentUser} from 'shared/hooks/useCurrentUser';
-import {useDataSource} from 'shared/hooks/useDataSource';
+import {useDataSources} from 'shared/context/dataSources';
 import {useParams} from 'react-router-dom';
-import {useQuery} from '@apollo/react-hooks';
+import {useQuery} from '@apollo/client';
 import {useRequest} from 'shared/hooks/useRequest';
 
 type IndividualsMetricCard = {
@@ -90,9 +90,10 @@ const IndividualsMetricsCard: React.FC<IIndividualsMetricsCardProps> = ({
 								}}
 							>
 								<ClayIcon
-									symbol={getIcon(
-										data?.trend?.percentage ?? 0
-									)}
+									symbol={
+										getIcon(data?.trend?.percentage ?? 0) ??
+										''
+									}
 								/>
 							</span>
 						)}
@@ -126,12 +127,9 @@ const IndividualsMetricsCard: React.FC<IIndividualsMetricsCardProps> = ({
 	);
 };
 
-const IndividualsOverviewEmptyState: React.FC<IIndividualsOverviewEmptyStateProps> = ({
-	authorized,
-	dataSourceData,
-	dataSourceLoading,
-	groupId
-}) => {
+const IndividualsOverviewEmptyState: React.FC<
+	IIndividualsOverviewEmptyStateProps
+> = ({authorized, dataSourceData, dataSourceLoading, groupId}) => {
 	if (dataSourceLoading) {
 		return (
 			<NoResultsDisplay>
@@ -185,7 +183,7 @@ const IndividualsOverviewEmptyState: React.FC<IIndividualsOverviewEmptyStateProp
 					primary
 					title={Liferay.Language.get('no-data-source-synced')}
 				>
-					{authorized && (
+					{authorized ? (
 						<ClayLink
 							button
 							className='button-root'
@@ -196,7 +194,7 @@ const IndividualsOverviewEmptyState: React.FC<IIndividualsOverviewEmptyStateProp
 						>
 							{Liferay.Language.get('connect-data-source')}
 						</ClayLink>
-					)}
+					) : undefined}
 				</NoResultsDisplay>
 			</Card>
 		);
@@ -206,11 +204,14 @@ const IndividualsOverviewEmptyState: React.FC<IIndividualsOverviewEmptyStateProp
 };
 
 const IndividualsOverviewCDP = () => {
-	const {channelId, groupId} = useParams();
+	const {channelId = '', groupId = ''} = useParams<{
+		channelId: string;
+		groupId: string;
+	}>();
 
 	const currentUser = useCurrentUser();
 
-	const dataSourceStates = useDataSource();
+	const dataSourceStates = useDataSources();
 
 	const authorized = currentUser.isAdmin();
 
@@ -235,7 +236,7 @@ const IndividualsOverviewCDP = () => {
 			<BasePage.SubHeader>
 				<div className='d-flex justify-content-end w-100'>
 					<DownloadStaticCSVReport
-						disabled={dataSourceStates.empty}
+						disabled={!!dataSourceStates.empty}
 						type={CSVType.Individual}
 						typeLang={Liferay.Language.get('individuals')}
 					/>

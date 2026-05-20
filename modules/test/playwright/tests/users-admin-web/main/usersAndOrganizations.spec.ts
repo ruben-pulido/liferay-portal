@@ -28,7 +28,6 @@ export const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-36105': {enabled: true},
 	}),
 	loginTest(),
 	usersAndOrganizationsPagesTest
@@ -1034,11 +1033,9 @@ test(
 			[userAccount1.id, userAccount2.id]
 		);
 
-		const site = await apiHelpers.headlessSite.createSite({
+		const site = await apiHelpers.headlessAdminSite.postSite({
 			name: getRandomString(),
 		});
-
-		apiHelpers.data.push({id: site.externalReferenceCode, type: 'site'});
 
 		const role =
 			await apiHelpers.headlessAdminUser.getRoleByName(

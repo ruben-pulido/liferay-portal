@@ -6,13 +6,14 @@
 package com.liferay.headless.admin.site.internal.resource.v1_0;
 
 import com.liferay.batch.engine.thread.local.BatchEngineThreadLocal;
+import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.admin.site.dto.v1_0.NavigationMenu;
 import com.liferay.headless.admin.site.dto.v1_0.NavigationMenuItem;
 import com.liferay.headless.admin.site.internal.odata.entity.v1_0.NavigationMenuEntityModel;
-import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
 import com.liferay.headless.admin.site.resource.v1_0.NavigationMenuResource;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
+import com.liferay.headless.common.spi.util.GroupUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.Field;
@@ -116,6 +117,11 @@ public class NavigationMenuResourceImpl
 			@Override
 			public Scope getScope() {
 				return Scope.SITE;
+			}
+
+			@Override
+			public String getSectionKey() {
+				return ExportImportConstants.SECTION_KEY_SITE_BUILDER;
 			}
 
 			@Override

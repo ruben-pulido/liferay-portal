@@ -31,7 +31,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -100,7 +100,7 @@ public class PullRequest {
 				"Secondary rate limit exceeded", "Liferay CI");
 
 			throw new GitHubSecondaryRateLimitRuntimeException(
-				gitHubSecondaryRateLimitRuntimeException.getGitHubApiUrl(),
+				gitHubSecondaryRateLimitRuntimeException.getGitHubAPIURL(),
 				gitHubSecondaryRateLimitRuntimeException.getRetryAfterSeconds(),
 				sb.toString(), gitHubSecondaryRateLimitRuntimeException);
 		}
@@ -140,13 +140,13 @@ public class PullRequest {
 			jsonArray.put(newLabel.getName());
 		}
 
-		String gitHubApiUrl = JenkinsResultsParserUtil.getGitHubApiUrl(
+		String gitHubAPIURL = JenkinsResultsParserUtil.getGitHubAPIURL(
 			getGitHubRemoteGitRepositoryName(), getOwnerUsername(),
 			"issues/" + getNumber() + "/labels");
 
 		try {
 			JenkinsResultsParserUtil.toString(
-				gitHubApiUrl, false, HttpRequestMethod.POST,
+				gitHubAPIURL, false, HttpRequestMethod.POST,
 				jsonArray.toString());
 		}
 		catch (IOException ioException) {
@@ -230,9 +230,10 @@ public class PullRequest {
 	}
 
 	public String forward(
-		String commentBody, String consoleURL, String forwardReceiverUsername,
-		String forwardBranchName, String forwardSenderUsername,
-		File gitRepositoryDir) {
+			String commentBody, String consoleURL,
+			String forwardReceiverUsername, String forwardBranchName,
+			String forwardSenderUsername, File gitRepositoryDir)
+		throws ForwardPullRequestException {
 
 		if (!isUpdateEnabled()) {
 			return null;
@@ -243,11 +244,19 @@ public class PullRequest {
 				getUpstreamRemoteGitBranchName(),
 				gitRepositoryDir.getAbsolutePath(), getGitRepositoryName());
 
+		String senderSHA = getSenderSHA();
+
+		if (!gitWorkingDirectory.localSHAExists(senderSHA)) {
+			RemoteGitRef senderRemoteGitRef =
+				gitWorkingDirectory.getRemoteGitRef(
+					getSenderBranchName(), getSenderRemoteURL(), true);
+
+			gitWorkingDirectory.fetch(senderRemoteGitRef);
+		}
+
 		LocalGitBranch forwardLocalGitBranch =
-			gitWorkingDirectory.getRebasedLocalGitBranch(
-				forwardBranchName, getSenderBranchName(), getSenderRemoteURL(),
-				getSenderSHA(), getUpstreamRemoteGitBranchName(),
-				getUpstreamBranchSHA());
+			gitWorkingDirectory.createLocalGitBranch(
+				forwardBranchName, true, senderSHA);
 
 		RemoteGitBranch forwardRemoteGitBranch =
 			gitWorkingDirectory.pushToRemoteGitRepository(
@@ -257,6 +266,41 @@ public class PullRequest {
 
 		if (forwardRemoteGitBranch == null) {
 			throw new RuntimeException("Unable to push branch to GitHub");
+		}
+
+		String compareAPIURL = JenkinsResultsParserUtil.getGitHubAPIURL(
+			getGitRepositoryName(), forwardReceiverUsername,
+			JenkinsResultsParserUtil.combine(
+				"compare/", getUpstreamRemoteGitBranchName(), "...",
+				forwardSenderUsername, ":", forwardBranchName));
+
+		int aheadBy = -1;
+
+		try {
+			JSONObject compareJSONObject =
+				JenkinsResultsParserUtil.toJSONObject(compareAPIURL);
+
+			aheadBy = compareJSONObject.getInt("ahead_by");
+		}
+		catch (IOException ioException) {
+			System.out.println(
+				"Unable to compare branches: " + ioException.getMessage());
+		}
+
+		if (aheadBy == 0) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("`ci:forward` could not forward this pull ");
+			sb.append("request because every commit on this pull request is ");
+			sb.append("already present on `");
+			sb.append(forwardReceiverUsername);
+			sb.append("/");
+			sb.append(getGitRepositoryName());
+			sb.append(":");
+			sb.append(getUpstreamRemoteGitBranchName());
+			sb.append("`.");
+
+			throw new ForwardPullRequestException(sb.toString(), false, null);
 		}
 
 		return gitWorkingDirectory.createPullRequest(
@@ -304,7 +348,7 @@ public class PullRequest {
 
 		_comments = new ArrayList<>();
 
-		String gitHubApiUrl = JenkinsResultsParserUtil.getGitHubApiUrl(
+		String gitHubAPIURL = JenkinsResultsParserUtil.getGitHubAPIURL(
 			getGitHubRemoteGitRepositoryName(), getOwnerUsername(),
 			"issues/" + getNumber() + "/comments?per_page=100&page=");
 
@@ -316,7 +360,7 @@ public class PullRequest {
 			try {
 				JSONArray commentJSONArray =
 					JenkinsResultsParserUtil.toJSONArray(
-						gitHubApiUrl + pageNumber, false);
+						gitHubAPIURL + pageNumber, false);
 
 				if (commentJSONArray.length() == 0) {
 					break;
@@ -608,8 +652,12 @@ public class PullRequest {
 
 	public RemoteGitBranch getSenderRemoteGitBranch() {
 		if (_senderRemoteGitBranch == null) {
-			_senderRemoteGitBranch = GitUtil.getRemoteGitBranch(
-				getSenderBranchName(), new File(""), getSenderRemoteURL());
+			_senderRemoteGitBranch =
+				(RemoteGitBranch)GitBranchFactory.newRemoteGitRef(
+					GitRepositoryFactory.getRemoteGitRepository(
+						"github.com", getGitHubRemoteGitRepositoryName(),
+						getSenderUsername()),
+					getSenderBranchName(), getSenderSHA(), "heads");
 		}
 
 		return _senderRemoteGitBranch;
@@ -928,12 +976,12 @@ public class PullRequest {
 			"issues/", getNumber(), "/labels/",
 			JenkinsResultsParserUtil.fixURL(labelName));
 
-		String gitHubApiUrl = JenkinsResultsParserUtil.getGitHubApiUrl(
+		String gitHubAPIURL = JenkinsResultsParserUtil.getGitHubAPIURL(
 			getGitHubRemoteGitRepositoryName(), getOwnerUsername(), path);
 
 		try {
 			JenkinsResultsParserUtil.toString(
-				gitHubApiUrl, false, HttpRequestMethod.DELETE);
+				gitHubAPIURL, false, HttpRequestMethod.DELETE);
 
 			_labels = null;
 		}
@@ -1181,6 +1229,24 @@ public class PullRequest {
 
 	}
 
+	public static class ForwardPullRequestException extends Exception {
+
+		public ForwardPullRequestException(
+			String message, boolean retryable, Throwable throwable) {
+
+			super(message, throwable);
+
+			_retryable = retryable;
+		}
+
+		public boolean isRetryable() {
+			return _retryable;
+		}
+
+		private final boolean _retryable;
+
+	}
+
 	public static enum TestSuiteStatus {
 
 		BYPASSED("bcf5db"), ERROR("fccdcc"), FAILURE("fccdcc"),
@@ -1229,8 +1295,8 @@ public class PullRequest {
 		refresh();
 	}
 
-	protected String getGitHubApiUrl() {
-		return JenkinsResultsParserUtil.getGitHubApiUrl(
+	protected String getGitHubAPIURL() {
+		return JenkinsResultsParserUtil.getGitHubAPIURL(
 			_gitHubRemoteGitRepositoryName, _ownerUsername, "pulls/" + _number);
 	}
 
@@ -1348,7 +1414,7 @@ public class PullRequest {
 	private void _refreshJSONObject() {
 		try {
 			_jsonObject = JenkinsResultsParserUtil.toJSONObject(
-				getGitHubApiUrl(), false);
+				getGitHubAPIURL(), false);
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);

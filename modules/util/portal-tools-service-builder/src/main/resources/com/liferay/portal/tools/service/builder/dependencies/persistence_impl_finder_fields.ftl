@@ -9,11 +9,13 @@
 <#list entityColumns as entityColumn>
 	<#assign entityColumnName = entityColumn.name finderFieldSuffix = "" />
 
-	<#include "persistence_impl_finder_field.ftl">
-
-	<#if entity.isPermissionCheckEnabled(entityFinder) && !entity.isPermissionedModel() && ((entityColumn.name != entityColumn.DBName) || entityFinderDBWhere)>
-		<#assign entityColumnName = entityColumn.DBName finderFieldSuffix = finderFieldSQLSuffix />
-
+	<#if !entityFinder.finderDelegationEnabled || (entityFinder.hasArrayableOperator() && !entityFinder.collectionPersistenceFinderEnabled)>
 		<#include "persistence_impl_finder_field.ftl">
+
+		<#if entity.isPermissionCheckEnabled(entityFinder) && !entity.isPermissionedModel() && ((entityColumn.name != entityColumn.DBName) || entityFinderDBWhere)>
+			<#assign entityColumnName = entityColumn.DBName finderFieldSuffix = finderFieldSQLSuffix />
+
+			<#include "persistence_impl_finder_field.ftl">
+		</#if>
 	</#if>
 </#list>

@@ -13,14 +13,10 @@ import com.liferay.commerce.term.model.impl.CTermEntryLocalizationModelImpl;
 import com.liferay.commerce.term.service.persistence.CTermEntryLocalizationPersistence;
 import com.liferay.commerce.term.service.persistence.CTermEntryLocalizationUtil;
 import com.liferay.commerce.term.service.persistence.impl.constants.CommercePersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -32,11 +28,12 @@ import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 
 import java.io.Serializable;
@@ -45,8 +42,6 @@ import java.lang.reflect.InvocationHandler;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -67,7 +62,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CTermEntryLocalizationPersistence.class)
 public class CTermEntryLocalizationPersistenceImpl
-	extends BasePersistenceImpl<CTermEntryLocalization>
+	extends BasePersistenceImpl
+		<CTermEntryLocalization, NoSuchCTermEntryLocalizationException>
 	implements CTermEntryLocalizationPersistence {
 
 	/*
@@ -84,73 +80,14 @@ public class CTermEntryLocalizationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByCommerceTermEntryId;
-	private FinderPath _finderPathWithoutPaginationFindByCommerceTermEntryId;
-	private FinderPath _finderPathCountByCommerceTermEntryId;
-
-	/**
-	 * Returns all the c term entry localizations where commerceTermEntryId = &#63;.
-	 *
-	 * @param commerceTermEntryId the commerce term entry ID
-	 * @return the matching c term entry localizations
-	 */
-	@Override
-	public List<CTermEntryLocalization> findByCommerceTermEntryId(
-		long commerceTermEntryId) {
-
-		return findByCommerceTermEntryId(
-			commerceTermEntryId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the c term entry localizations where commerceTermEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commerceTermEntryId the commerce term entry ID
-	 * @param start the lower bound of the range of c term entry localizations
-	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @return the range of matching c term entry localizations
-	 */
-	@Override
-	public List<CTermEntryLocalization> findByCommerceTermEntryId(
-		long commerceTermEntryId, int start, int end) {
-
-		return findByCommerceTermEntryId(commerceTermEntryId, start, end, null);
-	}
+	private CollectionPersistenceFinder<CTermEntryLocalization>
+		_collectionPersistenceFinderByCommerceTermEntryId;
 
 	/**
 	 * Returns an ordered range of all the c term entry localizations where commerceTermEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commerceTermEntryId the commerce term entry ID
-	 * @param start the lower bound of the range of c term entry localizations
-	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching c term entry localizations
-	 */
-	@Override
-	public List<CTermEntryLocalization> findByCommerceTermEntryId(
-		long commerceTermEntryId, int start, int end,
-		OrderByComparator<CTermEntryLocalization> orderByComparator) {
-
-		return findByCommerceTermEntryId(
-			commerceTermEntryId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the c term entry localizations where commerceTermEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param commerceTermEntryId the commerce term entry ID
@@ -166,98 +103,9 @@ public class CTermEntryLocalizationPersistenceImpl
 		OrderByComparator<CTermEntryLocalization> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByCommerceTermEntryId;
-				finderArgs = new Object[] {commerceTermEntryId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByCommerceTermEntryId;
-			finderArgs = new Object[] {
-				commerceTermEntryId, start, end, orderByComparator
-			};
-		}
-
-		List<CTermEntryLocalization> list = null;
-
-		if (useFinderCache) {
-			list = (List<CTermEntryLocalization>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CTermEntryLocalization cTermEntryLocalization : list) {
-					if (commerceTermEntryId !=
-							cTermEntryLocalization.getCommerceTermEntryId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_CTERMENTRYLOCALIZATION_WHERE);
-
-			sb.append(_FINDER_COLUMN_COMMERCETERMENTRYID_COMMERCETERMENTRYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(CTermEntryLocalizationModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(commerceTermEntryId);
-
-				list = (List<CTermEntryLocalization>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByCommerceTermEntryId.find(
+			finderCache, new Object[] {commerceTermEntryId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -282,16 +130,11 @@ public class CTermEntryLocalizationPersistenceImpl
 			return cTermEntryLocalization;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("commerceTermEntryId=");
-		sb.append(commerceTermEntryId);
-
-		sb.append("}");
-
-		throw new NoSuchCTermEntryLocalizationException(sb.toString());
+		throw new NoSuchCTermEntryLocalizationException(
+			_collectionPersistenceFinderByCommerceTermEntryId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {commerceTermEntryId}));
 	}
 
 	/**
@@ -306,14 +149,8 @@ public class CTermEntryLocalizationPersistenceImpl
 		long commerceTermEntryId,
 		OrderByComparator<CTermEntryLocalization> orderByComparator) {
 
-		List<CTermEntryLocalization> list = findByCommerceTermEntryId(
-			commerceTermEntryId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCommerceTermEntryId.fetchFirst(
+			finderCache, new Object[] {commerceTermEntryId}, orderByComparator);
 	}
 
 	/**
@@ -323,13 +160,8 @@ public class CTermEntryLocalizationPersistenceImpl
 	 */
 	@Override
 	public void removeByCommerceTermEntryId(long commerceTermEntryId) {
-		for (CTermEntryLocalization cTermEntryLocalization :
-				findByCommerceTermEntryId(
-					commerceTermEntryId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(cTermEntryLocalization);
-		}
+		_collectionPersistenceFinderByCommerceTermEntryId.remove(
+			finderCache, new Object[] {commerceTermEntryId});
 	}
 
 	/**
@@ -340,52 +172,12 @@ public class CTermEntryLocalizationPersistenceImpl
 	 */
 	@Override
 	public int countByCommerceTermEntryId(long commerceTermEntryId) {
-		FinderPath finderPath = _finderPathCountByCommerceTermEntryId;
-
-		Object[] finderArgs = new Object[] {commerceTermEntryId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_CTERMENTRYLOCALIZATION_WHERE);
-
-			sb.append(_FINDER_COLUMN_COMMERCETERMENTRYID_COMMERCETERMENTRYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(commerceTermEntryId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByCommerceTermEntryId.count(
+			finderCache, new Object[] {commerceTermEntryId});
 	}
 
-	private static final String
-		_FINDER_COLUMN_COMMERCETERMENTRYID_COMMERCETERMENTRYID_2 =
-			"cTermEntryLocalization.commerceTermEntryId = ?";
-
-	private FinderPath _finderPathFetchByCommerceTermEntryId_LanguageId;
+	private UniquePersistenceFinder<CTermEntryLocalization>
+		_uniquePersistenceFinderByCommerceTermEntryId_LanguageId;
 
 	/**
 	 * Returns the c term entry localization where commerceTermEntryId = &#63; and languageId = &#63; or throws a <code>NoSuchCTermEntryLocalizationException</code> if it could not be found.
@@ -405,41 +197,20 @@ public class CTermEntryLocalizationPersistenceImpl
 				commerceTermEntryId, languageId);
 
 		if (cTermEntryLocalization == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("commerceTermEntryId=");
-			sb.append(commerceTermEntryId);
-
-			sb.append(", languageId=");
-			sb.append(languageId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByCommerceTermEntryId_LanguageId.
+					buildNoSuchKeyMessage(
+						_NO_SUCH_ENTITY_WITH_KEY,
+						new Object[] {commerceTermEntryId, languageId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCTermEntryLocalizationException(sb.toString());
+			throw new NoSuchCTermEntryLocalizationException(message);
 		}
 
 		return cTermEntryLocalization;
-	}
-
-	/**
-	 * Returns the c term entry localization where commerceTermEntryId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param commerceTermEntryId the commerce term entry ID
-	 * @param languageId the language ID
-	 * @return the matching c term entry localization, or <code>null</code> if a matching c term entry localization could not be found
-	 */
-	@Override
-	public CTermEntryLocalization fetchByCommerceTermEntryId_LanguageId(
-		long commerceTermEntryId, String languageId) {
-
-		return fetchByCommerceTermEntryId_LanguageId(
-			commerceTermEntryId, languageId, true);
 	}
 
 	/**
@@ -454,104 +225,9 @@ public class CTermEntryLocalizationPersistenceImpl
 	public CTermEntryLocalization fetchByCommerceTermEntryId_LanguageId(
 		long commerceTermEntryId, String languageId, boolean useFinderCache) {
 
-		languageId = Objects.toString(languageId, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {commerceTermEntryId, languageId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByCommerceTermEntryId_LanguageId, finderArgs,
-				this);
-		}
-
-		if (result instanceof CTermEntryLocalization) {
-			CTermEntryLocalization cTermEntryLocalization =
-				(CTermEntryLocalization)result;
-
-			if ((commerceTermEntryId !=
-					cTermEntryLocalization.getCommerceTermEntryId()) ||
-				!Objects.equals(
-					languageId, cTermEntryLocalization.getLanguageId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_CTERMENTRYLOCALIZATION_WHERE);
-
-			sb.append(
-				_FINDER_COLUMN_COMMERCETERMENTRYID_LANGUAGEID_COMMERCETERMENTRYID_2);
-
-			boolean bindLanguageId = false;
-
-			if (languageId.isEmpty()) {
-				sb.append(
-					_FINDER_COLUMN_COMMERCETERMENTRYID_LANGUAGEID_LANGUAGEID_3);
-			}
-			else {
-				bindLanguageId = true;
-
-				sb.append(
-					_FINDER_COLUMN_COMMERCETERMENTRYID_LANGUAGEID_LANGUAGEID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(commerceTermEntryId);
-
-				if (bindLanguageId) {
-					queryPos.add(languageId);
-				}
-
-				List<CTermEntryLocalization> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByCommerceTermEntryId_LanguageId,
-							finderArgs, list);
-					}
-				}
-				else {
-					CTermEntryLocalization cTermEntryLocalization = list.get(0);
-
-					result = cTermEntryLocalization;
-
-					cacheResult(cTermEntryLocalization);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (CTermEntryLocalization)result;
-		}
+		return _uniquePersistenceFinderByCommerceTermEntryId_LanguageId.fetch(
+			finderCache, new Object[] {commerceTermEntryId, languageId},
+			useFinderCache);
 	}
 
 	/**
@@ -584,28 +260,9 @@ public class CTermEntryLocalizationPersistenceImpl
 	public int countByCommerceTermEntryId_LanguageId(
 		long commerceTermEntryId, String languageId) {
 
-		CTermEntryLocalization cTermEntryLocalization =
-			fetchByCommerceTermEntryId_LanguageId(
-				commerceTermEntryId, languageId);
-
-		if (cTermEntryLocalization == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByCommerceTermEntryId_LanguageId.count(
+			finderCache, new Object[] {commerceTermEntryId, languageId});
 	}
-
-	private static final String
-		_FINDER_COLUMN_COMMERCETERMENTRYID_LANGUAGEID_COMMERCETERMENTRYID_2 =
-			"cTermEntryLocalization.commerceTermEntryId = ? AND ";
-
-	private static final String
-		_FINDER_COLUMN_COMMERCETERMENTRYID_LANGUAGEID_LANGUAGEID_2 =
-			"cTermEntryLocalization.languageId = ?";
-
-	private static final String
-		_FINDER_COLUMN_COMMERCETERMENTRYID_LANGUAGEID_LANGUAGEID_3 =
-			"(cTermEntryLocalization.languageId IS NULL OR cTermEntryLocalization.languageId = '')";
 
 	public CTermEntryLocalizationPersistenceImpl() {
 		setModelClass(CTermEntryLocalization.class);
@@ -614,119 +271,6 @@ public class CTermEntryLocalizationPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(CTermEntryLocalizationTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the c term entry localization in the entity cache if it is enabled.
-	 *
-	 * @param cTermEntryLocalization the c term entry localization
-	 */
-	@Override
-	public void cacheResult(CTermEntryLocalization cTermEntryLocalization) {
-		entityCache.putResult(
-			CTermEntryLocalizationImpl.class,
-			cTermEntryLocalization.getPrimaryKey(), cTermEntryLocalization);
-
-		finderCache.putResult(
-			_finderPathFetchByCommerceTermEntryId_LanguageId,
-			new Object[] {
-				cTermEntryLocalization.getCommerceTermEntryId(),
-				cTermEntryLocalization.getLanguageId()
-			},
-			cTermEntryLocalization);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the c term entry localizations in the entity cache if it is enabled.
-	 *
-	 * @param cTermEntryLocalizations the c term entry localizations
-	 */
-	@Override
-	public void cacheResult(
-		List<CTermEntryLocalization> cTermEntryLocalizations) {
-
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (cTermEntryLocalizations.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (CTermEntryLocalization cTermEntryLocalization :
-				cTermEntryLocalizations) {
-
-			if (entityCache.getResult(
-					CTermEntryLocalizationImpl.class,
-					cTermEntryLocalization.getPrimaryKey()) == null) {
-
-				cacheResult(cTermEntryLocalization);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all c term entry localizations.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(CTermEntryLocalizationImpl.class);
-
-		finderCache.clearCache(CTermEntryLocalizationImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the c term entry localization.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(CTermEntryLocalization cTermEntryLocalization) {
-		entityCache.removeResult(
-			CTermEntryLocalizationImpl.class, cTermEntryLocalization);
-	}
-
-	@Override
-	public void clearCache(
-		List<CTermEntryLocalization> cTermEntryLocalizations) {
-
-		for (CTermEntryLocalization cTermEntryLocalization :
-				cTermEntryLocalizations) {
-
-			entityCache.removeResult(
-				CTermEntryLocalizationImpl.class, cTermEntryLocalization);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(CTermEntryLocalizationImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				CTermEntryLocalizationImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		CTermEntryLocalizationModelImpl cTermEntryLocalizationModelImpl) {
-
-		Object[] args = new Object[] {
-			cTermEntryLocalizationModelImpl.getCommerceTermEntryId(),
-			cTermEntryLocalizationModelImpl.getLanguageId()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByCommerceTermEntryId_LanguageId, args,
-			cTermEntryLocalizationModelImpl);
 	}
 
 	/**
@@ -760,48 +304,6 @@ public class CTermEntryLocalizationPersistenceImpl
 		throws NoSuchCTermEntryLocalizationException {
 
 		return remove((Serializable)cTermEntryLocalizationId);
-	}
-
-	/**
-	 * Removes the c term entry localization with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the c term entry localization
-	 * @return the c term entry localization that was removed
-	 * @throws NoSuchCTermEntryLocalizationException if a c term entry localization with the primary key could not be found
-	 */
-	@Override
-	public CTermEntryLocalization remove(Serializable primaryKey)
-		throws NoSuchCTermEntryLocalizationException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			CTermEntryLocalization cTermEntryLocalization =
-				(CTermEntryLocalization)session.get(
-					CTermEntryLocalizationImpl.class, primaryKey);
-
-			if (cTermEntryLocalization == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchCTermEntryLocalizationException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(cTermEntryLocalization);
-		}
-		catch (NoSuchCTermEntryLocalizationException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -921,43 +423,13 @@ public class CTermEntryLocalizationPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			CTermEntryLocalizationImpl.class, cTermEntryLocalizationModelImpl,
-			false, true);
-
-		cacheUniqueFindersCache(cTermEntryLocalizationModelImpl);
+		cacheUniqueFindersResult(cTermEntryLocalization, false);
 
 		if (isNew) {
 			cTermEntryLocalization.setNew(false);
 		}
 
 		cTermEntryLocalization.resetOriginalValues();
-
-		return cTermEntryLocalization;
-	}
-
-	/**
-	 * Returns the c term entry localization with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the c term entry localization
-	 * @return the c term entry localization
-	 * @throws NoSuchCTermEntryLocalizationException if a c term entry localization with the primary key could not be found
-	 */
-	@Override
-	public CTermEntryLocalization findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchCTermEntryLocalizationException {
-
-		CTermEntryLocalization cTermEntryLocalization = fetchByPrimaryKey(
-			primaryKey);
-
-		if (cTermEntryLocalization == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchCTermEntryLocalizationException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return cTermEntryLocalization;
 	}
@@ -990,188 +462,6 @@ public class CTermEntryLocalizationPersistenceImpl
 		return fetchByPrimaryKey((Serializable)cTermEntryLocalizationId);
 	}
 
-	/**
-	 * Returns all the c term entry localizations.
-	 *
-	 * @return the c term entry localizations
-	 */
-	@Override
-	public List<CTermEntryLocalization> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the c term entry localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of c term entry localizations
-	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @return the range of c term entry localizations
-	 */
-	@Override
-	public List<CTermEntryLocalization> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the c term entry localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of c term entry localizations
-	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of c term entry localizations
-	 */
-	@Override
-	public List<CTermEntryLocalization> findAll(
-		int start, int end,
-		OrderByComparator<CTermEntryLocalization> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the c term entry localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of c term entry localizations
-	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of c term entry localizations
-	 */
-	@Override
-	public List<CTermEntryLocalization> findAll(
-		int start, int end,
-		OrderByComparator<CTermEntryLocalization> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<CTermEntryLocalization> list = null;
-
-		if (useFinderCache) {
-			list = (List<CTermEntryLocalization>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_CTERMENTRYLOCALIZATION);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_CTERMENTRYLOCALIZATION;
-
-				sql = sql.concat(CTermEntryLocalizationModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<CTermEntryLocalization>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the c term entry localizations from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (CTermEntryLocalization cTermEntryLocalization : findAll()) {
-			remove(cTermEntryLocalization);
-		}
-	}
-
-	/**
-	 * Returns the number of c term entry localizations.
-	 *
-	 * @return the number of c term entry localizations
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_CTERMENTRYLOCALIZATION);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
 	@Override
 	protected EntityCache getEntityCache() {
 		return entityCache;
@@ -1197,43 +487,56 @@ public class CTermEntryLocalizationPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByCommerceTermEntryId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByCommerceTermEntryId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"commerceTermEntryId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByCommerceTermEntryId",
+					new String[] {Long.class.getName()},
+					new String[] {"commerceTermEntryId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByCommerceTermEntryId",
+					new String[] {Long.class.getName()},
+					new String[] {"commerceTermEntryId"}, false),
+				_SQL_SELECT_CTERMENTRYLOCALIZATION_WHERE,
+				_SQL_COUNT_CTERMENTRYLOCALIZATION_WHERE,
+				CTermEntryLocalizationModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"cTermEntryLocalization.", "commerceTermEntryId",
+					FinderColumn.Type.LONG, "=", true, true,
+					CTermEntryLocalization::getCommerceTermEntryId));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByCommerceTermEntryId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCommerceTermEntryId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"commerceTermEntryId"}, true);
-
-		_finderPathWithoutPaginationFindByCommerceTermEntryId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByCommerceTermEntryId", new String[] {Long.class.getName()},
-			new String[] {"commerceTermEntryId"}, true);
-
-		_finderPathCountByCommerceTermEntryId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByCommerceTermEntryId", new String[] {Long.class.getName()},
-			new String[] {"commerceTermEntryId"}, false);
-
-		_finderPathFetchByCommerceTermEntryId_LanguageId = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByCommerceTermEntryId_LanguageId",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"commerceTermEntryId", "languageId"}, true);
+		_uniquePersistenceFinderByCommerceTermEntryId_LanguageId =
+			new UniquePersistenceFinder<>(
+				this,
+				createUniqueFinderPath(
+					FINDER_CLASS_NAME_ENTITY,
+					"fetchByCommerceTermEntryId_LanguageId",
+					new String[] {Long.class.getName(), String.class.getName()},
+					new String[] {"commerceTermEntryId", "languageId"}, 0, 2,
+					false, CTermEntryLocalization::getCommerceTermEntryId,
+					convertNullFunction(CTermEntryLocalization::getLanguageId)),
+				_SQL_SELECT_CTERMENTRYLOCALIZATION_WHERE, "",
+				new FinderColumn<>(
+					"cTermEntryLocalization.", "commerceTermEntryId",
+					FinderColumn.Type.LONG, "=", true, true,
+					CTermEntryLocalization::getCommerceTermEntryId),
+				new FinderColumn<>(
+					"cTermEntryLocalization.", "languageId",
+					FinderColumn.Type.STRING, "=", true, true,
+					CTermEntryLocalization::getLanguageId));
 
 		CTermEntryLocalizationUtil.setPersistence(this);
 	}
@@ -1277,23 +580,17 @@ public class CTermEntryLocalizationPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		CTermEntryLocalizationModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_CTERMENTRYLOCALIZATION =
 		"SELECT cTermEntryLocalization FROM CTermEntryLocalization cTermEntryLocalization";
 
 	private static final String _SQL_SELECT_CTERMENTRYLOCALIZATION_WHERE =
 		"SELECT cTermEntryLocalization FROM CTermEntryLocalization cTermEntryLocalization WHERE ";
 
-	private static final String _SQL_COUNT_CTERMENTRYLOCALIZATION =
-		"SELECT COUNT(cTermEntryLocalization) FROM CTermEntryLocalization cTermEntryLocalization";
-
 	private static final String _SQL_COUNT_CTERMENTRYLOCALIZATION_WHERE =
 		"SELECT COUNT(cTermEntryLocalization) FROM CTermEntryLocalization cTermEntryLocalization WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"cTermEntryLocalization.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No CTermEntryLocalization exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No CTermEntryLocalization exists with the key {";
@@ -1307,4 +604,4 @@ public class CTermEntryLocalizationPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1227256571
+// LIFERAY-SERVICE-BUILDER-HASH:114471369

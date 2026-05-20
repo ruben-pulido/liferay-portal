@@ -37,6 +37,24 @@ public class NotificationQueueEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<NotificationQueueEntry> notificationQueueEntries) {
+
+		getPersistence().cacheResult(notificationQueueEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		NotificationQueueEntry notificationQueueEntry) {
+
+		getPersistence().cacheResult(notificationQueueEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,59 +135,10 @@ public class NotificationQueueEntryUtil {
 	}
 
 	/**
-	 * Returns all the notification queue entries where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the notification queue entries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @return the range of matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the notification queue entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<NotificationQueueEntry> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the notification queue entries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -222,40 +191,10 @@ public class NotificationQueueEntryUtil {
 	}
 
 	/**
-	 * Returns all the notification queue entries that the user has permission to view where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching notification queue entries that the user has permission to view
-	 */
-	public static List<NotificationQueueEntry> filterFindByCompanyId(
-		long companyId) {
-
-		return getPersistence().filterFindByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the notification queue entries that the user has permission to view where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @return the range of matching notification queue entries that the user has permission to view
-	 */
-	public static List<NotificationQueueEntry> filterFindByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().filterFindByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the notification queue entries that the user has permissions to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -302,63 +241,10 @@ public class NotificationQueueEntryUtil {
 	}
 
 	/**
-	 * Returns all the notification queue entries where notificationTemplateId = &#63;.
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @return the matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByNotificationTemplateId(
-		long notificationTemplateId) {
-
-		return getPersistence().findByNotificationTemplateId(
-			notificationTemplateId);
-	}
-
-	/**
-	 * Returns a range of all the notification queue entries where notificationTemplateId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @return the range of matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByNotificationTemplateId(
-		long notificationTemplateId, int start, int end) {
-
-		return getPersistence().findByNotificationTemplateId(
-			notificationTemplateId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the notification queue entries where notificationTemplateId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByNotificationTemplateId(
-		long notificationTemplateId, int start, int end,
-		OrderByComparator<NotificationQueueEntry> orderByComparator) {
-
-		return getPersistence().findByNotificationTemplateId(
-			notificationTemplateId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the notification queue entries where notificationTemplateId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param notificationTemplateId the notification template ID
@@ -412,43 +298,10 @@ public class NotificationQueueEntryUtil {
 	}
 
 	/**
-	 * Returns all the notification queue entries that the user has permission to view where notificationTemplateId = &#63;.
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @return the matching notification queue entries that the user has permission to view
-	 */
-	public static List<NotificationQueueEntry>
-		filterFindByNotificationTemplateId(long notificationTemplateId) {
-
-		return getPersistence().filterFindByNotificationTemplateId(
-			notificationTemplateId);
-	}
-
-	/**
-	 * Returns a range of all the notification queue entries that the user has permission to view where notificationTemplateId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @return the range of matching notification queue entries that the user has permission to view
-	 */
-	public static List<NotificationQueueEntry>
-		filterFindByNotificationTemplateId(
-			long notificationTemplateId, int start, int end) {
-
-		return getPersistence().filterFindByNotificationTemplateId(
-			notificationTemplateId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the notification queue entries that the user has permissions to view where notificationTemplateId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param notificationTemplateId the notification template ID
@@ -517,7 +370,7 @@ public class NotificationQueueEntryUtil {
 	 * Returns a range of all the notification queue entries where sentDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sentDate the sent date
@@ -535,7 +388,7 @@ public class NotificationQueueEntryUtil {
 	 * Returns an ordered range of all the notification queue entries where sentDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sentDate the sent date
@@ -556,7 +409,7 @@ public class NotificationQueueEntryUtil {
 	 * Returns an ordered range of all the notification queue entries where sentDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sentDate the sent date
@@ -624,7 +477,7 @@ public class NotificationQueueEntryUtil {
 	 * Returns a range of all the notification queue entries that the user has permission to view where sentDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sentDate the sent date
@@ -642,7 +495,7 @@ public class NotificationQueueEntryUtil {
 	 * Returns an ordered range of all the notification queue entries that the user has permissions to view where sentDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sentDate the sent date
@@ -689,64 +542,10 @@ public class NotificationQueueEntryUtil {
 	}
 
 	/**
-	 * Returns all the notification queue entries where type = &#63; and status = &#63;.
-	 *
-	 * @param type the type
-	 * @param status the status
-	 * @return the matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByT_S(
-		String type, int status) {
-
-		return getPersistence().findByT_S(type, status);
-	}
-
-	/**
-	 * Returns a range of all the notification queue entries where type = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param status the status
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @return the range of matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByT_S(
-		String type, int status, int start, int end) {
-
-		return getPersistence().findByT_S(type, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the notification queue entries where type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param status the status
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching notification queue entries
-	 */
-	public static List<NotificationQueueEntry> findByT_S(
-		String type, int status, int start, int end,
-		OrderByComparator<NotificationQueueEntry> orderByComparator) {
-
-		return getPersistence().findByT_S(
-			type, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the notification queue entries where type = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param type the type
@@ -802,42 +601,10 @@ public class NotificationQueueEntryUtil {
 	}
 
 	/**
-	 * Returns all the notification queue entries that the user has permission to view where type = &#63; and status = &#63;.
-	 *
-	 * @param type the type
-	 * @param status the status
-	 * @return the matching notification queue entries that the user has permission to view
-	 */
-	public static List<NotificationQueueEntry> filterFindByT_S(
-		String type, int status) {
-
-		return getPersistence().filterFindByT_S(type, status);
-	}
-
-	/**
-	 * Returns a range of all the notification queue entries that the user has permission to view where type = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param status the status
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @return the range of matching notification queue entries that the user has permission to view
-	 */
-	public static List<NotificationQueueEntry> filterFindByT_S(
-		String type, int status, int start, int end) {
-
-		return getPersistence().filterFindByT_S(type, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the notification queue entries that the user has permissions to view where type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param type the type
@@ -885,28 +652,6 @@ public class NotificationQueueEntryUtil {
 	 */
 	public static int filterCountByT_S(String type, int status) {
 		return getPersistence().filterCountByT_S(type, status);
-	}
-
-	/**
-	 * Caches the notification queue entry in the entity cache if it is enabled.
-	 *
-	 * @param notificationQueueEntry the notification queue entry
-	 */
-	public static void cacheResult(
-		NotificationQueueEntry notificationQueueEntry) {
-
-		getPersistence().cacheResult(notificationQueueEntry);
-	}
-
-	/**
-	 * Caches the notification queue entries in the entity cache if it is enabled.
-	 *
-	 * @param notificationQueueEntries the notification queue entries
-	 */
-	public static void cacheResult(
-		List<NotificationQueueEntry> notificationQueueEntries) {
-
-		getPersistence().cacheResult(notificationQueueEntries);
 	}
 
 	/**
@@ -967,84 +712,254 @@ public class NotificationQueueEntryUtil {
 	}
 
 	/**
-	 * Returns all the notification queue entries.
+	 * Returns all the notification queue entries where companyId = &#63;.
 	 *
-	 * @return the notification queue entries
+	 * @param companyId the company ID
+	 * @return the matching notification queue entries
 	 */
-	public static List<NotificationQueueEntry> findAll() {
-		return getPersistence().findAll();
+	public static List<NotificationQueueEntry> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
 	}
 
 	/**
-	 * Returns a range of all the notification queue entries.
+	 * Returns a range of all the notification queue entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of notification queue entries
 	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @return the range of notification queue entries
+	 * @return the range of matching notification queue entries
 	 */
-	public static List<NotificationQueueEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<NotificationQueueEntry> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the notification queue entries.
+	 * Returns an ordered range of all the notification queue entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of notification queue entries
 	 * @param end the upper bound of the range of notification queue entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of notification queue entries
+	 * @return the ordered range of matching notification queue entries
 	 */
-	public static List<NotificationQueueEntry> findAll(
-		int start, int end,
+	public static List<NotificationQueueEntry> findByCompanyId(
+		long companyId, int start, int end,
 		OrderByComparator<NotificationQueueEntry> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the notification queue entries.
+	 * Returns all the notification queue entries that the user has permission to view where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching notification queue entries that the user has permission to view
+	 */
+	public static List<NotificationQueueEntry> filterFindByCompanyId(
+		long companyId) {
+
+		return getPersistence().filterFindByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the notification queue entries that the user has permission to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of notification queue entries
+	 * @param end the upper bound of the range of notification queue entries (not inclusive)
+	 * @return the range of matching notification queue entries that the user has permission to view
+	 */
+	public static List<NotificationQueueEntry> filterFindByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().filterFindByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns all the notification queue entries where notificationTemplateId = &#63;.
+	 *
+	 * @param notificationTemplateId the notification template ID
+	 * @return the matching notification queue entries
+	 */
+	public static List<NotificationQueueEntry> findByNotificationTemplateId(
+		long notificationTemplateId) {
+
+		return getPersistence().findByNotificationTemplateId(
+			notificationTemplateId);
+	}
+
+	/**
+	 * Returns a range of all the notification queue entries where notificationTemplateId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param notificationTemplateId the notification template ID
+	 * @param start the lower bound of the range of notification queue entries
+	 * @param end the upper bound of the range of notification queue entries (not inclusive)
+	 * @return the range of matching notification queue entries
+	 */
+	public static List<NotificationQueueEntry> findByNotificationTemplateId(
+		long notificationTemplateId, int start, int end) {
+
+		return getPersistence().findByNotificationTemplateId(
+			notificationTemplateId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the notification queue entries where notificationTemplateId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param notificationTemplateId the notification template ID
 	 * @param start the lower bound of the range of notification queue entries
 	 * @param end the upper bound of the range of notification queue entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of notification queue entries
+	 * @return the ordered range of matching notification queue entries
 	 */
-	public static List<NotificationQueueEntry> findAll(
-		int start, int end,
-		OrderByComparator<NotificationQueueEntry> orderByComparator,
-		boolean useFinderCache) {
+	public static List<NotificationQueueEntry> findByNotificationTemplateId(
+		long notificationTemplateId, int start, int end,
+		OrderByComparator<NotificationQueueEntry> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByNotificationTemplateId(
+			notificationTemplateId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the notification queue entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of notification queue entries.
+	 * Returns all the notification queue entries that the user has permission to view where notificationTemplateId = &#63;.
 	 *
-	 * @return the number of notification queue entries
+	 * @param notificationTemplateId the notification template ID
+	 * @return the matching notification queue entries that the user has permission to view
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<NotificationQueueEntry>
+		filterFindByNotificationTemplateId(long notificationTemplateId) {
+
+		return getPersistence().filterFindByNotificationTemplateId(
+			notificationTemplateId);
+	}
+
+	/**
+	 * Returns a range of all the notification queue entries that the user has permission to view where notificationTemplateId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param notificationTemplateId the notification template ID
+	 * @param start the lower bound of the range of notification queue entries
+	 * @param end the upper bound of the range of notification queue entries (not inclusive)
+	 * @return the range of matching notification queue entries that the user has permission to view
+	 */
+	public static List<NotificationQueueEntry>
+		filterFindByNotificationTemplateId(
+			long notificationTemplateId, int start, int end) {
+
+		return getPersistence().filterFindByNotificationTemplateId(
+			notificationTemplateId, start, end);
+	}
+
+	/**
+	 * Returns all the notification queue entries where type = &#63; and status = &#63;.
+	 *
+	 * @param type the type
+	 * @param status the status
+	 * @return the matching notification queue entries
+	 */
+	public static List<NotificationQueueEntry> findByT_S(
+		String type, int status) {
+
+		return getPersistence().findByT_S(type, status);
+	}
+
+	/**
+	 * Returns a range of all the notification queue entries where type = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param status the status
+	 * @param start the lower bound of the range of notification queue entries
+	 * @param end the upper bound of the range of notification queue entries (not inclusive)
+	 * @return the range of matching notification queue entries
+	 */
+	public static List<NotificationQueueEntry> findByT_S(
+		String type, int status, int start, int end) {
+
+		return getPersistence().findByT_S(type, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the notification queue entries where type = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param status the status
+	 * @param start the lower bound of the range of notification queue entries
+	 * @param end the upper bound of the range of notification queue entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching notification queue entries
+	 */
+	public static List<NotificationQueueEntry> findByT_S(
+		String type, int status, int start, int end,
+		OrderByComparator<NotificationQueueEntry> orderByComparator) {
+
+		return getPersistence().findByT_S(
+			type, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the notification queue entries that the user has permission to view where type = &#63; and status = &#63;.
+	 *
+	 * @param type the type
+	 * @param status the status
+	 * @return the matching notification queue entries that the user has permission to view
+	 */
+	public static List<NotificationQueueEntry> filterFindByT_S(
+		String type, int status) {
+
+		return getPersistence().filterFindByT_S(type, status);
+	}
+
+	/**
+	 * Returns a range of all the notification queue entries that the user has permission to view where type = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.notification.model.impl.NotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param status the status
+	 * @param start the lower bound of the range of notification queue entries
+	 * @param end the upper bound of the range of notification queue entries (not inclusive)
+	 * @return the range of matching notification queue entries that the user has permission to view
+	 */
+	public static List<NotificationQueueEntry> filterFindByT_S(
+		String type, int status, int start, int end) {
+
+		return getPersistence().filterFindByT_S(type, status, start, end);
 	}
 
 	public static NotificationQueueEntryPersistence getPersistence() {
@@ -1060,4 +975,4 @@ public class NotificationQueueEntryUtil {
 	private static volatile NotificationQueueEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1042255966
+// LIFERAY-SERVICE-BUILDER-HASH:569919808

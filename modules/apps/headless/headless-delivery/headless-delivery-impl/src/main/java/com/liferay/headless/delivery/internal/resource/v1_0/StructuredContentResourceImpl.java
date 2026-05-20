@@ -129,7 +129,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -494,21 +493,6 @@ public class StructuredContentResourceImpl
 
 		JournalArticle journalArticle = _journalArticleService.getLatestArticle(
 			structuredContentId);
-
-		if (!ArrayUtil.contains(
-				journalArticle.getAvailableLanguageIds(),
-				contextAcceptLanguage.getPreferredLanguageId())) {
-
-			throw new BadRequestException(
-				StringBundler.concat(
-					"Unable to patch structured content with language ",
-					LocaleUtil.toW3cLanguageId(
-						contextAcceptLanguage.getPreferredLanguageId()),
-					" because it is only available in the following languages ",
-					Arrays.toString(
-						LocaleUtil.toW3cLanguageIds(
-							journalArticle.getAvailableLanguageIds()))));
-		}
 
 		DDMStructure ddmStructure = journalArticle.getDDMStructure();
 
@@ -1324,26 +1308,36 @@ public class StructuredContentResourceImpl
 			}
 		}
 
-		for (ContentField contentField : contentFields) {
-			Field field = fields.get(contentField.getName());
+		Map<String, List<ContentField>> contentFieldsMap = new HashMap<>();
 
-			Value value = DDMValueUtil.toDDMValue(
-				contentField.toString(),
-				DDMFormFieldUtil.getDDMFormField(
-					_ddmStructureService, ddmStructure, contentField.getName()),
-				_dlAppService, journalArticle.getGroupId(),
-				_journalArticleService, _layoutLocalService,
-				contextAcceptLanguage.getPreferredLocale());
+		_populateContentFieldsMap(contentFields, contentFieldsMap);
 
-			for (Locale locale : value.getAvailableLocales()) {
-				field.setValue(locale, value.getString(locale));
+		for (Map.Entry<String, List<ContentField>> entry :
+				contentFieldsMap.entrySet()) {
+
+			Field field = fields.get(entry.getKey());
+
+			if (field == null) {
+				continue;
 			}
 
-			ContentField[] nestedContentFields =
-				contentField.getNestedContentFields();
+			DDMFormField ddmFormField = DDMFormFieldUtil.getDDMFormField(
+				_ddmStructureService, ddmStructure, entry.getKey());
 
-			if (nestedContentFields != null) {
-				_toPatchedFields(nestedContentFields, journalArticle);
+			for (ContentField contentField : entry.getValue()) {
+				Value value = DDMValueUtil.toDDMValue(
+					contentField.toString(), ddmFormField, _dlAppService,
+					journalArticle.getGroupId(), _journalArticleService,
+					_layoutLocalService,
+					contextAcceptLanguage.getPreferredLocale());
+
+				if (value == null) {
+					continue;
+				}
+
+				for (Locale locale : value.getAvailableLocales()) {
+					field.setValue(locale, value.getString(locale));
+				}
 			}
 		}
 

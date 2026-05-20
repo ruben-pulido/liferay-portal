@@ -8,14 +8,12 @@ package com.liferay.portal.search.internal.facet;
 import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
+import com.liferay.portal.kernel.search.NestedQuery;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.NestedQuery;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.aggregation.Aggregation;
@@ -110,7 +108,7 @@ public class NestedFacetImpl extends FacetImpl implements NestedFacet {
 				nestedAggregationTermsFilter, BooleanClauseOccur.MUST);
 		}
 
-		BooleanQuery booleanQuery = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		booleanQuery.setPreBooleanFilter(booleanFilter);
 
@@ -118,7 +116,7 @@ public class NestedFacetImpl extends FacetImpl implements NestedFacet {
 
 		QueryFilter queryFilter = new QueryFilter(nestedQuery);
 
-		return new BooleanClauseImpl<>(queryFilter, BooleanClauseOccur.MUST);
+		return new BooleanClause<>(queryFilter, BooleanClauseOccur.MUST);
 	}
 
 	private Aggregation _childAggregation;

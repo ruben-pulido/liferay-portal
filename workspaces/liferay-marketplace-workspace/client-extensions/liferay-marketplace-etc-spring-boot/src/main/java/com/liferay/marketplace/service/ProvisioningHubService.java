@@ -5,19 +5,32 @@
 
 package com.liferay.marketplace.service;
 
+import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
+import com.liferay.marketplace.util.MarketplaceUtil;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.net.URL;
 
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Caleb Hall
@@ -25,39 +38,35 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProvisioningHubService extends BaseService {
 
-	public void provision(Order order, ProductPurchase productPurchase)
+	public void provision(
+			Account koroneikiAccount, Order order,
+			ProductPurchase productPurchase)
 		throws Exception {
 
 		Product product = productPurchase.getProduct();
 
 		if (Objects.equals(product.getName(), "Liferay Data Platform")) {
-			Account koroneikiAccount = _koroneikiService.getKoroneikiAccount(
-				productPurchase.getAccountKey());
-
-			Map<String, String> properties = koroneikiAccount.getProperties();
-
-			String securityContactEmailAddress = properties.get(
-				"securityContactEmailAddress");
-
-			JSONObject jsonObject = new JSONObject(
-			).put(
-				"corpProjectName", koroneikiAccount.getName()
-			).put(
-				"corpProjectUuid", koroneikiAccount.getKey()
-			).put(
-				"incidentReportEmailAddresses",
-				securityContactEmailAddress.split(",")
-			).put(
-				"name", properties.get("ldpWorkspaceName")
-			).put(
-				"ownerEmailAddress", order.getCreatorEmailAddress()
-			).put(
-				"serverLocation",
-				_getServerLocation(properties.get("dataCenterLocation"))
-			);
-
-			_analyticsService.provision(jsonObject, order.getId());
+			_provisionLDP(koroneikiAccount, order);
 		}
+	}
+
+	public String provisionAIHub(JSONObject jsonObject) {
+		String response = post(
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				"external-ai-hub"),
+			jsonObject.toString(),
+			UriComponentsBuilder.fromUriString(
+				_externalAIHubHomePageURL.toString()
+			).path(
+				"/o/ai-hub/v1.0/provisioning"
+			).build(
+			).toUri());
+
+		if (_log.isInfoEnabled()) {
+			_log.info("AI Hub provisioned " + jsonObject);
+		}
+
+		return response;
 	}
 
 	private String _getServerLocation(String dataCenterLocation) {
@@ -81,14 +90,84 @@ public class ProvisioningHubService extends BaseService {
 			return "us-west1-ac4-c1";
 		}
 
-		throw new IllegalArgumentException(
-			"Invalid data center location: " + dataCenterLocation);
+		return "us-west1-s2-c1";
 	}
+
+	private void _provisionLDP(Account koroneikiAccount, Order order)
+		throws Exception {
+
+		Map<String, String> properties = koroneikiAccount.getProperties();
+
+		if (Validator.isNull(properties.get("dataCenterLocation")) ||
+			Validator.isNull(properties.get("ldpWorkspaceName"))) {
+
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					StringBundler.concat(
+						"Missing properties to provision LDP for account ",
+						koroneikiAccount.getKey(), ": ", properties));
+			}
+
+			return;
+		}
+
+		String securityContactEmailAddress = properties.get(
+			"securityContactEmailAddress");
+
+		JSONArray incidentReportEmailAddressesJSONArray = new JSONArray();
+
+		if (Validator.isNotNull(securityContactEmailAddress)) {
+			incidentReportEmailAddressesJSONArray = new JSONArray(
+				securityContactEmailAddress.split(","));
+		}
+
+		String analyticsProject = _analyticsService.provision(
+			new JSONObject(
+			).put(
+				"corpProjectName", koroneikiAccount.getName()
+			).put(
+				"corpProjectUuid", koroneikiAccount.getKey()
+			).put(
+				"incidentReportEmailAddresses",
+				incidentReportEmailAddressesJSONArray
+			).put(
+				"name", properties.get("ldpWorkspaceName")
+			).put(
+				"ownerEmailAddress",
+				properties.get("securityContactEmailAddress")
+			).put(
+				"serverLocation",
+				_getServerLocation(properties.get("dataCenterLocation"))
+			));
+
+		_marketplaceService.completeOrder(
+			HashMapBuilder.put(
+				"order-metadata",
+				MarketplaceUtil.getOrderMetadata(
+					order
+				).put(
+					"analyticsProject", new JSONObject(analyticsProject)
+				).toString()
+			).build(),
+			order.getId(), order.getPaymentStatus());
+	}
+
+	private static final Log _log = LogFactory.getLog(
+		ProvisioningHubService.class);
 
 	@Autowired
 	private AnalyticsService _analyticsService;
 
+	@Value("${external.ai.hub.oauth2.headless.server.home.page.url}")
+	private URL _externalAIHubHomePageURL;
+
 	@Autowired
 	private KoroneikiService _koroneikiService;
+
+	@Autowired
+	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
+
+	@Autowired
+	private MarketplaceService _marketplaceService;
 
 }

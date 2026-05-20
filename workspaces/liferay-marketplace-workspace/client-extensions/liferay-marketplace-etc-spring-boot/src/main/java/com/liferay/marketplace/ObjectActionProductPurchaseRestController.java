@@ -93,7 +93,6 @@ public class ObjectActionProductPurchaseRestController
 		}
 
 		if (Objects.equals(orderTypeExternalReferenceCode, "CLOUD_APP") ||
-			Objects.equals(orderTypeExternalReferenceCode, "COMPOSITE_APP") ||
 			Objects.equals(
 				orderTypeExternalReferenceCode, "LOW_CODE_CONFIGURATION") ||
 			Objects.equals(orderTypeExternalReferenceCode, "OTHER")) {
@@ -105,6 +104,7 @@ public class ObjectActionProductPurchaseRestController
 
 		if (Objects.equals(
 				orderTypeExternalReferenceCode, "CLIENT_EXTENSION") ||
+			Objects.equals(orderTypeExternalReferenceCode, "COMPOSITE_APP") ||
 			Objects.equals(
 				order.getOrderTypeExternalReferenceCode(), "DXP_APP")) {
 
@@ -128,11 +128,8 @@ public class ObjectActionProductPurchaseRestController
 	}
 
 	private String _getExchangeRate(Order order) {
-		Map<String, String> customFields =
-			(Map<String, String>)order.getCustomFields();
-
-		JSONObject orderMetadataJSONObject = new JSONObject(
-			customFields.getOrDefault("order-metadata", "{}"));
+		JSONObject orderMetadataJSONObject = MarketplaceUtil.getOrderMetadata(
+			order);
 
 		if (!Objects.equals(order.getCurrencyCode(), "USD") ||
 			!orderMetadataJSONObject.has("exchangeRate")) {
@@ -461,11 +458,8 @@ public class ObjectActionProductPurchaseRestController
 			return;
 		}
 
-		Map<String, String> customFields =
-			(Map<String, String>)order.getCustomFields();
-
-		JSONObject orderMetadataJSONObject = new JSONObject(
-			customFields.getOrDefault("order-metadata", "{}"));
+		JSONObject orderMetadataJSONObject = MarketplaceUtil.getOrderMetadata(
+			order);
 
 		if (_koroneikiService.hasEntitlement(
 				_koroneikiService.getKoroneikiAccount(
@@ -509,6 +503,10 @@ public class ObjectActionProductPurchaseRestController
 					order.getCreatorEmailAddress())));
 
 		if (jsonObject == null) {
+			_marketplaceService.updateOrder(
+				null, order.getId(),
+				MarketplaceConstants.ORDER_STATUS_CANCELLED);
+
 			return;
 		}
 

@@ -20,7 +20,6 @@ export {
 } from './common/types/BulkActionTask';
 export {ObjectField, StateFlowValue} from './common/types/ObjectDefinition';
 export {type Space} from './common/types/Space';
-
 export {
 	displayCreateSuccessToast,
 	displayCreateTaskErrorToast,
@@ -33,12 +32,14 @@ export {
 	displayNameInUseErrorToast,
 } from './common/utils/toastUtil';
 
+export {default as ContentEditorPreview} from './content_editor/components/ContentEditorPreview';
 export {default as ContentEditorSidePanel} from './content_editor/components/ContentEditorSidePanel';
 
 // Content Editor
 
 export {default as ContentEditorToolbar} from './content_editor/components/ContentEditorToolbar';
 export {default as Spaces} from './content_editor/components/Spaces';
+
 export {default as CommentsPanel} from './content_editor/components/panels/CommentsPanel';
 export {default as BulkActionTaskAssets} from './main_view/bulk_action_task/BulkActionTaskAssets';
 export {default as BulkActionTaskDuration} from './main_view/bulk_action_task/BulkActionTaskDuration';
@@ -49,9 +50,9 @@ export {default as EditCategoryPage} from './main_view/categorization/categories
 export {default as ViewTags} from './main_view/categorization/tags/ViewTags';
 export {default as EditVocabulary} from './main_view/categorization/vocabularies/EditVocabulary';
 export {default as ViewDashboard} from './main_view/dashboard/ViewDashboard';
+
 export {default as EditFolder} from './main_view/folders/EditFolder';
 export {default as QuickActions} from './main_view/home/QuickActions';
-export {default as RecentAssetsHeader} from './main_view/home/RecentAssetsHeader';
 export {default as SearchBar} from './main_view/home/SearchBar';
 
 export {default as ViewWorkflowTasks} from './main_view/home/ViewWorkflowTasks';
@@ -90,6 +91,7 @@ export {default as manageMembersAction} from './main_view/props_transformer/acti
 export {triggerAssetBulkAction} from './main_view/props_transformer/actions/triggerAssetBulkAction';
 export {default as SimpleActionLinkRenderer} from './main_view/props_transformer/cell_renderers/SimpleActionLinkRenderer';
 export {default as addOnClickToCreationMenuItems} from './main_view/props_transformer/utils/addOnClickToCreationMenuItems';
+export {default as AllQuickFilters} from './main_view/quick_filters/AllQuickFilters';
 export {default as RecycleBinToolbar} from './main_view/recycle_bin/RecycleBinToolbar';
 export {default as AddSpaceMembers} from './main_view/spaces/AddSpaceMembers';
 export {default as NewSpace} from './main_view/spaces/NewSpace';
@@ -97,6 +99,7 @@ export {default as SpaceSettings} from './main_view/spaces/SpaceSettings';
 export {default as SpaceSummaryHeader} from './main_view/spaces/SpaceSummaryHeader';
 export {default as SpacesNavigation} from './main_view/spaces_navigation/SpacesNavigation';
 export {default as VersionHistoryToolbar} from './main_view/version_history/VersionHistoryToolbar';
+export {default as ViewAsset} from './main_view/view_asset/ViewAsset';
 
 // Structure Builder
 

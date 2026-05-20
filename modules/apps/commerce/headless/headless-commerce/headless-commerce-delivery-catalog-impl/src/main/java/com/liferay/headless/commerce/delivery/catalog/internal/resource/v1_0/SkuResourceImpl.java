@@ -8,6 +8,7 @@ package com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0;
 import com.liferay.account.exception.NoSuchEntryException;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.service.AccountEntryService;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.context.CommerceContextFactory;
 import com.liferay.commerce.helper.CommerceAccountHelper;
@@ -30,6 +31,7 @@ import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.Product;
 import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.Sku;
 import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.SkuOption;
 import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.converter.SkuDTOConverterContext;
+import com.liferay.headless.commerce.delivery.catalog.internal.util.v1_0.AccountUtil;
 import com.liferay.headless.commerce.delivery.catalog.resource.v1_0.SkuResource;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTAware;
@@ -181,32 +183,10 @@ public class SkuResourceImpl extends BaseSkuResourceImpl {
 		CommerceChannel commerceChannel =
 			_commerceChannelLocalService.getCommerceChannel(channelId);
 
-		int countUserCommerceAccounts =
-			_commerceAccountHelper.countUserCommerceAccounts(
-				contextUser.getUserId(), commerceChannel.getGroupId());
-
-		if (countUserCommerceAccounts > 1) {
-			if (accountId == null) {
-				throw new NoSuchEntryException();
-			}
-		}
-		else {
-			long[] commerceAccountIds =
-				_commerceAccountHelper.getUserCommerceAccountIds(
-					contextUser.getUserId(), commerceChannel.getGroupId());
-
-			if (commerceAccountIds.length == 0) {
-				AccountEntry accountEntry =
-					_accountEntryLocalService.getGuestAccountEntry(
-						contextCompany.getCompanyId());
-
-				commerceAccountIds = new long[] {
-					accountEntry.getAccountEntryId()
-				};
-			}
-
-			accountId = commerceAccountIds[0];
-		}
+		accountId = AccountUtil.getAccountId(
+			contextCompany.getCompanyId(), commerceChannel.getGroupId(),
+			contextUser.getUserId(), _accountEntryLocalService,
+			_accountEntryService, accountId, _commerceAccountHelper, null);
 
 		_commerceProductViewPermission.check(
 			PermissionThreadLocal.getPermissionChecker(), accountId,
@@ -322,6 +302,18 @@ public class SkuResourceImpl extends BaseSkuResourceImpl {
 			String currencyCode)
 		throws Exception {
 
+		if ((accountId != null) && (accountId > 0)) {
+			AccountEntry accountEntry = _accountEntryService.fetchAccountEntry(
+				accountId);
+
+			if (accountEntry != null) {
+				return _commerceContextFactory.create(
+					accountEntry.getAccountEntryId(),
+					commerceChannel.getGroupId(), currencyCode, 0,
+					contextCompany.getCompanyId());
+			}
+		}
+
 		int countUserCommerceAccounts =
 			_commerceAccountHelper.countUserCommerceAccounts(
 				contextUser.getUserId(), commerceChannel.getGroupId());
@@ -414,6 +406,9 @@ public class SkuResourceImpl extends BaseSkuResourceImpl {
 
 	@Reference
 	private AccountEntryLocalService _accountEntryLocalService;
+
+	@Reference
+	private AccountEntryService _accountEntryService;
 
 	@Reference
 	private CommerceAccountHelper _commerceAccountHelper;

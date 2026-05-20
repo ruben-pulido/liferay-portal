@@ -10,6 +10,7 @@ import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import fillAndClickOutside from '../../utils/fillAndClickOutside';
 import {PORTLET_URLS} from '../../utils/portletUrls';
 import {waitForAlert} from '../../utils/waitForAlert';
+import {waitForAllPortletsReady} from '../../utils/waitForAllPortletsReady';
 import {PageEditorPage} from '../layout-content-page-editor-web/PageEditorPage';
 
 export class PagesAdminPage {
@@ -215,15 +216,19 @@ export class PagesAdminPage {
 			'[id$="theme-spritemap-client-extension"]'
 		);
 
+		await waitForAllPortletsReady(this.page);
+
 		await panel.getByRole('button', {name: 'Select'}).click();
 
 		const iframe = this.page.frameLocator(
 			'#selectThemeSpritemapCET_iframe_'
 		);
 
-		const clientExtensionItem = iframe.getByText(clientExtensionName);
+		const clientExtensionItem = iframe.getByText(clientExtensionName, {
+			exact: true,
+		});
 
-		await expect(clientExtensionItem).toBeVisible();
+		await clientExtensionItem.click({trial: true});
 
 		await clientExtensionItem.click();
 

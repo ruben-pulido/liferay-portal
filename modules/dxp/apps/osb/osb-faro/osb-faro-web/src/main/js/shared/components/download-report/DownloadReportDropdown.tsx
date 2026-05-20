@@ -6,11 +6,11 @@ import Loading, {Align} from '../Loading';
 import React from 'react';
 import {CSVType, useMutationObserver} from './utils';
 import {DownloadStaticCSVReport} from './DownloadStaticCSVReport';
-import {useDataSource} from 'shared/hooks/useDataSource';
+import {useDataSources} from 'shared/context/dataSources';
 
 const reportType = {
 	CSV: {
-		Component: props => (
+		Component: (props: any) => (
 			<DownloadStaticCSVReport
 				segmentId={props.segmentId}
 				type={CSVType.Membership}
@@ -21,7 +21,7 @@ const reportType = {
 		value: 'csv'
 	},
 	PDF: {
-		Component: props => (
+		Component: (props: any) => (
 			<DownloadPDFReport showDateRange={false} {...props} />
 		),
 		label: Liferay.Language.get('pdf-file'),
@@ -29,7 +29,16 @@ const reportType = {
 	}
 };
 
-const DownloadReportDropdown = ({
+interface IDownloadReportDropdownProps {
+	className?: string;
+	label?: string;
+	onClick?: (event: React.MouseEvent) => void;
+	segmentId?: string;
+	subtitle: string;
+	title: string;
+}
+
+const DownloadReportDropdown: React.FC<IDownloadReportDropdownProps> = ({
 	className,
 	label,
 	onClick,
@@ -38,7 +47,7 @@ const DownloadReportDropdown = ({
 	title
 }) => {
 	const {loadingCount} = useMutationObserver();
-	const dataSourceStates = useDataSource();
+	const dataSourceStates = useDataSources();
 
 	return (
 		<>

@@ -8,7 +8,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {apiHelpersTest} from '../../../../fixtures/apiHelpersTest';
 import {commercePagesTest} from '../../../../fixtures/commercePagesTest';
 import {dataApiHelpersTest} from '../../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
 import {globalMenuPagesTest} from '../../../../fixtures/globalMenuPagesTest';
 import {loginTest} from '../../../../fixtures/loginTest';
 import {getRandomInt} from '../../../../utils/getRandomInt';
@@ -17,9 +16,6 @@ export const test = mergeTests(
 	apiHelpersTest,
 	commercePagesTest,
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	globalMenuPagesTest,
 	loginTest()
 );
@@ -73,23 +69,19 @@ test('LPD-18714 Setting default sort for commerce products', async ({
 
 	const siteName1 = 'Minium' + getRandomInt();
 
-	const site1 = await apiHelpers.headlessSite.createSite({
+	await apiHelpers.headlessAdminSite.postSite({
 		name: siteName1,
 		templateKey: 'minium-initializer',
 		templateType: 'site-initializer',
 	});
 
-	apiHelpers.data.push({id: site1.externalReferenceCode, type: 'site'});
-
 	const siteName2 = 'Minium' + getRandomInt();
 
-	const site2 = await apiHelpers.headlessSite.createSite({
+	await apiHelpers.headlessAdminSite.postSite({
 		name: siteName2,
 		templateKey: 'minium-initializer',
 		templateType: 'site-initializer',
 	});
-
-	apiHelpers.data.push({id: site2.externalReferenceCode, type: 'site'});
 
 	const sortingOption1 = 'Name Ascending';
 	const sortingOption2 = 'Name Descending';

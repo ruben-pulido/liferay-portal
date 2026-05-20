@@ -7,8 +7,10 @@ package com.liferay.marketplace;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.marketplace.constants.MarketplaceConstants;
+import com.liferay.marketplace.permission.AccountMemberPermission;
 import com.liferay.marketplace.service.AnalyticsService;
 import com.liferay.marketplace.service.KoroneikiService;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductConsumption;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
@@ -30,13 +32,17 @@ import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import reactor.util.retry.Retry;
@@ -54,9 +60,15 @@ public class AnalyticsRestController extends BaseRestController {
 		throws Exception {
 
 		try {
-			if (!_koroneikiService.hasEntitlement(
-					_koroneikiService.getKoroneikiAccount(accountKey),
-					MarketplaceConstants.KORONEIKI_DXP_ENTITLEMENTS)) {
+			Account koroneikiAccount = _koroneikiService.getKoroneikiAccount(
+				accountKey);
+
+			if (!(_koroneikiService.hasEntitlement(
+					koroneikiAccount,
+					MarketplaceConstants.KORONEIKI_AC_ENTITLEMENTS) ||
+				  _koroneikiService.hasEntitlement(
+					  koroneikiAccount,
+					  MarketplaceConstants.KORONEIKI_DXP_ENTITLEMENTS))) {
 
 				throw new Exception(
 					"DXP entitlements not found for account " + accountKey);
@@ -169,6 +181,51 @@ public class AnalyticsRestController extends BaseRestController {
 			).toUri());
 	}
 
+	@GetMapping("project/corpProjectUuid/{corpProjectUuid}")
+	public ResponseEntity<?> getProjectCorpProjectUuid(
+			@AuthenticationPrincipal Jwt jwt,
+			@PathVariable String corpProjectUuid)
+		throws Exception {
+
+		_accountMemberPermission.check(corpProjectUuid, jwt);
+
+		String analyticsProject = _analyticsService.getCorpProjectUuid(
+			corpProjectUuid);
+
+		if (analyticsProject == null) {
+			return ResponseEntity.status(
+				HttpStatus.NOT_FOUND
+			).body(
+				null
+			);
+		}
+
+		return ResponseEntity.status(
+			HttpStatus.OK
+		).body(
+			analyticsProject
+		);
+	}
+
+	@GetMapping("project/{projectId}/data-source/token")
+	public String getProjectDataSourceToken(@PathVariable String projectId)
+		throws Exception {
+
+		return WebClient.builder(
+		).baseUrl(
+			_analyticsAuthUrl
+		).defaultHeader(
+			HttpHeaders.AUTHORIZATION, _analyticsService.getAuthorization()
+		).build(
+		).get(
+		).uri(
+			"/o/faro/contacts/" + projectId + "/data_source/token"
+		).retrieve(
+		).bodyToMono(
+			String.class
+		).block();
+	}
+
 	@Override
 	protected ExchangeFilterFunction getWebClientExchangeFilterFunction() {
 		return (clientRequest, exchangeFunction) -> exchangeFunction.exchange(
@@ -191,6 +248,9 @@ public class AnalyticsRestController extends BaseRestController {
 
 	private static final Log _log = LogFactory.getLog(
 		AnalyticsRestController.class);
+
+	@Autowired
+	private AccountMemberPermission _accountMemberPermission;
 
 	@Value("${liferay.marketplace.analytics.auth.url}")
 	private String _analyticsAuthUrl;

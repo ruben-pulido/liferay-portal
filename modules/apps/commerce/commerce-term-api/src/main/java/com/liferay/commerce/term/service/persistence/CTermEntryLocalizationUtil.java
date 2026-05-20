@@ -36,6 +36,24 @@ public class CTermEntryLocalizationUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<CTermEntryLocalization> cTermEntryLocalizations) {
+
+		getPersistence().cacheResult(cTermEntryLocalizations);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		CTermEntryLocalization cTermEntryLocalization) {
+
+		getPersistence().cacheResult(cTermEntryLocalization);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -116,62 +134,10 @@ public class CTermEntryLocalizationUtil {
 	}
 
 	/**
-	 * Returns all the c term entry localizations where commerceTermEntryId = &#63;.
-	 *
-	 * @param commerceTermEntryId the commerce term entry ID
-	 * @return the matching c term entry localizations
-	 */
-	public static List<CTermEntryLocalization> findByCommerceTermEntryId(
-		long commerceTermEntryId) {
-
-		return getPersistence().findByCommerceTermEntryId(commerceTermEntryId);
-	}
-
-	/**
-	 * Returns a range of all the c term entry localizations where commerceTermEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commerceTermEntryId the commerce term entry ID
-	 * @param start the lower bound of the range of c term entry localizations
-	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @return the range of matching c term entry localizations
-	 */
-	public static List<CTermEntryLocalization> findByCommerceTermEntryId(
-		long commerceTermEntryId, int start, int end) {
-
-		return getPersistence().findByCommerceTermEntryId(
-			commerceTermEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the c term entry localizations where commerceTermEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commerceTermEntryId the commerce term entry ID
-	 * @param start the lower bound of the range of c term entry localizations
-	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching c term entry localizations
-	 */
-	public static List<CTermEntryLocalization> findByCommerceTermEntryId(
-		long commerceTermEntryId, int start, int end,
-		OrderByComparator<CTermEntryLocalization> orderByComparator) {
-
-		return getPersistence().findByCommerceTermEntryId(
-			commerceTermEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the c term entry localizations where commerceTermEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.term.model.impl.CTermEntryLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param commerceTermEntryId the commerce term entry ID
@@ -260,20 +226,6 @@ public class CTermEntryLocalizationUtil {
 	}
 
 	/**
-	 * Returns the c term entry localization where commerceTermEntryId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param commerceTermEntryId the commerce term entry ID
-	 * @param languageId the language ID
-	 * @return the matching c term entry localization, or <code>null</code> if a matching c term entry localization could not be found
-	 */
-	public static CTermEntryLocalization fetchByCommerceTermEntryId_LanguageId(
-		long commerceTermEntryId, String languageId) {
-
-		return getPersistence().fetchByCommerceTermEntryId_LanguageId(
-			commerceTermEntryId, languageId);
-	}
-
-	/**
 	 * Returns the c term entry localization where commerceTermEntryId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param commerceTermEntryId the commerce term entry ID
@@ -316,28 +268,6 @@ public class CTermEntryLocalizationUtil {
 
 		return getPersistence().countByCommerceTermEntryId_LanguageId(
 			commerceTermEntryId, languageId);
-	}
-
-	/**
-	 * Caches the c term entry localization in the entity cache if it is enabled.
-	 *
-	 * @param cTermEntryLocalization the c term entry localization
-	 */
-	public static void cacheResult(
-		CTermEntryLocalization cTermEntryLocalization) {
-
-		getPersistence().cacheResult(cTermEntryLocalization);
-	}
-
-	/**
-	 * Caches the c term entry localizations in the entity cache if it is enabled.
-	 *
-	 * @param cTermEntryLocalizations the c term entry localizations
-	 */
-	public static void cacheResult(
-		List<CTermEntryLocalization> cTermEntryLocalizations) {
-
-		getPersistence().cacheResult(cTermEntryLocalizations);
 	}
 
 	/**
@@ -398,84 +328,69 @@ public class CTermEntryLocalizationUtil {
 	}
 
 	/**
-	 * Returns all the c term entry localizations.
+	 * Returns the c term entry localization where commerceTermEntryId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the c term entry localizations
+	 * @param commerceTermEntryId the commerce term entry ID
+	 * @param languageId the language ID
+	 * @return the matching c term entry localization, or <code>null</code> if a matching c term entry localization could not be found
 	 */
-	public static List<CTermEntryLocalization> findAll() {
-		return getPersistence().findAll();
+	public static CTermEntryLocalization fetchByCommerceTermEntryId_LanguageId(
+		long commerceTermEntryId, String languageId) {
+
+		return getPersistence().fetchByCommerceTermEntryId_LanguageId(
+			commerceTermEntryId, languageId);
 	}
 
 	/**
-	 * Returns a range of all the c term entry localizations.
+	 * Returns all the c term entry localizations where commerceTermEntryId = &#63;.
+	 *
+	 * @param commerceTermEntryId the commerce term entry ID
+	 * @return the matching c term entry localizations
+	 */
+	public static List<CTermEntryLocalization> findByCommerceTermEntryId(
+		long commerceTermEntryId) {
+
+		return getPersistence().findByCommerceTermEntryId(commerceTermEntryId);
+	}
+
+	/**
+	 * Returns a range of all the c term entry localizations where commerceTermEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.term.model.impl.CTermEntryLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param commerceTermEntryId the commerce term entry ID
 	 * @param start the lower bound of the range of c term entry localizations
 	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @return the range of c term entry localizations
+	 * @return the range of matching c term entry localizations
 	 */
-	public static List<CTermEntryLocalization> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CTermEntryLocalization> findByCommerceTermEntryId(
+		long commerceTermEntryId, int start, int end) {
+
+		return getPersistence().findByCommerceTermEntryId(
+			commerceTermEntryId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the c term entry localizations.
+	 * Returns an ordered range of all the c term entry localizations where commerceTermEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.term.model.impl.CTermEntryLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param commerceTermEntryId the commerce term entry ID
 	 * @param start the lower bound of the range of c term entry localizations
 	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of c term entry localizations
+	 * @return the ordered range of matching c term entry localizations
 	 */
-	public static List<CTermEntryLocalization> findAll(
-		int start, int end,
+	public static List<CTermEntryLocalization> findByCommerceTermEntryId(
+		long commerceTermEntryId, int start, int end,
 		OrderByComparator<CTermEntryLocalization> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the c term entry localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTermEntryLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of c term entry localizations
-	 * @param end the upper bound of the range of c term entry localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of c term entry localizations
-	 */
-	public static List<CTermEntryLocalization> findAll(
-		int start, int end,
-		OrderByComparator<CTermEntryLocalization> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the c term entry localizations from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of c term entry localizations.
-	 *
-	 * @return the number of c term entry localizations
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByCommerceTermEntryId(
+			commerceTermEntryId, start, end, orderByComparator);
 	}
 
 	public static CTermEntryLocalizationPersistence getPersistence() {
@@ -491,4 +406,4 @@ public class CTermEntryLocalizationUtil {
 	private static volatile CTermEntryLocalizationPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-270015276
+// LIFERAY-SERVICE-BUILDER-HASH:-1788294731

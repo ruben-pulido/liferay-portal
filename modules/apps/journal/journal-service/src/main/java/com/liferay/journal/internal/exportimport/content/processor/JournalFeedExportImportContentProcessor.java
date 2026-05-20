@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 
 import java.util.Arrays;
@@ -82,10 +83,6 @@ public class JournalFeedExportImportContentProcessor
 			feed.setTargetLayoutFriendlyUrl(targetLayoutFriendlyURL);
 		}
 
-		Group targetLayoutGroup = _groupLocalService.fetchFriendlyURLGroup(
-			portletDataContext.getCompanyId(),
-			StringPool.SLASH + oldGroupFriendlyURL);
-
 		boolean privateLayout = false;
 
 		if (!PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING.equals(
@@ -105,6 +102,10 @@ public class JournalFeedExportImportContentProcessor
 
 			targetLayoutFriendlyURL =
 				StringPool.SLASH + targetLayoutFriendlyURL;
+
+			Group targetLayoutGroup = _groupLocalService.fetchFriendlyURLGroup(
+				portletDataContext.getCompanyId(),
+				StringPool.SLASH + oldGroupFriendlyURL);
 
 			targetLayout = _layoutLocalService.fetchLayoutByFriendlyURL(
 				targetLayoutGroup.getGroupId(), privateLayout,
@@ -133,9 +134,17 @@ public class JournalFeedExportImportContentProcessor
 
 		Element feedElement = portletDataContext.getExportDataElement(feed);
 
-		portletDataContext.addReferenceElement(
-			feed, feedElement, targetLayout,
-			PortletDataContext.REFERENCE_TYPE_DEPENDENCY, true);
+		feedElement.addAttribute(
+			"targetLayoutERC", targetLayout.getExternalReferenceCode());
+
+		if (targetLayout.getGroupId() != feed.getGroupId()) {
+			Group targetLayoutGroup = _groupLocalService.getGroup(
+				targetLayout.getGroupId());
+
+			feedElement.addAttribute(
+				"targetLayoutGroupERC",
+				targetLayoutGroup.getExternalReferenceCode());
+		}
 
 		return content;
 	}
@@ -148,38 +157,43 @@ public class JournalFeedExportImportContentProcessor
 
 		JournalFeed feed = (JournalFeed)stagedModel;
 
-		Group group = _groupLocalService.getGroup(
-			portletDataContext.getScopeGroupId());
+		Element feedElement =
+			portletDataContext.getImportDataStagedModelElement(feed);
 
-		String newGroupFriendlyURL = group.getFriendlyURL();
+		String targetLayoutERC = feedElement.attributeValue("targetLayoutERC");
 
-		newGroupFriendlyURL = newGroupFriendlyURL.substring(1);
+		if (Validator.isNotNull(targetLayoutERC)) {
+			long targetLayoutGroupId = portletDataContext.getGroupId();
 
-		String newTargetLayoutFriendlyURL = StringUtil.replace(
-			feed.getTargetLayoutFriendlyUrl(), _DATA_HANDLER_GROUP_FRIENDLY_URL,
-			newGroupFriendlyURL);
+			String targetLayoutGroupERC = feedElement.attributeValue(
+				"targetLayoutGroupERC");
 
-		long plid = _portal.getPlidFromFriendlyURL(
-			portletDataContext.getCompanyId(), newTargetLayoutFriendlyURL);
+			if (Validator.isNotNull(targetLayoutGroupERC)) {
+				Group targetLayoutGroup =
+					_groupLocalService.fetchGroupByExternalReferenceCode(
+						targetLayoutGroupERC,
+						portletDataContext.getCompanyId());
 
-		if (plid <= 0) {
-			Group oldGroup = _groupLocalService.fetchGroup(
-				portletDataContext.getSourceGroupId());
-
-			if (oldGroup == null) {
-				return content;
+				if (targetLayoutGroup != null) {
+					targetLayoutGroupId = targetLayoutGroup.getGroupId();
+				}
 			}
 
-			String oldGroupFriendlyURL = oldGroup.getFriendlyURL();
+			Layout targetLayout =
+				_layoutLocalService.getLayoutByExternalReferenceCode(
+					targetLayoutERC, targetLayoutGroupId);
 
-			oldGroupFriendlyURL = oldGroupFriendlyURL.substring(1);
+			Group targetLayoutGroup = _groupLocalService.getGroup(
+				targetLayout.getGroupId());
 
-			newTargetLayoutFriendlyURL = StringUtil.replace(
-				feed.getTargetLayoutFriendlyUrl(),
-				_DATA_HANDLER_GROUP_FRIENDLY_URL, oldGroupFriendlyURL);
+			String friendlyURLPath = targetLayout.isPrivateLayout() ?
+				_portal.getPathFriendlyURLPrivateGroup() :
+					_portal.getPathFriendlyURLPublic();
+
+			feed.setTargetLayoutFriendlyUrl(
+				friendlyURLPath + targetLayoutGroup.getFriendlyURL() +
+					targetLayout.getFriendlyURL());
 		}
-
-		feed.setTargetLayoutFriendlyUrl(newTargetLayoutFriendlyURL);
 
 		return content;
 	}

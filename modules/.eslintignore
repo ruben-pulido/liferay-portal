@@ -45,6 +45,7 @@
     apps/frontend-js/frontend-js-clay-web/clay/clay-css/src/js/svg4everybody.js
     apps/frontend-js/frontend-js-svg4everybody-web/src/main/resources/META-INF/resources/svg4everybody.js
     apps/commerce/google-copyright.js
+    dxp/apps/ai-hub/ai-hub-site-initializer/src/main/resources/site-initializer/documents/company/chatbot/
 
 ##
 ## Other
@@ -83,3 +84,8 @@
     #
     frontend-sdk/eslint-plugin/
     frontend-sdk/node-scripts/util/jest/
+
+    #
+    # LPD-86504 Ignore GraphQL query templates.
+    #
+    apps/site/site-dsr-analytics-rest-impl/src/main/resources/com/liferay/site/dsr/analytics/rest/internal/client/dependencies/

@@ -175,6 +175,35 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
+	public List<FailureReport> getDistinctFailureReports() {
+		if (_distinctFailureReports != null) {
+			return _distinctFailureReports;
+		}
+
+		List<FailureReport> distinctFailureReports = new ArrayList<>();
+
+		for (FailureReport failureReport : getFailureReports()) {
+			boolean hasSimilarFailureReport = false;
+
+			for (FailureReport distinctFailureReport : distinctFailureReports) {
+				if (failureReport.isSimilar(distinctFailureReport)) {
+					hasSimilarFailureReport = true;
+
+					break;
+				}
+			}
+
+			if (!hasSimilarFailureReport) {
+				distinctFailureReports.add(failureReport);
+			}
+		}
+
+		_distinctFailureReports = distinctFailureReports;
+
+		return _distinctFailureReports;
+	}
+
+	@Override
 	public DownstreamBuildReport getDownstreamBuildReport(String axisName) {
 		for (DownstreamBuildReport downstreamBuildReport :
 				_downstreamBuildReports) {
@@ -205,6 +234,26 @@ public abstract class BaseTopLevelBuildReport
 		downstreamBuildReports.addAll(_downstreamBuildReports);
 
 		return downstreamBuildReports;
+	}
+
+	@Override
+	public List<FailureReport> getFailureReports() {
+		if (_failureReports != null) {
+			return _failureReports;
+		}
+
+		List<FailureReport> failureReports = new ArrayList<>(
+			super.getFailureReports());
+
+		for (DownstreamBuildReport downstreamBuildReport :
+				getDownstreamBuildReports()) {
+
+			failureReports.addAll(downstreamBuildReport.getFailureReports());
+		}
+
+		_failureReports = failureReports;
+
+		return _failureReports;
 	}
 
 	@Override
@@ -249,6 +298,102 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
+	public TopLevelBuildReport getPreviousTopLevelBuildReport() {
+		if (_previousTopLevelBuildReport != null) {
+			return _previousTopLevelBuildReport;
+		}
+
+		ControllerBuildReport controllerBuildReport =
+			getControllerBuildReport();
+
+		if (controllerBuildReport == null) {
+			return null;
+		}
+
+		int currentBuildNumber = controllerBuildReport.getBuildNumber();
+
+		if (currentBuildNumber <= 1) {
+			return null;
+		}
+
+		JenkinsMaster controllerJenkinsMaster =
+			controllerBuildReport.getJenkinsMaster();
+
+		String controllerJobURL = JenkinsResultsParserUtil.combine(
+			controllerJenkinsMaster.getRemoteURL(), "job/",
+			controllerBuildReport.getJobName());
+
+		JSONObject controllerJobJSONObject = JenkinsAPIUtil.getAPIJSONObject(
+			controllerJobURL, "builds[description,number]");
+
+		if (controllerJobJSONObject == null) {
+			return null;
+		}
+
+		JSONArray buildsJSONArray = controllerJobJSONObject.optJSONArray(
+			"builds");
+
+		if (buildsJSONArray == null) {
+			return null;
+		}
+
+		boolean foundCurrentBuild = false;
+
+		String previousTopLevelBuildURL = null;
+
+		for (int i = 0; i < buildsJSONArray.length(); i++) {
+			JSONObject buildJSONObject = buildsJSONArray.getJSONObject(i);
+
+			int buildNumber = buildJSONObject.optInt("number", -1);
+
+			if (buildNumber == currentBuildNumber) {
+				foundCurrentBuild = true;
+
+				continue;
+			}
+
+			if (!foundCurrentBuild) {
+				continue;
+			}
+
+			Matcher matcher = _controllerBuildDescriptionPattern.matcher(
+				buildJSONObject.optString("description"));
+
+			if (!matcher.find()) {
+				continue;
+			}
+
+			String status = matcher.group("status");
+
+			if (!Objects.equals(status, "FAILURE") &&
+				!Objects.equals(status, "SUCCESS") &&
+				!Objects.equals(status, "UNSTABLE")) {
+
+				continue;
+			}
+
+			previousTopLevelBuildURL = matcher.group("buildURL");
+
+			break;
+		}
+
+		if (!JenkinsResultsParserUtil.isURL(previousTopLevelBuildURL)) {
+			return null;
+		}
+
+		try {
+			_previousTopLevelBuildReport =
+				BuildReportFactory.newTopLevelBuildReport(
+					new URL(previousTopLevelBuildURL));
+
+			return _previousTopLevelBuildReport;
+		}
+		catch (MalformedURLException malformedURLException) {
+			return null;
+		}
+	}
+
+	@Override
 	public String getTestrayBuildDateString() {
 		return JenkinsResultsParserUtil.toDateString(
 			getStartDate(), "yyyy-MM-dd HH:mm:ss", "America/Los_Angeles");
@@ -257,10 +402,21 @@ public abstract class BaseTopLevelBuildReport
 	@Override
 	public URL getTestResultsJSONUserContentURL() {
 		try {
+			String masterHostname = JenkinsResultsParserUtil.getBuildProperty(
+				"jenkins.remote.url[test-1-0]");
+
+			if (JenkinsResultsParserUtil.isNullOrEmpty(masterHostname)) {
+				masterHostname = "https://test-1-0.liferay.com/";
+			}
+
+			if (!masterHostname.endsWith("/")) {
+				masterHostname += "/";
+			}
+
 			return new URL(
 				JenkinsResultsParserUtil.combine(
-					"https://test-1-0.liferay.com/userContent/testResults/",
-					getJobName(), "/builds/", String.valueOf(getBuildNumber()),
+					masterHostname, "userContent/testResults/", getJobName(),
+					"/builds/", String.valueOf(getBuildNumber()),
 					"/test.results.json"));
 		}
 		catch (IOException ioException) {
@@ -365,6 +521,48 @@ public abstract class BaseTopLevelBuildReport
 		return buildReportJSONObject.optLong("totalDuration");
 	}
 
+	@Override
+	public List<FailureReport> getUniqueFailureReports() {
+		if (_uniqueFailureReports != null) {
+			return _uniqueFailureReports;
+		}
+
+		TopLevelBuildReport previousTopLevelBuildReport =
+			getPreviousTopLevelBuildReport();
+
+		if (previousTopLevelBuildReport == null) {
+			_uniqueFailureReports = new ArrayList<>(
+				getDistinctFailureReports());
+
+			return _uniqueFailureReports;
+		}
+
+		List<FailureReport> uniqueFailureReports = new ArrayList<>();
+
+		List<FailureReport> previousFailureReports =
+			previousTopLevelBuildReport.getDistinctFailureReports();
+
+		for (FailureReport failureReport : getDistinctFailureReports()) {
+			boolean hasSimilarFailure = false;
+
+			for (FailureReport previousFailureReport : previousFailureReports) {
+				if (failureReport.isSimilar(previousFailureReport)) {
+					hasSimilarFailure = true;
+
+					break;
+				}
+			}
+
+			if (!hasSimilarFailure) {
+				uniqueFailureReports.add(failureReport);
+			}
+		}
+
+		_uniqueFailureReports = uniqueFailureReports;
+
+		return _uniqueFailureReports;
+	}
+
 	public void setControllerBuildReport(
 		ControllerBuildReport controllerBuildReport) {
 
@@ -428,12 +626,21 @@ public abstract class BaseTopLevelBuildReport
 		"(?<jobURL>https?://(?<masterHostname>test-\\d+-\\d+)" +
 			"(\\.liferay\\.com)?/job/(?<jobName>[^/]+))" +
 				"(/AXIS_VARIABLE=(?<axisVariable>\\d+))?/(?<buildNumber>\\d+)");
+	private static final Pattern _controllerBuildDescriptionPattern =
+		Pattern.compile(
+			JenkinsResultsParserUtil.combine(
+				"<strong[^>]*>(?<status>[A-Z]+)<\\/strong> - <a href=\\\"",
+				"(?<buildURL>[^\\\"]+)\\\">Build URL<\\/a>.*"));
 
 	private final Set<DownstreamBuildReport> _cachedDownstreamBuildReports =
 		new HashSet<>();
 	private ControllerBuildReport _controllerBuildReport;
+	private List<FailureReport> _distinctFailureReports;
 	private final Set<DownstreamBuildReport> _downstreamBuildReports =
 		new HashSet<>();
+	private List<FailureReport> _failureReports;
 	private JobReport _jobReport;
+	private TopLevelBuildReport _previousTopLevelBuildReport;
+	private List<FailureReport> _uniqueFailureReports;
 
 }

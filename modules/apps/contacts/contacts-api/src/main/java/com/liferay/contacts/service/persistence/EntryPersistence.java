@@ -32,50 +32,10 @@ public interface EntryPersistence extends BasePersistence<Entry> {
 	 */
 
 	/**
-	 * Returns all the entries where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching entries
-	 */
-	public java.util.List<Entry> findByUserId(long userId);
-
-	/**
-	 * Returns a range of all the entries where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of entries
-	 * @param end the upper bound of the range of entries (not inclusive)
-	 * @return the range of matching entries
-	 */
-	public java.util.List<Entry> findByUserId(long userId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the entries where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of entries
-	 * @param end the upper bound of the range of entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching entries
-	 */
-	public java.util.List<Entry> findByUserId(
-		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Entry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the entries where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.contacts.model.impl.EntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -144,15 +104,6 @@ public interface EntryPersistence extends BasePersistence<Entry> {
 		throws NoSuchEntryException;
 
 	/**
-	 * Returns the entry where userId = &#63; and emailAddress = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param emailAddress the email address
-	 * @return the matching entry, or <code>null</code> if a matching entry could not be found
-	 */
-	public Entry fetchByU_EA(long userId, String emailAddress);
-
-	/**
 	 * Returns the entry where userId = &#63; and emailAddress = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param userId the user ID
@@ -181,20 +132,6 @@ public interface EntryPersistence extends BasePersistence<Entry> {
 	 * @return the number of matching entries
 	 */
 	public int countByU_EA(long userId, String emailAddress);
-
-	/**
-	 * Caches the entry in the entity cache if it is enabled.
-	 *
-	 * @param entry the entry
-	 */
-	public void cacheResult(Entry entry);
-
-	/**
-	 * Caches the entries in the entity cache if it is enabled.
-	 *
-	 * @param entries the entries
-	 */
-	public void cacheResult(java.util.List<Entry> entries);
 
 	/**
 	 * Creates a new entry with the primary key. Does not add the entry to the database.
@@ -233,72 +170,66 @@ public interface EntryPersistence extends BasePersistence<Entry> {
 	public Entry fetchByPrimaryKey(long entryId);
 
 	/**
-	 * Returns all the entries.
+	 * Returns the entry where userId = &#63; and emailAddress = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the entries
+	 * @param userId the user ID
+	 * @param emailAddress the email address
+	 * @return the matching entry, or <code>null</code> if a matching entry could not be found
 	 */
-	public java.util.List<Entry> findAll();
+	public default Entry fetchByU_EA(long userId, String emailAddress) {
+		return fetchByU_EA(userId, emailAddress, true);
+	}
 
 	/**
-	 * Returns a range of all the entries.
+	 * Returns all the entries where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching entries
+	 */
+	public default java.util.List<Entry> findByUserId(long userId) {
+		return findByUserId(
+			userId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the entries where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.contacts.model.impl.EntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of entries
 	 * @param end the upper bound of the range of entries (not inclusive)
-	 * @return the range of entries
+	 * @return the range of matching entries
 	 */
-	public java.util.List<Entry> findAll(int start, int end);
+	public default java.util.List<Entry> findByUserId(
+		long userId, int start, int end) {
+
+		return findByUserId(userId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the entries.
+	 * Returns an ordered range of all the entries where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.contacts.model.impl.EntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of entries
 	 * @param end the upper bound of the range of entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of entries
+	 * @return the ordered range of matching entries
 	 */
-	public java.util.List<Entry> findAll(
-		int start, int end,
+	public default java.util.List<Entry> findByUserId(
+		long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Entry>
-			orderByComparator);
+			orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>EntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of entries
-	 * @param end the upper bound of the range of entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of entries
-	 */
-	public java.util.List<Entry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Entry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of entries.
-	 *
-	 * @return the number of entries
-	 */
-	public int countAll();
+		return findByUserId(userId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:358008332
+// LIFERAY-SERVICE-BUILDER-HASH:185649993

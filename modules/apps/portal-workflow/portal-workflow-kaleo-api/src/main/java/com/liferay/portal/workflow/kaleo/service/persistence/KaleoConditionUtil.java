@@ -36,6 +36,20 @@ public class KaleoConditionUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<KaleoCondition> kaleoConditions) {
+		getPersistence().cacheResult(kaleoConditions);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(KaleoCondition kaleoCondition) {
+		getPersistence().cacheResult(kaleoCondition);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,59 +125,10 @@ public class KaleoConditionUtil {
 	}
 
 	/**
-	 * Returns all the kaleo conditions where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching kaleo conditions
-	 */
-	public static List<KaleoCondition> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the kaleo conditions where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of kaleo conditions
-	 * @param end the upper bound of the range of kaleo conditions (not inclusive)
-	 * @return the range of matching kaleo conditions
-	 */
-	public static List<KaleoCondition> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kaleo conditions where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of kaleo conditions
-	 * @param end the upper bound of the range of kaleo conditions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kaleo conditions
-	 */
-	public static List<KaleoCondition> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<KaleoCondition> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kaleo conditions where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -233,63 +198,10 @@ public class KaleoConditionUtil {
 	}
 
 	/**
-	 * Returns all the kaleo conditions where kaleoDefinitionVersionId = &#63;.
-	 *
-	 * @param kaleoDefinitionVersionId the kaleo definition version ID
-	 * @return the matching kaleo conditions
-	 */
-	public static List<KaleoCondition> findByKaleoDefinitionVersionId(
-		long kaleoDefinitionVersionId) {
-
-		return getPersistence().findByKaleoDefinitionVersionId(
-			kaleoDefinitionVersionId);
-	}
-
-	/**
-	 * Returns a range of all the kaleo conditions where kaleoDefinitionVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param kaleoDefinitionVersionId the kaleo definition version ID
-	 * @param start the lower bound of the range of kaleo conditions
-	 * @param end the upper bound of the range of kaleo conditions (not inclusive)
-	 * @return the range of matching kaleo conditions
-	 */
-	public static List<KaleoCondition> findByKaleoDefinitionVersionId(
-		long kaleoDefinitionVersionId, int start, int end) {
-
-		return getPersistence().findByKaleoDefinitionVersionId(
-			kaleoDefinitionVersionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kaleo conditions where kaleoDefinitionVersionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param kaleoDefinitionVersionId the kaleo definition version ID
-	 * @param start the lower bound of the range of kaleo conditions
-	 * @param end the upper bound of the range of kaleo conditions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kaleo conditions
-	 */
-	public static List<KaleoCondition> findByKaleoDefinitionVersionId(
-		long kaleoDefinitionVersionId, int start, int end,
-		OrderByComparator<KaleoCondition> orderByComparator) {
-
-		return getPersistence().findByKaleoDefinitionVersionId(
-			kaleoDefinitionVersionId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kaleo conditions where kaleoDefinitionVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param kaleoDefinitionVersionId the kaleo definition version ID
@@ -382,16 +294,6 @@ public class KaleoConditionUtil {
 	}
 
 	/**
-	 * Returns the kaleo condition where kaleoNodeId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param kaleoNodeId the kaleo node ID
-	 * @return the matching kaleo condition, or <code>null</code> if a matching kaleo condition could not be found
-	 */
-	public static KaleoCondition fetchByKaleoNodeId(long kaleoNodeId) {
-		return getPersistence().fetchByKaleoNodeId(kaleoNodeId);
-	}
-
-	/**
 	 * Returns the kaleo condition where kaleoNodeId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param kaleoNodeId the kaleo node ID
@@ -425,24 +327,6 @@ public class KaleoConditionUtil {
 	 */
 	public static int countByKaleoNodeId(long kaleoNodeId) {
 		return getPersistence().countByKaleoNodeId(kaleoNodeId);
-	}
-
-	/**
-	 * Caches the kaleo condition in the entity cache if it is enabled.
-	 *
-	 * @param kaleoCondition the kaleo condition
-	 */
-	public static void cacheResult(KaleoCondition kaleoCondition) {
-		getPersistence().cacheResult(kaleoCondition);
-	}
-
-	/**
-	 * Caches the kaleo conditions in the entity cache if it is enabled.
-	 *
-	 * @param kaleoConditions the kaleo conditions
-	 */
-	public static void cacheResult(List<KaleoCondition> kaleoConditions) {
-		getPersistence().cacheResult(kaleoConditions);
 	}
 
 	/**
@@ -498,83 +382,115 @@ public class KaleoConditionUtil {
 	}
 
 	/**
-	 * Returns all the kaleo conditions.
+	 * Returns the kaleo condition where kaleoNodeId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the kaleo conditions
+	 * @param kaleoNodeId the kaleo node ID
+	 * @return the matching kaleo condition, or <code>null</code> if a matching kaleo condition could not be found
 	 */
-	public static List<KaleoCondition> findAll() {
-		return getPersistence().findAll();
+	public static KaleoCondition fetchByKaleoNodeId(long kaleoNodeId) {
+		return getPersistence().fetchByKaleoNodeId(kaleoNodeId);
 	}
 
 	/**
-	 * Returns a range of all the kaleo conditions.
+	 * Returns all the kaleo conditions where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching kaleo conditions
+	 */
+	public static List<KaleoCondition> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the kaleo conditions where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of kaleo conditions
 	 * @param end the upper bound of the range of kaleo conditions (not inclusive)
-	 * @return the range of kaleo conditions
+	 * @return the range of matching kaleo conditions
 	 */
-	public static List<KaleoCondition> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<KaleoCondition> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the kaleo conditions.
+	 * Returns an ordered range of all the kaleo conditions where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of kaleo conditions
 	 * @param end the upper bound of the range of kaleo conditions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of kaleo conditions
+	 * @return the ordered range of matching kaleo conditions
 	 */
-	public static List<KaleoCondition> findAll(
-		int start, int end,
+	public static List<KaleoCondition> findByCompanyId(
+		long companyId, int start, int end,
 		OrderByComparator<KaleoCondition> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the kaleo conditions.
+	 * Returns all the kaleo conditions where kaleoDefinitionVersionId = &#63;.
+	 *
+	 * @param kaleoDefinitionVersionId the kaleo definition version ID
+	 * @return the matching kaleo conditions
+	 */
+	public static List<KaleoCondition> findByKaleoDefinitionVersionId(
+		long kaleoDefinitionVersionId) {
+
+		return getPersistence().findByKaleoDefinitionVersionId(
+			kaleoDefinitionVersionId);
+	}
+
+	/**
+	 * Returns a range of all the kaleo conditions where kaleoDefinitionVersionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoConditionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param kaleoDefinitionVersionId the kaleo definition version ID
+	 * @param start the lower bound of the range of kaleo conditions
+	 * @param end the upper bound of the range of kaleo conditions (not inclusive)
+	 * @return the range of matching kaleo conditions
+	 */
+	public static List<KaleoCondition> findByKaleoDefinitionVersionId(
+		long kaleoDefinitionVersionId, int start, int end) {
+
+		return getPersistence().findByKaleoDefinitionVersionId(
+			kaleoDefinitionVersionId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the kaleo conditions where kaleoDefinitionVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param kaleoDefinitionVersionId the kaleo definition version ID
 	 * @param start the lower bound of the range of kaleo conditions
 	 * @param end the upper bound of the range of kaleo conditions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of kaleo conditions
+	 * @return the ordered range of matching kaleo conditions
 	 */
-	public static List<KaleoCondition> findAll(
-		int start, int end, OrderByComparator<KaleoCondition> orderByComparator,
-		boolean useFinderCache) {
+	public static List<KaleoCondition> findByKaleoDefinitionVersionId(
+		long kaleoDefinitionVersionId, int start, int end,
+		OrderByComparator<KaleoCondition> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the kaleo conditions from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of kaleo conditions.
-	 *
-	 * @return the number of kaleo conditions
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByKaleoDefinitionVersionId(
+			kaleoDefinitionVersionId, start, end, orderByComparator);
 	}
 
 	public static KaleoConditionPersistence getPersistence() {
@@ -588,4 +504,4 @@ public class KaleoConditionUtil {
 	private static volatile KaleoConditionPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:228773619
+// LIFERAY-SERVICE-BUILDER-HASH:711534235

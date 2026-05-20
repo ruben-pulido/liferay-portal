@@ -1,4 +1,5 @@
 import BundleRouter from '../../route-middleware/BundleRouter';
+import DataSourcesProvider from 'shared/context/dataSources';
 import Loading from 'shared/components/Loading';
 import React, {lazy, Suspense} from 'react';
 import RouteNotFound from 'shared/components/RouteNotFound';
@@ -99,6 +100,13 @@ const IndividualsDashboardCDP = lazy(() =>
 	)
 );
 
+/* Lifecycle */
+const LifecycleDashboard = lazy(() =>
+	import(
+		/* webpackChunkname: "LifecycleDashboard" */ '../../lifecycle/pages/BaseLifecycle'
+	)
+);
+
 /* Sites */
 
 const SitesDashboard = lazy(() =>
@@ -128,7 +136,7 @@ const TouchpointRoutes = lazy(() =>
 /* Assets */
 
 const NewAssetsList = lazy(() =>
-	import(/* webpackChunkName: "NewAssetsList" */ 'assets/List')
+	import(/* webpackChunkName: "NewAssetsList" */ 'assets/pages/List')
 );
 
 const AssetsList = lazy(() =>
@@ -170,16 +178,6 @@ const CommerceDashboard = lazy(() =>
 );
 
 const ROUTES = [
-	{
-		data: AccountsList,
-		path: Routes.CONTACTS_LIST_ACCOUNT
-	},
-	{
-		data: AccountProfileRoutes,
-		exact: false,
-		path: Routes.CONTACTS_ACCOUNT
-	},
-
 	{
 		data: SegmentsList,
 		path: Routes.CONTACTS_LIST_SEGMENT
@@ -301,76 +299,103 @@ export default class AppSidebarRoutes extends React.PureComponent {
 	static contextType = ChannelContext;
 
 	render() {
-		const {currentUser, groupId, LDPEnabled} = this.props;
+		const {LDPEnabled, currentUser, groupId} = this.props;
 		const {selectedChannel} = this.context;
 
 		return (
-			<DownloadReportProvider>
-				<Suspense fallback={<Loading />}>
-					<Switch>
-						{!selectedChannel && (
-							<BundleRouter
-								componentProps={{currentUser, groupId}}
-								data={NoPropertiesAvailable}
-								exact={false}
-								path={Routes.WORKSPACE_WITH_ID}
-							/>
-						)}
-
-						{LDPEnabled ? (
-							<BundleRouter
-								data={IndividualProfileRoutesCDP}
-								exact={false}
-								path={Routes.CONTACTS_INDIVIDUAL}
-							/>
-						) : (
-							<BundleRouter
-								data={IndividualProfileRoutes}
-								exact={false}
-								path={Routes.CONTACTS_INDIVIDUAL}
-							/>
-						)}
-
-						{LDPEnabled ? (
-							<BundleRouter
-								data={IndividualsDashboardCDP}
-								destructured={false}
-								exact={false}
-								path={Routes.CONTACTS_INDIVIDUALS}
-							/>
-						) : (
-							<BundleRouter
-								data={IndividualsDashboard}
-								destructured={false}
-								exact={false}
-								path={Routes.CONTACTS_INDIVIDUALS}
-							/>
-						)}
-
-						{ROUTES.map(
-							({data, exact = true, path, ...otherProps}) => (
+			<DataSourcesProvider groupId={groupId} skip={!selectedChannel}>
+				<DownloadReportProvider>
+					<Suspense fallback={<Loading />}>
+						<Switch>
+							{!selectedChannel && (
 								<BundleRouter
-									{...otherProps}
-									data={data}
-									exact={exact}
-									key={path}
-									path={path}
+									componentProps={{currentUser, groupId}}
+									data={NoPropertiesAvailable}
+									exact={false}
+									path={Routes.WORKSPACE_WITH_ID}
 								/>
-							)
-						)}
+							)}
 
-						{DEVELOPER_MODE && (
-							<BundleRouter
-								data={UIKit}
-								exact
-								path={Routes.UI_KIT}
-							/>
-						)}
+							{LDPEnabled ? (
+								<BundleRouter
+									data={IndividualProfileRoutesCDP}
+									exact={false}
+									path={Routes.CONTACTS_INDIVIDUAL}
+								/>
+							) : (
+								<BundleRouter
+									data={IndividualProfileRoutes}
+									exact={false}
+									path={Routes.CONTACTS_INDIVIDUAL}
+								/>
+							)}
 
-						<RouteNotFound />
-					</Switch>
-				</Suspense>
-			</DownloadReportProvider>
+							{LDPEnabled ? (
+								<BundleRouter
+									data={IndividualsDashboardCDP}
+									destructured={false}
+									exact={false}
+									path={Routes.CONTACTS_INDIVIDUALS}
+								/>
+							) : (
+								<BundleRouter
+									data={IndividualsDashboard}
+									destructured={false}
+									exact={false}
+									path={Routes.CONTACTS_INDIVIDUALS}
+								/>
+							)}
+
+							{LDPEnabled && (
+								<BundleRouter
+									data={AccountsList}
+									exact
+									path={Routes.CONTACTS_LIST_ACCOUNT}
+								/>
+							)}
+
+							{LDPEnabled && (
+								<BundleRouter
+									data={AccountProfileRoutes}
+									exact={false}
+									path={Routes.CONTACTS_ACCOUNT}
+								/>
+							)}
+
+							{LDPEnabled && (
+								<BundleRouter
+									data={LifecycleDashboard}
+									destructured={false}
+									exact
+									path={Routes.LIFECYCLE}
+								/>
+							)}
+
+							{ROUTES.map(
+								({data, exact = true, path, ...otherProps}) => (
+									<BundleRouter
+										{...otherProps}
+										data={data}
+										exact={exact}
+										key={path}
+										path={path}
+									/>
+								)
+							)}
+
+							{DEVELOPER_MODE && (
+								<BundleRouter
+									data={UIKit}
+									exact
+									path={Routes.UI_KIT}
+								/>
+							)}
+
+							<RouteNotFound />
+						</Switch>
+					</Suspense>
+				</DownloadReportProvider>
+			</DataSourcesProvider>
 		);
 	}
 }

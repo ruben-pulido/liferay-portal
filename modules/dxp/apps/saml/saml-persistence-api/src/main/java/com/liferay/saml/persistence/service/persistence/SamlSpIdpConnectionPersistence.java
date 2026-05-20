@@ -33,51 +33,10 @@ public interface SamlSpIdpConnectionPersistence
 	 */
 
 	/**
-	 * Returns all the saml sp idp connections where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching saml sp idp connections
-	 */
-	public java.util.List<SamlSpIdpConnection> findByCompanyId(long companyId);
-
-	/**
-	 * Returns a range of all the saml sp idp connections where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlSpIdpConnectionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of saml sp idp connections
-	 * @param end the upper bound of the range of saml sp idp connections (not inclusive)
-	 * @return the range of matching saml sp idp connections
-	 */
-	public java.util.List<SamlSpIdpConnection> findByCompanyId(
-		long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the saml sp idp connections where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlSpIdpConnectionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of saml sp idp connections
-	 * @param end the upper bound of the range of saml sp idp connections (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching saml sp idp connections
-	 */
-	public java.util.List<SamlSpIdpConnection> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SamlSpIdpConnection>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the saml sp idp connections where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlSpIdpConnectionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.saml.persistence.model.impl.SamlSpIdpConnectionModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -147,16 +106,6 @@ public interface SamlSpIdpConnectionPersistence
 		throws NoSuchSpIdpConnectionException;
 
 	/**
-	 * Returns the saml sp idp connection where companyId = &#63; and samlIdpEntityId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param samlIdpEntityId the saml idp entity ID
-	 * @return the matching saml sp idp connection, or <code>null</code> if a matching saml sp idp connection could not be found
-	 */
-	public SamlSpIdpConnection fetchByC_SIEI(
-		long companyId, String samlIdpEntityId);
-
-	/**
 	 * Returns the saml sp idp connection where companyId = &#63; and samlIdpEntityId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -186,21 +135,6 @@ public interface SamlSpIdpConnectionPersistence
 	 * @return the number of matching saml sp idp connections
 	 */
 	public int countByC_SIEI(long companyId, String samlIdpEntityId);
-
-	/**
-	 * Caches the saml sp idp connection in the entity cache if it is enabled.
-	 *
-	 * @param samlSpIdpConnection the saml sp idp connection
-	 */
-	public void cacheResult(SamlSpIdpConnection samlSpIdpConnection);
-
-	/**
-	 * Caches the saml sp idp connections in the entity cache if it is enabled.
-	 *
-	 * @param samlSpIdpConnections the saml sp idp connections
-	 */
-	public void cacheResult(
-		java.util.List<SamlSpIdpConnection> samlSpIdpConnections);
 
 	/**
 	 * Creates a new saml sp idp connection with the primary key. Does not add the saml sp idp connection to the database.
@@ -242,72 +176,70 @@ public interface SamlSpIdpConnectionPersistence
 	public SamlSpIdpConnection fetchByPrimaryKey(long samlSpIdpConnectionId);
 
 	/**
-	 * Returns all the saml sp idp connections.
+	 * Returns the saml sp idp connection where companyId = &#63; and samlIdpEntityId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the saml sp idp connections
+	 * @param companyId the company ID
+	 * @param samlIdpEntityId the saml idp entity ID
+	 * @return the matching saml sp idp connection, or <code>null</code> if a matching saml sp idp connection could not be found
 	 */
-	public java.util.List<SamlSpIdpConnection> findAll();
+	public default SamlSpIdpConnection fetchByC_SIEI(
+		long companyId, String samlIdpEntityId) {
+
+		return fetchByC_SIEI(companyId, samlIdpEntityId, true);
+	}
 
 	/**
-	 * Returns a range of all the saml sp idp connections.
+	 * Returns all the saml sp idp connections where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching saml sp idp connections
+	 */
+	public default java.util.List<SamlSpIdpConnection> findByCompanyId(
+		long companyId) {
+
+		return findByCompanyId(
+			companyId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the saml sp idp connections where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlSpIdpConnectionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.saml.persistence.model.impl.SamlSpIdpConnectionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of saml sp idp connections
 	 * @param end the upper bound of the range of saml sp idp connections (not inclusive)
-	 * @return the range of saml sp idp connections
+	 * @return the range of matching saml sp idp connections
 	 */
-	public java.util.List<SamlSpIdpConnection> findAll(int start, int end);
+	public default java.util.List<SamlSpIdpConnection> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return findByCompanyId(companyId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the saml sp idp connections.
+	 * Returns an ordered range of all the saml sp idp connections where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlSpIdpConnectionModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.saml.persistence.model.impl.SamlSpIdpConnectionModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of saml sp idp connections
 	 * @param end the upper bound of the range of saml sp idp connections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of saml sp idp connections
+	 * @return the ordered range of matching saml sp idp connections
 	 */
-	public java.util.List<SamlSpIdpConnection> findAll(
-		int start, int end,
+	public default java.util.List<SamlSpIdpConnection> findByCompanyId(
+		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<SamlSpIdpConnection>
-			orderByComparator);
+			orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the saml sp idp connections.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SamlSpIdpConnectionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of saml sp idp connections
-	 * @param end the upper bound of the range of saml sp idp connections (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of saml sp idp connections
-	 */
-	public java.util.List<SamlSpIdpConnection> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<SamlSpIdpConnection>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the saml sp idp connections from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of saml sp idp connections.
-	 *
-	 * @return the number of saml sp idp connections
-	 */
-	public int countAll();
+		return findByCompanyId(companyId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1118983780
+// LIFERAY-SERVICE-BUILDER-HASH:-623318656

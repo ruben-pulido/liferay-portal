@@ -131,45 +131,6 @@ public class PortalWorkspaceGitRepository extends BaseWorkspaceGitRepository {
 			"liferay-portal-ee", getUpstreamBranchName() + "-private");
 	}
 
-	@Override
-	public synchronized void setUp() {
-		if (isSetUp()) {
-			return;
-		}
-
-		System.out.println(toString());
-
-		try {
-			if (JenkinsResultsParserUtil.isBuildCachingEnabled(
-					System.getenv("JOB_NAME"),
-					System.getenv("CI_TEST_SUITE"))) {
-
-				checkAvailableGitArchive();
-			}
-
-			if (!isSnapshot()) {
-				prepareGitWorkingDirectory();
-
-				_setUpBinariesCache();
-
-				prepareGitArchive();
-
-				setSetUp(true);
-			}
-
-			if (!isSetUp() && isSnapshot()) {
-				useGitArchive();
-
-				_setUpBinariesCache();
-			}
-		}
-		catch (IOException ioException) {
-			throw new RuntimeException(ioException);
-		}
-
-		setSetUp(true);
-	}
-
 	public void setUpPortalProfile() {
 		String upstreamBranchName = getUpstreamBranchName();
 
@@ -251,6 +212,25 @@ public class PortalWorkspaceGitRepository extends BaseWorkspaceGitRepository {
 		propertyOptions.add(getUpstreamBranchName());
 
 		return propertyOptions;
+	}
+
+	protected boolean isBinariesCacheEnabled() {
+		try {
+			return Boolean.parseBoolean(
+				JenkinsResultsParserUtil.getBuildProperty(
+					"binaries.cache.enabled", System.getenv("CI_TEST_SUITE"),
+					System.getenv("JOB_NAME")));
+		}
+		catch (IOException ioException) {
+			return true;
+		}
+	}
+
+	@Override
+	protected void setUpAdditionalCaches() throws IOException {
+		if (isBinariesCacheEnabled()) {
+			_setUpBinariesCache();
+		}
 	}
 
 	private String _getLiferayFacesURL(

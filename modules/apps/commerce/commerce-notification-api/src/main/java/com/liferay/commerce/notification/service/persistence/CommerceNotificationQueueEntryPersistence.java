@@ -37,52 +37,10 @@ public interface CommerceNotificationQueueEntryPersistence
 	 */
 
 	/**
-	 * Returns all the commerce notification queue entries where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findByGroupId(
-		long groupId);
-
-	/**
-	 * Returns a range of all the commerce notification queue entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @return the range of matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findByGroupId(
-		long groupId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the commerce notification queue entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findByGroupId(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CommerceNotificationQueueEntry> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the commerce notification queue entries where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -140,55 +98,10 @@ public interface CommerceNotificationQueueEntryPersistence
 	public int countByGroupId(long groupId);
 
 	/**
-	 * Returns all the commerce notification queue entries where commerceNotificationTemplateId = &#63;.
-	 *
-	 * @param commerceNotificationTemplateId the commerce notification template ID
-	 * @return the matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry>
-		findByCommerceNotificationTemplateId(
-			long commerceNotificationTemplateId);
-
-	/**
-	 * Returns a range of all the commerce notification queue entries where commerceNotificationTemplateId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commerceNotificationTemplateId the commerce notification template ID
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @return the range of matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry>
-		findByCommerceNotificationTemplateId(
-			long commerceNotificationTemplateId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the commerce notification queue entries where commerceNotificationTemplateId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param commerceNotificationTemplateId the commerce notification template ID
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry>
-		findByCommerceNotificationTemplateId(
-			long commerceNotificationTemplateId, int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator
-				<CommerceNotificationQueueEntry> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the commerce notification queue entries where commerceNotificationTemplateId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param commerceNotificationTemplateId the commerce notification template ID
@@ -251,52 +164,10 @@ public interface CommerceNotificationQueueEntryPersistence
 		long commerceNotificationTemplateId);
 
 	/**
-	 * Returns all the commerce notification queue entries where sent = &#63;.
-	 *
-	 * @param sent the sent
-	 * @return the matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findBySent(
-		boolean sent);
-
-	/**
-	 * Returns a range of all the commerce notification queue entries where sent = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param sent the sent
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @return the range of matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findBySent(
-		boolean sent, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the commerce notification queue entries where sent = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param sent the sent
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findBySent(
-		boolean sent, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CommerceNotificationQueueEntry> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the commerce notification queue entries where sent = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sent the sent
@@ -366,7 +237,7 @@ public interface CommerceNotificationQueueEntryPersistence
 	 * Returns a range of all the commerce notification queue entries where sentDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sentDate the sent date
@@ -381,7 +252,7 @@ public interface CommerceNotificationQueueEntryPersistence
 	 * Returns an ordered range of all the commerce notification queue entries where sentDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sentDate the sent date
@@ -399,7 +270,7 @@ public interface CommerceNotificationQueueEntryPersistence
 	 * Returns an ordered range of all the commerce notification queue entries where sentDate &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param sentDate the sent date
@@ -457,63 +328,10 @@ public interface CommerceNotificationQueueEntryPersistence
 	public int countByLtSentDate(Date sentDate);
 
 	/**
-	 * Returns all the commerce notification queue entries where groupId = &#63; and classNameId = &#63; and classPK = &#63; and sent = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param sent the sent
-	 * @return the matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findByG_C_C_S(
-		long groupId, long classNameId, long classPK, boolean sent);
-
-	/**
-	 * Returns a range of all the commerce notification queue entries where groupId = &#63; and classNameId = &#63; and classPK = &#63; and sent = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param sent the sent
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @return the range of matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findByG_C_C_S(
-		long groupId, long classNameId, long classPK, boolean sent, int start,
-		int end);
-
-	/**
 	 * Returns an ordered range of all the commerce notification queue entries where groupId = &#63; and classNameId = &#63; and classPK = &#63; and sent = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param sent the sent
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findByG_C_C_S(
-		long groupId, long classNameId, long classPK, boolean sent, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CommerceNotificationQueueEntry> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the commerce notification queue entries where groupId = &#63; and classNameId = &#63; and classPK = &#63; and sent = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -589,23 +407,6 @@ public interface CommerceNotificationQueueEntryPersistence
 		long groupId, long classNameId, long classPK, boolean sent);
 
 	/**
-	 * Caches the commerce notification queue entry in the entity cache if it is enabled.
-	 *
-	 * @param commerceNotificationQueueEntry the commerce notification queue entry
-	 */
-	public void cacheResult(
-		CommerceNotificationQueueEntry commerceNotificationQueueEntry);
-
-	/**
-	 * Caches the commerce notification queue entries in the entity cache if it is enabled.
-	 *
-	 * @param commerceNotificationQueueEntries the commerce notification queue entries
-	 */
-	public void cacheResult(
-		java.util.List<CommerceNotificationQueueEntry>
-			commerceNotificationQueueEntries);
-
-	/**
 	 * Creates a new commerce notification queue entry with the primary key. Does not add the commerce notification queue entry to the database.
 	 *
 	 * @param commerceNotificationQueueEntryId the primary key for the new commerce notification queue entry
@@ -649,73 +450,238 @@ public interface CommerceNotificationQueueEntryPersistence
 		long commerceNotificationQueueEntryId);
 
 	/**
-	 * Returns all the commerce notification queue entries.
+	 * Returns all the commerce notification queue entries where groupId = &#63;.
 	 *
-	 * @return the commerce notification queue entries
+	 * @param groupId the group ID
+	 * @return the matching commerce notification queue entries
 	 */
-	public java.util.List<CommerceNotificationQueueEntry> findAll();
+	public default java.util.List<CommerceNotificationQueueEntry> findByGroupId(
+		long groupId) {
+
+		return findByGroupId(
+			groupId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the commerce notification queue entries.
+	 * Returns a range of all the commerce notification queue entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of commerce notification queue entries
 	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @return the range of commerce notification queue entries
+	 * @return the range of matching commerce notification queue entries
 	 */
-	public java.util.List<CommerceNotificationQueueEntry> findAll(
-		int start, int end);
+	public default java.util.List<CommerceNotificationQueueEntry> findByGroupId(
+		long groupId, int start, int end) {
+
+		return findByGroupId(groupId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the commerce notification queue entries.
+	 * Returns an ordered range of all the commerce notification queue entries where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of commerce notification queue entries
-	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce notification queue entries
-	 */
-	public java.util.List<CommerceNotificationQueueEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CommerceNotificationQueueEntry> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the commerce notification queue entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceNotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
+	 * @param groupId the group ID
 	 * @param start the lower bound of the range of commerce notification queue entries
 	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce notification queue entries
+	 * @return the ordered range of matching commerce notification queue entries
 	 */
-	public java.util.List<CommerceNotificationQueueEntry> findAll(
-		int start, int end,
+	public default java.util.List<CommerceNotificationQueueEntry> findByGroupId(
+		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<CommerceNotificationQueueEntry> orderByComparator,
-		boolean useFinderCache);
+			<CommerceNotificationQueueEntry> orderByComparator) {
+
+		return findByGroupId(groupId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the commerce notification queue entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of commerce notification queue entries.
+	 * Returns all the commerce notification queue entries where commerceNotificationTemplateId = &#63;.
 	 *
-	 * @return the number of commerce notification queue entries
+	 * @param commerceNotificationTemplateId the commerce notification template ID
+	 * @return the matching commerce notification queue entries
 	 */
-	public int countAll();
+	public default java.util.List<CommerceNotificationQueueEntry>
+		findByCommerceNotificationTemplateId(
+			long commerceNotificationTemplateId) {
+
+		return findByCommerceNotificationTemplateId(
+			commerceNotificationTemplateId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the commerce notification queue entries where commerceNotificationTemplateId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param commerceNotificationTemplateId the commerce notification template ID
+	 * @param start the lower bound of the range of commerce notification queue entries
+	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
+	 * @return the range of matching commerce notification queue entries
+	 */
+	public default java.util.List<CommerceNotificationQueueEntry>
+		findByCommerceNotificationTemplateId(
+			long commerceNotificationTemplateId, int start, int end) {
+
+		return findByCommerceNotificationTemplateId(
+			commerceNotificationTemplateId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce notification queue entries where commerceNotificationTemplateId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param commerceNotificationTemplateId the commerce notification template ID
+	 * @param start the lower bound of the range of commerce notification queue entries
+	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce notification queue entries
+	 */
+	public default java.util.List<CommerceNotificationQueueEntry>
+		findByCommerceNotificationTemplateId(
+			long commerceNotificationTemplateId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<CommerceNotificationQueueEntry> orderByComparator) {
+
+		return findByCommerceNotificationTemplateId(
+			commerceNotificationTemplateId, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns all the commerce notification queue entries where sent = &#63;.
+	 *
+	 * @param sent the sent
+	 * @return the matching commerce notification queue entries
+	 */
+	public default java.util.List<CommerceNotificationQueueEntry> findBySent(
+		boolean sent) {
+
+		return findBySent(
+			sent, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the commerce notification queue entries where sent = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param sent the sent
+	 * @param start the lower bound of the range of commerce notification queue entries
+	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
+	 * @return the range of matching commerce notification queue entries
+	 */
+	public default java.util.List<CommerceNotificationQueueEntry> findBySent(
+		boolean sent, int start, int end) {
+
+		return findBySent(sent, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce notification queue entries where sent = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param sent the sent
+	 * @param start the lower bound of the range of commerce notification queue entries
+	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce notification queue entries
+	 */
+	public default java.util.List<CommerceNotificationQueueEntry> findBySent(
+		boolean sent, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator
+			<CommerceNotificationQueueEntry> orderByComparator) {
+
+		return findBySent(sent, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the commerce notification queue entries where groupId = &#63; and classNameId = &#63; and classPK = &#63; and sent = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param sent the sent
+	 * @return the matching commerce notification queue entries
+	 */
+	public default java.util.List<CommerceNotificationQueueEntry> findByG_C_C_S(
+		long groupId, long classNameId, long classPK, boolean sent) {
+
+		return findByG_C_C_S(
+			groupId, classNameId, classPK, sent,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the commerce notification queue entries where groupId = &#63; and classNameId = &#63; and classPK = &#63; and sent = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param sent the sent
+	 * @param start the lower bound of the range of commerce notification queue entries
+	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
+	 * @return the range of matching commerce notification queue entries
+	 */
+	public default java.util.List<CommerceNotificationQueueEntry> findByG_C_C_S(
+		long groupId, long classNameId, long classPK, boolean sent, int start,
+		int end) {
+
+		return findByG_C_C_S(
+			groupId, classNameId, classPK, sent, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce notification queue entries where groupId = &#63; and classNameId = &#63; and classPK = &#63; and sent = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param sent the sent
+	 * @param start the lower bound of the range of commerce notification queue entries
+	 * @param end the upper bound of the range of commerce notification queue entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce notification queue entries
+	 */
+	public default java.util.List<CommerceNotificationQueueEntry> findByG_C_C_S(
+		long groupId, long classNameId, long classPK, boolean sent, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator
+			<CommerceNotificationQueueEntry> orderByComparator) {
+
+		return findByG_C_C_S(
+			groupId, classNameId, classPK, sent, start, end, orderByComparator,
+			true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1532107515
+// LIFERAY-SERVICE-BUILDER-HASH:-594290033

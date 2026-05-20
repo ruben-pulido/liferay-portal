@@ -35,50 +35,10 @@ public interface UserPersistence
 	 */
 
 	/**
-	 * Returns all the users where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the users where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByUuid(String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -136,54 +96,10 @@ public interface UserPersistence
 	public int countByUuid(String uuid);
 
 	/**
-	 * Returns all the users where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByUuid_C(String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the users where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -246,51 +162,10 @@ public interface UserPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the users where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByCompanyId(long companyId);
-
-	/**
-	 * Returns a range of all the users where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByCompanyId(
-		long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -357,14 +232,6 @@ public interface UserPersistence
 	public User findByContactId(long contactId) throws NoSuchUserException;
 
 	/**
-	 * Returns the user where contactId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param contactId the contact ID
-	 * @return the matching user, or <code>null</code> if a matching user could not be found
-	 */
-	public User fetchByContactId(long contactId);
-
-	/**
 	 * Returns the user where contactId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param contactId the contact ID
@@ -390,51 +257,10 @@ public interface UserPersistence
 	public int countByContactId(long contactId);
 
 	/**
-	 * Returns all the users where emailAddress = &#63;.
-	 *
-	 * @param emailAddress the email address
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByEmailAddress(String emailAddress);
-
-	/**
-	 * Returns a range of all the users where emailAddress = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param emailAddress the email address
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByEmailAddress(
-		String emailAddress, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where emailAddress = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param emailAddress the email address
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByEmailAddress(
-		String emailAddress, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where emailAddress = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param emailAddress the email address
@@ -492,51 +318,10 @@ public interface UserPersistence
 	public int countByEmailAddress(String emailAddress);
 
 	/**
-	 * Returns all the users where portraitId = &#63;.
-	 *
-	 * @param portraitId the portrait ID
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByPortraitId(long portraitId);
-
-	/**
-	 * Returns a range of all the users where portraitId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param portraitId the portrait ID
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByPortraitId(
-		long portraitId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where portraitId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param portraitId the portrait ID
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByPortraitId(
-		long portraitId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where portraitId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param portraitId the portrait ID
@@ -606,7 +391,7 @@ public interface UserPersistence
 	 * Returns a range of all the users where userId &gt; &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -622,7 +407,7 @@ public interface UserPersistence
 	 * Returns an ordered range of all the users where userId &gt; &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -641,7 +426,7 @@ public interface UserPersistence
 	 * Returns an ordered range of all the users where userId &gt; &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -715,15 +500,6 @@ public interface UserPersistence
 		throws NoSuchUserException;
 
 	/**
-	 * Returns the user where companyId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param userId the user ID
-	 * @return the matching user, or <code>null</code> if a matching user could not be found
-	 */
-	public User fetchByC_U(long companyId, long userId);
-
-	/**
 	 * Returns the user where companyId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -753,54 +529,10 @@ public interface UserPersistence
 	public int countByC_U(long companyId, long userId);
 
 	/**
-	 * Returns all the users where companyId = &#63; and createDate = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param createDate the create date
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByC_CD(long companyId, Date createDate);
-
-	/**
-	 * Returns a range of all the users where companyId = &#63; and createDate = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param createDate the create date
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByC_CD(
-		long companyId, Date createDate, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where companyId = &#63; and createDate = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param createDate the create date
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByC_CD(
-		long companyId, Date createDate, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where companyId = &#63; and createDate = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -863,54 +595,10 @@ public interface UserPersistence
 	public int countByC_CD(long companyId, Date createDate);
 
 	/**
-	 * Returns all the users where companyId = &#63; and modifiedDate = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param modifiedDate the modified date
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByC_MD(long companyId, Date modifiedDate);
-
-	/**
-	 * Returns a range of all the users where companyId = &#63; and modifiedDate = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param modifiedDate the modified date
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByC_MD(
-		long companyId, Date modifiedDate, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where companyId = &#63; and modifiedDate = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param modifiedDate the modified date
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByC_MD(
-		long companyId, Date modifiedDate, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where companyId = &#63; and modifiedDate = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -984,15 +672,6 @@ public interface UserPersistence
 		throws NoSuchUserException;
 
 	/**
-	 * Returns the user where companyId = &#63; and screenName = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param screenName the screen name
-	 * @return the matching user, or <code>null</code> if a matching user could not be found
-	 */
-	public User fetchByC_SN(long companyId, String screenName);
-
-	/**
 	 * Returns the user where companyId = &#63; and screenName = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -1034,15 +713,6 @@ public interface UserPersistence
 		throws NoSuchUserException;
 
 	/**
-	 * Returns the user where companyId = &#63; and emailAddress = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param emailAddress the email address
-	 * @return the matching user, or <code>null</code> if a matching user could not be found
-	 */
-	public User fetchByC_EA(long companyId, String emailAddress);
-
-	/**
 	 * Returns the user where companyId = &#63; and emailAddress = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -1073,54 +743,10 @@ public interface UserPersistence
 	public int countByC_EA(long companyId, String emailAddress);
 
 	/**
-	 * Returns all the users where companyId = &#63; and facebookId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param facebookId the facebook ID
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByC_FID(long companyId, long facebookId);
-
-	/**
-	 * Returns a range of all the users where companyId = &#63; and facebookId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param facebookId the facebook ID
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByC_FID(
-		long companyId, long facebookId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where companyId = &#63; and facebookId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param facebookId the facebook ID
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByC_FID(
-		long companyId, long facebookId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where companyId = &#63; and facebookId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1183,54 +809,10 @@ public interface UserPersistence
 	public int countByC_FID(long companyId, long facebookId);
 
 	/**
-	 * Returns all the users where companyId = &#63; and type = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByC_T(long companyId, int type);
-
-	/**
-	 * Returns a range of all the users where companyId = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByC_T(
-		long companyId, int type, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where companyId = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByC_T(
-		long companyId, int type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where companyId = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1293,54 +875,10 @@ public interface UserPersistence
 	public int countByC_T(long companyId, int type);
 
 	/**
-	 * Returns all the users where companyId = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByC_S(long companyId, int status);
-
-	/**
-	 * Returns a range of all the users where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByC_S(
-		long companyId, int status, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where companyId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param status the status
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByC_S(
-		long companyId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where companyId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1403,58 +941,10 @@ public interface UserPersistence
 	public int countByC_S(long companyId, int status);
 
 	/**
-	 * Returns all the users where companyId = &#63; and createDate = &#63; and modifiedDate = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param createDate the create date
-	 * @param modifiedDate the modified date
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByC_CD_MD(
-		long companyId, Date createDate, Date modifiedDate);
-
-	/**
-	 * Returns a range of all the users where companyId = &#63; and createDate = &#63; and modifiedDate = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param createDate the create date
-	 * @param modifiedDate the modified date
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByC_CD_MD(
-		long companyId, Date createDate, Date modifiedDate, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where companyId = &#63; and createDate = &#63; and modifiedDate = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param createDate the create date
-	 * @param modifiedDate the modified date
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByC_CD_MD(
-		long companyId, Date createDate, Date modifiedDate, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where companyId = &#63; and createDate = &#63; and modifiedDate = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1524,58 +1014,10 @@ public interface UserPersistence
 		long companyId, Date createDate, Date modifiedDate);
 
 	/**
-	 * Returns all the users where companyId = &#63; and type = &#63; and status = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param status the status
-	 * @return the matching users
-	 */
-	public java.util.List<User> findByC_T_S(
-		long companyId, int type, int status);
-
-	/**
-	 * Returns a range of all the users where companyId = &#63; and type = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param status the status
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of matching users
-	 */
-	public java.util.List<User> findByC_T_S(
-		long companyId, int type, int status, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the users where companyId = &#63; and type = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param status the status
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching users
-	 */
-	public java.util.List<User> findByC_T_S(
-		long companyId, int type, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users where companyId = &#63; and type = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1654,15 +1096,6 @@ public interface UserPersistence
 		throws NoSuchUserException;
 
 	/**
-	 * Returns the user where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching user, or <code>null</code> if a matching user could not be found
-	 */
-	public User fetchByERC_C(String externalReferenceCode, long companyId);
-
-	/**
 	 * Returns the user where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -1691,20 +1124,6 @@ public interface UserPersistence
 	 * @return the number of matching users
 	 */
 	public int countByERC_C(String externalReferenceCode, long companyId);
-
-	/**
-	 * Caches the user in the entity cache if it is enabled.
-	 *
-	 * @param user the user
-	 */
-	public void cacheResult(User user);
-
-	/**
-	 * Caches the users in the entity cache if it is enabled.
-	 *
-	 * @param users the users
-	 */
-	public void cacheResult(java.util.List<User> users);
 
 	/**
 	 * Creates a new user with the primary key. Does not add the user to the database.
@@ -1743,74 +1162,6 @@ public interface UserPersistence
 	public User fetchByPrimaryKey(long userId);
 
 	/**
-	 * Returns all the users.
-	 *
-	 * @return the users
-	 */
-	public java.util.List<User> findAll();
-
-	/**
-	 * Returns a range of all the users.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @return the range of users
-	 */
-	public java.util.List<User> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the users.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of users
-	 */
-	public java.util.List<User> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the users.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of users
-	 * @param end the upper bound of the range of users (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of users
-	 */
-	public java.util.List<User> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<User>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the users from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of users.
-	 *
-	 * @return the number of users
-	 */
-	public int countAll();
-
-	/**
 	 * Returns the primaryKeys of groups associated with the user.
 	 *
 	 * @param pk the primary key of the user
@@ -1831,7 +1182,7 @@ public interface UserPersistence
 	 * Returns a range of all the groups associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -1846,7 +1197,7 @@ public interface UserPersistence
 	 * Returns an ordered range of all the groups associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2002,7 +1353,7 @@ public interface UserPersistence
 	 * Returns a range of all the organizations associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2017,7 +1368,7 @@ public interface UserPersistence
 	 * Returns an ordered range of all the organizations associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2181,7 +1532,7 @@ public interface UserPersistence
 	 * Returns a range of all the roles associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2196,7 +1547,7 @@ public interface UserPersistence
 	 * Returns an ordered range of all the roles associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2350,7 +1701,7 @@ public interface UserPersistence
 	 * Returns a range of all the teams associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2365,7 +1716,7 @@ public interface UserPersistence
 	 * Returns an ordered range of all the teams associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2519,7 +1870,7 @@ public interface UserPersistence
 	 * Returns a range of all the user groups associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2534,7 +1885,7 @@ public interface UserPersistence
 	 * Returns an ordered range of all the user groups associated with the user.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the user
@@ -2673,5 +2024,737 @@ public interface UserPersistence
 		long pk,
 		java.util.List<com.liferay.portal.kernel.model.UserGroup> userGroups);
 
+	/**
+	 * Returns the user where contactId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param contactId the contact ID
+	 * @return the matching user, or <code>null</code> if a matching user could not be found
+	 */
+	public default User fetchByContactId(long contactId) {
+		return fetchByContactId(contactId, true);
+	}
+
+	/**
+	 * Returns the user where companyId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param userId the user ID
+	 * @return the matching user, or <code>null</code> if a matching user could not be found
+	 */
+	public default User fetchByC_U(long companyId, long userId) {
+		return fetchByC_U(companyId, userId, true);
+	}
+
+	/**
+	 * Returns the user where companyId = &#63; and screenName = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param screenName the screen name
+	 * @return the matching user, or <code>null</code> if a matching user could not be found
+	 */
+	public default User fetchByC_SN(long companyId, String screenName) {
+		return fetchByC_SN(companyId, screenName, true);
+	}
+
+	/**
+	 * Returns the user where companyId = &#63; and emailAddress = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param emailAddress the email address
+	 * @return the matching user, or <code>null</code> if a matching user could not be found
+	 */
+	public default User fetchByC_EA(long companyId, String emailAddress) {
+		return fetchByC_EA(companyId, emailAddress, true);
+	}
+
+	/**
+	 * Returns the user where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching user, or <code>null</code> if a matching user could not be found
+	 */
+	public default User fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return fetchByERC_C(externalReferenceCode, companyId, true);
+	}
+
+	/**
+	 * Returns all the users where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where uuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where uuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByUuid(
+		String uuid, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByCompanyId(long companyId) {
+		return findByCompanyId(
+			companyId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return findByCompanyId(companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByCompanyId(
+		long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByCompanyId(companyId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where emailAddress = &#63;.
+	 *
+	 * @param emailAddress the email address
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByEmailAddress(
+		String emailAddress) {
+
+		return findByEmailAddress(
+			emailAddress, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where emailAddress = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param emailAddress the email address
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByEmailAddress(
+		String emailAddress, int start, int end) {
+
+		return findByEmailAddress(emailAddress, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where emailAddress = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param emailAddress the email address
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByEmailAddress(
+		String emailAddress, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByEmailAddress(
+			emailAddress, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where portraitId = &#63;.
+	 *
+	 * @param portraitId the portrait ID
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByPortraitId(long portraitId) {
+		return findByPortraitId(
+			portraitId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where portraitId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param portraitId the portrait ID
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByPortraitId(
+		long portraitId, int start, int end) {
+
+		return findByPortraitId(portraitId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where portraitId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param portraitId the portrait ID
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByPortraitId(
+		long portraitId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByPortraitId(
+			portraitId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where companyId = &#63; and createDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param createDate the create date
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByC_CD(
+		long companyId, Date createDate) {
+
+		return findByC_CD(
+			companyId, createDate,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where companyId = &#63; and createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByC_CD(
+		long companyId, Date createDate, int start, int end) {
+
+		return findByC_CD(companyId, createDate, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where companyId = &#63; and createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByC_CD(
+		long companyId, Date createDate, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByC_CD(
+			companyId, createDate, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where companyId = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param modifiedDate the modified date
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByC_MD(
+		long companyId, Date modifiedDate) {
+
+		return findByC_MD(
+			companyId, modifiedDate,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where companyId = &#63; and modifiedDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param modifiedDate the modified date
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByC_MD(
+		long companyId, Date modifiedDate, int start, int end) {
+
+		return findByC_MD(companyId, modifiedDate, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where companyId = &#63; and modifiedDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param modifiedDate the modified date
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByC_MD(
+		long companyId, Date modifiedDate, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByC_MD(
+			companyId, modifiedDate, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where companyId = &#63; and facebookId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param facebookId the facebook ID
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByC_FID(
+		long companyId, long facebookId) {
+
+		return findByC_FID(
+			companyId, facebookId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where companyId = &#63; and facebookId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param facebookId the facebook ID
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByC_FID(
+		long companyId, long facebookId, int start, int end) {
+
+		return findByC_FID(companyId, facebookId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where companyId = &#63; and facebookId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param facebookId the facebook ID
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByC_FID(
+		long companyId, long facebookId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByC_FID(
+			companyId, facebookId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where companyId = &#63; and type = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByC_T(long companyId, int type) {
+		return findByC_T(
+			companyId, type,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where companyId = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByC_T(
+		long companyId, int type, int start, int end) {
+
+		return findByC_T(companyId, type, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where companyId = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByC_T(
+		long companyId, int type, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByC_T(companyId, type, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where companyId = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByC_S(long companyId, int status) {
+		return findByC_S(
+			companyId, status,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByC_S(
+		long companyId, int status, int start, int end) {
+
+		return findByC_S(companyId, status, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where companyId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param status the status
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByC_S(
+		long companyId, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByC_S(
+			companyId, status, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the users where companyId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByC_CD_MD(
+		long companyId, Date createDate, Date modifiedDate) {
+
+		return findByC_CD_MD(
+			companyId, createDate, modifiedDate,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where companyId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByC_CD_MD(
+		long companyId, Date createDate, Date modifiedDate, int start,
+		int end) {
+
+		return findByC_CD_MD(
+			companyId, createDate, modifiedDate, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where companyId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByC_CD_MD(
+		long companyId, Date createDate, Date modifiedDate, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByC_CD_MD(
+			companyId, createDate, modifiedDate, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns all the users where companyId = &#63; and type = &#63; and status = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @param status the status
+	 * @return the matching users
+	 */
+	public default java.util.List<User> findByC_T_S(
+		long companyId, int type, int status) {
+
+		return findByC_T_S(
+			companyId, type, status,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the users where companyId = &#63; and type = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @param status the status
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @return the range of matching users
+	 */
+	public default java.util.List<User> findByC_T_S(
+		long companyId, int type, int status, int start, int end) {
+
+		return findByC_T_S(companyId, type, status, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the users where companyId = &#63; and type = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @param status the status
+	 * @param start the lower bound of the range of users
+	 * @param end the upper bound of the range of users (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching users
+	 */
+	public default java.util.List<User> findByC_T_S(
+		long companyId, int type, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User>
+			orderByComparator) {
+
+		return findByC_T_S(
+			companyId, type, status, start, end, orderByComparator, true);
+	}
+
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1834585980
+// LIFERAY-SERVICE-BUILDER-HASH:-239348651

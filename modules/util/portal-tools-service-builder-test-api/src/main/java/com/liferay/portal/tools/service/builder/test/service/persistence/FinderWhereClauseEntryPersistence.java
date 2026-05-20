@@ -33,52 +33,10 @@ public interface FinderWhereClauseEntryPersistence
 	 */
 
 	/**
-	 * Returns all the finder where clause entries where name = &#63;.
-	 *
-	 * @param name the name
-	 * @return the matching finder where clause entries
-	 */
-	public java.util.List<FinderWhereClauseEntry> findByName_Nickname(
-		String name);
-
-	/**
-	 * Returns a range of all the finder where clause entries where name = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param name the name
-	 * @param start the lower bound of the range of finder where clause entries
-	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @return the range of matching finder where clause entries
-	 */
-	public java.util.List<FinderWhereClauseEntry> findByName_Nickname(
-		String name, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the finder where clause entries where name = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param name the name
-	 * @param start the lower bound of the range of finder where clause entries
-	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching finder where clause entries
-	 */
-	public java.util.List<FinderWhereClauseEntry> findByName_Nickname(
-		String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<FinderWhereClauseEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the finder where clause entries where name = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.FinderWhereClauseEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param name the name
@@ -136,21 +94,6 @@ public interface FinderWhereClauseEntryPersistence
 	public int countByName_Nickname(String name);
 
 	/**
-	 * Caches the finder where clause entry in the entity cache if it is enabled.
-	 *
-	 * @param finderWhereClauseEntry the finder where clause entry
-	 */
-	public void cacheResult(FinderWhereClauseEntry finderWhereClauseEntry);
-
-	/**
-	 * Caches the finder where clause entries in the entity cache if it is enabled.
-	 *
-	 * @param finderWhereClauseEntries the finder where clause entries
-	 */
-	public void cacheResult(
-		java.util.List<FinderWhereClauseEntry> finderWhereClauseEntries);
-
-	/**
 	 * Creates a new finder where clause entry with the primary key. Does not add the finder where clause entry to the database.
 	 *
 	 * @param finderWhereClauseEntryId the primary key for the new finder where clause entry
@@ -192,72 +135,57 @@ public interface FinderWhereClauseEntryPersistence
 		long finderWhereClauseEntryId);
 
 	/**
-	 * Returns all the finder where clause entries.
+	 * Returns all the finder where clause entries where name = &#63;.
 	 *
-	 * @return the finder where clause entries
+	 * @param name the name
+	 * @return the matching finder where clause entries
 	 */
-	public java.util.List<FinderWhereClauseEntry> findAll();
+	public default java.util.List<FinderWhereClauseEntry> findByName_Nickname(
+		String name) {
+
+		return findByName_Nickname(
+			name, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the finder where clause entries.
+	 * Returns a range of all the finder where clause entries where name = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.FinderWhereClauseEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param name the name
 	 * @param start the lower bound of the range of finder where clause entries
 	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @return the range of finder where clause entries
+	 * @return the range of matching finder where clause entries
 	 */
-	public java.util.List<FinderWhereClauseEntry> findAll(int start, int end);
+	public default java.util.List<FinderWhereClauseEntry> findByName_Nickname(
+		String name, int start, int end) {
+
+		return findByName_Nickname(name, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the finder where clause entries.
+	 * Returns an ordered range of all the finder where clause entries where name = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.tools.service.builder.test.model.impl.FinderWhereClauseEntryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of finder where clause entries
-	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of finder where clause entries
-	 */
-	public java.util.List<FinderWhereClauseEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<FinderWhereClauseEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the finder where clause entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FinderWhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
+	 * @param name the name
 	 * @param start the lower bound of the range of finder where clause entries
 	 * @param end the upper bound of the range of finder where clause entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of finder where clause entries
+	 * @return the ordered range of matching finder where clause entries
 	 */
-	public java.util.List<FinderWhereClauseEntry> findAll(
-		int start, int end,
+	public default java.util.List<FinderWhereClauseEntry> findByName_Nickname(
+		String name, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<FinderWhereClauseEntry>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
 
-	/**
-	 * Removes all the finder where clause entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of finder where clause entries.
-	 *
-	 * @return the number of finder where clause entries
-	 */
-	public int countAll();
+		return findByName_Nickname(name, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1318476310
+// LIFERAY-SERVICE-BUILDER-HASH:362596659

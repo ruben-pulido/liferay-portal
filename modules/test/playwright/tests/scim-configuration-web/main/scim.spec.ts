@@ -5,7 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {globalMenuPagesTest} from '../../../fixtures/globalMenuPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {serverAdministrationPageTest} from '../../../fixtures/serverAdministrationPageTest';
@@ -21,9 +20,6 @@ import {newScimUser} from './utils/newScimUserUtil';
 
 export const test = mergeTests(
 	loginTest(),
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	globalMenuPagesTest,
 	serverAdministrationPageTest,
 	userGroupsPageTest,
@@ -306,10 +302,12 @@ test('LPS-190119 (TC-2 & TC-5). Admin User can Generate and Revoke SCIM Access T
 
 	const defaultBaseUrl = liferayConfig.environment.baseUrl;
 
-	liferayConfig.environment.baseUrl = `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`;
+	const virtualInstanceBaseUrl = `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`;
+
+	liferayConfig.environment.baseUrl = virtualInstanceBaseUrl;
 
 	const newPage = await browser.newPage({
-		baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`,
+		baseURL: virtualInstanceBaseUrl,
 	});
 
 	await performLogin(

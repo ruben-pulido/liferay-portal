@@ -6,20 +6,23 @@
 package com.liferay.style.book.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.depot.constants.DepotConstants;
+import com.liferay.depot.model.DepotEntry;
+import com.liferay.depot.service.DepotEntryLocalService;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -56,6 +59,71 @@ public class StyleBookEntryServiceTest {
 	}
 
 	@Test
+	public void testAddStyleBookEntryToDepotEntry() throws Exception {
+		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build(),
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build(),
+			DepotConstants.TYPE_DESIGN_LIBRARY, _serviceContext);
+
+		try {
+			long depotGroupId = depotEntry.getGroupId();
+
+			StyleBookEntry styleBookEntry =
+				_styleBookEntryService.addStyleBookEntry(
+					null, depotGroupId, RandomTestUtil.randomString(),
+					StringPool.BLANK, RandomTestUtil.randomString(),
+					ServiceContextTestUtil.getServiceContext(
+						depotGroupId, TestPropsValues.getUserId()));
+
+			Assert.assertEquals(depotGroupId, styleBookEntry.getGroupId());
+			Assert.assertFalse(styleBookEntry.isDefaultStyleBookEntry());
+		}
+		finally {
+			_depotEntryLocalService.deleteDepotEntry(depotEntry);
+		}
+	}
+
+	@Test
+	public void testAddStyleBookEntryToDepotEntryWithoutAddPermission()
+		throws Exception {
+
+		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build(),
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build(),
+			DepotConstants.TYPE_DESIGN_LIBRARY, _serviceContext);
+
+		try {
+			long depotGroupId = depotEntry.getGroupId();
+
+			UserTestUtil.setUser(
+				UserTestUtil.addGroupUser(_group, RoleConstants.SITE_MEMBER));
+
+			_styleBookEntryService.addStyleBookEntry(
+				null, depotGroupId, RandomTestUtil.randomString(),
+				StringPool.BLANK, RandomTestUtil.randomString(),
+				ServiceContextTestUtil.getServiceContext(
+					depotGroupId, TestPropsValues.getUserId()));
+
+			Assert.fail();
+		}
+		catch (PrincipalException principalException) {
+		}
+		finally {
+			UserTestUtil.setUser(TestPropsValues.getUser());
+
+			_depotEntryLocalService.deleteDepotEntry(depotEntry);
+		}
+	}
+
+	@Test
 	public void testAddStyleBookEntryWithoutAddPermission() throws Exception {
 		try {
 			UserTestUtil.setUser(
@@ -85,6 +153,22 @@ public class StyleBookEntryServiceTest {
 				RandomTestUtil.randomString(), null,
 				RandomTestUtil.randomString(), _serviceContext);
 
+		try {
+			UserTestUtil.setUser(
+				UserTestUtil.addGroupUser(_group, RoleConstants.SITE_MEMBER));
+
+			_styleBookEntryService.deleteStyleBookEntry(
+				styleBookEntry.getExternalReferenceCode(),
+				styleBookEntry.getGroupId());
+
+			Assert.fail();
+		}
+		catch (PrincipalException principalException) {
+		}
+		finally {
+			UserTestUtil.setUser(TestPropsValues.getUser());
+		}
+
 		_styleBookEntryService.deleteStyleBookEntry(
 			styleBookEntry.getExternalReferenceCode(),
 			styleBookEntry.getGroupId());
@@ -95,22 +179,24 @@ public class StyleBookEntryServiceTest {
 	}
 
 	@Test
-	public void testDeleteStyleBookEntryByExternalReferenceCodeWithoutDeletePermission()
-		throws Exception {
-
+	public void testGetStyleBookEntry() throws Exception {
 		StyleBookEntry styleBookEntry =
 			_styleBookEntryService.addStyleBookEntry(
 				RandomTestUtil.randomString(), _group.getGroupId(),
 				RandomTestUtil.randomString(), null,
 				RandomTestUtil.randomString(), _serviceContext);
 
+		Assert.assertEquals(
+			styleBookEntry,
+			_styleBookEntryService.getStyleBookEntry(
+				styleBookEntry.getStyleBookEntryId()));
+
 		try {
 			UserTestUtil.setUser(
 				UserTestUtil.addGroupUser(_group, RoleConstants.SITE_MEMBER));
 
-			_styleBookEntryService.deleteStyleBookEntry(
-				styleBookEntry.getExternalReferenceCode(),
-				styleBookEntry.getGroupId());
+			_styleBookEntryService.getStyleBookEntry(
+				styleBookEntry.getStyleBookEntryId());
 
 			Assert.fail();
 		}
@@ -131,36 +217,11 @@ public class StyleBookEntryServiceTest {
 				RandomTestUtil.randomString(), null,
 				RandomTestUtil.randomString(), _serviceContext);
 
-		StyleBookEntry curStyleBookEntry =
+		Assert.assertEquals(
+			styleBookEntry,
 			_styleBookEntryService.getStyleBookEntryByExternalReferenceCode(
 				styleBookEntry.getExternalReferenceCode(),
-				styleBookEntry.getGroupId());
-
-		Assert.assertEquals(
-			styleBookEntry.getStyleBookEntryId(),
-			curStyleBookEntry.getStyleBookEntryId());
-	}
-
-	@Test
-	public void testGetStyleBookEntryByExternalReferenceCodeWithoutViewPermission()
-		throws Exception {
-
-		StyleBookEntry styleBookEntry =
-			_styleBookEntryService.addStyleBookEntry(
-				RandomTestUtil.randomString(), _group.getGroupId(),
-				RandomTestUtil.randomString(), null,
-				RandomTestUtil.randomString(), _serviceContext);
-
-		RoleTestUtil.removeResourcePermission(
-			RoleConstants.GUEST, StyleBookEntry.class.getName(),
-			ResourceConstants.SCOPE_INDIVIDUAL,
-			String.valueOf(styleBookEntry.getStyleBookEntryId()),
-			ActionKeys.VIEW);
-		RoleTestUtil.removeResourcePermission(
-			RoleConstants.SITE_MEMBER, StyleBookEntry.class.getName(),
-			ResourceConstants.SCOPE_INDIVIDUAL,
-			String.valueOf(styleBookEntry.getStyleBookEntryId()),
-			ActionKeys.VIEW);
+				styleBookEntry.getGroupId()));
 
 		try {
 			UserTestUtil.setUser(
@@ -178,6 +239,9 @@ public class StyleBookEntryServiceTest {
 			UserTestUtil.setUser(TestPropsValues.getUser());
 		}
 	}
+
+	@Inject
+	private DepotEntryLocalService _depotEntryLocalService;
 
 	@DeleteAfterTestRun
 	private Group _group;

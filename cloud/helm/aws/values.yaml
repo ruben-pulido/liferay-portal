@@ -5,10 +5,15 @@ liferay-default:
         instrumentation.opentelemetry.io/inject-nodejs: "false"
         instrumentation.opentelemetry.io/inject-python: "false"
         sidecar.opentelemetry.io/inject: "false"
+    autoscaling:
+        keda:
+            triggerAuthentication:
+                spec:
+                    podIdentity:
+                        provider: aws
+        type: keda
     configmap:
         data:
-            com.liferay.portal.search.opensearch2.configuration.OpenSearchConfiguration.config: |
-                remoteClusterConnectionId="REMOTE"
             com.liferay.portal.search.opensearch2.configuration.OpenSearchConnectionConfiguration-REMOTE.config: |
                 active=B"true"
                 authenticationEnabled=B"true"
@@ -68,11 +73,11 @@ liferay-default:
                                 {{- if eq .image.tag "latest" }}
                                 local product_version="nightly"
 
-                                local url="https://releases.liferay.com/opensearch2/${product_version}/com.liferay.portal.search.opensearch2.${1}.jar"
+                                local url="{{ .search.opensearch2DownloadBaseURL }}/${product_version}/com.liferay.portal.search.opensearch2.${1}.jar"
                                 {{- else }}
                                 local product_version="{{ .image.tag }}"
 
-                                local url="https://releases.liferay.com/opensearch2/dxp/${product_version}/com.liferay.portal.search.opensearch2.${1}.jar"
+                                local url="{{ .search.opensearch2DownloadBaseURL }}/dxp/${product_version}/com.liferay.portal.search.opensearch2.${1}.jar"
                                 {{- end }}
 
                                 local http_code=$( \
@@ -88,11 +93,11 @@ liferay-default:
 
                                 if [ "${http_code}" != "200" ]
                                 then
-                                    echo "Unable to download OpenSearch modules for product version ${product_version}." >&2
+                                    echo "Unable to download OpenSearch modules for product version ${product_version} from ${url}." >&2
 
                                     rm --force --verbose /temp/liferay/deploy/com.liferay.portal.search.opensearch2.${1}.jar
 
-                                    exit 0
+                                    exit 1
                                 fi
                             }
 
@@ -153,17 +158,37 @@ liferay-default:
                 name: liferay-configmap
                 subPath: com.liferay.portal.store.s3.configuration.S3StoreConfiguration.config
         x-liferay-aws-opensearch:
-            -   mountPath: /opt/liferay/osgi/configs/com.liferay.portal.search.opensearch2.configuration.OpenSearchConfiguration.config
-                name: liferay-configmap
-                subPath: com.liferay.portal.search.opensearch2.configuration.OpenSearchConfiguration.config
             -   mountPath: /opt/liferay/osgi/configs/com.liferay.portal.search.opensearch2.configuration.OpenSearchConnectionConfiguration-REMOTE.config
                 name: liferay-configmap
                 subPath: com.liferay.portal.search.opensearch2.configuration.OpenSearchConnectionConfiguration-REMOTE.config
+    dependencies:
+        opensearch2:
+            portalProperties: |
+                configuration.override.com.liferay.portal.search.opensearch2.configuration.OpenSearchConfiguration_remoteClusterConnectionId="REMOTE"
     network:
         enabled: true
         timeouts:
             backendRequest: 300s
             request: 300s
+    networkPolicy:
+        enabled: true
+        extraEgress:
+            -   ports:
+                    -   port: 5432
+                        protocol: TCP
+                to:
+                    -   ipBlock:
+                            cidr: 0.0.0.0/0
+                            except:
+                                -   169.254.169.254/32
+            -   ports:
+                    -   port: 443
+                        protocol: TCP
+                to:
+                    -   ipBlock:
+                            cidr: 0.0.0.0/0
+                            except:
+                                -   169.254.169.254/32
     portalBundleDenyList:
         -   com.liferay.portal.search.elasticsearch.cross.cluster.replication.impl
         -   com.liferay.portal.search.elasticsearch.monitoring.web
@@ -178,6 +203,8 @@ liferay-default:
         requests:
             cpu: 2000m
             memory: 4Gi
+    search:
+        opensearch2DownloadBaseURL: https://releases.liferay.com/opensearch2
     volumeClaimTemplates:
         -   metadata:
                 name: liferay-persistent-volume

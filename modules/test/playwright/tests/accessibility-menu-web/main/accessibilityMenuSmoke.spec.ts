@@ -14,6 +14,7 @@ import {loginTest} from '../../../fixtures/loginTest';
 import {siteSettingsPagesTest} from '../../../fixtures/siteSettingsPagesTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
 import {virtualInstancesPagesTest} from '../../../fixtures/virtualInstancesPagesTest';
+import {liferayConfig} from '../../../liferay.config';
 import {AccessibilityMenuPage} from '../../../pages/accessibility-menu-web/AccessibilityMenuPage';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import performLogin from '../../../utils/performLogin';
@@ -25,7 +26,6 @@ const test = mergeTests(
 	siteSettingsPagesTest,
 	systemSettingsPageTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	instanceSettingsPagesTest,
@@ -143,7 +143,7 @@ test.describe('Accessibility Menu Configuration Override and Inheritance', () =>
 			);
 
 			virtualInstancePage = await browser.newPage({
-				baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:8080`,
+				baseURL: `http://${DEFAULT_VIRTUAL_INSTANCE_NAME}:${liferayConfig.environment.port}`,
 			});
 
 			await performLogin(
@@ -156,7 +156,7 @@ test.describe('Accessibility Menu Configuration Override and Inheritance', () =>
 			[firstSite, secondSite] = await Promise.all(
 				[FIRST_SITE_NAME, SECOND_SITE_NAME].map(
 					async (name) =>
-						await apiHelpers.headlessSite.createSite({name})
+						await apiHelpers.headlessAdminSite.postSite({name})
 				)
 			);
 		});
@@ -183,7 +183,9 @@ test.describe('Accessibility Menu Configuration Override and Inheritance', () =>
 
 			await Promise.all(
 				[firstSite, secondSite].map((site) =>
-					apiHelpers.headlessSite.deleteSite(site.id)
+					apiHelpers.headlessAdminSite.deleteSite(
+						site.externalReferenceCode
+					)
 				)
 			);
 

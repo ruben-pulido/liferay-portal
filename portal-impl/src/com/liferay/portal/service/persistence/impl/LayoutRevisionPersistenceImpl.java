@@ -5,19 +5,14 @@
 
 package com.liferay.portal.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchLayoutRevisionException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.LayoutRevision;
 import com.liferay.portal.kernel.model.LayoutRevisionTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -26,10 +21,9 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.LayoutRevisionPersistence;
 import com.liferay.portal.kernel.service.persistence.LayoutRevisionUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.model.impl.LayoutRevisionImpl;
 import com.liferay.portal.model.impl.LayoutRevisionModelImpl;
@@ -41,7 +35,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The persistence implementation for the layout revision service.
@@ -54,7 +47,7 @@ import java.util.Set;
  * @generated
  */
 public class LayoutRevisionPersistenceImpl
-	extends BasePersistenceImpl<LayoutRevision>
+	extends BasePersistenceImpl<LayoutRevision, NoSuchLayoutRevisionException>
 	implements LayoutRevisionPersistence {
 
 	/*
@@ -71,67 +64,8 @@ public class LayoutRevisionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByLayoutSetBranchId;
-	private FinderPath _finderPathWithoutPaginationFindByLayoutSetBranchId;
-	private FinderPath _finderPathCountByLayoutSetBranchId;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByLayoutSetBranchId(
-		long layoutSetBranchId) {
-
-		return findByLayoutSetBranchId(
-			layoutSetBranchId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByLayoutSetBranchId(
-		long layoutSetBranchId, int start, int end) {
-
-		return findByLayoutSetBranchId(layoutSetBranchId, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByLayoutSetBranchId(
-		long layoutSetBranchId, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByLayoutSetBranchId(
-			layoutSetBranchId, start, end, orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByLayoutSetBranchId;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63;.
@@ -153,98 +87,9 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByLayoutSetBranchId;
-				finderArgs = new Object[] {layoutSetBranchId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByLayoutSetBranchId;
-			finderArgs = new Object[] {
-				layoutSetBranchId, start, end, orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if (layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_LAYOUTSETBRANCHID_LAYOUTSETBRANCHID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByLayoutSetBranchId.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {layoutSetBranchId},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -268,16 +113,11 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByLayoutSetBranchId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {layoutSetBranchId}));
 	}
 
 	/**
@@ -292,14 +132,9 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByLayoutSetBranchId(
-			layoutSetBranchId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByLayoutSetBranchId.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {layoutSetBranchId},
+			orderByComparator);
 	}
 
 	/**
@@ -309,13 +144,8 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByLayoutSetBranchId(long layoutSetBranchId) {
-		for (LayoutRevision layoutRevision :
-				findByLayoutSetBranchId(
-					layoutSetBranchId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByLayoutSetBranchId.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {layoutSetBranchId});
 	}
 
 	/**
@@ -326,104 +156,12 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByLayoutSetBranchId(long layoutSetBranchId) {
-		FinderPath finderPath = _finderPathCountByLayoutSetBranchId;
-
-		Object[] finderArgs = new Object[] {layoutSetBranchId};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_LAYOUTSETBRANCHID_LAYOUTSETBRANCHID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByLayoutSetBranchId.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {layoutSetBranchId});
 	}
 
-	private static final String
-		_FINDER_COLUMN_LAYOUTSETBRANCHID_LAYOUTSETBRANCHID_2 =
-			"layoutRevision.layoutSetBranchId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByPlid;
-	private FinderPath _finderPathWithoutPaginationFindByPlid;
-	private FinderPath _finderPathCountByPlid;
-
-	/**
-	 * Returns all the layout revisions where plid = &#63;.
-	 *
-	 * @param plid the plid
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByPlid(long plid) {
-		return findByPlid(plid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByPlid(long plid, int start, int end) {
-		return findByPlid(plid, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByPlid(
-		long plid, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByPlid(plid, start, end, orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByPlid;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where plid = &#63;.
@@ -445,93 +183,9 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByPlid;
-				finderArgs = new Object[] {plid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByPlid;
-			finderArgs = new Object[] {plid, start, end, orderByComparator};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if (plid != layoutRevision.getPlid()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_PLID_PLID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(plid);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByPlid.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -554,16 +208,9 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("plid=");
-		sb.append(plid);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByPlid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid}));
 	}
 
 	/**
@@ -577,13 +224,9 @@ public class LayoutRevisionPersistenceImpl
 	public LayoutRevision fetchByPlid_First(
 		long plid, OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByPlid(plid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByPlid.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid},
+			orderByComparator);
 	}
 
 	/**
@@ -593,11 +236,8 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByPlid(long plid) {
-		for (LayoutRevision layoutRevision :
-				findByPlid(plid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByPlid.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid});
 	}
 
 	/**
@@ -608,103 +248,12 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByPlid(long plid) {
-		FinderPath finderPath = _finderPathCountByPlid;
-
-		Object[] finderArgs = new Object[] {plid};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_PLID_PLID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(plid);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByPlid.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid});
 	}
 
-	private static final String _FINDER_COLUMN_PLID_PLID_2 =
-		"layoutRevision.plid = ?";
-
-	private FinderPath _finderPathWithPaginationFindByStatus;
-	private FinderPath _finderPathWithoutPaginationFindByStatus;
-	private FinderPath _finderPathCountByStatus;
-
-	/**
-	 * Returns all the layout revisions where status = &#63;.
-	 *
-	 * @param status the status
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByStatus(int status) {
-		return findByStatus(status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param status the status
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByStatus(int status, int start, int end) {
-		return findByStatus(status, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param status the status
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByStatus(
-		int status, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByStatus(status, start, end, orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByStatus;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where status = &#63;.
@@ -726,93 +275,9 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByStatus;
-				finderArgs = new Object[] {status};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByStatus;
-			finderArgs = new Object[] {status, start, end, orderByComparator};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if (status != layoutRevision.getStatus()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_STATUS_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(status);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByStatus.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -835,16 +300,9 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByStatus.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {status}));
 	}
 
 	/**
@@ -858,14 +316,9 @@ public class LayoutRevisionPersistenceImpl
 	public LayoutRevision fetchByStatus_First(
 		int status, OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByStatus(
-			status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByStatus.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {status},
+			orderByComparator);
 	}
 
 	/**
@@ -875,12 +328,8 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByStatus(int status) {
-		for (LayoutRevision layoutRevision :
-				findByStatus(
-					status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByStatus.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {status});
 	}
 
 	/**
@@ -891,113 +340,12 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByStatus(int status) {
-		FinderPath finderPath = _finderPathCountByStatus;
-
-		Object[] finderArgs = new Object[] {status};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_STATUS_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByStatus.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {status});
 	}
 
-	private static final String _FINDER_COLUMN_STATUS_STATUS_2 =
-		"layoutRevision.status = ?";
-
-	private FinderPath _finderPathWithPaginationFindByL_H;
-	private FinderPath _finderPathWithoutPaginationFindByL_H;
-	private FinderPath _finderPathCountByL_H;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63; and head = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H(
-		long layoutSetBranchId, boolean head) {
-
-		return findByL_H(
-			layoutSetBranchId, head, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H(
-		long layoutSetBranchId, boolean head, int start, int end) {
-
-		return findByL_H(layoutSetBranchId, head, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H(
-		long layoutSetBranchId, boolean head, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByL_H(
-			layoutSetBranchId, head, start, end, orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByL_H;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63;.
@@ -1020,102 +368,10 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByL_H;
-				finderArgs = new Object[] {layoutSetBranchId, head};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByL_H;
-			finderArgs = new Object[] {
-				layoutSetBranchId, head, start, end, orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) ||
-						(head != layoutRevision.isHead())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_H_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_H_HEAD_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(head);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByL_H.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1140,19 +396,10 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append(", head=");
-		sb.append(head);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByL_H.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {layoutSetBranchId, head}));
 	}
 
 	/**
@@ -1168,14 +415,9 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId, boolean head,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByL_H(
-			layoutSetBranchId, head, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByL_H.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head}, orderByComparator);
 	}
 
 	/**
@@ -1186,13 +428,9 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByL_H(long layoutSetBranchId, boolean head) {
-		for (LayoutRevision layoutRevision :
-				findByL_H(
-					layoutSetBranchId, head, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByL_H.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head});
 	}
 
 	/**
@@ -1204,118 +442,13 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByL_H(long layoutSetBranchId, boolean head) {
-		FinderPath finderPath = _finderPathCountByL_H;
-
-		Object[] finderArgs = new Object[] {layoutSetBranchId, head};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_H_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_H_HEAD_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(head);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByL_H.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head});
 	}
 
-	private static final String _FINDER_COLUMN_L_H_LAYOUTSETBRANCHID_2 =
-		"layoutRevision.layoutSetBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_H_HEAD_2 =
-		"layoutRevision.head = ?";
-
-	private FinderPath _finderPathWithPaginationFindByL_P;
-	private FinderPath _finderPathWithoutPaginationFindByL_P;
-	private FinderPath _finderPathCountByL_P;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63; and plid = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param plid the plid
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P(long layoutSetBranchId, long plid) {
-		return findByL_P(
-			layoutSetBranchId, plid, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P(
-		long layoutSetBranchId, long plid, int start, int end) {
-
-		return findByL_P(layoutSetBranchId, plid, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P(
-		long layoutSetBranchId, long plid, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByL_P(
-			layoutSetBranchId, plid, start, end, orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByL_P;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and plid = &#63;.
@@ -1338,102 +471,10 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByL_P;
-				finderArgs = new Object[] {layoutSetBranchId, plid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByL_P;
-			finderArgs = new Object[] {
-				layoutSetBranchId, plid, start, end, orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) ||
-						(plid != layoutRevision.getPlid())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_P_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_PLID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(plid);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByL_P.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1458,19 +499,10 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append(", plid=");
-		sb.append(plid);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByL_P.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {layoutSetBranchId, plid}));
 	}
 
 	/**
@@ -1486,14 +518,9 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId, long plid,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByL_P(
-			layoutSetBranchId, plid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByL_P.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid}, orderByComparator);
 	}
 
 	/**
@@ -1504,13 +531,9 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByL_P(long layoutSetBranchId, long plid) {
-		for (LayoutRevision layoutRevision :
-				findByL_P(
-					layoutSetBranchId, plid, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByL_P.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid});
 	}
 
 	/**
@@ -1522,118 +545,13 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByL_P(long layoutSetBranchId, long plid) {
-		FinderPath finderPath = _finderPathCountByL_P;
-
-		Object[] finderArgs = new Object[] {layoutSetBranchId, plid};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_P_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_PLID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(plid);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByL_P.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid});
 	}
 
-	private static final String _FINDER_COLUMN_L_P_LAYOUTSETBRANCHID_2 =
-		"layoutRevision.layoutSetBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_P_PLID_2 =
-		"layoutRevision.plid = ?";
-
-	private FinderPath _finderPathWithPaginationFindByL_S;
-	private FinderPath _finderPathWithoutPaginationFindByL_S;
-	private FinderPath _finderPathCountByL_S;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63; and status = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param status the status
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_S(long layoutSetBranchId, int status) {
-		return findByL_S(
-			layoutSetBranchId, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param status the status
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_S(
-		long layoutSetBranchId, int status, int start, int end) {
-
-		return findByL_S(layoutSetBranchId, status, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param status the status
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_S(
-		long layoutSetBranchId, int status, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByL_S(
-			layoutSetBranchId, status, start, end, orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByL_S;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and status = &#63;.
@@ -1656,102 +574,10 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByL_S;
-				finderArgs = new Object[] {layoutSetBranchId, status};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByL_S;
-			finderArgs = new Object[] {
-				layoutSetBranchId, status, start, end, orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) ||
-						(status != layoutRevision.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_S_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_S_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(status);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByL_S.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1776,19 +602,10 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByL_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {layoutSetBranchId, status}));
 	}
 
 	/**
@@ -1804,14 +621,9 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId, int status,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByL_S(
-			layoutSetBranchId, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByL_S.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, status}, orderByComparator);
 	}
 
 	/**
@@ -1822,13 +634,9 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByL_S(long layoutSetBranchId, int status) {
-		for (LayoutRevision layoutRevision :
-				findByL_S(
-					layoutSetBranchId, status, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByL_S.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, status});
 	}
 
 	/**
@@ -1840,116 +648,13 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByL_S(long layoutSetBranchId, int status) {
-		FinderPath finderPath = _finderPathCountByL_S;
-
-		Object[] finderArgs = new Object[] {layoutSetBranchId, status};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_S_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_S_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByL_S.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, status});
 	}
 
-	private static final String _FINDER_COLUMN_L_S_LAYOUTSETBRANCHID_2 =
-		"layoutRevision.layoutSetBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_S_STATUS_2 =
-		"layoutRevision.status = ?";
-
-	private FinderPath _finderPathWithPaginationFindByH_P;
-	private FinderPath _finderPathWithoutPaginationFindByH_P;
-	private FinderPath _finderPathCountByH_P;
-
-	/**
-	 * Returns all the layout revisions where head = &#63; and plid = &#63;.
-	 *
-	 * @param head the head
-	 * @param plid the plid
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByH_P(boolean head, long plid) {
-		return findByH_P(
-			head, plid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where head = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param head the head
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByH_P(
-		boolean head, long plid, int start, int end) {
-
-		return findByH_P(head, plid, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where head = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param head the head
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByH_P(
-		boolean head, long plid, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByH_P(head, plid, start, end, orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByH_P;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where head = &#63; and plid = &#63;.
@@ -1972,101 +677,9 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByH_P;
-				finderArgs = new Object[] {head, plid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByH_P;
-			finderArgs = new Object[] {
-				head, plid, start, end, orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((head != layoutRevision.isHead()) ||
-						(plid != layoutRevision.getPlid())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_H_P_HEAD_2);
-
-			sb.append(_FINDER_COLUMN_H_P_PLID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(head);
-
-				queryPos.add(plid);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByH_P.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {head, plid}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2091,19 +704,9 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("head=");
-		sb.append(head);
-
-		sb.append(", plid=");
-		sb.append(plid);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByH_P.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {head, plid}));
 	}
 
 	/**
@@ -2119,14 +722,9 @@ public class LayoutRevisionPersistenceImpl
 		boolean head, long plid,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByH_P(
-			head, plid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByH_P.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {head, plid},
+			orderByComparator);
 	}
 
 	/**
@@ -2137,12 +735,8 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByH_P(boolean head, long plid) {
-		for (LayoutRevision layoutRevision :
-				findByH_P(
-					head, plid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByH_P.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {head, plid});
 	}
 
 	/**
@@ -2154,60 +748,12 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByH_P(boolean head, long plid) {
-		FinderPath finderPath = _finderPathCountByH_P;
-
-		Object[] finderArgs = new Object[] {head, plid};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_H_P_HEAD_2);
-
-			sb.append(_FINDER_COLUMN_H_P_PLID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(head);
-
-				queryPos.add(plid);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByH_P.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {head, plid});
 	}
 
-	private static final String _FINDER_COLUMN_H_P_HEAD_2 =
-		"layoutRevision.head = ? AND ";
-
-	private static final String _FINDER_COLUMN_H_P_PLID_2 =
-		"layoutRevision.plid = ?";
-
-	private FinderPath _finderPathWithPaginationFindByP_NotS;
-	private FinderPath _finderPathWithPaginationCountByP_NotS;
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByP_NotS;
 
 	/**
 	 * Returns all the layout revisions where plid = &#63; and status &ne; &#63;.
@@ -2285,89 +831,9 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		finderPath = _finderPathWithPaginationFindByP_NotS;
-		finderArgs = new Object[] {plid, status, start, end, orderByComparator};
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((plid != layoutRevision.getPlid()) ||
-						(status == layoutRevision.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_P_NOTS_PLID_2);
-
-			sb.append(_FINDER_COLUMN_P_NOTS_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(plid);
-
-				queryPos.add(status);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByP_NotS.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid, status},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2392,19 +858,9 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("plid=");
-		sb.append(plid);
-
-		sb.append(", status!=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByP_NotS.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid, status}));
 	}
 
 	/**
@@ -2420,14 +876,9 @@ public class LayoutRevisionPersistenceImpl
 		long plid, int status,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByP_NotS(
-			plid, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByP_NotS.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid, status},
+			orderByComparator);
 	}
 
 	/**
@@ -2438,12 +889,8 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByP_NotS(long plid, int status) {
-		for (LayoutRevision layoutRevision :
-				findByP_NotS(
-					plid, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByP_NotS.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid, status});
 	}
 
 	/**
@@ -2455,126 +902,12 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByP_NotS(long plid, int status) {
-		FinderPath finderPath = _finderPathWithPaginationCountByP_NotS;
-
-		Object[] finderArgs = new Object[] {plid, status};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_P_NOTS_PLID_2);
-
-			sb.append(_FINDER_COLUMN_P_NOTS_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(plid);
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByP_NotS.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid, status});
 	}
 
-	private static final String _FINDER_COLUMN_P_NOTS_PLID_2 =
-		"layoutRevision.plid = ? AND ";
-
-	private static final String _FINDER_COLUMN_P_NOTS_STATUS_2 =
-		"layoutRevision.status != ?";
-
-	private FinderPath _finderPathWithPaginationFindByL_L_P;
-	private FinderPath _finderPathWithoutPaginationFindByL_L_P;
-	private FinderPath _finderPathCountByL_L_P;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63; and layoutBranchId = &#63; and plid = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param layoutBranchId the layout branch ID
-	 * @param plid the plid
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_L_P(
-		long layoutSetBranchId, long layoutBranchId, long plid) {
-
-		return findByL_L_P(
-			layoutSetBranchId, layoutBranchId, plid, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and layoutBranchId = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param layoutBranchId the layout branch ID
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_L_P(
-		long layoutSetBranchId, long layoutBranchId, long plid, int start,
-		int end) {
-
-		return findByL_L_P(
-			layoutSetBranchId, layoutBranchId, plid, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and layoutBranchId = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param layoutBranchId the layout branch ID
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_L_P(
-		long layoutSetBranchId, long layoutBranchId, long plid, int start,
-		int end, OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByL_L_P(
-			layoutSetBranchId, layoutBranchId, plid, start, end,
-			orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByL_L_P;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and layoutBranchId = &#63; and plid = &#63;.
@@ -2598,111 +931,10 @@ public class LayoutRevisionPersistenceImpl
 		int end, OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByL_L_P;
-				finderArgs = new Object[] {
-					layoutSetBranchId, layoutBranchId, plid
-				};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByL_L_P;
-			finderArgs = new Object[] {
-				layoutSetBranchId, layoutBranchId, plid, start, end,
-				orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) ||
-						(layoutBranchId !=
-							layoutRevision.getLayoutBranchId()) ||
-						(plid != layoutRevision.getPlid())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_L_P_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_L_P_LAYOUTBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_L_P_PLID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(layoutBranchId);
-
-				queryPos.add(plid);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByL_L_P.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, layoutBranchId, plid}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2728,22 +960,10 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append(", layoutBranchId=");
-		sb.append(layoutBranchId);
-
-		sb.append(", plid=");
-		sb.append(plid);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByL_L_P.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {layoutSetBranchId, layoutBranchId, plid}));
 	}
 
 	/**
@@ -2760,14 +980,10 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId, long layoutBranchId, long plid,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByL_L_P(
-			layoutSetBranchId, layoutBranchId, plid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByL_L_P.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, layoutBranchId, plid},
+			orderByComparator);
 	}
 
 	/**
@@ -2781,13 +997,9 @@ public class LayoutRevisionPersistenceImpl
 	public void removeByL_L_P(
 		long layoutSetBranchId, long layoutBranchId, long plid) {
 
-		for (LayoutRevision layoutRevision :
-				findByL_L_P(
-					layoutSetBranchId, layoutBranchId, plid, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByL_L_P.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, layoutBranchId, plid});
 	}
 
 	/**
@@ -2802,136 +1014,13 @@ public class LayoutRevisionPersistenceImpl
 	public int countByL_L_P(
 		long layoutSetBranchId, long layoutBranchId, long plid) {
 
-		FinderPath finderPath = _finderPathCountByL_L_P;
-
-		Object[] finderArgs = new Object[] {
-			layoutSetBranchId, layoutBranchId, plid
-		};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_L_P_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_L_P_LAYOUTBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_L_P_PLID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(layoutBranchId);
-
-				queryPos.add(plid);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByL_L_P.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, layoutBranchId, plid});
 	}
 
-	private static final String _FINDER_COLUMN_L_L_P_LAYOUTSETBRANCHID_2 =
-		"layoutRevision.layoutSetBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_L_P_LAYOUTBRANCHID_2 =
-		"layoutRevision.layoutBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_L_P_PLID_2 =
-		"layoutRevision.plid = ? AND layoutRevision.status != 5";
-
-	private FinderPath _finderPathWithPaginationFindByL_P_P;
-	private FinderPath _finderPathWithoutPaginationFindByL_P_P;
-	private FinderPath _finderPathCountByL_P_P;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63; and parentLayoutRevisionId = &#63; and plid = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param parentLayoutRevisionId the parent layout revision ID
-	 * @param plid the plid
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P_P(
-		long layoutSetBranchId, long parentLayoutRevisionId, long plid) {
-
-		return findByL_P_P(
-			layoutSetBranchId, parentLayoutRevisionId, plid, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and parentLayoutRevisionId = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param parentLayoutRevisionId the parent layout revision ID
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P_P(
-		long layoutSetBranchId, long parentLayoutRevisionId, long plid,
-		int start, int end) {
-
-		return findByL_P_P(
-			layoutSetBranchId, parentLayoutRevisionId, plid, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and parentLayoutRevisionId = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param parentLayoutRevisionId the parent layout revision ID
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P_P(
-		long layoutSetBranchId, long parentLayoutRevisionId, long plid,
-		int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByL_P_P(
-			layoutSetBranchId, parentLayoutRevisionId, plid, start, end,
-			orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByL_P_P;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and parentLayoutRevisionId = &#63; and plid = &#63;.
@@ -2955,111 +1044,10 @@ public class LayoutRevisionPersistenceImpl
 		int start, int end, OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByL_P_P;
-				finderArgs = new Object[] {
-					layoutSetBranchId, parentLayoutRevisionId, plid
-				};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByL_P_P;
-			finderArgs = new Object[] {
-				layoutSetBranchId, parentLayoutRevisionId, plid, start, end,
-				orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) ||
-						(parentLayoutRevisionId !=
-							layoutRevision.getParentLayoutRevisionId()) ||
-						(plid != layoutRevision.getPlid())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_P_P_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_P_PARENTLAYOUTREVISIONID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_P_PLID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(parentLayoutRevisionId);
-
-				queryPos.add(plid);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByL_P_P.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, parentLayoutRevisionId, plid},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -3085,22 +1073,12 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append(", parentLayoutRevisionId=");
-		sb.append(parentLayoutRevisionId);
-
-		sb.append(", plid=");
-		sb.append(plid);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByL_P_P.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {
+					layoutSetBranchId, parentLayoutRevisionId, plid
+				}));
 	}
 
 	/**
@@ -3117,15 +1095,10 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId, long parentLayoutRevisionId, long plid,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByL_P_P(
-			layoutSetBranchId, parentLayoutRevisionId, plid, 0, 1,
+		return _collectionPersistenceFinderByL_P_P.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, parentLayoutRevisionId, plid},
 			orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
 	}
 
 	/**
@@ -3139,13 +1112,9 @@ public class LayoutRevisionPersistenceImpl
 	public void removeByL_P_P(
 		long layoutSetBranchId, long parentLayoutRevisionId, long plid) {
 
-		for (LayoutRevision layoutRevision :
-				findByL_P_P(
-					layoutSetBranchId, parentLayoutRevisionId, plid,
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByL_P_P.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, parentLayoutRevisionId, plid});
 	}
 
 	/**
@@ -3160,133 +1129,13 @@ public class LayoutRevisionPersistenceImpl
 	public int countByL_P_P(
 		long layoutSetBranchId, long parentLayoutRevisionId, long plid) {
 
-		FinderPath finderPath = _finderPathCountByL_P_P;
-
-		Object[] finderArgs = new Object[] {
-			layoutSetBranchId, parentLayoutRevisionId, plid
-		};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_P_P_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_P_PARENTLAYOUTREVISIONID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_P_PLID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(parentLayoutRevisionId);
-
-				queryPos.add(plid);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByL_P_P.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, parentLayoutRevisionId, plid});
 	}
 
-	private static final String _FINDER_COLUMN_L_P_P_LAYOUTSETBRANCHID_2 =
-		"layoutRevision.layoutSetBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_P_P_PARENTLAYOUTREVISIONID_2 =
-		"layoutRevision.parentLayoutRevisionId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_P_P_PLID_2 =
-		"layoutRevision.plid = ?";
-
-	private FinderPath _finderPathWithPaginationFindByL_H_P_Collection;
-	private FinderPath _finderPathWithoutPaginationFindByL_H_P_Collection;
-	private FinderPath _finderPathCountByL_H_P_Collection;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @param plid the plid
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H_P_Collection(
-		long layoutSetBranchId, boolean head, long plid) {
-
-		return findByL_H_P_Collection(
-			layoutSetBranchId, head, plid, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H_P_Collection(
-		long layoutSetBranchId, boolean head, long plid, int start, int end) {
-
-		return findByL_H_P_Collection(
-			layoutSetBranchId, head, plid, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H_P_Collection(
-		long layoutSetBranchId, boolean head, long plid, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByL_H_P_Collection(
-			layoutSetBranchId, head, plid, start, end, orderByComparator, true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByL_H_P_Collection;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
@@ -3310,107 +1159,10 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByL_H_P_Collection;
-				finderArgs = new Object[] {layoutSetBranchId, head, plid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByL_H_P_Collection;
-			finderArgs = new Object[] {
-				layoutSetBranchId, head, plid, start, end, orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) ||
-						(head != layoutRevision.isHead()) ||
-						(plid != layoutRevision.getPlid())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_H_P_COLLECTION_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_H_P_COLLECTION_HEAD_2);
-
-			sb.append(_FINDER_COLUMN_L_H_P_COLLECTION_PLID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(head);
-
-				queryPos.add(plid);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByL_H_P_Collection.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, plid}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -3436,22 +1188,11 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append(", head=");
-		sb.append(head);
-
-		sb.append(", plid=");
-		sb.append(plid);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByL_H_P_Collection.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {layoutSetBranchId, head, plid}));
 	}
 
 	/**
@@ -3468,14 +1209,9 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId, boolean head, long plid,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByL_H_P_Collection(
-			layoutSetBranchId, head, plid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByL_H_P_Collection.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, plid}, orderByComparator);
 	}
 
 	/**
@@ -3489,13 +1225,9 @@ public class LayoutRevisionPersistenceImpl
 	public void removeByL_H_P_Collection(
 		long layoutSetBranchId, boolean head, long plid) {
 
-		for (LayoutRevision layoutRevision :
-				findByL_H_P_Collection(
-					layoutSetBranchId, head, plid, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByL_H_P_Collection.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, plid});
 	}
 
 	/**
@@ -3510,132 +1242,13 @@ public class LayoutRevisionPersistenceImpl
 	public int countByL_H_P_Collection(
 		long layoutSetBranchId, boolean head, long plid) {
 
-		FinderPath finderPath = _finderPathCountByL_H_P_Collection;
-
-		Object[] finderArgs = new Object[] {layoutSetBranchId, head, plid};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_H_P_COLLECTION_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_H_P_COLLECTION_HEAD_2);
-
-			sb.append(_FINDER_COLUMN_L_H_P_COLLECTION_PLID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(head);
-
-				queryPos.add(plid);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByL_H_P_Collection.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, plid});
 	}
 
-	private static final String
-		_FINDER_COLUMN_L_H_P_COLLECTION_LAYOUTSETBRANCHID_2 =
-			"layoutRevision.layoutSetBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_H_P_COLLECTION_HEAD_2 =
-		"layoutRevision.head = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_H_P_COLLECTION_PLID_2 =
-		"layoutRevision.plid = ?";
-
-	private FinderPath _finderPathWithPaginationFindByL_H_S;
-	private FinderPath _finderPathWithoutPaginationFindByL_H_S;
-	private FinderPath _finderPathCountByL_H_S;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @param status the status
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H_S(
-		long layoutSetBranchId, boolean head, int status) {
-
-		return findByL_H_S(
-			layoutSetBranchId, head, status, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @param status the status
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H_S(
-		long layoutSetBranchId, boolean head, int status, int start, int end) {
-
-		return findByL_H_S(layoutSetBranchId, head, status, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param head the head
-	 * @param status the status
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_H_S(
-		long layoutSetBranchId, boolean head, int status, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByL_H_S(
-			layoutSetBranchId, head, status, start, end, orderByComparator,
-			true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByL_H_S;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
@@ -3659,107 +1272,10 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByL_H_S;
-				finderArgs = new Object[] {layoutSetBranchId, head, status};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByL_H_S;
-			finderArgs = new Object[] {
-				layoutSetBranchId, head, status, start, end, orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) ||
-						(head != layoutRevision.isHead()) ||
-						(status != layoutRevision.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_H_S_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_H_S_HEAD_2);
-
-			sb.append(_FINDER_COLUMN_L_H_S_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(head);
-
-				queryPos.add(status);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByL_H_S.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -3785,22 +1301,10 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append(", head=");
-		sb.append(head);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByL_H_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {layoutSetBranchId, head, status}));
 	}
 
 	/**
@@ -3817,14 +1321,9 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId, boolean head, int status,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByL_H_S(
-			layoutSetBranchId, head, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByL_H_S.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, status}, orderByComparator);
 	}
 
 	/**
@@ -3838,13 +1337,9 @@ public class LayoutRevisionPersistenceImpl
 	public void removeByL_H_S(
 		long layoutSetBranchId, boolean head, int status) {
 
-		for (LayoutRevision layoutRevision :
-				findByL_H_S(
-					layoutSetBranchId, head, status, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByL_H_S.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, status});
 	}
 
 	/**
@@ -3857,131 +1352,13 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByL_H_S(long layoutSetBranchId, boolean head, int status) {
-		FinderPath finderPath = _finderPathCountByL_H_S;
-
-		Object[] finderArgs = new Object[] {layoutSetBranchId, head, status};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_H_S_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_H_S_HEAD_2);
-
-			sb.append(_FINDER_COLUMN_L_H_S_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(head);
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByL_H_S.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, status});
 	}
 
-	private static final String _FINDER_COLUMN_L_H_S_LAYOUTSETBRANCHID_2 =
-		"layoutRevision.layoutSetBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_H_S_HEAD_2 =
-		"layoutRevision.head = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_H_S_STATUS_2 =
-		"layoutRevision.status = ?";
-
-	private FinderPath _finderPathWithPaginationFindByL_P_S;
-	private FinderPath _finderPathWithoutPaginationFindByL_P_S;
-	private FinderPath _finderPathCountByL_P_S;
-
-	/**
-	 * Returns all the layout revisions where layoutSetBranchId = &#63; and plid = &#63; and status = &#63;.
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param plid the plid
-	 * @param status the status
-	 * @return the matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P_S(
-		long layoutSetBranchId, long plid, int status) {
-
-		return findByL_P_S(
-			layoutSetBranchId, plid, status, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and plid = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param plid the plid
-	 * @param status the status
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P_S(
-		long layoutSetBranchId, long plid, int status, int start, int end) {
-
-		return findByL_P_S(layoutSetBranchId, plid, status, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and plid = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param layoutSetBranchId the layout set branch ID
-	 * @param plid the plid
-	 * @param status the status
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findByL_P_S(
-		long layoutSetBranchId, long plid, int status, int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findByL_P_S(
-			layoutSetBranchId, plid, status, start, end, orderByComparator,
-			true);
-	}
+	private CollectionPersistenceFinder<LayoutRevision>
+		_collectionPersistenceFinderByL_P_S;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and plid = &#63; and status = &#63;.
@@ -4005,107 +1382,10 @@ public class LayoutRevisionPersistenceImpl
 		OrderByComparator<LayoutRevision> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByL_P_S;
-				finderArgs = new Object[] {layoutSetBranchId, plid, status};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByL_P_S;
-			finderArgs = new Object[] {
-				layoutSetBranchId, plid, status, start, end, orderByComparator
-			};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (LayoutRevision layoutRevision : list) {
-					if ((layoutSetBranchId !=
-							layoutRevision.getLayoutSetBranchId()) ||
-						(plid != layoutRevision.getPlid()) ||
-						(status != layoutRevision.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_P_S_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_S_PLID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_S_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(plid);
-
-				queryPos.add(status);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByL_P_S.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid, status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -4131,22 +1411,10 @@ public class LayoutRevisionPersistenceImpl
 			return layoutRevision;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("layoutSetBranchId=");
-		sb.append(layoutSetBranchId);
-
-		sb.append(", plid=");
-		sb.append(plid);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutRevisionException(sb.toString());
+		throw new NoSuchLayoutRevisionException(
+			_collectionPersistenceFinderByL_P_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {layoutSetBranchId, plid, status}));
 	}
 
 	/**
@@ -4163,14 +1431,9 @@ public class LayoutRevisionPersistenceImpl
 		long layoutSetBranchId, long plid, int status,
 		OrderByComparator<LayoutRevision> orderByComparator) {
 
-		List<LayoutRevision> list = findByL_P_S(
-			layoutSetBranchId, plid, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByL_P_S.fetchFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid, status}, orderByComparator);
 	}
 
 	/**
@@ -4182,13 +1445,9 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public void removeByL_P_S(long layoutSetBranchId, long plid, int status) {
-		for (LayoutRevision layoutRevision :
-				findByL_P_S(
-					layoutSetBranchId, plid, status, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(layoutRevision);
-		}
+		_collectionPersistenceFinderByL_P_S.remove(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid, status});
 	}
 
 	/**
@@ -4201,64 +1460,10 @@ public class LayoutRevisionPersistenceImpl
 	 */
 	@Override
 	public int countByL_P_S(long layoutSetBranchId, long plid, int status) {
-		FinderPath finderPath = _finderPathCountByL_P_S;
-
-		Object[] finderArgs = new Object[] {layoutSetBranchId, plid, status};
-
-		Long count = (Long)FinderCacheUtil.getResult(
-			finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
-
-			sb.append(_FINDER_COLUMN_L_P_S_LAYOUTSETBRANCHID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_S_PLID_2);
-
-			sb.append(_FINDER_COLUMN_L_P_S_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(layoutSetBranchId);
-
-				queryPos.add(plid);
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByL_P_S.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid, status});
 	}
-
-	private static final String _FINDER_COLUMN_L_P_S_LAYOUTSETBRANCHID_2 =
-		"layoutRevision.layoutSetBranchId = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_P_S_PLID_2 =
-		"layoutRevision.plid = ? AND ";
-
-	private static final String _FINDER_COLUMN_L_P_S_STATUS_2 =
-		"layoutRevision.status = ?";
 
 	public LayoutRevisionPersistenceImpl() {
 		setModelClass(LayoutRevision.class);
@@ -4267,87 +1472,6 @@ public class LayoutRevisionPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(LayoutRevisionTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the layout revision in the entity cache if it is enabled.
-	 *
-	 * @param layoutRevision the layout revision
-	 */
-	@Override
-	public void cacheResult(LayoutRevision layoutRevision) {
-		EntityCacheUtil.putResult(
-			LayoutRevisionImpl.class, layoutRevision.getPrimaryKey(),
-			layoutRevision);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the layout revisions in the entity cache if it is enabled.
-	 *
-	 * @param layoutRevisions the layout revisions
-	 */
-	@Override
-	public void cacheResult(List<LayoutRevision> layoutRevisions) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (layoutRevisions.size() > _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (LayoutRevision layoutRevision : layoutRevisions) {
-			if (EntityCacheUtil.getResult(
-					LayoutRevisionImpl.class, layoutRevision.getPrimaryKey()) ==
-						null) {
-
-				cacheResult(layoutRevision);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all layout revisions.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		EntityCacheUtil.clearCache(LayoutRevisionImpl.class);
-
-		FinderCacheUtil.clearCache(LayoutRevisionImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the layout revision.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(LayoutRevision layoutRevision) {
-		EntityCacheUtil.removeResult(LayoutRevisionImpl.class, layoutRevision);
-	}
-
-	@Override
-	public void clearCache(List<LayoutRevision> layoutRevisions) {
-		for (LayoutRevision layoutRevision : layoutRevisions) {
-			EntityCacheUtil.removeResult(
-				LayoutRevisionImpl.class, layoutRevision);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		FinderCacheUtil.clearCache(LayoutRevisionImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			EntityCacheUtil.removeResult(LayoutRevisionImpl.class, primaryKey);
-		}
 	}
 
 	/**
@@ -4380,47 +1504,6 @@ public class LayoutRevisionPersistenceImpl
 		throws NoSuchLayoutRevisionException {
 
 		return remove((Serializable)layoutRevisionId);
-	}
-
-	/**
-	 * Removes the layout revision with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the layout revision
-	 * @return the layout revision that was removed
-	 * @throws NoSuchLayoutRevisionException if a layout revision with the primary key could not be found
-	 */
-	@Override
-	public LayoutRevision remove(Serializable primaryKey)
-		throws NoSuchLayoutRevisionException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			LayoutRevision layoutRevision = (LayoutRevision)session.get(
-				LayoutRevisionImpl.class, primaryKey);
-
-			if (layoutRevision == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchLayoutRevisionException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(layoutRevision);
-		}
-		catch (NoSuchLayoutRevisionException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -4522,39 +1605,13 @@ public class LayoutRevisionPersistenceImpl
 			closeSession(session);
 		}
 
-		EntityCacheUtil.putResult(
-			LayoutRevisionImpl.class, layoutRevisionModelImpl, false, true);
+		cacheUniqueFindersResult(layoutRevision, false);
 
 		if (isNew) {
 			layoutRevision.setNew(false);
 		}
 
 		layoutRevision.resetOriginalValues();
-
-		return layoutRevision;
-	}
-
-	/**
-	 * Returns the layout revision with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the layout revision
-	 * @return the layout revision
-	 * @throws NoSuchLayoutRevisionException if a layout revision with the primary key could not be found
-	 */
-	@Override
-	public LayoutRevision findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchLayoutRevisionException {
-
-		LayoutRevision layoutRevision = fetchByPrimaryKey(primaryKey);
-
-		if (layoutRevision == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchLayoutRevisionException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return layoutRevision;
 	}
@@ -4584,186 +1641,6 @@ public class LayoutRevisionPersistenceImpl
 		return fetchByPrimaryKey((Serializable)layoutRevisionId);
 	}
 
-	/**
-	 * Returns all the layout revisions.
-	 *
-	 * @return the layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the layout revisions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @return the range of layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findAll(
-		int start, int end,
-		OrderByComparator<LayoutRevision> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout revisions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutRevisionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of layout revisions
-	 * @param end the upper bound of the range of layout revisions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of layout revisions
-	 */
-	@Override
-	public List<LayoutRevision> findAll(
-		int start, int end, OrderByComparator<LayoutRevision> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<LayoutRevision> list = null;
-
-		if (useFinderCache) {
-			list = (List<LayoutRevision>)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_LAYOUTREVISION);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_LAYOUTREVISION;
-
-				sql = sql.concat(LayoutRevisionModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<LayoutRevision>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					FinderCacheUtil.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the layout revisions from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (LayoutRevision layoutRevision : findAll()) {
-			remove(layoutRevision);
-		}
-	}
-
-	/**
-	 * Returns the number of layout revisions.
-	 *
-	 * @return the number of layout revisions
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)FinderCacheUtil.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_LAYOUTREVISION);
-
-				count = (Long)query.uniqueResult();
-
-				FinderCacheUtil.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
 	@Override
 	protected EntityCache getEntityCache() {
 		return EntityCacheUtil.getEntityCache();
@@ -4788,294 +1665,421 @@ public class LayoutRevisionPersistenceImpl
 	 * Initializes the layout revision persistence.
 	 */
 	public void afterPropertiesSet() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByLayoutSetBranchId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByLayoutSetBranchId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"layoutSetBranchId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByLayoutSetBranchId",
+					new String[] {Long.class.getName()},
+					new String[] {"layoutSetBranchId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByLayoutSetBranchId",
+					new String[] {Long.class.getName()},
+					new String[] {"layoutSetBranchId"}, false),
+				_SQL_SELECT_LAYOUTREVISION_WHERE,
+				_SQL_COUNT_LAYOUTREVISION_WHERE,
+				LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"layoutRevision.", "layoutSetBranchId",
+					FinderColumn.Type.LONG, "=", true, true,
+					LayoutRevision::getLayoutSetBranchId));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByPlid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByPlid",
+				new String[] {
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"plid"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByPlid",
+				new String[] {Long.class.getName()}, new String[] {"plid"},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByPlid",
+				new String[] {Long.class.getName()}, new String[] {"plid"},
+				false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"layoutRevision.", "plid", FinderColumn.Type.LONG, "=", true,
+				true, LayoutRevision::getPlid));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByStatus =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByStatus",
+					new String[] {
+						Integer.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"status"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByStatus",
+					new String[] {Integer.class.getName()},
+					new String[] {"status"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByStatus",
+					new String[] {Integer.class.getName()},
+					new String[] {"status"}, false),
+				_SQL_SELECT_LAYOUTREVISION_WHERE,
+				_SQL_COUNT_LAYOUTREVISION_WHERE,
+				LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"layoutRevision.", "status", FinderColumn.Type.INTEGER, "=",
+					true, true, LayoutRevision::getStatus));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_collectionPersistenceFinderByL_H = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_H",
+				new String[] {
+					Long.class.getName(), Boolean.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "head"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_H",
+				new String[] {Long.class.getName(), Boolean.class.getName()},
+				new String[] {"layoutSetBranchId", "head"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_H",
+				new String[] {Long.class.getName(), Boolean.class.getName()},
+				new String[] {"layoutSetBranchId", "head"}, false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
+				"=", true, true, LayoutRevision::getLayoutSetBranchId),
+			new FinderColumn<>(
+				"layoutRevision.", "head", FinderColumn.Type.BOOLEAN, "=", true,
+				true, LayoutRevision::isHead));
 
-		_finderPathWithPaginationFindByLayoutSetBranchId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByLayoutSetBranchId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"layoutSetBranchId"}, true);
+		_collectionPersistenceFinderByL_P = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_P",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "plid"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_P",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"layoutSetBranchId", "plid"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_P",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"layoutSetBranchId", "plid"}, false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
+				"=", true, true, LayoutRevision::getLayoutSetBranchId),
+			new FinderColumn<>(
+				"layoutRevision.", "plid", FinderColumn.Type.LONG, "=", true,
+				true, LayoutRevision::getPlid));
 
-		_finderPathWithoutPaginationFindByLayoutSetBranchId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByLayoutSetBranchId", new String[] {Long.class.getName()},
-			new String[] {"layoutSetBranchId"}, true);
+		_collectionPersistenceFinderByL_S = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_S",
+				new String[] {
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "status"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_S",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"layoutSetBranchId", "status"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_S",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"layoutSetBranchId", "status"}, false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
+				"=", true, true, LayoutRevision::getLayoutSetBranchId),
+			new FinderColumn<>(
+				"layoutRevision.", "status", FinderColumn.Type.INTEGER, "=",
+				true, true, LayoutRevision::getStatus));
 
-		_finderPathCountByLayoutSetBranchId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByLayoutSetBranchId", new String[] {Long.class.getName()},
-			new String[] {"layoutSetBranchId"}, false);
+		_collectionPersistenceFinderByH_P = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByH_P",
+				new String[] {
+					Boolean.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"head", "plid"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByH_P",
+				new String[] {Boolean.class.getName(), Long.class.getName()},
+				new String[] {"head", "plid"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByH_P",
+				new String[] {Boolean.class.getName(), Long.class.getName()},
+				new String[] {"head", "plid"}, false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"layoutRevision.", "head", FinderColumn.Type.BOOLEAN, "=", true,
+				true, LayoutRevision::isHead),
+			new FinderColumn<>(
+				"layoutRevision.", "plid", FinderColumn.Type.LONG, "=", true,
+				true, LayoutRevision::getPlid));
 
-		_finderPathWithPaginationFindByPlid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByPlid",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"plid"}, true);
+		_collectionPersistenceFinderByP_NotS =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByP_NotS",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"plid", "status"}, true),
+				null,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByP_NotS",
+					new String[] {
+						Long.class.getName(), Integer.class.getName()
+					},
+					new String[] {"plid", "status"}, false),
+				_SQL_SELECT_LAYOUTREVISION_WHERE,
+				_SQL_COUNT_LAYOUTREVISION_WHERE,
+				LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"layoutRevision.", "plid", FinderColumn.Type.LONG, "=",
+					true, true, LayoutRevision::getPlid),
+				new FinderColumn<>(
+					"layoutRevision.", "status", FinderColumn.Type.INTEGER,
+					"!=", true, true, LayoutRevision::getStatus));
 
-		_finderPathWithoutPaginationFindByPlid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByPlid",
-			new String[] {Long.class.getName()}, new String[] {"plid"}, true);
+		_collectionPersistenceFinderByL_L_P = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_L_P",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "layoutBranchId", "plid"},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_L_P",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "layoutBranchId", "plid"},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_L_P",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "layoutBranchId", "plid"},
+				false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			"layoutRevision.status != 5",
+			new FinderColumn<>(
+				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
+				"=", true, true, LayoutRevision::getLayoutSetBranchId),
+			new FinderColumn<>(
+				"layoutRevision.", "layoutBranchId", FinderColumn.Type.LONG,
+				"=", true, true, LayoutRevision::getLayoutBranchId),
+			new FinderColumn<>(
+				"layoutRevision.", "plid", FinderColumn.Type.LONG, "=", true,
+				true, LayoutRevision::getPlid));
 
-		_finderPathCountByPlid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByPlid",
-			new String[] {Long.class.getName()}, new String[] {"plid"}, false);
+		_collectionPersistenceFinderByL_P_P = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_P_P",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {
+					"layoutSetBranchId", "parentLayoutRevisionId", "plid"
+				},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_P_P",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {
+					"layoutSetBranchId", "parentLayoutRevisionId", "plid"
+				},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_P_P",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {
+					"layoutSetBranchId", "parentLayoutRevisionId", "plid"
+				},
+				false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
+				"=", true, true, LayoutRevision::getLayoutSetBranchId),
+			new FinderColumn<>(
+				"layoutRevision.", "parentLayoutRevisionId",
+				FinderColumn.Type.LONG, "=", true, true,
+				LayoutRevision::getParentLayoutRevisionId),
+			new FinderColumn<>(
+				"layoutRevision.", "plid", FinderColumn.Type.LONG, "=", true,
+				true, LayoutRevision::getPlid));
 
-		_finderPathWithPaginationFindByStatus = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByStatus",
-			new String[] {
-				Integer.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"status"}, true);
+		_collectionPersistenceFinderByL_H_P_Collection =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByL_H_P_Collection",
+					new String[] {
+						Long.class.getName(), Boolean.class.getName(),
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"layoutSetBranchId", "head", "plid"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByL_H_P_Collection",
+					new String[] {
+						Long.class.getName(), Boolean.class.getName(),
+						Long.class.getName()
+					},
+					new String[] {"layoutSetBranchId", "head", "plid"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByL_H_P_Collection",
+					new String[] {
+						Long.class.getName(), Boolean.class.getName(),
+						Long.class.getName()
+					},
+					new String[] {"layoutSetBranchId", "head", "plid"}, false),
+				_SQL_SELECT_LAYOUTREVISION_WHERE,
+				_SQL_COUNT_LAYOUTREVISION_WHERE,
+				LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"layoutRevision.", "layoutSetBranchId",
+					FinderColumn.Type.LONG, "=", true, true,
+					LayoutRevision::getLayoutSetBranchId),
+				new FinderColumn<>(
+					"layoutRevision.", "head", FinderColumn.Type.BOOLEAN, "=",
+					true, true, LayoutRevision::isHead),
+				new FinderColumn<>(
+					"layoutRevision.", "plid", FinderColumn.Type.LONG, "=",
+					true, true, LayoutRevision::getPlid));
 
-		_finderPathWithoutPaginationFindByStatus = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByStatus",
-			new String[] {Integer.class.getName()}, new String[] {"status"},
-			true);
+		_collectionPersistenceFinderByL_H_S = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_H_S",
+				new String[] {
+					Long.class.getName(), Boolean.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "head", "status"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_H_S",
+				new String[] {
+					Long.class.getName(), Boolean.class.getName(),
+					Integer.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "head", "status"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_H_S",
+				new String[] {
+					Long.class.getName(), Boolean.class.getName(),
+					Integer.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "head", "status"}, false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
+				"=", true, true, LayoutRevision::getLayoutSetBranchId),
+			new FinderColumn<>(
+				"layoutRevision.", "head", FinderColumn.Type.BOOLEAN, "=", true,
+				true, LayoutRevision::isHead),
+			new FinderColumn<>(
+				"layoutRevision.", "status", FinderColumn.Type.INTEGER, "=",
+				true, true, LayoutRevision::getStatus));
 
-		_finderPathCountByStatus = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByStatus",
-			new String[] {Integer.class.getName()}, new String[] {"status"},
-			false);
-
-		_finderPathWithPaginationFindByL_H = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_H",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "head"}, true);
-
-		_finderPathWithoutPaginationFindByL_H = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_H",
-			new String[] {Long.class.getName(), Boolean.class.getName()},
-			new String[] {"layoutSetBranchId", "head"}, true);
-
-		_finderPathCountByL_H = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_H",
-			new String[] {Long.class.getName(), Boolean.class.getName()},
-			new String[] {"layoutSetBranchId", "head"}, false);
-
-		_finderPathWithPaginationFindByL_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_P",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "plid"}, true);
-
-		_finderPathWithoutPaginationFindByL_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_P",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"layoutSetBranchId", "plid"}, true);
-
-		_finderPathCountByL_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_P",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"layoutSetBranchId", "plid"}, false);
-
-		_finderPathWithPaginationFindByL_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_S",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "status"}, true);
-
-		_finderPathWithoutPaginationFindByL_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_S",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"layoutSetBranchId", "status"}, true);
-
-		_finderPathCountByL_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_S",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"layoutSetBranchId", "status"}, false);
-
-		_finderPathWithPaginationFindByH_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByH_P",
-			new String[] {
-				Boolean.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"head", "plid"}, true);
-
-		_finderPathWithoutPaginationFindByH_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByH_P",
-			new String[] {Boolean.class.getName(), Long.class.getName()},
-			new String[] {"head", "plid"}, true);
-
-		_finderPathCountByH_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByH_P",
-			new String[] {Boolean.class.getName(), Long.class.getName()},
-			new String[] {"head", "plid"}, false);
-
-		_finderPathWithPaginationFindByP_NotS = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByP_NotS",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"plid", "status"}, true);
-
-		_finderPathWithPaginationCountByP_NotS = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByP_NotS",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"plid", "status"}, false);
-
-		_finderPathWithPaginationFindByL_L_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_L_P",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "layoutBranchId", "plid"}, true);
-
-		_finderPathWithoutPaginationFindByL_L_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_L_P",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "layoutBranchId", "plid"}, true);
-
-		_finderPathCountByL_L_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_L_P",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "layoutBranchId", "plid"},
-			false);
-
-		_finderPathWithPaginationFindByL_P_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_P_P",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {
-				"layoutSetBranchId", "parentLayoutRevisionId", "plid"
-			},
-			true);
-
-		_finderPathWithoutPaginationFindByL_P_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_P_P",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {
-				"layoutSetBranchId", "parentLayoutRevisionId", "plid"
-			},
-			true);
-
-		_finderPathCountByL_P_P = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_P_P",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			new String[] {
-				"layoutSetBranchId", "parentLayoutRevisionId", "plid"
-			},
-			false);
-
-		_finderPathWithPaginationFindByL_H_P_Collection = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_H_P_Collection",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "head", "plid"}, true);
-
-		_finderPathWithoutPaginationFindByL_H_P_Collection = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_H_P_Collection",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				Long.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "head", "plid"}, true);
-
-		_finderPathCountByL_H_P_Collection = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByL_H_P_Collection",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				Long.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "head", "plid"}, false);
-
-		_finderPathWithPaginationFindByL_H_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_H_S",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "head", "status"}, true);
-
-		_finderPathWithoutPaginationFindByL_H_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_H_S",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				Integer.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "head", "status"}, true);
-
-		_finderPathCountByL_H_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_H_S",
-			new String[] {
-				Long.class.getName(), Boolean.class.getName(),
-				Integer.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "head", "status"}, false);
-
-		_finderPathWithPaginationFindByL_P_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_P_S",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "plid", "status"}, true);
-
-		_finderPathWithoutPaginationFindByL_P_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_P_S",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "plid", "status"}, true);
-
-		_finderPathCountByL_P_S = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_P_S",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName()
-			},
-			new String[] {"layoutSetBranchId", "plid", "status"}, false);
+		_collectionPersistenceFinderByL_P_S = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByL_P_S",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "plid", "status"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_P_S",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "plid", "status"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_P_S",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName()
+				},
+				new String[] {"layoutSetBranchId", "plid", "status"}, false),
+			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
+				"=", true, true, LayoutRevision::getLayoutSetBranchId),
+			new FinderColumn<>(
+				"layoutRevision.", "plid", FinderColumn.Type.LONG, "=", true,
+				true, LayoutRevision::getPlid),
+			new FinderColumn<>(
+				"layoutRevision.", "status", FinderColumn.Type.INTEGER, "=",
+				true, true, LayoutRevision::getStatus));
 
 		LayoutRevisionUtil.setPersistence(this);
 	}
@@ -5086,28 +2090,20 @@ public class LayoutRevisionPersistenceImpl
 		EntityCacheUtil.removeCache(LayoutRevisionImpl.class.getName());
 	}
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		LayoutRevisionModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_LAYOUTREVISION =
 		"SELECT layoutRevision FROM LayoutRevision layoutRevision";
 
 	private static final String _SQL_SELECT_LAYOUTREVISION_WHERE =
 		"SELECT layoutRevision FROM LayoutRevision layoutRevision WHERE ";
 
-	private static final String _SQL_COUNT_LAYOUTREVISION =
-		"SELECT COUNT(layoutRevision) FROM LayoutRevision layoutRevision";
-
 	private static final String _SQL_COUNT_LAYOUTREVISION_WHERE =
 		"SELECT COUNT(layoutRevision) FROM LayoutRevision layoutRevision WHERE ";
 
-	private static final String _ORDER_BY_ENTITY_ALIAS = "layoutRevision.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No LayoutRevision exists with the primary key ";
-
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No LayoutRevision exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LayoutRevisionPersistenceImpl.class);
 
 	@Override
 	protected FinderCache getFinderCache() {
@@ -5115,4 +2111,4 @@ public class LayoutRevisionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:767879323
+// LIFERAY-SERVICE-BUILDER-HASH:-1845047651

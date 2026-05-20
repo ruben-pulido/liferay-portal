@@ -36,6 +36,24 @@ public class LayoutSEOEntryCustomMetaTagUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<LayoutSEOEntryCustomMetaTag> layoutSEOEntryCustomMetaTags) {
+
+		getPersistence().cacheResult(layoutSEOEntryCustomMetaTags);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(
+		LayoutSEOEntryCustomMetaTag layoutSEOEntryCustomMetaTag) {
+
+		getPersistence().cacheResult(layoutSEOEntryCustomMetaTag);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -117,65 +135,10 @@ public class LayoutSEOEntryCustomMetaTagUtil {
 	}
 
 	/**
-	 * Returns all the layout seo entry custom meta tags where groupId = &#63; and layoutSEOEntryId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param layoutSEOEntryId the layout seo entry ID
-	 * @return the matching layout seo entry custom meta tags
-	 */
-	public static List<LayoutSEOEntryCustomMetaTag> findByG_L(
-		long groupId, long layoutSEOEntryId) {
-
-		return getPersistence().findByG_L(groupId, layoutSEOEntryId);
-	}
-
-	/**
-	 * Returns a range of all the layout seo entry custom meta tags where groupId = &#63; and layoutSEOEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutSEOEntryCustomMetaTagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param layoutSEOEntryId the layout seo entry ID
-	 * @param start the lower bound of the range of layout seo entry custom meta tags
-	 * @param end the upper bound of the range of layout seo entry custom meta tags (not inclusive)
-	 * @return the range of matching layout seo entry custom meta tags
-	 */
-	public static List<LayoutSEOEntryCustomMetaTag> findByG_L(
-		long groupId, long layoutSEOEntryId, int start, int end) {
-
-		return getPersistence().findByG_L(
-			groupId, layoutSEOEntryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the layout seo entry custom meta tags where groupId = &#63; and layoutSEOEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutSEOEntryCustomMetaTagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param layoutSEOEntryId the layout seo entry ID
-	 * @param start the lower bound of the range of layout seo entry custom meta tags
-	 * @param end the upper bound of the range of layout seo entry custom meta tags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout seo entry custom meta tags
-	 */
-	public static List<LayoutSEOEntryCustomMetaTag> findByG_L(
-		long groupId, long layoutSEOEntryId, int start, int end,
-		OrderByComparator<LayoutSEOEntryCustomMetaTag> orderByComparator) {
-
-		return getPersistence().findByG_L(
-			groupId, layoutSEOEntryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout seo entry custom meta tags where groupId = &#63; and layoutSEOEntryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutSEOEntryCustomMetaTagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.seo.model.impl.LayoutSEOEntryCustomMetaTagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -253,28 +216,6 @@ public class LayoutSEOEntryCustomMetaTagUtil {
 	}
 
 	/**
-	 * Caches the layout seo entry custom meta tag in the entity cache if it is enabled.
-	 *
-	 * @param layoutSEOEntryCustomMetaTag the layout seo entry custom meta tag
-	 */
-	public static void cacheResult(
-		LayoutSEOEntryCustomMetaTag layoutSEOEntryCustomMetaTag) {
-
-		getPersistence().cacheResult(layoutSEOEntryCustomMetaTag);
-	}
-
-	/**
-	 * Caches the layout seo entry custom meta tags in the entity cache if it is enabled.
-	 *
-	 * @param layoutSEOEntryCustomMetaTags the layout seo entry custom meta tags
-	 */
-	public static void cacheResult(
-		List<LayoutSEOEntryCustomMetaTag> layoutSEOEntryCustomMetaTags) {
-
-		getPersistence().cacheResult(layoutSEOEntryCustomMetaTags);
-	}
-
-	/**
 	 * Creates a new layout seo entry custom meta tag with the primary key. Does not add the layout seo entry custom meta tag to the database.
 	 *
 	 * @param layoutSEOEntryCustomMetaTagId the primary key for the new layout seo entry custom meta tag
@@ -336,86 +277,58 @@ public class LayoutSEOEntryCustomMetaTagUtil {
 	}
 
 	/**
-	 * Returns all the layout seo entry custom meta tags.
+	 * Returns all the layout seo entry custom meta tags where groupId = &#63; and layoutSEOEntryId = &#63;.
 	 *
-	 * @return the layout seo entry custom meta tags
+	 * @param groupId the group ID
+	 * @param layoutSEOEntryId the layout seo entry ID
+	 * @return the matching layout seo entry custom meta tags
 	 */
-	public static List<LayoutSEOEntryCustomMetaTag> findAll() {
-		return getPersistence().findAll();
+	public static List<LayoutSEOEntryCustomMetaTag> findByG_L(
+		long groupId, long layoutSEOEntryId) {
+
+		return getPersistence().findByG_L(groupId, layoutSEOEntryId);
 	}
 
 	/**
-	 * Returns a range of all the layout seo entry custom meta tags.
+	 * Returns a range of all the layout seo entry custom meta tags where groupId = &#63; and layoutSEOEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutSEOEntryCustomMetaTagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.seo.model.impl.LayoutSEOEntryCustomMetaTagModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param layoutSEOEntryId the layout seo entry ID
 	 * @param start the lower bound of the range of layout seo entry custom meta tags
 	 * @param end the upper bound of the range of layout seo entry custom meta tags (not inclusive)
-	 * @return the range of layout seo entry custom meta tags
+	 * @return the range of matching layout seo entry custom meta tags
 	 */
-	public static List<LayoutSEOEntryCustomMetaTag> findAll(
-		int start, int end) {
+	public static List<LayoutSEOEntryCustomMetaTag> findByG_L(
+		long groupId, long layoutSEOEntryId, int start, int end) {
 
-		return getPersistence().findAll(start, end);
+		return getPersistence().findByG_L(
+			groupId, layoutSEOEntryId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the layout seo entry custom meta tags.
+	 * Returns an ordered range of all the layout seo entry custom meta tags where groupId = &#63; and layoutSEOEntryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutSEOEntryCustomMetaTagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.seo.model.impl.LayoutSEOEntryCustomMetaTagModelImpl</code>.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param layoutSEOEntryId the layout seo entry ID
 	 * @param start the lower bound of the range of layout seo entry custom meta tags
 	 * @param end the upper bound of the range of layout seo entry custom meta tags (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of layout seo entry custom meta tags
+	 * @return the ordered range of matching layout seo entry custom meta tags
 	 */
-	public static List<LayoutSEOEntryCustomMetaTag> findAll(
-		int start, int end,
+	public static List<LayoutSEOEntryCustomMetaTag> findByG_L(
+		long groupId, long layoutSEOEntryId, int start, int end,
 		OrderByComparator<LayoutSEOEntryCustomMetaTag> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the layout seo entry custom meta tags.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutSEOEntryCustomMetaTagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of layout seo entry custom meta tags
-	 * @param end the upper bound of the range of layout seo entry custom meta tags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of layout seo entry custom meta tags
-	 */
-	public static List<LayoutSEOEntryCustomMetaTag> findAll(
-		int start, int end,
-		OrderByComparator<LayoutSEOEntryCustomMetaTag> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the layout seo entry custom meta tags from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of layout seo entry custom meta tags.
-	 *
-	 * @return the number of layout seo entry custom meta tags
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByG_L(
+			groupId, layoutSEOEntryId, start, end, orderByComparator);
 	}
 
 	public static LayoutSEOEntryCustomMetaTagPersistence getPersistence() {
@@ -431,4 +344,4 @@ public class LayoutSEOEntryCustomMetaTagUtil {
 	private static volatile LayoutSEOEntryCustomMetaTagPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1701380185
+// LIFERAY-SERVICE-BUILDER-HASH:216203368

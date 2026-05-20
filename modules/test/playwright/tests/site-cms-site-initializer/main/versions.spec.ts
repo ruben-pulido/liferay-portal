@@ -43,7 +43,13 @@ test(
 
 		await assetsPage.gotoContents();
 
-		await testCanViewVersion(assetsPage, page, objectEntry.title, 'Table');
+		await testCanViewVersion(
+			assetsPage,
+			false,
+			page,
+			objectEntry.title,
+			'Table'
+		);
 
 		await apiHelpers.objectEntry.deleteObjectEntry(
 			applicationName,
@@ -78,6 +84,7 @@ test(
 
 		await testCanViewVersion(
 			assetsPage,
+			true,
 			page,
 			objectEntry.title,
 			'Gallery'
@@ -185,11 +192,12 @@ test(
 
 async function testCanViewVersion(
 	assetsPage,
+	hasFilePreview: boolean,
 	page,
 	title: string,
 	view: 'Table' | 'Gallery'
 ) {
-	expect(page.getByRole('heading', {name: title})).toBeVisible();
+	await expect(page.getByRole('heading', {name: title})).toBeVisible();
 
 	if (view === 'Table') {
 		assetsPage.execItemAction({action: 'View History', filter: title});
@@ -207,6 +215,15 @@ async function testCanViewVersion(
 	expect(
 		page.getByRole('heading', {name: `${title} (Version 1)`})
 	).toBeVisible();
+
+	if (hasFilePreview) {
+		const previewImage = page
+			.getByRole('dialog')
+			.locator('img.preview-file-image');
+
+		await expect(previewImage).toBeVisible();
+		await expect(previewImage).toHaveAttribute('src', /\S+/);
+	}
 
 	await page.getByRole('button', {name: 'Close'}).click();
 }

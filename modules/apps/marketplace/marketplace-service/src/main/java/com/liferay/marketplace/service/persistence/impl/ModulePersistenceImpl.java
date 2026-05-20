@@ -13,24 +13,20 @@ import com.liferay.marketplace.model.impl.ModuleModelImpl;
 import com.liferay.marketplace.service.persistence.ModulePersistence;
 import com.liferay.marketplace.service.persistence.ModuleUtil;
 import com.liferay.marketplace.service.persistence.impl.constants.MarketplacePersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -43,7 +39,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -65,7 +60,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = ModulePersistence.class)
 public class ModulePersistenceImpl
-	extends BasePersistenceImpl<Module> implements ModulePersistence {
+	extends BasePersistenceImpl<Module, NoSuchModuleException>
+	implements ModulePersistence {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -81,67 +77,14 @@ public class ModulePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the modules where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching modules
-	 */
-	@Override
-	public List<Module> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the modules where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @return the range of matching modules
-	 */
-	@Override
-	public List<Module> findByUuid(String uuid, int start, int end) {
-		return findByUuid(uuid, start, end, null);
-	}
+	private CollectionPersistenceFinder<Module>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the modules where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching modules
-	 */
-	@Override
-	public List<Module> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<Module> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the modules where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -156,106 +99,9 @@ public class ModulePersistenceImpl
 		String uuid, int start, int end,
 		OrderByComparator<Module> orderByComparator, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<Module> list = null;
-
-		if (useFinderCache) {
-			list = (List<Module>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (Module module : list) {
-					if (!uuid.equals(module.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_MODULE_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ModuleModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<Module>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -277,16 +123,9 @@ public class ModulePersistenceImpl
 			return module;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchModuleException(sb.toString());
+		throw new NoSuchModuleException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -300,13 +139,8 @@ public class ModulePersistenceImpl
 	public Module fetchByUuid_First(
 		String uuid, OrderByComparator<Module> orderByComparator) {
 
-		List<Module> list = findByUuid(uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -316,11 +150,8 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (Module module :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(module);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -331,130 +162,18 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_MODULE_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 = "module.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(module.uuid IS NULL OR module.uuid = '')";
-
-	private FinderPath _finderPathWithPaginationFindByUuid_C;
-	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
-	private FinderPath _finderPathCountByUuid_C;
-
-	/**
-	 * Returns all the modules where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching modules
-	 */
-	@Override
-	public List<Module> findByUuid_C(String uuid, long companyId) {
-		return findByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the modules where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @return the range of matching modules
-	 */
-	@Override
-	public List<Module> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return findByUuid_C(uuid, companyId, start, end, null);
-	}
+	private CollectionPersistenceFinder<Module>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the modules where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching modules
-	 */
-	@Override
-	public List<Module> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<Module> orderByComparator) {
-
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the modules where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -470,114 +189,9 @@ public class ModulePersistenceImpl
 		String uuid, long companyId, int start, int end,
 		OrderByComparator<Module> orderByComparator, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<Module> list = null;
-
-		if (useFinderCache) {
-			list = (List<Module>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (Module module : list) {
-					if (!uuid.equals(module.getUuid()) ||
-						(companyId != module.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_MODULE_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ModuleModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<Module>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -601,19 +215,9 @@ public class ModulePersistenceImpl
 			return module;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchModuleException(sb.toString());
+		throw new NoSuchModuleException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -629,14 +233,8 @@ public class ModulePersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<Module> orderByComparator) {
 
-		List<Module> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -647,13 +245,8 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (Module module :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(module);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -665,131 +258,18 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_MODULE_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"module.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(module.uuid IS NULL OR module.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"module.companyId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByAppId;
-	private FinderPath _finderPathWithoutPaginationFindByAppId;
-	private FinderPath _finderPathCountByAppId;
-
-	/**
-	 * Returns all the modules where appId = &#63;.
-	 *
-	 * @param appId the app ID
-	 * @return the matching modules
-	 */
-	@Override
-	public List<Module> findByAppId(long appId) {
-		return findByAppId(appId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the modules where appId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param appId the app ID
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @return the range of matching modules
-	 */
-	@Override
-	public List<Module> findByAppId(long appId, int start, int end) {
-		return findByAppId(appId, start, end, null);
-	}
+	private CollectionPersistenceFinder<Module>
+		_collectionPersistenceFinderByAppId;
 
 	/**
 	 * Returns an ordered range of all the modules where appId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param appId the app ID
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching modules
-	 */
-	@Override
-	public List<Module> findByAppId(
-		long appId, int start, int end,
-		OrderByComparator<Module> orderByComparator) {
-
-		return findByAppId(appId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the modules where appId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param appId the app ID
@@ -804,93 +284,9 @@ public class ModulePersistenceImpl
 		long appId, int start, int end,
 		OrderByComparator<Module> orderByComparator, boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByAppId;
-				finderArgs = new Object[] {appId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByAppId;
-			finderArgs = new Object[] {appId, start, end, orderByComparator};
-		}
-
-		List<Module> list = null;
-
-		if (useFinderCache) {
-			list = (List<Module>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (Module module : list) {
-					if (appId != module.getAppId()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_MODULE_WHERE);
-
-			sb.append(_FINDER_COLUMN_APPID_APPID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ModuleModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(appId);
-
-				list = (List<Module>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByAppId.find(
+			finderCache, new Object[] {appId}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -912,16 +308,9 @@ public class ModulePersistenceImpl
 			return module;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("appId=");
-		sb.append(appId);
-
-		sb.append("}");
-
-		throw new NoSuchModuleException(sb.toString());
+		throw new NoSuchModuleException(
+			_collectionPersistenceFinderByAppId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {appId}));
 	}
 
 	/**
@@ -935,13 +324,8 @@ public class ModulePersistenceImpl
 	public Module fetchByAppId_First(
 		long appId, OrderByComparator<Module> orderByComparator) {
 
-		List<Module> list = findByAppId(appId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByAppId.fetchFirst(
+			finderCache, new Object[] {appId}, orderByComparator);
 	}
 
 	/**
@@ -951,12 +335,8 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public void removeByAppId(long appId) {
-		for (Module module :
-				findByAppId(
-					appId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(module);
-		}
+		_collectionPersistenceFinderByAppId.remove(
+			finderCache, new Object[] {appId});
 	}
 
 	/**
@@ -967,112 +347,18 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public int countByAppId(long appId) {
-		FinderPath finderPath = _finderPathCountByAppId;
-
-		Object[] finderArgs = new Object[] {appId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_MODULE_WHERE);
-
-			sb.append(_FINDER_COLUMN_APPID_APPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(appId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByAppId.count(
+			finderCache, new Object[] {appId});
 	}
 
-	private static final String _FINDER_COLUMN_APPID_APPID_2 =
-		"module.appId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByBundleSymbolicName;
-	private FinderPath _finderPathWithoutPaginationFindByBundleSymbolicName;
-	private FinderPath _finderPathCountByBundleSymbolicName;
-
-	/**
-	 * Returns all the modules where bundleSymbolicName = &#63;.
-	 *
-	 * @param bundleSymbolicName the bundle symbolic name
-	 * @return the matching modules
-	 */
-	@Override
-	public List<Module> findByBundleSymbolicName(String bundleSymbolicName) {
-		return findByBundleSymbolicName(
-			bundleSymbolicName, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the modules where bundleSymbolicName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param bundleSymbolicName the bundle symbolic name
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @return the range of matching modules
-	 */
-	@Override
-	public List<Module> findByBundleSymbolicName(
-		String bundleSymbolicName, int start, int end) {
-
-		return findByBundleSymbolicName(bundleSymbolicName, start, end, null);
-	}
+	private CollectionPersistenceFinder<Module>
+		_collectionPersistenceFinderByBundleSymbolicName;
 
 	/**
 	 * Returns an ordered range of all the modules where bundleSymbolicName = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param bundleSymbolicName the bundle symbolic name
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching modules
-	 */
-	@Override
-	public List<Module> findByBundleSymbolicName(
-		String bundleSymbolicName, int start, int end,
-		OrderByComparator<Module> orderByComparator) {
-
-		return findByBundleSymbolicName(
-			bundleSymbolicName, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the modules where bundleSymbolicName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param bundleSymbolicName the bundle symbolic name
@@ -1087,113 +373,9 @@ public class ModulePersistenceImpl
 		String bundleSymbolicName, int start, int end,
 		OrderByComparator<Module> orderByComparator, boolean useFinderCache) {
 
-		bundleSymbolicName = Objects.toString(bundleSymbolicName, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByBundleSymbolicName;
-				finderArgs = new Object[] {bundleSymbolicName};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByBundleSymbolicName;
-			finderArgs = new Object[] {
-				bundleSymbolicName, start, end, orderByComparator
-			};
-		}
-
-		List<Module> list = null;
-
-		if (useFinderCache) {
-			list = (List<Module>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (Module module : list) {
-					if (!bundleSymbolicName.equals(
-							module.getBundleSymbolicName())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_MODULE_WHERE);
-
-			boolean bindBundleSymbolicName = false;
-
-			if (bundleSymbolicName.isEmpty()) {
-				sb.append(
-					_FINDER_COLUMN_BUNDLESYMBOLICNAME_BUNDLESYMBOLICNAME_3);
-			}
-			else {
-				bindBundleSymbolicName = true;
-
-				sb.append(
-					_FINDER_COLUMN_BUNDLESYMBOLICNAME_BUNDLESYMBOLICNAME_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ModuleModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindBundleSymbolicName) {
-					queryPos.add(bundleSymbolicName);
-				}
-
-				list = (List<Module>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByBundleSymbolicName.find(
+			finderCache, new Object[] {bundleSymbolicName}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1217,16 +399,11 @@ public class ModulePersistenceImpl
 			return module;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("bundleSymbolicName=");
-		sb.append(bundleSymbolicName);
-
-		sb.append("}");
-
-		throw new NoSuchModuleException(sb.toString());
+		throw new NoSuchModuleException(
+			_collectionPersistenceFinderByBundleSymbolicName.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {bundleSymbolicName}));
 	}
 
 	/**
@@ -1241,14 +418,8 @@ public class ModulePersistenceImpl
 		String bundleSymbolicName,
 		OrderByComparator<Module> orderByComparator) {
 
-		List<Module> list = findByBundleSymbolicName(
-			bundleSymbolicName, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByBundleSymbolicName.fetchFirst(
+			finderCache, new Object[] {bundleSymbolicName}, orderByComparator);
 	}
 
 	/**
@@ -1258,13 +429,8 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public void removeByBundleSymbolicName(String bundleSymbolicName) {
-		for (Module module :
-				findByBundleSymbolicName(
-					bundleSymbolicName, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(module);
-		}
+		_collectionPersistenceFinderByBundleSymbolicName.remove(
+			finderCache, new Object[] {bundleSymbolicName});
 	}
 
 	/**
@@ -1275,132 +441,18 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public int countByBundleSymbolicName(String bundleSymbolicName) {
-		bundleSymbolicName = Objects.toString(bundleSymbolicName, "");
-
-		FinderPath finderPath = _finderPathCountByBundleSymbolicName;
-
-		Object[] finderArgs = new Object[] {bundleSymbolicName};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_MODULE_WHERE);
-
-			boolean bindBundleSymbolicName = false;
-
-			if (bundleSymbolicName.isEmpty()) {
-				sb.append(
-					_FINDER_COLUMN_BUNDLESYMBOLICNAME_BUNDLESYMBOLICNAME_3);
-			}
-			else {
-				bindBundleSymbolicName = true;
-
-				sb.append(
-					_FINDER_COLUMN_BUNDLESYMBOLICNAME_BUNDLESYMBOLICNAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindBundleSymbolicName) {
-					queryPos.add(bundleSymbolicName);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByBundleSymbolicName.count(
+			finderCache, new Object[] {bundleSymbolicName});
 	}
 
-	private static final String
-		_FINDER_COLUMN_BUNDLESYMBOLICNAME_BUNDLESYMBOLICNAME_2 =
-			"module.bundleSymbolicName = ?";
-
-	private static final String
-		_FINDER_COLUMN_BUNDLESYMBOLICNAME_BUNDLESYMBOLICNAME_3 =
-			"(module.bundleSymbolicName IS NULL OR module.bundleSymbolicName = '')";
-
-	private FinderPath _finderPathWithPaginationFindByContextName;
-	private FinderPath _finderPathWithoutPaginationFindByContextName;
-	private FinderPath _finderPathCountByContextName;
-
-	/**
-	 * Returns all the modules where contextName = &#63;.
-	 *
-	 * @param contextName the context name
-	 * @return the matching modules
-	 */
-	@Override
-	public List<Module> findByContextName(String contextName) {
-		return findByContextName(
-			contextName, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the modules where contextName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param contextName the context name
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @return the range of matching modules
-	 */
-	@Override
-	public List<Module> findByContextName(
-		String contextName, int start, int end) {
-
-		return findByContextName(contextName, start, end, null);
-	}
+	private CollectionPersistenceFinder<Module>
+		_collectionPersistenceFinderByContextName;
 
 	/**
 	 * Returns an ordered range of all the modules where contextName = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param contextName the context name
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching modules
-	 */
-	@Override
-	public List<Module> findByContextName(
-		String contextName, int start, int end,
-		OrderByComparator<Module> orderByComparator) {
-
-		return findByContextName(
-			contextName, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the modules where contextName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param contextName the context name
@@ -1415,108 +467,9 @@ public class ModulePersistenceImpl
 		String contextName, int start, int end,
 		OrderByComparator<Module> orderByComparator, boolean useFinderCache) {
 
-		contextName = Objects.toString(contextName, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByContextName;
-				finderArgs = new Object[] {contextName};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByContextName;
-			finderArgs = new Object[] {
-				contextName, start, end, orderByComparator
-			};
-		}
-
-		List<Module> list = null;
-
-		if (useFinderCache) {
-			list = (List<Module>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (Module module : list) {
-					if (!contextName.equals(module.getContextName())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_MODULE_WHERE);
-
-			boolean bindContextName = false;
-
-			if (contextName.isEmpty()) {
-				sb.append(_FINDER_COLUMN_CONTEXTNAME_CONTEXTNAME_3);
-			}
-			else {
-				bindContextName = true;
-
-				sb.append(_FINDER_COLUMN_CONTEXTNAME_CONTEXTNAME_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ModuleModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindContextName) {
-					queryPos.add(contextName);
-				}
-
-				list = (List<Module>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByContextName.find(
+			finderCache, new Object[] {contextName}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1539,16 +492,9 @@ public class ModulePersistenceImpl
 			return module;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("contextName=");
-		sb.append(contextName);
-
-		sb.append("}");
-
-		throw new NoSuchModuleException(sb.toString());
+		throw new NoSuchModuleException(
+			_collectionPersistenceFinderByContextName.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {contextName}));
 	}
 
 	/**
@@ -1562,14 +508,8 @@ public class ModulePersistenceImpl
 	public Module fetchByContextName_First(
 		String contextName, OrderByComparator<Module> orderByComparator) {
 
-		List<Module> list = findByContextName(
-			contextName, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByContextName.fetchFirst(
+			finderCache, new Object[] {contextName}, orderByComparator);
 	}
 
 	/**
@@ -1579,12 +519,8 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public void removeByContextName(String contextName) {
-		for (Module module :
-				findByContextName(
-					contextName, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(module);
-		}
+		_collectionPersistenceFinderByContextName.remove(
+			finderCache, new Object[] {contextName});
 	}
 
 	/**
@@ -1595,131 +531,18 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public int countByContextName(String contextName) {
-		contextName = Objects.toString(contextName, "");
-
-		FinderPath finderPath = _finderPathCountByContextName;
-
-		Object[] finderArgs = new Object[] {contextName};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_MODULE_WHERE);
-
-			boolean bindContextName = false;
-
-			if (contextName.isEmpty()) {
-				sb.append(_FINDER_COLUMN_CONTEXTNAME_CONTEXTNAME_3);
-			}
-			else {
-				bindContextName = true;
-
-				sb.append(_FINDER_COLUMN_CONTEXTNAME_CONTEXTNAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindContextName) {
-					queryPos.add(contextName);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByContextName.count(
+			finderCache, new Object[] {contextName});
 	}
 
-	private static final String _FINDER_COLUMN_CONTEXTNAME_CONTEXTNAME_2 =
-		"module.contextName = ?";
-
-	private static final String _FINDER_COLUMN_CONTEXTNAME_CONTEXTNAME_3 =
-		"(module.contextName IS NULL OR module.contextName = '')";
-
-	private FinderPath _finderPathWithPaginationFindByA_CN;
-	private FinderPath _finderPathWithoutPaginationFindByA_CN;
-	private FinderPath _finderPathCountByA_CN;
-
-	/**
-	 * Returns all the modules where appId = &#63; and contextName = &#63;.
-	 *
-	 * @param appId the app ID
-	 * @param contextName the context name
-	 * @return the matching modules
-	 */
-	@Override
-	public List<Module> findByA_CN(long appId, String contextName) {
-		return findByA_CN(
-			appId, contextName, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the modules where appId = &#63; and contextName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param appId the app ID
-	 * @param contextName the context name
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @return the range of matching modules
-	 */
-	@Override
-	public List<Module> findByA_CN(
-		long appId, String contextName, int start, int end) {
-
-		return findByA_CN(appId, contextName, start, end, null);
-	}
+	private CollectionPersistenceFinder<Module>
+		_collectionPersistenceFinderByA_CN;
 
 	/**
 	 * Returns an ordered range of all the modules where appId = &#63; and contextName = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param appId the app ID
-	 * @param contextName the context name
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching modules
-	 */
-	@Override
-	public List<Module> findByA_CN(
-		long appId, String contextName, int start, int end,
-		OrderByComparator<Module> orderByComparator) {
-
-		return findByA_CN(
-			appId, contextName, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the modules where appId = &#63; and contextName = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
 	 * </p>
 	 *
 	 * @param appId the app ID
@@ -1735,114 +558,9 @@ public class ModulePersistenceImpl
 		long appId, String contextName, int start, int end,
 		OrderByComparator<Module> orderByComparator, boolean useFinderCache) {
 
-		contextName = Objects.toString(contextName, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByA_CN;
-				finderArgs = new Object[] {appId, contextName};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByA_CN;
-			finderArgs = new Object[] {
-				appId, contextName, start, end, orderByComparator
-			};
-		}
-
-		List<Module> list = null;
-
-		if (useFinderCache) {
-			list = (List<Module>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (Module module : list) {
-					if ((appId != module.getAppId()) ||
-						!contextName.equals(module.getContextName())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_MODULE_WHERE);
-
-			sb.append(_FINDER_COLUMN_A_CN_APPID_2);
-
-			boolean bindContextName = false;
-
-			if (contextName.isEmpty()) {
-				sb.append(_FINDER_COLUMN_A_CN_CONTEXTNAME_3);
-			}
-			else {
-				bindContextName = true;
-
-				sb.append(_FINDER_COLUMN_A_CN_CONTEXTNAME_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ModuleModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(appId);
-
-				if (bindContextName) {
-					queryPos.add(contextName);
-				}
-
-				list = (List<Module>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByA_CN.find(
+			finderCache, new Object[] {appId, contextName}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1867,19 +585,9 @@ public class ModulePersistenceImpl
 			return module;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("appId=");
-		sb.append(appId);
-
-		sb.append(", contextName=");
-		sb.append(contextName);
-
-		sb.append("}");
-
-		throw new NoSuchModuleException(sb.toString());
+		throw new NoSuchModuleException(
+			_collectionPersistenceFinderByA_CN.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {appId, contextName}));
 	}
 
 	/**
@@ -1895,14 +603,8 @@ public class ModulePersistenceImpl
 		long appId, String contextName,
 		OrderByComparator<Module> orderByComparator) {
 
-		List<Module> list = findByA_CN(
-			appId, contextName, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByA_CN.fetchFirst(
+			finderCache, new Object[] {appId, contextName}, orderByComparator);
 	}
 
 	/**
@@ -1913,13 +615,8 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public void removeByA_CN(long appId, String contextName) {
-		for (Module module :
-				findByA_CN(
-					appId, contextName, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(module);
-		}
+		_collectionPersistenceFinderByA_CN.remove(
+			finderCache, new Object[] {appId, contextName});
 	}
 
 	/**
@@ -1931,74 +628,11 @@ public class ModulePersistenceImpl
 	 */
 	@Override
 	public int countByA_CN(long appId, String contextName) {
-		contextName = Objects.toString(contextName, "");
-
-		FinderPath finderPath = _finderPathCountByA_CN;
-
-		Object[] finderArgs = new Object[] {appId, contextName};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_MODULE_WHERE);
-
-			sb.append(_FINDER_COLUMN_A_CN_APPID_2);
-
-			boolean bindContextName = false;
-
-			if (contextName.isEmpty()) {
-				sb.append(_FINDER_COLUMN_A_CN_CONTEXTNAME_3);
-			}
-			else {
-				bindContextName = true;
-
-				sb.append(_FINDER_COLUMN_A_CN_CONTEXTNAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(appId);
-
-				if (bindContextName) {
-					queryPos.add(contextName);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByA_CN.count(
+			finderCache, new Object[] {appId, contextName});
 	}
 
-	private static final String _FINDER_COLUMN_A_CN_APPID_2 =
-		"module.appId = ? AND ";
-
-	private static final String _FINDER_COLUMN_A_CN_CONTEXTNAME_2 =
-		"module.contextName = ?";
-
-	private static final String _FINDER_COLUMN_A_CN_CONTEXTNAME_3 =
-		"(module.contextName IS NULL OR module.contextName = '')";
-
-	private FinderPath _finderPathFetchByA_BSN_BV;
+	private UniquePersistenceFinder<Module> _uniquePersistenceFinderByA_BSN_BV;
 
 	/**
 	 * Returns the module where appId = &#63; and bundleSymbolicName = &#63; and bundleVersion = &#63; or throws a <code>NoSuchModuleException</code> if it could not be found.
@@ -2018,44 +652,19 @@ public class ModulePersistenceImpl
 			appId, bundleSymbolicName, bundleVersion);
 
 		if (module == null) {
-			StringBundler sb = new StringBundler(8);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("appId=");
-			sb.append(appId);
-
-			sb.append(", bundleSymbolicName=");
-			sb.append(bundleSymbolicName);
-
-			sb.append(", bundleVersion=");
-			sb.append(bundleVersion);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByA_BSN_BV.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {appId, bundleSymbolicName, bundleVersion});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchModuleException(sb.toString());
+			throw new NoSuchModuleException(message);
 		}
 
 		return module;
-	}
-
-	/**
-	 * Returns the module where appId = &#63; and bundleSymbolicName = &#63; and bundleVersion = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param appId the app ID
-	 * @param bundleSymbolicName the bundle symbolic name
-	 * @param bundleVersion the bundle version
-	 * @return the matching module, or <code>null</code> if a matching module could not be found
-	 */
-	@Override
-	public Module fetchByA_BSN_BV(
-		long appId, String bundleSymbolicName, String bundleVersion) {
-
-		return fetchByA_BSN_BV(appId, bundleSymbolicName, bundleVersion, true);
 	}
 
 	/**
@@ -2072,116 +681,10 @@ public class ModulePersistenceImpl
 		long appId, String bundleSymbolicName, String bundleVersion,
 		boolean useFinderCache) {
 
-		bundleSymbolicName = Objects.toString(bundleSymbolicName, "");
-		bundleVersion = Objects.toString(bundleVersion, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {
-				appId, bundleSymbolicName, bundleVersion
-			};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByA_BSN_BV, finderArgs, this);
-		}
-
-		if (result instanceof Module) {
-			Module module = (Module)result;
-
-			if ((appId != module.getAppId()) ||
-				!Objects.equals(
-					bundleSymbolicName, module.getBundleSymbolicName()) ||
-				!Objects.equals(bundleVersion, module.getBundleVersion())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(5);
-
-			sb.append(_SQL_SELECT_MODULE_WHERE);
-
-			sb.append(_FINDER_COLUMN_A_BSN_BV_APPID_2);
-
-			boolean bindBundleSymbolicName = false;
-
-			if (bundleSymbolicName.isEmpty()) {
-				sb.append(_FINDER_COLUMN_A_BSN_BV_BUNDLESYMBOLICNAME_3);
-			}
-			else {
-				bindBundleSymbolicName = true;
-
-				sb.append(_FINDER_COLUMN_A_BSN_BV_BUNDLESYMBOLICNAME_2);
-			}
-
-			boolean bindBundleVersion = false;
-
-			if (bundleVersion.isEmpty()) {
-				sb.append(_FINDER_COLUMN_A_BSN_BV_BUNDLEVERSION_3);
-			}
-			else {
-				bindBundleVersion = true;
-
-				sb.append(_FINDER_COLUMN_A_BSN_BV_BUNDLEVERSION_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(appId);
-
-				if (bindBundleSymbolicName) {
-					queryPos.add(bundleSymbolicName);
-				}
-
-				if (bindBundleVersion) {
-					queryPos.add(bundleVersion);
-				}
-
-				List<Module> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByA_BSN_BV, finderArgs, list);
-					}
-				}
-				else {
-					Module module = list.get(0);
-
-					result = module;
-
-					cacheResult(module);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (Module)result;
-		}
+		return _uniquePersistenceFinderByA_BSN_BV.fetch(
+			finderCache,
+			new Object[] {appId, bundleSymbolicName, bundleVersion},
+			useFinderCache);
 	}
 
 	/**
@@ -2215,30 +718,10 @@ public class ModulePersistenceImpl
 	public int countByA_BSN_BV(
 		long appId, String bundleSymbolicName, String bundleVersion) {
 
-		Module module = fetchByA_BSN_BV(
-			appId, bundleSymbolicName, bundleVersion);
-
-		if (module == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByA_BSN_BV.count(
+			finderCache,
+			new Object[] {appId, bundleSymbolicName, bundleVersion});
 	}
-
-	private static final String _FINDER_COLUMN_A_BSN_BV_APPID_2 =
-		"module.appId = ? AND ";
-
-	private static final String _FINDER_COLUMN_A_BSN_BV_BUNDLESYMBOLICNAME_2 =
-		"module.bundleSymbolicName = ? AND ";
-
-	private static final String _FINDER_COLUMN_A_BSN_BV_BUNDLESYMBOLICNAME_3 =
-		"(module.bundleSymbolicName IS NULL OR module.bundleSymbolicName = '') AND ";
-
-	private static final String _FINDER_COLUMN_A_BSN_BV_BUNDLEVERSION_2 =
-		"module.bundleVersion = ?";
-
-	private static final String _FINDER_COLUMN_A_BSN_BV_BUNDLEVERSION_3 =
-		"(module.bundleVersion IS NULL OR module.bundleVersion = '')";
 
 	public ModulePersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -2253,101 +736,6 @@ public class ModulePersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(ModuleTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the module in the entity cache if it is enabled.
-	 *
-	 * @param module the module
-	 */
-	@Override
-	public void cacheResult(Module module) {
-		entityCache.putResult(ModuleImpl.class, module.getPrimaryKey(), module);
-
-		finderCache.putResult(
-			_finderPathFetchByA_BSN_BV,
-			new Object[] {
-				module.getAppId(), module.getBundleSymbolicName(),
-				module.getBundleVersion()
-			},
-			module);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the modules in the entity cache if it is enabled.
-	 *
-	 * @param modules the modules
-	 */
-	@Override
-	public void cacheResult(List<Module> modules) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (modules.size() > _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (Module module : modules) {
-			if (entityCache.getResult(
-					ModuleImpl.class, module.getPrimaryKey()) == null) {
-
-				cacheResult(module);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all modules.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(ModuleImpl.class);
-
-		finderCache.clearCache(ModuleImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the module.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(Module module) {
-		entityCache.removeResult(ModuleImpl.class, module);
-	}
-
-	@Override
-	public void clearCache(List<Module> modules) {
-		for (Module module : modules) {
-			entityCache.removeResult(ModuleImpl.class, module);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(ModuleImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(ModuleImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(ModuleModelImpl moduleModelImpl) {
-		Object[] args = new Object[] {
-			moduleModelImpl.getAppId(), moduleModelImpl.getBundleSymbolicName(),
-			moduleModelImpl.getBundleVersion()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByA_BSN_BV, args, moduleModelImpl);
 	}
 
 	/**
@@ -2382,44 +770,6 @@ public class ModulePersistenceImpl
 	@Override
 	public Module remove(long moduleId) throws NoSuchModuleException {
 		return remove((Serializable)moduleId);
-	}
-
-	/**
-	 * Removes the module with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the module
-	 * @return the module that was removed
-	 * @throws NoSuchModuleException if a module with the primary key could not be found
-	 */
-	@Override
-	public Module remove(Serializable primaryKey) throws NoSuchModuleException {
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Module module = (Module)session.get(ModuleImpl.class, primaryKey);
-
-			if (module == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchModuleException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(module);
-		}
-		catch (NoSuchModuleException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -2499,40 +849,13 @@ public class ModulePersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(ModuleImpl.class, moduleModelImpl, false, true);
-
-		cacheUniqueFindersCache(moduleModelImpl);
+		cacheUniqueFindersResult(module, false);
 
 		if (isNew) {
 			module.setNew(false);
 		}
 
 		module.resetOriginalValues();
-
-		return module;
-	}
-
-	/**
-	 * Returns the module with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the module
-	 * @return the module
-	 * @throws NoSuchModuleException if a module with the primary key could not be found
-	 */
-	@Override
-	public Module findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchModuleException {
-
-		Module module = fetchByPrimaryKey(primaryKey);
-
-		if (module == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchModuleException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return module;
 	}
@@ -2558,185 +881,6 @@ public class ModulePersistenceImpl
 	@Override
 	public Module fetchByPrimaryKey(long moduleId) {
 		return fetchByPrimaryKey((Serializable)moduleId);
-	}
-
-	/**
-	 * Returns all the modules.
-	 *
-	 * @return the modules
-	 */
-	@Override
-	public List<Module> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the modules.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @return the range of modules
-	 */
-	@Override
-	public List<Module> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the modules.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of modules
-	 */
-	@Override
-	public List<Module> findAll(
-		int start, int end, OrderByComparator<Module> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the modules.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ModuleModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of modules
-	 * @param end the upper bound of the range of modules (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of modules
-	 */
-	@Override
-	public List<Module> findAll(
-		int start, int end, OrderByComparator<Module> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<Module> list = null;
-
-		if (useFinderCache) {
-			list = (List<Module>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_MODULE);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_MODULE;
-
-				sql = sql.concat(ModuleModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<Module>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the modules from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (Module module : findAll()) {
-			remove(module);
-		}
-	}
-
-	/**
-	 * Returns the number of modules.
-	 *
-	 * @return the number of modules
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_MODULE);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -2769,137 +913,182 @@ public class ModulePersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"uuid_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, false, null),
+			_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
+			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"module.", "uuid", FinderColumn.Type.STRING, "=", true, true,
+				Module::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+					new String[] {
+						String.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_", "companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
+				_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
+				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"module.", "uuid", FinderColumn.Type.STRING, "=", true,
+					true, Module::getUuid),
+				new FinderColumn<>(
+					"module.", "companyId", FinderColumn.Type.LONG, "=", true,
+					true, Module::getCompanyId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByAppId = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAppId",
+				new String[] {
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"appId"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByAppId",
+				new String[] {Long.class.getName()}, new String[] {"appId"},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByAppId",
+				new String[] {Long.class.getName()}, new String[] {"appId"},
+				false),
+			_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
+			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"module.", "appId", FinderColumn.Type.LONG, "=", true, true,
+				Module::getAppId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_collectionPersistenceFinderByBundleSymbolicName =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByBundleSymbolicName",
+					new String[] {
+						String.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"bundleSymbolicName"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByBundleSymbolicName",
+					new String[] {String.class.getName()},
+					new String[] {"bundleSymbolicName"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByBundleSymbolicName",
+					new String[] {String.class.getName()},
+					new String[] {"bundleSymbolicName"}, 0, 1, false, null),
+				_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
+				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"module.", "bundleSymbolicName", FinderColumn.Type.STRING,
+					"=", true, true, Module::getBundleSymbolicName));
 
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
+		_collectionPersistenceFinderByContextName =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByContextName",
+					new String[] {
+						String.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"contextName"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByContextName", new String[] {String.class.getName()},
+					new String[] {"contextName"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByContextName", new String[] {String.class.getName()},
+					new String[] {"contextName"}, 0, 1, false, null),
+				_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
+				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"module.", "contextName", FinderColumn.Type.STRING, "=",
+					true, true, Module::getContextName));
 
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
+		_collectionPersistenceFinderByA_CN = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByA_CN",
+				new String[] {
+					Long.class.getName(), String.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"appId", "contextName"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByA_CN",
+				new String[] {Long.class.getName(), String.class.getName()},
+				new String[] {"appId", "contextName"}, 0, 2, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByA_CN",
+				new String[] {Long.class.getName(), String.class.getName()},
+				new String[] {"appId", "contextName"}, 0, 2, false, null),
+			_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
+			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"module.", "appId", FinderColumn.Type.LONG, "=", true, true,
+				Module::getAppId),
+			new FinderColumn<>(
+				"module.", "contextName", FinderColumn.Type.STRING, "=", true,
+				true, Module::getContextName));
 
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
-
-		_finderPathWithPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, true);
-
-		_finderPathCountByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, false);
-
-		_finderPathWithPaginationFindByAppId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAppId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"appId"}, true);
-
-		_finderPathWithoutPaginationFindByAppId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByAppId",
-			new String[] {Long.class.getName()}, new String[] {"appId"}, true);
-
-		_finderPathCountByAppId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByAppId",
-			new String[] {Long.class.getName()}, new String[] {"appId"}, false);
-
-		_finderPathWithPaginationFindByBundleSymbolicName = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByBundleSymbolicName",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"bundleSymbolicName"}, true);
-
-		_finderPathWithoutPaginationFindByBundleSymbolicName = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByBundleSymbolicName", new String[] {String.class.getName()},
-			new String[] {"bundleSymbolicName"}, true);
-
-		_finderPathCountByBundleSymbolicName = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByBundleSymbolicName", new String[] {String.class.getName()},
-			new String[] {"bundleSymbolicName"}, false);
-
-		_finderPathWithPaginationFindByContextName = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByContextName",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"contextName"}, true);
-
-		_finderPathWithoutPaginationFindByContextName = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByContextName",
-			new String[] {String.class.getName()}, new String[] {"contextName"},
-			true);
-
-		_finderPathCountByContextName = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByContextName",
-			new String[] {String.class.getName()}, new String[] {"contextName"},
-			false);
-
-		_finderPathWithPaginationFindByA_CN = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByA_CN",
-			new String[] {
-				Long.class.getName(), String.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"appId", "contextName"}, true);
-
-		_finderPathWithoutPaginationFindByA_CN = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByA_CN",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"appId", "contextName"}, true);
-
-		_finderPathCountByA_CN = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByA_CN",
-			new String[] {Long.class.getName(), String.class.getName()},
-			new String[] {"appId", "contextName"}, false);
-
-		_finderPathFetchByA_BSN_BV = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByA_BSN_BV",
-			new String[] {
-				Long.class.getName(), String.class.getName(),
-				String.class.getName()
-			},
-			new String[] {"appId", "bundleSymbolicName", "bundleVersion"},
-			true);
+		_uniquePersistenceFinderByA_BSN_BV = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByA_BSN_BV",
+				new String[] {
+					Long.class.getName(), String.class.getName(),
+					String.class.getName()
+				},
+				new String[] {"appId", "bundleSymbolicName", "bundleVersion"},
+				0, 6, false, Module::getAppId,
+				convertNullFunction(Module::getBundleSymbolicName),
+				convertNullFunction(Module::getBundleVersion)),
+			_SQL_SELECT_MODULE_WHERE, "",
+			new FinderColumn<>(
+				"module.", "appId", FinderColumn.Type.LONG, "=", true, true,
+				Module::getAppId),
+			new FinderColumn<>(
+				"module.", "bundleSymbolicName", FinderColumn.Type.STRING, "=",
+				true, true, Module::getBundleSymbolicName),
+			new FinderColumn<>(
+				"module.", "bundleVersion", FinderColumn.Type.STRING, "=", true,
+				true, Module::getBundleVersion));
 
 		ModuleUtil.setPersistence(this);
 	}
@@ -2943,22 +1132,17 @@ public class ModulePersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		ModuleModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_MODULE =
 		"SELECT module FROM Module module";
 
 	private static final String _SQL_SELECT_MODULE_WHERE =
 		"SELECT module FROM Module module WHERE ";
 
-	private static final String _SQL_COUNT_MODULE =
-		"SELECT COUNT(module) FROM Module module";
-
 	private static final String _SQL_COUNT_MODULE_WHERE =
 		"SELECT COUNT(module) FROM Module module WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "module.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No Module exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No Module exists with the key {";
@@ -2975,4 +1159,4 @@ public class ModulePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1742784418
+// LIFERAY-SERVICE-BUILDER-HASH:-1274754694

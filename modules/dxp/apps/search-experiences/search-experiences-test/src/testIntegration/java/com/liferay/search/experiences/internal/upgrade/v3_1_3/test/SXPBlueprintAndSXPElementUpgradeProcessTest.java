@@ -9,6 +9,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.MultiVMPool;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -27,6 +28,7 @@ import com.liferay.portal.upgrade.test.util.UpgradeTestUtil;
 import com.liferay.search.experiences.constants.SXPBlueprintConstants;
 import com.liferay.search.experiences.model.SXPBlueprint;
 import com.liferay.search.experiences.model.SXPElement;
+import com.liferay.search.experiences.rest.dto.v1_0.util.ElementInstanceUtil;
 import com.liferay.search.experiences.service.SXPBlueprintLocalService;
 import com.liferay.search.experiences.service.SXPElementLocalService;
 
@@ -45,6 +47,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 /**
  * @author Joshua Cords
  * @author Felipe Lorenz
+ * @author Selena Aungst
  */
 @RunWith(Arquillian.class)
 public class SXPBlueprintAndSXPElementUpgradeProcessTest {
@@ -113,14 +116,7 @@ public class SXPBlueprintAndSXPElementUpgradeProcessTest {
 					TestPropsValues.getGroupId(), TestPropsValues.getUserId()));
 		}
 
-		UpgradeProcess upgradeProcess = UpgradeTestUtil.getUpgradeStep(
-			_upgradeStepRegistrator,
-			"com.liferay.search.experiences.internal.upgrade.v3_1_3." +
-				"SXPBlueprintAndSXPElementUpgradeProcess");
-
-		upgradeProcess.upgrade();
-
-		_multiVMPool.clear();
+		_runUpgrade();
 
 		sxpBlueprint = _sxpBlueprintLocalService.fetchSXPBlueprint(
 			sxpBlueprint.getSXPBlueprintId());
@@ -154,12 +150,120 @@ public class SXPBlueprintAndSXPElementUpgradeProcessTest {
 			sxpElement.getElementDefinitionJSON());
 	}
 
+	@Test
+	public void testUpgradeHandlesLegacyFieldMappingLabel() throws Exception {
+		String elementDefinitionJSON = _readJSON(
+			"legacyFieldMappingLabelElementDefinition");
+
+		String elementInstancesJSON = _readJSON("legacyFieldMappingLabel");
+
+		Assert.assertNotNull(
+			ElementInstanceUtil.toElementInstances(elementInstancesJSON));
+
+		SXPBlueprint sxpBlueprint = _sxpBlueprintLocalService.addSXPBlueprint(
+			null, TestPropsValues.getUserId(), StringPool.BLANK,
+			Collections.singletonMap(
+				LocaleUtil.US, RandomTestUtil.randomString()),
+			StringPool.BLANK, SXPBlueprintConstants.SCHEMA_VERSION,
+			Collections.singletonMap(
+				LocaleUtil.US, RandomTestUtil.randomString()),
+			ServiceContextTestUtil.getServiceContext(
+				_group1, TestPropsValues.getUserId()));
+
+		sxpBlueprint.setElementInstancesJSON(elementInstancesJSON);
+
+		sxpBlueprint = _sxpBlueprintLocalService.updateSXPBlueprint(
+			sxpBlueprint);
+
+		SXPElement sxpElement = _sxpElementLocalService.addSXPElement(
+			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+			Collections.singletonMap(LocaleUtil.US, StringPool.BLANK),
+			elementDefinitionJSON, StringPool.BLANK, StringPool.BLANK, true,
+			StringPool.BLANK,
+			Collections.singletonMap(
+				LocaleUtil.US, RandomTestUtil.randomString()),
+			0,
+			ServiceContextTestUtil.getServiceContext(
+				TestPropsValues.getCompanyId(), TestPropsValues.getGroupId(),
+				TestPropsValues.getUserId()));
+
+		_runUpgrade();
+
+		sxpBlueprint = _sxpBlueprintLocalService.fetchSXPBlueprint(
+			sxpBlueprint.getSXPBlueprintId());
+
+		Assert.assertFalse(
+			sxpBlueprint.getElementInstancesJSON(
+			).contains(
+				"LegacyFieldMappingLabelSentinel"
+			));
+
+		sxpElement = _sxpElementLocalService.fetchSXPElement(
+			sxpElement.getSXPElementId());
+
+		Assert.assertFalse(
+			sxpElement.getElementDefinitionJSON(
+			).contains(
+				"LegacyFieldMappingLabelSentinel"
+			));
+	}
+
+	@Test
+	public void testUpgradeSXPBlueprintWithUnknownLegacyField()
+		throws Exception {
+
+		String elementInstancesJSON = JSONUtil.put(
+			JSONUtil.put(
+				"sxpElement",
+				JSONUtil.put(
+					"externalReferenceCode", "OTHER"
+				).put(
+					"label", "legacy-label"
+				))
+		).toString();
+
+		SXPBlueprint sxpBlueprint = _sxpBlueprintLocalService.addSXPBlueprint(
+			null, TestPropsValues.getUserId(), StringPool.BLANK,
+			Collections.singletonMap(
+				LocaleUtil.US, RandomTestUtil.randomString()),
+			StringPool.BLANK, SXPBlueprintConstants.SCHEMA_VERSION,
+			Collections.singletonMap(
+				LocaleUtil.US, RandomTestUtil.randomString()),
+			ServiceContextTestUtil.getServiceContext(
+				_group1, TestPropsValues.getUserId()));
+
+		sxpBlueprint.setElementInstancesJSON(elementInstancesJSON);
+
+		sxpBlueprint = _sxpBlueprintLocalService.updateSXPBlueprint(
+			sxpBlueprint);
+
+		_runUpgrade();
+
+		sxpBlueprint = _sxpBlueprintLocalService.fetchSXPBlueprint(
+			sxpBlueprint.getSXPBlueprintId());
+
+		JSONAssert.assertEquals(
+			elementInstancesJSON, sxpBlueprint.getElementInstancesJSON(),
+			JSONCompareMode.STRICT);
+	}
+
 	private String _readJSON(String name) {
 		return StringUtil.read(
 			_clazz,
 			StringBundler.concat(
 				"dependencies/", _clazz.getSimpleName(), StringPool.PERIOD,
 				name, ".json"));
+	}
+
+	private void _runUpgrade() throws Exception {
+		UpgradeProcess upgradeProcess = UpgradeTestUtil.getUpgradeStep(
+			_upgradeStepRegistrator,
+			"com.liferay.search.experiences.internal.upgrade.v3_1_3." +
+				"SXPBlueprintAndSXPElementUpgradeProcess");
+
+		upgradeProcess.upgrade();
+
+		_multiVMPool.clear();
 	}
 
 	@Inject(

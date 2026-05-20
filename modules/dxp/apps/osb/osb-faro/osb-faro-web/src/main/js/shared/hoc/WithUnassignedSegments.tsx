@@ -64,7 +64,7 @@ const withUnassignedSegments = (
 			if (data && !error) {
 				const {items, total} = data;
 
-				unassignedSegmentsDispatch({
+				unassignedSegmentsDispatch?.({
 					payload: items,
 					type: ActionType.setSegments
 				});

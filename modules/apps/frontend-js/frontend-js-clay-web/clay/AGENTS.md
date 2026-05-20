@@ -56,8 +56,13 @@ yarn run build
 ```bash
 yarn build
 yarn buildTypes
-yarn test
 ```
+
+> **Do not run `yarn test` from a package root.** Jest depends on `node_modules`
+> hoisted at `modules/`, so package-level test runs fail with `Cannot find
+> module 'browserslist-config-clay'` and similar resolution errors. Always run
+> tests from the module root (`frontend-js-clay-web/`) — see
+> [Testing Expectations](#testing-expectations).
 
 ### Clay CSS (`clay/clay-css/`)
 
@@ -111,7 +116,7 @@ yarn run lint
 
 ## Releasing Clay (Examples)
 
-Run from `modules/apps/frontend-js/frontend-js-clay-web`:
+* Run from `modules/apps/frontend-js/frontend-js-clay-web`:
 
 ```bash
 # Preview version and dependency changes only
@@ -129,6 +134,14 @@ NPM_TAG=next node clay/publish-clay-packages.mjs --target-version=3.160.0
 # Optional: skip version bump (advanced)
 SKIP_VERSION_BUMP=true node clay/publish-clay-packages.mjs --target-version=3.160.0
 ```
+
+* Review `package.json` version updates in `modules/apps/frontend-js/frontend-js-clay-web`
+
+* Go to `/portal-impl` and run `ant format-source-all -Dsource.check.names=JSONPackageJSONDependencyVersionCheck -Dsource.file.extensions=json`. It should update all `clayui` package references across `liferay-portal`.
+
+* Go to `/modules` and run `yarn && npx yarn-deduplicate yarn.lock && yarn`. Verify the yarn.lock diff to check if it makes sense. If its numbers are considerably off (more + than - or vice versa), review the contents to find an explanation.
+
+* Review and commit changes
 
 Release notes:
 
@@ -189,7 +202,7 @@ Release notes:
 - Prefer explicit, behavior-focused assertions for specific cases.
 - Avoid snapshot testing for new coverage unless there is a clear reason and strong review value.
 - Update stories when component behavior, props, or visuals change.
-- **Running tests**: Run tests from the `frontend-js-clay-web` directory.
+- **Running tests**: **Always run from the `frontend-js-clay-web` module root, never from a package root** (`clay/clay-*/`). Package-level runs fail because `node_modules` is hoisted to `modules/`.
     - Running `yarn test` with no arguments will run tests for all packages.
     - To run tests for a specific package, specify it as the first positional argument. Use the `-t` flag to isolate specific tests.
     - Example: `yarn test clay/clay-drop-down`

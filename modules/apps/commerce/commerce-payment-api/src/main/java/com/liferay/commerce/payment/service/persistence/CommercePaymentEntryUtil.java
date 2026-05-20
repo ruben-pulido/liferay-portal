@@ -36,6 +36,22 @@ public class CommercePaymentEntryUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<CommercePaymentEntry> commercePaymentEntries) {
+
+		getPersistence().cacheResult(commercePaymentEntries);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(CommercePaymentEntry commercePaymentEntry) {
+		getPersistence().cacheResult(commercePaymentEntry);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -114,59 +130,10 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the commerce payment entries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce payment entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<CommercePaymentEntry> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce payment entries where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -219,40 +186,10 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries that the user has permission to view where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching commerce payment entries that the user has permission to view
-	 */
-	public static List<CommercePaymentEntry> filterFindByCompanyId(
-		long companyId) {
-
-		return getPersistence().filterFindByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the commerce payment entries that the user has permission to view where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of matching commerce payment entries that the user has permission to view
-	 */
-	public static List<CommercePaymentEntry> filterFindByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().filterFindByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce payment entries that the user has permissions to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -299,68 +236,10 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C(
-		long companyId, long classNameId, long classPK) {
-
-		return getPersistence().findByC_C_C(companyId, classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C(
-		long companyId, long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().findByC_C_C(
-			companyId, classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C(
-		long companyId, long classNameId, long classPK, int start, int end,
-		OrderByComparator<CommercePaymentEntry> orderByComparator) {
-
-		return getPersistence().findByC_C_C(
-			companyId, classNameId, classPK, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -420,46 +299,10 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @return the matching commerce payment entries that the user has permission to view
-	 */
-	public static List<CommercePaymentEntry> filterFindByC_C_C(
-		long companyId, long classNameId, long classPK) {
-
-		return getPersistence().filterFindByC_C_C(
-			companyId, classNameId, classPK);
-	}
-
-	/**
-	 * Returns a range of all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of matching commerce payment entries that the user has permission to view
-	 */
-	public static List<CommercePaymentEntry> filterFindByC_C_C(
-		long companyId, long classNameId, long classPK, int start, int end) {
-
-		return getPersistence().filterFindByC_C_C(
-			companyId, classNameId, classPK, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce payment entries that the user has permissions to view where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -521,74 +364,10 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @return the matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C_T(
-		long companyId, long classNameId, long classPK, int type) {
-
-		return getPersistence().findByC_C_C_T(
-			companyId, classNameId, classPK, type);
-	}
-
-	/**
-	 * Returns a range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C_T(
-		long companyId, long classNameId, long classPK, int type, int start,
-		int end) {
-
-		return getPersistence().findByC_C_C_T(
-			companyId, classNameId, classPK, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C_T(
-		long companyId, long classNameId, long classPK, int type, int start,
-		int end, OrderByComparator<CommercePaymentEntry> orderByComparator) {
-
-		return getPersistence().findByC_C_C_T(
-			companyId, classNameId, classPK, type, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -651,49 +430,10 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @return the matching commerce payment entries that the user has permission to view
-	 */
-	public static List<CommercePaymentEntry> filterFindByC_C_C_T(
-		long companyId, long classNameId, long classPK, int type) {
-
-		return getPersistence().filterFindByC_C_C_T(
-			companyId, classNameId, classPK, type);
-	}
-
-	/**
-	 * Returns a range of all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param type the type
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of matching commerce payment entries that the user has permission to view
-	 */
-	public static List<CommercePaymentEntry> filterFindByC_C_C_T(
-		long companyId, long classNameId, long classPK, int type, int start,
-		int end) {
-
-		return getPersistence().filterFindByC_C_C_T(
-			companyId, classNameId, classPK, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce payment entries that the user has permissions to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -761,79 +501,10 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param paymentStatus the payment status
-	 * @param type the type
-	 * @return the matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C_P_T(
-		long companyId, long classNameId, long classPK, int paymentStatus,
-		int type) {
-
-		return getPersistence().findByC_C_C_P_T(
-			companyId, classNameId, classPK, paymentStatus, type);
-	}
-
-	/**
-	 * Returns a range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param paymentStatus the payment status
-	 * @param type the type
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C_P_T(
-		long companyId, long classNameId, long classPK, int paymentStatus,
-		int type, int start, int end) {
-
-		return getPersistence().findByC_C_C_P_T(
-			companyId, classNameId, classPK, paymentStatus, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param paymentStatus the payment status
-	 * @param type the type
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching commerce payment entries
-	 */
-	public static List<CommercePaymentEntry> findByC_C_C_P_T(
-		long companyId, long classNameId, long classPK, int paymentStatus,
-		int type, int start, int end,
-		OrderByComparator<CommercePaymentEntry> orderByComparator) {
-
-		return getPersistence().findByC_C_C_P_T(
-			companyId, classNameId, classPK, paymentStatus, type, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -902,52 +573,10 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param paymentStatus the payment status
-	 * @param type the type
-	 * @return the matching commerce payment entries that the user has permission to view
-	 */
-	public static List<CommercePaymentEntry> filterFindByC_C_C_P_T(
-		long companyId, long classNameId, long classPK, int paymentStatus,
-		int type) {
-
-		return getPersistence().filterFindByC_C_C_P_T(
-			companyId, classNameId, classPK, paymentStatus, type);
-	}
-
-	/**
-	 * Returns a range of all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param classNameId the class name ID
-	 * @param classPK the class pk
-	 * @param paymentStatus the payment status
-	 * @param type the type
-	 * @param start the lower bound of the range of commerce payment entries
-	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of matching commerce payment entries that the user has permission to view
-	 */
-	public static List<CommercePaymentEntry> filterFindByC_C_C_P_T(
-		long companyId, long classNameId, long classPK, int paymentStatus,
-		int type, int start, int end) {
-
-		return getPersistence().filterFindByC_C_C_P_T(
-			companyId, classNameId, classPK, paymentStatus, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the commerce payment entries that the user has permissions to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1040,19 +669,6 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns the commerce payment entry where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching commerce payment entry, or <code>null</code> if a matching commerce payment entry could not be found
-	 */
-	public static CommercePaymentEntry fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
 	 * Returns the commerce payment entry where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -1093,26 +709,6 @@ public class CommercePaymentEntryUtil {
 		String externalReferenceCode, long companyId) {
 
 		return getPersistence().countByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
-	 * Caches the commerce payment entry in the entity cache if it is enabled.
-	 *
-	 * @param commercePaymentEntry the commerce payment entry
-	 */
-	public static void cacheResult(CommercePaymentEntry commercePaymentEntry) {
-		getPersistence().cacheResult(commercePaymentEntry);
-	}
-
-	/**
-	 * Caches the commerce payment entries in the entity cache if it is enabled.
-	 *
-	 * @param commercePaymentEntries the commerce payment entries
-	 */
-	public static void cacheResult(
-		List<CommercePaymentEntry> commercePaymentEntries) {
-
-		getPersistence().cacheResult(commercePaymentEntries);
 	}
 
 	/**
@@ -1173,84 +769,403 @@ public class CommercePaymentEntryUtil {
 	}
 
 	/**
-	 * Returns all the commerce payment entries.
+	 * Returns the commerce payment entry where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the commerce payment entries
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching commerce payment entry, or <code>null</code> if a matching commerce payment entry could not be found
 	 */
-	public static List<CommercePaymentEntry> findAll() {
-		return getPersistence().findAll();
+	public static CommercePaymentEntry fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
 	}
 
 	/**
-	 * Returns a range of all the commerce payment entries.
+	 * Returns all the commerce payment entries where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the commerce payment entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of commerce payment entries
 	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
-	 * @return the range of commerce payment entries
+	 * @return the range of matching commerce payment entries
 	 */
-	public static List<CommercePaymentEntry> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CommercePaymentEntry> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce payment entries.
+	 * Returns an ordered range of all the commerce payment entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of commerce payment entries
 	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce payment entries
+	 * @return the ordered range of matching commerce payment entries
 	 */
-	public static List<CommercePaymentEntry> findAll(
-		int start, int end,
+	public static List<CommercePaymentEntry> findByCompanyId(
+		long companyId, int start, int end,
 		OrderByComparator<CommercePaymentEntry> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the commerce payment entries.
+	 * Returns all the commerce payment entries that the user has permission to view where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching commerce payment entries that the user has permission to view
+	 */
+	public static List<CommercePaymentEntry> filterFindByCompanyId(
+		long companyId) {
+
+		return getPersistence().filterFindByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the commerce payment entries that the user has permission to view where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommercePaymentEntryModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @return the range of matching commerce payment entries that the user has permission to view
+	 */
+	public static List<CommercePaymentEntry> filterFindByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().filterFindByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByC_C_C(
+		long companyId, long classNameId, long classPK) {
+
+		return getPersistence().findByC_C_C(companyId, classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @return the range of matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByC_C_C(
+		long companyId, long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().findByC_C_C(
+			companyId, classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
 	 * @param start the lower bound of the range of commerce payment entries
 	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce payment entries
+	 * @return the ordered range of matching commerce payment entries
 	 */
-	public static List<CommercePaymentEntry> findAll(
-		int start, int end,
-		OrderByComparator<CommercePaymentEntry> orderByComparator,
-		boolean useFinderCache) {
+	public static List<CommercePaymentEntry> findByC_C_C(
+		long companyId, long classNameId, long classPK, int start, int end,
+		OrderByComparator<CommercePaymentEntry> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByC_C_C(
+			companyId, classNameId, classPK, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the commerce payment entries from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of commerce payment entries.
+	 * Returns all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
-	 * @return the number of commerce payment entries
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @return the matching commerce payment entries that the user has permission to view
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<CommercePaymentEntry> filterFindByC_C_C(
+		long companyId, long classNameId, long classPK) {
+
+		return getPersistence().filterFindByC_C_C(
+			companyId, classNameId, classPK);
+	}
+
+	/**
+	 * Returns a range of all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @return the range of matching commerce payment entries that the user has permission to view
+	 */
+	public static List<CommercePaymentEntry> filterFindByC_C_C(
+		long companyId, long classNameId, long classPK, int start, int end) {
+
+		return getPersistence().filterFindByC_C_C(
+			companyId, classNameId, classPK, start, end);
+	}
+
+	/**
+	 * Returns all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param type the type
+	 * @return the matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByC_C_C_T(
+		long companyId, long classNameId, long classPK, int type) {
+
+		return getPersistence().findByC_C_C_T(
+			companyId, classNameId, classPK, type);
+	}
+
+	/**
+	 * Returns a range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param type the type
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @return the range of matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByC_C_C_T(
+		long companyId, long classNameId, long classPK, int type, int start,
+		int end) {
+
+		return getPersistence().findByC_C_C_T(
+			companyId, classNameId, classPK, type, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param type the type
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByC_C_C_T(
+		long companyId, long classNameId, long classPK, int type, int start,
+		int end, OrderByComparator<CommercePaymentEntry> orderByComparator) {
+
+		return getPersistence().findByC_C_C_T(
+			companyId, classNameId, classPK, type, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param type the type
+	 * @return the matching commerce payment entries that the user has permission to view
+	 */
+	public static List<CommercePaymentEntry> filterFindByC_C_C_T(
+		long companyId, long classNameId, long classPK, int type) {
+
+		return getPersistence().filterFindByC_C_C_T(
+			companyId, classNameId, classPK, type);
+	}
+
+	/**
+	 * Returns a range of all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param type the type
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @return the range of matching commerce payment entries that the user has permission to view
+	 */
+	public static List<CommercePaymentEntry> filterFindByC_C_C_T(
+		long companyId, long classNameId, long classPK, int type, int start,
+		int end) {
+
+		return getPersistence().filterFindByC_C_C_T(
+			companyId, classNameId, classPK, type, start, end);
+	}
+
+	/**
+	 * Returns all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param paymentStatus the payment status
+	 * @param type the type
+	 * @return the matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByC_C_C_P_T(
+		long companyId, long classNameId, long classPK, int paymentStatus,
+		int type) {
+
+		return getPersistence().findByC_C_C_P_T(
+			companyId, classNameId, classPK, paymentStatus, type);
+	}
+
+	/**
+	 * Returns a range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param paymentStatus the payment status
+	 * @param type the type
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @return the range of matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByC_C_C_P_T(
+		long companyId, long classNameId, long classPK, int paymentStatus,
+		int type, int start, int end) {
+
+		return getPersistence().findByC_C_C_P_T(
+			companyId, classNameId, classPK, paymentStatus, type, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce payment entries where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param paymentStatus the payment status
+	 * @param type the type
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce payment entries
+	 */
+	public static List<CommercePaymentEntry> findByC_C_C_P_T(
+		long companyId, long classNameId, long classPK, int paymentStatus,
+		int type, int start, int end,
+		OrderByComparator<CommercePaymentEntry> orderByComparator) {
+
+		return getPersistence().findByC_C_C_P_T(
+			companyId, classNameId, classPK, paymentStatus, type, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param paymentStatus the payment status
+	 * @param type the type
+	 * @return the matching commerce payment entries that the user has permission to view
+	 */
+	public static List<CommercePaymentEntry> filterFindByC_C_C_P_T(
+		long companyId, long classNameId, long classPK, int paymentStatus,
+		int type) {
+
+		return getPersistence().filterFindByC_C_C_P_T(
+			companyId, classNameId, classPK, paymentStatus, type);
+	}
+
+	/**
+	 * Returns a range of all the commerce payment entries that the user has permission to view where companyId = &#63; and classNameId = &#63; and classPK = &#63; and paymentStatus = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.payment.model.impl.CommercePaymentEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param paymentStatus the payment status
+	 * @param type the type
+	 * @param start the lower bound of the range of commerce payment entries
+	 * @param end the upper bound of the range of commerce payment entries (not inclusive)
+	 * @return the range of matching commerce payment entries that the user has permission to view
+	 */
+	public static List<CommercePaymentEntry> filterFindByC_C_C_P_T(
+		long companyId, long classNameId, long classPK, int paymentStatus,
+		int type, int start, int end) {
+
+		return getPersistence().filterFindByC_C_C_P_T(
+			companyId, classNameId, classPK, paymentStatus, type, start, end);
 	}
 
 	public static CommercePaymentEntryPersistence getPersistence() {
@@ -1266,4 +1181,4 @@ public class CommercePaymentEntryUtil {
 	private static volatile CommercePaymentEntryPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:902595748
+// LIFERAY-SERVICE-BUILDER-HASH:-1396124066

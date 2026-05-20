@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -73,12 +74,14 @@ public class UpdateLanguageAction implements Action {
 					themeDisplay.getUserId(), languageId);
 			}
 
-			HttpSession httpSession = httpServletRequest.getSession();
+			if (Validator.isNull(themeDisplay.getDoAsUserId())) {
+				HttpSession httpSession = httpServletRequest.getSession();
 
-			httpSession.setAttribute(WebKeys.LOCALE, locale);
+				httpSession.setAttribute(WebKeys.LOCALE, locale);
 
-			LanguageUtil.updateCookie(
-				httpServletRequest, httpServletResponse, locale);
+				LanguageUtil.updateCookie(
+					httpServletRequest, httpServletResponse, locale);
+			}
 		}
 
 		// Send redirect
@@ -191,26 +194,50 @@ public class UpdateLanguageAction implements Action {
 			layoutURL = layoutURL.substring(0, friendlyURLSeparatorIndex);
 		}
 
+		Locale currentLocale = themeDisplay.getLocale();
+
 		String mappingPart = StringPool.BLANK;
 
-		List<FriendlyURLMapper> friendlyURLMappers =
-			PortletLocalServiceUtil.getFriendlyURLMappers();
+		String currentLayoutFriendlyURL = layout.getFriendlyURL(currentLocale);
 
-		for (FriendlyURLMapper friendlyURLMapper : friendlyURLMappers) {
-			if (friendlyURLMapper.isCheckMappingWithPrefix()) {
-				continue;
-			}
+		int currentLayoutFriendlyURLIndex = -1;
 
-			int mappingIndex = layoutURL.indexOf(
-				friendlyURLMapper.getMapping());
-
-			if (mappingIndex != -1) {
-				mappingPart =
-					StringPool.SLASH + layoutURL.substring(mappingIndex);
-			}
+		if (Validator.isNotNull(currentLayoutFriendlyURL)) {
+			currentLayoutFriendlyURLIndex = layoutURL.indexOf(
+				currentLayoutFriendlyURL);
 		}
 
-		Locale currentLocale = themeDisplay.getLocale();
+		if (currentLayoutFriendlyURLIndex != -1) {
+			int fromIndex =
+				currentLayoutFriendlyURLIndex +
+					currentLayoutFriendlyURL.length();
+
+			List<FriendlyURLMapper> friendlyURLMappers =
+				PortletLocalServiceUtil.getFriendlyURLMappers();
+
+			for (FriendlyURLMapper friendlyURLMapper : friendlyURLMappers) {
+				if (friendlyURLMapper.isCheckMappingWithPrefix()) {
+					continue;
+				}
+
+				String mappingPath =
+					StringPool.SLASH + friendlyURLMapper.getMapping();
+
+				int mappingIndex = layoutURL.indexOf(mappingPath, fromIndex);
+
+				if (mappingIndex == -1) {
+					continue;
+				}
+
+				int mappingEndIndex = mappingIndex + mappingPath.length();
+
+				if ((mappingEndIndex == layoutURL.length()) ||
+					(layoutURL.charAt(mappingEndIndex) == CharPool.SLASH)) {
+
+					mappingPart = layoutURL.substring(mappingIndex);
+				}
+			}
+		}
 
 		if (themeDisplay.isI18n()) {
 			String i18nPath = themeDisplay.getI18nPath();
@@ -284,6 +311,13 @@ public class UpdateLanguageAction implements Action {
 			redirect = redirect + queryString;
 		}
 
+		if (Validator.isNotNull(themeDisplay.getDoAsUserId())) {
+			return HttpComponentsUtil.setParameter(
+				PortalUtil.addPreservedParameters(
+					themeDisplay, layout, redirect, true),
+				"doAsUserLanguageId", LocaleUtil.toLanguageId(locale));
+		}
+
 		return redirect;
 	}
 
@@ -304,8 +338,16 @@ public class UpdateLanguageAction implements Action {
 		Group group, Layout layout, String layoutURL, Locale locale) {
 
 		if (Validator.isNull(layoutURL) ||
-			Objects.equals(layoutURL, StringPool.SLASH) ||
-			PortalUtil.isGroupFriendlyURL(
+			Objects.equals(layoutURL, StringPool.SLASH)) {
+
+			return true;
+		}
+
+		if ((layoutURL.length() > 1) && layoutURL.endsWith(StringPool.SLASH)) {
+			layoutURL = layoutURL.substring(0, layoutURL.length() - 1);
+		}
+
+		if (PortalUtil.isGroupFriendlyURL(
 				layoutURL, group.getFriendlyURL(),
 				layout.getFriendlyURL(locale))) {
 

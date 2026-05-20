@@ -36,6 +36,20 @@ public class KaleoNodeSettingUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<KaleoNodeSetting> kaleoNodeSettings) {
+		getPersistence().cacheResult(kaleoNodeSettings);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(KaleoNodeSetting kaleoNodeSetting) {
+		getPersistence().cacheResult(kaleoNodeSetting);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,59 +125,10 @@ public class KaleoNodeSettingUtil {
 	}
 
 	/**
-	 * Returns all the kaleo node settings where kaleoNodeId = &#63;.
-	 *
-	 * @param kaleoNodeId the kaleo node ID
-	 * @return the matching kaleo node settings
-	 */
-	public static List<KaleoNodeSetting> findByKaleoNodeId(long kaleoNodeId) {
-		return getPersistence().findByKaleoNodeId(kaleoNodeId);
-	}
-
-	/**
-	 * Returns a range of all the kaleo node settings where kaleoNodeId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNodeSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param kaleoNodeId the kaleo node ID
-	 * @param start the lower bound of the range of kaleo node settings
-	 * @param end the upper bound of the range of kaleo node settings (not inclusive)
-	 * @return the range of matching kaleo node settings
-	 */
-	public static List<KaleoNodeSetting> findByKaleoNodeId(
-		long kaleoNodeId, int start, int end) {
-
-		return getPersistence().findByKaleoNodeId(kaleoNodeId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the kaleo node settings where kaleoNodeId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNodeSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param kaleoNodeId the kaleo node ID
-	 * @param start the lower bound of the range of kaleo node settings
-	 * @param end the upper bound of the range of kaleo node settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching kaleo node settings
-	 */
-	public static List<KaleoNodeSetting> findByKaleoNodeId(
-		long kaleoNodeId, int start, int end,
-		OrderByComparator<KaleoNodeSetting> orderByComparator) {
-
-		return getPersistence().findByKaleoNodeId(
-			kaleoNodeId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kaleo node settings where kaleoNodeId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNodeSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNodeSettingModelImpl</code>.
 	 * </p>
 	 *
 	 * @param kaleoNodeId the kaleo node ID
@@ -250,17 +215,6 @@ public class KaleoNodeSettingUtil {
 	}
 
 	/**
-	 * Returns the kaleo node setting where kaleoNodeId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param kaleoNodeId the kaleo node ID
-	 * @param name the name
-	 * @return the matching kaleo node setting, or <code>null</code> if a matching kaleo node setting could not be found
-	 */
-	public static KaleoNodeSetting fetchByKNI_N(long kaleoNodeId, String name) {
-		return getPersistence().fetchByKNI_N(kaleoNodeId, name);
-	}
-
-	/**
 	 * Returns the kaleo node setting where kaleoNodeId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param kaleoNodeId the kaleo node ID
@@ -297,24 +251,6 @@ public class KaleoNodeSettingUtil {
 	 */
 	public static int countByKNI_N(long kaleoNodeId, String name) {
 		return getPersistence().countByKNI_N(kaleoNodeId, name);
-	}
-
-	/**
-	 * Caches the kaleo node setting in the entity cache if it is enabled.
-	 *
-	 * @param kaleoNodeSetting the kaleo node setting
-	 */
-	public static void cacheResult(KaleoNodeSetting kaleoNodeSetting) {
-		getPersistence().cacheResult(kaleoNodeSetting);
-	}
-
-	/**
-	 * Caches the kaleo node settings in the entity cache if it is enabled.
-	 *
-	 * @param kaleoNodeSettings the kaleo node settings
-	 */
-	public static void cacheResult(List<KaleoNodeSetting> kaleoNodeSettings) {
-		getPersistence().cacheResult(kaleoNodeSettings);
 	}
 
 	/**
@@ -372,84 +308,63 @@ public class KaleoNodeSettingUtil {
 	}
 
 	/**
-	 * Returns all the kaleo node settings.
+	 * Returns the kaleo node setting where kaleoNodeId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the kaleo node settings
+	 * @param kaleoNodeId the kaleo node ID
+	 * @param name the name
+	 * @return the matching kaleo node setting, or <code>null</code> if a matching kaleo node setting could not be found
 	 */
-	public static List<KaleoNodeSetting> findAll() {
-		return getPersistence().findAll();
+	public static KaleoNodeSetting fetchByKNI_N(long kaleoNodeId, String name) {
+		return getPersistence().fetchByKNI_N(kaleoNodeId, name);
 	}
 
 	/**
-	 * Returns a range of all the kaleo node settings.
+	 * Returns all the kaleo node settings where kaleoNodeId = &#63;.
+	 *
+	 * @param kaleoNodeId the kaleo node ID
+	 * @return the matching kaleo node settings
+	 */
+	public static List<KaleoNodeSetting> findByKaleoNodeId(long kaleoNodeId) {
+		return getPersistence().findByKaleoNodeId(kaleoNodeId);
+	}
+
+	/**
+	 * Returns a range of all the kaleo node settings where kaleoNodeId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNodeSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNodeSettingModelImpl</code>.
 	 * </p>
 	 *
+	 * @param kaleoNodeId the kaleo node ID
 	 * @param start the lower bound of the range of kaleo node settings
 	 * @param end the upper bound of the range of kaleo node settings (not inclusive)
-	 * @return the range of kaleo node settings
+	 * @return the range of matching kaleo node settings
 	 */
-	public static List<KaleoNodeSetting> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<KaleoNodeSetting> findByKaleoNodeId(
+		long kaleoNodeId, int start, int end) {
+
+		return getPersistence().findByKaleoNodeId(kaleoNodeId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the kaleo node settings.
+	 * Returns an ordered range of all the kaleo node settings where kaleoNodeId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNodeSettingModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.workflow.kaleo.model.impl.KaleoNodeSettingModelImpl</code>.
 	 * </p>
 	 *
+	 * @param kaleoNodeId the kaleo node ID
 	 * @param start the lower bound of the range of kaleo node settings
 	 * @param end the upper bound of the range of kaleo node settings (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of kaleo node settings
+	 * @return the ordered range of matching kaleo node settings
 	 */
-	public static List<KaleoNodeSetting> findAll(
-		int start, int end,
+	public static List<KaleoNodeSetting> findByKaleoNodeId(
+		long kaleoNodeId, int start, int end,
 		OrderByComparator<KaleoNodeSetting> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the kaleo node settings.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>KaleoNodeSettingModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of kaleo node settings
-	 * @param end the upper bound of the range of kaleo node settings (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of kaleo node settings
-	 */
-	public static List<KaleoNodeSetting> findAll(
-		int start, int end,
-		OrderByComparator<KaleoNodeSetting> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the kaleo node settings from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of kaleo node settings.
-	 *
-	 * @return the number of kaleo node settings
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByKaleoNodeId(
+			kaleoNodeId, start, end, orderByComparator);
 	}
 
 	public static KaleoNodeSettingPersistence getPersistence() {
@@ -463,4 +378,4 @@ public class KaleoNodeSettingUtil {
 	private static volatile KaleoNodeSettingPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:463135857
+// LIFERAY-SERVICE-BUILDER-HASH:510613126

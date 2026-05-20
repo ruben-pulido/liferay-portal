@@ -24,6 +24,19 @@ class ProvisioningOAuth2 extends MarketplaceSpringBootOAuth2 {
 		});
 	}
 
+	async licenseKeyTypeFreeDomainsCheck(payload: {
+		domains: string;
+		owner: string;
+	}) {
+		return this.post<Response>(
+			'/license-key-type-free-domains-check',
+			payload,
+			{
+				earlyReturn: false,
+			}
+		);
+	}
+
 	async downloadLicenseKey(id: number) {
 		const response = await this.get<Response>(
 			`/license-keys/${id}/download`,
@@ -70,8 +83,14 @@ class ProvisioningOAuth2 extends MarketplaceSpringBootOAuth2 {
 		await this.post(`/license-key-type-free/${licenseKey}/renew`);
 	}
 
-	async provisionCMPBeta(payload: any) {
+	async provisionCMPBeta(payload: unknown) {
 		return this.post('/cmp-beta-license-key', payload, {
+			earlyReturn: true,
+		});
+	}
+
+	async provisionDSRBeta(payload: unknown) {
+		return this.post('/dsr-beta-license-key', payload, {
 			earlyReturn: true,
 		});
 	}

@@ -10,8 +10,8 @@ import {
 } from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
 
-import {applicationsMenuPageTest} from '../../../fixtures/applicationsMenuPageTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
+import {globalMenuPagesTest} from '../../../fixtures/globalMenuPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import {workflowPagesTest} from '../../../fixtures/workflowPagesTest';
@@ -22,7 +22,7 @@ import {generateObjectEntryValues} from '../utils/generateObjectEntry';
 import {generateObjectFields} from '../utils/generateObjectFields';
 
 export const test = mergeTests(
-	applicationsMenuPageTest,
+	globalMenuPagesTest,
 	dataApiHelpersTest,
 	loginTest(),
 	objectPagesTest,
@@ -92,7 +92,8 @@ test(
 		await page.getByRole('link', {name: viewName}).waitFor();
 
 		await page
-			.getByPlaceholder('Search')
+			.getByRole('search')
+			.getByRole('searchbox', {name: 'Search'})
 			.fill('NonExistentView' + getRandomInt());
 
 		await page.keyboard.press('Enter');
@@ -1344,60 +1345,6 @@ test(
 	}
 );
 
-test.skip(
-	'can delete a pre-order column in default sort',
-	{tag: '@LPD-78504'},
-	async ({apiHelpers, editObjectViewPage, objectViewPage, page}) => {
-		const objectDefinition =
-			await apiHelpers.objectAdmin.postRandomObjectDefinition({
-				status: {code: 0},
-			});
-
-		apiHelpers.data.push({
-			id: objectDefinition.id,
-			type: 'objectDefinition',
-		});
-
-		await objectViewPage.goto(objectDefinition.label['en_US']);
-
-		const viewName = 'CustomView' + getRandomInt();
-
-		await objectViewPage.createObjectView(viewName);
-
-		await page.getByRole('link', {name: viewName}).waitFor();
-
-		await page.getByRole('link', {name: viewName}).click();
-
-		await editObjectViewPage.selectObjectFields(['Author']);
-
-		await editObjectViewPage.saveButton.last().click();
-
-		await page.waitForLoadState('networkidle');
-
-		await page.reload();
-
-		await page.getByRole('link', {name: viewName}).click();
-
-		await editObjectViewPage.viewBuilderTab.click();
-
-		const sidePanel = editObjectViewPage.sidePanel;
-
-		await expect(sidePanel.getByText('Author').first()).toBeVisible();
-
-		await sidePanel
-			.locator('.lfr-object__object-custom-view-builder-item')
-			.filter({hasText: 'Author'})
-			.getByRole('button', {name: 'More'})
-			.click();
-
-		await sidePanel.getByRole('menuitem', {name: 'Delete'}).click();
-
-		await expect(
-			sidePanel.getByText('No columns added yet.')
-		).toBeVisible();
-	}
-);
-
 test(
 	'can drag columns in custom view builder',
 	{tag: '@LPS-135394'},
@@ -1539,9 +1486,9 @@ test(
 	{tag: '@LPS-144957'},
 	async ({
 		apiHelpers,
-		applicationsMenuPage,
 		configurationTabPage,
 		editObjectViewPage,
+		globalMenuPage,
 		objectViewPage,
 		page,
 		viewObjectEntriesPage,
@@ -1564,7 +1511,7 @@ test(
 			applicationName
 		);
 
-		await applicationsMenuPage.goToProcessBuilder();
+		await globalMenuPage.goToApplications('Process Builder');
 
 		await configurationTabPage.configurationTabLink.click();
 
@@ -1835,19 +1782,27 @@ test(
 
 		yesterday.setDate(yesterday.getDate() - 1);
 
-		const tomorrow = new Date(today);
-
-		tomorrow.setDate(tomorrow.getDate() + 1);
-
 		const formatDate = (d: Date) =>
 			`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-		await page.getByLabel('From').fill(formatDate(yesterday));
 		await page
-			.getByRole('textbox', {name: 'To'})
-			.fill(formatDate(tomorrow));
+			.getByRole('textbox', {name: 'From'})
+			.fill(formatDate(yesterday));
+
+		await page.getByRole('textbox', {name: 'To'}).fill(formatDate(today));
 
 		await page.getByRole('button', {name: 'Add Filter'}).click();
+
+		const formatDisplayDate = (d: Date) =>
+			`${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+
+		await expect(page.getByText('1 Result Found for:')).toBeVisible();
+
+		await expect(
+			page.getByRole('button', {
+				name: `Create Date: ${formatDisplayDate(yesterday)} - ${formatDisplayDate(today)}`,
+			})
+		).toBeVisible();
 
 		await expect(page.getByText('Entry Test').first()).toBeVisible();
 	}
@@ -1935,19 +1890,27 @@ test(
 
 		yesterday.setDate(yesterday.getDate() - 1);
 
-		const tomorrow = new Date(today);
-
-		tomorrow.setDate(tomorrow.getDate() + 1);
-
 		const formatDate = (d: Date) =>
 			`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-		await page.getByLabel('From').fill(formatDate(yesterday));
 		await page
-			.getByRole('textbox', {name: 'To'})
-			.fill(formatDate(tomorrow));
+			.getByRole('textbox', {name: 'From'})
+			.fill(formatDate(yesterday));
+
+		await page.getByRole('textbox', {name: 'To'}).fill(formatDate(today));
 
 		await page.getByRole('button', {name: 'Add Filter'}).click();
+
+		const formatDisplayDate = (d: Date) =>
+			`${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+
+		await expect(page.getByText('1 Result Found for:')).toBeVisible();
+
+		await expect(
+			page.getByRole('button', {
+				name: `Modified Date: ${formatDisplayDate(yesterday)} - ${formatDisplayDate(today)}`,
+			})
+		).toBeVisible();
 
 		await expect(page.getByText('Entry Test').first()).toBeVisible();
 	}
@@ -1958,9 +1921,9 @@ test(
 	{tag: '@LPS-169016'},
 	async ({
 		apiHelpers,
-		applicationsMenuPage,
 		configurationTabPage,
 		editObjectViewPage,
+		globalMenuPage,
 		objectViewPage,
 		page,
 		viewObjectEntriesPage,
@@ -1983,7 +1946,7 @@ test(
 			applicationName
 		);
 
-		await applicationsMenuPage.goToProcessBuilder();
+		await globalMenuPage.goToApplications('Process Builder');
 
 		await configurationTabPage.configurationTabLink.click();
 
@@ -2321,7 +2284,10 @@ test(
 
 		await page.getByRole('link', {name: viewNameB}).waitFor();
 
-		await page.getByPlaceholder('Search').fill(viewNameA);
+		await page
+			.getByRole('search')
+			.getByRole('searchbox', {name: 'Search'})
+			.fill(viewNameA);
 
 		await page.keyboard.press('Enter');
 
@@ -2638,63 +2604,6 @@ test(
 
 		await expect(
 			page.getByRole('link', {name: 'New Custom Views'})
-		).toBeVisible();
-	}
-);
-
-test.skip(
-	'can update a pre-order column in default sort',
-	{tag: '@LPS-144472'},
-	async ({apiHelpers, editObjectViewPage, objectViewPage, page}) => {
-		const objectDefinition =
-			await apiHelpers.objectAdmin.postRandomObjectDefinition({
-				status: {code: 0},
-			});
-
-		apiHelpers.data.push({
-			id: objectDefinition.id,
-			type: 'objectDefinition',
-		});
-
-		await objectViewPage.goto(objectDefinition.label['en_US']);
-
-		const viewName = 'CustomView' + getRandomInt();
-
-		await objectViewPage.createObjectView(viewName);
-
-		await page.getByRole('link', {name: viewName}).waitFor();
-
-		await page.getByRole('link', {name: viewName}).click();
-
-		const sidePanel = editObjectViewPage.sidePanel;
-
-		await sidePanel.getByLabel('Mark as Default').check();
-
-		await editObjectViewPage.selectObjectFields(['Author']);
-
-		await expect(sidePanel.getByText('Author').first()).toBeVisible();
-
-		await editObjectViewPage.saveButton.last().click();
-
-		await page.waitForLoadState('networkidle');
-
-		await page.reload();
-
-		await page.getByRole('link', {name: viewName}).click();
-
-		const nameInput = sidePanel.locator('input[type="text"]').first();
-
-		await nameInput.clear();
-		await nameInput.fill('Custom Views Edit');
-
-		await editObjectViewPage.saveButton.last().click();
-
-		await page.waitForLoadState('networkidle');
-
-		await page.reload();
-
-		await expect(
-			page.getByRole('link', {name: 'Custom Views Edit'})
 		).toBeVisible();
 	}
 );

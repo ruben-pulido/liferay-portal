@@ -36,6 +36,20 @@ public class CPMeasurementUnitUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<CPMeasurementUnit> cpMeasurementUnits) {
+		getPersistence().cacheResult(cpMeasurementUnits);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(CPMeasurementUnit cpMeasurementUnit) {
+		getPersistence().cacheResult(cpMeasurementUnit);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -113,58 +127,10 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns all the cp measurement units where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the cp measurement units where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @return the range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp measurement units where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<CPMeasurementUnit> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp measurement units where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -247,17 +213,6 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns the cp measurement unit where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching cp measurement unit, or <code>null</code> if a matching cp measurement unit could not be found
-	 */
-	public static CPMeasurementUnit fetchByUUID_G(String uuid, long groupId) {
-		return getPersistence().fetchByUUID_G(uuid, groupId);
-	}
-
-	/**
 	 * Returns the cp measurement unit where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -297,64 +252,10 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns all the cp measurement units where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByUuid_C(
-		String uuid, long companyId) {
-
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the cp measurement units where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @return the range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp measurement units where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<CPMeasurementUnit> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp measurement units where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -431,59 +332,10 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns all the cp measurement units where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the cp measurement units where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @return the range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp measurement units where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<CPMeasurementUnit> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp measurement units where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -570,17 +422,6 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns the cp measurement unit where companyId = &#63; and key = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param key the key
-	 * @return the matching cp measurement unit, or <code>null</code> if a matching cp measurement unit could not be found
-	 */
-	public static CPMeasurementUnit fetchByC_K(long companyId, String key) {
-		return getPersistence().fetchByC_K(companyId, key);
-	}
-
-	/**
 	 * Returns the cp measurement unit where companyId = &#63; and key = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -620,62 +461,10 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns all the cp measurement units where companyId = &#63; and type = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @return the matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByC_T(long companyId, int type) {
-		return getPersistence().findByC_T(companyId, type);
-	}
-
-	/**
-	 * Returns a range of all the cp measurement units where companyId = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @return the range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByC_T(
-		long companyId, int type, int start, int end) {
-
-		return getPersistence().findByC_T(companyId, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp measurement units where companyId = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByC_T(
-		long companyId, int type, int start, int end,
-		OrderByComparator<CPMeasurementUnit> orderByComparator) {
-
-		return getPersistence().findByC_T(
-			companyId, type, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp measurement units where companyId = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -752,68 +541,10 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns all the cp measurement units where companyId = &#63; and primary = &#63; and type = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param primary the primary
-	 * @param type the type
-	 * @return the matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByC_P_T(
-		long companyId, boolean primary, int type) {
-
-		return getPersistence().findByC_P_T(companyId, primary, type);
-	}
-
-	/**
-	 * Returns a range of all the cp measurement units where companyId = &#63; and primary = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param primary the primary
-	 * @param type the type
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @return the range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByC_P_T(
-		long companyId, boolean primary, int type, int start, int end) {
-
-		return getPersistence().findByC_P_T(
-			companyId, primary, type, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the cp measurement units where companyId = &#63; and primary = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param primary the primary
-	 * @param type the type
-	 * @param start the lower bound of the range of cp measurement units
-	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp measurement units
-	 */
-	public static List<CPMeasurementUnit> findByC_P_T(
-		long companyId, boolean primary, int type, int start, int end,
-		OrderByComparator<CPMeasurementUnit> orderByComparator) {
-
-		return getPersistence().findByC_P_T(
-			companyId, primary, type, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp measurement units where companyId = &#63; and primary = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -914,19 +645,6 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns the cp measurement unit where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param externalReferenceCode the external reference code
-	 * @param companyId the company ID
-	 * @return the matching cp measurement unit, or <code>null</code> if a matching cp measurement unit could not be found
-	 */
-	public static CPMeasurementUnit fetchByERC_C(
-		String externalReferenceCode, long companyId) {
-
-		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
 	 * Returns the cp measurement unit where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param externalReferenceCode the external reference code
@@ -967,24 +685,6 @@ public class CPMeasurementUnitUtil {
 		String externalReferenceCode, long companyId) {
 
 		return getPersistence().countByERC_C(externalReferenceCode, companyId);
-	}
-
-	/**
-	 * Caches the cp measurement unit in the entity cache if it is enabled.
-	 *
-	 * @param cpMeasurementUnit the cp measurement unit
-	 */
-	public static void cacheResult(CPMeasurementUnit cpMeasurementUnit) {
-		getPersistence().cacheResult(cpMeasurementUnit);
-	}
-
-	/**
-	 * Caches the cp measurement units in the entity cache if it is enabled.
-	 *
-	 * @param cpMeasurementUnits the cp measurement units
-	 */
-	public static void cacheResult(List<CPMeasurementUnit> cpMeasurementUnits) {
-		getPersistence().cacheResult(cpMeasurementUnits);
 	}
 
 	/**
@@ -1044,84 +744,299 @@ public class CPMeasurementUnitUtil {
 	}
 
 	/**
-	 * Returns all the cp measurement units.
+	 * Returns the cp measurement unit where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the cp measurement units
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching cp measurement unit, or <code>null</code> if a matching cp measurement unit could not be found
 	 */
-	public static List<CPMeasurementUnit> findAll() {
-		return getPersistence().findAll();
+	public static CPMeasurementUnit fetchByUUID_G(String uuid, long groupId) {
+		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
-	 * Returns a range of all the cp measurement units.
+	 * Returns the cp measurement unit where companyId = &#63; and key = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param key the key
+	 * @return the matching cp measurement unit, or <code>null</code> if a matching cp measurement unit could not be found
+	 */
+	public static CPMeasurementUnit fetchByC_K(long companyId, String key) {
+		return getPersistence().fetchByC_K(companyId, key);
+	}
+
+	/**
+	 * Returns the cp measurement unit where externalReferenceCode = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param externalReferenceCode the external reference code
+	 * @param companyId the company ID
+	 * @return the matching cp measurement unit, or <code>null</code> if a matching cp measurement unit could not be found
+	 */
+	public static CPMeasurementUnit fetchByERC_C(
+		String externalReferenceCode, long companyId) {
+
+		return getPersistence().fetchByERC_C(externalReferenceCode, companyId);
+	}
+
+	/**
+	 * Returns all the cp measurement units where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByUuid(String uuid) {
+		return getPersistence().findByUuid(uuid);
+	}
+
+	/**
+	 * Returns a range of all the cp measurement units where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of cp measurement units
 	 * @param end the upper bound of the range of cp measurement units (not inclusive)
-	 * @return the range of cp measurement units
+	 * @return the range of matching cp measurement units
 	 */
-	public static List<CPMeasurementUnit> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<CPMeasurementUnit> findByUuid(
+		String uuid, int start, int end) {
+
+		return getPersistence().findByUuid(uuid, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the cp measurement units.
+	 * Returns an ordered range of all the cp measurement units where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of cp measurement units
 	 * @param end the upper bound of the range of cp measurement units (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cp measurement units
+	 * @return the ordered range of matching cp measurement units
 	 */
-	public static List<CPMeasurementUnit> findAll(
-		int start, int end,
+	public static List<CPMeasurementUnit> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<CPMeasurementUnit> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the cp measurement units.
+	 * Returns all the cp measurement units where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByUuid_C(
+		String uuid, long companyId) {
+
+		return getPersistence().findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of all the cp measurement units where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPMeasurementUnitModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of cp measurement units
+	 * @param end the upper bound of the range of cp measurement units (not inclusive)
+	 * @return the range of matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return getPersistence().findByUuid_C(uuid, companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp measurement units where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of cp measurement units
 	 * @param end the upper bound of the range of cp measurement units (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cp measurement units
+	 * @return the ordered range of matching cp measurement units
 	 */
-	public static List<CPMeasurementUnit> findAll(
-		int start, int end,
-		OrderByComparator<CPMeasurementUnit> orderByComparator,
-		boolean useFinderCache) {
+	public static List<CPMeasurementUnit> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<CPMeasurementUnit> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Removes all the cp measurement units from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of cp measurement units.
+	 * Returns all the cp measurement units where companyId = &#63;.
 	 *
-	 * @return the number of cp measurement units
+	 * @param companyId the company ID
+	 * @return the matching cp measurement units
 	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static List<CPMeasurementUnit> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the cp measurement units where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of cp measurement units
+	 * @param end the upper bound of the range of cp measurement units (not inclusive)
+	 * @return the range of matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp measurement units where companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of cp measurement units
+	 * @param end the upper bound of the range of cp measurement units (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByCompanyId(
+		long companyId, int start, int end,
+		OrderByComparator<CPMeasurementUnit> orderByComparator) {
+
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the cp measurement units where companyId = &#63; and type = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @return the matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByC_T(long companyId, int type) {
+		return getPersistence().findByC_T(companyId, type);
+	}
+
+	/**
+	 * Returns a range of all the cp measurement units where companyId = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @param start the lower bound of the range of cp measurement units
+	 * @param end the upper bound of the range of cp measurement units (not inclusive)
+	 * @return the range of matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByC_T(
+		long companyId, int type, int start, int end) {
+
+		return getPersistence().findByC_T(companyId, type, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp measurement units where companyId = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param type the type
+	 * @param start the lower bound of the range of cp measurement units
+	 * @param end the upper bound of the range of cp measurement units (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByC_T(
+		long companyId, int type, int start, int end,
+		OrderByComparator<CPMeasurementUnit> orderByComparator) {
+
+		return getPersistence().findByC_T(
+			companyId, type, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the cp measurement units where companyId = &#63; and primary = &#63; and type = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param primary the primary
+	 * @param type the type
+	 * @return the matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByC_P_T(
+		long companyId, boolean primary, int type) {
+
+		return getPersistence().findByC_P_T(companyId, primary, type);
+	}
+
+	/**
+	 * Returns a range of all the cp measurement units where companyId = &#63; and primary = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param primary the primary
+	 * @param type the type
+	 * @param start the lower bound of the range of cp measurement units
+	 * @param end the upper bound of the range of cp measurement units (not inclusive)
+	 * @return the range of matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByC_P_T(
+		long companyId, boolean primary, int type, int start, int end) {
+
+		return getPersistence().findByC_P_T(
+			companyId, primary, type, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp measurement units where companyId = &#63; and primary = &#63; and type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPMeasurementUnitModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param primary the primary
+	 * @param type the type
+	 * @param start the lower bound of the range of cp measurement units
+	 * @param end the upper bound of the range of cp measurement units (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp measurement units
+	 */
+	public static List<CPMeasurementUnit> findByC_P_T(
+		long companyId, boolean primary, int type, int start, int end,
+		OrderByComparator<CPMeasurementUnit> orderByComparator) {
+
+		return getPersistence().findByC_P_T(
+			companyId, primary, type, start, end, orderByComparator);
 	}
 
 	public static CPMeasurementUnitPersistence getPersistence() {
@@ -1137,4 +1052,4 @@ public class CPMeasurementUnitUtil {
 	private static volatile CPMeasurementUnitPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1644612656
+// LIFERAY-SERVICE-BUILDER-HASH:-1972642858

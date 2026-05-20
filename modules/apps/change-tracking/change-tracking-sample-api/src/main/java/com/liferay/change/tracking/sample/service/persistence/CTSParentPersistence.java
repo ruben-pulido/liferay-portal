@@ -34,51 +34,10 @@ public interface CTSParentPersistence
 	 */
 
 	/**
-	 * Returns all the cts parents where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching cts parents
-	 */
-	public java.util.List<CTSParent> findByCompanyId(long companyId);
-
-	/**
-	 * Returns a range of all the cts parents where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cts parents
-	 * @param end the upper bound of the range of cts parents (not inclusive)
-	 * @return the range of matching cts parents
-	 */
-	public java.util.List<CTSParent> findByCompanyId(
-		long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the cts parents where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cts parents
-	 * @param end the upper bound of the range of cts parents (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cts parents
-	 */
-	public java.util.List<CTSParent> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CTSParent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cts parents where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.sample.model.impl.CTSParentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -136,55 +95,10 @@ public interface CTSParentPersistence
 	public int countByCompanyId(long companyId);
 
 	/**
-	 * Returns all the cts parents where companyId = &#63; and ctsGrandParentId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param ctsGrandParentId the cts grand parent ID
-	 * @return the matching cts parents
-	 */
-	public java.util.List<CTSParent> findByC_C(
-		long companyId, long ctsGrandParentId);
-
-	/**
-	 * Returns a range of all the cts parents where companyId = &#63; and ctsGrandParentId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param ctsGrandParentId the cts grand parent ID
-	 * @param start the lower bound of the range of cts parents
-	 * @param end the upper bound of the range of cts parents (not inclusive)
-	 * @return the range of matching cts parents
-	 */
-	public java.util.List<CTSParent> findByC_C(
-		long companyId, long ctsGrandParentId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the cts parents where companyId = &#63; and ctsGrandParentId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param ctsGrandParentId the cts grand parent ID
-	 * @param start the lower bound of the range of cts parents
-	 * @param end the upper bound of the range of cts parents (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cts parents
-	 */
-	public java.util.List<CTSParent> findByC_C(
-		long companyId, long ctsGrandParentId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CTSParent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cts parents where companyId = &#63; and ctsGrandParentId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.sample.model.impl.CTSParentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -247,20 +161,6 @@ public interface CTSParentPersistence
 	public int countByC_C(long companyId, long ctsGrandParentId);
 
 	/**
-	 * Caches the cts parent in the entity cache if it is enabled.
-	 *
-	 * @param ctsParent the cts parent
-	 */
-	public void cacheResult(CTSParent ctsParent);
-
-	/**
-	 * Caches the cts parents in the entity cache if it is enabled.
-	 *
-	 * @param ctsParents the cts parents
-	 */
-	public void cacheResult(java.util.List<CTSParent> ctsParents);
-
-	/**
 	 * Creates a new cts parent with the primary key. Does not add the cts parent to the database.
 	 *
 	 * @param ctsParentId the primary key for the new cts parent
@@ -298,72 +198,113 @@ public interface CTSParentPersistence
 	public CTSParent fetchByPrimaryKey(long ctsParentId);
 
 	/**
-	 * Returns all the cts parents.
+	 * Returns all the cts parents where companyId = &#63;.
 	 *
-	 * @return the cts parents
+	 * @param companyId the company ID
+	 * @return the matching cts parents
 	 */
-	public java.util.List<CTSParent> findAll();
+	public default java.util.List<CTSParent> findByCompanyId(long companyId) {
+		return findByCompanyId(
+			companyId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the cts parents.
+	 * Returns a range of all the cts parents where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.sample.model.impl.CTSParentModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of cts parents
 	 * @param end the upper bound of the range of cts parents (not inclusive)
-	 * @return the range of cts parents
+	 * @return the range of matching cts parents
 	 */
-	public java.util.List<CTSParent> findAll(int start, int end);
+	public default java.util.List<CTSParent> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return findByCompanyId(companyId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the cts parents.
+	 * Returns an ordered range of all the cts parents where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.sample.model.impl.CTSParentModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of cts parents
-	 * @param end the upper bound of the range of cts parents (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cts parents
-	 */
-	public java.util.List<CTSParent> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<CTSParent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cts parents.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CTSParentModelImpl</code>.
-	 * </p>
-	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of cts parents
 	 * @param end the upper bound of the range of cts parents (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cts parents
+	 * @return the ordered range of matching cts parents
 	 */
-	public java.util.List<CTSParent> findAll(
-		int start, int end,
+	public default java.util.List<CTSParent> findByCompanyId(
+		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<CTSParent>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByCompanyId(companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the cts parents from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of cts parents.
+	 * Returns all the cts parents where companyId = &#63; and ctsGrandParentId = &#63;.
 	 *
-	 * @return the number of cts parents
+	 * @param companyId the company ID
+	 * @param ctsGrandParentId the cts grand parent ID
+	 * @return the matching cts parents
 	 */
-	public int countAll();
+	public default java.util.List<CTSParent> findByC_C(
+		long companyId, long ctsGrandParentId) {
+
+		return findByC_C(
+			companyId, ctsGrandParentId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the cts parents where companyId = &#63; and ctsGrandParentId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.sample.model.impl.CTSParentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param ctsGrandParentId the cts grand parent ID
+	 * @param start the lower bound of the range of cts parents
+	 * @param end the upper bound of the range of cts parents (not inclusive)
+	 * @return the range of matching cts parents
+	 */
+	public default java.util.List<CTSParent> findByC_C(
+		long companyId, long ctsGrandParentId, int start, int end) {
+
+		return findByC_C(companyId, ctsGrandParentId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the cts parents where companyId = &#63; and ctsGrandParentId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.change.tracking.sample.model.impl.CTSParentModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param ctsGrandParentId the cts grand parent ID
+	 * @param start the lower bound of the range of cts parents
+	 * @param end the upper bound of the range of cts parents (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cts parents
+	 */
+	public default java.util.List<CTSParent> findByC_C(
+		long companyId, long ctsGrandParentId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<CTSParent>
+			orderByComparator) {
+
+		return findByC_C(
+			companyId, ctsGrandParentId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:265555450
+// LIFERAY-SERVICE-BUILDER-HASH:1253547779

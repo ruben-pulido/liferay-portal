@@ -7,6 +7,9 @@ create unique index IX_1CF99E19 on CacheDisabledEntry (name[$COLUMN_LENGTH:75$])
 
 create index IX_4F11FECA on CacheFieldEntry (groupId);
 
+create index IX_CC6D5DF1 on CacheReplicatorEntry (companyId);
+create unique index IX_45E63C56 on CacheReplicatorEntry (name[$COLUMN_LENGTH:75$]);
+
 create index IX_D7D86B01 on DefinedDefaultOrderEntry (name[$COLUMN_LENGTH:75$]);
 
 create unique index IX_1B0249DC on ERCCompanyEntry (externalReferenceCode[$COLUMN_LENGTH:75$], companyId);
@@ -26,7 +29,7 @@ create unique index IX_6E042099 on EagerBlobEntry (uuid_[$COLUMN_LENGTH:75$], gr
 
 create index IX_420C1E47 on FinderWhereClauseEntry (name[$COLUMN_LENGTH:75$]);
 
-create unique index IX_393E011D on IndexEntry (companyId, ctCollectionId, externalReferenceCode[$COLUMN_LENGTH:75$]);
+create unique index IX_EA51DD99 on IndexEntry (companyId, externalReferenceCode[$COLUMN_LENGTH:75$], ctCollectionId);
 create index IX_366486F8 on IndexEntry (ownerId);
 create index IX_24229732 on IndexEntry (ownerType, ownerId, plid);
 create index IX_18CD6471 on IndexEntry (plid);

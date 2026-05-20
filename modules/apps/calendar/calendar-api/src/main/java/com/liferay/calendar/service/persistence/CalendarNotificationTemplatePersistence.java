@@ -35,51 +35,10 @@ public interface CalendarNotificationTemplatePersistence
 	 */
 
 	/**
-	 * Returns all the calendar notification templates where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the calendar notification templates where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of calendar notification templates
-	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
-	 * @return the range of matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar notification templates where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of calendar notification templates
-	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CalendarNotificationTemplate> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar notification templates where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -148,16 +107,6 @@ public interface CalendarNotificationTemplatePersistence
 		throws NoSuchNotificationTemplateException;
 
 	/**
-	 * Returns the calendar notification template where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching calendar notification template, or <code>null</code> if a matching calendar notification template could not be found
-	 */
-	public CalendarNotificationTemplate fetchByUUID_G(
-		String uuid, long groupId);
-
-	/**
 	 * Returns the calendar notification template where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -189,55 +138,10 @@ public interface CalendarNotificationTemplatePersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the calendar notification templates where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the calendar notification templates where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of calendar notification templates
-	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
-	 * @return the range of matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar notification templates where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of calendar notification templates
-	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CalendarNotificationTemplate> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar notification templates where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -300,52 +204,10 @@ public interface CalendarNotificationTemplatePersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the calendar notification templates where calendarId = &#63;.
-	 *
-	 * @param calendarId the calendar ID
-	 * @return the matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByCalendarId(
-		long calendarId);
-
-	/**
-	 * Returns a range of all the calendar notification templates where calendarId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param calendarId the calendar ID
-	 * @param start the lower bound of the range of calendar notification templates
-	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
-	 * @return the range of matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByCalendarId(
-		long calendarId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the calendar notification templates where calendarId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
-	 * </p>
-	 *
-	 * @param calendarId the calendar ID
-	 * @param start the lower bound of the range of calendar notification templates
-	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching calendar notification templates
-	 */
-	public java.util.List<CalendarNotificationTemplate> findByCalendarId(
-		long calendarId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CalendarNotificationTemplate> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the calendar notification templates where calendarId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
 	 * </p>
 	 *
 	 * @param calendarId the calendar ID
@@ -417,18 +279,6 @@ public interface CalendarNotificationTemplatePersistence
 		throws NoSuchNotificationTemplateException;
 
 	/**
-	 * Returns the calendar notification template where calendarId = &#63; and notificationType = &#63; and notificationTemplateType = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param calendarId the calendar ID
-	 * @param notificationType the notification type
-	 * @param notificationTemplateType the notification template type
-	 * @return the matching calendar notification template, or <code>null</code> if a matching calendar notification template could not be found
-	 */
-	public CalendarNotificationTemplate fetchByC_NT_NTT(
-		long calendarId, String notificationType,
-		String notificationTemplateType);
-
-	/**
 	 * Returns the calendar notification template where calendarId = &#63; and notificationType = &#63; and notificationTemplateType = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param calendarId the calendar ID
@@ -465,23 +315,6 @@ public interface CalendarNotificationTemplatePersistence
 	public int countByC_NT_NTT(
 		long calendarId, String notificationType,
 		String notificationTemplateType);
-
-	/**
-	 * Caches the calendar notification template in the entity cache if it is enabled.
-	 *
-	 * @param calendarNotificationTemplate the calendar notification template
-	 */
-	public void cacheResult(
-		CalendarNotificationTemplate calendarNotificationTemplate);
-
-	/**
-	 * Caches the calendar notification templates in the entity cache if it is enabled.
-	 *
-	 * @param calendarNotificationTemplates the calendar notification templates
-	 */
-	public void cacheResult(
-		java.util.List<CalendarNotificationTemplate>
-			calendarNotificationTemplates);
 
 	/**
 	 * Creates a new calendar notification template with the primary key. Does not add the calendar notification template to the database.
@@ -527,73 +360,199 @@ public interface CalendarNotificationTemplatePersistence
 		long calendarNotificationTemplateId);
 
 	/**
-	 * Returns all the calendar notification templates.
+	 * Returns the calendar notification template where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the calendar notification templates
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching calendar notification template, or <code>null</code> if a matching calendar notification template could not be found
 	 */
-	public java.util.List<CalendarNotificationTemplate> findAll();
+	public default CalendarNotificationTemplate fetchByUUID_G(
+		String uuid, long groupId) {
+
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the calendar notification templates.
+	 * Returns the calendar notification template where calendarId = &#63; and notificationType = &#63; and notificationTemplateType = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param calendarId the calendar ID
+	 * @param notificationType the notification type
+	 * @param notificationTemplateType the notification template type
+	 * @return the matching calendar notification template, or <code>null</code> if a matching calendar notification template could not be found
+	 */
+	public default CalendarNotificationTemplate fetchByC_NT_NTT(
+		long calendarId, String notificationType,
+		String notificationTemplateType) {
+
+		return fetchByC_NT_NTT(
+			calendarId, notificationType, notificationTemplateType, true);
+	}
+
+	/**
+	 * Returns all the calendar notification templates where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching calendar notification templates
+	 */
+	public default java.util.List<CalendarNotificationTemplate> findByUuid(
+		String uuid) {
+
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar notification templates where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of calendar notification templates
 	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
-	 * @return the range of calendar notification templates
+	 * @return the range of matching calendar notification templates
 	 */
-	public java.util.List<CalendarNotificationTemplate> findAll(
-		int start, int end);
+	public default java.util.List<CalendarNotificationTemplate> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the calendar notification templates.
+	 * Returns an ordered range of all the calendar notification templates where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of calendar notification templates
 	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of calendar notification templates
+	 * @return the ordered range of matching calendar notification templates
 	 */
-	public java.util.List<CalendarNotificationTemplate> findAll(
-		int start, int end,
+	public default java.util.List<CalendarNotificationTemplate> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<CalendarNotificationTemplate> orderByComparator);
+			<CalendarNotificationTemplate> orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the calendar notification templates.
+	 * Returns all the calendar notification templates where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching calendar notification templates
+	 */
+	public default java.util.List<CalendarNotificationTemplate> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar notification templates where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CalendarNotificationTemplateModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of calendar notification templates
+	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
+	 * @return the range of matching calendar notification templates
+	 */
+	public default java.util.List<CalendarNotificationTemplate> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the calendar notification templates where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of calendar notification templates
 	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of calendar notification templates
+	 * @return the ordered range of matching calendar notification templates
 	 */
-	public java.util.List<CalendarNotificationTemplate> findAll(
-		int start, int end,
+	public default java.util.List<CalendarNotificationTemplate> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<CalendarNotificationTemplate> orderByComparator,
-		boolean useFinderCache);
+			<CalendarNotificationTemplate> orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the calendar notification templates from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of calendar notification templates.
+	 * Returns all the calendar notification templates where calendarId = &#63;.
 	 *
-	 * @return the number of calendar notification templates
+	 * @param calendarId the calendar ID
+	 * @return the matching calendar notification templates
 	 */
-	public int countAll();
+	public default java.util.List<CalendarNotificationTemplate>
+		findByCalendarId(long calendarId) {
+
+		return findByCalendarId(
+			calendarId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the calendar notification templates where calendarId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
+	 * </p>
+	 *
+	 * @param calendarId the calendar ID
+	 * @param start the lower bound of the range of calendar notification templates
+	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
+	 * @return the range of matching calendar notification templates
+	 */
+	public default java.util.List<CalendarNotificationTemplate>
+		findByCalendarId(long calendarId, int start, int end) {
+
+		return findByCalendarId(calendarId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the calendar notification templates where calendarId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl</code>.
+	 * </p>
+	 *
+	 * @param calendarId the calendar ID
+	 * @param start the lower bound of the range of calendar notification templates
+	 * @param end the upper bound of the range of calendar notification templates (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching calendar notification templates
+	 */
+	public default java.util.List<CalendarNotificationTemplate>
+		findByCalendarId(
+			long calendarId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<CalendarNotificationTemplate> orderByComparator) {
+
+		return findByCalendarId(
+			calendarId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1739753091
+// LIFERAY-SERVICE-BUILDER-HASH:-721861922

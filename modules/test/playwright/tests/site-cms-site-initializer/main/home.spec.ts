@@ -9,13 +9,20 @@ import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {workflowPagesTest} from '../../../fixtures/workflowPagesTest';
+import {DataApiHelpers} from '../../../helpers/ApiHelpers';
+import {addCMSAdministrator} from '../../../utils/addCMSAdministrator';
+import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
 import performLogin, {
+	performLoginViaApi,
 	performLogout,
+	performUserSwitch,
 	userData,
 } from '../../../utils/performLogin';
+import {structureBuilderPagesTest} from '../structure-builder/fixtures/structureBuilderPagesTest';
 import {cmsPagesTest} from './fixtures/cmsPagesTest';
 import {DataSetPage} from './pages/DataSetPage';
+import {SpaceSummaryPage} from './pages/SpaceSummaryPage';
 
 const test = mergeTests(
 	cmsPagesTest,
@@ -25,8 +32,77 @@ const test = mergeTests(
 		'LPD-17564': {enabled: true},
 	}),
 	loginTest(),
+	structureBuilderPagesTest,
 	workflowPagesTest
 );
+
+let cmsAdminUser: TUserAccount;
+let setupData: Array<{id: number | string; type: string}>;
+let spaceAdminUser: TUserAccount;
+let spaceUser: TUserAccount;
+
+test.beforeAll(async ({browser}) => {
+	const page = await browser.newPage();
+
+	await performLoginViaApi({page, screenName: 'test'});
+
+	const apiHelpers = new DataApiHelpers(page);
+
+	cmsAdminUser = await addCMSAdministrator(apiHelpers);
+
+	apiHelpers.data.push({id: cmsAdminUser.id, type: 'userAccount'});
+
+	spaceAdminUser = await apiHelpers.headlessAdminUser.postUserAccount();
+
+	apiHelpers.data.push({id: spaceAdminUser.id, type: 'userAccount'});
+
+	userData[spaceAdminUser.alternateName] = {
+		name: spaceAdminUser.givenName,
+		password: 'test',
+		surname: spaceAdminUser.familyName,
+	};
+
+	spaceUser = await apiHelpers.headlessAdminUser.postUserAccount();
+
+	apiHelpers.data.push({id: spaceUser.id, type: 'userAccount'});
+
+	userData[spaceUser.alternateName] = {
+		name: spaceUser.givenName,
+		password: 'test',
+		surname: spaceUser.familyName,
+	};
+
+	const spaceSummaryPage = new SpaceSummaryPage(page);
+
+	await spaceSummaryPage.goto('Default');
+
+	await spaceSummaryPage.addUserOrUserGroup(spaceAdminUser.name, 'users');
+
+	await spaceSummaryPage.addRoleToSpaceMember(
+		'Space Administrator',
+		spaceAdminUser.name
+	);
+
+	await spaceSummaryPage.addUserOrUserGroup(spaceUser.name, 'users');
+
+	setupData = [...apiHelpers.data];
+
+	await page.close();
+});
+
+test.afterAll(async ({browser}) => {
+	const page = await browser.newPage();
+
+	await performLoginViaApi({page, screenName: 'test'});
+
+	const apiHelpers = new DataApiHelpers(page);
+
+	apiHelpers.setData(setupData);
+
+	await apiHelpers.clearData();
+
+	await page.close();
+});
 
 test(
 	'My Workflow Tasks full view preserves the back button when switching tabs',
@@ -470,6 +546,238 @@ test(
 );
 
 test(
+	'Can only see Recent Assets the user has VIEW permission on',
+	{tag: '@LPD-87568'},
+	async ({apiHelpers, homePage, page}) => {
+		const applicationName = 'cms/basic-web-contents';
+		const restrictedTitle = `restricted ${getRandomString()}`;
+		const visibleTitle = `visible ${getRandomString()}`;
+
+		const restrictedSpace =
+			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+				name: `Space ${getRandomString()}`,
+				settings: {
+					logoColor: 'outline-3',
+					sharingEnabled: true,
+				},
+				type: 'Space',
+			});
+
+		let restrictedEntry;
+		let visibleEntry;
+
+		try {
+			restrictedEntry = await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: restrictedTitle,
+				},
+				applicationName,
+				restrictedSpace.name
+			);
+
+			visibleEntry = await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: visibleTitle,
+				},
+				applicationName,
+				'Default'
+			);
+
+			const dataSetFragmentPage: DataSetPage = new DataSetPage(page);
+
+			await test.step('Default admin can see both assets in Recent Assets', async () => {
+				await homePage.goto();
+
+				await expect(
+					dataSetFragmentPage.getRow(visibleTitle)
+				).toBeVisible();
+
+				await expect(
+					dataSetFragmentPage.getRow(restrictedTitle)
+				).toBeVisible();
+			});
+
+			await test.step('Space User cannot see the restricted asset in Recent Assets', async () => {
+				await performUserSwitch(page, spaceUser.alternateName);
+
+				await homePage.goto();
+
+				await expect(
+					dataSetFragmentPage.getRow(visibleTitle)
+				).toBeVisible();
+
+				await expect(
+					dataSetFragmentPage.getRow(restrictedTitle)
+				).toBeHidden();
+			});
+		}
+		finally {
+			await performUserSwitch(page, 'test');
+
+			if (restrictedEntry) {
+				await apiHelpers.objectEntry.deleteObjectEntry(
+					applicationName,
+					String(restrictedEntry.id)
+				);
+			}
+
+			if (visibleEntry) {
+				await apiHelpers.objectEntry.deleteObjectEntry(
+					applicationName,
+					String(visibleEntry.id)
+				);
+			}
+		}
+	}
+);
+
+test(
+	'Can perform asset actions on Recent Assets rows',
+	{tag: '@LPD-87568'},
+	async ({apiHelpers, homePage, page}) => {
+		const contentApplicationName = 'cms/basic-web-contents';
+		const contentTitle = `content ${getRandomString()}`;
+		const fileApplicationName = 'cms/basic-documents';
+		const fileName = `file_${getRandomString()}.png`;
+		const fileTitle = `file ${getRandomString()}`;
+
+		let contentEntry;
+		let fileEntry;
+
+		try {
+			contentEntry = await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: contentTitle,
+				},
+				contentApplicationName,
+				'Default'
+			);
+
+			fileEntry = await apiHelpers.objectEntry.postObjectEntry(
+				{
+					file: {
+						fileBase64: 'R0lGODlhAQABAAAAACw=',
+						name: fileName,
+					},
+					objectEntryFolderExternalReferenceCode: 'L_FILES',
+					title: fileTitle,
+				},
+				fileApplicationName,
+				'Default'
+			);
+
+			apiHelpers.data.push({
+				id: fileEntry.file.id,
+				type: 'document',
+			});
+
+			const dataSetFragmentPage: DataSetPage = new DataSetPage(page);
+
+			await homePage.goto();
+
+			await test.step('Recent Assets shows the content and file rows', async () => {
+				await expect(
+					dataSetFragmentPage.getRow(contentTitle)
+				).toBeVisible();
+
+				await expect(
+					dataSetFragmentPage.getRow(fileTitle)
+				).toBeVisible();
+			});
+
+			await test.step('File row action menu shows Download and inherited actions', async () => {
+				await dataSetFragmentPage
+					.getRow(fileTitle)
+					.getByRole('button', {name: `${fileTitle} Actions`})
+					.click();
+
+				for (const action of [
+					'Delete',
+					'Download',
+					'Edit',
+					'Permissions',
+					'Share',
+					'View History',
+				]) {
+					await expect(
+						page.getByRole('menuitem', {
+							exact: true,
+							name: action,
+						})
+					).toBeVisible();
+				}
+
+				await page.keyboard.press('Escape');
+			});
+
+			await test.step('Content row action menu shows inherited actions but no Download', async () => {
+				await dataSetFragmentPage
+					.getRow(contentTitle)
+					.getByRole('button', {
+						name: `${contentTitle} Actions`,
+					})
+					.click();
+
+				for (const action of [
+					'Delete',
+					'Edit',
+					'Permissions',
+					'Share',
+					'View History',
+				]) {
+					await expect(
+						page.getByRole('menuitem', {
+							exact: true,
+							name: action,
+						})
+					).toBeVisible();
+				}
+
+				await expect(
+					page.getByRole('menu').getByRole('menuitem', {
+						exact: true,
+						name: 'Download',
+					})
+				).toBeHidden();
+
+				await page.keyboard.press('Escape');
+			});
+
+			await test.step('Can download a file asset from Recent Assets', async () => {
+				const downloadPromise = page.waitForEvent('download');
+
+				await dataSetFragmentPage.execItemAction({
+					action: 'Download',
+					filter: fileTitle,
+				});
+
+				const download = await downloadPromise;
+
+				expect(download.suggestedFilename()).toBe(fileName);
+			});
+		}
+		finally {
+			if (contentEntry) {
+				await apiHelpers.objectEntry.deleteObjectEntry(
+					contentApplicationName,
+					String(contentEntry.id)
+				);
+			}
+
+			if (fileEntry) {
+				await apiHelpers.objectEntry.deleteObjectEntry(
+					fileApplicationName,
+					String(fileEntry.id)
+				);
+			}
+		}
+	}
+);
+
+test(
 	'Can use Quick Actions to create new content',
 	{tag: '@LPD-58793'},
 	async ({apiHelpers, homePage, page}) => {
@@ -522,6 +830,63 @@ test(
 			await homePage.vocabularyButton.click();
 
 			await expect(page.getByText('Basic Info')).toBeVisible();
+		});
+	}
+);
+
+test(
+	'Can see a custom Content Structure as a quick action',
+	{tag: '@LPD-87559'},
+	async ({homePage, page, structureBuilderPage}) => {
+		const structureLabel = `Custom${getRandomInt()}`;
+
+		await structureBuilderPage.createStructureFromData({
+			label: structureLabel,
+			page: structureBuilderPage,
+			spaces: ['Default'],
+		});
+
+		const verifyCustomStructureQuickAction = async () => {
+			await homePage.goto();
+
+			const customStructureButton = page.getByRole('button', {
+				name: structureLabel,
+			});
+
+			await expect(customStructureButton).toBeVisible();
+
+			await customStructureButton.click();
+
+			await expect(
+				page.getByPlaceholder(`New ${structureLabel}`)
+			).toBeVisible();
+		};
+
+		await test.step(
+			'Default admin can use the custom Content Structure quick action',
+			verifyCustomStructureQuickAction
+		);
+
+		await test.step('CMS Administrator can use the custom Content Structure quick action', async () => {
+			await performUserSwitch(page, cmsAdminUser.alternateName);
+
+			await verifyCustomStructureQuickAction();
+		});
+
+		await test.step('Space Administrator can use the custom Content Structure quick action', async () => {
+			await performUserSwitch(page, spaceAdminUser.alternateName);
+
+			await verifyCustomStructureQuickAction();
+		});
+
+		await test.step('Space User does not see the Quick Actions section', async () => {
+			await performUserSwitch(page, spaceUser.alternateName);
+
+			await homePage.goto();
+
+			await expect(
+				page.getByRole('heading', {name: 'Quick Actions'})
+			).not.toBeVisible();
 		});
 	}
 );

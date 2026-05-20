@@ -35,51 +35,10 @@ public interface CPInstanceOptionValueRelPersistence
 	 */
 
 	/**
-	 * Returns all the cp instance option value rels where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the cp instance option value rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @return the range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the cp instance option value rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CPInstanceOptionValueRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cp instance option value rels where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -148,15 +107,6 @@ public interface CPInstanceOptionValueRelPersistence
 		throws NoSuchCPInstanceOptionValueRelException;
 
 	/**
-	 * Returns the cp instance option value rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching cp instance option value rel, or <code>null</code> if a matching cp instance option value rel could not be found
-	 */
-	public CPInstanceOptionValueRel fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the cp instance option value rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -187,55 +137,10 @@ public interface CPInstanceOptionValueRelPersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the cp instance option value rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the cp instance option value rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @return the range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the cp instance option value rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CPInstanceOptionValueRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cp instance option value rels where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -298,54 +203,10 @@ public interface CPInstanceOptionValueRelPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the cp instance option value rels where CPDefinitionOptionRelId = &#63;.
-	 *
-	 * @param CPDefinitionOptionRelId the cp definition option rel ID
-	 * @return the matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel>
-		findByCPDefinitionOptionRelId(long CPDefinitionOptionRelId);
-
-	/**
-	 * Returns a range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPDefinitionOptionRelId the cp definition option rel ID
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @return the range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel>
-		findByCPDefinitionOptionRelId(
-			long CPDefinitionOptionRelId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPDefinitionOptionRelId the cp definition option rel ID
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel>
-		findByCPDefinitionOptionRelId(
-			long CPDefinitionOptionRelId, int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator
-				<CPInstanceOptionValueRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param CPDefinitionOptionRelId the cp definition option rel ID
@@ -404,52 +265,10 @@ public interface CPInstanceOptionValueRelPersistence
 	public int countByCPDefinitionOptionRelId(long CPDefinitionOptionRelId);
 
 	/**
-	 * Returns all the cp instance option value rels where CPInstanceId = &#63;.
-	 *
-	 * @param CPInstanceId the cp instance ID
-	 * @return the matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByCPInstanceId(
-		long CPInstanceId);
-
-	/**
-	 * Returns a range of all the cp instance option value rels where CPInstanceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPInstanceId the cp instance ID
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @return the range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByCPInstanceId(
-		long CPInstanceId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the cp instance option value rels where CPInstanceId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPInstanceId the cp instance ID
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByCPInstanceId(
-		long CPInstanceId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CPInstanceOptionValueRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cp instance option value rels where CPInstanceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param CPInstanceId the cp instance ID
@@ -507,55 +326,10 @@ public interface CPInstanceOptionValueRelPersistence
 	public int countByCPInstanceId(long CPInstanceId);
 
 	/**
-	 * Returns all the cp instance option value rels where CPDefinitionOptionRelId = &#63; and CPInstanceId = &#63;.
-	 *
-	 * @param CPDefinitionOptionRelId the cp definition option rel ID
-	 * @param CPInstanceId the cp instance ID
-	 * @return the matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByCDORI_CII(
-		long CPDefinitionOptionRelId, long CPInstanceId);
-
-	/**
-	 * Returns a range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63; and CPInstanceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPDefinitionOptionRelId the cp definition option rel ID
-	 * @param CPInstanceId the cp instance ID
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @return the range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByCDORI_CII(
-		long CPDefinitionOptionRelId, long CPInstanceId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63; and CPInstanceId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param CPDefinitionOptionRelId the cp definition option rel ID
-	 * @param CPInstanceId the cp instance ID
-	 * @param start the lower bound of the range of cp instance option value rels
-	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching cp instance option value rels
-	 */
-	public java.util.List<CPInstanceOptionValueRel> findByCDORI_CII(
-		long CPDefinitionOptionRelId, long CPInstanceId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator
-			<CPInstanceOptionValueRel> orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63; and CPInstanceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param CPDefinitionOptionRelId the cp definition option rel ID
@@ -632,16 +406,6 @@ public interface CPInstanceOptionValueRelPersistence
 		throws NoSuchCPInstanceOptionValueRelException;
 
 	/**
-	 * Returns the cp instance option value rel where CPDefinitionOptionValueRelId = &#63; and CPInstanceId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param CPDefinitionOptionValueRelId the cp definition option value rel ID
-	 * @param CPInstanceId the cp instance ID
-	 * @return the matching cp instance option value rel, or <code>null</code> if a matching cp instance option value rel could not be found
-	 */
-	public CPInstanceOptionValueRel fetchByCDOVRI_CII(
-		long CPDefinitionOptionValueRelId, long CPInstanceId);
-
-	/**
 	 * Returns the cp instance option value rel where CPDefinitionOptionValueRelId = &#63; and CPInstanceId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param CPDefinitionOptionValueRelId the cp definition option value rel ID
@@ -689,18 +453,6 @@ public interface CPInstanceOptionValueRelPersistence
 		throws NoSuchCPInstanceOptionValueRelException;
 
 	/**
-	 * Returns the cp instance option value rel where CPDefinitionOptionRelId = &#63; and CPDefinitionOptionValueRelId = &#63; and CPInstanceId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param CPDefinitionOptionRelId the cp definition option rel ID
-	 * @param CPDefinitionOptionValueRelId the cp definition option value rel ID
-	 * @param CPInstanceId the cp instance ID
-	 * @return the matching cp instance option value rel, or <code>null</code> if a matching cp instance option value rel could not be found
-	 */
-	public CPInstanceOptionValueRel fetchByCDORI_CDOVRI_CII(
-		long CPDefinitionOptionRelId, long CPDefinitionOptionValueRelId,
-		long CPInstanceId);
-
-	/**
 	 * Returns the cp instance option value rel where CPDefinitionOptionRelId = &#63; and CPDefinitionOptionValueRelId = &#63; and CPInstanceId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param CPDefinitionOptionRelId the cp definition option rel ID
@@ -737,21 +489,6 @@ public interface CPInstanceOptionValueRelPersistence
 	public int countByCDORI_CDOVRI_CII(
 		long CPDefinitionOptionRelId, long CPDefinitionOptionValueRelId,
 		long CPInstanceId);
-
-	/**
-	 * Caches the cp instance option value rel in the entity cache if it is enabled.
-	 *
-	 * @param cpInstanceOptionValueRel the cp instance option value rel
-	 */
-	public void cacheResult(CPInstanceOptionValueRel cpInstanceOptionValueRel);
-
-	/**
-	 * Caches the cp instance option value rels in the entity cache if it is enabled.
-	 *
-	 * @param cpInstanceOptionValueRels the cp instance option value rels
-	 */
-	public void cacheResult(
-		java.util.List<CPInstanceOptionValueRel> cpInstanceOptionValueRels);
 
 	/**
 	 * Creates a new cp instance option value rel with the primary key. Does not add the cp instance option value rel to the database.
@@ -795,72 +532,331 @@ public interface CPInstanceOptionValueRelPersistence
 		long CPInstanceOptionValueRelId);
 
 	/**
-	 * Returns all the cp instance option value rels.
+	 * Returns the cp instance option value rel where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the cp instance option value rels
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching cp instance option value rel, or <code>null</code> if a matching cp instance option value rel could not be found
 	 */
-	public java.util.List<CPInstanceOptionValueRel> findAll();
+	public default CPInstanceOptionValueRel fetchByUUID_G(
+		String uuid, long groupId) {
+
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the cp instance option value rels.
+	 * Returns the cp instance option value rel where CPDefinitionOptionValueRelId = &#63; and CPInstanceId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param CPDefinitionOptionValueRelId the cp definition option value rel ID
+	 * @param CPInstanceId the cp instance ID
+	 * @return the matching cp instance option value rel, or <code>null</code> if a matching cp instance option value rel could not be found
+	 */
+	public default CPInstanceOptionValueRel fetchByCDOVRI_CII(
+		long CPDefinitionOptionValueRelId, long CPInstanceId) {
+
+		return fetchByCDOVRI_CII(
+			CPDefinitionOptionValueRelId, CPInstanceId, true);
+	}
+
+	/**
+	 * Returns the cp instance option value rel where CPDefinitionOptionRelId = &#63; and CPDefinitionOptionValueRelId = &#63; and CPInstanceId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param CPDefinitionOptionRelId the cp definition option rel ID
+	 * @param CPDefinitionOptionValueRelId the cp definition option value rel ID
+	 * @param CPInstanceId the cp instance ID
+	 * @return the matching cp instance option value rel, or <code>null</code> if a matching cp instance option value rel could not be found
+	 */
+	public default CPInstanceOptionValueRel fetchByCDORI_CDOVRI_CII(
+		long CPDefinitionOptionRelId, long CPDefinitionOptionValueRelId,
+		long CPInstanceId) {
+
+		return fetchByCDORI_CDOVRI_CII(
+			CPDefinitionOptionRelId, CPDefinitionOptionValueRelId, CPInstanceId,
+			true);
+	}
+
+	/**
+	 * Returns all the cp instance option value rels where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByUuid(
+		String uuid) {
+
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the cp instance option value rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of cp instance option value rels
 	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
-	 * @return the range of cp instance option value rels
+	 * @return the range of matching cp instance option value rels
 	 */
-	public java.util.List<CPInstanceOptionValueRel> findAll(int start, int end);
+	public default java.util.List<CPInstanceOptionValueRel> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the cp instance option value rels.
+	 * Returns an ordered range of all the cp instance option value rels where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of cp instance option value rels
 	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cp instance option value rels
+	 * @return the ordered range of matching cp instance option value rels
 	 */
-	public java.util.List<CPInstanceOptionValueRel> findAll(
-		int start, int end,
+	public default java.util.List<CPInstanceOptionValueRel> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<CPInstanceOptionValueRel> orderByComparator);
+			<CPInstanceOptionValueRel> orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the cp instance option value rels.
+	 * Returns all the cp instance option value rels where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the cp instance option value rels where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPInstanceOptionValueRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of cp instance option value rels
+	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
+	 * @return the range of matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp instance option value rels where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of cp instance option value rels
 	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cp instance option value rels
+	 * @return the ordered range of matching cp instance option value rels
 	 */
-	public java.util.List<CPInstanceOptionValueRel> findAll(
-		int start, int end,
+	public default java.util.List<CPInstanceOptionValueRel> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator
-			<CPInstanceOptionValueRel> orderByComparator,
-		boolean useFinderCache);
+			<CPInstanceOptionValueRel> orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the cp instance option value rels from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of cp instance option value rels.
+	 * Returns all the cp instance option value rels where CPDefinitionOptionRelId = &#63;.
 	 *
-	 * @return the number of cp instance option value rels
+	 * @param CPDefinitionOptionRelId the cp definition option rel ID
+	 * @return the matching cp instance option value rels
 	 */
-	public int countAll();
+	public default java.util.List<CPInstanceOptionValueRel>
+		findByCPDefinitionOptionRelId(long CPDefinitionOptionRelId) {
+
+		return findByCPDefinitionOptionRelId(
+			CPDefinitionOptionRelId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param CPDefinitionOptionRelId the cp definition option rel ID
+	 * @param start the lower bound of the range of cp instance option value rels
+	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
+	 * @return the range of matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel>
+		findByCPDefinitionOptionRelId(
+			long CPDefinitionOptionRelId, int start, int end) {
+
+		return findByCPDefinitionOptionRelId(
+			CPDefinitionOptionRelId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param CPDefinitionOptionRelId the cp definition option rel ID
+	 * @param start the lower bound of the range of cp instance option value rels
+	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel>
+		findByCPDefinitionOptionRelId(
+			long CPDefinitionOptionRelId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<CPInstanceOptionValueRel> orderByComparator) {
+
+		return findByCPDefinitionOptionRelId(
+			CPDefinitionOptionRelId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the cp instance option value rels where CPInstanceId = &#63;.
+	 *
+	 * @param CPInstanceId the cp instance ID
+	 * @return the matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByCPInstanceId(
+		long CPInstanceId) {
+
+		return findByCPInstanceId(
+			CPInstanceId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the cp instance option value rels where CPInstanceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param CPInstanceId the cp instance ID
+	 * @param start the lower bound of the range of cp instance option value rels
+	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
+	 * @return the range of matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByCPInstanceId(
+		long CPInstanceId, int start, int end) {
+
+		return findByCPInstanceId(CPInstanceId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp instance option value rels where CPInstanceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param CPInstanceId the cp instance ID
+	 * @param start the lower bound of the range of cp instance option value rels
+	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByCPInstanceId(
+		long CPInstanceId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator
+			<CPInstanceOptionValueRel> orderByComparator) {
+
+		return findByCPInstanceId(
+			CPInstanceId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the cp instance option value rels where CPDefinitionOptionRelId = &#63; and CPInstanceId = &#63;.
+	 *
+	 * @param CPDefinitionOptionRelId the cp definition option rel ID
+	 * @param CPInstanceId the cp instance ID
+	 * @return the matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByCDORI_CII(
+		long CPDefinitionOptionRelId, long CPInstanceId) {
+
+		return findByCDORI_CII(
+			CPDefinitionOptionRelId, CPInstanceId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63; and CPInstanceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param CPDefinitionOptionRelId the cp definition option rel ID
+	 * @param CPInstanceId the cp instance ID
+	 * @param start the lower bound of the range of cp instance option value rels
+	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
+	 * @return the range of matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByCDORI_CII(
+		long CPDefinitionOptionRelId, long CPInstanceId, int start, int end) {
+
+		return findByCDORI_CII(
+			CPDefinitionOptionRelId, CPInstanceId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the cp instance option value rels where CPDefinitionOptionRelId = &#63; and CPInstanceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPInstanceOptionValueRelModelImpl</code>.
+	 * </p>
+	 *
+	 * @param CPDefinitionOptionRelId the cp definition option rel ID
+	 * @param CPInstanceId the cp instance ID
+	 * @param start the lower bound of the range of cp instance option value rels
+	 * @param end the upper bound of the range of cp instance option value rels (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching cp instance option value rels
+	 */
+	public default java.util.List<CPInstanceOptionValueRel> findByCDORI_CII(
+		long CPDefinitionOptionRelId, long CPInstanceId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator
+			<CPInstanceOptionValueRel> orderByComparator) {
+
+		return findByCDORI_CII(
+			CPDefinitionOptionRelId, CPInstanceId, start, end,
+			orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1927489347
+// LIFERAY-SERVICE-BUILDER-HASH:71316452

@@ -39,6 +39,14 @@ module "eks" {
 		}
 		vpc-cni={
 			before_compute=true
+			configuration_values=jsonencode(
+				{
+					enableNetworkPolicy="true"
+					nodeAgent={
+						healthProbeBindAddr="8163"
+						metricsBindAddr="8162"
+					}
+				})
 			most_recent=true
 		}
 	}
@@ -56,7 +64,8 @@ module "eks" {
 		provider_key_arn=aws_kms_key.eks_secrets.arn
 	}
 	endpoint_private_access=true
-	endpoint_public_access=true
+	endpoint_public_access=var.eks_allow_public_access
+	endpoint_public_access_cidrs=local.eks_api_public_access_cidrs
 	iam_role_additional_policies={
 		AmazonEKSBlockStoragePolicy="arn:${var.arn_partition}:iam::aws:policy/AmazonEKSBlockStoragePolicy"
 		AmazonEKSComputePolicy="arn:${var.arn_partition}:iam::aws:policy/AmazonEKSComputePolicy"
@@ -69,9 +78,8 @@ module "eks" {
 		AWSXRayDaemonWriteAccess="arn:${var.arn_partition}:iam::aws:policy/AWSXRayDaemonWriteAccess"
 		CloudWatchAgentServerPolicy="arn:${var.arn_partition}:iam::aws:policy/CloudWatchAgentServerPolicy"
 	}
-	source="terraform-aws-modules/eks/aws"
+	source="git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=de2aa10f25c7f2d2ab1264f6451f7cbf57f784c4"
 	subnet_ids=module.vpc.private_subnets
-	version="21.3.1"
 	vpc_id=module.vpc.vpc_id
 }
 resource "aws_eks_addon" "s3_csi" {
@@ -213,6 +221,7 @@ resource "aws_kms_alias" "eks_kms_alias" {
 resource "aws_kms_key" "eks_secrets" {
 	deletion_window_in_days=7
 	description="KMS key for EKS secrets encryption"
+	enable_key_rotation=true
 	policy=jsonencode(
 		{
 			Statement=[

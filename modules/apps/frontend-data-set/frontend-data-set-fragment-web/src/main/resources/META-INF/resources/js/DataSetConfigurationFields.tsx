@@ -197,25 +197,25 @@ export default function DataSetConfigurationFields({
 				</ClayInput.Group>
 			</ClayForm.Group>
 
-			{Liferay.FeatureFlags['LPD-68748'] &&
+			{Liferay.FeatureFlags['LPD-38564'] &&
 				tokens?.map((token) => {
-					const tokenInputId = `${tokenBaseInputId}_${token}`;
+					const tokenKey = token.replaceAll(/[{}]/g, '');
+
+					const tokenInputId = `${tokenBaseInputId}_${tokenKey}`;
 
 					return (
 						<ClayForm.Group key={token}>
-							<label htmlFor={tokenInputId}>
-								{token.replaceAll(/[{}]/g, '')}
-							</label>
+							<label htmlFor={tokenInputId}>{token}</label>
 
 							<ClayInput
 								defaultValue={
-									localAPIURLTokenValues[token] || token
+									localAPIURLTokenValues[tokenKey] || token
 								}
 								id={tokenInputId}
 								onChange={(event) => {
 									const newTokensValue = {
 										...localAPIURLTokenValues,
-										[token]: event.target.value,
+										[tokenKey]: event.target.value,
 									};
 
 									setLocalAPIURLTokenValues(newTokensValue);

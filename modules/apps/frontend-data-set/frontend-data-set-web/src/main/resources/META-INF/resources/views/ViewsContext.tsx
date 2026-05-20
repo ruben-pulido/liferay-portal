@@ -13,7 +13,7 @@ export interface IViewsContext {
 	modifiedFields: any;
 	paginationDelta: any;
 	snapshotUpdated: boolean;
-	snapshots: Array<ISnapshot>;
+	snapshots: Array<ISnapshots>;
 	snapshotsEnabled: boolean;
 	sorts: Array<any>;
 	views: Array<any>;
@@ -24,6 +24,12 @@ export interface ISnapshot {
 	configuration?: any;
 	erc: string;
 	label: string;
+}
+
+export interface ISnapshots {
+	headerVisible: boolean;
+	items: Array<ISnapshot>;
+	label?: string;
 }
 
 export type TViewsContextDispatch = ({

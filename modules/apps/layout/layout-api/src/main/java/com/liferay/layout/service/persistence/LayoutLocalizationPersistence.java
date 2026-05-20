@@ -35,51 +35,10 @@ public interface LayoutLocalizationPersistence
 	 */
 
 	/**
-	 * Returns all the layout localizations where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the layout localizations where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of layout localizations
-	 * @param end the upper bound of the range of layout localizations (not inclusive)
-	 * @return the range of matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the layout localizations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of layout localizations
-	 * @param end the upper bound of the range of layout localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<LayoutLocalization>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the layout localizations where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -148,15 +107,6 @@ public interface LayoutLocalizationPersistence
 		throws NoSuchLayoutLocalizationException;
 
 	/**
-	 * Returns the layout localization where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching layout localization, or <code>null</code> if a matching layout localization could not be found
-	 */
-	public LayoutLocalization fetchByUUID_G(String uuid, long groupId);
-
-	/**
 	 * Returns the layout localization where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
@@ -187,55 +137,10 @@ public interface LayoutLocalizationPersistence
 	public int countByUUID_G(String uuid, long groupId);
 
 	/**
-	 * Returns all the layout localizations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the layout localizations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of layout localizations
-	 * @param end the upper bound of the range of layout localizations (not inclusive)
-	 * @return the range of matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the layout localizations where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of layout localizations
-	 * @param end the upper bound of the range of layout localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<LayoutLocalization>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the layout localizations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -298,51 +203,10 @@ public interface LayoutLocalizationPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the layout localizations where plid = &#63;.
-	 *
-	 * @param plid the plid
-	 * @return the matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByPlid(long plid);
-
-	/**
-	 * Returns a range of all the layout localizations where plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout localizations
-	 * @param end the upper bound of the range of layout localizations (not inclusive)
-	 * @return the range of matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByPlid(
-		long plid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the layout localizations where plid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param plid the plid
-	 * @param start the lower bound of the range of layout localizations
-	 * @param end the upper bound of the range of layout localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching layout localizations
-	 */
-	public java.util.List<LayoutLocalization> findByPlid(
-		long plid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<LayoutLocalization>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the layout localizations where plid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param plid the plid
@@ -411,15 +275,6 @@ public interface LayoutLocalizationPersistence
 		throws NoSuchLayoutLocalizationException;
 
 	/**
-	 * Returns the layout localization where languageId = &#63; and plid = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param languageId the language ID
-	 * @param plid the plid
-	 * @return the matching layout localization, or <code>null</code> if a matching layout localization could not be found
-	 */
-	public LayoutLocalization fetchByL_P(String languageId, long plid);
-
-	/**
 	 * Returns the layout localization where languageId = &#63; and plid = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param languageId the language ID
@@ -463,17 +318,6 @@ public interface LayoutLocalizationPersistence
 		throws NoSuchLayoutLocalizationException;
 
 	/**
-	 * Returns the layout localization where groupId = &#63; and languageId = &#63; and plid = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param groupId the group ID
-	 * @param languageId the language ID
-	 * @param plid the plid
-	 * @return the matching layout localization, or <code>null</code> if a matching layout localization could not be found
-	 */
-	public LayoutLocalization fetchByG_L_P(
-		long groupId, String languageId, long plid);
-
-	/**
 	 * Returns the layout localization where groupId = &#63; and languageId = &#63; and plid = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
@@ -506,21 +350,6 @@ public interface LayoutLocalizationPersistence
 	 * @return the number of matching layout localizations
 	 */
 	public int countByG_L_P(long groupId, String languageId, long plid);
-
-	/**
-	 * Caches the layout localization in the entity cache if it is enabled.
-	 *
-	 * @param layoutLocalization the layout localization
-	 */
-	public void cacheResult(LayoutLocalization layoutLocalization);
-
-	/**
-	 * Caches the layout localizations in the entity cache if it is enabled.
-	 *
-	 * @param layoutLocalizations the layout localizations
-	 */
-	public void cacheResult(
-		java.util.List<LayoutLocalization> layoutLocalizations);
 
 	/**
 	 * Creates a new layout localization with the primary key. Does not add the layout localization to the database.
@@ -561,72 +390,200 @@ public interface LayoutLocalizationPersistence
 	public LayoutLocalization fetchByPrimaryKey(long layoutLocalizationId);
 
 	/**
-	 * Returns all the layout localizations.
+	 * Returns the layout localization where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the layout localizations
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching layout localization, or <code>null</code> if a matching layout localization could not be found
 	 */
-	public java.util.List<LayoutLocalization> findAll();
+	public default LayoutLocalization fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
+	}
 
 	/**
-	 * Returns a range of all the layout localizations.
+	 * Returns the layout localization where languageId = &#63; and plid = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param languageId the language ID
+	 * @param plid the plid
+	 * @return the matching layout localization, or <code>null</code> if a matching layout localization could not be found
+	 */
+	public default LayoutLocalization fetchByL_P(String languageId, long plid) {
+		return fetchByL_P(languageId, plid, true);
+	}
+
+	/**
+	 * Returns the layout localization where groupId = &#63; and languageId = &#63; and plid = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param languageId the language ID
+	 * @param plid the plid
+	 * @return the matching layout localization, or <code>null</code> if a matching layout localization could not be found
+	 */
+	public default LayoutLocalization fetchByG_L_P(
+		long groupId, String languageId, long plid) {
+
+		return fetchByG_L_P(groupId, languageId, plid, true);
+	}
+
+	/**
+	 * Returns all the layout localizations where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching layout localizations
+	 */
+	public default java.util.List<LayoutLocalization> findByUuid(String uuid) {
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the layout localizations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of layout localizations
 	 * @param end the upper bound of the range of layout localizations (not inclusive)
-	 * @return the range of layout localizations
+	 * @return the range of matching layout localizations
 	 */
-	public java.util.List<LayoutLocalization> findAll(int start, int end);
+	public default java.util.List<LayoutLocalization> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the layout localizations.
+	 * Returns an ordered range of all the layout localizations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of layout localizations
 	 * @param end the upper bound of the range of layout localizations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of layout localizations
+	 * @return the ordered range of matching layout localizations
 	 */
-	public java.util.List<LayoutLocalization> findAll(
-		int start, int end,
+	public default java.util.List<LayoutLocalization> findByUuid(
+		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<LayoutLocalization>
-			orderByComparator);
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the layout localizations.
+	 * Returns all the layout localizations where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching layout localizations
+	 */
+	public default java.util.List<LayoutLocalization> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the layout localizations where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of layout localizations
+	 * @param end the upper bound of the range of layout localizations (not inclusive)
+	 * @return the range of matching layout localizations
+	 */
+	public default java.util.List<LayoutLocalization> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout localizations where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of layout localizations
 	 * @param end the upper bound of the range of layout localizations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of layout localizations
+	 * @return the ordered range of matching layout localizations
 	 */
-	public java.util.List<LayoutLocalization> findAll(
-		int start, int end,
+	public default java.util.List<LayoutLocalization> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<LayoutLocalization>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the layout localizations from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of layout localizations.
+	 * Returns all the layout localizations where plid = &#63;.
 	 *
-	 * @return the number of layout localizations
+	 * @param plid the plid
+	 * @return the matching layout localizations
 	 */
-	public int countAll();
+	public default java.util.List<LayoutLocalization> findByPlid(long plid) {
+		return findByPlid(
+			plid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the layout localizations where plid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
+	 * </p>
+	 *
+	 * @param plid the plid
+	 * @param start the lower bound of the range of layout localizations
+	 * @param end the upper bound of the range of layout localizations (not inclusive)
+	 * @return the range of matching layout localizations
+	 */
+	public default java.util.List<LayoutLocalization> findByPlid(
+		long plid, int start, int end) {
+
+		return findByPlid(plid, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout localizations where plid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.layout.model.impl.LayoutLocalizationModelImpl</code>.
+	 * </p>
+	 *
+	 * @param plid the plid
+	 * @param start the lower bound of the range of layout localizations
+	 * @param end the upper bound of the range of layout localizations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching layout localizations
+	 */
+	public default java.util.List<LayoutLocalization> findByPlid(
+		long plid, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<LayoutLocalization>
+			orderByComparator) {
+
+		return findByPlid(plid, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:677892002
+// LIFERAY-SERVICE-BUILDER-HASH:-345339349

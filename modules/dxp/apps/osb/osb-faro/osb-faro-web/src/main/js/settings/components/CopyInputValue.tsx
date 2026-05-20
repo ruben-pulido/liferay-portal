@@ -6,7 +6,23 @@ import getCN from 'classnames';
 import React, {useEffect, useRef, useState} from 'react';
 import {Alert} from 'shared/types';
 
-const CopyInputValue = ({addAlert, disabled, value}) => {
+interface ICopyInputValueProps {
+	addAlert: (params: {
+		alertType: any;
+		message: string;
+		timeout?: boolean;
+	}) => any;
+	disabled?: boolean;
+	value: string;
+	title?: string;
+}
+
+const CopyInputValue = ({
+	addAlert,
+	disabled,
+	title,
+	value
+}: ICopyInputValueProps) => {
 	const [isUrlCopied, setIsUrlCopied] = useState(false);
 	const [copyTitle, setCopyTitle] = useState(
 		Liferay.Language.get('click-to-copy')
@@ -20,7 +36,7 @@ const CopyInputValue = ({addAlert, disabled, value}) => {
 
 		const _clipboard = new Clipboard(buttonRef.current);
 
-		_clipboard.on('success', event => {
+		_clipboard.on('success', (event: {clearSelection: () => void}) => {
 			setCopyTitle(Liferay.Language.get('copied'));
 
 			addAlert({
@@ -47,6 +63,8 @@ const CopyInputValue = ({addAlert, disabled, value}) => {
 				'has-success': isUrlCopied
 			})}
 		>
+			{title && <label htmlFor='value'>{title}</label>}
+
 			<ClayInput.Group>
 				<ClayInput.GroupItem prepend>
 					<ClayInput

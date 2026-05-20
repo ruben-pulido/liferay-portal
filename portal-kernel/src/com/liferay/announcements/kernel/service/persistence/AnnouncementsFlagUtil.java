@@ -36,6 +36,20 @@ public class AnnouncementsFlagUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<AnnouncementsFlag> announcementsFlags) {
+		getPersistence().cacheResult(announcementsFlags);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(AnnouncementsFlag announcementsFlag) {
+		getPersistence().cacheResult(announcementsFlag);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -113,59 +127,10 @@ public class AnnouncementsFlagUtil {
 	}
 
 	/**
-	 * Returns all the announcements flags where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching announcements flags
-	 */
-	public static List<AnnouncementsFlag> findByCompanyId(long companyId) {
-		return getPersistence().findByCompanyId(companyId);
-	}
-
-	/**
-	 * Returns a range of all the announcements flags where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of announcements flags
-	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @return the range of matching announcements flags
-	 */
-	public static List<AnnouncementsFlag> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return getPersistence().findByCompanyId(companyId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the announcements flags where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of announcements flags
-	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching announcements flags
-	 */
-	public static List<AnnouncementsFlag> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<AnnouncementsFlag> orderByComparator) {
-
-		return getPersistence().findByCompanyId(
-			companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the announcements flags where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -236,59 +201,10 @@ public class AnnouncementsFlagUtil {
 	}
 
 	/**
-	 * Returns all the announcements flags where entryId = &#63;.
-	 *
-	 * @param entryId the entry ID
-	 * @return the matching announcements flags
-	 */
-	public static List<AnnouncementsFlag> findByEntryId(long entryId) {
-		return getPersistence().findByEntryId(entryId);
-	}
-
-	/**
-	 * Returns a range of all the announcements flags where entryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param entryId the entry ID
-	 * @param start the lower bound of the range of announcements flags
-	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @return the range of matching announcements flags
-	 */
-	public static List<AnnouncementsFlag> findByEntryId(
-		long entryId, int start, int end) {
-
-		return getPersistence().findByEntryId(entryId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the announcements flags where entryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
-	 * </p>
-	 *
-	 * @param entryId the entry ID
-	 * @param start the lower bound of the range of announcements flags
-	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching announcements flags
-	 */
-	public static List<AnnouncementsFlag> findByEntryId(
-		long entryId, int start, int end,
-		OrderByComparator<AnnouncementsFlag> orderByComparator) {
-
-		return getPersistence().findByEntryId(
-			entryId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the announcements flags where entryId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
 	 * @param entryId the entry ID
@@ -373,20 +289,6 @@ public class AnnouncementsFlagUtil {
 	}
 
 	/**
-	 * Returns the announcements flag where userId = &#63; and entryId = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param entryId the entry ID
-	 * @param value the value
-	 * @return the matching announcements flag, or <code>null</code> if a matching announcements flag could not be found
-	 */
-	public static AnnouncementsFlag fetchByU_E_V(
-		long userId, long entryId, int value) {
-
-		return getPersistence().fetchByU_E_V(userId, entryId, value);
-	}
-
-	/**
 	 * Returns the announcements flag where userId = &#63; and entryId = &#63; and value = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param userId the user ID
@@ -427,24 +329,6 @@ public class AnnouncementsFlagUtil {
 	 */
 	public static int countByU_E_V(long userId, long entryId, int value) {
 		return getPersistence().countByU_E_V(userId, entryId, value);
-	}
-
-	/**
-	 * Caches the announcements flag in the entity cache if it is enabled.
-	 *
-	 * @param announcementsFlag the announcements flag
-	 */
-	public static void cacheResult(AnnouncementsFlag announcementsFlag) {
-		getPersistence().cacheResult(announcementsFlag);
-	}
-
-	/**
-	 * Caches the announcements flags in the entity cache if it is enabled.
-	 *
-	 * @param announcementsFlags the announcements flags
-	 */
-	public static void cacheResult(List<AnnouncementsFlag> announcementsFlags) {
-		getPersistence().cacheResult(announcementsFlags);
 	}
 
 	/**
@@ -500,84 +384,115 @@ public class AnnouncementsFlagUtil {
 	}
 
 	/**
-	 * Returns all the announcements flags.
+	 * Returns the announcements flag where userId = &#63; and entryId = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the announcements flags
+	 * @param userId the user ID
+	 * @param entryId the entry ID
+	 * @param value the value
+	 * @return the matching announcements flag, or <code>null</code> if a matching announcements flag could not be found
 	 */
-	public static List<AnnouncementsFlag> findAll() {
-		return getPersistence().findAll();
+	public static AnnouncementsFlag fetchByU_E_V(
+		long userId, long entryId, int value) {
+
+		return getPersistence().fetchByU_E_V(userId, entryId, value);
 	}
 
 	/**
-	 * Returns a range of all the announcements flags.
+	 * Returns all the announcements flags where companyId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @return the matching announcements flags
+	 */
+	public static List<AnnouncementsFlag> findByCompanyId(long companyId) {
+		return getPersistence().findByCompanyId(companyId);
+	}
+
+	/**
+	 * Returns a range of all the announcements flags where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of announcements flags
 	 * @param end the upper bound of the range of announcements flags (not inclusive)
-	 * @return the range of announcements flags
+	 * @return the range of matching announcements flags
 	 */
-	public static List<AnnouncementsFlag> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<AnnouncementsFlag> findByCompanyId(
+		long companyId, int start, int end) {
+
+		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the announcements flags.
+	 * Returns an ordered range of all the announcements flags where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
+	 * @param companyId the company ID
 	 * @param start the lower bound of the range of announcements flags
 	 * @param end the upper bound of the range of announcements flags (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of announcements flags
+	 * @return the ordered range of matching announcements flags
 	 */
-	public static List<AnnouncementsFlag> findAll(
-		int start, int end,
+	public static List<AnnouncementsFlag> findByCompanyId(
+		long companyId, int start, int end,
 		OrderByComparator<AnnouncementsFlag> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findByCompanyId(
+			companyId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the announcements flags.
+	 * Returns all the announcements flags where entryId = &#63;.
+	 *
+	 * @param entryId the entry ID
+	 * @return the matching announcements flags
+	 */
+	public static List<AnnouncementsFlag> findByEntryId(long entryId) {
+		return getPersistence().findByEntryId(entryId);
+	}
+
+	/**
+	 * Returns a range of all the announcements flags where entryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AnnouncementsFlagModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
 	 * </p>
 	 *
+	 * @param entryId the entry ID
+	 * @param start the lower bound of the range of announcements flags
+	 * @param end the upper bound of the range of announcements flags (not inclusive)
+	 * @return the range of matching announcements flags
+	 */
+	public static List<AnnouncementsFlag> findByEntryId(
+		long entryId, int start, int end) {
+
+		return getPersistence().findByEntryId(entryId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the announcements flags where entryId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portlet.announcements.model.impl.AnnouncementsFlagModelImpl</code>.
+	 * </p>
+	 *
+	 * @param entryId the entry ID
 	 * @param start the lower bound of the range of announcements flags
 	 * @param end the upper bound of the range of announcements flags (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of announcements flags
+	 * @return the ordered range of matching announcements flags
 	 */
-	public static List<AnnouncementsFlag> findAll(
-		int start, int end,
-		OrderByComparator<AnnouncementsFlag> orderByComparator,
-		boolean useFinderCache) {
+	public static List<AnnouncementsFlag> findByEntryId(
+		long entryId, int start, int end,
+		OrderByComparator<AnnouncementsFlag> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the announcements flags from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of announcements flags.
-	 *
-	 * @return the number of announcements flags
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByEntryId(
+			entryId, start, end, orderByComparator);
 	}
 
 	public static AnnouncementsFlagPersistence getPersistence() {
@@ -593,4 +508,4 @@ public class AnnouncementsFlagUtil {
 	private static volatile AnnouncementsFlagPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1632501538
+// LIFERAY-SERVICE-BUILDER-HASH:1258915986

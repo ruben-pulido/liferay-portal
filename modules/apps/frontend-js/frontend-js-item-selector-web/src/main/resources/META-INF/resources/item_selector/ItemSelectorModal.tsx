@@ -9,7 +9,6 @@ import ClayLayout from '@clayui/layout';
 import ClayModal from '@clayui/modal';
 import {InternalDispatch} from '@clayui/shared';
 import {
-	ACTION_ITEM_TARGETS,
 	FrontendDataSet,
 	IFileDropSettings,
 	IFrontendDataSetProps,
@@ -52,6 +51,13 @@ export type FilesUploaderComponent = React.ComponentType<{
 }>;
 
 export interface IItemSelectorModalProps<T> {
+
+	/**
+	 * When true, the Select button remains enabled even when no items are
+	 * selected. Clicking it calls onItemsChange with an empty array.
+	 */
+	allowEmptySelection?: boolean;
+
 	allowedExtensions?: string;
 
 	/**
@@ -70,9 +76,10 @@ export interface IItemSelectorModalProps<T> {
 	breadcrumbsLabel?: boolean;
 
 	/**
-	 * URL for item creation used to open a new tab.
+	 * Label shown in the footer as "{label} Selected" when
+	 * 'allowEmptySelection' is true and no items are selected.
 	 */
-	createItemURL?: string;
+	emptySelectionLabel?: string;
 
 	/**
 	 * Configuration properties of the Frontend Data Set used to display data.
@@ -149,19 +156,13 @@ export interface IItemSelectorModalProps<T> {
 	title?: string;
 }
 
-const EMPTY_STATE_PROPS = {
-	description: Liferay.Language.get(
-		'fortunately-it-is-very-easy-to-add-new-ones'
-	),
-	title: Liferay.Language.get('no-items-were-found'),
-};
-
 function ItemSelectorModal<T extends Record<string, any>>({
+	allowEmptySelection = false,
 	allowedExtensions,
 	apiURL,
 	breadcrumbs,
 	breadcrumbsLabel = true,
-	createItemURL,
+	emptySelectionLabel,
 	fdsProps,
 	filesUploaderComponent: FilesUploaderComponent,
 	groupId,
@@ -200,6 +201,8 @@ function ItemSelectorModal<T extends Record<string, any>>({
 	};
 
 	const hasSelectedItems = !!selectedItems.length;
+
+	const isSelectEnabled = hasSelectedItems || allowEmptySelection;
 
 	const fileDropSettings = useMemo<IFileDropSettings>(() => {
 		return {
@@ -264,24 +267,21 @@ function ItemSelectorModal<T extends Record<string, any>>({
 						{...fdsProps}
 						apiURL={apiURL}
 						creationMenu={
-							createItemURL
+							FilesUploaderComponent
 								? {
 										primaryItems: [
 											{
-												href: createItemURL,
 												label: Liferay.Language.get(
-													'add-new-item'
+													'upload-files'
 												),
-												target: ACTION_ITEM_TARGETS.BLANK,
+												onClick: () =>
+													setViewType('upload'),
 											},
 										],
 									}
 								: undefined
 						}
-						emptyState={
-							fdsProps.emptyState ||
-							(createItemURL ? EMPTY_STATE_PROPS : undefined)
-						}
+						emptyState={fdsProps.emptyState}
 						fileDropSettings={fileDropSettings}
 						key={fdsRefreshKey}
 						onSelectedItemsChange={setSelectedItems}
@@ -312,7 +312,7 @@ function ItemSelectorModal<T extends Record<string, any>>({
 				<ClayModal.Footer
 					className={classNames({
 						'bg-primary-l3 border-primary border-top':
-							hasSelectedItems,
+							isSelectEnabled,
 					})}
 					first={
 						hasSelectedItems ? (
@@ -343,6 +343,13 @@ function ItemSelectorModal<T extends Record<string, any>>({
 									</strong>
 								</ClayButton>
 							</div>
+						) : allowEmptySelection && emptySelectionLabel ? (
+							<div className="align-items-center d-flex">
+								{sub(
+									Liferay.Language.get('x-selected'),
+									emptySelectionLabel
+								)}
+							</div>
 						) : undefined
 					}
 					last={
@@ -361,7 +368,7 @@ function ItemSelectorModal<T extends Record<string, any>>({
 
 							<ClayButton
 								className="item-preview selector-button"
-								disabled={!hasSelectedItems}
+								disabled={!isSelectEnabled}
 								onClick={() => {
 									onItemsChange(
 										multiSelect

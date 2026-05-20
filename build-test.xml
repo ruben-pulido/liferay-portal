@@ -211,7 +211,7 @@ passwords.encryption.algorithm=NONE</echo>
 			<basename file="@{src}" property="archive.basename" />
 
 			<if>
-				<matches pattern=".*\.7z$" string="${archive.basename}" />
+				<matches casesensitive="false" pattern=".*\.7z$" string="${archive.basename}" />
 				<then>
 					<if>
 						<os family="mac" />
@@ -232,7 +232,7 @@ passwords.encryption.algorithm=NONE</echo>
 					</if>
 				</then>
 				<elseif>
-					<matches pattern=".*\.tar\.gz$" string="${archive.basename}" />
+					<matches casesensitive="false" pattern=".*\.tar\.gz$" string="${archive.basename}" />
 					<then>
 						<execute>
 							<![CDATA[
@@ -244,7 +244,7 @@ passwords.encryption.algorithm=NONE</echo>
 					</then>
 				</elseif>
 				<elseif>
-					<matches pattern=".*\.zip$" string="${archive.basename}" />
+					<matches casesensitive="false" pattern=".*\.zip$" string="${archive.basename}" />
 					<then>
 						<execute>
 							<![CDATA[
@@ -2485,6 +2485,8 @@ war.path=${app.server.portal.dir}/</echo>
 		<attribute name="task" />
 
 		<sequential>
+			<mkdir dir="${project.dir}/.gradle" />
+
 			<propertyfile file="${project.dir}/.gradle/gradle.properties">
 				<entry key="sdk.dir" value="${sdk.dir}" />
 			</propertyfile>
@@ -3160,12 +3162,39 @@ server.detector.server.id=wildfly</echo>
 
 			<property name="database.url.upgrade" value="${database.url}" />
 
+			<get-testcase-property property.name="portal.version" />
+
+			<local name="database.url.parameters" />
+
+			<prepare-database-url-parameters url="${database.url.upgrade}" />
+
 			<echo file="${liferay.home}/tools/portal-tools-db-upgrade-client/portal-upgrade-ext.properties">jdbc.default.driverClassName=${database.driver}
-jdbc.default.url=${database.url.upgrade}
+jdbc.default.url=${database.url.upgrade}${database.url.parameters}
 jdbc.default.username=${database.username}
 jdbc.default.password=${database.password}</echo>
 
 			<prepare-upgrade-ext-properties />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="prepare-database-url-parameters">
+		<attribute name="url" />
+
+		<sequential>
+			<if>
+				<and>
+					<equals arg1="${portal.version}" arg2="6.1.30" />
+					<equals arg1="${database.type}" arg2="postgresql" />
+				</and>
+				<then>
+					<condition else="?autosave=conservative&amp;reWriteBatchedInserts=true" property="database.url.parameters" value="&amp;autosave=conservative&amp;reWriteBatchedInserts=true">
+						<contains string="@{url}" substring="?" />
+					</condition>
+				</then>
+				<else>
+					<property name="database.url.parameters" value="" />
+				</else>
+			</if>
 		</sequential>
 	</macrodef>
 
@@ -3857,91 +3886,6 @@ tell application "Safari" to quit
 						</echo>
 					</then>
 				</elseif>
-			</if>
-		</sequential>
-	</macrodef>
-
-	<macrodef name="prepare-selenium-click-to-chat-properties">
-		<sequential>
-			<if>
-				<isset property="click.to.chat.chatwoot.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.chatwoot.password=${click.to.chat.chatwoot.password}
-					</echo>
-				</then>
-			</if>
-
-			<if>
-				<isset property="click.to.chat.hubspot.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.hubspot.password=${click.to.chat.hubspot.password}
-					</echo>
-				</then>
-			</if>
-
-			<if>
-				<isset property="click.to.chat.jivochat.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.jivochat.password=${click.to.chat.jivochat.password}
-					</echo>
-				</then>
-			</if>
-
-			<if>
-				<isset property="click.to.chat.liveperson.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.liveperson.password=${click.to.chat.liveperson.password}
-					</echo>
-				</then>
-			</if>
-
-			<if>
-				<isset property="click.to.chat.smartsupp.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.smartsupp.password=${click.to.chat.smartsupp.password}
-					</echo>
-				</then>
-			</if>
-
-			<if>
-				<isset property="click.to.chat.tawkto.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.tawkto.password=${click.to.chat.tawkto.password}
-					</echo>
-				</then>
-			</if>
-
-			<if>
-				<isset property="click.to.chat.tidio.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.tidio.password=${click.to.chat.tidio.password}
-					</echo>
-				</then>
-			</if>
-
-			<if>
-				<isset property="click.to.chat.tolvnow.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.tolvnow.password=${click.to.chat.tolvnow.password}
-					</echo>
-				</then>
-			</if>
-
-			<if>
-				<isset property="click.to.chat.zendesk.password" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						click.to.chat.zendesk.password=${click.to.chat.zendesk.password}
-					</echo>
-				</then>
 			</if>
 		</sequential>
 	</macrodef>
@@ -6990,6 +6934,85 @@ ${custom.upgrade.properties}</echo>
 		</sequential>
 	</macrodef>
 
+	<macrodef name="set-playwright-object-storage-salesforce-properties">
+		<sequential>
+			<var name="env.object.storage.salesforce.consumer.key" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_CONSUMER_KEY" />
+				<then>
+					<var name="env.object.storage.salesforce.consumer.key" value="--env=OBJECT_STORAGE_SALESFORCE_CONSUMER_KEY=${env.OBJECT_STORAGE_SALESFORCE_CONSUMER_KEY}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.consumer.key" />
+					<then>
+						<var name="env.object.storage.salesforce.consumer.key" value="--env=OBJECT_STORAGE_SALESFORCE_CONSUMER_KEY=${object.storage.salesforce.consumer.key}" />
+					</then>
+				</elseif>
+			</if>
+
+			<var name="env.object.storage.salesforce.consumer.secret" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_CONSUMER_SECRET" />
+				<then>
+					<var name="env.object.storage.salesforce.consumer.secret" value="--env=OBJECT_STORAGE_SALESFORCE_CONSUMER_SECRET=${env.OBJECT_STORAGE_SALESFORCE_CONSUMER_SECRET}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.consumer.secret" />
+					<then>
+						<var name="env.object.storage.salesforce.consumer.secret" value="--env=OBJECT_STORAGE_SALESFORCE_CONSUMER_SECRET=${object.storage.salesforce.consumer.secret}" />
+					</then>
+				</elseif>
+			</if>
+
+			<var name="env.object.storage.salesforce.login.url" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_LOGIN_URL" />
+				<then>
+					<var name="env.object.storage.salesforce.login.url" value="--env=OBJECT_STORAGE_SALESFORCE_LOGIN_URL=${env.OBJECT_STORAGE_SALESFORCE_LOGIN_URL}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.login.url" />
+					<then>
+						<var name="env.object.storage.salesforce.login.url" value="--env=OBJECT_STORAGE_SALESFORCE_LOGIN_URL=${object.storage.salesforce.login.url}" />
+					</then>
+				</elseif>
+			</if>
+
+			<var name="env.object.storage.salesforce.password" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_PASSWORD" />
+				<then>
+					<var name="env.object.storage.salesforce.password" value="--env=OBJECT_STORAGE_SALESFORCE_PASSWORD=${env.OBJECT_STORAGE_SALESFORCE_PASSWORD}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.password" />
+					<then>
+						<var name="env.object.storage.salesforce.password" value="--env=OBJECT_STORAGE_SALESFORCE_PASSWORD=${object.storage.salesforce.password}" />
+					</then>
+				</elseif>
+			</if>
+
+			<var name="env.object.storage.salesforce.username" value="" />
+
+			<if>
+				<isset property="env.OBJECT_STORAGE_SALESFORCE_USERNAME" />
+				<then>
+					<var name="env.object.storage.salesforce.username" value="--env=OBJECT_STORAGE_SALESFORCE_USERNAME=${env.OBJECT_STORAGE_SALESFORCE_USERNAME}" />
+				</then>
+				<elseif>
+					<isset property="object.storage.salesforce.username" />
+					<then>
+						<var name="env.object.storage.salesforce.username" value="--env=OBJECT_STORAGE_SALESFORCE_USERNAME=${object.storage.salesforce.username}" />
+					</then>
+				</elseif>
+			</if>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="set-portal-impl-portal-test-ext-properties">
 		<sequential>
 			<generate-jdbc-properties properties.file="portal-impl/test/portal-test-ext.properties">
@@ -7366,7 +7389,7 @@ log.sanitizer.enabled=false</echo>
 					</then>
 				</elseif>
 				<else>
-					<var name="app.server.tomcat.version" value="10.1.52" />
+					<var name="app.server.tomcat.version" value="10.1.55" />
 				</else>
 			</if>
 
@@ -8565,6 +8588,8 @@ ${docker.start.error}</fail>
 
 			<set-playwright-click-to-chat-properties />
 
+			<set-playwright-object-storage-salesforce-properties />
+
 			<local name="env.portal.url.arg" />
 
 			<condition else="" property="env.portal.url.arg" value="--env=PORTAL_URL=http://${env.NODE_NAME}:8080">
@@ -8599,6 +8624,11 @@ ${docker.start.error}</fail>
 				${env.click.to.chat.tawkto.password} \
 				${env.click.to.chat.tidio.password} \
 				${env.click.to.chat.zendesk.password} \
+				${env.object.storage.salesforce.consumer.key} \
+				${env.object.storage.salesforce.consumer.secret} \
+				${env.object.storage.salesforce.login.url} \
+				${env.object.storage.salesforce.password} \
+				${env.object.storage.salesforce.username} \
 				${env.osb.asah.api.token} \
 				${env.osb.asah.backend.url} \
 				${env.osb.asah.batch.curator.url} \
@@ -10030,7 +10060,9 @@ update db cfg for lportal${databases.size} using logsecond 254;</echo>
 							>
 								<replacetoken>grant connect,resource to &amp;1;</replacetoken>
 								<replacevalue>grant connect,resource to &amp;1;
-	grant unlimited tablespace to &amp;1;</replacevalue>
+	grant unlimited tablespace to &amp;1;
+	grant select on sys.v_$session to &amp;1;
+	grant select on sys.v_$sql to &amp;1;</replacevalue>
 							</replace>
 
 							<if>
@@ -10040,7 +10072,9 @@ update db cfg for lportal${databases.size} using logsecond 254;</echo>
 										file="create.sql"
 									>
 										<replacetoken>grant connect,resource to &amp;1;
-	grant unlimited tablespace to &amp;1;</replacetoken>
+	grant unlimited tablespace to &amp;1;
+	grant select on sys.v_$session to &amp;1;
+	grant select on sys.v_$sql to &amp;1;</replacetoken>
 										<replacevalue>grant all privileges to &amp;1;</replacevalue>
 									</replace>
 									<replace
@@ -10082,7 +10116,11 @@ alter database lportal set allow_snapshot_isolation on;
 
 go
 
-alter database lportal set read_committed_snapshot on;
+alter database lportal set read_committed_snapshot on with rollback immediate;
+
+go
+
+dbcc traceon (1222, -1);
 
 go]]></replacevalue>
 								</replacefilter>
@@ -10100,7 +10138,7 @@ alter database lportal${databases.size} set allow_snapshot_isolation on;
 
 go
 
-alter database lportal${databases.size} set read_committed_snapshot on;
+alter database lportal${databases.size} set read_committed_snapshot on with rollback immediate;
 
 go</echo>
 								</then>
@@ -10271,7 +10309,9 @@ update db cfg for lportal${databases.size} using logsecond 254;</echo>
 							>
 								<replacetoken>grant connect,resource to &amp;1;</replacetoken>
 								<replacevalue>grant connect,resource to &amp;1;
-grant unlimited tablespace to &amp;1;</replacevalue>
+grant unlimited tablespace to &amp;1;
+grant select on sys.v_$session to &amp;1;
+grant select on sys.v_$sql to &amp;1;</replacevalue>
 							</replace>
 
 							<if>
@@ -10281,7 +10321,9 @@ grant unlimited tablespace to &amp;1;</replacevalue>
 										file="create.sql"
 									>
 										<replacetoken>grant connect,resource to &amp;1;
-grant unlimited tablespace to &amp;1;</replacetoken>
+grant unlimited tablespace to &amp;1;
+grant select on sys.v_$session to &amp;1;
+grant select on sys.v_$sql to &amp;1;</replacetoken>
 										<replacevalue>grant all privileges to &amp;1;</replacevalue>
 									</replace>
 									<replace
@@ -10324,7 +10366,11 @@ alter database lportal set allow_snapshot_isolation on;
 
 go
 
-alter database lportal set read_committed_snapshot on;
+alter database lportal set read_committed_snapshot on with rollback immediate;
+
+go
+
+dbcc traceon (1222, -1);
 
 go]]></replacevalue>
 								</replacefilter>
@@ -10342,7 +10388,7 @@ alter database lportal${databases.size} set allow_snapshot_isolation on;
 
 go
 
-alter database lportal${databases.size} set read_committed_snapshot on;
+alter database lportal${databases.size} set read_committed_snapshot on with rollback immediate;
 
 go</echo>
 								</then>
@@ -10956,11 +11002,15 @@ org.apache.catalina.ha.session.level=INFO]]>
 					</then>
 				</if>
 
+				<get-testcase-property property.name="legacy.database.file" />
 				<get-testcase-property property.name="portal.version" />
 
 				<if>
 					<and>
-						<isset property="portal.version" />
+						<or>
+							<isset property="legacy.database.file" />
+							<isset property="portal.version" />
+						</or>
 						<not>
 							<equals arg1="${keep.osgi.state}" arg2="true" />
 						</not>
@@ -11223,6 +11273,18 @@ org.apache.catalina.ha.session.level=INFO]]>
 				<mirrors-get
 					dest="${liferay.home}/deploy/license-cmp.xml"
 					src="${test.build.cmp.license.url}"
+				/>
+			</then>
+		</if>
+
+		<if>
+			<matches pattern="https?://" string="${test.build.dsr.license.url}" />
+			<then>
+				<mkdir dir="${liferay.home}/deploy" />
+
+				<mirrors-get
+					dest="${liferay.home}/deploy/license-dsr.xml"
+					src="${test.build.dsr.license.url}"
 				/>
 			</then>
 		</if>
@@ -12839,19 +12901,6 @@ ${update.properties}</echo>
 
 		<if>
 			<and>
-				<equals arg1="${portal.version}" arg2="6.1.30" />
-				<equals arg1="${database.type}" arg2="postgresql" />
-			</and>
-			<then>
-				<property name="database.url.parameters" value="?autosave=conservative&amp;reWriteBatchedInserts=true" />
-			</then>
-			<else>
-				<property name="database.url.parameters" value="" />
-			</else>
-		</if>
-
-		<if>
-			<and>
 				<isset property="portal.version" />
 				<or>
 					<equals arg1="database.partition.enabled" arg2="true" />
@@ -12871,6 +12920,10 @@ ${update.properties}</echo>
 		<get-database-property property.name="database.url" />
 		<get-database-property property.name="database.username" />
 		<get-database-property property.name="database.version" />
+
+		<local name="database.url.parameters" />
+
+		<prepare-database-url-parameters url="${database.url}" />
 
 		<echo append="true" file="portal-impl/src/portal-ext.properties">
 
@@ -13498,34 +13551,7 @@ feature.flag.LPD-11342=true</echo>
 		<echo append="true" file="portal-impl/src/portal-ext.properties">
 analytics.cloud.domain.allowed=*</echo>
 
-		<if>
-			<equals arg1="${functional.test.type}" arg2="poshi" />
-			<then>
-				<echo append="true" file="portal-impl/src/portal-ext.properties">
-feature.flag.LPD-36105=true</echo>
-			</then>
-		</if>
-
 		<apply-portal-ext-properties />
-	</target>
-
-	<target name="prepare-portal-properties">
-		<replace
-			file="portal-impl/src/portal.properties"
-		>
-			<replacefilter
-				token="#upgrade.processes="
-				value="upgrade.processes="
-			/>
-			<replacefilter
-				token="#com.liferay.portal.upgrade.UpgradeProcess_"
-				value="com.liferay.portal.upgrade.UpgradeProcess_"
-			/>
-			<replacefilter
-				token="verify.frequency=0"
-				value="verify.frequency=1"
-			/>
-		</replace>
 	</target>
 
 	<target name="prepare-portal-ssl">
@@ -13863,105 +13889,6 @@ feature.flag.LPD-36105=true</echo>
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
 					azure.container.id=${azure.container.id}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.chatwoot.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.chatwoot.password=${click.to.chat.chatwoot.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.crisp.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.crisp.password=${click.to.chat.crisp.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.hubspot.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.hubspot.password=${click.to.chat.hubspot.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.jivochat.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.jivochat.password=${click.to.chat.jivochat.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.livechat.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.livechat.password=${click.to.chat.livechat.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.liveperson.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.liveperson.password=${click.to.chat.liveperson.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.smartsupp.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.smartsupp.password=${click.to.chat.smartsupp.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.tawkto.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.tawkto.password=${click.to.chat.tawkto.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.tidio.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.tidio.password=${click.to.chat.tidio.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.tolvnow.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.tolvnow.password=${click.to.chat.tolvnow.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="click.to.chat.zendesk.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					click.to.chat.zendesk.password=${click.to.chat.zendesk.password}
 				</echo>
 			</then>
 		</if>
@@ -14465,6 +14392,7 @@ feature.flag.LPD-36105=true</echo>
 
 		<antcall target="deploy-license-xml">
 			<param name="test.build.cmp.license.url" value="${test.cmp.license.url}" />
+			<param name="test.build.dsr.license.url" value="${test.dsr.license.url}" />
 			<param name="test.build.license.xml.zip.url" value="${test.license.xml.url}" />
 		</antcall>
 	</target>
@@ -14483,7 +14411,6 @@ feature.flag.LPD-36105=true</echo>
 		<prepare-selenium-aws-translation-properties />
 		<prepare-selenium-azure-translation-properties />
 		<prepare-selenium-browser />
-		<prepare-selenium-click-to-chat-properties />
 		<prepare-selenium-database-properties />
 		<prepare-selenium-digital-signature-properties />
 		<prepare-selenium-email-properties />
@@ -15393,6 +15320,7 @@ ANT_OPTS=${env.ANT_OPTS}</echo>
 
 		<antcall target="deploy-license-xml">
 			<param name="test.build.cmp.license.url" value="${test.cmp.license.url}" />
+			<param name="test.build.dsr.license.url" value="${test.dsr.license.url}" />
 			<param name="test.build.license.xml.zip.url" value="${test.license.xml.url}" />
 		</antcall>
 
@@ -15419,7 +15347,6 @@ ANT_OPTS=${env.ANT_OPTS}</echo>
 		</antcall>
 
 		<antcall target="prepare-osgi-module-configurations" />
-		<antcall target="prepare-portal-properties" />
 		<antcall inheritAll="false" target="prepare-portal-ext-properties">
 			<param name="app.server.tomcat.version" value="${app.server.tomcat.version}" />
 		</antcall>
@@ -15571,6 +15498,7 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 			</not>
 			<then>
 				<get-testcase-property property.name="data.archive.type" />
+				<get-testcase-property property.name="legacy.database.file" />
 				<get-testcase-property property.name="portal.version" />
 			</then>
 		</if>
@@ -15578,20 +15506,163 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 		<delete dir="${liferay.home}/data" />
 
 		<if>
-			<contains string="${data.archive.type}" substring="partition-large" />
+			<isset property="legacy.database.file" />
 			<then>
-				<mirrors-get
-					dest="${liferay.home}"
-					src="http://files.liferay.com/mirrors/data-archive-portal-partition-large.zip"
-				/>
+				<for param="legacy.database.leftover.dir">
+					<path>
+						<dirset
+							dir="${liferay.home}"
+							includes="legacy-database-*"
+						/>
+					</path>
+					<sequential>
+						<delete dir="@{legacy.database.leftover.dir}" />
+					</sequential>
+				</for>
 
-				<unzip
-					dest="${liferay.home}"
-					src="${liferay.home}/data-archive-portal-partition-large.zip"
-				/>
+				<local name="legacy.database.temp.dir" />
 
-				<delete file="${liferay.home}/data-archive-portal-partition-large.zip" />
+				<tempfile destdir="${liferay.home}" prefix="legacy-database-" property="legacy.database.temp.dir" />
+
+				<mkdir dir="${legacy.database.temp.dir}" />
+
+				<trycatch>
+					<try>
+						<if>
+							<matches casesensitive="false" pattern=".*\.(7z|tar\.gz|zip)$" string="${legacy.database.file}" />
+							<then>
+								<decompress
+									dest="${legacy.database.temp.dir}"
+									src="${legacy.database.file}"
+								/>
+							</then>
+							<elseif>
+								<matches casesensitive="false" pattern=".*\.gz$" string="${legacy.database.file}" />
+								<then>
+									<gunzip
+										dest="${legacy.database.temp.dir}"
+										src="${legacy.database.file}"
+									/>
+								</then>
+							</elseif>
+							<else>
+								<copy
+									file="${legacy.database.file}"
+									todir="${legacy.database.temp.dir}"
+								/>
+							</else>
+						</if>
+
+						<if>
+							<not>
+								<equals arg1="${database.type}" arg2="db2" />
+							</not>
+							<then>
+								<local name="legacy.database.dump.extension" />
+
+								<if>
+									<equals arg1="${database.type}" arg2="oracle" />
+									<then>
+										<property name="legacy.database.dump.extension" value="dmp" />
+									</then>
+									<elseif>
+										<equals arg1="${database.type}" arg2="sqlserver" />
+										<then>
+											<property name="legacy.database.dump.extension" value="bak" />
+										</then>
+									</elseif>
+									<else>
+										<property name="legacy.database.dump.extension" value="sql" />
+									</else>
+								</if>
+
+								<local name="legacy.database.dump.count" />
+
+								<resourcecount property="legacy.database.dump.count">
+									<fileset
+										dir="${legacy.database.temp.dir}"
+										includes="*"
+									>
+										<type type="file" />
+									</fileset>
+								</resourcecount>
+
+								<local name="legacy.database.dump.ext.count" />
+
+								<resourcecount property="legacy.database.dump.ext.count">
+									<fileset
+										dir="${legacy.database.temp.dir}"
+										includes="*.${legacy.database.dump.extension}"
+									>
+										<type type="file" />
+									</fileset>
+								</resourcecount>
+
+								<local name="legacy.database.dump.includes" />
+
+								<if>
+									<equals arg1="${legacy.database.dump.count}" arg2="1" />
+									<then>
+										<property name="legacy.database.dump.includes" value="*" />
+									</then>
+									<elseif>
+										<equals arg1="${legacy.database.dump.ext.count}" arg2="1" />
+										<then>
+											<property name="legacy.database.dump.includes" value="*.${legacy.database.dump.extension}" />
+										</then>
+									</elseif>
+									<else>
+										<fail message="Unable to identify the database dump file in ${legacy.database.file}." />
+									</else>
+								</if>
+
+								<local name="legacy.database.dump.file" />
+
+								<pathconvert property="legacy.database.dump.file">
+									<fileset
+										dir="${legacy.database.temp.dir}"
+										includes="${legacy.database.dump.includes}"
+									>
+										<type type="file" />
+									</fileset>
+								</pathconvert>
+
+								<move
+									file="${legacy.database.dump.file}"
+									tofile="${liferay.home}/${database.type}.${legacy.database.dump.extension}"
+								/>
+							</then>
+						</if>
+
+						<move
+							todir="${liferay.home}"
+						>
+							<fileset
+								dir="${legacy.database.temp.dir}"
+							/>
+						</move>
+					</try>
+					<finally>
+						<delete dir="${legacy.database.temp.dir}" />
+					</finally>
+				</trycatch>
 			</then>
+			<elseif>
+				<contains string="${data.archive.type}" substring="partition-large" />
+				<then>
+					<mirrors-get
+						dest="${liferay.home}"
+						src="http://files.liferay.com/mirrors/data-archive-portal-partition-large.zip"
+					/>
+
+					<unzip
+						dest="${liferay.home}"
+						src="${liferay.home}/data-archive-portal-partition-large.zip"
+					/>
+
+					<delete file="${liferay.home}/data-archive-portal-partition-large.zip" />
+				</then>
+			</elseif>
 			<else>
 				<unzip
 					dest="${liferay.home}"
@@ -15626,17 +15697,19 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 				<equals arg1="${database.type}" arg2="mysql" />
 			</or>
 			<then>
-				<loadresource property="found.utf8mb3.line">
-					<concat>
-						<file file="${liferay.home}/${database.type}.sql" />
-						<filterchain>
-							<linecontainsregexp casesensitive="false">
-								<regexp pattern="DEFAULT CHARSET\s*=\s*utf8(mb3)?(?![mb4])" />
-							</linecontainsregexp>
-							<headfilter lines="1" />
-						</filterchain>
-					</concat>
-				</loadresource>
+				<local name="grep.utf8mb3.exit" />
+
+				<exec executable="grep" failonerror="false" resultproperty="grep.utf8mb3.exit">
+					<arg value="-iE" />
+					<arg value="-m" />
+					<arg value="1" />
+					<arg value="DEFAULT CHARSET\s*=\s*utf8(mb3)?([^mb4]|$)" />
+					<arg value="${liferay.home}/${database.type}.sql" />
+				</exec>
+
+				<condition property="found.utf8mb3.line">
+					<equals arg1="${grep.utf8mb3.exit}" arg2="0" />
+				</condition>
 
 				<if>
 					<isset property="found.utf8mb3.line" />
@@ -15894,7 +15967,15 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 								<![CDATA[
 									#!/bin/bash
 
-									${database.sqlserver.executable} -P ${database.sqlserver.password} -Q "RESTORE DATABASE ${database.sqlserver.schema} FROM DISK='/tmp/${database.type}.bak'" -S localhost -U ${database.sqlserver.username}
+									set -e
+
+									${database.sqlserver.executable} -b -P "${database.sqlserver.password}" -Q "restore database ${database.sqlserver.schema} from disk='/tmp/${database.type}.bak'" -S localhost -U ${database.sqlserver.username}
+
+									${database.sqlserver.executable} -b -P "${database.sqlserver.password}" -Q "alter database ${database.sqlserver.schema} set allow_snapshot_isolation on;" -S localhost -U ${database.sqlserver.username}
+
+									${database.sqlserver.executable} -b -P "${database.sqlserver.password}" -Q "alter database ${database.sqlserver.schema} set read_committed_snapshot on with rollback immediate;" -S localhost -U ${database.sqlserver.username}
+
+									${database.sqlserver.executable} -b -P "${database.sqlserver.password}" -Q "dbcc traceon (1222, -1);" -S localhost -U ${database.sqlserver.username}
 								]]>
 							</echo>
 
@@ -15912,22 +15993,6 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 						docker exec ${database.host} /bin/bash /tmp/import-database.sh
 					]]>
 				</execute>
-
-				<get-testcase-property property.name="custom.mysql.sql.statement" />
-
-				<if>
-					<and>
-						<equals arg1="${database.type}" arg2="mysql" />
-						<isset property="custom.mysql.sql.statement" />
-					</and>
-					<then>
-						<sql classpath="${app.server.shielded-container-lib.portal.dir}/${jdbc.mysql.driver}" driver="${database.mysql.driver}" onerror="continue" output="output.txt" password="${database.mysql.password}" print="true" url="${database.mysql.url}" userid="${database.mysql.username}">
-							<![CDATA[
-								${custom.mysql.sql.statement}
-							]]>
-						</sql>
-					</then>
-				</if>
 			</then>
 			<else>
 				<if>
@@ -16030,22 +16095,6 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 									<exec executable="mysql_upgrade" />
 								</then>
 							</if>
-
-							<get-testcase-property property.name="custom.mysql.sql.statement" />
-
-							<if>
-								<and>
-									<equals arg1="${database.type}" arg2="mysql" />
-									<isset property="custom.mysql.sql.statement" />
-								</and>
-								<then>
-									<sql classpath="${app.server.shielded-container-lib.portal.dir}/${jdbc.mysql.driver}" driver="${database.mysql.driver}" onerror="continue" output="output.txt" password="${database.mysql.password}" print="true" url="${database.mysql.url}" userid="${database.mysql.username}">
-										<![CDATA[
-											${custom.mysql.sql.statement}
-										]]>
-									</sql>
-								</then>
-							</if>
 						</then>
 					</elseif>
 					<elseif>
@@ -16117,8 +16166,64 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 							</exec>
 						</then>
 					</elseif>
+					<elseif>
+						<equals arg1="${database.type}" arg2="sqlserver" />
+						<then>
+							<get-database-property property.name="database.host" />
+							<get-database-property property.name="database.password" />
+							<get-database-property property.name="database.schema" />
+							<get-database-property property.name="database.username" />
+
+							<exec executable="/bin/bash" failonerror="true">
+								<arg value="-c" />
+								<arg value="${database.sqlserver.executable} -b -P &quot;${database.password}&quot; -Q &quot;restore database ${database.schema} from disk='${liferay.home}/${database.type}.bak' with replace; alter database ${database.schema} set allow_snapshot_isolation on; alter database ${database.schema} set read_committed_snapshot on with rollback immediate; dbcc traceon (1222, -1);&quot; -S ${database.host} -U ${database.username}" />
+							</exec>
+						</then>
+					</elseif>
 				</if>
 			</else>
+		</if>
+
+		<get-testcase-property property.name="custom.${database.type}.sql.statement" />
+
+		<local name="custom.sql.statement" />
+
+		<propertycopy from="custom.${database.type}.sql.statement" name="custom.sql.statement" silent="true" />
+
+		<if>
+			<isset property="custom.sql.statement" />
+			<then>
+				<local name="custom.sql.driver" />
+				<local name="custom.sql.driver.jar" />
+				<local name="custom.sql.password" />
+				<local name="custom.sql.url" />
+				<local name="custom.sql.username" />
+
+				<propertycopy from="jdbc.${database.type}.driver" name="custom.sql.driver.jar" silent="true" />
+				<propertycopy from="database.${database.type}.driver" name="custom.sql.driver" silent="true" />
+				<propertycopy from="database.${database.type}.password" name="custom.sql.password" silent="true" />
+				<propertycopy from="database.${database.type}.url" name="custom.sql.url" silent="true" />
+				<propertycopy from="database.${database.type}.username" name="custom.sql.username" silent="true" />
+
+				<delete failonerror="false" file="output.txt" />
+
+				<for delimiter="${line.separator}" list="${custom.sql.statement}" param="sql.statement">
+					<sequential>
+						<if>
+							<not>
+								<equals arg1="@{sql.statement}" arg2="" trim="true" />
+							</not>
+							<then>
+								<sql append="true" classpath="${app.server.shielded-container-lib.portal.dir}/${custom.sql.driver.jar}" driver="${custom.sql.driver}" onerror="continue" output="output.txt" password="${custom.sql.password}" print="true" url="${custom.sql.url}" userid="${custom.sql.username}">
+									<![CDATA[
+										@{sql.statement}
+									]]>
+								</sql>
+							</then>
+						</if>
+					</sequential>
+				</for>
+			</then>
 		</if>
 
 		<delete file="sql/create-bare/create-bare-mysql-utf8mb3.sql" quiet="true" />
@@ -16791,8 +16896,6 @@ sendBlacklist=[]
 			<else>
 				<antcall target="prepare-osgi-module-configurations" />
 
-				<antcall target="prepare-portal-properties" />
-
 				<antcall target="prepare-portal-ext-properties">
 					<param name="functional.test.type" value="${functional.test.type}" />
 				</antcall>
@@ -17008,12 +17111,16 @@ sendBlacklist=[]
 			</then>
 		</if>
 
+		<get-testcase-property property.name="legacy.database.file" />
 		<get-testcase-property property.name="portal.version" />
 		<get-testcase-property property.name="rebuild.staging.database" />
 		<get-testcase-property property.name="skip.upgrade-legacy-database" />
 
 		<if>
-			<isset property="portal.version" />
+			<or>
+				<isset property="legacy.database.file" />
+				<isset property="portal.version" />
+			</or>
 			<then>
 				<antcall target="rebuild-legacy-database" />
 

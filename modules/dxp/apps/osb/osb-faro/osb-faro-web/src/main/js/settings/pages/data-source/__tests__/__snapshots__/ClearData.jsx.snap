@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DataSourceClearData should render 1`] = `
+exports[`ClearData should render 1`] = `
 <div>
   <div
     class="settings-root"
@@ -134,7 +134,7 @@ exports[`DataSourceClearData should render 1`] = `
               </a>
             </li>
             <li
-              class="item"
+              class="item active"
             >
               <a
                 class="button-root"
@@ -406,7 +406,7 @@ exports[`DataSourceClearData should render 1`] = `
                       class="sheet-body"
                     >
                       <div>
-                        To complete, copy the following sentence to confirm your intention and click clear data. Once you have deleted This data, you can not undo this operation.
+                        To complete, copy the following sentence to confirm your action and click clear data. Once you delete this data, you can not undo this operation.
                       </div>
                       <div
                         class="copy-container"
@@ -440,7 +440,6 @@ exports[`DataSourceClearData should render 1`] = `
                     >
                       <button
                         class="button-root delete-button btn btn-warning"
-                        disabled=""
                         type="submit"
                       >
                         Clear Data

@@ -38,10 +38,9 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -248,15 +247,14 @@ public class GetLayoutContentChangesMVCResourceCommand
 						});
 					searchContext.setAttribute("showHideable", Boolean.TRUE);
 
-					BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
+					BooleanQuery booleanQuery = new BooleanQuery();
 
-					booleanQueryImpl.addRequiredTerm("plid", plid);
+					booleanQuery.addRequiredTerm("plid", plid);
 
 					searchContext.setBooleanClauses(
 						new BooleanClause[] {
-							BooleanClauseFactoryUtil.create(
-								booleanQueryImpl,
-								BooleanClauseOccur.MUST.getName())
+							new BooleanClause<>(
+								booleanQuery, BooleanClauseOccur.MUST)
 						});
 				}
 			);

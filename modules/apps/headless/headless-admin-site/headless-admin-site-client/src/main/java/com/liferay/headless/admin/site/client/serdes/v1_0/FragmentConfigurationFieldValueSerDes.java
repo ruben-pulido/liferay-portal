@@ -15,6 +15,7 @@ import com.liferay.headless.admin.site.client.dto.v1_0.ItemFragmentConfiguration
 import com.liferay.headless.admin.site.client.dto.v1_0.LengthFragmentConfigurationFieldValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.NavigationMenuFragmentConfigurationFieldValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.SelectFragmentConfigurationFieldValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.TargetCollectionDisplayFragmentConfigurationFieldValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.TextFragmentConfigurationFieldValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.URLFragmentConfigurationFieldValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.VideoFragmentConfigurationFieldValue;
@@ -117,6 +118,13 @@ public class FragmentConfigurationFieldValueSerDes {
 				return SelectFragmentConfigurationFieldValueSerDes.toJSON(
 					(SelectFragmentConfigurationFieldValue)
 						fragmentConfigurationFieldValue);
+			}
+
+			if (typeString.equals("TargetCollectionDisplay")) {
+				return TargetCollectionDisplayFragmentConfigurationFieldValueSerDes.
+					toJSON(
+						(TargetCollectionDisplayFragmentConfigurationFieldValue)
+							fragmentConfigurationFieldValue);
 			}
 
 			if (typeString.equals("Text")) {
@@ -244,6 +252,11 @@ public class FragmentConfigurationFieldValueSerDes {
 					return SelectFragmentConfigurationFieldValue.toDTO(json);
 				}
 
+				if (typeString.equals("TargetCollectionDisplay")) {
+					return TargetCollectionDisplayFragmentConfigurationFieldValue.
+						toDTO(json);
+				}
+
 				if (typeString.equals("Text")) {
 					return TextFragmentConfigurationFieldValue.toDTO(json);
 				}
@@ -357,4 +370,4 @@ public class FragmentConfigurationFieldValueSerDes {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1983156341
+// LIFERAY-REST-BUILDER-HASH:251765430

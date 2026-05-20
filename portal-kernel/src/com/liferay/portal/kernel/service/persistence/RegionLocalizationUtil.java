@@ -36,6 +36,22 @@ public class RegionLocalizationUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(
+		List<RegionLocalization> regionLocalizations) {
+
+		getPersistence().cacheResult(regionLocalizations);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(RegionLocalization regionLocalization) {
+		getPersistence().cacheResult(regionLocalization);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -113,59 +129,10 @@ public class RegionLocalizationUtil {
 	}
 
 	/**
-	 * Returns all the region localizations where regionId = &#63;.
-	 *
-	 * @param regionId the region ID
-	 * @return the matching region localizations
-	 */
-	public static List<RegionLocalization> findByRegionId(long regionId) {
-		return getPersistence().findByRegionId(regionId);
-	}
-
-	/**
-	 * Returns a range of all the region localizations where regionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegionLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param regionId the region ID
-	 * @param start the lower bound of the range of region localizations
-	 * @param end the upper bound of the range of region localizations (not inclusive)
-	 * @return the range of matching region localizations
-	 */
-	public static List<RegionLocalization> findByRegionId(
-		long regionId, int start, int end) {
-
-		return getPersistence().findByRegionId(regionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the region localizations where regionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegionLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param regionId the region ID
-	 * @param start the lower bound of the range of region localizations
-	 * @param end the upper bound of the range of region localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching region localizations
-	 */
-	public static List<RegionLocalization> findByRegionId(
-		long regionId, int start, int end,
-		OrderByComparator<RegionLocalization> orderByComparator) {
-
-		return getPersistence().findByRegionId(
-			regionId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the region localizations where regionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegionLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.RegionLocalizationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param regionId the region ID
@@ -253,20 +220,6 @@ public class RegionLocalizationUtil {
 	}
 
 	/**
-	 * Returns the region localization where regionId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param regionId the region ID
-	 * @param languageId the language ID
-	 * @return the matching region localization, or <code>null</code> if a matching region localization could not be found
-	 */
-	public static RegionLocalization fetchByRegionId_LanguageId(
-		long regionId, String languageId) {
-
-		return getPersistence().fetchByRegionId_LanguageId(
-			regionId, languageId);
-	}
-
-	/**
 	 * Returns the region localization where regionId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param regionId the region ID
@@ -309,26 +262,6 @@ public class RegionLocalizationUtil {
 
 		return getPersistence().countByRegionId_LanguageId(
 			regionId, languageId);
-	}
-
-	/**
-	 * Caches the region localization in the entity cache if it is enabled.
-	 *
-	 * @param regionLocalization the region localization
-	 */
-	public static void cacheResult(RegionLocalization regionLocalization) {
-		getPersistence().cacheResult(regionLocalization);
-	}
-
-	/**
-	 * Caches the region localizations in the entity cache if it is enabled.
-	 *
-	 * @param regionLocalizations the region localizations
-	 */
-	public static void cacheResult(
-		List<RegionLocalization> regionLocalizations) {
-
-		getPersistence().cacheResult(regionLocalizations);
 	}
 
 	/**
@@ -388,84 +321,66 @@ public class RegionLocalizationUtil {
 	}
 
 	/**
-	 * Returns all the region localizations.
+	 * Returns the region localization where regionId = &#63; and languageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the region localizations
+	 * @param regionId the region ID
+	 * @param languageId the language ID
+	 * @return the matching region localization, or <code>null</code> if a matching region localization could not be found
 	 */
-	public static List<RegionLocalization> findAll() {
-		return getPersistence().findAll();
+	public static RegionLocalization fetchByRegionId_LanguageId(
+		long regionId, String languageId) {
+
+		return getPersistence().fetchByRegionId_LanguageId(
+			regionId, languageId);
 	}
 
 	/**
-	 * Returns a range of all the region localizations.
+	 * Returns all the region localizations where regionId = &#63;.
+	 *
+	 * @param regionId the region ID
+	 * @return the matching region localizations
+	 */
+	public static List<RegionLocalization> findByRegionId(long regionId) {
+		return getPersistence().findByRegionId(regionId);
+	}
+
+	/**
+	 * Returns a range of all the region localizations where regionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegionLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.RegionLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param regionId the region ID
 	 * @param start the lower bound of the range of region localizations
 	 * @param end the upper bound of the range of region localizations (not inclusive)
-	 * @return the range of region localizations
+	 * @return the range of matching region localizations
 	 */
-	public static List<RegionLocalization> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<RegionLocalization> findByRegionId(
+		long regionId, int start, int end) {
+
+		return getPersistence().findByRegionId(regionId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the region localizations.
+	 * Returns an ordered range of all the region localizations where regionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegionLocalizationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.RegionLocalizationModelImpl</code>.
 	 * </p>
 	 *
+	 * @param regionId the region ID
 	 * @param start the lower bound of the range of region localizations
 	 * @param end the upper bound of the range of region localizations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of region localizations
+	 * @return the ordered range of matching region localizations
 	 */
-	public static List<RegionLocalization> findAll(
-		int start, int end,
+	public static List<RegionLocalization> findByRegionId(
+		long regionId, int start, int end,
 		OrderByComparator<RegionLocalization> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the region localizations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegionLocalizationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of region localizations
-	 * @param end the upper bound of the range of region localizations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of region localizations
-	 */
-	public static List<RegionLocalization> findAll(
-		int start, int end,
-		OrderByComparator<RegionLocalization> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the region localizations from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of region localizations.
-	 *
-	 * @return the number of region localizations
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByRegionId(
+			regionId, start, end, orderByComparator);
 	}
 
 	public static RegionLocalizationPersistence getPersistence() {
@@ -481,4 +396,4 @@ public class RegionLocalizationUtil {
 	private static volatile RegionLocalizationPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1826384153
+// LIFERAY-SERVICE-BUILDER-HASH:-124495357

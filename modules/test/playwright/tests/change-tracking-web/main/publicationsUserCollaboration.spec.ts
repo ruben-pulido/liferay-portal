@@ -7,7 +7,6 @@ import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {changeTrackingPagesTest} from '../../../fixtures/changeTrackingPagesTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {productMenuPageTest} from '../../../fixtures/productMenuPageTest';
 import getRandomString from '../../../utils/getRandomString';
@@ -18,9 +17,6 @@ import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest
 export const test = mergeTests(
 	apiHelpersTest,
 	changeTrackingPagesTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	isolatedSiteTest,
 	journalPagesTest,
 	productMenuPageTest
@@ -112,6 +108,47 @@ test('LPD-30098 Invite user as admin', async ({
 
 	await apiHelpers.headlessAdminUser.deleteUserAccount(Number(user1.id));
 	await apiHelpers.headlessAdminUser.deleteUserAccount(Number(user2.id));
+
+	await apiHelpers.headlessChangeTracking.deleteCTCollection(
+		ctCollection.body.id
+	);
+});
+
+test('LPD-89418 Paste email address to automatically add user in Invite Users modal', async ({
+	apiHelpers,
+	changeTrackingPage,
+	ctCollection,
+	page,
+}) => {
+	const user = await changeTrackingPage.addUserWithPublicationsUserRole();
+
+	await changeTrackingPage.workOnPublication(ctCollection);
+
+	await changeTrackingPage.goToReviewChanges(ctCollection.body.name);
+
+	await page.getByLabel('View Collaborators').click();
+
+	const input = page.getByPlaceholder('Enter name or email address.');
+
+	await input.click();
+
+	await input.evaluate((element: HTMLInputElement, emailAddress: string) => {
+		const dt = new DataTransfer();
+
+		dt.setData('text/plain', emailAddress);
+
+		element.dispatchEvent(
+			new ClipboardEvent('paste', {
+				bubbles: true,
+				cancelable: true,
+				clipboardData: dt,
+			})
+		);
+	}, user.emailAddress);
+
+	await expect(page.getByText(user.emailAddress)).toBeVisible();
+
+	await apiHelpers.headlessAdminUser.deleteUserAccount(Number(user.id));
 
 	await apiHelpers.headlessChangeTracking.deleteCTCollection(
 		ctCollection.body.id

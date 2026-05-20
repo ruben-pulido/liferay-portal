@@ -413,7 +413,7 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 					"clientExtensionFilterURL",
 					"/o/" + cetExternalReferenceCode + "/index.js"
 				).put(
-					"entityFieldType", "string"
+					"entityFieldType", FDSEntityFieldTypes.STRING
 				).put(
 					"id", FIELD_NAMES[0]
 				).put(
@@ -570,6 +570,10 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 		_mockSerializeFilters(
 			FDS_NAMES[0],
 			HashMapBuilder.<String, Object>put(
+				"autocompleteEnabled", true
+			).put(
+				"entityFieldType", FDSEntityFieldTypes.STRING
+			).put(
 				"fieldName", FIELD_NAMES[0]
 			).put(
 				"include", true
@@ -609,7 +613,7 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 				).put(
 					"autocompleteEnabled", true
 				).put(
-					"entityFieldType", "string"
+					"entityFieldType", FDSEntityFieldTypes.STRING
 				).put(
 					"id", FIELD_NAMES[0]
 				).put(
@@ -830,6 +834,26 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 				FDS_NAMES[1], httpServletRequest
 			).toString(),
 			JSONCompareMode.STRICT);
+	}
+
+	@Test
+	public void testSerializeShowSearch() throws Exception {
+		_mockSerializeShowSearch(FDS_NAMES[0], false);
+		_mockSerializeShowSearch(FDS_NAMES[1], true);
+
+		Assert.assertNotEquals(
+			_customFDSSerializer.serializeShowSearch(
+				FDS_NAMES[0], httpServletRequest),
+			_customFDSSerializer.serializeShowSearch(
+				FDS_NAMES[1], httpServletRequest));
+		Assert.assertFalse(
+			_customFDSSerializer.serializeShowSearch(
+				FDS_NAMES[0], httpServletRequest));
+		Assert.assertTrue(
+			_customFDSSerializer.serializeShowSearch(
+				FDS_NAMES[1], httpServletRequest));
+
+		_resetFDSSerializer();
 	}
 
 	@Test
@@ -1349,8 +1373,9 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 			});
 
 		Mockito.when(
-			_customFDSSerializer.getSortedRelatedObjectEntries(
-				fdsName, httpServletRequest, null, "tableSectionsOrder",
+			_customFDSSerializer.getRelatedObjectEntries(
+				fdsName, httpServletRequest, null,
+				"dataSetToDataSetCardsSections", "dataSetToDataSetListSections",
 				"dataSetToDataSetTableSections")
 		).thenReturn(
 			objectEntries
@@ -1503,6 +1528,22 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 
 		Mockito.when(
 			_customFDSSerializer.serializePagination(
+				fdsName, httpServletRequest)
+		).thenCallRealMethod();
+	}
+
+	private void _mockSerializeShowSearch(String fdsName, boolean showSearch) {
+		Mockito.when(
+			_customFDSSerializer.getDataSetObjectEntryProperties(
+				fdsName, httpServletRequest)
+		).thenReturn(
+			HashMapBuilder.<String, Object>put(
+				"showSearch", showSearch
+			).build()
+		);
+
+		Mockito.when(
+			_customFDSSerializer.serializeShowSearch(
 				fdsName, httpServletRequest)
 		).thenCallRealMethod();
 	}

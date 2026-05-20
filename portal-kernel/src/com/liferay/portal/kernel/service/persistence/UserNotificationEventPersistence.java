@@ -32,51 +32,10 @@ public interface UserNotificationEventPersistence
 	 */
 
 	/**
-	 * Returns all the user notification events where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUuid(String uuid);
-
-	/**
-	 * Returns a range of all the user notification events where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUuid(
-		String uuid, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUuid(
-		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -134,55 +93,10 @@ public interface UserNotificationEventPersistence
 	public int countByUuid(String uuid);
 
 	/**
-	 * Returns all the user notification events where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUuid_C(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of all the user notification events where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUuid_C(
-		String uuid, long companyId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -245,51 +159,10 @@ public interface UserNotificationEventPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns all the user notification events where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUserId(long userId);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUserId(
-		long userId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByUserId(
-		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -347,51 +220,10 @@ public interface UserNotificationEventPersistence
 	public int countByUserId(long userId);
 
 	/**
-	 * Returns all the user notification events where type = &#63;.
-	 *
-	 * @param type the type
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByType(String type);
-
-	/**
-	 * Returns a range of all the user notification events where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByType(
-		String type, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByType(
-		String type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param type the type
@@ -449,55 +281,10 @@ public interface UserNotificationEventPersistence
 	public int countByType(String type);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT(
-		long userId, int deliveryType);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT(
-		long userId, int deliveryType, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT(
-		long userId, int deliveryType, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -560,55 +347,10 @@ public interface UserNotificationEventPersistence
 	public int countByU_DT(long userId, int deliveryType);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and delivered = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D(
-		long userId, boolean delivered);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and delivered = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D(
-		long userId, boolean delivered, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D(
-		long userId, boolean delivered, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -671,55 +413,10 @@ public interface UserNotificationEventPersistence
 	public int countByU_D(long userId, boolean delivered);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_A(
-		long userId, boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_A(
-		long userId, boolean archived, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_A(
-		long userId, boolean archived, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -782,58 +479,10 @@ public interface UserNotificationEventPersistence
 	public int countByU_A(long userId, boolean archived);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D(
-		long userId, int deliveryType, boolean delivered);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D(
-		long userId, int deliveryType, boolean delivered, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D(
-		long userId, int deliveryType, boolean delivered, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -902,58 +551,10 @@ public interface UserNotificationEventPersistence
 	public int countByU_DT_D(long userId, int deliveryType, boolean delivered);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_A(
-		long userId, int deliveryType, boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_A(
-		long userId, int deliveryType, boolean archived, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_A(
-		long userId, int deliveryType, boolean archived, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1021,60 +622,10 @@ public interface UserNotificationEventPersistence
 	public int countByU_DT_A(long userId, int deliveryType, boolean archived);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_AR(
-		long userId, boolean delivered, boolean actionRequired);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_AR(
-		long userId, boolean delivered, boolean actionRequired, int start,
-		int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_AR(
-		long userId, boolean delivered, boolean actionRequired, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1145,58 +696,10 @@ public interface UserNotificationEventPersistence
 		long userId, boolean delivered, boolean actionRequired);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_A(
-		long userId, boolean delivered, boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_A(
-		long userId, boolean delivered, boolean archived, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_A(
-		long userId, boolean delivered, boolean archived, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1264,60 +767,10 @@ public interface UserNotificationEventPersistence
 	public int countByU_D_A(long userId, boolean delivered, boolean archived);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_AR_A(
-		long userId, boolean actionRequired, boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_AR_A(
-		long userId, boolean actionRequired, boolean archived, int start,
-		int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and actionRequired = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_AR_A(
-		long userId, boolean actionRequired, boolean archived, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1403,7 +856,7 @@ public interface UserNotificationEventPersistence
 	 * Returns a range of all the user notification events where userId = &#63; and type = &#63; and timestamp &ge; &#63; and delivered = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1422,7 +875,7 @@ public interface UserNotificationEventPersistence
 	 * Returns an ordered range of all the user notification events where userId = &#63; and type = &#63; and timestamp &ge; &#63; and delivered = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1444,7 +897,7 @@ public interface UserNotificationEventPersistence
 	 * Returns an ordered range of all the user notification events where userId = &#63; and type = &#63; and timestamp &ge; &#63; and delivered = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1520,63 +973,10 @@ public interface UserNotificationEventPersistence
 		long userId, String type, long timestamp, boolean delivered);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param type the type
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_T_DT_D(
-		long userId, String type, int deliveryType, boolean delivered);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param type the type
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_T_DT_D(
-		long userId, String type, int deliveryType, boolean delivered,
-		int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param type the type
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_T_DT_D(
-		long userId, String type, int deliveryType, boolean delivered,
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1652,64 +1052,10 @@ public interface UserNotificationEventPersistence
 		long userId, String type, int deliveryType, boolean delivered);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_AR(
-		long userId, int deliveryType, boolean delivered,
-		boolean actionRequired);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_AR(
-		long userId, int deliveryType, boolean delivered,
-		boolean actionRequired, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_AR(
-		long userId, int deliveryType, boolean delivered,
-		boolean actionRequired, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1789,63 +1135,10 @@ public interface UserNotificationEventPersistence
 		boolean actionRequired);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_A(
-		long userId, int deliveryType, boolean delivered, boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_A(
-		long userId, int deliveryType, boolean delivered, boolean archived,
-		int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_A(
-		long userId, int deliveryType, boolean delivered, boolean archived,
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -1921,64 +1214,10 @@ public interface UserNotificationEventPersistence
 		long userId, int deliveryType, boolean delivered, boolean archived);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_AR_A(
-		long userId, int deliveryType, boolean actionRequired,
-		boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_AR_A(
-		long userId, int deliveryType, boolean actionRequired, boolean archived,
-		int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and actionRequired = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_AR_A(
-		long userId, int deliveryType, boolean actionRequired, boolean archived,
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2057,64 +1296,10 @@ public interface UserNotificationEventPersistence
 		boolean archived);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_AR_A(
-		long userId, boolean delivered, boolean actionRequired,
-		boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_AR_A(
-		long userId, boolean delivered, boolean actionRequired,
-		boolean archived, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_D_AR_A(
-		long userId, boolean delivered, boolean actionRequired,
-		boolean archived, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2194,67 +1379,10 @@ public interface UserNotificationEventPersistence
 		boolean archived);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param type the type
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_T_DT_D_A(
-		long userId, String type, int deliveryType, boolean delivered,
-		boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param type the type
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_T_DT_D_A(
-		long userId, String type, int deliveryType, boolean delivered,
-		boolean archived, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param type the type
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_T_DT_D_A(
-		long userId, String type, int deliveryType, boolean delivered,
-		boolean archived, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2339,67 +1467,10 @@ public interface UserNotificationEventPersistence
 		boolean archived);
 
 	/**
-	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @return the matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_AR_A(
-		long userId, int deliveryType, boolean delivered,
-		boolean actionRequired, boolean archived);
-
-	/**
-	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_AR_A(
-		long userId, int deliveryType, boolean delivered,
-		boolean actionRequired, boolean archived, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param deliveryType the delivery type
-	 * @param delivered the delivered
-	 * @param actionRequired the action required
-	 * @param archived the archived
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findByU_DT_D_AR_A(
-		long userId, int deliveryType, boolean delivered,
-		boolean actionRequired, boolean archived, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2484,21 +1555,6 @@ public interface UserNotificationEventPersistence
 		boolean actionRequired, boolean archived);
 
 	/**
-	 * Caches the user notification event in the entity cache if it is enabled.
-	 *
-	 * @param userNotificationEvent the user notification event
-	 */
-	public void cacheResult(UserNotificationEvent userNotificationEvent);
-
-	/**
-	 * Caches the user notification events in the entity cache if it is enabled.
-	 *
-	 * @param userNotificationEvents the user notification events
-	 */
-	public void cacheResult(
-		java.util.List<UserNotificationEvent> userNotificationEvents);
-
-	/**
 	 * Creates a new user notification event with the primary key. Does not add the user notification event to the database.
 	 *
 	 * @param userNotificationEventId the primary key for the new user notification event
@@ -2539,72 +1595,1203 @@ public interface UserNotificationEventPersistence
 		long userNotificationEventId);
 
 	/**
-	 * Returns all the user notification events.
+	 * Returns all the user notification events where uuid = &#63;.
 	 *
-	 * @return the user notification events
+	 * @param uuid the uuid
+	 * @return the matching user notification events
 	 */
-	public java.util.List<UserNotificationEvent> findAll();
+	public default java.util.List<UserNotificationEvent> findByUuid(
+		String uuid) {
+
+		return findByUuid(
+			uuid, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
 
 	/**
-	 * Returns a range of all the user notification events.
+	 * Returns a range of all the user notification events where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of user notification events
 	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @return the range of user notification events
+	 * @return the range of matching user notification events
 	 */
-	public java.util.List<UserNotificationEvent> findAll(int start, int end);
+	public default java.util.List<UserNotificationEvent> findByUuid(
+		String uuid, int start, int end) {
+
+		return findByUuid(uuid, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the user notification events.
+	 * Returns an ordered range of all the user notification events where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of user notification events
-	 * @param end the upper bound of the range of user notification events (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of user notification events
-	 */
-	public java.util.List<UserNotificationEvent> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the user notification events.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UserNotificationEventModelImpl</code>.
-	 * </p>
-	 *
+	 * @param uuid the uuid
 	 * @param start the lower bound of the range of user notification events
 	 * @param end the upper bound of the range of user notification events (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of user notification events
+	 * @return the ordered range of matching user notification events
 	 */
-	public java.util.List<UserNotificationEvent> findAll(
+	public default java.util.List<UserNotificationEvent> findByUuid(
+		String uuid, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByUuid(uuid, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
+		return findByUuid_C(uuid, companyId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByUserId(
+		long userId) {
+
+		return findByUserId(
+			userId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByUserId(
+		long userId, int start, int end) {
+
+		return findByUserId(userId, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByUserId(
+		long userId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByUserId(userId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where type = &#63;.
+	 *
+	 * @param type the type
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByType(
+		String type) {
+
+		return findByType(
+			type, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByType(
+		String type, int start, int end) {
+
+		return findByType(type, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where type = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param type the type
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByType(
+		String type, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByType(type, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT(
+		long userId, int deliveryType) {
+
+		return findByU_DT(
+			userId, deliveryType,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT(
+		long userId, int deliveryType, int start, int end) {
+
+		return findByU_DT(userId, deliveryType, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT(
+		long userId, int deliveryType, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_DT(
+			userId, deliveryType, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and delivered = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D(
+		long userId, boolean delivered) {
+
+		return findByU_D(
+			userId, delivered,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and delivered = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D(
+		long userId, boolean delivered, int start, int end) {
+
+		return findByU_D(userId, delivered, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D(
+		long userId, boolean delivered, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_D(
+			userId, delivered, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_A(
+		long userId, boolean archived) {
+
+		return findByU_A(
+			userId, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_A(
+		long userId, boolean archived, int start, int end) {
+
+		return findByU_A(userId, archived, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_A(
+		long userId, boolean archived, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_A(userId, archived, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D(
+		long userId, int deliveryType, boolean delivered) {
+
+		return findByU_DT_D(
+			userId, deliveryType, delivered,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D(
+		long userId, int deliveryType, boolean delivered, int start, int end) {
+
+		return findByU_DT_D(
+			userId, deliveryType, delivered, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D(
+		long userId, int deliveryType, boolean delivered, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_DT_D(
+			userId, deliveryType, delivered, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_A(
+		long userId, int deliveryType, boolean archived) {
+
+		return findByU_DT_A(
+			userId, deliveryType, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_A(
+		long userId, int deliveryType, boolean archived, int start, int end) {
+
+		return findByU_DT_A(
+			userId, deliveryType, archived, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_A(
+		long userId, int deliveryType, boolean archived, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_DT_A(
+			userId, deliveryType, archived, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_AR(
+		long userId, boolean delivered, boolean actionRequired) {
+
+		return findByU_D_AR(
+			userId, delivered, actionRequired,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_AR(
+		long userId, boolean delivered, boolean actionRequired, int start,
+		int end) {
+
+		return findByU_D_AR(
+			userId, delivered, actionRequired, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_AR(
+		long userId, boolean delivered, boolean actionRequired, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_D_AR(
+			userId, delivered, actionRequired, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_A(
+		long userId, boolean delivered, boolean archived) {
+
+		return findByU_D_A(
+			userId, delivered, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_A(
+		long userId, boolean delivered, boolean archived, int start, int end) {
+
+		return findByU_D_A(userId, delivered, archived, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_A(
+		long userId, boolean delivered, boolean archived, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_D_A(
+			userId, delivered, archived, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_AR_A(
+		long userId, boolean actionRequired, boolean archived) {
+
+		return findByU_AR_A(
+			userId, actionRequired, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_AR_A(
+		long userId, boolean actionRequired, boolean archived, int start,
+		int end) {
+
+		return findByU_AR_A(
+			userId, actionRequired, archived, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_AR_A(
+		long userId, boolean actionRequired, boolean archived, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_AR_A(
+			userId, actionRequired, archived, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param type the type
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_T_DT_D(
+		long userId, String type, int deliveryType, boolean delivered) {
+
+		return findByU_T_DT_D(
+			userId, type, deliveryType, delivered,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param type the type
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_T_DT_D(
+		long userId, String type, int deliveryType, boolean delivered,
+		int start, int end) {
+
+		return findByU_T_DT_D(
+			userId, type, deliveryType, delivered, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param type the type
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_T_DT_D(
+		long userId, String type, int deliveryType, boolean delivered,
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
-			orderByComparator,
-		boolean useFinderCache);
+			orderByComparator) {
+
+		return findByU_T_DT_D(
+			userId, type, deliveryType, delivered, start, end,
+			orderByComparator, true);
+	}
 
 	/**
-	 * Removes all the user notification events from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of user notification events.
+	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63;.
 	 *
-	 * @return the number of user notification events
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @return the matching user notification events
 	 */
-	public int countAll();
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_AR(
+		long userId, int deliveryType, boolean delivered,
+		boolean actionRequired) {
+
+		return findByU_DT_D_AR(
+			userId, deliveryType, delivered, actionRequired,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_AR(
+		long userId, int deliveryType, boolean delivered,
+		boolean actionRequired, int start, int end) {
+
+		return findByU_DT_D_AR(
+			userId, deliveryType, delivered, actionRequired, start, end, null,
+			true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_AR(
+		long userId, int deliveryType, boolean delivered,
+		boolean actionRequired, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_DT_D_AR(
+			userId, deliveryType, delivered, actionRequired, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_A(
+		long userId, int deliveryType, boolean delivered, boolean archived) {
+
+		return findByU_DT_D_A(
+			userId, deliveryType, delivered, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_A(
+		long userId, int deliveryType, boolean delivered, boolean archived,
+		int start, int end) {
+
+		return findByU_DT_D_A(
+			userId, deliveryType, delivered, archived, start, end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_A(
+		long userId, int deliveryType, boolean delivered, boolean archived,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_DT_D_A(
+			userId, deliveryType, delivered, archived, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_AR_A(
+		long userId, int deliveryType, boolean actionRequired,
+		boolean archived) {
+
+		return findByU_DT_AR_A(
+			userId, deliveryType, actionRequired, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_AR_A(
+		long userId, int deliveryType, boolean actionRequired, boolean archived,
+		int start, int end) {
+
+		return findByU_DT_AR_A(
+			userId, deliveryType, actionRequired, archived, start, end, null,
+			true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_AR_A(
+		long userId, int deliveryType, boolean actionRequired, boolean archived,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_DT_AR_A(
+			userId, deliveryType, actionRequired, archived, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_AR_A(
+		long userId, boolean delivered, boolean actionRequired,
+		boolean archived) {
+
+		return findByU_D_AR_A(
+			userId, delivered, actionRequired, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_AR_A(
+		long userId, boolean delivered, boolean actionRequired,
+		boolean archived, int start, int end) {
+
+		return findByU_D_AR_A(
+			userId, delivered, actionRequired, archived, start, end, null,
+			true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_D_AR_A(
+		long userId, boolean delivered, boolean actionRequired,
+		boolean archived, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_D_AR_A(
+			userId, delivered, actionRequired, archived, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param type the type
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_T_DT_D_A(
+		long userId, String type, int deliveryType, boolean delivered,
+		boolean archived) {
+
+		return findByU_T_DT_D_A(
+			userId, type, deliveryType, delivered, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param type the type
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_T_DT_D_A(
+		long userId, String type, int deliveryType, boolean delivered,
+		boolean archived, int start, int end) {
+
+		return findByU_T_DT_D_A(
+			userId, type, deliveryType, delivered, archived, start, end, null,
+			true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and type = &#63; and deliveryType = &#63; and delivered = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param type the type
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_T_DT_D_A(
+		long userId, String type, int deliveryType, boolean delivered,
+		boolean archived, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_T_DT_D_A(
+			userId, type, deliveryType, delivered, archived, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @return the matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_AR_A(
+		long userId, int deliveryType, boolean delivered,
+		boolean actionRequired, boolean archived) {
+
+		return findByU_DT_D_AR_A(
+			userId, deliveryType, delivered, actionRequired, archived,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @return the range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_AR_A(
+		long userId, int deliveryType, boolean delivered,
+		boolean actionRequired, boolean archived, int start, int end) {
+
+		return findByU_DT_D_AR_A(
+			userId, deliveryType, delivered, actionRequired, archived, start,
+			end, null, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the user notification events where userId = &#63; and deliveryType = &#63; and delivered = &#63; and actionRequired = &#63; and archived = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.UserNotificationEventModelImpl</code>.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param deliveryType the delivery type
+	 * @param delivered the delivered
+	 * @param actionRequired the action required
+	 * @param archived the archived
+	 * @param start the lower bound of the range of user notification events
+	 * @param end the upper bound of the range of user notification events (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching user notification events
+	 */
+	public default java.util.List<UserNotificationEvent> findByU_DT_D_AR_A(
+		long userId, int deliveryType, boolean delivered,
+		boolean actionRequired, boolean archived, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<UserNotificationEvent>
+			orderByComparator) {
+
+		return findByU_DT_D_AR_A(
+			userId, deliveryType, delivered, actionRequired, archived, start,
+			end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-83299089
+// LIFERAY-SERVICE-BUILDER-HASH:-305845281

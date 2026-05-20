@@ -192,59 +192,77 @@ public class CommerceTierCommercePriceEntryDisplayContext
 		return contextTitle;
 	}
 
-	public String getDiscountLevel1() throws PortalException {
+	public String getDiscountLevel1(CommerceCurrency commerceCurrency)
+		throws PortalException {
+
 		CommerceTierPriceEntry commerceTierPriceEntry =
 			getCommerceTierPriceEntry();
 
-		if (commerceTierPriceEntry == null) {
+		if ((commerceTierPriceEntry == null) ||
+			(commerceTierPriceEntry.getDiscountLevel1() == null)) {
+
 			return StringPool.BLANK;
 		}
 
 		return _commercePriceFormatter.format(
-			commerceTierPriceEntry.getDiscountLevel1(),
-			cpRequestHelper.getLocale());
+			commerceCurrency, false, cpRequestHelper.getLocale(),
+			commerceTierPriceEntry.getDiscountLevel1());
 	}
 
-	public String getDiscountLevel2() throws PortalException {
+	public String getDiscountLevel2(CommerceCurrency commerceCurrency)
+		throws PortalException {
+
 		CommerceTierPriceEntry commerceTierPriceEntry =
 			getCommerceTierPriceEntry();
 
-		if (commerceTierPriceEntry == null) {
+		if ((commerceTierPriceEntry == null) ||
+			(commerceTierPriceEntry.getDiscountLevel2() == null)) {
+
 			return StringPool.BLANK;
 		}
 
 		return _commercePriceFormatter.format(
-			commerceTierPriceEntry.getDiscountLevel2(),
-			cpRequestHelper.getLocale());
+			commerceCurrency, false, cpRequestHelper.getLocale(),
+			commerceTierPriceEntry.getDiscountLevel2());
 	}
 
-	public String getDiscountLevel3() throws PortalException {
+	public String getDiscountLevel3(CommerceCurrency commerceCurrency)
+		throws PortalException {
+
 		CommerceTierPriceEntry commerceTierPriceEntry =
 			getCommerceTierPriceEntry();
 
-		if (commerceTierPriceEntry == null) {
+		if ((commerceTierPriceEntry == null) ||
+			(commerceTierPriceEntry.getDiscountLevel3() == null)) {
+
 			return StringPool.BLANK;
 		}
 
 		return _commercePriceFormatter.format(
-			commerceTierPriceEntry.getDiscountLevel3(),
-			cpRequestHelper.getLocale());
+			commerceCurrency, false, cpRequestHelper.getLocale(),
+			commerceTierPriceEntry.getDiscountLevel3());
 	}
 
-	public String getDiscountLevel4() throws PortalException {
+	public String getDiscountLevel4(CommerceCurrency commerceCurrency)
+		throws PortalException {
+
 		CommerceTierPriceEntry commerceTierPriceEntry =
 			getCommerceTierPriceEntry();
 
-		if (commerceTierPriceEntry == null) {
+		if ((commerceTierPriceEntry == null) ||
+			(commerceTierPriceEntry.getDiscountLevel4() == null)) {
+
 			return StringPool.BLANK;
 		}
 
 		return _commercePriceFormatter.format(
-			commerceTierPriceEntry.getDiscountLevel4(),
-			cpRequestHelper.getLocale());
+			commerceCurrency, false, cpRequestHelper.getLocale(),
+			commerceTierPriceEntry.getDiscountLevel4());
 	}
 
-	public String getPrice() throws PortalException {
+	public String getPrice(CommerceCurrency commerceCurrency)
+		throws PortalException {
+
 		CommerceTierPriceEntry commerceTierPriceEntry =
 			getCommerceTierPriceEntry();
 
@@ -253,7 +271,8 @@ public class CommerceTierCommercePriceEntryDisplayContext
 		}
 
 		return _commercePriceFormatter.format(
-			commerceTierPriceEntry.getPrice(), cpRequestHelper.getLocale());
+			commerceCurrency, false, cpRequestHelper.getLocale(),
+			commerceTierPriceEntry.getPrice());
 	}
 
 	public boolean hasCustomAttributes() throws Exception {

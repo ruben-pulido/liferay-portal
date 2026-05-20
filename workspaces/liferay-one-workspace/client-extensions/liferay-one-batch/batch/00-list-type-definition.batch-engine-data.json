@@ -1,0 +1,276 @@
+{
+	"configuration": {
+		"className": "com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"taskItemDelegateName": "DEFAULT",
+			"updateStrategy": "UPDATE"
+		}
+	},
+	"items": [
+		{
+			"externalReferenceCode": "LT_ACCOUNT_REGION",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ACCOUNT_REGION_AMERICAS",
+					"key": "americas",
+					"name": "Americas"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_REGION_EMEA",
+					"key": "eMEA",
+					"name": "EMEA"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_REGION_APAC",
+					"key": "aPAC",
+					"name": "APAC"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_REGION_LATAM",
+					"key": "lATAM",
+					"name": "LATAM"
+				}
+			],
+			"name": "Account Region"
+		},
+		{
+			"externalReferenceCode": "LT_ACCOUNT_TIER",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ACCOUNT_TIER_PLATINUM",
+					"key": "platinum",
+					"name": "Platinum"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_TIER_GOLD",
+					"key": "gold",
+					"name": "Gold"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_TIER_SILVER",
+					"key": "silver",
+					"name": "Silver"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_TIER_BRONZE",
+					"key": "bronze",
+					"name": "Bronze"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_TIER_TRIAL",
+					"key": "trial",
+					"name": "Trial"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_TIER_COMMUNITY",
+					"key": "community",
+					"name": "Community"
+				}
+			],
+			"name": "Account Tier"
+		},
+		{
+			"externalReferenceCode": "LT_ACCOUNT_STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ACCOUNT_STATUS_ACTIVE",
+					"key": "active",
+					"name": "Active"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_STATUS_SUSPENDED",
+					"key": "suspended",
+					"name": "Suspended"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_STATUS_CANCELLED",
+					"key": "cancelled",
+					"name": "Cancelled"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_STATUS_EXPIRED",
+					"key": "expired",
+					"name": "Expired"
+				}
+			],
+			"name": "Account Status"
+		},
+		{
+			"externalReferenceCode": "LT_ACCOUNT_FLAG_CODE",
+			"listTypeEntries": [
+			],
+			"name": "Account Flag Code"
+		},
+		{
+			"externalReferenceCode": "LT_ACCOUNT_FLAG_VALUE",
+			"listTypeEntries": [
+			],
+			"name": "Account Flag Value"
+		},
+		{
+			"externalReferenceCode": "LT_ACCOUNT_NOTE_TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ACCOUNT_NOTE_TYPE_GENERAL",
+					"key": "general",
+					"name": "General"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_NOTE_TYPE_SALES",
+					"key": "sales",
+					"name": "Sales"
+				}
+			],
+			"name": "Account Note Type"
+		},
+		{
+			"externalReferenceCode": "LT_ACCOUNT_NOTE_PRIORITY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ACCOUNT_NOTE_PRIORITY_NORMAL",
+					"key": "normal",
+					"name": "Normal"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_NOTE_PRIORITY_PINNED",
+					"key": "pinned",
+					"name": "Pinned"
+				}
+			],
+			"name": "Account Note Priority"
+		},
+		{
+			"externalReferenceCode": "LT_ACCOUNT_NOTE_STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ACCOUNT_NOTE_STATUS_APPROVED",
+					"key": "approved",
+					"name": "Approved"
+				},
+				{
+					"externalReferenceCode": "LT_ACCOUNT_NOTE_STATUS_ARCHIVED",
+					"key": "archived",
+					"name": "Archived"
+				}
+			],
+			"name": "Account Note Status"
+		},
+		{
+			"externalReferenceCode": "LT_ENTITLEMENT_RULE_TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ENTITLEMENT_DEFINITION_RULE_TYPE_FILTER",
+					"key": "filter",
+					"name": "Filter"
+				},
+				{
+					"externalReferenceCode": "LT_ENTITLEMENT_DEFINITION_RULE_TYPE_SCRIPTED",
+					"key": "scripted",
+					"name": "Scripted"
+				}
+			],
+			"name": "Entitlement Rule Type"
+		},
+		{
+			"externalReferenceCode": "LT_ENTITLEMENT_STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ENTITLEMENT_DEFINITION_STATUS_ACTIVE",
+					"key": "active",
+					"name": "Active"
+				},
+				{
+					"externalReferenceCode": "LT_ENTITLEMENT_DEFINITION_STATUS_INACTIVE",
+					"key": "inactive",
+					"name": "Inactive"
+				}
+			],
+			"name": "Entitlement Status"
+		},
+		{
+			"externalReferenceCode": "LT_PRODUCT_FAMILY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_DXP",
+					"key": "dXP",
+					"name": "DXP"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_PORTAL",
+					"key": "portal",
+					"name": "Portal"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_ANALYTICS",
+					"key": "analytics",
+					"name": "Analytics"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_COMMERCE",
+					"key": "commerce",
+					"name": "Commerce"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_AI_HUB",
+					"key": "aIHub",
+					"name": "AIHub"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_CMP",
+					"key": "cMP",
+					"name": "CMP"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_PARTNER",
+					"key": "partner",
+					"name": "Partner"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_SUPPORT",
+					"key": "support",
+					"name": "Support"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_TRAINING",
+					"key": "training",
+					"name": "Training"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_ENTERPRISE_SEARCH",
+					"key": "enterpriseSearch",
+					"name": "Enterprise Search"
+				},
+				{
+					"externalReferenceCode": "LT_PRODUCT_FAMILY_OTHER",
+					"key": "other",
+					"name": "Other"
+				}
+			],
+			"name": "Product Family"
+		},
+		{
+			"externalReferenceCode": "LT_ENVIRONMENT_TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "LT_ENVIRONMENT_TYPE_PRODUCTION",
+					"key": "production",
+					"name": "Production"
+				},
+				{
+					"externalReferenceCode": "LT_ENVIRONMENT_TYPE_NON_PRODUCTION",
+					"key": "nonProduction",
+					"name": "Non-Production"
+				},
+				{
+					"externalReferenceCode": "LT_ENVIRONMENT_TYPE_BACKUP",
+					"key": "backup",
+					"name": "Backup"
+				}
+			],
+			"name": "Environment Type"
+		}
+	]
+}

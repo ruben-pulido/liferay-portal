@@ -40,14 +40,6 @@ public interface CompanyPersistence extends BasePersistence<Company> {
 	public Company findByWebId(String webId) throws NoSuchCompanyException;
 
 	/**
-	 * Returns the company where webId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param webId the web ID
-	 * @return the matching company, or <code>null</code> if a matching company could not be found
-	 */
-	public Company fetchByWebId(String webId);
-
-	/**
 	 * Returns the company where webId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param webId the web ID
@@ -73,51 +65,10 @@ public interface CompanyPersistence extends BasePersistence<Company> {
 	public int countByWebId(String webId);
 
 	/**
-	 * Returns all the companies where logoId = &#63;.
-	 *
-	 * @param logoId the logo ID
-	 * @return the matching companies
-	 */
-	public java.util.List<Company> findByLogoId(long logoId);
-
-	/**
-	 * Returns a range of all the companies where logoId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CompanyModelImpl</code>.
-	 * </p>
-	 *
-	 * @param logoId the logo ID
-	 * @param start the lower bound of the range of companies
-	 * @param end the upper bound of the range of companies (not inclusive)
-	 * @return the range of matching companies
-	 */
-	public java.util.List<Company> findByLogoId(
-		long logoId, int start, int end);
-
-	/**
 	 * Returns an ordered range of all the companies where logoId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CompanyModelImpl</code>.
-	 * </p>
-	 *
-	 * @param logoId the logo ID
-	 * @param start the lower bound of the range of companies
-	 * @param end the upper bound of the range of companies (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching companies
-	 */
-	public java.util.List<Company> findByLogoId(
-		long logoId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Company>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the companies where logoId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CompanyModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CompanyModelImpl</code>.
 	 * </p>
 	 *
 	 * @param logoId the logo ID
@@ -175,20 +126,6 @@ public interface CompanyPersistence extends BasePersistence<Company> {
 	public int countByLogoId(long logoId);
 
 	/**
-	 * Caches the company in the entity cache if it is enabled.
-	 *
-	 * @param company the company
-	 */
-	public void cacheResult(Company company);
-
-	/**
-	 * Caches the companies in the entity cache if it is enabled.
-	 *
-	 * @param companies the companies
-	 */
-	public void cacheResult(java.util.List<Company> companies);
-
-	/**
 	 * Creates a new company with the primary key. Does not add the company to the database.
 	 *
 	 * @param companyId the primary key for the new company
@@ -226,72 +163,65 @@ public interface CompanyPersistence extends BasePersistence<Company> {
 	public Company fetchByPrimaryKey(long companyId);
 
 	/**
-	 * Returns all the companies.
+	 * Returns the company where webId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the companies
+	 * @param webId the web ID
+	 * @return the matching company, or <code>null</code> if a matching company could not be found
 	 */
-	public java.util.List<Company> findAll();
+	public default Company fetchByWebId(String webId) {
+		return fetchByWebId(webId, true);
+	}
 
 	/**
-	 * Returns a range of all the companies.
+	 * Returns all the companies where logoId = &#63;.
+	 *
+	 * @param logoId the logo ID
+	 * @return the matching companies
+	 */
+	public default java.util.List<Company> findByLogoId(long logoId) {
+		return findByLogoId(
+			logoId, com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS,
+			com.liferay.portal.kernel.dao.orm.QueryUtil.ALL_POS, null, true);
+	}
+
+	/**
+	 * Returns a range of all the companies where logoId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CompanyModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CompanyModelImpl</code>.
 	 * </p>
 	 *
+	 * @param logoId the logo ID
 	 * @param start the lower bound of the range of companies
 	 * @param end the upper bound of the range of companies (not inclusive)
-	 * @return the range of companies
+	 * @return the range of matching companies
 	 */
-	public java.util.List<Company> findAll(int start, int end);
+	public default java.util.List<Company> findByLogoId(
+		long logoId, int start, int end) {
+
+		return findByLogoId(logoId, start, end, null, true);
+	}
 
 	/**
-	 * Returns an ordered range of all the companies.
+	 * Returns an ordered range of all the companies where logoId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CompanyModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.CompanyModelImpl</code>.
 	 * </p>
 	 *
+	 * @param logoId the logo ID
 	 * @param start the lower bound of the range of companies
 	 * @param end the upper bound of the range of companies (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of companies
+	 * @return the ordered range of matching companies
 	 */
-	public java.util.List<Company> findAll(
-		int start, int end,
+	public default java.util.List<Company> findByLogoId(
+		long logoId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Company>
-			orderByComparator);
+			orderByComparator) {
 
-	/**
-	 * Returns an ordered range of all the companies.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CompanyModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of companies
-	 * @param end the upper bound of the range of companies (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of companies
-	 */
-	public java.util.List<Company> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Company>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the companies from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of companies.
-	 *
-	 * @return the number of companies
-	 */
-	public int countAll();
+		return findByLogoId(logoId, start, end, orderByComparator, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1552376487
+// LIFERAY-SERVICE-BUILDER-HASH:-1744450588

@@ -132,8 +132,9 @@ const OnboardingPages: React.FC = () => {
 				type: actionTypes.CHANGE_STEP as keyof typeof actionTypes,
 			});
 		}
-
-		pageHandle();
+		else {
+			pageHandle();
+		}
 	};
 
 	let availableSupportSeatsCount =

@@ -36,6 +36,20 @@ public class ReleaseUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<Release> releases) {
+		getPersistence().cacheResult(releases);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(Release release) {
+		getPersistence().cacheResult(release);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -124,16 +138,6 @@ public class ReleaseUtil {
 	}
 
 	/**
-	 * Returns the release where servletContextName = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param servletContextName the servlet context name
-	 * @return the matching release, or <code>null</code> if a matching release could not be found
-	 */
-	public static Release fetchByServletContextName(String servletContextName) {
-		return getPersistence().fetchByServletContextName(servletContextName);
-	}
-
-	/**
 	 * Returns the release where servletContextName = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param servletContextName the servlet context name
@@ -167,24 +171,6 @@ public class ReleaseUtil {
 	 */
 	public static int countByServletContextName(String servletContextName) {
 		return getPersistence().countByServletContextName(servletContextName);
-	}
-
-	/**
-	 * Caches the release in the entity cache if it is enabled.
-	 *
-	 * @param release the release
-	 */
-	public static void cacheResult(Release release) {
-		getPersistence().cacheResult(release);
-	}
-
-	/**
-	 * Caches the releases in the entity cache if it is enabled.
-	 *
-	 * @param releases the releases
-	 */
-	public static void cacheResult(List<Release> releases) {
-		getPersistence().cacheResult(releases);
 	}
 
 	/**
@@ -238,82 +224,13 @@ public class ReleaseUtil {
 	}
 
 	/**
-	 * Returns all the releases.
+	 * Returns the release where servletContextName = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the releases
+	 * @param servletContextName the servlet context name
+	 * @return the matching release, or <code>null</code> if a matching release could not be found
 	 */
-	public static List<Release> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the releases.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ReleaseModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of releases
-	 * @param end the upper bound of the range of releases (not inclusive)
-	 * @return the range of releases
-	 */
-	public static List<Release> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the releases.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ReleaseModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of releases
-	 * @param end the upper bound of the range of releases (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of releases
-	 */
-	public static List<Release> findAll(
-		int start, int end, OrderByComparator<Release> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the releases.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ReleaseModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of releases
-	 * @param end the upper bound of the range of releases (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of releases
-	 */
-	public static List<Release> findAll(
-		int start, int end, OrderByComparator<Release> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the releases from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of releases.
-	 *
-	 * @return the number of releases
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+	public static Release fetchByServletContextName(String servletContextName) {
+		return getPersistence().fetchByServletContextName(servletContextName);
 	}
 
 	public static ReleasePersistence getPersistence() {
@@ -327,4 +244,4 @@ public class ReleaseUtil {
 	private static volatile ReleasePersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1251732267
+// LIFERAY-SERVICE-BUILDER-HASH:658222087

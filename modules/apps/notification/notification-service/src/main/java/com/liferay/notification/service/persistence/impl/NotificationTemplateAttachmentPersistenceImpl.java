@@ -13,24 +13,20 @@ import com.liferay.notification.model.impl.NotificationTemplateAttachmentModelIm
 import com.liferay.notification.service.persistence.NotificationTemplateAttachmentPersistence;
 import com.liferay.notification.service.persistence.NotificationTemplateAttachmentUtil;
 import com.liferay.notification.service.persistence.impl.constants.NotificationPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 
@@ -62,7 +58,9 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = NotificationTemplateAttachmentPersistence.class)
 public class NotificationTemplateAttachmentPersistenceImpl
-	extends BasePersistenceImpl<NotificationTemplateAttachment>
+	extends BasePersistenceImpl
+		<NotificationTemplateAttachment,
+		 NoSuchNotificationTemplateAttachmentException>
 	implements NotificationTemplateAttachmentPersistence {
 
 	/*
@@ -79,74 +77,14 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByNotificationTemplateId;
-	private FinderPath _finderPathWithoutPaginationFindByNotificationTemplateId;
-	private FinderPath _finderPathCountByNotificationTemplateId;
-
-	/**
-	 * Returns all the notification template attachments where notificationTemplateId = &#63;.
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @return the matching notification template attachments
-	 */
-	@Override
-	public List<NotificationTemplateAttachment> findByNotificationTemplateId(
-		long notificationTemplateId) {
-
-		return findByNotificationTemplateId(
-			notificationTemplateId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the notification template attachments where notificationTemplateId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationTemplateAttachmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @param start the lower bound of the range of notification template attachments
-	 * @param end the upper bound of the range of notification template attachments (not inclusive)
-	 * @return the range of matching notification template attachments
-	 */
-	@Override
-	public List<NotificationTemplateAttachment> findByNotificationTemplateId(
-		long notificationTemplateId, int start, int end) {
-
-		return findByNotificationTemplateId(
-			notificationTemplateId, start, end, null);
-	}
+	private CollectionPersistenceFinder<NotificationTemplateAttachment>
+		_collectionPersistenceFinderByNotificationTemplateId;
 
 	/**
 	 * Returns an ordered range of all the notification template attachments where notificationTemplateId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationTemplateAttachmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @param start the lower bound of the range of notification template attachments
-	 * @param end the upper bound of the range of notification template attachments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching notification template attachments
-	 */
-	@Override
-	public List<NotificationTemplateAttachment> findByNotificationTemplateId(
-		long notificationTemplateId, int start, int end,
-		OrderByComparator<NotificationTemplateAttachment> orderByComparator) {
-
-		return findByNotificationTemplateId(
-			notificationTemplateId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the notification template attachments where notificationTemplateId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationTemplateAttachmentModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationTemplateAttachmentModelImpl</code>.
 	 * </p>
 	 *
 	 * @param notificationTemplateId the notification template ID
@@ -162,103 +100,9 @@ public class NotificationTemplateAttachmentPersistenceImpl
 		OrderByComparator<NotificationTemplateAttachment> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByNotificationTemplateId;
-				finderArgs = new Object[] {notificationTemplateId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByNotificationTemplateId;
-			finderArgs = new Object[] {
-				notificationTemplateId, start, end, orderByComparator
-			};
-		}
-
-		List<NotificationTemplateAttachment> list = null;
-
-		if (useFinderCache) {
-			list = (List<NotificationTemplateAttachment>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (NotificationTemplateAttachment
-						notificationTemplateAttachment : list) {
-
-					if (notificationTemplateId !=
-							notificationTemplateAttachment.
-								getNotificationTemplateId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE);
-
-			sb.append(
-				_FINDER_COLUMN_NOTIFICATIONTEMPLATEID_NOTIFICATIONTEMPLATEID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(
-					NotificationTemplateAttachmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(notificationTemplateId);
-
-				list = (List<NotificationTemplateAttachment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByNotificationTemplateId.find(
+			finderCache, new Object[] {notificationTemplateId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -283,16 +127,11 @@ public class NotificationTemplateAttachmentPersistenceImpl
 			return notificationTemplateAttachment;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("notificationTemplateId=");
-		sb.append(notificationTemplateId);
-
-		sb.append("}");
-
-		throw new NoSuchNotificationTemplateAttachmentException(sb.toString());
+		throw new NoSuchNotificationTemplateAttachmentException(
+			_collectionPersistenceFinderByNotificationTemplateId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {notificationTemplateId}));
 	}
 
 	/**
@@ -307,15 +146,9 @@ public class NotificationTemplateAttachmentPersistenceImpl
 		long notificationTemplateId,
 		OrderByComparator<NotificationTemplateAttachment> orderByComparator) {
 
-		List<NotificationTemplateAttachment> list =
-			findByNotificationTemplateId(
-				notificationTemplateId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByNotificationTemplateId.fetchFirst(
+			finderCache, new Object[] {notificationTemplateId},
+			orderByComparator);
 	}
 
 	/**
@@ -325,13 +158,8 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	 */
 	@Override
 	public void removeByNotificationTemplateId(long notificationTemplateId) {
-		for (NotificationTemplateAttachment notificationTemplateAttachment :
-				findByNotificationTemplateId(
-					notificationTemplateId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(notificationTemplateAttachment);
-		}
+		_collectionPersistenceFinderByNotificationTemplateId.remove(
+			finderCache, new Object[] {notificationTemplateId});
 	}
 
 	/**
@@ -342,53 +170,12 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	 */
 	@Override
 	public int countByNotificationTemplateId(long notificationTemplateId) {
-		FinderPath finderPath = _finderPathCountByNotificationTemplateId;
-
-		Object[] finderArgs = new Object[] {notificationTemplateId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE);
-
-			sb.append(
-				_FINDER_COLUMN_NOTIFICATIONTEMPLATEID_NOTIFICATIONTEMPLATEID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(notificationTemplateId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByNotificationTemplateId.count(
+			finderCache, new Object[] {notificationTemplateId});
 	}
 
-	private static final String
-		_FINDER_COLUMN_NOTIFICATIONTEMPLATEID_NOTIFICATIONTEMPLATEID_2 =
-			"notificationTemplateAttachment.notificationTemplateId = ?";
-
-	private FinderPath _finderPathFetchByNTI_OFI;
+	private UniquePersistenceFinder<NotificationTemplateAttachment>
+		_uniquePersistenceFinderByNTI_OFI;
 
 	/**
 	 * Returns the notification template attachment where notificationTemplateId = &#63; and objectFieldId = &#63; or throws a <code>NoSuchNotificationTemplateAttachmentException</code> if it could not be found.
@@ -407,41 +194,19 @@ public class NotificationTemplateAttachmentPersistenceImpl
 			fetchByNTI_OFI(notificationTemplateId, objectFieldId);
 
 		if (notificationTemplateAttachment == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("notificationTemplateId=");
-			sb.append(notificationTemplateId);
-
-			sb.append(", objectFieldId=");
-			sb.append(objectFieldId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByNTI_OFI.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {notificationTemplateId, objectFieldId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchNotificationTemplateAttachmentException(
-				sb.toString());
+			throw new NoSuchNotificationTemplateAttachmentException(message);
 		}
 
 		return notificationTemplateAttachment;
-	}
-
-	/**
-	 * Returns the notification template attachment where notificationTemplateId = &#63; and objectFieldId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param notificationTemplateId the notification template ID
-	 * @param objectFieldId the object field ID
-	 * @return the matching notification template attachment, or <code>null</code> if a matching notification template attachment could not be found
-	 */
-	@Override
-	public NotificationTemplateAttachment fetchByNTI_OFI(
-		long notificationTemplateId, long objectFieldId) {
-
-		return fetchByNTI_OFI(notificationTemplateId, objectFieldId, true);
 	}
 
 	/**
@@ -457,88 +222,9 @@ public class NotificationTemplateAttachmentPersistenceImpl
 		long notificationTemplateId, long objectFieldId,
 		boolean useFinderCache) {
 
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {notificationTemplateId, objectFieldId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByNTI_OFI, finderArgs, this);
-		}
-
-		if (result instanceof NotificationTemplateAttachment) {
-			NotificationTemplateAttachment notificationTemplateAttachment =
-				(NotificationTemplateAttachment)result;
-
-			if ((notificationTemplateId !=
-					notificationTemplateAttachment.
-						getNotificationTemplateId()) ||
-				(objectFieldId !=
-					notificationTemplateAttachment.getObjectFieldId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE);
-
-			sb.append(_FINDER_COLUMN_NTI_OFI_NOTIFICATIONTEMPLATEID_2);
-
-			sb.append(_FINDER_COLUMN_NTI_OFI_OBJECTFIELDID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(notificationTemplateId);
-
-				queryPos.add(objectFieldId);
-
-				List<NotificationTemplateAttachment> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByNTI_OFI, finderArgs, list);
-					}
-				}
-				else {
-					NotificationTemplateAttachment
-						notificationTemplateAttachment = list.get(0);
-
-					result = notificationTemplateAttachment;
-
-					cacheResult(notificationTemplateAttachment);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (NotificationTemplateAttachment)result;
-		}
+		return _uniquePersistenceFinderByNTI_OFI.fetch(
+			finderCache, new Object[] {notificationTemplateId, objectFieldId},
+			useFinderCache);
 	}
 
 	/**
@@ -568,22 +254,9 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	 */
 	@Override
 	public int countByNTI_OFI(long notificationTemplateId, long objectFieldId) {
-		NotificationTemplateAttachment notificationTemplateAttachment =
-			fetchByNTI_OFI(notificationTemplateId, objectFieldId);
-
-		if (notificationTemplateAttachment == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByNTI_OFI.count(
+			finderCache, new Object[] {notificationTemplateId, objectFieldId});
 	}
-
-	private static final String
-		_FINDER_COLUMN_NTI_OFI_NOTIFICATIONTEMPLATEID_2 =
-			"notificationTemplateAttachment.notificationTemplateId = ? AND ";
-
-	private static final String _FINDER_COLUMN_NTI_OFI_OBJECTFIELDID_2 =
-		"notificationTemplateAttachment.objectFieldId = ?";
 
 	public NotificationTemplateAttachmentPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -599,127 +272,6 @@ public class NotificationTemplateAttachmentPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(NotificationTemplateAttachmentTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the notification template attachment in the entity cache if it is enabled.
-	 *
-	 * @param notificationTemplateAttachment the notification template attachment
-	 */
-	@Override
-	public void cacheResult(
-		NotificationTemplateAttachment notificationTemplateAttachment) {
-
-		entityCache.putResult(
-			NotificationTemplateAttachmentImpl.class,
-			notificationTemplateAttachment.getPrimaryKey(),
-			notificationTemplateAttachment);
-
-		finderCache.putResult(
-			_finderPathFetchByNTI_OFI,
-			new Object[] {
-				notificationTemplateAttachment.getNotificationTemplateId(),
-				notificationTemplateAttachment.getObjectFieldId()
-			},
-			notificationTemplateAttachment);
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the notification template attachments in the entity cache if it is enabled.
-	 *
-	 * @param notificationTemplateAttachments the notification template attachments
-	 */
-	@Override
-	public void cacheResult(
-		List<NotificationTemplateAttachment> notificationTemplateAttachments) {
-
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (notificationTemplateAttachments.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (NotificationTemplateAttachment notificationTemplateAttachment :
-				notificationTemplateAttachments) {
-
-			if (entityCache.getResult(
-					NotificationTemplateAttachmentImpl.class,
-					notificationTemplateAttachment.getPrimaryKey()) == null) {
-
-				cacheResult(notificationTemplateAttachment);
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all notification template attachments.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(NotificationTemplateAttachmentImpl.class);
-
-		finderCache.clearCache(NotificationTemplateAttachmentImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the notification template attachment.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(
-		NotificationTemplateAttachment notificationTemplateAttachment) {
-
-		entityCache.removeResult(
-			NotificationTemplateAttachmentImpl.class,
-			notificationTemplateAttachment);
-	}
-
-	@Override
-	public void clearCache(
-		List<NotificationTemplateAttachment> notificationTemplateAttachments) {
-
-		for (NotificationTemplateAttachment notificationTemplateAttachment :
-				notificationTemplateAttachments) {
-
-			entityCache.removeResult(
-				NotificationTemplateAttachmentImpl.class,
-				notificationTemplateAttachment);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(NotificationTemplateAttachmentImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				NotificationTemplateAttachmentImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		NotificationTemplateAttachmentModelImpl
-			notificationTemplateAttachmentModelImpl) {
-
-		Object[] args = new Object[] {
-			notificationTemplateAttachmentModelImpl.getNotificationTemplateId(),
-			notificationTemplateAttachmentModelImpl.getObjectFieldId()
-		};
-
-		finderCache.putResult(
-			_finderPathFetchByNTI_OFI, args,
-			notificationTemplateAttachmentModelImpl);
 	}
 
 	/**
@@ -758,50 +310,6 @@ public class NotificationTemplateAttachmentPersistenceImpl
 		throws NoSuchNotificationTemplateAttachmentException {
 
 		return remove((Serializable)notificationTemplateAttachmentId);
-	}
-
-	/**
-	 * Removes the notification template attachment with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the notification template attachment
-	 * @return the notification template attachment that was removed
-	 * @throws NoSuchNotificationTemplateAttachmentException if a notification template attachment with the primary key could not be found
-	 */
-	@Override
-	public NotificationTemplateAttachment remove(Serializable primaryKey)
-		throws NoSuchNotificationTemplateAttachmentException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			NotificationTemplateAttachment notificationTemplateAttachment =
-				(NotificationTemplateAttachment)session.get(
-					NotificationTemplateAttachmentImpl.class, primaryKey);
-
-			if (notificationTemplateAttachment == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchNotificationTemplateAttachmentException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(notificationTemplateAttachment);
-		}
-		catch (NoSuchNotificationTemplateAttachmentException
-					noSuchEntityException) {
-
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -891,44 +399,13 @@ public class NotificationTemplateAttachmentPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			NotificationTemplateAttachmentImpl.class,
-			notificationTemplateAttachmentModelImpl, false, true);
-
-		cacheUniqueFindersCache(notificationTemplateAttachmentModelImpl);
+		cacheUniqueFindersResult(notificationTemplateAttachment, false);
 
 		if (isNew) {
 			notificationTemplateAttachment.setNew(false);
 		}
 
 		notificationTemplateAttachment.resetOriginalValues();
-
-		return notificationTemplateAttachment;
-	}
-
-	/**
-	 * Returns the notification template attachment with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the notification template attachment
-	 * @return the notification template attachment
-	 * @throws NoSuchNotificationTemplateAttachmentException if a notification template attachment with the primary key could not be found
-	 */
-	@Override
-	public NotificationTemplateAttachment findByPrimaryKey(
-			Serializable primaryKey)
-		throws NoSuchNotificationTemplateAttachmentException {
-
-		NotificationTemplateAttachment notificationTemplateAttachment =
-			fetchByPrimaryKey(primaryKey);
-
-		if (notificationTemplateAttachment == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchNotificationTemplateAttachmentException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return notificationTemplateAttachment;
 	}
@@ -962,191 +439,6 @@ public class NotificationTemplateAttachmentPersistenceImpl
 			(Serializable)notificationTemplateAttachmentId);
 	}
 
-	/**
-	 * Returns all the notification template attachments.
-	 *
-	 * @return the notification template attachments
-	 */
-	@Override
-	public List<NotificationTemplateAttachment> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the notification template attachments.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationTemplateAttachmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of notification template attachments
-	 * @param end the upper bound of the range of notification template attachments (not inclusive)
-	 * @return the range of notification template attachments
-	 */
-	@Override
-	public List<NotificationTemplateAttachment> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the notification template attachments.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationTemplateAttachmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of notification template attachments
-	 * @param end the upper bound of the range of notification template attachments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of notification template attachments
-	 */
-	@Override
-	public List<NotificationTemplateAttachment> findAll(
-		int start, int end,
-		OrderByComparator<NotificationTemplateAttachment> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the notification template attachments.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationTemplateAttachmentModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of notification template attachments
-	 * @param end the upper bound of the range of notification template attachments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of notification template attachments
-	 */
-	@Override
-	public List<NotificationTemplateAttachment> findAll(
-		int start, int end,
-		OrderByComparator<NotificationTemplateAttachment> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<NotificationTemplateAttachment> list = null;
-
-		if (useFinderCache) {
-			list = (List<NotificationTemplateAttachment>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT;
-
-				sql = sql.concat(
-					NotificationTemplateAttachmentModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<NotificationTemplateAttachment>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the notification template attachments from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (NotificationTemplateAttachment notificationTemplateAttachment :
-				findAll()) {
-
-			remove(notificationTemplateAttachment);
-		}
-	}
-
-	/**
-	 * Returns the number of notification template attachments.
-	 *
-	 * @return the number of notification template attachments
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_NOTIFICATIONTEMPLATEATTACHMENT);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
-	}
-
 	@Override
 	public Set<String> getBadColumnNames() {
 		return _badColumnNames;
@@ -1177,47 +469,55 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByNotificationTemplateId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findByNotificationTemplateId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"notificationTemplateId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByNotificationTemplateId",
+					new String[] {Long.class.getName()},
+					new String[] {"notificationTemplateId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByNotificationTemplateId",
+					new String[] {Long.class.getName()},
+					new String[] {"notificationTemplateId"}, false),
+				_SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE,
+				_SQL_COUNT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE,
+				NotificationTemplateAttachmentModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"notificationTemplateAttachment.", "notificationTemplateId",
+					FinderColumn.Type.LONG, "=", true, true,
+					NotificationTemplateAttachment::getNotificationTemplateId));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindByNotificationTemplateId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByNotificationTemplateId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"notificationTemplateId"}, true);
-
-		_finderPathWithoutPaginationFindByNotificationTemplateId =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-				"findByNotificationTemplateId",
-				new String[] {Long.class.getName()},
-				new String[] {"notificationTemplateId"}, true);
-
-		_finderPathCountByNotificationTemplateId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByNotificationTemplateId",
-			new String[] {Long.class.getName()},
-			new String[] {"notificationTemplateId"}, false);
-
-		_finderPathFetchByNTI_OFI = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByNTI_OFI",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"notificationTemplateId", "objectFieldId"}, true);
+		_uniquePersistenceFinderByNTI_OFI = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByNTI_OFI",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"notificationTemplateId", "objectFieldId"}, 0, 0,
+				false,
+				NotificationTemplateAttachment::getNotificationTemplateId,
+				NotificationTemplateAttachment::getObjectFieldId),
+			_SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE, "",
+			new FinderColumn<>(
+				"notificationTemplateAttachment.", "notificationTemplateId",
+				FinderColumn.Type.LONG, "=", true, true,
+				NotificationTemplateAttachment::getNotificationTemplateId),
+			new FinderColumn<>(
+				"notificationTemplateAttachment.", "objectFieldId",
+				FinderColumn.Type.LONG, "=", true, true,
+				NotificationTemplateAttachment::getObjectFieldId));
 
 		NotificationTemplateAttachmentUtil.setPersistence(this);
 	}
@@ -1262,6 +562,9 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		NotificationTemplateAttachmentModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT =
 		"SELECT notificationTemplateAttachment FROM NotificationTemplateAttachment notificationTemplateAttachment";
 
@@ -1269,18 +572,9 @@ public class NotificationTemplateAttachmentPersistenceImpl
 		_SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE =
 			"SELECT notificationTemplateAttachment FROM NotificationTemplateAttachment notificationTemplateAttachment WHERE ";
 
-	private static final String _SQL_COUNT_NOTIFICATIONTEMPLATEATTACHMENT =
-		"SELECT COUNT(notificationTemplateAttachment) FROM NotificationTemplateAttachment notificationTemplateAttachment";
-
 	private static final String
 		_SQL_COUNT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE =
 			"SELECT COUNT(notificationTemplateAttachment) FROM NotificationTemplateAttachment notificationTemplateAttachment WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"notificationTemplateAttachment.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No NotificationTemplateAttachment exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No NotificationTemplateAttachment exists with the key {";
@@ -1297,4 +591,4 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-44449938
+// LIFERAY-SERVICE-BUILDER-HASH:-1748903532

@@ -12,6 +12,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.list.type.service.ListTypeDefinitionService;
 import com.liferay.object.admin.rest.dto.v1_0.util.ObjectFieldUtil;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.business.type.ObjectFieldBusinessTypeRegistry;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
@@ -38,9 +39,11 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Marco Leo
@@ -65,6 +68,29 @@ public class ObjectDefinitionsFieldsDisplayContext
 		_depotEntryLocalService = depotEntryLocalService;
 		_listTypeDefinitionService = listTypeDefinitionService;
 		_objectFieldBusinessTypeRegistry = objectFieldBusinessTypeRegistry;
+	}
+
+	public List<Map<String, String>> getCountries() {
+		ObjectFieldBusinessType phoneNumberObjectFieldBusinessType =
+			_objectFieldBusinessTypeRegistry.getObjectFieldBusinessType(
+				ObjectFieldConstants.BUSINESS_TYPE_PHONE_NUMBER);
+
+		Map<String, Object> renderingProperties =
+			phoneNumberObjectFieldBusinessType.getRenderingProperties();
+
+		return (List<Map<String, String>>)renderingProperties.get("countries");
+	}
+
+	public List<Map<String, String>> getCountries(ObjectField objectField) {
+		if ((objectField == null) ||
+			!Objects.equals(
+				objectField.getBusinessType(),
+				ObjectFieldConstants.BUSINESS_TYPE_PHONE_NUMBER)) {
+
+			return Collections.emptyList();
+		}
+
+		return getCountries();
 	}
 
 	public CreationMenu getCreationMenu(ObjectDefinition objectDefinition)

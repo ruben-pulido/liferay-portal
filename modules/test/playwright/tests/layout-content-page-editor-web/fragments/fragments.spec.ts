@@ -41,7 +41,6 @@ const test = mergeTests(
 	featureFlagsTest({
 		'LPD-11235': {enabled: false},
 		'LPD-17564': {enabled: true},
-		'LPD-36105': {enabled: true},
 		'LPD-39304': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
@@ -766,6 +765,61 @@ test.describe('Image Fragment', () => {
 					.first()
 					.getAttribute('src')
 			).toContain('poodle.jpg');
+		}
+	);
+
+	test(
+		"Saves URL and 'Open in a new tab' configuration without showing an error",
+		{tag: '@LPD-88811'},
+		async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+			const imageId = getRandomString();
+
+			const imageFragment = getFragmentDefinition({
+				id: imageId,
+				key: 'BASIC_COMPONENT-image',
+			});
+
+			const layout = await apiHelpers.headlessDelivery.createSitePage({
+				pageDefinition: getPageDefinition([imageFragment]),
+				siteId: pageManagementSite.id,
+				title: getRandomString(),
+			});
+
+			await pageEditorPage.goto(
+				layout,
+				pageManagementSite.friendlyUrlPath
+			);
+
+			await pageEditorPage.selectEditable(imageId, 'image-square');
+
+			await page.getByRole('tab', {exact: true, name: 'Link'}).click();
+
+			await page
+				.getByRole('combobox', {exact: true, name: 'Link'})
+				.selectOption({label: 'URL'});
+
+			await page
+				.getByLabel('URL', {exact: true})
+				.fill('https://test.com');
+
+			const hasErrorAlert = page
+				.locator('.alert-danger', {
+					hasText: 'Error:An unexpected error occurred.',
+				})
+				.waitFor({state: 'visible', timeout: 5000})
+				.then(() => true)
+				.catch(() => false);
+
+			await page.getByLabel('Open in a new tab.', {exact: true}).check();
+
+			await pageEditorPage.waitForChangesSaved();
+
+			const link = page.locator('.component-image a').first();
+
+			await expect(link).toHaveAttribute('href', 'https://test.com');
+			await expect(link).toHaveAttribute('target', '_blank');
+
+			expect(await hasErrorAlert).toBe(false);
 		}
 	);
 });

@@ -129,6 +129,8 @@ public class FragmentEntryLinkModelImpl
 
 	public static final String TABLE_SQL_DROP = "drop table FragmentEntryLink";
 
+	public static final String ENTITY_ALIAS = "fragmentEntryLink";
+
 	public static final String ORDER_BY_JPQL =
 		" ORDER BY fragmentEntryLink.classNameId ASC, fragmentEntryLink.classPK ASC, fragmentEntryLink.position ASC";
 
@@ -1494,6 +1496,20 @@ public class FragmentEntryLinkModelImpl
 	}
 
 	@Override
+	public void copyCacheFields(FragmentEntryLink source) {
+		FragmentEntryLinkModelImpl sourceModelImpl =
+			(FragmentEntryLinkModelImpl)source;
+
+		setConfigurationJSONObject(
+			sourceModelImpl.getConfigurationJSONObject());
+
+		setEditableValuesJSONObject(
+			sourceModelImpl.getEditableValuesJSONObject());
+
+		setFragmentEntry(sourceModelImpl.getFragmentEntry());
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -2088,4 +2104,4 @@ public class FragmentEntryLinkModelImpl
 	private FragmentEntryLink _escapedModel;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-176347062
+// LIFERAY-SERVICE-BUILDER-HASH:-109082964

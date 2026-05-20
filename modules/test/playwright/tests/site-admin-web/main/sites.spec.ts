@@ -7,13 +7,13 @@ import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {instanceSettingsPagesTest} from '../../../fixtures/instanceSettingsPagesTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {productMenuPageTest} from '../../../fixtures/productMenuPageTest';
 import {virtualInstancesPagesTest} from '../../../fixtures/virtualInstancesPagesTest';
+import {liferayConfig} from '../../../liferay.config';
 import getRandomString from '../../../utils/getRandomString';
 import {openProductMenu} from '../../../utils/productMenu';
 import {pageViewModePagesTest} from './../../../fixtures/pageViewModePagesTest';
@@ -25,9 +25,6 @@ import {sitesAdminPagesTest} from './fixtures/sitesAdminPagesTest';
 const test = mergeTests(
 	apiHelpersTest,
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	instanceSettingsPagesTest,
 	loginTest(),
 	isolatedSiteTest,
@@ -381,7 +378,7 @@ test('View public page via virtual host URL', async ({
 	// Access the site's page using the Virtual Host
 
 	await page.goto(
-		`http://${VIRTUAL_HOST_NAME}:8080/web${site.friendlyUrlPath}${layout.friendlyURL}`
+		`http://${VIRTUAL_HOST_NAME}:${liferayConfig.environment.port}/web${site.friendlyUrlPath}${layout.friendlyURL}`
 	);
 
 	await expect(

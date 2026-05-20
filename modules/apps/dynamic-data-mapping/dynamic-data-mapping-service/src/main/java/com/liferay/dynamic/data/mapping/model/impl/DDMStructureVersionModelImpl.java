@@ -119,6 +119,8 @@ public class DDMStructureVersionModelImpl
 	public static final String TABLE_SQL_DROP =
 		"drop table DDMStructureVersion";
 
+	public static final String ENTITY_ALIAS = "ddmStructureVersion";
+
 	public static final String ORDER_BY_JPQL =
 		" ORDER BY ddmStructureVersion.structureVersionId ASC";
 
@@ -1311,6 +1313,14 @@ public class DDMStructureVersionModelImpl
 	}
 
 	@Override
+	public void copyCacheFields(DDMStructureVersion source) {
+		DDMStructureVersionModelImpl sourceModelImpl =
+			(DDMStructureVersionModelImpl)source;
+
+		setDDMForm(sourceModelImpl.getDDMForm());
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -1720,4 +1730,4 @@ public class DDMStructureVersionModelImpl
 	private DDMStructureVersion _escapedModel;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1158972010
+// LIFERAY-SERVICE-BUILDER-HASH:1076816172

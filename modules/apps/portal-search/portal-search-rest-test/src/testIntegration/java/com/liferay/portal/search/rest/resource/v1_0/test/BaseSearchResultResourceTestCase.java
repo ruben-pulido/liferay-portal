@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -108,7 +109,8 @@ public abstract class BaseSearchResultResourceTestCase {
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
-			testCompany.getVirtualHostname(), 8080, "http"
+			testCompany.getVirtualHostname(),
+			PortalUtil.getPortalServerPort(false), "http"
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
@@ -628,6 +630,14 @@ public abstract class BaseSearchResultResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("dateReview", additionalAssertFieldName)) {
+				if (searchResult.getDateReview() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("description", additionalAssertFieldName)) {
 				if (searchResult.getDescription() == null) {
 					valid = false;
@@ -821,6 +831,17 @@ public abstract class BaseSearchResultResourceTestCase {
 				if (!Objects.deepEquals(
 						searchResult1.getDateModified(),
 						searchResult2.getDateModified())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("dateReview", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						searchResult1.getDateReview(),
+						searchResult2.getDateReview())) {
 
 					return false;
 				}
@@ -1062,6 +1083,35 @@ public abstract class BaseSearchResultResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("dateReview")) {
+			if (operator.equals("between")) {
+				Date date = searchResult.getDateReview();
+
+				sb = new StringBundler();
+
+				sb.append("(");
+				sb.append(entityFieldName);
+				sb.append(" gt ");
+				sb.append(_format.format(date.getTime() - (2 * Time.SECOND)));
+				sb.append(" and ");
+				sb.append(entityFieldName);
+				sb.append(" lt ");
+				sb.append(_format.format(date.getTime() + (2 * Time.SECOND)));
+				sb.append(")");
+			}
+			else {
+				sb.append(entityFieldName);
+
+				sb.append(" ");
+				sb.append(operator);
+				sb.append(" ");
+
+				sb.append(_format.format(searchResult.getDateReview()));
+			}
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("description")) {
 			Object object = searchResult.getDescription();
 
@@ -1269,7 +1319,9 @@ public abstract class BaseSearchResultResourceTestCase {
 			).toString(),
 			"application/json");
 		httpInvoker.httpMethod(HttpInvoker.HttpMethod.POST);
-		httpInvoker.path("http://localhost:8080/o/graphql");
+		httpInvoker.path(
+			"http://localhost:" + PortalUtil.getPortalServerPort(false) +
+				"/o/graphql");
 		httpInvoker.userNameAndPassword(
 			"test@liferay.com:" + PropsValues.DEFAULT_ADMIN_PASSWORD);
 
@@ -1303,6 +1355,7 @@ public abstract class BaseSearchResultResourceTestCase {
 			{
 				dateCreated = RandomTestUtil.nextDate();
 				dateModified = RandomTestUtil.nextDate();
+				dateReview = RandomTestUtil.nextDate();
 				description = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				entryClassName = StringUtil.toLowerCase(
@@ -1533,4 +1586,4 @@ public abstract class BaseSearchResultResourceTestCase {
 		_searchResultResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1963226699
+// LIFERAY-REST-BUILDER-HASH:-460916642

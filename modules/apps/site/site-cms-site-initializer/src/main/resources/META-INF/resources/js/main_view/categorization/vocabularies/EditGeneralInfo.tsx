@@ -36,10 +36,13 @@ const VISIBILITY_OPTIONS = [
 export default function EditGeneralInfo({
 	assetLibraries,
 	defaultLanguageId,
+	externalReferenceCodeInputError,
+	externalReferenceCodeMaxLength,
 	isNew,
 	locales,
 	nameInputError,
 	onChangeVocabulary,
+	setExternalReferenceCodeInputError,
 	setNameInputError,
 	setSpaceChange,
 	setSpaceInputError,
@@ -51,10 +54,13 @@ export default function EditGeneralInfo({
 }: {
 	assetLibraries: AssetLibraryType[];
 	defaultLanguageId: string;
+	externalReferenceCodeInputError: string;
+	externalReferenceCodeMaxLength: number;
 	isNew: boolean;
 	locales: any[];
 	nameInputError: string;
 	onChangeVocabulary: Function;
+	setExternalReferenceCodeInputError: (value: string) => void;
 	setNameInputError: Function;
 	setSpaceChange: (value: boolean) => void;
 	setSpaceInputError: (value: string) => void;
@@ -197,6 +203,57 @@ export default function EditGeneralInfo({
 						{nameInputError && (
 							<ClayAlert displayType="danger" variant="feedback">
 								{nameInputError}
+							</ClayAlert>
+						)}
+					</div>
+
+					<div
+						className={
+							externalReferenceCodeInputError ? 'has-error' : ''
+						}
+					>
+						<label>
+							{Liferay.Language.get('external-reference-code')}
+						</label>
+
+						<ClayInput
+							aria-label={Liferay.Language.get(
+								'external-reference-code'
+							)}
+							onChange={({target: {value}}) => {
+								if (
+									value.length >
+									externalReferenceCodeMaxLength
+								) {
+									setExternalReferenceCodeInputError(
+										sub(
+											Liferay.Language.get(
+												'external-reference-code-cannot-exceed-x-characters'
+											),
+											String(
+												externalReferenceCodeMaxLength
+											)
+										)
+									);
+								}
+								else if (externalReferenceCodeInputError) {
+									setExternalReferenceCodeInputError('');
+								}
+
+								onChangeVocabulary(
+									(prevVocabulary: IVocabulary) => ({
+										...prevVocabulary,
+										externalReferenceCode: value,
+									})
+								);
+							}}
+							type="text"
+							value={vocabulary.externalReferenceCode || ''}
+						/>
+
+						{externalReferenceCodeInputError && (
+							<ClayAlert displayType="danger" variant="feedback">
+								{externalReferenceCodeInputError}
 							</ClayAlert>
 						)}
 					</div>

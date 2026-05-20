@@ -600,3 +600,123 @@ test.describe('Subcategory tests', () => {
 		}
 	);
 });
+
+test.describe('Search category tests', () => {
+	let categoryName1: string;
+	let categoryName2: string;
+	let prefix: string;
+
+	test.beforeEach('Create Categories via API', async ({apiHelpers}) => {
+		prefix = `category_name_${getRandomString().replace(/-/g, '')}`;
+		categoryName1 = `${prefix}_one`;
+		categoryName2 = `${prefix}_two`;
+
+		await apiHelpers.headlessAdminTaxonomy.postTaxonomyVocabularyTaxonomyCategory(
+			{name: categoryName1, vocabularyId}
+		);
+		await apiHelpers.headlessAdminTaxonomy.postTaxonomyVocabularyTaxonomyCategory(
+			{name: categoryName2, vocabularyId}
+		);
+	});
+
+	test(
+		"Search a Vocabulary's Categories by name and prefix",
+		{tag: '@LPD-89731'},
+		async ({categoriesPage}) => {
+			await categoriesPage.goto(vocabularyId, vocabularyName);
+
+			await categoriesPage.search(categoryName1);
+
+			await expect(categoriesPage.getItem(categoryName1)).toBeVisible();
+			await expect(categoriesPage.getItem(categoryName2)).toBeHidden();
+
+			await categoriesPage.search(prefix);
+
+			await expect(categoriesPage.getItem(categoryName1)).toBeVisible();
+			await expect(categoriesPage.getItem(categoryName2)).toBeVisible();
+		}
+	);
+
+	test(
+		"Clear search restores all of a Vocabulary's Categories",
+		{tag: '@LPD-89731'},
+		async ({categoriesPage}) => {
+			await categoriesPage.goto(vocabularyId, vocabularyName);
+
+			await categoriesPage.search(categoryName1);
+
+			await expect(categoriesPage.getItem(categoryName1)).toBeVisible();
+			await expect(categoriesPage.getItem(categoryName2)).toBeHidden();
+
+			await categoriesPage.clearSearch();
+
+			await expect(categoriesPage.getItem(categoryName1)).toBeVisible();
+			await expect(categoriesPage.getItem(categoryName2)).toBeVisible();
+		}
+	);
+});
+
+test(
+	'Content can be saved when all asset subtypes are required in a vocabulary',
+	{tag: '@LPD-83651'},
+	async ({apiHelpers, contentsPage, page}) => {
+		const categoryName = getRandomString();
+
+		await apiHelpers.headlessAdminTaxonomy.postTaxonomyVocabularyTaxonomyCategory(
+			{
+				name: categoryName,
+				vocabularyId,
+			}
+		);
+
+		await contentsPage.goto();
+
+		await contentsPage.createContent('Basic Web Content');
+
+		const title = getRandomString();
+
+		await contentsPage.fillData([{label: 'Title', value: title}]);
+
+		await contentsPage.openSidePanel('Categorization');
+
+		const categoriesAutocomplete = page.getByPlaceholder('Add category');
+
+		await categoriesAutocomplete.fill(categoryName);
+
+		const option = page.getByRole('option', {name: categoryName});
+
+		await option.waitFor();
+		await option.click();
+
+		await contentsPage.saveContent();
+
+		await expect(
+			page.getByRole('link', {exact: true, name: `${title}`})
+		).toBeVisible();
+	}
+);
+
+test(
+	'Folder can be saved when all asset subtypes are required in a vocabulary',
+	{tag: '@LPD-83651'},
+	async ({apiHelpers, contentsPage, page}) => {
+		const categoryName = getRandomString();
+
+		await apiHelpers.headlessAdminTaxonomy.postTaxonomyVocabularyTaxonomyCategory(
+			{
+				name: categoryName,
+				vocabularyId,
+			}
+		);
+
+		await contentsPage.goto();
+
+		const folderName = getRandomString();
+
+		await contentsPage.createFolder(folderName, 'Default');
+
+		await expect(
+			page.getByRole('link', {exact: true, name: `${folderName}`})
+		).toBeVisible();
+	}
+);

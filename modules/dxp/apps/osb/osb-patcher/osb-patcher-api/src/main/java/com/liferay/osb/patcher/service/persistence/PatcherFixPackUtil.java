@@ -36,6 +36,20 @@ public class PatcherFixPackUtil {
 	 */
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<PatcherFixPack> patcherFixPacks) {
+		getPersistence().cacheResult(patcherFixPacks);
+	}
+
+	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(PatcherFixPack patcherFixPack) {
+		getPersistence().cacheResult(patcherFixPack);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -124,16 +138,6 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns the patcher fix pack where patcherBuildId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param patcherBuildId the patcher build ID
-	 * @return the matching patcher fix pack, or <code>null</code> if a matching patcher fix pack could not be found
-	 */
-	public static PatcherFixPack fetchByPatcherBuildId(long patcherBuildId) {
-		return getPersistence().fetchByPatcherBuildId(patcherBuildId);
-	}
-
-	/**
 	 * Returns the patcher fix pack where patcherBuildId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param patcherBuildId the patcher build ID
@@ -170,63 +174,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs where patcherFixComponentId = &#63;.
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @return the matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPatcherFixComponentId(
-		long patcherFixComponentId) {
-
-		return getPersistence().findByPatcherFixComponentId(
-			patcherFixComponentId);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs where patcherFixComponentId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPatcherFixComponentId(
-		long patcherFixComponentId, int start, int end) {
-
-		return getPersistence().findByPatcherFixComponentId(
-			patcherFixComponentId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPatcherFixComponentId(
-		long patcherFixComponentId, int start, int end,
-		OrderByComparator<PatcherFixPack> orderByComparator) {
-
-		return getPersistence().findByPatcherFixComponentId(
-			patcherFixComponentId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -279,42 +230,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63;.
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @return the matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByPatcherFixComponentId(
-		long patcherFixComponentId) {
-
-		return getPersistence().filterFindByPatcherFixComponentId(
-			patcherFixComponentId);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByPatcherFixComponentId(
-		long patcherFixComponentId, int start, int end) {
-
-		return getPersistence().filterFindByPatcherFixComponentId(
-			patcherFixComponentId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs that the user has permissions to view where patcherFixComponentId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -367,59 +286,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs where version = &#63;.
-	 *
-	 * @param version the version
-	 * @return the matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByVersion(int version) {
-		return getPersistence().findByVersion(version);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs where version = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param version the version
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByVersion(
-		int version, int start, int end) {
-
-		return getPersistence().findByVersion(version, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs where version = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param version the version
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByVersion(
-		int version, int start, int end,
-		OrderByComparator<PatcherFixPack> orderByComparator) {
-
-		return getPersistence().findByVersion(
-			version, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fix packs where version = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param version the version
@@ -468,38 +338,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs that the user has permission to view where version = &#63;.
-	 *
-	 * @param version the version
-	 * @return the matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByVersion(int version) {
-		return getPersistence().filterFindByVersion(version);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs that the user has permission to view where version = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param version the version
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByVersion(
-		int version, int start, int end) {
-
-		return getPersistence().filterFindByVersion(version, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs that the user has permissions to view where version = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param version the version
@@ -546,68 +388,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @return the matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_PPVI(
-		long patcherFixComponentId, long patcherProjectVersionId) {
-
-		return getPersistence().findByPFCI_PPVI(
-			patcherFixComponentId, patcherProjectVersionId);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_PPVI(
-		long patcherFixComponentId, long patcherProjectVersionId, int start,
-		int end) {
-
-		return getPersistence().findByPFCI_PPVI(
-			patcherFixComponentId, patcherProjectVersionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_PPVI(
-		long patcherFixComponentId, long patcherProjectVersionId, int start,
-		int end, OrderByComparator<PatcherFixPack> orderByComparator) {
-
-		return getPersistence().findByPFCI_PPVI(
-			patcherFixComponentId, patcherProjectVersionId, start, end,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -663,45 +447,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @return the matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByPFCI_PPVI(
-		long patcherFixComponentId, long patcherProjectVersionId) {
-
-		return getPersistence().filterFindByPFCI_PPVI(
-			patcherFixComponentId, patcherProjectVersionId);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByPFCI_PPVI(
-		long patcherFixComponentId, long patcherProjectVersionId, int start,
-		int end) {
-
-		return getPersistence().filterFindByPFCI_PPVI(
-			patcherFixComponentId, patcherProjectVersionId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs that the user has permissions to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -762,65 +511,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs where patcherFixComponentId = &#63; and version = &#63;.
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param version the version
-	 * @return the matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_V(
-		long patcherFixComponentId, int version) {
-
-		return getPersistence().findByPFCI_V(patcherFixComponentId, version);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs where patcherFixComponentId = &#63; and version = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param version the version
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_V(
-		long patcherFixComponentId, int version, int start, int end) {
-
-		return getPersistence().findByPFCI_V(
-			patcherFixComponentId, version, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and version = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param version the version
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_V(
-		long patcherFixComponentId, int version, int start, int end,
-		OrderByComparator<PatcherFixPack> orderByComparator) {
-
-		return getPersistence().findByPFCI_V(
-			patcherFixComponentId, version, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and version = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -876,44 +570,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and version = &#63;.
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param version the version
-	 * @return the matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByPFCI_V(
-		long patcherFixComponentId, int version) {
-
-		return getPersistence().filterFindByPFCI_V(
-			patcherFixComponentId, version);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and version = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param version the version
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByPFCI_V(
-		long patcherFixComponentId, int version, int start, int end) {
-
-		return getPersistence().filterFindByPFCI_V(
-			patcherFixComponentId, version, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs that the user has permissions to view where patcherFixComponentId = &#63; and version = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -982,19 +642,6 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns the patcher fix pack where patcherProjectVersionId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param name the name
-	 * @return the matching patcher fix pack, or <code>null</code> if a matching patcher fix pack could not be found
-	 */
-	public static PatcherFixPack fetchByPFCI_N(
-		long patcherProjectVersionId, String name) {
-
-		return getPersistence().fetchByPFCI_N(patcherProjectVersionId, name);
-	}
-
-	/**
 	 * Returns the patcher fix pack where patcherProjectVersionId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -1035,65 +682,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs where patcherProjectVersionId = &#63; and status = &#63;.
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param status the status
-	 * @return the matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_S(
-		long patcherProjectVersionId, int status) {
-
-		return getPersistence().findByPFCI_S(patcherProjectVersionId, status);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs where patcherProjectVersionId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param status the status
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_S(
-		long patcherProjectVersionId, int status, int start, int end) {
-
-		return getPersistence().findByPFCI_S(
-			patcherProjectVersionId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs where patcherProjectVersionId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param status the status
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching patcher fix packs
-	 */
-	public static List<PatcherFixPack> findByPFCI_S(
-		long patcherProjectVersionId, int status, int start, int end,
-		OrderByComparator<PatcherFixPack> orderByComparator) {
-
-		return getPersistence().findByPFCI_S(
-			patcherProjectVersionId, status, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fix packs where patcherProjectVersionId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -1149,44 +741,10 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs that the user has permission to view where patcherProjectVersionId = &#63; and status = &#63;.
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param status the status
-	 * @return the matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByPFCI_S(
-		long patcherProjectVersionId, int status) {
-
-		return getPersistence().filterFindByPFCI_S(
-			patcherProjectVersionId, status);
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherProjectVersionId = &#63; and status = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param status the status
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of matching patcher fix packs that the user has permission to view
-	 */
-	public static List<PatcherFixPack> filterFindByPFCI_S(
-		long patcherProjectVersionId, int status, int start, int end) {
-
-		return getPersistence().filterFindByPFCI_S(
-			patcherProjectVersionId, status, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the patcher fix packs that the user has permissions to view where patcherProjectVersionId = &#63; and status = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherProjectVersionId the patcher project version ID
@@ -1260,7 +818,7 @@ public class PatcherFixPackUtil {
 	 * Returns a range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1283,7 +841,7 @@ public class PatcherFixPackUtil {
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1308,7 +866,7 @@ public class PatcherFixPackUtil {
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1387,7 +945,7 @@ public class PatcherFixPackUtil {
 	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1410,7 +968,7 @@ public class PatcherFixPackUtil {
 	 * Returns an ordered range of all the patcher fix packs that the user has permissions to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &gt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1494,7 +1052,7 @@ public class PatcherFixPackUtil {
 	 * Returns a range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1517,7 +1075,7 @@ public class PatcherFixPackUtil {
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1542,7 +1100,7 @@ public class PatcherFixPackUtil {
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1621,7 +1179,7 @@ public class PatcherFixPackUtil {
 	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1644,7 +1202,7 @@ public class PatcherFixPackUtil {
 	 * Returns an ordered range of all the patcher fix packs that the user has permissions to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &lt; &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1729,23 +1287,6 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns the patcher fix pack where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and name = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param patcherFixComponentId the patcher fix component ID
-	 * @param patcherProjectVersionId the patcher project version ID
-	 * @param name the name
-	 * @param version the version
-	 * @return the matching patcher fix pack, or <code>null</code> if a matching patcher fix pack could not be found
-	 */
-	public static PatcherFixPack fetchByPFCI_PPVI_N_V(
-		long patcherFixComponentId, long patcherProjectVersionId, String name,
-		int version) {
-
-		return getPersistence().fetchByPFCI_PPVI_N_V(
-			patcherFixComponentId, patcherProjectVersionId, name, version);
-	}
-
-	/**
 	 * Returns the patcher fix pack where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and name = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param patcherFixComponentId the patcher fix component ID
@@ -1800,24 +1341,6 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Caches the patcher fix pack in the entity cache if it is enabled.
-	 *
-	 * @param patcherFixPack the patcher fix pack
-	 */
-	public static void cacheResult(PatcherFixPack patcherFixPack) {
-		getPersistence().cacheResult(patcherFixPack);
-	}
-
-	/**
-	 * Caches the patcher fix packs in the entity cache if it is enabled.
-	 *
-	 * @param patcherFixPacks the patcher fix packs
-	 */
-	public static void cacheResult(List<PatcherFixPack> patcherFixPacks) {
-		getPersistence().cacheResult(patcherFixPacks);
-	}
-
-	/**
 	 * Creates a new patcher fix pack with the primary key. Does not add the patcher fix pack to the database.
 	 *
 	 * @param patcherFixPackId the primary key for the new patcher fix pack
@@ -1868,86 +1391,6 @@ public class PatcherFixPackUtil {
 	}
 
 	/**
-	 * Returns all the patcher fix packs.
-	 *
-	 * @return the patcher fix packs
-	 */
-	public static List<PatcherFixPack> findAll() {
-		return getPersistence().findAll();
-	}
-
-	/**
-	 * Returns a range of all the patcher fix packs.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @return the range of patcher fix packs
-	 */
-	public static List<PatcherFixPack> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fix packs.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of patcher fix packs
-	 */
-	public static List<PatcherFixPack> findAll(
-		int start, int end,
-		OrderByComparator<PatcherFixPack> orderByComparator) {
-
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher fix packs.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher fix packs
-	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of patcher fix packs
-	 */
-	public static List<PatcherFixPack> findAll(
-		int start, int end, OrderByComparator<PatcherFixPack> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the patcher fix packs from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of patcher fix packs.
-	 *
-	 * @return the number of patcher fix packs
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
-	}
-
-	/**
 	 * Returns the primaryKeys of patcher fixes associated with the patcher fix pack.
 	 *
 	 * @param pk the primary key of the patcher fix pack
@@ -1971,7 +1414,7 @@ public class PatcherFixPackUtil {
 	 * Returns all the patcher fix pack associated with the patcher fix.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the patcher fix
@@ -1989,7 +1432,7 @@ public class PatcherFixPackUtil {
 	 * Returns all the patcher fix pack associated with the patcher fix.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherFixPackModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
 	 * </p>
 	 *
 	 * @param pk the primary key of the patcher fix
@@ -2160,6 +1603,479 @@ public class PatcherFixPackUtil {
 		getPersistence().setPatcherFixes(pk, patcherFixes);
 	}
 
+	/**
+	 * Returns the patcher fix pack where patcherBuildId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param patcherBuildId the patcher build ID
+	 * @return the matching patcher fix pack, or <code>null</code> if a matching patcher fix pack could not be found
+	 */
+	public static PatcherFixPack fetchByPatcherBuildId(long patcherBuildId) {
+		return getPersistence().fetchByPatcherBuildId(patcherBuildId);
+	}
+
+	/**
+	 * Returns the patcher fix pack where patcherProjectVersionId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param name the name
+	 * @return the matching patcher fix pack, or <code>null</code> if a matching patcher fix pack could not be found
+	 */
+	public static PatcherFixPack fetchByPFCI_N(
+		long patcherProjectVersionId, String name) {
+
+		return getPersistence().fetchByPFCI_N(patcherProjectVersionId, name);
+	}
+
+	/**
+	 * Returns the patcher fix pack where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and name = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param name the name
+	 * @param version the version
+	 * @return the matching patcher fix pack, or <code>null</code> if a matching patcher fix pack could not be found
+	 */
+	public static PatcherFixPack fetchByPFCI_PPVI_N_V(
+		long patcherFixComponentId, long patcherProjectVersionId, String name,
+		int version) {
+
+		return getPersistence().fetchByPFCI_PPVI_N_V(
+			patcherFixComponentId, patcherProjectVersionId, name, version);
+	}
+
+	/**
+	 * Returns all the patcher fix packs where patcherFixComponentId = &#63;.
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @return the matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPatcherFixComponentId(
+		long patcherFixComponentId) {
+
+		return getPersistence().findByPatcherFixComponentId(
+			patcherFixComponentId);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs where patcherFixComponentId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPatcherFixComponentId(
+		long patcherFixComponentId, int start, int end) {
+
+		return getPersistence().findByPatcherFixComponentId(
+			patcherFixComponentId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPatcherFixComponentId(
+		long patcherFixComponentId, int start, int end,
+		OrderByComparator<PatcherFixPack> orderByComparator) {
+
+		return getPersistence().findByPatcherFixComponentId(
+			patcherFixComponentId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63;.
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @return the matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByPatcherFixComponentId(
+		long patcherFixComponentId) {
+
+		return getPersistence().filterFindByPatcherFixComponentId(
+			patcherFixComponentId);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByPatcherFixComponentId(
+		long patcherFixComponentId, int start, int end) {
+
+		return getPersistence().filterFindByPatcherFixComponentId(
+			patcherFixComponentId, start, end);
+	}
+
+	/**
+	 * Returns all the patcher fix packs where version = &#63;.
+	 *
+	 * @param version the version
+	 * @return the matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByVersion(int version) {
+		return getPersistence().findByVersion(version);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs where version = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param version the version
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByVersion(
+		int version, int start, int end) {
+
+		return getPersistence().findByVersion(version, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the patcher fix packs where version = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param version the version
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByVersion(
+		int version, int start, int end,
+		OrderByComparator<PatcherFixPack> orderByComparator) {
+
+		return getPersistence().findByVersion(
+			version, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the patcher fix packs that the user has permission to view where version = &#63;.
+	 *
+	 * @param version the version
+	 * @return the matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByVersion(int version) {
+		return getPersistence().filterFindByVersion(version);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs that the user has permission to view where version = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param version the version
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByVersion(
+		int version, int start, int end) {
+
+		return getPersistence().filterFindByVersion(version, start, end);
+	}
+
+	/**
+	 * Returns all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @return the matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_PPVI(
+		long patcherFixComponentId, long patcherProjectVersionId) {
+
+		return getPersistence().findByPFCI_PPVI(
+			patcherFixComponentId, patcherProjectVersionId);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_PPVI(
+		long patcherFixComponentId, long patcherProjectVersionId, int start,
+		int end) {
+
+		return getPersistence().findByPFCI_PPVI(
+			patcherFixComponentId, patcherProjectVersionId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_PPVI(
+		long patcherFixComponentId, long patcherProjectVersionId, int start,
+		int end, OrderByComparator<PatcherFixPack> orderByComparator) {
+
+		return getPersistence().findByPFCI_PPVI(
+			patcherFixComponentId, patcherProjectVersionId, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @return the matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByPFCI_PPVI(
+		long patcherFixComponentId, long patcherProjectVersionId) {
+
+		return getPersistence().filterFindByPFCI_PPVI(
+			patcherFixComponentId, patcherProjectVersionId);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByPFCI_PPVI(
+		long patcherFixComponentId, long patcherProjectVersionId, int start,
+		int end) {
+
+		return getPersistence().filterFindByPFCI_PPVI(
+			patcherFixComponentId, patcherProjectVersionId, start, end);
+	}
+
+	/**
+	 * Returns all the patcher fix packs where patcherFixComponentId = &#63; and version = &#63;.
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param version the version
+	 * @return the matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_V(
+		long patcherFixComponentId, int version) {
+
+		return getPersistence().findByPFCI_V(patcherFixComponentId, version);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs where patcherFixComponentId = &#63; and version = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param version the version
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_V(
+		long patcherFixComponentId, int version, int start, int end) {
+
+		return getPersistence().findByPFCI_V(
+			patcherFixComponentId, version, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and version = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param version the version
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_V(
+		long patcherFixComponentId, int version, int start, int end,
+		OrderByComparator<PatcherFixPack> orderByComparator) {
+
+		return getPersistence().findByPFCI_V(
+			patcherFixComponentId, version, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and version = &#63;.
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param version the version
+	 * @return the matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByPFCI_V(
+		long patcherFixComponentId, int version) {
+
+		return getPersistence().filterFindByPFCI_V(
+			patcherFixComponentId, version);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherFixComponentId = &#63; and version = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherFixComponentId the patcher fix component ID
+	 * @param version the version
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByPFCI_V(
+		long patcherFixComponentId, int version, int start, int end) {
+
+		return getPersistence().filterFindByPFCI_V(
+			patcherFixComponentId, version, start, end);
+	}
+
+	/**
+	 * Returns all the patcher fix packs where patcherProjectVersionId = &#63; and status = &#63;.
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param status the status
+	 * @return the matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_S(
+		long patcherProjectVersionId, int status) {
+
+		return getPersistence().findByPFCI_S(patcherProjectVersionId, status);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs where patcherProjectVersionId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param status the status
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_S(
+		long patcherProjectVersionId, int status, int start, int end) {
+
+		return getPersistence().findByPFCI_S(
+			patcherProjectVersionId, status, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the patcher fix packs where patcherProjectVersionId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param status the status
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching patcher fix packs
+	 */
+	public static List<PatcherFixPack> findByPFCI_S(
+		long patcherProjectVersionId, int status, int start, int end,
+		OrderByComparator<PatcherFixPack> orderByComparator) {
+
+		return getPersistence().findByPFCI_S(
+			patcherProjectVersionId, status, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the patcher fix packs that the user has permission to view where patcherProjectVersionId = &#63; and status = &#63;.
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param status the status
+	 * @return the matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByPFCI_S(
+		long patcherProjectVersionId, int status) {
+
+		return getPersistence().filterFindByPFCI_S(
+			patcherProjectVersionId, status);
+	}
+
+	/**
+	 * Returns a range of all the patcher fix packs that the user has permission to view where patcherProjectVersionId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.patcher.model.impl.PatcherFixPackModelImpl</code>.
+	 * </p>
+	 *
+	 * @param patcherProjectVersionId the patcher project version ID
+	 * @param status the status
+	 * @param start the lower bound of the range of patcher fix packs
+	 * @param end the upper bound of the range of patcher fix packs (not inclusive)
+	 * @return the range of matching patcher fix packs that the user has permission to view
+	 */
+	public static List<PatcherFixPack> filterFindByPFCI_S(
+		long patcherProjectVersionId, int status, int start, int end) {
+
+		return getPersistence().filterFindByPFCI_S(
+			patcherProjectVersionId, status, start, end);
+	}
+
 	public static PatcherFixPackPersistence getPersistence() {
 		return _persistence;
 	}
@@ -2171,4 +2087,4 @@ public class PatcherFixPackUtil {
 	private static volatile PatcherFixPackPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-281970822
+// LIFERAY-SERVICE-BUILDER-HASH:-487516943

@@ -19,12 +19,13 @@ import {NAME} from 'shared/util/pagination';
 import {Routes, toRoute} from 'shared/util/router';
 import {Sizes} from 'shared/util/constants';
 import {useChannelContext} from 'shared/context/channel';
-import {useDataSource} from 'shared/hooks/useDataSource';
+import {useDataSources} from 'shared/context/dataSources';
 import {useParams} from 'react-router-dom';
 import {User} from 'shared/util/records';
 
 interface IBaseListPageProps {
 	alerts?: IEmbeddedAlertListProps[];
+	children?: React.ReactNode;
 	className?: string;
 	columns: {
 		accessor: string;
@@ -48,7 +49,7 @@ interface IBaseListPageProps {
 	query?: string;
 	ref?: React.RefObject<SearchableEntityTable>;
 	renderRowActions?: any;
-	renderSelectedAction?: (checkedItemsISet) => any;
+	renderSelectedAction?: (checkedItemsISet: unknown) => any;
 	rowIdentifier?: string;
 	showCheckbox?: boolean;
 }
@@ -82,10 +83,13 @@ const BaseListPage: React.FC<IBaseListPageProps> = ({
 	...otherProps
 }) => {
 	const {selectedChannel} = useChannelContext();
-	const {channelId, groupId} = useParams();
+	const {channelId = '', groupId = ''} = useParams<{
+		channelId: string;
+		groupId: string;
+	}>();
 	const authorized = currentUser.isAdmin();
 
-	const dataSourceStates = useDataSource();
+	const dataSourceStates = useDataSources();
 	const {empty, error, loading} = dataSourceStates;
 
 	const ConnectDataSourceButton = () => (
@@ -102,7 +106,7 @@ const BaseListPage: React.FC<IBaseListPageProps> = ({
 		</ClayLink>
 	);
 
-	const renderNoResults = (query, activeFilters) => {
+	const renderNoResults = (query: string, activeFilters: unknown) => {
 		if (query || activeFilters) {
 			return (
 				<NoResultsDisplay
@@ -130,7 +134,7 @@ const BaseListPage: React.FC<IBaseListPageProps> = ({
 	};
 
 	return (
-		<BasePage className={className} documentTitle={entityLabel}>
+		<BasePage className={className} documentTitle={entityLabel ?? ''}>
 			<BasePage.Header
 				breadcrumbs={[
 					breadcrumbs.getHome({

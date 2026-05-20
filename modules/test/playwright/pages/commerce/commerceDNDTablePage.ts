@@ -41,6 +41,7 @@ export class CommerceDNDTablePage {
 	readonly filterMenuItem: (name: string) => Locator;
 	readonly filterValue: (value: string) => Locator;
 	readonly resetFiltersButton: Locator;
+	readonly searchInput: Locator;
 	readonly table: Locator;
 	readonly tableHeadSelector: Locator;
 	readonly tableHeadSelectorActionButton: Locator;
@@ -51,6 +52,13 @@ export class CommerceDNDTablePage {
 		strictEqual?: boolean
 	) => Promise<{column: Locator; row: Locator}>;
 	readonly tableRows: () => Promise<Locator[]>;
+	readonly tableRowButton: ({
+		colIndex,
+		rowValue,
+	}: {
+		colIndex?: number;
+		rowValue: number | string;
+	}) => Promise<Locator>;
 	readonly tableRowLink: ({colIndex, rowValue}) => Promise<Locator>;
 
 	constructor(page: Page, tableIdentifier: string) {
@@ -73,6 +81,9 @@ export class CommerceDNDTablePage {
 			exact: true,
 			name: 'Clear',
 		});
+		this.searchInput = page
+			.locator('[data-testid="visualization-mode-table"]')
+			.getByRole('searchbox', {name: 'Search'});
 		this.table = page.locator(tableIdentifier);
 		this.tableHeadSelector = page.locator('input[name="items-selector"]');
 		this.tableHeadSelectorActionButton = page
@@ -97,6 +108,28 @@ export class CommerceDNDTablePage {
 
 			return await this.table.locator('tbody tr').all();
 		};
+		this.tableRowButton = async ({
+			colIndex = 1,
+			rowValue,
+		}: {
+			colIndex?: number;
+			rowValue: number | string;
+		}) => {
+			const tableRow = await searchTableRowByValue(
+				this.table,
+				colIndex,
+				String(rowValue),
+				true
+			);
+
+			if (tableRow && tableRow.column) {
+				return tableRow.column.getByRole('button', {
+					name: String(rowValue),
+				});
+			}
+
+			throw new Error(`Cannot locate row with rowValue: ${rowValue}`);
+		};
 		this.tableRowLink = async ({
 			colIndex = 1,
 			rowValue,
@@ -114,6 +147,11 @@ export class CommerceDNDTablePage {
 
 			throw new Error(`Cannot locate row with rowValue: ${rowValue}`);
 		};
+	}
+
+	async searchByValue(value: string) {
+		await this.searchInput.fill(value);
+		await this.searchInput.press('Enter');
 	}
 
 	async addDataSetFilter(

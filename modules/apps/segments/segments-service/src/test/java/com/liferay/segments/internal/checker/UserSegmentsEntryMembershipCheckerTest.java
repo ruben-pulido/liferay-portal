@@ -50,6 +50,9 @@ public class UserSegmentsEntryMembershipCheckerTest {
 		Assert.assertFalse(
 			UserSegmentsEntryMembershipChecker.isMember(
 				"(contains(firstName, 'Testing ÖÀñ'))", _userAttributes));
+		Assert.assertFalse(
+			UserSegmentsEntryMembershipChecker.isMember(
+				"(contains(invalidField, 'value'))", _userAttributes));
 		Assert.assertTrue(
 			UserSegmentsEntryMembershipChecker.isMember(
 				"(contains(customField/_00001_test, 'tes'))", _userAttributes));
@@ -195,13 +198,40 @@ public class UserSegmentsEntryMembershipCheckerTest {
 				"(organizationIds in ('2'))", _userAttributes));
 		Assert.assertFalse(
 			UserSegmentsEntryMembershipChecker.isMember(
+				"(organizationIds in ('2', '3', '4'))", _userAttributes));
+		Assert.assertFalse(
+			UserSegmentsEntryMembershipChecker.isMember(
+				"((organizationIds in ('2', '3', '4')) and (classPK eq " +
+					"CLASS_PK))",
+				_userAttributes));
+		Assert.assertFalse(
+			UserSegmentsEntryMembershipChecker.isMember(
 				"not (organizationIds in ('1'))", _userAttributes));
+		Assert.assertFalse(
+			UserSegmentsEntryMembershipChecker.isMember(
+				"not (organizationIds in ('1', '2', '3'))", _userAttributes));
 		Assert.assertTrue(
 			UserSegmentsEntryMembershipChecker.isMember(
 				"(organizationIds in ('1'))", _userAttributes));
 		Assert.assertTrue(
 			UserSegmentsEntryMembershipChecker.isMember(
+				"(organizationIds in ('1', '2', '3'))", _userAttributes));
+		Assert.assertTrue(
+			UserSegmentsEntryMembershipChecker.isMember(
+				"((organizationIds in ('1', '2', '3')) and (classPK eq " +
+					"CLASS_PK))",
+				_userAttributes));
+		Assert.assertTrue(
+			UserSegmentsEntryMembershipChecker.isMember(
+				"((organizationIds in ('2', '3', '4')) or (roleIds in ('1', " +
+					"'5')))",
+				_userAttributes));
+		Assert.assertTrue(
+			UserSegmentsEntryMembershipChecker.isMember(
 				"not (organizationIds in ('2'))", _userAttributes));
+		Assert.assertTrue(
+			UserSegmentsEntryMembershipChecker.isMember(
+				"not (organizationIds in ('2', '3', '4'))", _userAttributes));
 	}
 
 	@Test

@@ -5,17 +5,11 @@
 
 package com.liferay.segments.service.persistence.impl;
 
-import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -25,10 +19,10 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.segments.exception.NoSuchExperimentRelException;
 import com.liferay.segments.model.SegmentsExperimentRel;
@@ -47,9 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,7 +65,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = SegmentsExperimentRelPersistence.class)
 public class SegmentsExperimentRelPersistenceImpl
-	extends BasePersistenceImpl<SegmentsExperimentRel>
+	extends BasePersistenceImpl
+		<SegmentsExperimentRel, NoSuchExperimentRelException>
 	implements SegmentsExperimentRelPersistence {
 
 	/*
@@ -90,74 +83,14 @@ public class SegmentsExperimentRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindBySegmentsExperimentId;
-	private FinderPath _finderPathWithoutPaginationFindBySegmentsExperimentId;
-	private FinderPath _finderPathCountBySegmentsExperimentId;
-
-	/**
-	 * Returns all the segments experiment rels where segmentsExperimentId = &#63;.
-	 *
-	 * @param segmentsExperimentId the segments experiment ID
-	 * @return the matching segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findBySegmentsExperimentId(
-		long segmentsExperimentId) {
-
-		return findBySegmentsExperimentId(
-			segmentsExperimentId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the segments experiment rels where segmentsExperimentId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param segmentsExperimentId the segments experiment ID
-	 * @param start the lower bound of the range of segments experiment rels
-	 * @param end the upper bound of the range of segments experiment rels (not inclusive)
-	 * @return the range of matching segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findBySegmentsExperimentId(
-		long segmentsExperimentId, int start, int end) {
-
-		return findBySegmentsExperimentId(
-			segmentsExperimentId, start, end, null);
-	}
+	private CollectionPersistenceFinder<SegmentsExperimentRel>
+		_collectionPersistenceFinderBySegmentsExperimentId;
 
 	/**
 	 * Returns an ordered range of all the segments experiment rels where segmentsExperimentId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param segmentsExperimentId the segments experiment ID
-	 * @param start the lower bound of the range of segments experiment rels
-	 * @param end the upper bound of the range of segments experiment rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findBySegmentsExperimentId(
-		long segmentsExperimentId, int start, int end,
-		OrderByComparator<SegmentsExperimentRel> orderByComparator) {
-
-		return findBySegmentsExperimentId(
-			segmentsExperimentId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the segments experiment rels where segmentsExperimentId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param segmentsExperimentId the segments experiment ID
@@ -173,106 +106,9 @@ public class SegmentsExperimentRelPersistenceImpl
 		OrderByComparator<SegmentsExperimentRel> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					SegmentsExperimentRel.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath =
-						_finderPathWithoutPaginationFindBySegmentsExperimentId;
-					finderArgs = new Object[] {segmentsExperimentId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath =
-					_finderPathWithPaginationFindBySegmentsExperimentId;
-				finderArgs = new Object[] {
-					segmentsExperimentId, start, end, orderByComparator
-				};
-			}
-
-			List<SegmentsExperimentRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<SegmentsExperimentRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SegmentsExperimentRel segmentsExperimentRel : list) {
-						if (segmentsExperimentId !=
-								segmentsExperimentRel.
-									getSegmentsExperimentId()) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE);
-
-				sb.append(
-					_FINDER_COLUMN_SEGMENTSEXPERIMENTID_SEGMENTSEXPERIMENTID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SegmentsExperimentRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(segmentsExperimentId);
-
-					list = (List<SegmentsExperimentRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderBySegmentsExperimentId.find(
+			finderCache, new Object[] {segmentsExperimentId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -297,16 +133,11 @@ public class SegmentsExperimentRelPersistenceImpl
 			return segmentsExperimentRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("segmentsExperimentId=");
-		sb.append(segmentsExperimentId);
-
-		sb.append("}");
-
-		throw new NoSuchExperimentRelException(sb.toString());
+		throw new NoSuchExperimentRelException(
+			_collectionPersistenceFinderBySegmentsExperimentId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {segmentsExperimentId}));
 	}
 
 	/**
@@ -321,14 +152,9 @@ public class SegmentsExperimentRelPersistenceImpl
 		long segmentsExperimentId,
 		OrderByComparator<SegmentsExperimentRel> orderByComparator) {
 
-		List<SegmentsExperimentRel> list = findBySegmentsExperimentId(
-			segmentsExperimentId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderBySegmentsExperimentId.fetchFirst(
+			finderCache, new Object[] {segmentsExperimentId},
+			orderByComparator);
 	}
 
 	/**
@@ -338,13 +164,8 @@ public class SegmentsExperimentRelPersistenceImpl
 	 */
 	@Override
 	public void removeBySegmentsExperimentId(long segmentsExperimentId) {
-		for (SegmentsExperimentRel segmentsExperimentRel :
-				findBySegmentsExperimentId(
-					segmentsExperimentId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(segmentsExperimentRel);
-		}
+		_collectionPersistenceFinderBySegmentsExperimentId.remove(
+			finderCache, new Object[] {segmentsExperimentId});
 	}
 
 	/**
@@ -355,123 +176,18 @@ public class SegmentsExperimentRelPersistenceImpl
 	 */
 	@Override
 	public int countBySegmentsExperimentId(long segmentsExperimentId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					SegmentsExperimentRel.class)) {
-
-			FinderPath finderPath = _finderPathCountBySegmentsExperimentId;
-
-			Object[] finderArgs = new Object[] {segmentsExperimentId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_SEGMENTSEXPERIMENTREL_WHERE);
-
-				sb.append(
-					_FINDER_COLUMN_SEGMENTSEXPERIMENTID_SEGMENTSEXPERIMENTID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(segmentsExperimentId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderBySegmentsExperimentId.count(
+			finderCache, new Object[] {segmentsExperimentId});
 	}
 
-	private static final String
-		_FINDER_COLUMN_SEGMENTSEXPERIMENTID_SEGMENTSEXPERIMENTID_2 =
-			"segmentsExperimentRel.segmentsExperimentId = ?";
-
-	private FinderPath _finderPathWithPaginationFindBySegmentsExperienceId;
-	private FinderPath _finderPathWithoutPaginationFindBySegmentsExperienceId;
-	private FinderPath _finderPathCountBySegmentsExperienceId;
-
-	/**
-	 * Returns all the segments experiment rels where segmentsExperienceId = &#63;.
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @return the matching segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findBySegmentsExperienceId(
-		long segmentsExperienceId) {
-
-		return findBySegmentsExperienceId(
-			segmentsExperienceId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the segments experiment rels where segmentsExperienceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param start the lower bound of the range of segments experiment rels
-	 * @param end the upper bound of the range of segments experiment rels (not inclusive)
-	 * @return the range of matching segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findBySegmentsExperienceId(
-		long segmentsExperienceId, int start, int end) {
-
-		return findBySegmentsExperienceId(
-			segmentsExperienceId, start, end, null);
-	}
+	private CollectionPersistenceFinder<SegmentsExperimentRel>
+		_collectionPersistenceFinderBySegmentsExperienceId;
 
 	/**
 	 * Returns an ordered range of all the segments experiment rels where segmentsExperienceId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param start the lower bound of the range of segments experiment rels
-	 * @param end the upper bound of the range of segments experiment rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findBySegmentsExperienceId(
-		long segmentsExperienceId, int start, int end,
-		OrderByComparator<SegmentsExperimentRel> orderByComparator) {
-
-		return findBySegmentsExperienceId(
-			segmentsExperienceId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the segments experiment rels where segmentsExperienceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
 	 * </p>
 	 *
 	 * @param segmentsExperienceId the segments experience ID
@@ -487,106 +203,9 @@ public class SegmentsExperimentRelPersistenceImpl
 		OrderByComparator<SegmentsExperimentRel> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					SegmentsExperimentRel.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath =
-						_finderPathWithoutPaginationFindBySegmentsExperienceId;
-					finderArgs = new Object[] {segmentsExperienceId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath =
-					_finderPathWithPaginationFindBySegmentsExperienceId;
-				finderArgs = new Object[] {
-					segmentsExperienceId, start, end, orderByComparator
-				};
-			}
-
-			List<SegmentsExperimentRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<SegmentsExperimentRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SegmentsExperimentRel segmentsExperimentRel : list) {
-						if (segmentsExperienceId !=
-								segmentsExperimentRel.
-									getSegmentsExperienceId()) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE);
-
-				sb.append(
-					_FINDER_COLUMN_SEGMENTSEXPERIENCEID_SEGMENTSEXPERIENCEID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SegmentsExperimentRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(segmentsExperienceId);
-
-					list = (List<SegmentsExperimentRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderBySegmentsExperienceId.find(
+			finderCache, new Object[] {segmentsExperienceId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -611,16 +230,11 @@ public class SegmentsExperimentRelPersistenceImpl
 			return segmentsExperimentRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("segmentsExperienceId=");
-		sb.append(segmentsExperienceId);
-
-		sb.append("}");
-
-		throw new NoSuchExperimentRelException(sb.toString());
+		throw new NoSuchExperimentRelException(
+			_collectionPersistenceFinderBySegmentsExperienceId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {segmentsExperienceId}));
 	}
 
 	/**
@@ -635,14 +249,9 @@ public class SegmentsExperimentRelPersistenceImpl
 		long segmentsExperienceId,
 		OrderByComparator<SegmentsExperimentRel> orderByComparator) {
 
-		List<SegmentsExperimentRel> list = findBySegmentsExperienceId(
-			segmentsExperienceId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderBySegmentsExperienceId.fetchFirst(
+			finderCache, new Object[] {segmentsExperienceId},
+			orderByComparator);
 	}
 
 	/**
@@ -652,13 +261,8 @@ public class SegmentsExperimentRelPersistenceImpl
 	 */
 	@Override
 	public void removeBySegmentsExperienceId(long segmentsExperienceId) {
-		for (SegmentsExperimentRel segmentsExperimentRel :
-				findBySegmentsExperienceId(
-					segmentsExperienceId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(segmentsExperimentRel);
-		}
+		_collectionPersistenceFinderBySegmentsExperienceId.remove(
+			finderCache, new Object[] {segmentsExperienceId});
 	}
 
 	/**
@@ -669,59 +273,12 @@ public class SegmentsExperimentRelPersistenceImpl
 	 */
 	@Override
 	public int countBySegmentsExperienceId(long segmentsExperienceId) {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					SegmentsExperimentRel.class)) {
-
-			FinderPath finderPath = _finderPathCountBySegmentsExperienceId;
-
-			Object[] finderArgs = new Object[] {segmentsExperienceId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_SEGMENTSEXPERIMENTREL_WHERE);
-
-				sb.append(
-					_FINDER_COLUMN_SEGMENTSEXPERIENCEID_SEGMENTSEXPERIENCEID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(segmentsExperienceId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderBySegmentsExperienceId.count(
+			finderCache, new Object[] {segmentsExperienceId});
 	}
 
-	private static final String
-		_FINDER_COLUMN_SEGMENTSEXPERIENCEID_SEGMENTSEXPERIENCEID_2 =
-			"segmentsExperimentRel.segmentsExperienceId = ?";
-
-	private FinderPath _finderPathFetchByS_S;
+	private UniquePersistenceFinder<SegmentsExperimentRel>
+		_uniquePersistenceFinderByS_S;
 
 	/**
 	 * Returns the segments experiment rel where segmentsExperimentId = &#63; and segmentsExperienceId = &#63; or throws a <code>NoSuchExperimentRelException</code> if it could not be found.
@@ -740,40 +297,19 @@ public class SegmentsExperimentRelPersistenceImpl
 			segmentsExperimentId, segmentsExperienceId);
 
 		if (segmentsExperimentRel == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("segmentsExperimentId=");
-			sb.append(segmentsExperimentId);
-
-			sb.append(", segmentsExperienceId=");
-			sb.append(segmentsExperienceId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByS_S.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {segmentsExperimentId, segmentsExperienceId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchExperimentRelException(sb.toString());
+			throw new NoSuchExperimentRelException(message);
 		}
 
 		return segmentsExperimentRel;
-	}
-
-	/**
-	 * Returns the segments experiment rel where segmentsExperimentId = &#63; and segmentsExperienceId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param segmentsExperimentId the segments experiment ID
-	 * @param segmentsExperienceId the segments experience ID
-	 * @return the matching segments experiment rel, or <code>null</code> if a matching segments experiment rel could not be found
-	 */
-	@Override
-	public SegmentsExperimentRel fetchByS_S(
-		long segmentsExperimentId, long segmentsExperienceId) {
-
-		return fetchByS_S(segmentsExperimentId, segmentsExperienceId, true);
 	}
 
 	/**
@@ -789,94 +325,10 @@ public class SegmentsExperimentRelPersistenceImpl
 		long segmentsExperimentId, long segmentsExperienceId,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					SegmentsExperimentRel.class)) {
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {
-					segmentsExperimentId, segmentsExperienceId
-				};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByS_S, finderArgs, this);
-			}
-
-			if (result instanceof SegmentsExperimentRel) {
-				SegmentsExperimentRel segmentsExperimentRel =
-					(SegmentsExperimentRel)result;
-
-				if ((segmentsExperimentId !=
-						segmentsExperimentRel.getSegmentsExperimentId()) ||
-					(segmentsExperienceId !=
-						segmentsExperimentRel.getSegmentsExperienceId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE);
-
-				sb.append(_FINDER_COLUMN_S_S_SEGMENTSEXPERIMENTID_2);
-
-				sb.append(_FINDER_COLUMN_S_S_SEGMENTSEXPERIENCEID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(segmentsExperimentId);
-
-					queryPos.add(segmentsExperienceId);
-
-					List<SegmentsExperimentRel> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByS_S, finderArgs, list);
-						}
-					}
-					else {
-						SegmentsExperimentRel segmentsExperimentRel = list.get(
-							0);
-
-						result = segmentsExperimentRel;
-
-						cacheResult(segmentsExperimentRel);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (SegmentsExperimentRel)result;
-			}
-		}
+		return _uniquePersistenceFinderByS_S.fetch(
+			finderCache,
+			new Object[] {segmentsExperimentId, segmentsExperienceId},
+			useFinderCache);
 	}
 
 	/**
@@ -908,21 +360,10 @@ public class SegmentsExperimentRelPersistenceImpl
 	public int countByS_S(
 		long segmentsExperimentId, long segmentsExperienceId) {
 
-		SegmentsExperimentRel segmentsExperimentRel = fetchByS_S(
-			segmentsExperimentId, segmentsExperienceId);
-
-		if (segmentsExperimentRel == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByS_S.count(
+			finderCache,
+			new Object[] {segmentsExperimentId, segmentsExperienceId});
 	}
-
-	private static final String _FINDER_COLUMN_S_S_SEGMENTSEXPERIMENTID_2 =
-		"segmentsExperimentRel.segmentsExperimentId = ? AND ";
-
-	private static final String _FINDER_COLUMN_S_S_SEGMENTSEXPERIENCEID_2 =
-		"segmentsExperimentRel.segmentsExperienceId = ?";
 
 	public SegmentsExperimentRelPersistenceImpl() {
 		setModelClass(SegmentsExperimentRel.class);
@@ -931,131 +372,6 @@ public class SegmentsExperimentRelPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(SegmentsExperimentRelTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the segments experiment rel in the entity cache if it is enabled.
-	 *
-	 * @param segmentsExperimentRel the segments experiment rel
-	 */
-	@Override
-	public void cacheResult(SegmentsExperimentRel segmentsExperimentRel) {
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					segmentsExperimentRel.getCtCollectionId())) {
-
-			entityCache.putResult(
-				SegmentsExperimentRelImpl.class,
-				segmentsExperimentRel.getPrimaryKey(), segmentsExperimentRel);
-
-			finderCache.putResult(
-				_finderPathFetchByS_S,
-				new Object[] {
-					segmentsExperimentRel.getSegmentsExperimentId(),
-					segmentsExperimentRel.getSegmentsExperienceId()
-				},
-				segmentsExperimentRel);
-		}
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the segments experiment rels in the entity cache if it is enabled.
-	 *
-	 * @param segmentsExperimentRels the segments experiment rels
-	 */
-	@Override
-	public void cacheResult(
-		List<SegmentsExperimentRel> segmentsExperimentRels) {
-
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (segmentsExperimentRels.size() >
-				 _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (SegmentsExperimentRel segmentsExperimentRel :
-				segmentsExperimentRels) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-						segmentsExperimentRel.getCtCollectionId())) {
-
-				if (entityCache.getResult(
-						SegmentsExperimentRelImpl.class,
-						segmentsExperimentRel.getPrimaryKey()) == null) {
-
-					cacheResult(segmentsExperimentRel);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all segments experiment rels.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(SegmentsExperimentRelImpl.class);
-
-		finderCache.clearCache(SegmentsExperimentRelImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the segments experiment rel.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(SegmentsExperimentRel segmentsExperimentRel) {
-		entityCache.removeResult(
-			SegmentsExperimentRelImpl.class, segmentsExperimentRel);
-	}
-
-	@Override
-	public void clearCache(List<SegmentsExperimentRel> segmentsExperimentRels) {
-		for (SegmentsExperimentRel segmentsExperimentRel :
-				segmentsExperimentRels) {
-
-			entityCache.removeResult(
-				SegmentsExperimentRelImpl.class, segmentsExperimentRel);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(SegmentsExperimentRelImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				SegmentsExperimentRelImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		SegmentsExperimentRelModelImpl segmentsExperimentRelModelImpl) {
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					segmentsExperimentRelModelImpl.getCtCollectionId())) {
-
-			Object[] args = new Object[] {
-				segmentsExperimentRelModelImpl.getSegmentsExperimentId(),
-				segmentsExperimentRelModelImpl.getSegmentsExperienceId()
-			};
-
-			finderCache.putResult(
-				_finderPathFetchByS_S, args, segmentsExperimentRelModelImpl);
-		}
 	}
 
 	/**
@@ -1089,48 +405,6 @@ public class SegmentsExperimentRelPersistenceImpl
 		throws NoSuchExperimentRelException {
 
 		return remove((Serializable)segmentsExperimentRelId);
-	}
-
-	/**
-	 * Removes the segments experiment rel with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the segments experiment rel
-	 * @return the segments experiment rel that was removed
-	 * @throws NoSuchExperimentRelException if a segments experiment rel with the primary key could not be found
-	 */
-	@Override
-	public SegmentsExperimentRel remove(Serializable primaryKey)
-		throws NoSuchExperimentRelException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SegmentsExperimentRel segmentsExperimentRel =
-				(SegmentsExperimentRel)session.get(
-					SegmentsExperimentRelImpl.class, primaryKey);
-
-			if (segmentsExperimentRel == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchExperimentRelException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(segmentsExperimentRel);
-		}
-		catch (NoSuchExperimentRelException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1247,43 +521,13 @@ public class SegmentsExperimentRelPersistenceImpl
 			closeSession(session);
 		}
 
-		entityCache.putResult(
-			SegmentsExperimentRelImpl.class, segmentsExperimentRelModelImpl,
-			false, true);
-
-		cacheUniqueFindersCache(segmentsExperimentRelModelImpl);
+		cacheUniqueFindersResult(segmentsExperimentRel, false);
 
 		if (isNew) {
 			segmentsExperimentRel.setNew(false);
 		}
 
 		segmentsExperimentRel.resetOriginalValues();
-
-		return segmentsExperimentRel;
-	}
-
-	/**
-	 * Returns the segments experiment rel with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the segments experiment rel
-	 * @return the segments experiment rel
-	 * @throws NoSuchExperimentRelException if a segments experiment rel with the primary key could not be found
-	 */
-	@Override
-	public SegmentsExperimentRel findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchExperimentRelException {
-
-		SegmentsExperimentRel segmentsExperimentRel = fetchByPrimaryKey(
-			primaryKey);
-
-		if (segmentsExperimentRel == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchExperimentRelException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return segmentsExperimentRel;
 	}
@@ -1302,53 +546,9 @@ public class SegmentsExperimentRelPersistenceImpl
 		return findByPrimaryKey((Serializable)segmentsExperimentRelId);
 	}
 
-	/**
-	 * Returns the segments experiment rel with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the segments experiment rel
-	 * @return the segments experiment rel, or <code>null</code> if a segments experiment rel with the primary key could not be found
-	 */
 	@Override
-	public SegmentsExperimentRel fetchByPrimaryKey(Serializable primaryKey) {
-		if (ctPersistenceHelper.isProductionMode(
-				SegmentsExperimentRel.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		SegmentsExperimentRel segmentsExperimentRel =
-			(SegmentsExperimentRel)entityCache.getResult(
-				SegmentsExperimentRelImpl.class, primaryKey);
-
-		if (segmentsExperimentRel != null) {
-			return segmentsExperimentRel;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			segmentsExperimentRel = (SegmentsExperimentRel)session.get(
-				SegmentsExperimentRelImpl.class, primaryKey);
-
-			if (segmentsExperimentRel != null) {
-				cacheResult(segmentsExperimentRel);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return segmentsExperimentRel;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return ctPersistenceHelper;
 	}
 
 	/**
@@ -1362,328 +562,6 @@ public class SegmentsExperimentRelPersistenceImpl
 		long segmentsExperimentRelId) {
 
 		return fetchByPrimaryKey((Serializable)segmentsExperimentRelId);
-	}
-
-	@Override
-	public Map<Serializable, SegmentsExperimentRel> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (ctPersistenceHelper.isProductionMode(SegmentsExperimentRel.class)) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, SegmentsExperimentRel> map =
-			new HashMap<Serializable, SegmentsExperimentRel>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			SegmentsExperimentRel segmentsExperimentRel = fetchByPrimaryKey(
-				primaryKey);
-
-			if (segmentsExperimentRel != null) {
-				map.put(primaryKey, segmentsExperimentRel);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-						SegmentsExperimentRel.class, primaryKey)) {
-
-				SegmentsExperimentRel segmentsExperimentRel =
-					(SegmentsExperimentRel)entityCache.getResult(
-						SegmentsExperimentRelImpl.class, primaryKey);
-
-				if (segmentsExperimentRel == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, segmentsExperimentRel);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (SegmentsExperimentRel segmentsExperimentRel :
-					(List<SegmentsExperimentRel>)query.list()) {
-
-				map.put(
-					segmentsExperimentRel.getPrimaryKeyObj(),
-					segmentsExperimentRel);
-
-				cacheResult(segmentsExperimentRel);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the segments experiment rels.
-	 *
-	 * @return the segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the segments experiment rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of segments experiment rels
-	 * @param end the upper bound of the range of segments experiment rels (not inclusive)
-	 * @return the range of segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the segments experiment rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of segments experiment rels
-	 * @param end the upper bound of the range of segments experiment rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findAll(
-		int start, int end,
-		OrderByComparator<SegmentsExperimentRel> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the segments experiment rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SegmentsExperimentRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of segments experiment rels
-	 * @param end the upper bound of the range of segments experiment rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of segments experiment rels
-	 */
-	@Override
-	public List<SegmentsExperimentRel> findAll(
-		int start, int end,
-		OrderByComparator<SegmentsExperimentRel> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					SegmentsExperimentRel.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<SegmentsExperimentRel> list = null;
-
-			if (useFinderCache) {
-				list = (List<SegmentsExperimentRel>)finderCache.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_SEGMENTSEXPERIMENTREL);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_SEGMENTSEXPERIMENTREL;
-
-					sql = sql.concat(
-						SegmentsExperimentRelModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<SegmentsExperimentRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the segments experiment rels from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (SegmentsExperimentRel segmentsExperimentRel : findAll()) {
-			remove(segmentsExperimentRel);
-		}
-	}
-
-	/**
-	 * Returns the number of segments experiment rels.
-	 *
-	 * @return the number of segments experiment rels
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					SegmentsExperimentRel.class)) {
-
-			Long count = (Long)finderCache.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(
-						_SQL_COUNT_SEGMENTSEXPERIMENTREL);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -1775,64 +653,85 @@ public class SegmentsExperimentRelPersistenceImpl
 	 */
 	@Activate
 	public void activate() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderBySegmentsExperimentId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findBySegmentsExperimentId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"segmentsExperimentId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findBySegmentsExperimentId",
+					new String[] {Long.class.getName()},
+					new String[] {"segmentsExperimentId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countBySegmentsExperimentId",
+					new String[] {Long.class.getName()},
+					new String[] {"segmentsExperimentId"}, false),
+				_SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE,
+				_SQL_COUNT_SEGMENTSEXPERIMENTREL_WHERE,
+				SegmentsExperimentRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"segmentsExperimentRel.", "segmentsExperimentId",
+					FinderColumn.Type.LONG, "=", true, true,
+					SegmentsExperimentRel::getSegmentsExperimentId));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderBySegmentsExperienceId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+					"findBySegmentsExperienceId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"segmentsExperienceId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findBySegmentsExperienceId",
+					new String[] {Long.class.getName()},
+					new String[] {"segmentsExperienceId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countBySegmentsExperienceId",
+					new String[] {Long.class.getName()},
+					new String[] {"segmentsExperienceId"}, false),
+				_SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE,
+				_SQL_COUNT_SEGMENTSEXPERIMENTREL_WHERE,
+				SegmentsExperimentRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"segmentsExperimentRel.", "segmentsExperienceId",
+					FinderColumn.Type.LONG, "=", true, true,
+					SegmentsExperimentRel::getSegmentsExperienceId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
-		_finderPathWithPaginationFindBySegmentsExperimentId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findBySegmentsExperimentId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"segmentsExperimentId"}, true);
-
-		_finderPathWithoutPaginationFindBySegmentsExperimentId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findBySegmentsExperimentId", new String[] {Long.class.getName()},
-			new String[] {"segmentsExperimentId"}, true);
-
-		_finderPathCountBySegmentsExperimentId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countBySegmentsExperimentId", new String[] {Long.class.getName()},
-			new String[] {"segmentsExperimentId"}, false);
-
-		_finderPathWithPaginationFindBySegmentsExperienceId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findBySegmentsExperienceId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"segmentsExperienceId"}, true);
-
-		_finderPathWithoutPaginationFindBySegmentsExperienceId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findBySegmentsExperienceId", new String[] {Long.class.getName()},
-			new String[] {"segmentsExperienceId"}, true);
-
-		_finderPathCountBySegmentsExperienceId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countBySegmentsExperienceId", new String[] {Long.class.getName()},
-			new String[] {"segmentsExperienceId"}, false);
-
-		_finderPathFetchByS_S = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByS_S",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"segmentsExperimentId", "segmentsExperienceId"},
-			true);
+		_uniquePersistenceFinderByS_S = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByS_S",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"segmentsExperimentId", "segmentsExperienceId"},
+				0, 0, false, SegmentsExperimentRel::getSegmentsExperimentId,
+				SegmentsExperimentRel::getSegmentsExperienceId),
+			_SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE, "",
+			new FinderColumn<>(
+				"segmentsExperimentRel.", "segmentsExperimentId",
+				FinderColumn.Type.LONG, "=", true, true,
+				SegmentsExperimentRel::getSegmentsExperimentId),
+			new FinderColumn<>(
+				"segmentsExperimentRel.", "segmentsExperienceId",
+				FinderColumn.Type.LONG, "=", true, true,
+				SegmentsExperimentRel::getSegmentsExperienceId));
 
 		SegmentsExperimentRelUtil.setPersistence(this);
 	}
@@ -1879,23 +778,17 @@ public class SegmentsExperimentRelPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		SegmentsExperimentRelModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_SEGMENTSEXPERIMENTREL =
 		"SELECT segmentsExperimentRel FROM SegmentsExperimentRel segmentsExperimentRel";
 
 	private static final String _SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE =
 		"SELECT segmentsExperimentRel FROM SegmentsExperimentRel segmentsExperimentRel WHERE ";
 
-	private static final String _SQL_COUNT_SEGMENTSEXPERIMENTREL =
-		"SELECT COUNT(segmentsExperimentRel) FROM SegmentsExperimentRel segmentsExperimentRel";
-
 	private static final String _SQL_COUNT_SEGMENTSEXPERIMENTREL_WHERE =
 		"SELECT COUNT(segmentsExperimentRel) FROM SegmentsExperimentRel segmentsExperimentRel WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"segmentsExperimentRel.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No SegmentsExperimentRel exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No SegmentsExperimentRel exists with the key {";
@@ -1909,4 +802,4 @@ public class SegmentsExperimentRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-63513518
+// LIFERAY-SERVICE-BUILDER-HASH:-553186800

@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -71,6 +72,13 @@ public interface PatcherFixLocalService
 			String name, int type, int status, List<Long> parentPatcherFixIds)
 		throws Exception;
 
+	@Indexable(type = IndexableType.REINDEX)
+	public PatcherFix addPatcherFix(
+			long userId, long patcherProductVersionId,
+			long patcherProjectVersionId, String committish,
+			String gitRemoteURL, String name, int type, int status)
+		throws Exception;
+
 	/**
 	 * Adds the patcher fix to the database. Also notifies the appropriate model listeners.
 	 *
@@ -95,6 +103,10 @@ public interface PatcherFixLocalService
 
 	public boolean addPatcherFixPackPatcherFixes(
 		long patcherFixPackId, long[] patcherFixIds);
+
+	public JSONObject checkPatcherFixesByPatcherProjectVersionName(
+			String patcherFixNames, String patcherProjectVersionName)
+		throws PortalException;
 
 	public void clearPatcherBuildPatcherFixes(long patcherBuildId);
 
@@ -469,4 +481,4 @@ public interface PatcherFixLocalService
 		throws PortalException;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-104527664
+// LIFERAY-SERVICE-BUILDER-HASH:1193074550

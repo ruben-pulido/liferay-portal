@@ -36,6 +36,20 @@ public class PasswordTrackerUtil {
 	 */
 
 	/**
+	 * @see BasePersistence#cacheResult(List)
+	 */
+	public static void cacheResult(List<PasswordTracker> passwordTrackers) {
+		getPersistence().cacheResult(passwordTrackers);
+	}
+
+	/**
+	 * @see BasePersistence#cacheResult(com.liferay.portal.kernel.model.BaseModel)
+	 */
+	public static void cacheResult(PasswordTracker passwordTracker) {
+		getPersistence().cacheResult(passwordTracker);
+	}
+
+	/**
 	 * @see BasePersistence#clearCache()
 	 */
 	public static void clearCache() {
@@ -111,59 +125,10 @@ public class PasswordTrackerUtil {
 	}
 
 	/**
-	 * Returns all the password trackers where userId = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @return the matching password trackers
-	 */
-	public static List<PasswordTracker> findByUserId(long userId) {
-		return getPersistence().findByUserId(userId);
-	}
-
-	/**
-	 * Returns a range of all the password trackers where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PasswordTrackerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of password trackers
-	 * @param end the upper bound of the range of password trackers (not inclusive)
-	 * @return the range of matching password trackers
-	 */
-	public static List<PasswordTracker> findByUserId(
-		long userId, int start, int end) {
-
-		return getPersistence().findByUserId(userId, start, end);
-	}
-
-	/**
 	 * Returns an ordered range of all the password trackers where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PasswordTrackerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of password trackers
-	 * @param end the upper bound of the range of password trackers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching password trackers
-	 */
-	public static List<PasswordTracker> findByUserId(
-		long userId, int start, int end,
-		OrderByComparator<PasswordTracker> orderByComparator) {
-
-		return getPersistence().findByUserId(
-			userId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the password trackers where userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PasswordTrackerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PasswordTrackerModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -231,24 +196,6 @@ public class PasswordTrackerUtil {
 	}
 
 	/**
-	 * Caches the password tracker in the entity cache if it is enabled.
-	 *
-	 * @param passwordTracker the password tracker
-	 */
-	public static void cacheResult(PasswordTracker passwordTracker) {
-		getPersistence().cacheResult(passwordTracker);
-	}
-
-	/**
-	 * Caches the password trackers in the entity cache if it is enabled.
-	 *
-	 * @param passwordTrackers the password trackers
-	 */
-	public static void cacheResult(List<PasswordTracker> passwordTrackers) {
-		getPersistence().cacheResult(passwordTrackers);
-	}
-
-	/**
 	 * Creates a new password tracker with the primary key. Does not add the password tracker to the database.
 	 *
 	 * @param passwordTrackerId the primary key for the new password tracker
@@ -301,84 +248,52 @@ public class PasswordTrackerUtil {
 	}
 
 	/**
-	 * Returns all the password trackers.
+	 * Returns all the password trackers where userId = &#63;.
 	 *
-	 * @return the password trackers
+	 * @param userId the user ID
+	 * @return the matching password trackers
 	 */
-	public static List<PasswordTracker> findAll() {
-		return getPersistence().findAll();
+	public static List<PasswordTracker> findByUserId(long userId) {
+		return getPersistence().findByUserId(userId);
 	}
 
 	/**
-	 * Returns a range of all the password trackers.
+	 * Returns a range of all the password trackers where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PasswordTrackerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PasswordTrackerModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of password trackers
 	 * @param end the upper bound of the range of password trackers (not inclusive)
-	 * @return the range of password trackers
+	 * @return the range of matching password trackers
 	 */
-	public static List<PasswordTracker> findAll(int start, int end) {
-		return getPersistence().findAll(start, end);
+	public static List<PasswordTracker> findByUserId(
+		long userId, int start, int end) {
+
+		return getPersistence().findByUserId(userId, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the password trackers.
+	 * Returns an ordered range of all the password trackers where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PasswordTrackerModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.portal.model.impl.PasswordTrackerModelImpl</code>.
 	 * </p>
 	 *
+	 * @param userId the user ID
 	 * @param start the lower bound of the range of password trackers
 	 * @param end the upper bound of the range of password trackers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of password trackers
+	 * @return the ordered range of matching password trackers
 	 */
-	public static List<PasswordTracker> findAll(
-		int start, int end,
+	public static List<PasswordTracker> findByUserId(
+		long userId, int start, int end,
 		OrderByComparator<PasswordTracker> orderByComparator) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the password trackers.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PasswordTrackerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of password trackers
-	 * @param end the upper bound of the range of password trackers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of password trackers
-	 */
-	public static List<PasswordTracker> findAll(
-		int start, int end,
-		OrderByComparator<PasswordTracker> orderByComparator,
-		boolean useFinderCache) {
-
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
-	}
-
-	/**
-	 * Removes all the password trackers from the database.
-	 */
-	public static void removeAll() {
-		getPersistence().removeAll();
-	}
-
-	/**
-	 * Returns the number of password trackers.
-	 *
-	 * @return the number of password trackers
-	 */
-	public static int countAll() {
-		return getPersistence().countAll();
+		return getPersistence().findByUserId(
+			userId, start, end, orderByComparator);
 	}
 
 	public static PasswordTrackerPersistence getPersistence() {
@@ -392,4 +307,4 @@ public class PasswordTrackerUtil {
 	private static volatile PasswordTrackerPersistence _persistence;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:411467378
+// LIFERAY-SERVICE-BUILDER-HASH:4130794

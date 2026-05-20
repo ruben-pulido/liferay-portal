@@ -42,14 +42,6 @@ public interface BrowserTrackerPersistence
 		throws NoSuchBrowserTrackerException;
 
 	/**
-	 * Returns the browser tracker where userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @return the matching browser tracker, or <code>null</code> if a matching browser tracker could not be found
-	 */
-	public BrowserTracker fetchByUserId(long userId);
-
-	/**
 	 * Returns the browser tracker where userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param userId the user ID
@@ -74,20 +66,6 @@ public interface BrowserTrackerPersistence
 	 * @return the number of matching browser trackers
 	 */
 	public int countByUserId(long userId);
-
-	/**
-	 * Caches the browser tracker in the entity cache if it is enabled.
-	 *
-	 * @param browserTracker the browser tracker
-	 */
-	public void cacheResult(BrowserTracker browserTracker);
-
-	/**
-	 * Caches the browser trackers in the entity cache if it is enabled.
-	 *
-	 * @param browserTrackers the browser trackers
-	 */
-	public void cacheResult(java.util.List<BrowserTracker> browserTrackers);
 
 	/**
 	 * Creates a new browser tracker with the primary key. Does not add the browser tracker to the database.
@@ -128,72 +106,14 @@ public interface BrowserTrackerPersistence
 	public BrowserTracker fetchByPrimaryKey(long browserTrackerId);
 
 	/**
-	 * Returns all the browser trackers.
+	 * Returns the browser tracker where userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the browser trackers
+	 * @param userId the user ID
+	 * @return the matching browser tracker, or <code>null</code> if a matching browser tracker could not be found
 	 */
-	public java.util.List<BrowserTracker> findAll();
-
-	/**
-	 * Returns a range of all the browser trackers.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BrowserTrackerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of browser trackers
-	 * @param end the upper bound of the range of browser trackers (not inclusive)
-	 * @return the range of browser trackers
-	 */
-	public java.util.List<BrowserTracker> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the browser trackers.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BrowserTrackerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of browser trackers
-	 * @param end the upper bound of the range of browser trackers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of browser trackers
-	 */
-	public java.util.List<BrowserTracker> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<BrowserTracker>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the browser trackers.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>BrowserTrackerModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of browser trackers
-	 * @param end the upper bound of the range of browser trackers (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of browser trackers
-	 */
-	public java.util.List<BrowserTracker> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<BrowserTracker>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the browser trackers from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of browser trackers.
-	 *
-	 * @return the number of browser trackers
-	 */
-	public int countAll();
+	public default BrowserTracker fetchByUserId(long userId) {
+		return fetchByUserId(userId, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:589572127
+// LIFERAY-SERVICE-BUILDER-HASH:-680003162

@@ -45,7 +45,9 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
@@ -334,7 +336,7 @@ public class OpenAPIResourceTest {
 		try {
 			HTTPTestUtil.customize(
 			).withBaseURL(
-				"http://www.able.com:8080"
+				"http://www.able.com:" + PortalUtil.getPortalServerPort(false)
 			).withCredentials(
 				"test@able.com", PropsValues.DEFAULT_ADMIN_PASSWORD
 			).apply(
@@ -368,9 +370,11 @@ public class OpenAPIResourceTest {
 
 					Assert.assertEquals(1, jsonArray.length());
 					Assert.assertEquals(
-						"http://www.able.com:8080/o" +
-							companyObjectDefinition.getRESTContextPath() +
-								"/openapi.yaml",
+						StringBundler.concat(
+							"http://www.able.com:",
+							PortalUtil.getPortalServerPort(false), "/o",
+							companyObjectDefinition.getRESTContextPath(),
+							"/openapi.yaml"),
 						jsonArray.get(0));
 				}
 			);
@@ -468,8 +472,11 @@ public class OpenAPIResourceTest {
 		throws Exception {
 
 		JSONAssert.assertEquals(
-			new String(
-				FileUtil.getBytes(getClass(), "dependencies/" + fileName)),
+			StringUtil.replace(
+				new String(
+					FileUtil.getBytes(getClass(), "dependencies/" + fileName)),
+				"[$SERVER_PORT$]",
+				String.valueOf(PortalUtil.getPortalServerPort(false))),
 			HTTPTestUtil.invokeToJSONObject(
 				null, objectDefinition.getRESTContextPath() + "/openapi.json",
 				Http.Method.GET
@@ -478,7 +485,7 @@ public class OpenAPIResourceTest {
 	}
 
 	@Inject
-	private static CompanyLocalService _companyLocalService;
+	private CompanyLocalService _companyLocalService;
 
 	@Inject
 	private ListTypeDefinitionLocalService _listTypeDefinitionLocalService;

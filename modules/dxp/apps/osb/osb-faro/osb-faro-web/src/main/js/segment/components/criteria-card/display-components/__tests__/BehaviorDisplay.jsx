@@ -10,14 +10,14 @@ import {
 } from 'segment/segment-editor/dynamic/utils/constants';
 import {List, Map} from 'immutable';
 import {Property, Segment} from 'shared/util/records';
+import {SegmentTypes} from 'shared/util/constants';
 import {withReferencedObjectsProvider} from 'segment/segment-editor/dynamic/context/referencedObjects';
 
 jest.unmock('react-dom');
 
 describe('BehaviorDisplay', () => {
-	const WrappedBehaviorDisplay = withReferencedObjectsProvider(
-		BehaviorDisplay
-	);
+	const WrappedBehaviorDisplay =
+		withReferencedObjectsProvider(BehaviorDisplay);
 
 	const mockSegment = data.getImmutableMock(Segment, data.mockSegment, 0, {
 		referencedObjects: {
@@ -72,6 +72,7 @@ describe('BehaviorDisplay', () => {
 				criterion={mockCriterion}
 				property={mockProperty}
 				segment={mockSegment}
+				segmentType={SegmentTypes.Batch}
 			/>
 		);
 

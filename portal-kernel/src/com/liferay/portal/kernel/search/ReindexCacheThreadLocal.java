@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -30,17 +31,23 @@ public class ReindexCacheThreadLocal {
 			return null;
 		}
 
-		T t = (T)reindexCacheMap.computeIfAbsent(
-			ownerName,
-			key -> {
-				int count = countSupplier.get();
+		T t = (T)reindexCacheMap.get(ownerName);
 
-				if (count > _SIZE_LIMIT) {
-					return _NULL_HOLDER;
-				}
+		// Waste one get to avoid potential "recursive update" error
 
-				return reindexCacheFunction.apply(count);
-			});
+		if (t == null) {
+			t = (T)reindexCacheMap.computeIfAbsent(
+				ownerName,
+				key -> {
+					int count = countSupplier.get();
+
+					if (count > _SIZE_LIMIT) {
+						return _NULL_HOLDER;
+					}
+
+					return reindexCacheFunction.apply(count);
+				});
+		}
 
 		if (t == _NULL_HOLDER) {
 			return null;
@@ -123,6 +130,19 @@ public class ReindexCacheThreadLocal {
 			safeCloseable2.close();
 
 			safeCloseable1.close();
+		};
+	}
+
+	public static <T> Callable<T> wrapCallable(Callable<T> callable) {
+		boolean fullMode = _fullMode.get();
+		Map<String, Object> reindexCacheMap = _reindexCacheMap.get();
+
+		return () -> {
+			try (SafeCloseable safeCloseable = openReindexMode(
+					fullMode, reindexCacheMap)) {
+
+				return callable.call();
+			}
 		};
 	}
 

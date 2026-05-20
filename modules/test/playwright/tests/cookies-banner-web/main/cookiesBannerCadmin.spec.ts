@@ -5,7 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedLayoutTest} from '../../../fixtures/isolatedLayoutTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
@@ -16,10 +15,6 @@ import {
 } from './utils/consentManagerConfigurationHelper';
 
 export const test = mergeTests(
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-		'LPD-75032': {enabled: true},
-	}),
 	isolatedLayoutTest(),
 	loginTest(),
 	systemSettingsPageTest
@@ -47,7 +42,7 @@ test('LPD-25440 Cookie Banner Cadmin', async ({page}) => {
 		await page.goto('/');
 
 		await page
-			.getByRole('dialog', {name: 'banner cookies'})
+			.locator('div[role="dialog"][aria-modal="true"]')
 			.waitFor({state: 'visible'});
 
 		const configuration = page.getByRole('button', {name: 'Configuration'});

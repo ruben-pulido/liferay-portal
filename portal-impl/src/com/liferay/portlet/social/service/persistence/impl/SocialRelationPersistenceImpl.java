@@ -5,28 +5,23 @@
 
 package com.liferay.portlet.social.service.persistence.impl;
 
-import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelperUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -48,10 +43,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -65,7 +58,7 @@ import java.util.Set;
  * @generated
  */
 public class SocialRelationPersistenceImpl
-	extends BasePersistenceImpl<SocialRelation>
+	extends BasePersistenceImpl<SocialRelation, NoSuchRelationException>
 	implements SocialRelationPersistence {
 
 	/*
@@ -82,67 +75,14 @@ public class SocialRelationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByUuid;
-	private FinderPath _finderPathWithoutPaginationFindByUuid;
-	private FinderPath _finderPathCountByUuid;
-
-	/**
-	 * Returns all the social relations where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUuid(String uuid) {
-		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUuid(String uuid, int start, int end) {
-		return findByUuid(uuid, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the social relations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByUuid(uuid, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -158,111 +98,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUuid;
-					finderArgs = new Object[] {uuid};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUuid;
-				finderArgs = new Object[] {uuid, start, end, orderByComparator};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if (!uuid.equals(socialRelation.getUuid())) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_UUID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUuid.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -285,16 +123,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -308,13 +139,9 @@ public class SocialRelationPersistenceImpl
 	public SocialRelation fetchByUuid_First(
 		String uuid, OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByUuid(uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -324,11 +151,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (SocialRelation socialRelation :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
 	/**
@@ -339,137 +163,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = _finderPathCountByUuid;
-
-			Object[] finderArgs = new Object[] {uuid};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_UUID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUuid.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"socialRelation.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(socialRelation.uuid IS NULL OR socialRelation.uuid = '')";
-
-	private FinderPath _finderPathWithPaginationFindByUuid_C;
-	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
-	private FinderPath _finderPathCountByUuid_C;
-
-	/**
-	 * Returns all the social relations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUuid_C(String uuid, long companyId) {
-		return findByUuid_C(
-			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return findByUuid_C(uuid, companyId, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the social relations where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -486,119 +191,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUuid_C;
-					finderArgs = new Object[] {uuid, companyId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUuid_C;
-				finderArgs = new Object[] {
-					uuid, companyId, start, end, orderByComparator
-				};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if (!uuid.equals(socialRelation.getUuid()) ||
-							(companyId != socialRelation.getCompanyId())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(companyId);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUuid_C.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -623,19 +218,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -651,14 +236,9 @@ public class SocialRelationPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -669,13 +249,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (SocialRelation socialRelation :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -687,140 +262,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = _finderPathCountByUuid_C;
-
-			Object[] finderArgs = new Object[] {uuid, companyId};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(companyId);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUuid_C.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"socialRelation.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(socialRelation.uuid IS NULL OR socialRelation.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"socialRelation.companyId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByCompanyId;
-	private FinderPath _finderPathWithoutPaginationFindByCompanyId;
-	private FinderPath _finderPathCountByCompanyId;
-
-	/**
-	 * Returns all the social relations where companyId = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByCompanyId(long companyId) {
-		return findByCompanyId(
-			companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByCompanyId(
-		long companyId, int start, int end) {
-
-		return findByCompanyId(companyId, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the social relations where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByCompanyId(
-		long companyId, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByCompanyId(companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -836,100 +289,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByCompanyId;
-					finderArgs = new Object[] {companyId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByCompanyId;
-				finderArgs = new Object[] {
-					companyId, start, end, orderByComparator
-				};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if (companyId != socialRelation.getCompanyId()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_COMPANYID_COMPANYID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByCompanyId.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -952,16 +314,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
 	}
 
 	/**
@@ -975,14 +330,9 @@ public class SocialRelationPersistenceImpl
 	public SocialRelation fetchByCompanyId_First(
 		long companyId, OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByCompanyId(
-			companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCompanyId.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -992,12 +342,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByCompanyId(long companyId) {
-		for (SocialRelation socialRelation :
-				findByCompanyId(
-					companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByCompanyId.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
 	/**
@@ -1008,117 +354,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByCompanyId(long companyId) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = _finderPathCountByCompanyId;
-
-			Object[] finderArgs = new Object[] {companyId};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_COMPANYID_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByCompanyId.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private static final String _FINDER_COLUMN_COMPANYID_COMPANYID_2 =
-		"socialRelation.companyId = ?";
-
-	private FinderPath _finderPathWithPaginationFindByUserId1;
-	private FinderPath _finderPathWithoutPaginationFindByUserId1;
-	private FinderPath _finderPathCountByUserId1;
-
-	/**
-	 * Returns all the social relations where userId1 = &#63;.
-	 *
-	 * @param userId1 the user id1
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUserId1(long userId1) {
-		return findByUserId1(
-			userId1, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where userId1 = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId1 the user id1
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUserId1(
-		long userId1, int start, int end) {
-
-		return findByUserId1(userId1, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByUserId1;
 
 	/**
 	 * Returns an ordered range of all the social relations where userId1 = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId1 the user id1
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUserId1(
-		long userId1, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByUserId1(userId1, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where userId1 = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId1 the user id1
@@ -1134,100 +381,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUserId1;
-					finderArgs = new Object[] {userId1};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUserId1;
-				finderArgs = new Object[] {
-					userId1, start, end, orderByComparator
-				};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if (userId1 != socialRelation.getUserId1()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_USERID1_USERID1_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId1);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUserId1.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1250,16 +406,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId1=");
-		sb.append(userId1);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByUserId1.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId1}));
 	}
 
 	/**
@@ -1273,14 +422,9 @@ public class SocialRelationPersistenceImpl
 	public SocialRelation fetchByUserId1_First(
 		long userId1, OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByUserId1(
-			userId1, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUserId1.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1},
+			orderByComparator);
 	}
 
 	/**
@@ -1290,12 +434,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByUserId1(long userId1) {
-		for (SocialRelation socialRelation :
-				findByUserId1(
-					userId1, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByUserId1.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1});
 	}
 
 	/**
@@ -1306,117 +446,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByUserId1(long userId1) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = _finderPathCountByUserId1;
-
-			Object[] finderArgs = new Object[] {userId1};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_USERID1_USERID1_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId1);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUserId1.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1});
 	}
 
-	private static final String _FINDER_COLUMN_USERID1_USERID1_2 =
-		"socialRelation.userId1 = ?";
-
-	private FinderPath _finderPathWithPaginationFindByUserId2;
-	private FinderPath _finderPathWithoutPaginationFindByUserId2;
-	private FinderPath _finderPathCountByUserId2;
-
-	/**
-	 * Returns all the social relations where userId2 = &#63;.
-	 *
-	 * @param userId2 the user id2
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUserId2(long userId2) {
-		return findByUserId2(
-			userId2, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where userId2 = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId2 the user id2
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUserId2(
-		long userId2, int start, int end) {
-
-		return findByUserId2(userId2, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByUserId2;
 
 	/**
 	 * Returns an ordered range of all the social relations where userId2 = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId2 the user id2
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByUserId2(
-		long userId2, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByUserId2(userId2, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where userId2 = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId2 the user id2
@@ -1432,100 +473,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUserId2;
-					finderArgs = new Object[] {userId2};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUserId2;
-				finderArgs = new Object[] {
-					userId2, start, end, orderByComparator
-				};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if (userId2 != socialRelation.getUserId2()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_USERID2_USERID2_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId2);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByUserId2.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId2}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1548,16 +498,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId2=");
-		sb.append(userId2);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByUserId2.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId2}));
 	}
 
 	/**
@@ -1571,14 +514,9 @@ public class SocialRelationPersistenceImpl
 	public SocialRelation fetchByUserId2_First(
 		long userId2, OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByUserId2(
-			userId2, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUserId2.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId2},
+			orderByComparator);
 	}
 
 	/**
@@ -1588,12 +526,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByUserId2(long userId2) {
-		for (SocialRelation socialRelation :
-				findByUserId2(
-					userId2, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByUserId2.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId2});
 	}
 
 	/**
@@ -1604,114 +538,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByUserId2(long userId2) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = _finderPathCountByUserId2;
-
-			Object[] finderArgs = new Object[] {userId2};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_USERID2_USERID2_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId2);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByUserId2.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId2});
 	}
 
-	private static final String _FINDER_COLUMN_USERID2_USERID2_2 =
-		"socialRelation.userId2 = ?";
-
-	private FinderPath _finderPathWithPaginationFindByType;
-	private FinderPath _finderPathWithoutPaginationFindByType;
-	private FinderPath _finderPathCountByType;
-
-	/**
-	 * Returns all the social relations where type = &#63;.
-	 *
-	 * @param type the type
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByType(int type) {
-		return findByType(type, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByType(int type, int start, int end) {
-		return findByType(type, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByType;
 
 	/**
 	 * Returns an ordered range of all the social relations where type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param type the type
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByType(
-		int type, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByType(type, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param type the type
@@ -1727,98 +565,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByType;
-					finderArgs = new Object[] {type};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByType;
-				finderArgs = new Object[] {type, start, end, orderByComparator};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if (type != socialRelation.getType()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_TYPE_TYPE_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(type);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByType.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {type}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1841,16 +590,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByType.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {type}));
 	}
 
 	/**
@@ -1864,13 +606,9 @@ public class SocialRelationPersistenceImpl
 	public SocialRelation fetchByType_First(
 		int type, OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByType(type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByType.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {type},
+			orderByComparator);
 	}
 
 	/**
@@ -1880,11 +618,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByType(int type) {
-		for (SocialRelation socialRelation :
-				findByType(type, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByType.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {type});
 	}
 
 	/**
@@ -1895,120 +630,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByType(int type) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = _finderPathCountByType;
-
-			Object[] finderArgs = new Object[] {type};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_TYPE_TYPE_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(type);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByType.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {type});
 	}
 
-	private static final String _FINDER_COLUMN_TYPE_TYPE_2 =
-		"socialRelation.type = ?";
-
-	private FinderPath _finderPathWithPaginationFindByC_T;
-	private FinderPath _finderPathWithoutPaginationFindByC_T;
-	private FinderPath _finderPathCountByC_T;
-
-	/**
-	 * Returns all the social relations where companyId = &#63; and type = &#63;.
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByC_T(long companyId, int type) {
-		return findByC_T(
-			companyId, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where companyId = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByC_T(
-		long companyId, int type, int start, int end) {
-
-		return findByC_T(companyId, type, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByC_T;
 
 	/**
 	 * Returns an ordered range of all the social relations where companyId = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param companyId the company ID
-	 * @param type the type
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByC_T(
-		long companyId, int type, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByC_T(companyId, type, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where companyId = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2025,106 +658,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByC_T;
-					finderArgs = new Object[] {companyId, type};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByC_T;
-				finderArgs = new Object[] {
-					companyId, type, start, end, orderByComparator
-				};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if ((companyId != socialRelation.getCompanyId()) ||
-							(type != socialRelation.getType())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_T_COMPANYID_2);
-
-				sb.append(_FINDER_COLUMN_C_T_TYPE_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					queryPos.add(type);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByC_T.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, type},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2149,19 +685,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByC_T.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, type}));
 	}
 
 	/**
@@ -2177,14 +703,9 @@ public class SocialRelationPersistenceImpl
 		long companyId, int type,
 		OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByC_T(
-			companyId, type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_T.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, type},
+			orderByComparator);
 	}
 
 	/**
@@ -2195,13 +716,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByC_T(long companyId, int type) {
-		for (SocialRelation socialRelation :
-				findByC_T(
-					companyId, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByC_T.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, type});
 	}
 
 	/**
@@ -2213,128 +729,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByC_T(long companyId, int type) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = _finderPathCountByC_T;
-
-			Object[] finderArgs = new Object[] {companyId, type};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_C_T_COMPANYID_2);
-
-				sb.append(_FINDER_COLUMN_C_T_TYPE_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					queryPos.add(type);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByC_T.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, type});
 	}
 
-	private static final String _FINDER_COLUMN_C_T_COMPANYID_2 =
-		"socialRelation.companyId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_T_TYPE_2 =
-		"socialRelation.type = ?";
-
-	private FinderPath _finderPathWithPaginationFindByU1_U2;
-	private FinderPath _finderPathWithoutPaginationFindByU1_U2;
-	private FinderPath _finderPathCountByU1_U2;
-
-	/**
-	 * Returns all the social relations where userId1 = &#63; and userId2 = &#63;.
-	 *
-	 * @param userId1 the user id1
-	 * @param userId2 the user id2
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU1_U2(long userId1, long userId2) {
-		return findByU1_U2(
-			userId1, userId2, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where userId1 = &#63; and userId2 = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId1 the user id1
-	 * @param userId2 the user id2
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU1_U2(
-		long userId1, long userId2, int start, int end) {
-
-		return findByU1_U2(userId1, userId2, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByU1_U2;
 
 	/**
 	 * Returns an ordered range of all the social relations where userId1 = &#63; and userId2 = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId1 the user id1
-	 * @param userId2 the user id2
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU1_U2(
-		long userId1, long userId2, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByU1_U2(
-			userId1, userId2, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where userId1 = &#63; and userId2 = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId1 the user id1
@@ -2351,106 +757,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByU1_U2;
-					finderArgs = new Object[] {userId1, userId2};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByU1_U2;
-				finderArgs = new Object[] {
-					userId1, userId2, start, end, orderByComparator
-				};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if ((userId1 != socialRelation.getUserId1()) ||
-							(userId2 != socialRelation.getUserId2())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_U1_U2_USERID1_2);
-
-				sb.append(_FINDER_COLUMN_U1_U2_USERID2_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId1);
-
-					queryPos.add(userId2);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByU1_U2.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1, userId2},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2475,19 +784,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId1=");
-		sb.append(userId1);
-
-		sb.append(", userId2=");
-		sb.append(userId2);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByU1_U2.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId1, userId2}));
 	}
 
 	/**
@@ -2503,14 +802,9 @@ public class SocialRelationPersistenceImpl
 		long userId1, long userId2,
 		OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByU1_U2(
-			userId1, userId2, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByU1_U2.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1, userId2},
+			orderByComparator);
 	}
 
 	/**
@@ -2521,13 +815,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByU1_U2(long userId1, long userId2) {
-		for (SocialRelation socialRelation :
-				findByU1_U2(
-					userId1, userId2, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByU1_U2.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1, userId2});
 	}
 
 	/**
@@ -2539,127 +828,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByU1_U2(long userId1, long userId2) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = _finderPathCountByU1_U2;
-
-			Object[] finderArgs = new Object[] {userId1, userId2};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_U1_U2_USERID1_2);
-
-				sb.append(_FINDER_COLUMN_U1_U2_USERID2_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId1);
-
-					queryPos.add(userId2);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByU1_U2.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1, userId2});
 	}
 
-	private static final String _FINDER_COLUMN_U1_U2_USERID1_2 =
-		"socialRelation.userId1 = ? AND ";
-
-	private static final String _FINDER_COLUMN_U1_U2_USERID2_2 =
-		"socialRelation.userId2 = ?";
-
-	private FinderPath _finderPathWithPaginationFindByU1_T;
-	private FinderPath _finderPathWithoutPaginationFindByU1_T;
-	private FinderPath _finderPathCountByU1_T;
-
-	/**
-	 * Returns all the social relations where userId1 = &#63; and type = &#63;.
-	 *
-	 * @param userId1 the user id1
-	 * @param type the type
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU1_T(long userId1, int type) {
-		return findByU1_T(
-			userId1, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where userId1 = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId1 the user id1
-	 * @param type the type
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU1_T(
-		long userId1, int type, int start, int end) {
-
-		return findByU1_T(userId1, type, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByU1_T;
 
 	/**
 	 * Returns an ordered range of all the social relations where userId1 = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId1 the user id1
-	 * @param type the type
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU1_T(
-		long userId1, int type, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByU1_T(userId1, type, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where userId1 = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId1 the user id1
@@ -2676,106 +856,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByU1_T;
-					finderArgs = new Object[] {userId1, type};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByU1_T;
-				finderArgs = new Object[] {
-					userId1, type, start, end, orderByComparator
-				};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if ((userId1 != socialRelation.getUserId1()) ||
-							(type != socialRelation.getType())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_U1_T_USERID1_2);
-
-				sb.append(_FINDER_COLUMN_U1_T_TYPE_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId1);
-
-					queryPos.add(type);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByU1_T.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1, type},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2800,19 +883,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId1=");
-		sb.append(userId1);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByU1_T.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId1, type}));
 	}
 
 	/**
@@ -2828,14 +901,9 @@ public class SocialRelationPersistenceImpl
 		long userId1, int type,
 		OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByU1_T(
-			userId1, type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByU1_T.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1, type},
+			orderByComparator);
 	}
 
 	/**
@@ -2846,13 +914,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByU1_T(long userId1, int type) {
-		for (SocialRelation socialRelation :
-				findByU1_T(
-					userId1, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByU1_T.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1, type});
 	}
 
 	/**
@@ -2864,127 +927,18 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByU1_T(long userId1, int type) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = _finderPathCountByU1_T;
-
-			Object[] finderArgs = new Object[] {userId1, type};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_U1_T_USERID1_2);
-
-				sb.append(_FINDER_COLUMN_U1_T_TYPE_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId1);
-
-					queryPos.add(type);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByU1_T.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId1, type});
 	}
 
-	private static final String _FINDER_COLUMN_U1_T_USERID1_2 =
-		"socialRelation.userId1 = ? AND ";
-
-	private static final String _FINDER_COLUMN_U1_T_TYPE_2 =
-		"socialRelation.type = ?";
-
-	private FinderPath _finderPathWithPaginationFindByU2_T;
-	private FinderPath _finderPathWithoutPaginationFindByU2_T;
-	private FinderPath _finderPathCountByU2_T;
-
-	/**
-	 * Returns all the social relations where userId2 = &#63; and type = &#63;.
-	 *
-	 * @param userId2 the user id2
-	 * @param type the type
-	 * @return the matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU2_T(long userId2, int type) {
-		return findByU2_T(
-			userId2, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations where userId2 = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId2 the user id2
-	 * @param type the type
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU2_T(
-		long userId2, int type, int start, int end) {
-
-		return findByU2_T(userId2, type, start, end, null);
-	}
+	private CollectionPersistenceFinder<SocialRelation>
+		_collectionPersistenceFinderByU2_T;
 
 	/**
 	 * Returns an ordered range of all the social relations where userId2 = &#63; and type = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param userId2 the user id2
-	 * @param type the type
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching social relations
-	 */
-	@Override
-	public List<SocialRelation> findByU2_T(
-		long userId2, int type, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findByU2_T(userId2, type, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations where userId2 = &#63; and type = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param userId2 the user id2
@@ -3001,106 +955,9 @@ public class SocialRelationPersistenceImpl
 		OrderByComparator<SocialRelation> orderByComparator,
 		boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByU2_T;
-					finderArgs = new Object[] {userId2, type};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByU2_T;
-				finderArgs = new Object[] {
-					userId2, type, start, end, orderByComparator
-				};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (SocialRelation socialRelation : list) {
-						if ((userId2 != socialRelation.getUserId2()) ||
-							(type != socialRelation.getType())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_U2_T_USERID2_2);
-
-				sb.append(_FINDER_COLUMN_U2_T_TYPE_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId2);
-
-					queryPos.add(type);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
+		return _collectionPersistenceFinderByU2_T.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId2, type},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -3125,19 +982,9 @@ public class SocialRelationPersistenceImpl
 			return socialRelation;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId2=");
-		sb.append(userId2);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchRelationException(sb.toString());
+		throw new NoSuchRelationException(
+			_collectionPersistenceFinderByU2_T.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId2, type}));
 	}
 
 	/**
@@ -3153,14 +1000,9 @@ public class SocialRelationPersistenceImpl
 		long userId2, int type,
 		OrderByComparator<SocialRelation> orderByComparator) {
 
-		List<SocialRelation> list = findByU2_T(
-			userId2, type, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByU2_T.fetchFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId2, type},
+			orderByComparator);
 	}
 
 	/**
@@ -3171,13 +1013,8 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public void removeByU2_T(long userId2, int type) {
-		for (SocialRelation socialRelation :
-				findByU2_T(
-					userId2, type, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(socialRelation);
-		}
+		_collectionPersistenceFinderByU2_T.remove(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId2, type});
 	}
 
 	/**
@@ -3189,64 +1026,12 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByU2_T(long userId2, int type) {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = _finderPathCountByU2_T;
-
-			Object[] finderArgs = new Object[] {userId2, type};
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_U2_T_USERID2_2);
-
-				sb.append(_FINDER_COLUMN_U2_T_TYPE_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId2);
-
-					queryPos.add(type);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
+		return _collectionPersistenceFinderByU2_T.count(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId2, type});
 	}
 
-	private static final String _FINDER_COLUMN_U2_T_USERID2_2 =
-		"socialRelation.userId2 = ? AND ";
-
-	private static final String _FINDER_COLUMN_U2_T_TYPE_2 =
-		"socialRelation.type = ?";
-
-	private FinderPath _finderPathFetchByU1_U2_T;
+	private UniquePersistenceFinder<SocialRelation>
+		_uniquePersistenceFinderByU1_U2_T;
 
 	/**
 	 * Returns the social relation where userId1 = &#63; and userId2 = &#63; and type = &#63; or throws a <code>NoSuchRelationException</code> if it could not be found.
@@ -3264,42 +1049,19 @@ public class SocialRelationPersistenceImpl
 		SocialRelation socialRelation = fetchByU1_U2_T(userId1, userId2, type);
 
 		if (socialRelation == null) {
-			StringBundler sb = new StringBundler(8);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("userId1=");
-			sb.append(userId1);
-
-			sb.append(", userId2=");
-			sb.append(userId2);
-
-			sb.append(", type=");
-			sb.append(type);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByU1_U2_T.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {userId1, userId2, type});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchRelationException(sb.toString());
+			throw new NoSuchRelationException(message);
 		}
 
 		return socialRelation;
-	}
-
-	/**
-	 * Returns the social relation where userId1 = &#63; and userId2 = &#63; and type = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId1 the user id1
-	 * @param userId2 the user id2
-	 * @param type the type
-	 * @return the matching social relation, or <code>null</code> if a matching social relation could not be found
-	 */
-	@Override
-	public SocialRelation fetchByU1_U2_T(long userId1, long userId2, int type) {
-		return fetchByU1_U2_T(userId1, userId2, type, true);
 	}
 
 	/**
@@ -3315,93 +1077,9 @@ public class SocialRelationPersistenceImpl
 	public SocialRelation fetchByU1_U2_T(
 		long userId1, long userId2, int type, boolean useFinderCache) {
 
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {userId1, userId2, type};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = FinderCacheUtil.getResult(
-					_finderPathFetchByU1_U2_T, finderArgs, this);
-			}
-
-			if (result instanceof SocialRelation) {
-				SocialRelation socialRelation = (SocialRelation)result;
-
-				if ((userId1 != socialRelation.getUserId1()) ||
-					(userId2 != socialRelation.getUserId2()) ||
-					(type != socialRelation.getType())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(5);
-
-				sb.append(_SQL_SELECT_SOCIALRELATION_WHERE);
-
-				sb.append(_FINDER_COLUMN_U1_U2_T_USERID1_2);
-
-				sb.append(_FINDER_COLUMN_U1_U2_T_USERID2_2);
-
-				sb.append(_FINDER_COLUMN_U1_U2_T_TYPE_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(userId1);
-
-					queryPos.add(userId2);
-
-					queryPos.add(type);
-
-					List<SocialRelation> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							FinderCacheUtil.putResult(
-								_finderPathFetchByU1_U2_T, finderArgs, list);
-						}
-					}
-					else {
-						SocialRelation socialRelation = list.get(0);
-
-						result = socialRelation;
-
-						cacheResult(socialRelation);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (SocialRelation)result;
-			}
-		}
+		return _uniquePersistenceFinderByU1_U2_T.fetch(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {userId1, userId2, type}, useFinderCache);
 	}
 
 	/**
@@ -3431,23 +1109,10 @@ public class SocialRelationPersistenceImpl
 	 */
 	@Override
 	public int countByU1_U2_T(long userId1, long userId2, int type) {
-		SocialRelation socialRelation = fetchByU1_U2_T(userId1, userId2, type);
-
-		if (socialRelation == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByU1_U2_T.count(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {userId1, userId2, type});
 	}
-
-	private static final String _FINDER_COLUMN_U1_U2_T_USERID1_2 =
-		"socialRelation.userId1 = ? AND ";
-
-	private static final String _FINDER_COLUMN_U1_U2_T_USERID2_2 =
-		"socialRelation.userId2 = ? AND ";
-
-	private static final String _FINDER_COLUMN_U1_U2_T_TYPE_2 =
-		"socialRelation.type = ?";
 
 	public SocialRelationPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -3463,123 +1128,6 @@ public class SocialRelationPersistenceImpl
 		setModelPKClass(long.class);
 
 		setTable(SocialRelationTable.INSTANCE);
-	}
-
-	/**
-	 * Caches the social relation in the entity cache if it is enabled.
-	 *
-	 * @param socialRelation the social relation
-	 */
-	@Override
-	public void cacheResult(SocialRelation socialRelation) {
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					socialRelation.getCtCollectionId())) {
-
-			EntityCacheUtil.putResult(
-				SocialRelationImpl.class, socialRelation.getPrimaryKey(),
-				socialRelation);
-
-			FinderCacheUtil.putResult(
-				_finderPathFetchByU1_U2_T,
-				new Object[] {
-					socialRelation.getUserId1(), socialRelation.getUserId2(),
-					socialRelation.getType()
-				},
-				socialRelation);
-		}
-	}
-
-	private int _valueObjectFinderCacheListThreshold;
-
-	/**
-	 * Caches the social relations in the entity cache if it is enabled.
-	 *
-	 * @param socialRelations the social relations
-	 */
-	@Override
-	public void cacheResult(List<SocialRelation> socialRelations) {
-		if ((_valueObjectFinderCacheListThreshold == 0) ||
-			((_valueObjectFinderCacheListThreshold > 0) &&
-			 (socialRelations.size() > _valueObjectFinderCacheListThreshold))) {
-
-			return;
-		}
-
-		for (SocialRelation socialRelation : socialRelations) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-						socialRelation.getCtCollectionId())) {
-
-				if (EntityCacheUtil.getResult(
-						SocialRelationImpl.class,
-						socialRelation.getPrimaryKey()) == null) {
-
-					cacheResult(socialRelation);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Clears the cache for all social relations.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		EntityCacheUtil.clearCache(SocialRelationImpl.class);
-
-		FinderCacheUtil.clearCache(SocialRelationImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the social relation.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(SocialRelation socialRelation) {
-		EntityCacheUtil.removeResult(SocialRelationImpl.class, socialRelation);
-	}
-
-	@Override
-	public void clearCache(List<SocialRelation> socialRelations) {
-		for (SocialRelation socialRelation : socialRelations) {
-			EntityCacheUtil.removeResult(
-				SocialRelationImpl.class, socialRelation);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		FinderCacheUtil.clearCache(SocialRelationImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			EntityCacheUtil.removeResult(SocialRelationImpl.class, primaryKey);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		SocialRelationModelImpl socialRelationModelImpl) {
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					socialRelationModelImpl.getCtCollectionId())) {
-
-			Object[] args = new Object[] {
-				socialRelationModelImpl.getUserId1(),
-				socialRelationModelImpl.getUserId2(),
-				socialRelationModelImpl.getType()
-			};
-
-			FinderCacheUtil.putResult(
-				_finderPathFetchByU1_U2_T, args, socialRelationModelImpl);
-		}
 	}
 
 	/**
@@ -3616,47 +1164,6 @@ public class SocialRelationPersistenceImpl
 		throws NoSuchRelationException {
 
 		return remove((Serializable)relationId);
-	}
-
-	/**
-	 * Removes the social relation with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the social relation
-	 * @return the social relation that was removed
-	 * @throws NoSuchRelationException if a social relation with the primary key could not be found
-	 */
-	@Override
-	public SocialRelation remove(Serializable primaryKey)
-		throws NoSuchRelationException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SocialRelation socialRelation = (SocialRelation)session.get(
-				SocialRelationImpl.class, primaryKey);
-
-			if (socialRelation == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchRelationException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(socialRelation);
-		}
-		catch (NoSuchRelationException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -3747,41 +1254,13 @@ public class SocialRelationPersistenceImpl
 			closeSession(session);
 		}
 
-		EntityCacheUtil.putResult(
-			SocialRelationImpl.class, socialRelationModelImpl, false, true);
-
-		cacheUniqueFindersCache(socialRelationModelImpl);
+		cacheUniqueFindersResult(socialRelation, false);
 
 		if (isNew) {
 			socialRelation.setNew(false);
 		}
 
 		socialRelation.resetOriginalValues();
-
-		return socialRelation;
-	}
-
-	/**
-	 * Returns the social relation with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the social relation
-	 * @return the social relation
-	 * @throws NoSuchRelationException if a social relation with the primary key could not be found
-	 */
-	@Override
-	public SocialRelation findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchRelationException {
-
-		SocialRelation socialRelation = fetchByPrimaryKey(primaryKey);
-
-		if (socialRelation == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchRelationException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
 
 		return socialRelation;
 	}
@@ -3800,53 +1279,9 @@ public class SocialRelationPersistenceImpl
 		return findByPrimaryKey((Serializable)relationId);
 	}
 
-	/**
-	 * Returns the social relation with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the social relation
-	 * @return the social relation, or <code>null</code> if a social relation with the primary key could not be found
-	 */
 	@Override
-	public SocialRelation fetchByPrimaryKey(Serializable primaryKey) {
-		if (CTPersistenceHelperUtil.isProductionMode(
-				SocialRelation.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		SocialRelation socialRelation =
-			(SocialRelation)EntityCacheUtil.getResult(
-				SocialRelationImpl.class, primaryKey);
-
-		if (socialRelation != null) {
-			return socialRelation;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			socialRelation = (SocialRelation)session.get(
-				SocialRelationImpl.class, primaryKey);
-
-			if (socialRelation != null) {
-				cacheResult(socialRelation);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return socialRelation;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return CTPersistenceHelperUtil.getCTPersistenceHelper();
 	}
 
 	/**
@@ -3858,323 +1293,6 @@ public class SocialRelationPersistenceImpl
 	@Override
 	public SocialRelation fetchByPrimaryKey(long relationId) {
 		return fetchByPrimaryKey((Serializable)relationId);
-	}
-
-	@Override
-	public Map<Serializable, SocialRelation> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (CTPersistenceHelperUtil.isProductionMode(SocialRelation.class)) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, SocialRelation> map =
-			new HashMap<Serializable, SocialRelation>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			SocialRelation socialRelation = fetchByPrimaryKey(primaryKey);
-
-			if (socialRelation != null) {
-				map.put(primaryKey, socialRelation);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-						SocialRelation.class, primaryKey)) {
-
-				SocialRelation socialRelation =
-					(SocialRelation)EntityCacheUtil.getResult(
-						SocialRelationImpl.class, primaryKey);
-
-				if (socialRelation == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, socialRelation);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (SocialRelation socialRelation :
-					(List<SocialRelation>)query.list()) {
-
-				map.put(socialRelation.getPrimaryKeyObj(), socialRelation);
-
-				cacheResult(socialRelation);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the social relations.
-	 *
-	 * @return the social relations
-	 */
-	@Override
-	public List<SocialRelation> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the social relations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @return the range of social relations
-	 */
-	@Override
-	public List<SocialRelation> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of social relations
-	 */
-	@Override
-	public List<SocialRelation> findAll(
-		int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the social relations.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SocialRelationModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of social relations
-	 * @param end the upper bound of the range of social relations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of social relations
-	 */
-	@Override
-	public List<SocialRelation> findAll(
-		int start, int end, OrderByComparator<SocialRelation> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<SocialRelation> list = null;
-
-			if (useFinderCache) {
-				list = (List<SocialRelation>)FinderCacheUtil.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_SOCIALRELATION);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_SOCIALRELATION;
-
-					sql = sql.concat(SocialRelationModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<SocialRelation>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						FinderCacheUtil.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the social relations from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (SocialRelation socialRelation : findAll()) {
-			remove(socialRelation);
-		}
-	}
-
-	/**
-	 * Returns the number of social relations.
-	 *
-	 * @return the number of social relations
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				CTPersistenceHelperUtil.setCTCollectionIdWithSafeCloseable(
-					SocialRelation.class)) {
-
-			Long count = (Long)FinderCacheUtil.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(
-						_SQL_COUNT_SOCIALRELATION);
-
-					count = (Long)query.uniqueResult();
-
-					FinderCacheUtil.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -4263,213 +1381,288 @@ public class SocialRelationPersistenceImpl
 	 * Initializes the social relation persistence.
 	 */
 	public void afterPropertiesSet() {
-		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+				new String[] {
+					String.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"uuid_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, true, null),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+				new String[] {String.class.getName()}, new String[] {"uuid_"},
+				0, 1, false, null),
+			_SQL_SELECT_SOCIALRELATION_WHERE, _SQL_COUNT_SOCIALRELATION_WHERE,
+			SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"socialRelation.", "uuid", FinderColumn.Type.STRING, "=", true,
+				true, SocialRelation::getUuid));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+					new String[] {
+						String.class.getName(), Long.class.getName(),
+						Integer.class.getName(), Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"uuid_", "companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, true, null),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+					new String[] {String.class.getName(), Long.class.getName()},
+					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
+				_SQL_SELECT_SOCIALRELATION_WHERE,
+				_SQL_COUNT_SOCIALRELATION_WHERE,
+				SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"socialRelation.", "uuid", FinderColumn.Type.STRING, "=",
+					true, true, SocialRelation::getUuid),
+				new FinderColumn<>(
+					"socialRelation.", "companyId", FinderColumn.Type.LONG, "=",
+					true, true, SocialRelation::getCompanyId));
 
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
+		_collectionPersistenceFinderByCompanyId =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCompanyId",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"findByCompanyId", new String[] {Long.class.getName()},
+					new String[] {"companyId"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+					"countByCompanyId", new String[] {Long.class.getName()},
+					new String[] {"companyId"}, false),
+				_SQL_SELECT_SOCIALRELATION_WHERE,
+				_SQL_COUNT_SOCIALRELATION_WHERE,
+				SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"socialRelation.", "companyId", FinderColumn.Type.LONG, "=",
+					true, true, SocialRelation::getCompanyId));
 
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
+		_collectionPersistenceFinderByUserId1 =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId1",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"userId1"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId1",
+					new String[] {Long.class.getName()},
+					new String[] {"userId1"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId1",
+					new String[] {Long.class.getName()},
+					new String[] {"userId1"}, false),
+				_SQL_SELECT_SOCIALRELATION_WHERE,
+				_SQL_COUNT_SOCIALRELATION_WHERE,
+				SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"socialRelation.", "userId1", FinderColumn.Type.LONG, "=",
+					true, true, SocialRelation::getUserId1));
 
-		_finderPathWithPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_"}, true);
+		_collectionPersistenceFinderByUserId2 =
+			new CollectionPersistenceFinder<>(
+				this,
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId2",
+					new String[] {
+						Long.class.getName(), Integer.class.getName(),
+						Integer.class.getName(),
+						OrderByComparator.class.getName()
+					},
+					new String[] {"userId2"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId2",
+					new String[] {Long.class.getName()},
+					new String[] {"userId2"}, true),
+				new FinderPath(
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId2",
+					new String[] {Long.class.getName()},
+					new String[] {"userId2"}, false),
+				_SQL_SELECT_SOCIALRELATION_WHERE,
+				_SQL_COUNT_SOCIALRELATION_WHERE,
+				SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				new FinderColumn<>(
+					"socialRelation.", "userId2", FinderColumn.Type.LONG, "=",
+					true, true, SocialRelation::getUserId2));
 
-		_finderPathWithoutPaginationFindByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			true);
+		_collectionPersistenceFinderByType = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByType",
+				new String[] {
+					Integer.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByType",
+				new String[] {Integer.class.getName()}, new String[] {"type_"},
+				true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByType",
+				new String[] {Integer.class.getName()}, new String[] {"type_"},
+				false),
+			_SQL_SELECT_SOCIALRELATION_WHERE, _SQL_COUNT_SOCIALRELATION_WHERE,
+			SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"socialRelation.", "type", FinderColumn.Type.INTEGER, "=", true,
+				true, SocialRelation::getType));
 
-		_finderPathCountByUuid = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] {String.class.getName()}, new String[] {"uuid_"},
-			false);
+		_collectionPersistenceFinderByC_T = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_T",
+				new String[] {
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"companyId", "type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_T",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"companyId", "type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_T",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"companyId", "type_"}, false),
+			_SQL_SELECT_SOCIALRELATION_WHERE, _SQL_COUNT_SOCIALRELATION_WHERE,
+			SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"socialRelation.", "companyId", FinderColumn.Type.LONG, "=",
+				true, true, SocialRelation::getCompanyId),
+			new FinderColumn<>(
+				"socialRelation.", "type", FinderColumn.Type.INTEGER, "=", true,
+				true, SocialRelation::getType));
 
-		_finderPathWithPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"uuid_", "companyId"}, true);
+		_collectionPersistenceFinderByU1_U2 = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU1_U2",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"userId1", "userId2"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByU1_U2",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"userId1", "userId2"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByU1_U2",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"userId1", "userId2"}, false),
+			_SQL_SELECT_SOCIALRELATION_WHERE, _SQL_COUNT_SOCIALRELATION_WHERE,
+			SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"socialRelation.", "userId1", FinderColumn.Type.LONG, "=", true,
+				true, SocialRelation::getUserId1),
+			new FinderColumn<>(
+				"socialRelation.", "userId2", FinderColumn.Type.LONG, "=", true,
+				true, SocialRelation::getUserId2));
 
-		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, true);
+		_collectionPersistenceFinderByU1_T = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU1_T",
+				new String[] {
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"userId1", "type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByU1_T",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"userId1", "type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByU1_T",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"userId1", "type_"}, false),
+			_SQL_SELECT_SOCIALRELATION_WHERE, _SQL_COUNT_SOCIALRELATION_WHERE,
+			SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"socialRelation.", "userId1", FinderColumn.Type.LONG, "=", true,
+				true, SocialRelation::getUserId1),
+			new FinderColumn<>(
+				"socialRelation.", "type", FinderColumn.Type.INTEGER, "=", true,
+				true, SocialRelation::getType));
 
-		_finderPathCountByUuid_C = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] {String.class.getName(), Long.class.getName()},
-			new String[] {"uuid_", "companyId"}, false);
+		_collectionPersistenceFinderByU2_T = new CollectionPersistenceFinder<>(
+			this,
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU2_T",
+				new String[] {
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				},
+				new String[] {"userId2", "type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByU2_T",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"userId2", "type_"}, true),
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByU2_T",
+				new String[] {Long.class.getName(), Integer.class.getName()},
+				new String[] {"userId2", "type_"}, false),
+			_SQL_SELECT_SOCIALRELATION_WHERE, _SQL_COUNT_SOCIALRELATION_WHERE,
+			SocialRelationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			new FinderColumn<>(
+				"socialRelation.", "userId2", FinderColumn.Type.LONG, "=", true,
+				true, SocialRelation::getUserId2),
+			new FinderColumn<>(
+				"socialRelation.", "type", FinderColumn.Type.INTEGER, "=", true,
+				true, SocialRelation::getType));
 
-		_finderPathWithPaginationFindByCompanyId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCompanyId",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"companyId"}, true);
-
-		_finderPathWithoutPaginationFindByCompanyId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByCompanyId",
-			new String[] {Long.class.getName()}, new String[] {"companyId"},
-			true);
-
-		_finderPathCountByCompanyId = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCompanyId",
-			new String[] {Long.class.getName()}, new String[] {"companyId"},
-			false);
-
-		_finderPathWithPaginationFindByUserId1 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId1",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"userId1"}, true);
-
-		_finderPathWithoutPaginationFindByUserId1 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId1",
-			new String[] {Long.class.getName()}, new String[] {"userId1"},
-			true);
-
-		_finderPathCountByUserId1 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId1",
-			new String[] {Long.class.getName()}, new String[] {"userId1"},
-			false);
-
-		_finderPathWithPaginationFindByUserId2 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId2",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"userId2"}, true);
-
-		_finderPathWithoutPaginationFindByUserId2 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId2",
-			new String[] {Long.class.getName()}, new String[] {"userId2"},
-			true);
-
-		_finderPathCountByUserId2 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId2",
-			new String[] {Long.class.getName()}, new String[] {"userId2"},
-			false);
-
-		_finderPathWithPaginationFindByType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByType",
-			new String[] {
-				Integer.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), OrderByComparator.class.getName()
-			},
-			new String[] {"type_"}, true);
-
-		_finderPathWithoutPaginationFindByType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByType",
-			new String[] {Integer.class.getName()}, new String[] {"type_"},
-			true);
-
-		_finderPathCountByType = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByType",
-			new String[] {Integer.class.getName()}, new String[] {"type_"},
-			false);
-
-		_finderPathWithPaginationFindByC_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_T",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"companyId", "type_"}, true);
-
-		_finderPathWithoutPaginationFindByC_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_T",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"companyId", "type_"}, true);
-
-		_finderPathCountByC_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_T",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"companyId", "type_"}, false);
-
-		_finderPathWithPaginationFindByU1_U2 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU1_U2",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"userId1", "userId2"}, true);
-
-		_finderPathWithoutPaginationFindByU1_U2 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByU1_U2",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"userId1", "userId2"}, true);
-
-		_finderPathCountByU1_U2 = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByU1_U2",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"userId1", "userId2"}, false);
-
-		_finderPathWithPaginationFindByU1_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU1_T",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"userId1", "type_"}, true);
-
-		_finderPathWithoutPaginationFindByU1_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByU1_T",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"userId1", "type_"}, true);
-
-		_finderPathCountByU1_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByU1_T",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"userId1", "type_"}, false);
-
-		_finderPathWithPaginationFindByU2_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU2_T",
-			new String[] {
-				Long.class.getName(), Integer.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			},
-			new String[] {"userId2", "type_"}, true);
-
-		_finderPathWithoutPaginationFindByU2_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByU2_T",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"userId2", "type_"}, true);
-
-		_finderPathCountByU2_T = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByU2_T",
-			new String[] {Long.class.getName(), Integer.class.getName()},
-			new String[] {"userId2", "type_"}, false);
-
-		_finderPathFetchByU1_U2_T = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByU1_U2_T",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName()
-			},
-			new String[] {"userId1", "userId2", "type_"}, true);
+		_uniquePersistenceFinderByU1_U2_T = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByU1_U2_T",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName()
+				},
+				new String[] {"userId1", "userId2", "type_"}, 0, 0, false,
+				SocialRelation::getUserId1, SocialRelation::getUserId2,
+				SocialRelation::getType),
+			_SQL_SELECT_SOCIALRELATION_WHERE, "",
+			new FinderColumn<>(
+				"socialRelation.", "userId1", FinderColumn.Type.LONG, "=", true,
+				true, SocialRelation::getUserId1),
+			new FinderColumn<>(
+				"socialRelation.", "userId2", FinderColumn.Type.LONG, "=", true,
+				true, SocialRelation::getUserId2),
+			new FinderColumn<>(
+				"socialRelation.", "type", FinderColumn.Type.INTEGER, "=", true,
+				true, SocialRelation::getType));
 
 		SocialRelationUtil.setPersistence(this);
 	}
@@ -4480,22 +1673,17 @@ public class SocialRelationPersistenceImpl
 		EntityCacheUtil.removeCache(SocialRelationImpl.class.getName());
 	}
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		SocialRelationModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_SOCIALRELATION =
 		"SELECT socialRelation FROM SocialRelation socialRelation";
 
 	private static final String _SQL_SELECT_SOCIALRELATION_WHERE =
 		"SELECT socialRelation FROM SocialRelation socialRelation WHERE ";
 
-	private static final String _SQL_COUNT_SOCIALRELATION =
-		"SELECT COUNT(socialRelation) FROM SocialRelation socialRelation";
-
 	private static final String _SQL_COUNT_SOCIALRELATION_WHERE =
 		"SELECT COUNT(socialRelation) FROM SocialRelation socialRelation WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "socialRelation.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No SocialRelation exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No SocialRelation exists with the key {";
@@ -4512,4 +1700,4 @@ public class SocialRelationPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1407692649
+// LIFERAY-SERVICE-BUILDER-HASH:144910930

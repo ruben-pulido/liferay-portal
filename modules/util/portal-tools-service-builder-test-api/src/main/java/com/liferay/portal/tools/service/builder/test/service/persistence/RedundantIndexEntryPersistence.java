@@ -44,15 +44,6 @@ public interface RedundantIndexEntryPersistence
 		throws NoSuchRedundantIndexEntryException;
 
 	/**
-	 * Returns the redundant index entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param companyId the company ID
-	 * @param name the name
-	 * @return the matching redundant index entry, or <code>null</code> if a matching redundant index entry could not be found
-	 */
-	public RedundantIndexEntry fetchByC_N(long companyId, String name);
-
-	/**
 	 * Returns the redundant index entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
@@ -81,21 +72,6 @@ public interface RedundantIndexEntryPersistence
 	 * @return the number of matching redundant index entries
 	 */
 	public int countByC_N(long companyId, String name);
-
-	/**
-	 * Caches the redundant index entry in the entity cache if it is enabled.
-	 *
-	 * @param redundantIndexEntry the redundant index entry
-	 */
-	public void cacheResult(RedundantIndexEntry redundantIndexEntry);
-
-	/**
-	 * Caches the redundant index entries in the entity cache if it is enabled.
-	 *
-	 * @param redundantIndexEntries the redundant index entries
-	 */
-	public void cacheResult(
-		java.util.List<RedundantIndexEntry> redundantIndexEntries);
 
 	/**
 	 * Creates a new redundant index entry with the primary key. Does not add the redundant index entry to the database.
@@ -137,72 +113,15 @@ public interface RedundantIndexEntryPersistence
 	public RedundantIndexEntry fetchByPrimaryKey(long redundantIndexEntryId);
 
 	/**
-	 * Returns all the redundant index entries.
+	 * Returns the redundant index entry where companyId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @return the redundant index entries
+	 * @param companyId the company ID
+	 * @param name the name
+	 * @return the matching redundant index entry, or <code>null</code> if a matching redundant index entry could not be found
 	 */
-	public java.util.List<RedundantIndexEntry> findAll();
-
-	/**
-	 * Returns a range of all the redundant index entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedundantIndexEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of redundant index entries
-	 * @param end the upper bound of the range of redundant index entries (not inclusive)
-	 * @return the range of redundant index entries
-	 */
-	public java.util.List<RedundantIndexEntry> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the redundant index entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedundantIndexEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of redundant index entries
-	 * @param end the upper bound of the range of redundant index entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of redundant index entries
-	 */
-	public java.util.List<RedundantIndexEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<RedundantIndexEntry>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the redundant index entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RedundantIndexEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of redundant index entries
-	 * @param end the upper bound of the range of redundant index entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of redundant index entries
-	 */
-	public java.util.List<RedundantIndexEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<RedundantIndexEntry>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the redundant index entries from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of redundant index entries.
-	 *
-	 * @return the number of redundant index entries
-	 */
-	public int countAll();
+	public default RedundantIndexEntry fetchByC_N(long companyId, String name) {
+		return fetchByC_N(companyId, name, true);
+	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:535380899
+// LIFERAY-SERVICE-BUILDER-HASH:-191665255

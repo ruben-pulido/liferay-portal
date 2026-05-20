@@ -16,6 +16,7 @@ import {
 	ReferenceLine,
 	ResponsiveContainer,
 	Tooltip,
+	TooltipProps,
 	XAxis,
 	YAxis
 } from 'recharts';
@@ -36,44 +37,46 @@ interface IChartProps<T> extends React.HTMLAttributes<HTMLElement> {
 	alwaysShowSelectedTooltip: boolean;
 	hasSelectedPoint?: boolean;
 	height?: number;
+	hideGrid?: boolean;
 	history: Array<T>;
-	interval?: Interval;
+	interval: Interval;
 	LDPEnabled?: boolean;
 	onAfterInit?: () => void;
-	onPointSelect: (index: number) => void;
-	rangeSelectors?: RangeSelectors;
-	selectedPoint: number;
-	tooltipRenderRows?: (
-		data: T
-	) => Array<{
-		label: string;
-		value: any;
-	}>;
+	onPointSelect: (index: number | null) => void;
+	rangeSelectors: RangeSelectors;
+	selectedPoint?: number;
+	tooltipRenderRows?: (data: T) => ChartTooltipRow[];
 }
 
 interface IActivitiesHistoryProps<initDateType = number> {
 	intervalInitDate: initDateType;
 	totalEvents: number;
+	totalSessions?: number;
+	uniqueVisitors?: number;
 }
 
 const ActivitiesChart: React.FC<
 	IChartProps<IActivitiesHistoryProps<number>>
 > = ({
+	LDPEnabled = false,
 	alwaysShowSelectedTooltip = false,
 	hasSelectedPoint,
 	height = 340,
+	hideGrid = false,
 	history,
 	interval,
-	LDPEnabled = false,
 	onPointSelect,
 	rangeSelectors,
-	selectedPoint
+	selectedPoint,
+	tooltipRenderRows
 }) => {
 	const _tooltipRef = useRef<any>();
 
 	const [hoverIndex, setHoverIndex] = useState(-1);
 	const [mouseOutside, setMouseOutside] = useState(false);
-	const [selectedTooltipX, setSelectedTooltipX] = useState(null);
+	const [selectedTooltipX, setSelectedTooltipX] = useState<
+		number | null | undefined
+	>(null);
 
 	const dateKeysIMap = createDateKeysIMap(
 		interval,
@@ -81,31 +84,41 @@ const ActivitiesChart: React.FC<
 		'intervalInitDate'
 	);
 
-	const renderTooltip = ({active, payload}) => {
-		if ((active && !!payload.length) || hasSelectedPoint) {
-			const {intervalInitDate, totalEvents, totalSessions} = get(
+	const renderTooltip = ({active, payload}: TooltipProps<number, string>) => {
+		if ((active && !!payload?.length) || hasSelectedPoint) {
+			const data: IActivitiesHistoryProps<number> & {
+				totalSessions: number;
+			} = get(
 				payload,
 				[0, 'payload'],
-				history[selectedPoint]
+				selectedPoint !== undefined ? history[selectedPoint] : undefined
 			);
 
-			const rows: ChartTooltipRow[] = [
-				{
-					label: Liferay.Language.get('events'),
-					value: totalEvents.toLocaleString()
-				},
-				{
-					label: Liferay.Language.get('sessions'),
-					value: totalSessions.toLocaleString()
-				}
-			];
+			if (!data) {
+				return null;
+			}
+
+			const {intervalInitDate, totalEvents, totalSessions} = data;
+
+			const rows: ChartTooltipRow[] = tooltipRenderRows
+				? tooltipRenderRows(data)
+				: [
+						{
+							label: Liferay.Language.get('events'),
+							value: totalEvents.toLocaleString()
+						},
+						{
+							label: Liferay.Language.get('sessions'),
+							value: totalSessions.toLocaleString()
+						}
+				  ];
 
 			if (moment.utc(intervalInitDate).isSame(moment(), 'day')) {
 				rows.push({
-					className: 'informative-text',
+					className: 'text-info text-uppercase mt-4',
 					label: Liferay.Language.get(
 						'data-for-todays-events-may-vary-or-be-incomplete'
-					).toUpperCase()
+					)
 				});
 			}
 
@@ -142,33 +155,34 @@ const ActivitiesChart: React.FC<
 				data={history}
 				onClick={pointData => {
 					if (alwaysShowSelectedTooltip && pointData) {
-						if (_tooltipRef) {
-							const {
-								getTranslate,
-								props: {viewBox},
-								state: {boxWidth}
-							} = _tooltipRef.current;
+						const tooltip = _tooltipRef.current;
 
+						if (tooltip?.state?.boxWidth && tooltip.getTranslate) {
 							setSelectedTooltipX(
-								getTranslate({
+								tooltip.getTranslate({
 									key: 'x',
-									tooltipDimension: boxWidth,
-									viewBoxDimension: viewBox.width
+									tooltipDimension: tooltip.state.boxWidth,
+									viewBoxDimension:
+										tooltip.props.viewBox.width
 								})
 							);
 						}
 
-						onPointSelect(pointData.activeTooltipIndex);
+						if (pointData.activeTooltipIndex !== undefined) {
+							onPointSelect(pointData.activeTooltipIndex);
+						}
 					}
 				}}
 				onMouseLeave={() => setMouseOutside(true)}
 				onMouseMove={() => setMouseOutside(false)}
 			>
-				<CartesianGrid
-					stroke={AXIS.gridStroke}
-					strokeDasharray='3 3'
-					vertical={false}
-				/>
+				{!hideGrid && (
+					<CartesianGrid
+						stroke={AXIS.gridStroke}
+						strokeDasharray='3 3'
+						vertical={false}
+					/>
+				)}
 
 				<XAxis
 					axisLine={{stroke: AXIS.borderStroke}}
@@ -186,7 +200,7 @@ const ActivitiesChart: React.FC<
 					)}
 					tickLine={false}
 					tickMargin={12}
-					ticks={intervals}
+					ticks={intervals.filter((v): v is number => v !== null)}
 					type='number'
 				/>
 
@@ -211,7 +225,7 @@ const ActivitiesChart: React.FC<
 									style: {fill: AXIS.textColor},
 									value: Liferay.Language.get('events')
 							  }
-							: null
+							: undefined
 					}
 					name={Liferay.Language.get('events')}
 					stroke={AXIS.gridStroke}
@@ -233,32 +247,32 @@ const ActivitiesChart: React.FC<
 					yAxisId='right'
 				/>
 
-				<Tooltip
-					content={renderTooltip}
-					cursor={{stroke: CHART_BLUE}}
-					position={
-						showFixedTooltip
-							? {
-									x: selectedTooltipX
-							  }
-							: null
-					}
-					ref={_tooltipRef}
-					wrapperStyle={
-						showFixedTooltip
-							? {
-									visibility: 'visible'
-							  }
-							: null
-					}
-				/>
+				{!hideGrid && (
+					<Tooltip
+						content={renderTooltip}
+						cursor={{stroke: CHART_BLUE}}
+						position={
+							showFixedTooltip &&
+							selectedTooltipX !== null &&
+							selectedTooltipX !== undefined
+								? {x: selectedTooltipX}
+								: undefined
+						}
+						ref={_tooltipRef}
+						wrapperStyle={
+							showFixedTooltip
+								? {visibility: 'visible'}
+								: undefined
+						}
+					/>
+				)}
 
 				<ReferenceLine
 					strokeWidth={1}
 					x={
-						showFixedTooltip
+						selectedPoint !== undefined
 							? history[selectedPoint].intervalInitDate
-							: null
+							: undefined
 					}
 				/>
 

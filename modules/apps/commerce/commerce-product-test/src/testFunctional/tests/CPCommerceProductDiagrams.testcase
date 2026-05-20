@@ -1,6 +1,7 @@
 @component-name = "portal-commerce"
 definition {
 
+	property custom.properties = "feature.flag.LPD-11235=true";
 	property osgi.module.configuration.file.names = "com.liferay.commerce.shop.by.diagram.configuration.CSDiagramCPTypeConfiguration.config";
 	property osgi.module.configurations = "enabled=\"true\"";
 	property portal.release = "true";
@@ -13,6 +14,10 @@ definition {
 
 		task ("Enable private pages") {
 			PagesAdmin.enablePrivatePages();
+		}
+
+		task ("Enable CKE4") {
+			PagesAdmin.enableCKE4();
 		}
 	}
 
