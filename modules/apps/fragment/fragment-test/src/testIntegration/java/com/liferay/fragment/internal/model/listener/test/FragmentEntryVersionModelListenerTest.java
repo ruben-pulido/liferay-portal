@@ -6,6 +6,8 @@
 package com.liferay.fragment.internal.model.listener.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.change.tracking.model.CTCollection;
+import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.internal.model.listener.FragmentEntryVersionModelListener;
@@ -15,8 +17,10 @@ import com.liferay.fragment.model.FragmentEntryVersion;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.fragment.service.persistence.FragmentEntryVersionPersistence;
 import com.liferay.fragment.test.util.FragmentTestUtil;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.model.Group;
@@ -103,6 +107,33 @@ public class FragmentEntryVersionModelListenerTest {
 			_countFragmentEntryVersions(fragmentEntry));
 		Assert.assertFalse(
 			_hasFragmentEntryVersion(fragmentEntry, oldestVersion));
+	}
+
+	@Test
+	public void testOnAfterCreateInCtCollection() throws Throwable {
+		FragmentEntry fragmentEntry = _addFragmentEntry();
+
+		_insertFragmentEntryVersions(
+			FragmentEntryVersionModelListener.MAX_VERSIONS - 1, fragmentEntry);
+
+		Assert.assertEquals(
+			FragmentEntryVersionModelListener.MAX_VERSIONS,
+			_countFragmentEntryVersions(fragmentEntry));
+
+		CTCollection ctCollection = _ctCollectionLocalService.addCTCollection(
+			null, TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
+			0, RandomTestUtil.randomString(), null);
+
+		try (SafeCloseable safeCloseable =
+				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+					ctCollection.getCtCollectionId())) {
+
+			_updateFragmentEntry(fragmentEntry);
+
+			Assert.assertEquals(
+				FragmentEntryVersionModelListener.MAX_VERSIONS + 1,
+				_countFragmentEntryVersions(fragmentEntry));
+		}
 	}
 
 	private FragmentEntry _addFragmentEntry() throws Exception {
@@ -227,6 +258,9 @@ public class FragmentEntryVersionModelListenerTest {
 	private CounterLocalService _counterLocalService;
 
 	private Timestamp _createDateTimestamp;
+
+	@Inject
+	private CTCollectionLocalService _ctCollectionLocalService;
 
 	@Inject
 	private FragmentEntryLocalService _fragmentEntryLocalService;
