@@ -8,6 +8,7 @@ package com.liferay.fragment.internal.model.listener.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.change.tracking.model.CTCollection;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
+import com.liferay.change.tracking.spi.listener.CTEventListener;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.internal.model.listener.FragmentEntryVersionModelListener;
@@ -107,6 +108,34 @@ public class FragmentEntryVersionModelListenerTest {
 			_countFragmentEntryVersions(fragmentEntry));
 		Assert.assertFalse(
 			_hasFragmentEntryVersion(fragmentEntry, oldestVersion));
+	}
+
+	@Test
+	public void testOnAfterCreateAfterPublishingCtCollection()
+		throws Throwable {
+
+		FragmentEntry fragmentEntry = _addFragmentEntry();
+
+		_insertFragmentEntryVersions(
+			FragmentEntryVersionModelListener.MAX_VERSIONS, fragmentEntry);
+
+		Assert.assertEquals(
+			FragmentEntryVersionModelListener.MAX_VERSIONS + 1,
+			_countFragmentEntryVersions(fragmentEntry));
+
+		TransactionInvokerUtil.invoke(
+			_transactionConfig,
+			() -> {
+				_fragmentEntryVersionCTEventListener.onAfterPublish(0L);
+
+				return null;
+			});
+
+		_fragmentEntryVersionPersistence.clearCache();
+
+		Assert.assertEquals(
+			FragmentEntryVersionModelListener.MAX_VERSIONS,
+			_countFragmentEntryVersions(fragmentEntry));
 	}
 
 	@Test
@@ -264,6 +293,11 @@ public class FragmentEntryVersionModelListenerTest {
 
 	@Inject
 	private FragmentEntryLocalService _fragmentEntryLocalService;
+
+	@Inject(
+		filter = "(&(component.name=com.liferay.fragment.internal.change.tracking.spi.listener.FragmentEntryVersionCTEventListener))"
+	)
+	private CTEventListener _fragmentEntryVersionCTEventListener;
 
 	@Inject
 	private FragmentEntryVersionPersistence _fragmentEntryVersionPersistence;
