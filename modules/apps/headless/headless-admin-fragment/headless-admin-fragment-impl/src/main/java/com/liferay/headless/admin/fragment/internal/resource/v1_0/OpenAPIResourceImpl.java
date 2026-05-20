@@ -89,9 +89,11 @@ public class OpenAPIResourceImpl {
 
 			add(FragmentSetResourceImpl.class);
 
+			add(ResourceFolderResourceImpl.class);
+
 			add(OpenAPIResourceImpl.class);
 		}
 	};
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1657981141
+// LIFERAY-REST-BUILDER-HASH:-106053435
