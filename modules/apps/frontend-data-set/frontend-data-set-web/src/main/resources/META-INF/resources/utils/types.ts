@@ -108,11 +108,28 @@ export interface IBaseActions {
 	itemId: number | string;
 }
 
-interface IBulkActionItem {
+export interface IBulkActionItem {
+	data?: {
+		highlighted?: boolean;
+		id?: string;
+		size?: string;
+	};
 	href?: string;
 	icon?: string;
+	isVisible?: ({
+		activeFilters,
+		activeSearch,
+		allItemsSelectedActive,
+		selectedItems,
+	}: {
+		activeFilters?: Array<IBaseFilterState>;
+		activeSearch?: ISearch;
+		allItemsSelectedActive?: boolean;
+		selectedItems?: Array<any>;
+	}) => boolean;
 	label?: string;
 	method?: string;
+	slug?: string;
 	target?: 'modal' | 'sidePanel';
 }
 export interface ICreationActionItem {
@@ -387,7 +404,7 @@ export interface IInfoPanelComponent {
 }
 
 export interface IManagementBarProps {
-	bulkActions?: Array<IBulkActionItem>;
+	bulkActions: Array<IBulkActionItem>;
 	creationMenu?: {
 		primaryItems: Array<ICreationActionItem>;
 		secondaryItems?: any[];
@@ -509,7 +526,7 @@ export type VisibleFieldNames = {
 	[fieldName: string]: boolean;
 };
 
-interface ISearch {
+export interface ISearch {
 	query: string;
 }
 
@@ -520,6 +537,7 @@ export interface IBaseFilterState {
 	id: string;
 	label: string;
 	moduleURL?: string;
+	multiple?: boolean;
 	odataFilterString?: string;
 	preloadedData: Record<string, unknown>;
 	selectedData?: Record<string, unknown>;

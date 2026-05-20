@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
@@ -31,6 +30,8 @@ import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -70,7 +71,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = NotificationQueueEntryPersistence.class)
 public class NotificationQueueEntryPersistenceImpl
-	extends BasePersistenceImpl<NotificationQueueEntry>
+	extends BasePersistenceImpl
+		<NotificationQueueEntry, NoSuchNotificationQueueEntryException>
 	implements NotificationQueueEntryPersistence {
 
 	/*
@@ -87,12 +89,11 @@ public class NotificationQueueEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByCompanyId;
 	private FinderPath _finderPathWithoutPaginationFindByCompanyId;
 	private FinderPath _finderPathCountByCompanyId;
+	private CollectionPersistenceFinder<NotificationQueueEntry>
+		_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns all the notification queue entries where companyId = &#63;.
@@ -166,95 +167,9 @@ public class NotificationQueueEntryPersistenceImpl
 		OrderByComparator<NotificationQueueEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByCompanyId;
-				finderArgs = new Object[] {companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByCompanyId;
-			finderArgs = new Object[] {
-				companyId, start, end, orderByComparator
-			};
-		}
-
-		List<NotificationQueueEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<NotificationQueueEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (NotificationQueueEntry notificationQueueEntry : list) {
-					if (companyId != notificationQueueEntry.getCompanyId()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_COMPANYID_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(NotificationQueueEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				list = (List<NotificationQueueEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByCompanyId.find(
+			finderCache, new Object[] {companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -278,16 +193,9 @@ public class NotificationQueueEntryPersistenceImpl
 			return notificationQueueEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchNotificationQueueEntryException(sb.toString());
+		throw new NoSuchNotificationQueueEntryException(
+			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
 	}
 
 	/**
@@ -302,14 +210,8 @@ public class NotificationQueueEntryPersistenceImpl
 		long companyId,
 		OrderByComparator<NotificationQueueEntry> orderByComparator) {
 
-		List<NotificationQueueEntry> list = findByCompanyId(
-			companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCompanyId.fetchFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -402,7 +304,7 @@ public class NotificationQueueEntryPersistenceImpl
 		if (orderByComparator != null) {
 			if (getDB().isSupportsInlineDistinct()) {
 				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+					sb, _ENTITY_ALIAS_PREFIX, orderByComparator, true);
 			}
 			else {
 				appendOrderByComparator(
@@ -462,12 +364,8 @@ public class NotificationQueueEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByCompanyId(long companyId) {
-		for (NotificationQueueEntry notificationQueueEntry :
-				findByCompanyId(
-					companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(notificationQueueEntry);
-		}
+		_collectionPersistenceFinderByCompanyId.remove(
+			finderCache, new Object[] {companyId});
 	}
 
 	/**
@@ -478,45 +376,8 @@ public class NotificationQueueEntryPersistenceImpl
 	 */
 	@Override
 	public int countByCompanyId(long companyId) {
-		FinderPath finderPath = _finderPathCountByCompanyId;
-
-		Object[] finderArgs = new Object[] {companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_COMPANYID_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByCompanyId.count(
+			finderCache, new Object[] {companyId});
 	}
 
 	/**
@@ -583,6 +444,8 @@ public class NotificationQueueEntryPersistenceImpl
 	private FinderPath _finderPathWithPaginationFindByNotificationTemplateId;
 	private FinderPath _finderPathWithoutPaginationFindByNotificationTemplateId;
 	private FinderPath _finderPathCountByNotificationTemplateId;
+	private CollectionPersistenceFinder<NotificationQueueEntry>
+		_collectionPersistenceFinderByNotificationTemplateId;
 
 	/**
 	 * Returns all the notification queue entries where notificationTemplateId = &#63;.
@@ -660,100 +523,9 @@ public class NotificationQueueEntryPersistenceImpl
 		OrderByComparator<NotificationQueueEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByNotificationTemplateId;
-				finderArgs = new Object[] {notificationTemplateId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByNotificationTemplateId;
-			finderArgs = new Object[] {
-				notificationTemplateId, start, end, orderByComparator
-			};
-		}
-
-		List<NotificationQueueEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<NotificationQueueEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (NotificationQueueEntry notificationQueueEntry : list) {
-					if (notificationTemplateId !=
-							notificationQueueEntry.
-								getNotificationTemplateId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE);
-
-			sb.append(
-				_FINDER_COLUMN_NOTIFICATIONTEMPLATEID_NOTIFICATIONTEMPLATEID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(NotificationQueueEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(notificationTemplateId);
-
-				list = (List<NotificationQueueEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByNotificationTemplateId.find(
+			finderCache, new Object[] {notificationTemplateId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -778,16 +550,11 @@ public class NotificationQueueEntryPersistenceImpl
 			return notificationQueueEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("notificationTemplateId=");
-		sb.append(notificationTemplateId);
-
-		sb.append("}");
-
-		throw new NoSuchNotificationQueueEntryException(sb.toString());
+		throw new NoSuchNotificationQueueEntryException(
+			_collectionPersistenceFinderByNotificationTemplateId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {notificationTemplateId}));
 	}
 
 	/**
@@ -802,14 +569,9 @@ public class NotificationQueueEntryPersistenceImpl
 		long notificationTemplateId,
 		OrderByComparator<NotificationQueueEntry> orderByComparator) {
 
-		List<NotificationQueueEntry> list = findByNotificationTemplateId(
-			notificationTemplateId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByNotificationTemplateId.fetchFirst(
+			finderCache, new Object[] {notificationTemplateId},
+			orderByComparator);
 	}
 
 	/**
@@ -907,7 +669,7 @@ public class NotificationQueueEntryPersistenceImpl
 		if (orderByComparator != null) {
 			if (getDB().isSupportsInlineDistinct()) {
 				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+					sb, _ENTITY_ALIAS_PREFIX, orderByComparator, true);
 			}
 			else {
 				appendOrderByComparator(
@@ -967,13 +729,8 @@ public class NotificationQueueEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByNotificationTemplateId(long notificationTemplateId) {
-		for (NotificationQueueEntry notificationQueueEntry :
-				findByNotificationTemplateId(
-					notificationTemplateId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(notificationQueueEntry);
-		}
+		_collectionPersistenceFinderByNotificationTemplateId.remove(
+			finderCache, new Object[] {notificationTemplateId});
 	}
 
 	/**
@@ -984,46 +741,8 @@ public class NotificationQueueEntryPersistenceImpl
 	 */
 	@Override
 	public int countByNotificationTemplateId(long notificationTemplateId) {
-		FinderPath finderPath = _finderPathCountByNotificationTemplateId;
-
-		Object[] finderArgs = new Object[] {notificationTemplateId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE);
-
-			sb.append(
-				_FINDER_COLUMN_NOTIFICATIONTEMPLATEID_NOTIFICATIONTEMPLATEID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(notificationTemplateId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByNotificationTemplateId.count(
+			finderCache, new Object[] {notificationTemplateId});
 	}
 
 	/**
@@ -1093,6 +812,8 @@ public class NotificationQueueEntryPersistenceImpl
 
 	private FinderPath _finderPathWithPaginationFindByLtSentDate;
 	private FinderPath _finderPathWithPaginationCountByLtSentDate;
+	private CollectionPersistenceFinder<NotificationQueueEntry>
+		_collectionPersistenceFinderByLtSentDate;
 
 	/**
 	 * Returns all the notification queue entries where sentDate &lt; &#63;.
@@ -1166,99 +887,9 @@ public class NotificationQueueEntryPersistenceImpl
 		OrderByComparator<NotificationQueueEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		finderPath = _finderPathWithPaginationFindByLtSentDate;
-		finderArgs = new Object[] {
-			_getTime(sentDate), start, end, orderByComparator
-		};
-
-		List<NotificationQueueEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<NotificationQueueEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (NotificationQueueEntry notificationQueueEntry : list) {
-					if (sentDate.getTime() <=
-							notificationQueueEntry.getSentDate(
-							).getTime()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE);
-
-			boolean bindSentDate = false;
-
-			if (sentDate == null) {
-				sb.append(_FINDER_COLUMN_LTSENTDATE_SENTDATE_1);
-			}
-			else {
-				bindSentDate = true;
-
-				sb.append(_FINDER_COLUMN_LTSENTDATE_SENTDATE_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(NotificationQueueEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindSentDate) {
-					queryPos.add(new Timestamp(sentDate.getTime()));
-				}
-
-				list = (List<NotificationQueueEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByLtSentDate.find(
+			finderCache, new Object[] {sentDate}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -1282,16 +913,9 @@ public class NotificationQueueEntryPersistenceImpl
 			return notificationQueueEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("sentDate<");
-		sb.append(sentDate);
-
-		sb.append("}");
-
-		throw new NoSuchNotificationQueueEntryException(sb.toString());
+		throw new NoSuchNotificationQueueEntryException(
+			_collectionPersistenceFinderByLtSentDate.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {sentDate}));
 	}
 
 	/**
@@ -1306,14 +930,8 @@ public class NotificationQueueEntryPersistenceImpl
 		Date sentDate,
 		OrderByComparator<NotificationQueueEntry> orderByComparator) {
 
-		List<NotificationQueueEntry> list = findByLtSentDate(
-			sentDate, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByLtSentDate.fetchFirst(
+			finderCache, new Object[] {sentDate}, orderByComparator);
 	}
 
 	/**
@@ -1415,7 +1033,7 @@ public class NotificationQueueEntryPersistenceImpl
 		if (orderByComparator != null) {
 			if (getDB().isSupportsInlineDistinct()) {
 				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+					sb, _ENTITY_ALIAS_PREFIX, orderByComparator, true);
 			}
 			else {
 				appendOrderByComparator(
@@ -1477,12 +1095,8 @@ public class NotificationQueueEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByLtSentDate(Date sentDate) {
-		for (NotificationQueueEntry notificationQueueEntry :
-				findByLtSentDate(
-					sentDate, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(notificationQueueEntry);
-		}
+		_collectionPersistenceFinderByLtSentDate.remove(
+			finderCache, new Object[] {sentDate});
 	}
 
 	/**
@@ -1493,56 +1107,8 @@ public class NotificationQueueEntryPersistenceImpl
 	 */
 	@Override
 	public int countByLtSentDate(Date sentDate) {
-		FinderPath finderPath = _finderPathWithPaginationCountByLtSentDate;
-
-		Object[] finderArgs = new Object[] {_getTime(sentDate)};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE);
-
-			boolean bindSentDate = false;
-
-			if (sentDate == null) {
-				sb.append(_FINDER_COLUMN_LTSENTDATE_SENTDATE_1);
-			}
-			else {
-				bindSentDate = true;
-
-				sb.append(_FINDER_COLUMN_LTSENTDATE_SENTDATE_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindSentDate) {
-					queryPos.add(new Timestamp(sentDate.getTime()));
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByLtSentDate.count(
+			finderCache, new Object[] {sentDate});
 	}
 
 	/**
@@ -1623,6 +1189,8 @@ public class NotificationQueueEntryPersistenceImpl
 	private FinderPath _finderPathWithPaginationFindByT_S;
 	private FinderPath _finderPathWithoutPaginationFindByT_S;
 	private FinderPath _finderPathCountByT_S;
+	private CollectionPersistenceFinder<NotificationQueueEntry>
+		_collectionPersistenceFinderByT_S;
 
 	/**
 	 * Returns all the notification queue entries where type = &#63; and status = &#63;.
@@ -1700,114 +1268,9 @@ public class NotificationQueueEntryPersistenceImpl
 		OrderByComparator<NotificationQueueEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		type = Objects.toString(type, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByT_S;
-				finderArgs = new Object[] {type, status};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByT_S;
-			finderArgs = new Object[] {
-				type, status, start, end, orderByComparator
-			};
-		}
-
-		List<NotificationQueueEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<NotificationQueueEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (NotificationQueueEntry notificationQueueEntry : list) {
-					if (!type.equals(notificationQueueEntry.getType()) ||
-						(status != notificationQueueEntry.getStatus())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE);
-
-			boolean bindType = false;
-
-			if (type.isEmpty()) {
-				sb.append(_FINDER_COLUMN_T_S_TYPE_3);
-			}
-			else {
-				bindType = true;
-
-				sb.append(_FINDER_COLUMN_T_S_TYPE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_T_S_STATUS_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(NotificationQueueEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindType) {
-					queryPos.add(type);
-				}
-
-				queryPos.add(status);
-
-				list = (List<NotificationQueueEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByT_S.find(
+			finderCache, new Object[] {type, status}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1832,19 +1295,9 @@ public class NotificationQueueEntryPersistenceImpl
 			return notificationQueueEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("type=");
-		sb.append(type);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchNotificationQueueEntryException(sb.toString());
+		throw new NoSuchNotificationQueueEntryException(
+			_collectionPersistenceFinderByT_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {type, status}));
 	}
 
 	/**
@@ -1860,14 +1313,8 @@ public class NotificationQueueEntryPersistenceImpl
 		String type, int status,
 		OrderByComparator<NotificationQueueEntry> orderByComparator) {
 
-		List<NotificationQueueEntry> list = findByT_S(
-			type, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByT_S.fetchFirst(
+			finderCache, new Object[] {type, status}, orderByComparator);
 	}
 
 	/**
@@ -1978,7 +1425,7 @@ public class NotificationQueueEntryPersistenceImpl
 		if (orderByComparator != null) {
 			if (getDB().isSupportsInlineDistinct()) {
 				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+					sb, _ENTITY_ALIAS_PREFIX, orderByComparator, true);
 			}
 			else {
 				appendOrderByComparator(
@@ -2043,12 +1490,8 @@ public class NotificationQueueEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByT_S(String type, int status) {
-		for (NotificationQueueEntry notificationQueueEntry :
-				findByT_S(
-					type, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(notificationQueueEntry);
-		}
+		_collectionPersistenceFinderByT_S.remove(
+			finderCache, new Object[] {type, status});
 	}
 
 	/**
@@ -2060,62 +1503,8 @@ public class NotificationQueueEntryPersistenceImpl
 	 */
 	@Override
 	public int countByT_S(String type, int status) {
-		type = Objects.toString(type, "");
-
-		FinderPath finderPath = _finderPathCountByT_S;
-
-		Object[] finderArgs = new Object[] {type, status};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE);
-
-			boolean bindType = false;
-
-			if (type.isEmpty()) {
-				sb.append(_FINDER_COLUMN_T_S_TYPE_3);
-			}
-			else {
-				bindType = true;
-
-				sb.append(_FINDER_COLUMN_T_S_TYPE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_T_S_STATUS_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindType) {
-					queryPos.add(type);
-				}
-
-				queryPos.add(status);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByT_S.count(
+			finderCache, new Object[] {type, status});
 	}
 
 	/**
@@ -2194,12 +1583,6 @@ public class NotificationQueueEntryPersistenceImpl
 		}
 	}
 
-	private static final String _FINDER_COLUMN_T_S_TYPE_2 =
-		"notificationQueueEntry.type = ? AND ";
-
-	private static final String _FINDER_COLUMN_T_S_TYPE_3 =
-		"(notificationQueueEntry.type IS NULL OR notificationQueueEntry.type = '') AND ";
-
 	private static final String _FINDER_COLUMN_T_S_TYPE_2_SQL =
 		"notificationQueueEntry.type_ = ? AND ";
 
@@ -2268,55 +1651,6 @@ public class NotificationQueueEntryPersistenceImpl
 	}
 
 	/**
-	 * Clears the cache for all notification queue entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(NotificationQueueEntryImpl.class);
-
-		finderCache.clearCache(NotificationQueueEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the notification queue entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(NotificationQueueEntry notificationQueueEntry) {
-		entityCache.removeResult(
-			NotificationQueueEntryImpl.class, notificationQueueEntry);
-	}
-
-	@Override
-	public void clearCache(
-		List<NotificationQueueEntry> notificationQueueEntries) {
-
-		for (NotificationQueueEntry notificationQueueEntry :
-				notificationQueueEntries) {
-
-			entityCache.removeResult(
-				NotificationQueueEntryImpl.class, notificationQueueEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(NotificationQueueEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				NotificationQueueEntryImpl.class, primaryKey);
-		}
-	}
-
-	/**
 	 * Creates a new notification queue entry with the primary key. Does not add the notification queue entry to the database.
 	 *
 	 * @param notificationQueueEntryId the primary key for the new notification queue entry
@@ -2347,48 +1681,6 @@ public class NotificationQueueEntryPersistenceImpl
 		throws NoSuchNotificationQueueEntryException {
 
 		return remove((Serializable)notificationQueueEntryId);
-	}
-
-	/**
-	 * Removes the notification queue entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the notification queue entry
-	 * @return the notification queue entry that was removed
-	 * @throws NoSuchNotificationQueueEntryException if a notification queue entry with the primary key could not be found
-	 */
-	@Override
-	public NotificationQueueEntry remove(Serializable primaryKey)
-		throws NoSuchNotificationQueueEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			NotificationQueueEntry notificationQueueEntry =
-				(NotificationQueueEntry)session.get(
-					NotificationQueueEntryImpl.class, primaryKey);
-
-			if (notificationQueueEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchNotificationQueueEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(notificationQueueEntry);
-		}
-		catch (NoSuchNotificationQueueEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -2511,32 +1803,6 @@ public class NotificationQueueEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the notification queue entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the notification queue entry
-	 * @return the notification queue entry
-	 * @throws NoSuchNotificationQueueEntryException if a notification queue entry with the primary key could not be found
-	 */
-	@Override
-	public NotificationQueueEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchNotificationQueueEntryException {
-
-		NotificationQueueEntry notificationQueueEntry = fetchByPrimaryKey(
-			primaryKey);
-
-		if (notificationQueueEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchNotificationQueueEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return notificationQueueEntry;
-	}
-
-	/**
 	 * Returns the notification queue entry with the primary key or throws a <code>NoSuchNotificationQueueEntryException</code> if it could not be found.
 	 *
 	 * @param notificationQueueEntryId the primary key of the notification queue entry
@@ -2562,188 +1828,6 @@ public class NotificationQueueEntryPersistenceImpl
 		long notificationQueueEntryId) {
 
 		return fetchByPrimaryKey((Serializable)notificationQueueEntryId);
-	}
-
-	/**
-	 * Returns all the notification queue entries.
-	 *
-	 * @return the notification queue entries
-	 */
-	@Override
-	public List<NotificationQueueEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the notification queue entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @return the range of notification queue entries
-	 */
-	@Override
-	public List<NotificationQueueEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the notification queue entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of notification queue entries
-	 */
-	@Override
-	public List<NotificationQueueEntry> findAll(
-		int start, int end,
-		OrderByComparator<NotificationQueueEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the notification queue entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NotificationQueueEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of notification queue entries
-	 * @param end the upper bound of the range of notification queue entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of notification queue entries
-	 */
-	@Override
-	public List<NotificationQueueEntry> findAll(
-		int start, int end,
-		OrderByComparator<NotificationQueueEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<NotificationQueueEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<NotificationQueueEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_NOTIFICATIONQUEUEENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_NOTIFICATIONQUEUEENTRY;
-
-				sql = sql.concat(NotificationQueueEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<NotificationQueueEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the notification queue entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (NotificationQueueEntry notificationQueueEntry : findAll()) {
-			remove(notificationQueueEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of notification queue entries.
-	 *
-	 * @return the number of notification queue entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_NOTIFICATIONQUEUEENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -2779,18 +1863,6 @@ public class NotificationQueueEntryPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByCompanyId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCompanyId",
 			new String[] {
@@ -2808,6 +1880,20 @@ public class NotificationQueueEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCompanyId",
 			new String[] {Long.class.getName()}, new String[] {"companyId"},
 			false);
+
+		_collectionPersistenceFinderByCompanyId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByCompanyId,
+				_finderPathWithoutPaginationFindByCompanyId,
+				_finderPathCountByCompanyId,
+				_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE,
+				_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE,
+				NotificationQueueEntryModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"notificationQueueEntry.", "companyId",
+					FinderColumn.Type.LONG, "=", true, true,
+					NotificationQueueEntry::getCompanyId));
 
 		_finderPathWithPaginationFindByNotificationTemplateId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
@@ -2831,6 +1917,20 @@ public class NotificationQueueEntryPersistenceImpl
 			new String[] {Long.class.getName()},
 			new String[] {"notificationTemplateId"}, false);
 
+		_collectionPersistenceFinderByNotificationTemplateId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByNotificationTemplateId,
+				_finderPathWithoutPaginationFindByNotificationTemplateId,
+				_finderPathCountByNotificationTemplateId,
+				_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE,
+				_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE,
+				NotificationQueueEntryModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"notificationQueueEntry.", "notificationTemplateId",
+					FinderColumn.Type.LONG, "=", true, true,
+					NotificationQueueEntry::getNotificationTemplateId));
+
 		_finderPathWithPaginationFindByLtSentDate = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByLtSentDate",
 			new String[] {
@@ -2843,6 +1943,19 @@ public class NotificationQueueEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByLtSentDate",
 			new String[] {Date.class.getName()}, new String[] {"sentDate"},
 			false);
+
+		_collectionPersistenceFinderByLtSentDate =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByLtSentDate, null,
+				_finderPathWithPaginationCountByLtSentDate,
+				_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE,
+				_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE,
+				NotificationQueueEntryModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"notificationQueueEntry.", "sentDate",
+					FinderColumn.Type.DATE, "<", true, true,
+					NotificationQueueEntry::getSentDate));
 
 		_finderPathWithPaginationFindByT_S = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByT_S",
@@ -2862,6 +1975,19 @@ public class NotificationQueueEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByT_S",
 			new String[] {String.class.getName(), Integer.class.getName()},
 			new String[] {"type_", "status"}, false);
+
+		_collectionPersistenceFinderByT_S = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByT_S,
+			_finderPathWithoutPaginationFindByT_S, _finderPathCountByT_S,
+			_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE,
+			_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE,
+			NotificationQueueEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"notificationQueueEntry.", "type", FinderColumn.Type.STRING,
+				"=", true, false, NotificationQueueEntry::getType),
+			new FinderColumn<>(
+				"notificationQueueEntry.", "status", FinderColumn.Type.INTEGER,
+				"=", true, true, NotificationQueueEntry::getStatus));
 
 		NotificationQueueEntryUtil.setPersistence(this);
 	}
@@ -2905,22 +2031,14 @@ public class NotificationQueueEntryPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
-	private static Long _getTime(Date date) {
-		if (date == null) {
-			return null;
-		}
-
-		return date.getTime();
-	}
+	private static final String _ENTITY_ALIAS_PREFIX =
+		NotificationQueueEntryModelImpl.ENTITY_ALIAS + ".";
 
 	private static final String _SQL_SELECT_NOTIFICATIONQUEUEENTRY =
 		"SELECT notificationQueueEntry FROM NotificationQueueEntry notificationQueueEntry";
 
 	private static final String _SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE =
 		"SELECT notificationQueueEntry FROM NotificationQueueEntry notificationQueueEntry WHERE ";
-
-	private static final String _SQL_COUNT_NOTIFICATIONQUEUEENTRY =
-		"SELECT COUNT(notificationQueueEntry) FROM NotificationQueueEntry notificationQueueEntry";
 
 	private static final String _SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE =
 		"SELECT COUNT(notificationQueueEntry) FROM NotificationQueueEntry notificationQueueEntry WHERE ";
@@ -2947,14 +2065,8 @@ public class NotificationQueueEntryPersistenceImpl
 
 	private static final String _FILTER_ENTITY_TABLE = "NotificationQueueEntry";
 
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"notificationQueueEntry.";
-
 	private static final String _ORDER_BY_ENTITY_TABLE =
 		"NotificationQueueEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No NotificationQueueEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No NotificationQueueEntry exists with the key {";
@@ -2971,4 +2083,4 @@ public class NotificationQueueEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:614514729
+// LIFERAY-SERVICE-BUILDER-HASH:1208738031

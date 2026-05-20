@@ -219,7 +219,7 @@ public class SystemFDSSerializer
 			systemFDSEntryRegistry.getSystemFDSEntry(fdsName);
 
 		if (systemFDSEntry == null) {
-			return false;
+			return _systemFDSEntry.getHideManagementBarInEmptyState();
 		}
 
 		return systemFDSEntry.getHideManagementBarInEmptyState();
@@ -295,6 +295,20 @@ public class SystemFDSSerializer
 		}
 
 		return systemFDSEntry.getPropsTransformer();
+	}
+
+	@Override
+	public boolean serializeShowSearch(
+		String fdsName, HttpServletRequest httpServletRequest) {
+
+		SystemFDSEntry systemFDSEntry =
+			systemFDSEntryRegistry.getSystemFDSEntry(fdsName);
+
+		if (systemFDSEntry == null) {
+			return _systemFDSEntry.getShowSearch();
+		}
+
+		return systemFDSEntry.getShowSearch();
 	}
 
 	@Override

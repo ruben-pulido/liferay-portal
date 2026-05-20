@@ -3,48 +3,76 @@ import ChartTooltip, {
 	Weights
 } from 'shared/components/chart-tooltip';
 import React, {useMemo} from 'react';
-import {CHART_DATA_PREVIOUS, METRIC_TOOLTIP_LABEL_MAP} from './MetricChart';
+import {
+	CHART_DATA_ID_1,
+	CHART_DATA_ID_2,
+	CHART_DATA_PREVIOUS,
+	getActiveItem,
+	getPreviousValueFromCompositeData,
+	METRIC_TOOLTIP_LABEL_MAP
+} from './util';
 import {find, get} from 'lodash';
-import {getActiveItem, getPreviousValueFromCompositeData} from './util';
 import {getDateTitle} from 'shared/util/charts';
+import {Interval, RangeSelectors} from 'shared/types';
 import {RangeKeyTimeRanges} from 'shared/util/constants';
 import {sub} from 'shared/util/lang';
 import {useData} from './MetricBaseCard';
 
-const CHART_DATA_ID_1 = 'data_1';
-const CHART_DATA_ID_2 = 'data_2';
+type TTooltipPayloadItem = {
+	dataKey?: string;
+	payload: {date: number};
+	value: number;
+};
 
-const useMetricTooltip = ({data, interval, payload, rangeSelectors}) => {
+const useMetricTooltipRows = ({
+	data,
+	interval,
+	payload,
+	rangeSelectors
+}: {
+	data: any;
+	interval: Interval;
+	payload: TTooltipPayloadItem[] | undefined;
+	rangeSelectors: RangeSelectors;
+}) => {
 	const {compareToPrevious} = useData();
 
-	const {
-		asymmetricComparison,
-		chartData,
-		compositeData,
-		content: {name, title},
-		dateKeysIMap,
-		format,
-		prevDateKeysIMap
-	} = useMemo(() => getActiveItem(data, compareToPrevious), [
-		compareToPrevious,
-		data
-	]);
+	const activeItem = useMemo(
+		() => getActiveItem(data, compareToPrevious),
+		[compareToPrevious, data]
+	);
 
-	const showCurrentPeriod =
-		compareToPrevious && asymmetricComparison ? payload.length > 1 : true;
+	return useMemo(() => {
+		if (!payload?.length) {
+			return null;
+		}
 
-	const [header, rows] = useMemo(() => {
+		const {
+			asymmetricComparison,
+			chartData,
+			compositeData,
+			content: {name, title},
+			dateKeysIMap,
+			format,
+			prevDateKeysIMap
+		} = activeItem;
+
+		const showCurrentPeriod =
+			compareToPrevious && asymmetricComparison
+				? payload.length > 1
+				: true;
+
 		const dateKey = payload[0].payload.date;
 
 		const dataOneItemData = find(
 			chartData,
-			({id}) => id === CHART_DATA_ID_1
+			({id}: {id: string}) => id === CHART_DATA_ID_1
 		);
 		const dataOneValue = payload[0].value;
 
 		const dataTwoItemData = find(
 			chartData,
-			({id}) => id === CHART_DATA_ID_2
+			({id}: {id: string}) => id === CHART_DATA_ID_2
 		);
 		const dataTwoValue = payload[1] && payload[1].value;
 
@@ -77,7 +105,7 @@ const useMetricTooltip = ({data, interval, payload, rangeSelectors}) => {
 			interval
 		);
 
-		const getDataRowName = itemData =>
+		const getDataRowName = (itemData: unknown) =>
 			get(itemData, 'tooltipTitle') ||
 			METRIC_TOOLTIP_LABEL_MAP[name] ||
 			get(itemData, 'name');
@@ -103,9 +131,7 @@ const useMetricTooltip = ({data, interval, payload, rangeSelectors}) => {
 		const rows = [
 			{
 				columns: [
-					{
-						label: getDataRowName(dataOneItemData)
-					},
+					{label: getDataRowName(dataOneItemData)},
 					compareToPrevious && {
 						align: Alignments.Right,
 						label: format(dataOnePreviousValue)
@@ -118,9 +144,7 @@ const useMetricTooltip = ({data, interval, payload, rangeSelectors}) => {
 			},
 			compositeData && {
 				columns: [
-					{
-						label: getDataRowName(dataTwoItemData)
-					},
+					{label: getDataRowName(dataTwoItemData)},
 					compareToPrevious && {
 						align: Alignments.Right,
 						label: format(dataTwoPreviousValue)
@@ -133,9 +157,7 @@ const useMetricTooltip = ({data, interval, payload, rangeSelectors}) => {
 			},
 			compositeData && {
 				columns: [
-					{
-						label: Liferay.Language.get('total')
-					},
+					{label: Liferay.Language.get('total')},
 					compareToPrevious && {
 						align: Alignments.Right,
 						label: format(
@@ -150,13 +172,21 @@ const useMetricTooltip = ({data, interval, payload, rangeSelectors}) => {
 			}
 		].filter(Boolean);
 
-		return [header, rows];
-	}, [showCurrentPeriod, interval, payload, rangeSelectors]);
-
-	return [header, rows];
+		return {header, rows};
+	}, [activeItem, compareToPrevious, interval, payload, rangeSelectors]);
 };
 
-const MetricTooltip = ({
+interface IMetricTooltipProps {
+	active?: boolean;
+	compareToPrevious: boolean;
+	data: any;
+	interval: Interval;
+	payload?: TTooltipPayloadItem[];
+	rangeSelectors: RangeSelectors;
+	retentionPeriod?: number;
+}
+
+const MetricTooltip: React.FC<IMetricTooltipProps> = ({
 	active,
 	compareToPrevious,
 	data,
@@ -165,45 +195,44 @@ const MetricTooltip = ({
 	rangeSelectors,
 	retentionPeriod
 }) => {
-	if (active && payload?.length) {
-		const [header, rows] = useMetricTooltip({
-			data,
-			interval,
-			payload,
-			rangeSelectors
-		});
+	const tooltipRows = useMetricTooltipRows({
+		data,
+		interval,
+		payload,
+		rangeSelectors
+	});
 
-		let description = '';
+	if (!active || !tooltipRows) {
+		return null;
+	}
 
-		if (
-			(compareToPrevious &&
-				rangeSelectors.rangeKey === RangeKeyTimeRanges.Last180Days) ||
-			(retentionPeriod === 13 &&
-				rangeSelectors.rangeKey === RangeKeyTimeRanges.LastYear)
-		) {
-			description = sub(
+	const showRetentionWarning =
+		(compareToPrevious &&
+			rangeSelectors.rangeKey === RangeKeyTimeRanges.Last180Days) ||
+		(retentionPeriod === 13 &&
+			rangeSelectors.rangeKey === RangeKeyTimeRanges.LastYear);
+
+	const description = showRetentionWarning
+		? (sub(
 				Liferay.Language.get(
 					'there-is-no-data-available-for-dates-prior-to-x-months-due-to-your-workspaces-data-retention-period'
 				),
 				[retentionPeriod]
-			) as string;
-		}
+		  ) as string)
+		: '';
 
-		return (
-			<div
-				className='bb-tooltip-container'
-				style={{maxWidth: 400, position: 'static'}}
-			>
-				<ChartTooltip
-					description={description}
-					header={header}
-					rows={rows}
-				/>
-			</div>
-		);
-	}
-
-	return null;
+	return (
+		<div
+			className='bb-tooltip-container'
+			style={{maxWidth: 400, position: 'static'}}
+		>
+			<ChartTooltip
+				description={description}
+				header={tooltipRows.header}
+				rows={tooltipRows.rows}
+			/>
+		</div>
+	);
 };
 
 export default MetricTooltip;

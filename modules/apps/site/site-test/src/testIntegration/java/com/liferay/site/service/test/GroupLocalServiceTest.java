@@ -10,6 +10,7 @@ import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.DuplicateGroupException;
+import com.liferay.portal.kernel.exception.GroupFriendlyURLException;
 import com.liferay.portal.kernel.exception.GroupKeyException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
@@ -23,6 +24,7 @@ import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.PropsValuesTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
@@ -145,6 +147,19 @@ public class GroupLocalServiceTest {
 	}
 
 	@Test
+	public void testAddGroupWithReservedKeywordFriendlyURL() throws Exception {
+		_assertAddGroupRejectsReservedKeywords();
+
+		try (SafeCloseable safeCloseable =
+				PropsValuesTestUtil.swapWithSafeCloseable(
+					"LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING_ENABLED",
+					false)) {
+
+			_assertAddGroupRejectsReservedKeywords();
+		}
+	}
+
+	@Test
 	public void testCheckSystemGroups() throws Exception {
 		Company company = CompanyTestUtil.addCompany();
 
@@ -206,6 +221,19 @@ public class GroupLocalServiceTest {
 		Assert.assertTrue(groups.toString(), groups.isEmpty());
 	}
 
+	@Test
+	public void testUpdateFriendlyURLWithReservedKeyword() throws Exception {
+		_assertUpdateFriendlyURLRejectsReservedKeywords();
+
+		try (SafeCloseable safeCloseable =
+				PropsValuesTestUtil.swapWithSafeCloseable(
+					"LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING_ENABLED",
+					false)) {
+
+			_assertUpdateFriendlyURLRejectsReservedKeywords();
+		}
+	}
+
 	private Group _addGroup(String name) throws Exception {
 		return _addGroup(StringPool.BLANK, name, null);
 	}
@@ -230,6 +258,39 @@ public class GroupLocalServiceTest {
 			false, true, ServiceContextTestUtil.getServiceContext());
 	}
 
+	private Group _addGroupWithFriendlyURL(String friendlyURL)
+		throws Exception {
+
+		return _groupLocalService.addGroup(
+			StringPool.BLANK, TestPropsValues.getUserId(),
+			GroupConstants.DEFAULT_PARENT_GROUP_ID, null, 0,
+			GroupConstants.DEFAULT_LIVE_GROUP_ID,
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build(),
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build(),
+			GroupConstants.TYPE_SITE_OPEN, null, true,
+			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, friendlyURL, true,
+			false, true, ServiceContextTestUtil.getServiceContext());
+	}
+
+	private void _assertAddGroupRejectsReservedKeywords() throws Exception {
+		for (String reservedKeyword : _RESERVED_KEYWORDS) {
+			try {
+				_addGroupWithFriendlyURL(reservedKeyword);
+
+				Assert.fail();
+			}
+			catch (GroupFriendlyURLException groupFriendlyURLException) {
+				Assert.assertEquals(
+					GroupFriendlyURLException.KEYWORD_CONFLICT,
+					groupFriendlyURLException.getType());
+			}
+		}
+	}
+
 	private void _assertDescendantGroups(
 		Group parentGroup, Group... expectedDescendantGroups) {
 
@@ -241,7 +302,6 @@ public class GroupLocalServiceTest {
 
 		for (Group expectedDescendantGroup : expectedDescendantGroups) {
 			Assert.assertTrue(
-				"Missing descendant: " + expectedDescendantGroup.toString(),
 				actualDescendantGroups.contains(expectedDescendantGroup));
 		}
 	}
@@ -259,6 +319,31 @@ public class GroupLocalServiceTest {
 
 		Assert.assertNotNull(_groupLocalService.getCompanyGroup(companyId));
 	}
+
+	private void _assertUpdateFriendlyURLRejectsReservedKeywords()
+		throws Exception {
+
+		Group group = GroupTestUtil.addGroup();
+
+		for (String reservedKeyword : _RESERVED_KEYWORDS) {
+			try {
+				_groupLocalService.updateFriendlyURL(
+					group.getGroupId(), reservedKeyword);
+
+				Assert.fail();
+			}
+			catch (GroupFriendlyURLException groupFriendlyURLException) {
+				Assert.assertEquals(
+					GroupFriendlyURLException.KEYWORD_CONFLICT,
+					groupFriendlyURLException.getType());
+			}
+		}
+	}
+
+	private static final String[] _RESERVED_KEYWORDS = {
+		"/api", "/c", "/combo", "/documents", "/group", "/html", "/image",
+		"/layouttpl", "/o", "/web", "/webdav"
+	};
 
 	@Inject
 	private ClassNameLocalService _classNameLocalService;

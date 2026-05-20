@@ -876,6 +876,9 @@ public class PropsValues {
 					PropsKeys.
 						FIELD_ENABLE_COM_LIFERAY_PORTAL_KERNEL_MODEL_ORGANIZATION_STATUS));
 
+	public static final boolean FIPS_ENABLED = GetterUtil.getBoolean(
+		PropsUtil.get(PropsKeys.FIPS_ENABLED));
+
 	public static final String[] GLOBAL_SHUTDOWN_EVENTS = PropsUtil.getArray(
 		PropsKeys.GLOBAL_SHUTDOWN_EVENTS);
 
@@ -2382,6 +2385,18 @@ public class PropsValues {
 	public static final boolean UPGRADE_LOG_CONTEXT_ENABLED =
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.UPGRADE_LOG_CONTEXT_ENABLED));
+
+	public static final boolean UPGRADE_LOG_PROGRESS_ENABLED =
+		GetterUtil.getBoolean(
+			PropsUtil.get(PropsKeys.UPGRADE_LOG_PROGRESS_ENABLED));
+
+	public static final long UPGRADE_LOG_PROGRESS_INTERVAL = GetterUtil.getLong(
+		PropsUtil.get(PropsKeys.UPGRADE_LOG_PROGRESS_INTERVAL));
+
+	public static final long UPGRADE_QUERY_MONITOR_LOCK_THRESHOLD =
+		GetterUtil.getLong(
+			PropsUtil.get(PropsKeys.UPGRADE_QUERY_MONITOR_LOCK_THRESHOLD),
+			300000);
 
 	public static final String UPGRADE_REPORT_DIR = GetterUtil.getString(
 		PropsUtil.get(PropsKeys.UPGRADE_REPORT_DIR));

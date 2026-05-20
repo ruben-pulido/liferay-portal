@@ -114,6 +114,23 @@ public class CookiesPreferenceHandlingManagedServiceFactory
 		return cookiesPreferenceHandlingConfiguration.floatingIconEnabled();
 	}
 
+	public boolean getCompanyGlobalPrivacyControlEnabled(long companyId) {
+		CookiesPreferenceHandlingConfiguration
+			cookiesPreferenceHandlingConfiguration =
+				_getCompanyCookiesPreferenceHandlingConfiguration(companyId);
+
+		return cookiesPreferenceHandlingConfiguration.
+			globalPrivacyControlEnabled();
+	}
+
+	public long getCompanyModifiedDate(long companyId) {
+		CookiesPreferenceHandlingConfiguration
+			cookiesPreferenceHandlingConfiguration =
+				_getCompanyCookiesPreferenceHandlingConfiguration(companyId);
+
+		return cookiesPreferenceHandlingConfiguration.modifiedDate();
+	}
+
 	public boolean getCompanyStoreConsent(long companyId) {
 		CookiesPreferenceHandlingConfiguration
 			cookiesPreferenceHandlingConfiguration =
@@ -212,6 +229,27 @@ public class CookiesPreferenceHandlingManagedServiceFactory
 		return cookiesPreferenceHandlingConfiguration.floatingIconEnabled();
 	}
 
+	public boolean getGroupGlobalPrivacyControlEnabled(
+		long companyId, long groupId) {
+
+		CookiesPreferenceHandlingConfiguration
+			cookiesPreferenceHandlingConfiguration =
+				_getGroupCookiesPreferenceHandlingConfiguration(
+					companyId, groupId);
+
+		return cookiesPreferenceHandlingConfiguration.
+			globalPrivacyControlEnabled();
+	}
+
+	public long getGroupModifiedDate(long companyId, long groupId) {
+		CookiesPreferenceHandlingConfiguration
+			cookiesPreferenceHandlingConfiguration =
+				_getGroupCookiesPreferenceHandlingConfiguration(
+					companyId, groupId);
+
+		return cookiesPreferenceHandlingConfiguration.modifiedDate();
+	}
+
 	public boolean getGroupStoreConsent(long companyId, long groupId) {
 		CookiesPreferenceHandlingConfiguration
 			cookiesPreferenceHandlingConfiguration =
@@ -268,6 +306,15 @@ public class CookiesPreferenceHandlingManagedServiceFactory
 	public boolean getSystemFloatingIconEnabled() {
 		return _systemCookiesPreferenceHandlingConfiguration.
 			floatingIconEnabled();
+	}
+
+	public boolean getSystemGlobalPrivacyControlEnabled() {
+		return _systemCookiesPreferenceHandlingConfiguration.
+			globalPrivacyControlEnabled();
+	}
+
+	public long getSystemModifiedDate() {
+		return _systemCookiesPreferenceHandlingConfiguration.modifiedDate();
 	}
 
 	public boolean getSystemStoreConsent() {

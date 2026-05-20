@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceComponentLocalServiceUtil;
 import com.liferay.portal.kernel.service.configuration.ServiceComponentConfiguration;
+import com.liferay.portal.kernel.upgrade.recorder.UpgradeLogProgressTracker;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -62,6 +63,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.logging.log4j.core.Appender;
@@ -228,6 +230,8 @@ public class DBUpgrader {
 				LogContext.class, UpgradeLogContext.getInstance(), null);
 		}
 
+		UpgradeLogProgressTracker.start();
+
 		_stopWatch = new StopWatch();
 
 		_stopWatch.start();
@@ -248,6 +252,8 @@ public class DBUpgrader {
 	}
 
 	public static void stopUpgradeLogAppender() {
+		UpgradeLogProgressTracker.stop();
+
 		if ((_appender != null) && _appender.isStarted()) {
 			_stopWatch.stop();
 
@@ -315,13 +321,13 @@ public class DBUpgrader {
 
 			};
 
+		Date buildDate = ReleaseInfo.getBuildDate();
+
 		ServiceComponentLocalServiceUtil.initServiceComponent(
 			portalServiceComponentConfiguration,
 			DBUpgrader.class.getClassLoader(),
 			ReleaseConstants.DEFAULT_SERVLET_CONTEXT_NAME,
-			ReleaseInfo.getBuildNumber(),
-			ReleaseInfo.getBuildDate(
-			).getTime());
+			ReleaseInfo.getBuildNumber(), buildDate.getTime());
 	}
 
 	public static void upgradeModules() {

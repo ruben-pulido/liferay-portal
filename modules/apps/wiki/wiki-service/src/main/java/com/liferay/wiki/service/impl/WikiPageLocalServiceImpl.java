@@ -17,6 +17,7 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.expando.kernel.util.ExpandoBridgeUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -306,8 +307,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		// Node
 
-		wikiPageLocalService.updateLastPostDate(
-			node.getNodeId(), serviceContext.getModifiedDate(date));
+		_updateLastPostDate(serviceContext.getModifiedDate(date), nodeId);
 
 		// Asset
 
@@ -3336,6 +3336,14 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			workflowContext);
 	}
 
+	private void _updateLastPostDate(Date date, long nodeId) {
+		if (!ExportImportThreadLocal.isImportInProcess() &&
+			!ExportImportThreadLocal.isStagingInProcess()) {
+
+			wikiPageLocalService.updateLastPostDate(nodeId, date);
+		}
+	}
+
 	private WikiPage _updatePage(
 			long userId, WikiPage oldPage, String newTitle, String content,
 			String summary, boolean minorEdit, String format,
@@ -3428,8 +3436,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		// Node
 
-		wikiPageLocalService.updateLastPostDate(
-			nodeId, serviceContext.getModifiedDate(date));
+		_updateLastPostDate(serviceContext.getModifiedDate(date), nodeId);
 
 		// Asset
 

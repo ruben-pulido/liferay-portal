@@ -74,6 +74,7 @@ import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.test.util.CompanyConfigurationTemporarySwapper;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -104,6 +105,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -185,10 +187,28 @@ public class EditableFragmentEntryProcessorTest {
 				_company, _group, _layout));
 
 		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
+
+		_companyConfigurationTemporarySwapper =
+			new CompanyConfigurationTemporarySwapper(
+				_company.getCompanyId(),
+				"com.liferay.analytics.settings.configuration." +
+					"AnalyticsConfiguration",
+				HashMapDictionaryBuilder.<String, Object>put(
+					"liferayAnalyticsDataSourceId",
+					RandomTestUtil.randomString()
+				).put(
+					"liferayAnalyticsFaroBackendSecuritySignature",
+					RandomTestUtil.randomString()
+				).put(
+					"liferayAnalyticsFaroBackendURL",
+					"http://" + RandomTestUtil.randomString()
+				).build());
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
+		_companyConfigurationTemporarySwapper.close();
+
 		LocaleThreadLocal.setSiteDefaultLocale(_originalSiteDefaultLocale);
 		LocaleThreadLocal.setThemeDisplayLocale(
 			_originalThemeDisplayDefaultLocale);
@@ -1327,6 +1347,9 @@ public class EditableFragmentEntryProcessorTest {
 		Assert.assertEquals(
 			assetCategory1.getTitle(LocaleUtil.US),
 			jsonObject.getString("name"));
+		Assert.assertEquals(
+			assetVocabulary.getVocabularyId(),
+			jsonObject.getLong("vocabularyId"));
 
 		jsonObject = jsonArray.getJSONObject(1);
 
@@ -1335,6 +1358,9 @@ public class EditableFragmentEntryProcessorTest {
 		Assert.assertEquals(
 			assetCategory2.getTitle(LocaleUtil.US),
 			jsonObject.getString("name"));
+		Assert.assertEquals(
+			assetVocabulary.getVocabularyId(),
+			jsonObject.getLong("vocabularyId"));
 
 		jsonArray = JSONFactoryUtil.createJSONArray(
 			element.attr("data-analytics-asset-tags"));
@@ -1348,6 +1374,19 @@ public class EditableFragmentEntryProcessorTest {
 
 		Assert.assertEquals(assetTag2.getTagId(), jsonObject.getLong("id"));
 		Assert.assertEquals(assetTag2.getName(), jsonObject.getString("name"));
+
+		jsonArray = JSONFactoryUtil.createJSONArray(
+			element.attr("data-analytics-asset-vocabularies"));
+
+		Assert.assertEquals(1, jsonArray.length());
+
+		jsonObject = jsonArray.getJSONObject(0);
+
+		Assert.assertEquals(
+			assetVocabulary.getVocabularyId(), jsonObject.getLong("id"));
+		Assert.assertEquals(
+			assetVocabulary.getTitle(LocaleUtil.US),
+			jsonObject.getString("name"));
 	}
 
 	@Test
@@ -2593,13 +2632,9 @@ public class EditableFragmentEntryProcessorTest {
 		).toString();
 	}
 
-	@Inject
-	private static JournalArticleLocalService _journalArticleLocalService;
-
-	@Inject(filter = "ddm.form.deserializer.type=json")
-	private static DDMFormDeserializer _jsonDDMFormDeserializer;
-
 	private Company _company;
+	private CompanyConfigurationTemporarySwapper
+		_companyConfigurationTemporarySwapper;
 
 	@Inject
 	private CompanyLocalService _companyLocalService;
@@ -2639,7 +2674,13 @@ public class EditableFragmentEntryProcessorTest {
 	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 	@Inject
+	private JournalArticleLocalService _journalArticleLocalService;
+
+	@Inject
 	private JournalConverter _journalConverter;
+
+	@Inject(filter = "ddm.form.deserializer.type=json")
+	private DDMFormDeserializer _jsonDDMFormDeserializer;
 
 	private Layout _layout;
 

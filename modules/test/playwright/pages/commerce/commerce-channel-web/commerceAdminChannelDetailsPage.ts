@@ -101,8 +101,13 @@ export class CommerceAdminChannelDetailsPage {
 		buttonName: string,
 		tableName: string
 	) => Promise<Locator>;
+	readonly sidePanelFrameBodyHTML: (tableName: string) => Promise<string>;
 	readonly sidePanelFrameInput: (
 		input: string,
+		tableName: string
+	) => Promise<Locator>;
+	readonly sidePanelFrameNavLink: (
+		navItem: string,
 		tableName: string
 	) => Promise<Locator>;
 	readonly sidePanelFrameEditMenuItem: (
@@ -391,11 +396,25 @@ export class CommerceAdminChannelDetailsPage {
 				{exact: true, name: buttonName}
 			);
 		};
+		this.sidePanelFrameBodyHTML = async (tableName: string) => {
+			return (await this.sidePanelFrame(tableName))
+				.locator('body')
+				.innerHTML();
+		};
 		this.sidePanelFrameInput = async (
 			inputName: string,
 			tableName: string
 		) => {
 			return (await this.sidePanelFrame(tableName)).getByLabel(inputName);
+		};
+		this.sidePanelFrameNavLink = async (
+			navItem: string,
+			tableName: string
+		) => {
+			return (await this.sidePanelFrame(tableName)).getByRole('link', {
+				exact: true,
+				name: navItem,
+			});
 		};
 		this.sidePanelFrameEditMenuItem = async (tableName: string) => {
 			return (await this.sidePanelFrame(tableName)).getByRole(
@@ -475,6 +494,26 @@ export class CommerceAdminChannelDetailsPage {
 
 		await (await this.frameSaveButton(false, tableName)).click();
 		await waitForAlert(await this.sidePanelFrame(tableName));
+		await (await this.closeSidePanelFrame(false, tableName)).click();
+	}
+
+	async activatePaymentMethod(name: string, description: string) {
+		const tableName = 'Payment Methods';
+
+		await (await this.generalCommerceAdminChannelTableLink(name)).click();
+
+		await this.sidePanelFrameLocator
+			.getByLabel('Description', {exact: true})
+			.fill(description);
+
+		if (!(await this.isActive.isChecked())) {
+			await this.isActive.check();
+		}
+
+		await (await this.frameSaveButton(false, tableName)).click();
+
+		await waitForAlert(await this.sidePanelFrame(tableName));
+
 		await (await this.closeSidePanelFrame(false, tableName)).click();
 	}
 

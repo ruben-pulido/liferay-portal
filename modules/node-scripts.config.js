@@ -10,13 +10,14 @@
  */
 
 module.exports = {
-	hash: '911f1d07ad602dac672fe0b368a344fb5801a75744c9d4bbac863ec2677567a6',
+	hash: '426f3d97cfd23da43077b817833364f786a0ec220e7cc4fa9ba674c026526881',
 	imports: {
 		'@liferay/accessibility-menu-web': [],
 		'@liferay/accessibility-settings-state-web': [],
 		'@liferay/address-web': [],
 		'@liferay/ai-creator-openai-web': [],
 		'@liferay/ai-hub-cell-js-components-web': [],
+		'@liferay/ai-hub-cell-web': [],
 		'@liferay/ai-hub-web': [],
 		'@liferay/analytics-reports-js-components-web': [],
 		'@liferay/analytics-settings-web': [],
@@ -151,7 +152,6 @@ module.exports = {
 			'cropperjs/dist/cropper.css',
 			'graphql-hooks-memcache',
 			'graphql-hooks',
-			'graphql',
 			'highlight.js/styles/monokai-sublime.css',
 			'qrcode',
 			'react-dropzone',
@@ -159,8 +159,6 @@ module.exports = {
 			'uuid',
 			'react-flow-renderer',
 			'react-helmet',
-			'graphiql',
-			'graphiql/style.css',
 			'axe-core',
 			'clipboard',
 			'cropperjs',

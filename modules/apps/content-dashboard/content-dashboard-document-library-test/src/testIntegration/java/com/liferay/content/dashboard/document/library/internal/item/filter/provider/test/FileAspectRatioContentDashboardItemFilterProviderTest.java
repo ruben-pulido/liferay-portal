@@ -15,15 +15,14 @@ import com.liferay.petra.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchContextFactory;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -133,7 +132,7 @@ public class FileAspectRatioContentDashboardItemFilterProviderTest {
 		searchContext.setCompanyId(_group.getCompanyId());
 		searchContext.setGroupIds(new long[] {_group.getGroupId()});
 
-		BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
+		BooleanQuery booleanQuery = new BooleanQuery();
 
 		BooleanFilter booleanFilter = new BooleanFilter();
 
@@ -147,11 +146,10 @@ public class FileAspectRatioContentDashboardItemFilterProviderTest {
 			booleanFilter.add(filter, BooleanClauseOccur.MUST);
 		}
 
-		booleanQueryImpl.setPreBooleanFilter(booleanFilter);
+		booleanQuery.setPreBooleanFilter(booleanFilter);
 
 		BooleanClause[] booleanClauses = {
-			BooleanClauseFactoryUtil.create(
-				booleanQueryImpl, BooleanClauseOccur.MUST.getName())
+			new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST)
 		};
 
 		searchContext.setBooleanClauses(booleanClauses);

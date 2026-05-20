@@ -39,6 +39,14 @@ module "eks" {
 		}
 		vpc-cni={
 			before_compute=true
+			configuration_values=jsonencode(
+				{
+					enableNetworkPolicy="true"
+					nodeAgent={
+						healthProbeBindAddr="8163"
+						metricsBindAddr="8162"
+					}
+				})
 			most_recent=true
 		}
 	}
@@ -56,7 +64,8 @@ module "eks" {
 		provider_key_arn=aws_kms_key.eks_secrets.arn
 	}
 	endpoint_private_access=true
-	endpoint_public_access=true
+	endpoint_public_access=var.eks_allow_public_access
+	endpoint_public_access_cidrs=local.eks_api_public_access_cidrs
 	iam_role_additional_policies={
 		AmazonEKSBlockStoragePolicy="arn:${var.arn_partition}:iam::aws:policy/AmazonEKSBlockStoragePolicy"
 		AmazonEKSComputePolicy="arn:${var.arn_partition}:iam::aws:policy/AmazonEKSComputePolicy"

@@ -60,7 +60,9 @@ gradle.buildFinished {
 
 	String errorString = errorByteArrayOutputStream.toString()
 
-	if (!errorString.contains("Not a git repository")) {
+	String lowerCaseErrorString = errorString.toLowerCase()
+
+	if (!lowerCaseErrorString.contains("not a git repository")) {
 		logger.error errorString
 	}
 
@@ -114,4 +116,16 @@ if (Boolean.getBoolean("build.performance.logger.enabled")) {
 			private final ConcurrentHashMap<Task, Long> _taskStartTimes = new ConcurrentHashMap<Task, Long>()
 
 		})
+}
+
+if (System.getenv("JENKINS_HOME")) {
+	gradle.rootProject {
+		Project rootProject ->
+
+		File scriptFile = rootProject.file("init-ci.gradle")
+
+		if (scriptFile.exists()) {
+			apply from: scriptFile
+		}
+	}
 }

@@ -5,19 +5,16 @@
 
 package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -35,8 +32,6 @@ import java.lang.reflect.InvocationHandler;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * The persistence implementation for the null convertible entry service.
@@ -49,7 +44,8 @@ import java.util.Set;
  * @generated
  */
 public class NullConvertibleEntryPersistenceImpl
-	extends BasePersistenceImpl<NullConvertibleEntry>
+	extends BasePersistenceImpl
+		<NullConvertibleEntry, NoSuchNullConvertibleEntryException>
 	implements NullConvertibleEntryPersistence {
 
 	/*
@@ -66,10 +62,9 @@ public class NullConvertibleEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathFetchByName;
+	private UniquePersistenceFinder<NullConvertibleEntry>
+		_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the null convertible entry where name = &#63; or throws a <code>NoSuchNullConvertibleEntryException</code> if it could not be found.
@@ -85,20 +80,15 @@ public class NullConvertibleEntryPersistenceImpl
 		NullConvertibleEntry nullConvertibleEntry = fetchByName(name);
 
 		if (nullConvertibleEntry == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("name=");
-			sb.append(name);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchNullConvertibleEntryException(sb.toString());
+			throw new NoSuchNullConvertibleEntryException(message);
 		}
 
 		return nullConvertibleEntry;
@@ -126,91 +116,8 @@ public class NullConvertibleEntryPersistenceImpl
 	public NullConvertibleEntry fetchByName(
 		String name, boolean useFinderCache) {
 
-		name = Objects.toString(name, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {name};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = dummyFinderCache.getResult(
-				_finderPathFetchByName, finderArgs, this);
-		}
-
-		if (result instanceof NullConvertibleEntry) {
-			NullConvertibleEntry nullConvertibleEntry =
-				(NullConvertibleEntry)result;
-
-			if (!Objects.equals(name, nullConvertibleEntry.getName())) {
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_SELECT_NULLCONVERTIBLEENTRY_WHERE);
-
-			boolean bindName = false;
-
-			if (name.isEmpty()) {
-				sb.append(_FINDER_COLUMN_NAME_NAME_3);
-			}
-			else {
-				bindName = true;
-
-				sb.append(_FINDER_COLUMN_NAME_NAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindName) {
-					queryPos.add(name);
-				}
-
-				List<NullConvertibleEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						dummyFinderCache.putResult(
-							_finderPathFetchByName, finderArgs, list);
-					}
-				}
-				else {
-					NullConvertibleEntry nullConvertibleEntry = list.get(0);
-
-					result = nullConvertibleEntry;
-
-					cacheResult(nullConvertibleEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (NullConvertibleEntry)result;
-		}
+		return _uniquePersistenceFinderByName.fetch(
+			dummyFinderCache, new Object[] {name}, useFinderCache);
 	}
 
 	/**
@@ -236,20 +143,9 @@ public class NullConvertibleEntryPersistenceImpl
 	 */
 	@Override
 	public int countByName(String name) {
-		NullConvertibleEntry nullConvertibleEntry = fetchByName(name);
-
-		if (nullConvertibleEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByName.count(
+			dummyFinderCache, new Object[] {name});
 	}
-
-	private static final String _FINDER_COLUMN_NAME_NAME_2 =
-		"nullConvertibleEntry.name = ?";
-
-	private static final String _FINDER_COLUMN_NAME_NAME_3 =
-		"(nullConvertibleEntry.name IS NULL OR nullConvertibleEntry.name = '')";
 
 	public NullConvertibleEntryPersistenceImpl() {
 		setModelClass(NullConvertibleEntry.class);
@@ -306,53 +202,6 @@ public class NullConvertibleEntryPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all null convertible entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		dummyEntityCache.clearCache(NullConvertibleEntryImpl.class);
-
-		dummyFinderCache.clearCache(NullConvertibleEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the null convertible entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(NullConvertibleEntry nullConvertibleEntry) {
-		dummyEntityCache.removeResult(
-			NullConvertibleEntryImpl.class, nullConvertibleEntry);
-	}
-
-	@Override
-	public void clearCache(List<NullConvertibleEntry> nullConvertibleEntries) {
-		for (NullConvertibleEntry nullConvertibleEntry :
-				nullConvertibleEntries) {
-
-			dummyEntityCache.removeResult(
-				NullConvertibleEntryImpl.class, nullConvertibleEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		dummyFinderCache.clearCache(NullConvertibleEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			dummyEntityCache.removeResult(
-				NullConvertibleEntryImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		NullConvertibleEntryModelImpl nullConvertibleEntryModelImpl) {
 
@@ -391,48 +240,6 @@ public class NullConvertibleEntryPersistenceImpl
 		throws NoSuchNullConvertibleEntryException {
 
 		return remove((Serializable)nullConvertibleEntryId);
-	}
-
-	/**
-	 * Removes the null convertible entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the null convertible entry
-	 * @return the null convertible entry that was removed
-	 * @throws NoSuchNullConvertibleEntryException if a null convertible entry with the primary key could not be found
-	 */
-	@Override
-	public NullConvertibleEntry remove(Serializable primaryKey)
-		throws NoSuchNullConvertibleEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			NullConvertibleEntry nullConvertibleEntry =
-				(NullConvertibleEntry)session.get(
-					NullConvertibleEntryImpl.class, primaryKey);
-
-			if (nullConvertibleEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchNullConvertibleEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(nullConvertibleEntry);
-		}
-		catch (NoSuchNullConvertibleEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -530,32 +337,6 @@ public class NullConvertibleEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the null convertible entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the null convertible entry
-	 * @return the null convertible entry
-	 * @throws NoSuchNullConvertibleEntryException if a null convertible entry with the primary key could not be found
-	 */
-	@Override
-	public NullConvertibleEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchNullConvertibleEntryException {
-
-		NullConvertibleEntry nullConvertibleEntry = fetchByPrimaryKey(
-			primaryKey);
-
-		if (nullConvertibleEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchNullConvertibleEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return nullConvertibleEntry;
-	}
-
-	/**
 	 * Returns the null convertible entry with the primary key or throws a <code>NoSuchNullConvertibleEntryException</code> if it could not be found.
 	 *
 	 * @param nullConvertibleEntryId the primary key of the null convertible entry
@@ -578,188 +359,6 @@ public class NullConvertibleEntryPersistenceImpl
 	@Override
 	public NullConvertibleEntry fetchByPrimaryKey(long nullConvertibleEntryId) {
 		return fetchByPrimaryKey((Serializable)nullConvertibleEntryId);
-	}
-
-	/**
-	 * Returns all the null convertible entries.
-	 *
-	 * @return the null convertible entries
-	 */
-	@Override
-	public List<NullConvertibleEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the null convertible entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NullConvertibleEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of null convertible entries
-	 * @param end the upper bound of the range of null convertible entries (not inclusive)
-	 * @return the range of null convertible entries
-	 */
-	@Override
-	public List<NullConvertibleEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the null convertible entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NullConvertibleEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of null convertible entries
-	 * @param end the upper bound of the range of null convertible entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of null convertible entries
-	 */
-	@Override
-	public List<NullConvertibleEntry> findAll(
-		int start, int end,
-		OrderByComparator<NullConvertibleEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the null convertible entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>NullConvertibleEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of null convertible entries
-	 * @param end the upper bound of the range of null convertible entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of null convertible entries
-	 */
-	@Override
-	public List<NullConvertibleEntry> findAll(
-		int start, int end,
-		OrderByComparator<NullConvertibleEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<NullConvertibleEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<NullConvertibleEntry>)dummyFinderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_NULLCONVERTIBLEENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_NULLCONVERTIBLEENTRY;
-
-				sql = sql.concat(NullConvertibleEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<NullConvertibleEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					dummyFinderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the null convertible entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (NullConvertibleEntry nullConvertibleEntry : findAll()) {
-			remove(nullConvertibleEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of null convertible entries.
-	 *
-	 * @return the number of null convertible entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)dummyFinderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_NULLCONVERTIBLEENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				dummyFinderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -789,21 +388,16 @@ public class NullConvertibleEntryPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathFetchByName = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByName",
 			new String[] {String.class.getName()}, new String[] {"name"}, true);
+
+		_uniquePersistenceFinderByName = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByName,
+			_SQL_SELECT_NULLCONVERTIBLEENTRY_WHERE,
+			new FinderColumn<>(
+				"nullConvertibleEntry.", "name", FinderColumn.Type.STRING, "=",
+				true, true, NullConvertibleEntry::getName));
 
 		NullConvertibleEntryUtil.setPersistence(this);
 	}
@@ -814,23 +408,14 @@ public class NullConvertibleEntryPersistenceImpl
 		dummyEntityCache.removeCache(NullConvertibleEntryImpl.class.getName());
 	}
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		NullConvertibleEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_NULLCONVERTIBLEENTRY =
 		"SELECT nullConvertibleEntry FROM NullConvertibleEntry nullConvertibleEntry";
 
 	private static final String _SQL_SELECT_NULLCONVERTIBLEENTRY_WHERE =
 		"SELECT nullConvertibleEntry FROM NullConvertibleEntry nullConvertibleEntry WHERE ";
-
-	private static final String _SQL_COUNT_NULLCONVERTIBLEENTRY =
-		"SELECT COUNT(nullConvertibleEntry) FROM NullConvertibleEntry nullConvertibleEntry";
-
-	private static final String _SQL_COUNT_NULLCONVERTIBLEENTRY_WHERE =
-		"SELECT COUNT(nullConvertibleEntry) FROM NullConvertibleEntry nullConvertibleEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"nullConvertibleEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No NullConvertibleEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No NullConvertibleEntry exists with the key {";
@@ -844,4 +429,4 @@ public class NullConvertibleEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:765127453
+// LIFERAY-SERVICE-BUILDER-HASH:818752918

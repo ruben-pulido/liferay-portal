@@ -39,7 +39,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -60,7 +59,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = WhereClauseEntryPersistence.class)
 public class WhereClauseEntryPersistenceImpl
-	extends BasePersistenceImpl<WhereClauseEntry>
+	extends BasePersistenceImpl
+		<WhereClauseEntry, NoSuchWhereClauseEntryException>
 	implements WhereClauseEntryPersistence {
 
 	/*
@@ -77,9 +77,6 @@ public class WhereClauseEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByName_Nickname;
 	private FinderPath _finderPathWithoutPaginationFindByName_Nickname;
 	private FinderPath _finderPathCountByName_Nickname;
@@ -217,7 +214,7 @@ public class WhereClauseEntryPersistenceImpl
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ENTITY_ALIAS_PREFIX, orderByComparator);
 			}
 			else {
 				sb.append(WhereClauseEntryModelImpl.ORDER_BY_JPQL);
@@ -443,49 +440,6 @@ public class WhereClauseEntryPersistenceImpl
 	}
 
 	/**
-	 * Clears the cache for all where clause entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(WhereClauseEntryImpl.class);
-
-		finderCache.clearCache(WhereClauseEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the where clause entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(WhereClauseEntry whereClauseEntry) {
-		entityCache.removeResult(WhereClauseEntryImpl.class, whereClauseEntry);
-	}
-
-	@Override
-	public void clearCache(List<WhereClauseEntry> whereClauseEntries) {
-		for (WhereClauseEntry whereClauseEntry : whereClauseEntries) {
-			entityCache.removeResult(
-				WhereClauseEntryImpl.class, whereClauseEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(WhereClauseEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(WhereClauseEntryImpl.class, primaryKey);
-		}
-	}
-
-	/**
 	 * Creates a new where clause entry with the primary key. Does not add the where clause entry to the database.
 	 *
 	 * @param whereClauseEntryId the primary key for the new where clause entry
@@ -513,47 +467,6 @@ public class WhereClauseEntryPersistenceImpl
 		throws NoSuchWhereClauseEntryException {
 
 		return remove((Serializable)whereClauseEntryId);
-	}
-
-	/**
-	 * Removes the where clause entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the where clause entry
-	 * @return the where clause entry that was removed
-	 * @throws NoSuchWhereClauseEntryException if a where clause entry with the primary key could not be found
-	 */
-	@Override
-	public WhereClauseEntry remove(Serializable primaryKey)
-		throws NoSuchWhereClauseEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			WhereClauseEntry whereClauseEntry = (WhereClauseEntry)session.get(
-				WhereClauseEntryImpl.class, primaryKey);
-
-			if (whereClauseEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchWhereClauseEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(whereClauseEntry);
-		}
-		catch (NoSuchWhereClauseEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -644,31 +557,6 @@ public class WhereClauseEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the where clause entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the where clause entry
-	 * @return the where clause entry
-	 * @throws NoSuchWhereClauseEntryException if a where clause entry with the primary key could not be found
-	 */
-	@Override
-	public WhereClauseEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchWhereClauseEntryException {
-
-		WhereClauseEntry whereClauseEntry = fetchByPrimaryKey(primaryKey);
-
-		if (whereClauseEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchWhereClauseEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return whereClauseEntry;
-	}
-
-	/**
 	 * Returns the where clause entry with the primary key or throws a <code>NoSuchWhereClauseEntryException</code> if it could not be found.
 	 *
 	 * @param whereClauseEntryId the primary key of the where clause entry
@@ -691,187 +579,6 @@ public class WhereClauseEntryPersistenceImpl
 	@Override
 	public WhereClauseEntry fetchByPrimaryKey(long whereClauseEntryId) {
 		return fetchByPrimaryKey((Serializable)whereClauseEntryId);
-	}
-
-	/**
-	 * Returns all the where clause entries.
-	 *
-	 * @return the where clause entries
-	 */
-	@Override
-	public List<WhereClauseEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the where clause entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of where clause entries
-	 * @param end the upper bound of the range of where clause entries (not inclusive)
-	 * @return the range of where clause entries
-	 */
-	@Override
-	public List<WhereClauseEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the where clause entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of where clause entries
-	 * @param end the upper bound of the range of where clause entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of where clause entries
-	 */
-	@Override
-	public List<WhereClauseEntry> findAll(
-		int start, int end,
-		OrderByComparator<WhereClauseEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the where clause entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>WhereClauseEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of where clause entries
-	 * @param end the upper bound of the range of where clause entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of where clause entries
-	 */
-	@Override
-	public List<WhereClauseEntry> findAll(
-		int start, int end,
-		OrderByComparator<WhereClauseEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<WhereClauseEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<WhereClauseEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_WHERECLAUSEENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_WHERECLAUSEENTRY;
-
-				sql = sql.concat(WhereClauseEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<WhereClauseEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the where clause entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (WhereClauseEntry whereClauseEntry : findAll()) {
-			remove(whereClauseEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of where clause entries.
-	 *
-	 * @return the number of where clause entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_WHERECLAUSEENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -901,18 +608,6 @@ public class WhereClauseEntryPersistenceImpl
 	public void activate() {
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
-
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
 
 		_finderPathWithPaginationFindByName_Nickname = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByName_Nickname",
@@ -973,22 +668,17 @@ public class WhereClauseEntryPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		WhereClauseEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_WHERECLAUSEENTRY =
 		"SELECT whereClauseEntry FROM WhereClauseEntry whereClauseEntry";
 
 	private static final String _SQL_SELECT_WHERECLAUSEENTRY_WHERE =
 		"SELECT whereClauseEntry FROM WhereClauseEntry whereClauseEntry WHERE ";
 
-	private static final String _SQL_COUNT_WHERECLAUSEENTRY =
-		"SELECT COUNT(whereClauseEntry) FROM WhereClauseEntry whereClauseEntry";
-
 	private static final String _SQL_COUNT_WHERECLAUSEENTRY_WHERE =
 		"SELECT COUNT(whereClauseEntry) FROM WhereClauseEntry whereClauseEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "whereClauseEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No WhereClauseEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No WhereClauseEntry exists with the key {";
@@ -1002,4 +692,4 @@ public class WhereClauseEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1116693235
+// LIFERAY-SERVICE-BUILDER-HASH:-2096216860

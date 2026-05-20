@@ -11,8 +11,8 @@ import {
 } from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
 
-import {collectionsPagesTest} from '../../../fixtures/collectionsPagesTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
+import {displayPageTemplatesPagesTest} from '../../../fixtures/displayPageTemplatesPagesTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {fragmentsPagesTest} from '../../../fixtures/fragmentPagesTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
@@ -21,18 +21,17 @@ import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
+import {performUserSwitch, userData} from '../../../utils/performLogin';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import getFormContainerDefinition from '../../layout-content-page-editor-web/main/utils/getFormContainerDefinition';
-import getFragmentDefinition from '../../layout-content-page-editor-web/main/utils/getFragmentDefinition';
 import getPageDefinition from '../../layout-content-page-editor-web/main/utils/getPageDefinition';
 import {localizationPagesTest} from '../../site-admin-web/main/fixtures/localizationPagesTest';
 import {generateObjectFields} from '../utils/generateObjectFields';
 
 const test = mergeTests(
-	collectionsPagesTest,
 	dataApiHelpersTest,
+	displayPageTemplatesPagesTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	fragmentsPagesTest,
@@ -50,40 +49,6 @@ const cmsTest = mergeTests(
 		'LPS-178052': {enabled: true},
 	})
 );
-
-test.describe('Manage export/import object definitions', () => {
-	test('can export data structure from a custom object', async ({
-		apiHelpers,
-		page,
-		viewObjectDefinitionsPage,
-	}) => {
-		const objectDefinition =
-			await apiHelpers.objectAdmin.postRandomObjectDefinition({
-				status: {code: 0},
-			});
-
-		apiHelpers.data.push({
-			id: objectDefinition.id,
-			type: 'objectDefinition',
-		});
-
-		await viewObjectDefinitionsPage.goto();
-
-		const downloadPromise = page.waitForEvent('download');
-
-		await viewObjectDefinitionsPage.actionsButton.last().click();
-
-		await viewObjectDefinitionsPage.exportObjectDefinitionOption
-			.last()
-			.click();
-
-		const download = await downloadPromise;
-
-		expect(download.suggestedFilename()).toContain(
-			objectDefinition.externalReferenceCode
-		);
-	});
-});
 
 test.describe('Manage object definitions through Model Builder', () => {
 	test.beforeEach(({page}) => {
@@ -1062,6 +1027,406 @@ test.describe('Manage object definitions through View Object Definitions', () =>
 		).toBeHidden();
 	});
 
+	test('can restrict a previously created object', async ({
+		apiHelpers,
+		editObjectDetailsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 2},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await editObjectDetailsPage.goto(objectDefinition.label['en_US']);
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await expect(
+			editObjectDetailsPage.accountRestrictionToggle
+		).toBeDisabled();
+
+		await apiHelpers.headlessAdminUser.postAccount();
+
+		const objectDefinitionAPIClient =
+			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+		const {body: accountObjectDefinition} =
+			await objectDefinitionAPIClient.getObjectDefinitionByExternalReferenceCode(
+				'L_ACCOUNT'
+			);
+
+		const objectRelationshipAPIClient = await apiHelpers.buildRestClient(
+			ObjectRelationshipAPI
+		);
+
+		const {body: objectRelationship} =
+			await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+				'L_ACCOUNT',
+				{
+					label: {
+						en_US: 'objectRelationshipLabel' + getRandomInt(),
+					},
+					name: 'objectRelationshipName' + getRandomInt(),
+					objectDefinitionExternalReferenceCode1: 'L_ACCOUNT',
+					objectDefinitionExternalReferenceCode2:
+						objectDefinition.externalReferenceCode,
+					objectDefinitionId1: accountObjectDefinition.id,
+					objectDefinitionId2: objectDefinition.id,
+					objectDefinitionName2: objectDefinition.name,
+					type: 'oneToMany',
+				}
+			);
+
+		apiHelpers.data.push({
+			id: objectRelationship.id,
+			type: 'objectRelationship',
+		});
+
+		await page.reload();
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await editObjectDetailsPage.enableAccountRestriction(
+			objectRelationship.label['en_US']
+		);
+
+		await editObjectDetailsPage.publishButton.click();
+
+		await waitForAlert(page, 'The object was published successfully');
+
+		await page.reload();
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await expect(
+			editObjectDetailsPage.accountRestrictionToggle
+		).toBeDisabled();
+	});
+
+	test('can save changes when publishing', async ({
+		apiHelpers,
+		editObjectDetailsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 2},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const label = 'UpdatedLabel' + getRandomInt();
+
+		await editObjectDetailsPage.goto(objectDefinition.label['en_US']);
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await editObjectDetailsPage.labelInput.fill(label);
+
+		await editObjectDetailsPage.publishButton.click();
+
+		await waitForAlert(page, 'The object was published successfully');
+
+		await page.reload();
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await expect(editObjectDetailsPage.labelInput).toHaveValue(label);
+	});
+
+	test('can set a different language value for the label and plural label', async ({
+		apiHelpers,
+		editObjectDetailsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const label = 'Rótulo em Português';
+		const pluralLabel = 'Rótulos em Português';
+
+		await editObjectDetailsPage.goto(objectDefinition.label['en_US']);
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await editObjectDetailsPage.selectLabelLanguage('pt_BR');
+
+		await editObjectDetailsPage.labelInput.fill(label);
+
+		await editObjectDetailsPage.selectPluralLabelLanguage('pt_BR');
+
+		await editObjectDetailsPage.pluralLabelInput.fill(pluralLabel);
+
+		await editObjectDetailsPage.saveObjectDefinition();
+
+		await waitForAlert(page, 'The object was saved successfully');
+
+		await page.reload();
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await editObjectDetailsPage.selectLabelLanguage('pt_BR');
+
+		await expect(editObjectDetailsPage.labelInput).toHaveValue(label);
+
+		await editObjectDetailsPage.selectPluralLabelLanguage('pt_BR');
+
+		await expect(editObjectDetailsPage.pluralLabelInput).toHaveValue(
+			pluralLabel
+		);
+	});
+
+	test('can update editable fields and cannot update disabled fields after publishing', async ({
+		apiHelpers,
+		editObjectDetailsPage,
+		page,
+	}) => {
+		const objectFields = generateObjectFields({
+			objectFieldBusinessTypes: ['Text'],
+		});
+
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFields,
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const objectFieldLabel = objectFields[0].label!['en_US'];
+		const label = 'UpdatedLabel' + getRandomInt();
+		const pluralLabel = 'UpdatedPlural' + getRandomInt();
+
+		await editObjectDetailsPage.goto(objectDefinition.label['en_US']);
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await expect(editObjectDetailsPage.nameInput).toBeDisabled();
+		await expect(editObjectDetailsPage.scopeCombobox).toBeDisabled();
+
+		await editObjectDetailsPage.labelInput.fill(label);
+		await editObjectDetailsPage.pluralLabelInput.fill(pluralLabel);
+		await editObjectDetailsPage.selectEntryTitleField(objectFieldLabel);
+		await editObjectDetailsPage.selectPanelLink('Object');
+
+		await editObjectDetailsPage.saveObjectDefinition();
+
+		await waitForAlert(page, 'The object was saved successfully');
+
+		await page.reload();
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await expect(editObjectDetailsPage.labelInput).toHaveValue(label);
+		await expect(editObjectDetailsPage.pluralLabelInput).toHaveValue(
+			pluralLabel
+		);
+		await expect(editObjectDetailsPage.entryTitleFieldCombobox).toHaveText(
+			objectFieldLabel
+		);
+		await expect(editObjectDetailsPage.panelLinkCombobox).toHaveText(
+			'Object',
+			{ignoreCase: true}
+		);
+	});
+
+	test('can update fields of a draft object before publishing', async ({
+		apiHelpers,
+		editObjectDetailsPage,
+		page,
+	}) => {
+		const objectFields = generateObjectFields({
+			objectFieldBusinessTypes: ['Text'],
+		});
+
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFields,
+				status: {code: 2},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const objectFieldLabel = objectFields[0].label!['en_US'];
+		const label = 'UpdatedLabel' + getRandomInt();
+		const name = 'UpdatedName' + getRandomInt();
+		const pluralLabel = 'UpdatedPlural' + getRandomInt();
+
+		await editObjectDetailsPage.goto(objectDefinition.label['en_US']);
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await editObjectDetailsPage.labelInput.fill(label);
+		await editObjectDetailsPage.pluralLabelInput.fill(pluralLabel);
+		await editObjectDetailsPage.nameInput.fill(name);
+		await editObjectDetailsPage.selectEntryTitleField(objectFieldLabel);
+		await editObjectDetailsPage.selectScope('Company');
+
+		await editObjectDetailsPage.selectPanelLink('Object');
+
+		await editObjectDetailsPage.saveObjectDefinition();
+
+		await waitForAlert(page, 'The object was saved successfully');
+
+		await page.reload();
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await expect(editObjectDetailsPage.labelInput).toHaveValue(label);
+		await expect(editObjectDetailsPage.pluralLabelInput).toHaveValue(
+			pluralLabel
+		);
+		await expect(editObjectDetailsPage.nameInput).toHaveValue(name);
+		await expect(editObjectDetailsPage.entryTitleFieldCombobox).toHaveText(
+			objectFieldLabel
+		);
+		await expect(editObjectDetailsPage.scopeCombobox).toHaveText(
+			'Company',
+			{ignoreCase: true}
+		);
+		await expect(editObjectDetailsPage.panelLinkCombobox).toHaveText(
+			'Object',
+			{ignoreCase: true}
+		);
+
+		await editObjectDetailsPage.selectScope('Site');
+
+		await editObjectDetailsPage.selectPanelLink('Content & Data');
+
+		await editObjectDetailsPage.saveObjectDefinition();
+
+		await waitForAlert(page, 'The object was saved successfully');
+
+		await page.reload();
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await expect(editObjectDetailsPage.scopeCombobox).toHaveText('Site', {
+			ignoreCase: true,
+		});
+		await expect(editObjectDetailsPage.panelLinkCombobox).toHaveText(
+			'Content & Data',
+			{ignoreCase: true}
+		);
+	});
+
+	test('can view and edit its own object with only the add permission', async ({
+		apiHelpers,
+		editObjectDetailsPage,
+		modalAddObjectDefinitionPage,
+		page,
+		viewObjectDefinitionsPage,
+	}) => {
+		const companyId = await page.evaluate(() => {
+			return Liferay.ThemeDisplay.getCompanyId();
+		});
+
+		const role = await apiHelpers.headlessAdminUser.postRole({
+			name: 'ObjRole' + getRandomInt(),
+			rolePermissions: [
+				{
+					actionIds: ['ACCESS_IN_CONTROL_PANEL', 'VIEW'],
+					primaryKey: companyId,
+					resourceName:
+						'com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet',
+					scope: 1,
+				},
+				{
+					actionIds: ['ADD_OBJECT_DEFINITION'],
+					primaryKey: companyId,
+					resourceName: 'com.liferay.object',
+					scope: 1,
+				},
+				{
+					actionIds: ['UPDATE', 'VIEW'],
+					primaryKey: companyId,
+					resourceName: 'com.liferay.object.model.ObjectDefinition',
+					scope: 1,
+				},
+				{
+					actionIds: ['VIEW_CONTROL_PANEL'],
+					primaryKey: companyId,
+					resourceName: '90',
+					scope: 1,
+				},
+			],
+		});
+
+		apiHelpers.data.push({id: role.id, type: 'role'});
+
+		const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+		apiHelpers.data.push({id: user.id, type: 'userAccount'});
+
+		userData[user.alternateName] = {
+			name: user.givenName,
+			password: 'test',
+			surname: user.familyName,
+		};
+
+		await apiHelpers.headlessAdminUser.assignUserToRole(
+			role.externalReferenceCode,
+			user.id
+		);
+
+		await performUserSwitch(page, user.alternateName);
+
+		await viewObjectDefinitionsPage.goto();
+
+		await viewObjectDefinitionsPage.createObjectDefinitionButton.click();
+
+		const objectLabel = 'CustomObject' + getRandomInt();
+
+		const objectDefinition =
+			await modalAddObjectDefinitionPage.createObjectDefinition(
+				objectLabel
+			);
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await editObjectDetailsPage.goto(objectDefinition.label['en_US']);
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		const label = 'UpdatedLabel' + getRandomInt();
+
+		await editObjectDetailsPage.labelInput.fill(label);
+
+		await editObjectDetailsPage.saveObjectDefinition();
+
+		await waitForAlert(page, 'The object was saved successfully');
+
+		await page.reload();
+
+		await editObjectDetailsPage.goToDetailsTab();
+
+		await expect(editObjectDetailsPage.labelInput).toHaveValue(label);
+	});
+
 	test('can view the object management toolbar in different tabs.', async ({
 		apiHelpers,
 		editObjectDetailsPage,
@@ -1127,6 +1492,75 @@ test.describe('Manage object definitions through View Object Definitions', () =>
 				page.getByText(objectDefinition.id.toString())
 			).toBeVisible();
 		}
+	});
+
+	test('cannot publish an object without the publish permission', async ({
+		apiHelpers,
+		editObjectDetailsPage,
+		page,
+	}) => {
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 2},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const companyId = await page.evaluate(() => {
+			return Liferay.ThemeDisplay.getCompanyId();
+		});
+
+		const role = await apiHelpers.headlessAdminUser.postRole({
+			name: 'ObjRole' + getRandomInt(),
+			rolePermissions: [
+				{
+					actionIds: ['ACCESS_IN_CONTROL_PANEL', 'VIEW'],
+					primaryKey: companyId,
+					resourceName:
+						'com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet',
+					scope: 1,
+				},
+				{
+					actionIds: ['VIEW'],
+					primaryKey: companyId,
+					resourceName: 'com.liferay.object.model.ObjectDefinition',
+					scope: 1,
+				},
+				{
+					actionIds: ['VIEW_CONTROL_PANEL'],
+					primaryKey: companyId,
+					resourceName: '90',
+					scope: 1,
+				},
+			],
+		});
+
+		apiHelpers.data.push({id: role.id, type: 'role'});
+
+		const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+		apiHelpers.data.push({id: user.id, type: 'userAccount'});
+
+		userData[user.alternateName] = {
+			name: user.givenName,
+			password: 'test',
+			surname: user.familyName,
+		};
+
+		await apiHelpers.headlessAdminUser.assignUserToRole(
+			role.externalReferenceCode,
+			user.id
+		);
+
+		await performUserSwitch(page, user.alternateName);
+
+		await editObjectDetailsPage.goto(objectDefinition.label['en_US']);
+
+		await expect(editObjectDetailsPage.publishButton).toBeDisabled();
+		await expect(editObjectDetailsPage.saveButton).toBeDisabled();
 	});
 
 	test('cannot publish definition with duplicate friendlyURL prefix', async ({
@@ -1213,99 +1647,6 @@ test.describe('Manage object definitions through View Object Definitions', () =>
 		await editObjectDetailsPage.saveButton.click();
 
 		await expect(page.getByText('Required')).toBeVisible();
-	});
-});
-
-test.describe('Manage object definitions through a Page', () => {
-	test('can display an object reactivated on the Collection Providers', async ({
-		apiHelpers,
-		collectionsPage,
-		page,
-		site,
-		viewObjectDefinitionsPage,
-	}) => {
-		const objectDefinition =
-			await apiHelpers.objectAdmin.postRandomObjectDefinition({
-				status: {code: 0},
-			});
-
-		apiHelpers.data.push({
-			id: objectDefinition.id,
-			type: 'objectDefinition',
-		});
-
-		await viewObjectDefinitionsPage.goto();
-
-		await viewObjectDefinitionsPage.changeObjectActivateStatus(
-			objectDefinition.name
-		);
-
-		await viewObjectDefinitionsPage.goto();
-
-		await viewObjectDefinitionsPage.changeObjectActivateStatus(
-			objectDefinition.name
-		);
-
-		await collectionsPage.goto(site.friendlyUrlPath);
-
-		await page.getByRole('link', {name: 'Collection Providers'}).click();
-
-		await expect(
-			page.getByText(objectDefinition.name).first()
-		).toBeVisible();
-	});
-
-	test('can display an object reactivated on the Page Item Selector', async ({
-		apiHelpers,
-		page,
-		pageEditorPage,
-		site,
-		viewObjectDefinitionsPage,
-	}) => {
-		const objectDefinition =
-			await apiHelpers.objectAdmin.postRandomObjectDefinition({
-				status: {code: 0},
-			});
-
-		apiHelpers.data.push({
-			id: objectDefinition.id,
-			type: 'objectDefinition',
-		});
-
-		await viewObjectDefinitionsPage.goto();
-
-		await viewObjectDefinitionsPage.changeObjectActivateStatus(
-			objectDefinition.name
-		);
-
-		await viewObjectDefinitionsPage.goto();
-
-		await viewObjectDefinitionsPage.changeObjectActivateStatus(
-			objectDefinition.name
-		);
-
-		const headingDefinition = getFragmentDefinition({
-			id: getRandomString(),
-			key: 'BASIC_COMPONENT-heading',
-		});
-
-		const layout = await apiHelpers.headlessDelivery.createSitePage({
-			pageDefinition: getPageDefinition([headingDefinition]),
-			siteId: site.id,
-			title: getRandomString(),
-		});
-
-		await pageEditorPage.goto(layout, site.friendlyUrlPath);
-
-		await page.getByText('Heading Example', {exact: true}).dblclick();
-
-		await page.getByLabel('Select Item').click();
-
-		await expect(
-			page
-				.frameLocator('iframe[title="Select"]')
-				.getByRole('menuitem', {name: objectDefinition.name})
-		).toBeVisible();
 	});
 });
 

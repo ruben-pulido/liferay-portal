@@ -90,11 +90,11 @@ public class DLFolderActivityInterpreterTest
 		DLTrashServiceUtil.restoreFolderFromTrash(_folder.getFolderId());
 	}
 
+	private Folder _folder;
+
 	@Inject(
 		filter = "model.class.name=com.liferay.document.library.kernel.model.DLFolder"
 	)
-	private static SocialActivityInterpreter _socialActivityInterpreter;
-
-	private Folder _folder;
+	private SocialActivityInterpreter _socialActivityInterpreter;
 
 }

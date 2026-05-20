@@ -1,0 +1,705 @@
+components:
+    schemas:
+        Fragment:
+            description:
+                A fragment entry.
+            properties:
+                cacheable:
+                    description:
+                        A flag that indicates whether the fragment output is cacheable.
+                    type: boolean
+                creator:
+                    $ref: ../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator
+                    description:
+                        The fragment's creator.
+                    readOnly: true
+                dateCreated:
+                    description:
+                        The fragment's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    description:
+                        The last time the fragment changed.
+                    format: date-time
+                    type: string
+                externalReferenceCode:
+                    description:
+                        The fragment's external reference code.
+                    type: string
+                fragmentSetExternalReferenceCode:
+                    description:
+                        The external reference code of the fragment set this fragment belongs to.
+                    type: string
+                fragmentVersions:
+                    description:
+                        The fragment's versions. A fragment can have up to 2 versions, one draft and one published
+                        (approved).
+                    items:
+                        $ref: "#/components/schemas/FragmentVersion"
+                    type: array
+                icon:
+                    description:
+                        The fragment's icon identifier.
+                    type: string
+                key:
+                    description:
+                        The fragment's unique key within the group.
+                    type: string
+                marketplace:
+                    description:
+                        A flag that indicates whether the fragment is from the marketplace.
+                    type: boolean
+                name:
+                    description:
+                        The fragment's name.
+                    type: string
+                readOnly:
+                    description:
+                        A flag that indicates whether the fragment is read-only.
+                    type: boolean
+                type:
+                    description:
+                        The fragment's type.
+                    enum: [Component]
+                    type: string
+            type: object
+        FragmentSet:
+            description:
+                A fragment set (also known as fragment collection).
+            properties:
+                creator:
+                    $ref: ../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator
+                    description:
+                        The fragment set's creator.
+                    readOnly: true
+                dateCreated:
+                    description:
+                        The fragment set's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    description:
+                        The last time the fragment set changed.
+                    format: date-time
+                    type: string
+                description:
+                    description:
+                        The fragment set's description.
+                    type: string
+                externalReferenceCode:
+                    description:
+                        The fragment set's external reference code.
+                    type: string
+                key:
+                    description:
+                        The fragment set's key.
+                    type: string
+                marketplace:
+                    description:
+                        A flag that indicates whether the fragment set is from the marketplace.
+                    type: boolean
+                name:
+                    description:
+                        The fragment set's name.
+                    type: string
+            type: object
+        FragmentVersion:
+            description:
+                A version of a fragment (draft or published).
+            properties:
+                configuration:
+                    description:
+                        The fragment version's JSON configuration.
+                    type: string
+                css:
+                    description:
+                        The fragment version's CSS code.
+                    type: string
+                html:
+                    description:
+                        The fragment version's HTML code.
+                    type: string
+                js:
+                    description:
+                        The fragment version's JavaScript code.
+                    type: string
+                status:
+                    description:
+                        The fragment version's status (Approved or Draft).
+                    enum: [Approved, Draft]
+                    type: string
+            type: object
+        ResourceFolder:
+            description:
+                A resource folder within a fragment set.
+            properties:
+                creator:
+                    $ref: ../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator
+                    description:
+                        The resource folder's creator.
+                    readOnly: true
+                dateCreated:
+                    description:
+                        The resource folder's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    description:
+                        The last time the resource folder changed.
+                    format: date-time
+                    type: string
+                externalReferenceCode:
+                    description:
+                        The resource folder's external reference code.
+                    type: string
+                fragmentSetExternalReferenceCode:
+                    description:
+                        The external reference code of the fragment set this resource folder belongs to.
+                    type: string
+                name:
+                    description:
+                        The resource folder's name.
+                    type: string
+                parentResourceFolderExternalReferenceCode:
+                    description:
+                        The external reference code of the parent resource folder. Null when the resource folder is at
+                        the fragment set's root.
+                    type: string
+            type: object
+info:
+    description:
+        "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
+        'com.liferay.headless.admin.fragment.client', and version '1.0.2'."
+    license:
+        name: Apache 2.0
+        url: http://www.apache.org/licenses/LICENSE-2.0.html
+    title: Liferay Headless Admin Fragment API
+    version: v1.0
+openapi: 3.0.1
+paths:
+    "/sites/{siteExternalReferenceCode}/fragment-sets":
+        get:
+            description:
+                Retrieves the fragment sets of the site.
+            operationId: getSiteFragmentSetsPage
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: filter
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/FragmentSet"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/FragmentSet"
+                                type: array
+            tags: ["FragmentSet"]
+        post:
+            description:
+                Adds a new fragment set.
+            operationId: postSiteFragmentSet
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/FragmentSet"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/FragmentSet"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+            tags: ["FragmentSet"]
+    "/sites/{siteExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}":
+        delete:
+            description:
+                Deletes a specific fragment set of a site.
+            operationId: deleteSiteFragmentSet
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["FragmentSet"]
+        get:
+            description:
+                Retrieves a specific fragment set of a site.
+            operationId: getSiteFragmentSet
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+            tags: ["FragmentSet"]
+        put:
+            description:
+                Updates the fragment set with the given external reference code, or creates it if it does not exist.
+            operationId: putSiteFragmentSet
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/FragmentSet"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/FragmentSet"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+            tags: ["FragmentSet"]
+    "/sites/{siteExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/fragments":
+        get:
+            description:
+                Retrieves the fragments of a fragment set.
+            operationId: getSiteFragmentSetFragmentsPage
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Fragment"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Fragment"
+                                type: array
+            tags: ["Fragment"]
+        post:
+            description:
+                Adds a new fragment to a fragment set.
+            operationId: postSiteFragmentSetFragment
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Fragment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Fragment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+            tags: ["Fragment"]
+    "/sites/{siteExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/resource-folders":
+        get:
+            description:
+                Retrieves the resource folders of a fragment set.
+            operationId: getSiteFragmentSetResourceFoldersPage
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ResourceFolder"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ResourceFolder"
+                                type: array
+            tags: ["ResourceFolder"]
+        post:
+            description:
+                Adds a new resource folder to a fragment set. The resource folder is created at the fragment set's root
+                unless the request body specifies a parent resource folder external reference code. If the target
+                fragment set does not exist, a default fragment set is automatically created using the provided external
+                reference code.
+            operationId: postSiteFragmentSetResourceFolder
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+            tags: ["ResourceFolder"]
+    "/sites/{siteExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}":
+        delete:
+            description:
+                Deletes a specific fragment of a site.
+            operationId: deleteSiteFragment
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["Fragment"]
+        get:
+            description:
+                Retrieves a specific fragment of a site.
+            operationId: getSiteFragment
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+            tags: ["Fragment"]
+        put:
+            description:
+                Updates the fragment with the given external reference code, or creates it if it does not exist.
+            operationId: putSiteFragment
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Fragment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Fragment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+            tags: ["Fragment"]
+    "/sites/{siteExternalReferenceCode}/resource-folders/{resourceFolderExternalReferenceCode}":
+        delete:
+            description:
+                Deletes a specific resource folder of a site. All nested resources and subfolders contained within the
+                resource folder are removed.
+            operationId: deleteSiteResourceFolder
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: resourceFolderExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["ResourceFolder"]
+        get:
+            description:
+                Retrieves a specific resource folder of a site.
+            operationId: getSiteResourceFolder
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: resourceFolderExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+            tags: ["ResourceFolder"]
+        put:
+            description:
+                Updates the resource folder with the given external reference code, or creates it if it does not exist.
+                The folder's name and parent resource folder may be updated; changing the parent relocates the folder
+                within the fragment set.
+            operationId: putSiteResourceFolder
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: resourceFolderExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+            tags: ["ResourceFolder"]

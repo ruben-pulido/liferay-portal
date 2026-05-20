@@ -99,6 +99,13 @@ const IndividualsDashboardCDP = lazy(() =>
 	)
 );
 
+/* Lifecycle */
+const LifecycleDashboard = lazy(() =>
+	import(
+		/* webpackChunkname: "LifecycleDashboard" */ '../../lifecycle/pages/BaseLifecycle'
+	)
+);
+
 /* Sites */
 
 const SitesDashboard = lazy(() =>
@@ -128,7 +135,7 @@ const TouchpointRoutes = lazy(() =>
 /* Assets */
 
 const NewAssetsList = lazy(() =>
-	import(/* webpackChunkName: "NewAssetsList" */ 'assets/List')
+	import(/* webpackChunkName: "NewAssetsList" */ 'assets/pages/List')
 );
 
 const AssetsList = lazy(() =>
@@ -282,6 +289,11 @@ const ROUTES = [
 		destructured: false,
 		path: Routes.CHANNEL
 	},
+	{
+		data: LifecycleDashboard,
+		destructured: false,
+		path: Routes.LIFECYCLE
+	},
 	DEVELOPER_MODE && {
 		data: CommerceDashboard,
 		destructured: false,
@@ -301,7 +313,7 @@ export default class AppSidebarRoutes extends React.PureComponent {
 	static contextType = ChannelContext;
 
 	render() {
-		const {currentUser, groupId, LDPEnabled} = this.props;
+		const {LDPEnabled, currentUser, groupId} = this.props;
 		const {selectedChannel} = this.context;
 
 		return (

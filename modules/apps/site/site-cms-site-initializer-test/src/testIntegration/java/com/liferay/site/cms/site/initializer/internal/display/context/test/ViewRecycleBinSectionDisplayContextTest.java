@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -43,7 +44,6 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +71,16 @@ public class ViewRecycleBinSectionDisplayContextTest
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
 
+	@Override
+	public Map<String, Object> getBaseAdditionalProps() throws Exception {
+		Map<String, Object> baseAdditionalProps =
+			super.getBaseAdditionalProps();
+
+		baseAdditionalProps.remove("additionalAPIURLParameters");
+
+		return baseAdditionalProps;
+	}
+
 	@Test
 	public void testGetBreadcrumbProps() throws Exception {
 		HttpServletRequest httpServletRequest = getMockHttpServletRequest();
@@ -93,6 +103,23 @@ public class ViewRecycleBinSectionDisplayContextTest
 				"hideSpace", true
 			).build(),
 			_getBreadcrumbProps(displayContext));
+	}
+
+	@Test
+	@TestInfo("LPD-87118")
+	public void testGetBulkActionDropdownItems() throws Exception {
+		List<FDSActionDropdownItem> bulkActionDropdownItems =
+			getBulkActionDropdownItems();
+
+		Assert.assertEquals(
+			bulkActionDropdownItems.toString(), 2,
+			bulkActionDropdownItems.size());
+
+		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
+			"trash", "delete", "Delete", null, bulkActionDropdownItems.get(0));
+		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
+			"restore", "restore", "Restore", null,
+			bulkActionDropdownItems.get(1));
 	}
 
 	@Override
@@ -282,7 +309,7 @@ public class ViewRecycleBinSectionDisplayContextTest
 				depotGroup.getTypeSettingsProperty("trashEnabled")));
 	}
 
-	private HashMap<String, Object> _getBreadcrumbProps(Object displayContext) {
+	private Map<String, Object> _getBreadcrumbProps(Object displayContext) {
 		return ReflectionTestUtil.invoke(
 			displayContext, "getBreadcrumbProps", new Class<?>[0]);
 	}

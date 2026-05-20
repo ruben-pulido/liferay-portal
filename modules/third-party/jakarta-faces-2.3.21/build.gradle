@@ -1,0 +1,21 @@
+ext {
+	gitHash = "a8be466f4f72ac33ef38552b72a6d89396f5ae86"
+	gitHubOwner = "liferay"
+	gitHubRepository = "mojarra"
+	mvnArgument = "package -Dmaven.test.skip=true -Dmaven.javadoc.skip=true"
+	mvnJARInclude = "jakarta.faces-2.3.21.LIFERAY-PATCHED-4.jar"
+	mvnTargetDir = "impl/target"
+}
+
+apply from: "../build-maven.gradle"
+
+downloadSource {
+	doLast {
+		File pomXmlFile = new File(mvnSourceDir, "pom.xml")
+
+		if (pomXmlFile.exists()) {
+			pomXmlFile.text = pomXmlFile.text.replace("<module>test</module>", "")
+			pomXmlFile.text = pomXmlFile.text.replace("<module>util</module>", "")
+		}
+	}
+}

@@ -2,6 +2,10 @@
 
 html#{$cadmin-selector} {
 	.cadmin {
+		.dropdown-menu {
+			max-width: none;
+		}
+
 		.page-editor__display-page-preview-item-selector {
 			&-label-wrapper {
 				&::after {
@@ -13,36 +17,18 @@ html#{$cadmin-selector} {
 				}
 			}
 
+			&-button {
+				width: 224px;
+			}
+
 			&-label {
 				font-size: 0.875rem;
 				font-weight: 600;
 				padding-right: 8px;
 			}
 
-			&-button {
-				&.btn.btn-secondary {
-					background-color: transparent;
-					border-color: transparent;
-					box-sizing: border-box;
-					width: 224px;
-				}
-
-				&.btn.btn-secondary {
-					background-color: $light-l1;
-				}
-			}
-
 			&-dropdown-item {
 				display: flex;
-
-				&-label {
-					flex-grow: 1;
-				}
-
-				.dropdown-item-indicator-end {
-					margin-top: 0.2em;
-					position: static;
-				}
 			}
 		}
 	}

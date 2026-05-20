@@ -14,7 +14,7 @@ export function getCMSItemSelectorFilters(
 ): TFilterConfig[] {
 	return [
 		{
-			apiURL: '/o/headless-asset-library/v1.0/asset-libraries',
+			apiURL: "/o/headless-asset-library/v1.0/asset-libraries?filter=type eq 'Space'",
 			entityFieldType: EEntityFieldType.COLLECTION,
 			id: 'groupIds',
 			itemKey: 'siteId',
@@ -25,9 +25,9 @@ export function getCMSItemSelectorFilters(
 		},
 		{
 			apiURL: "/o/object-admin/v1.0/object-definitions?filter=objectFolderExternalReferenceCode eq 'L_CMS_FILE_TYPES'",
-			entityFieldType: EEntityFieldType.INTEGER,
-			id: 'objectDefinitionId',
-			itemKey: 'id',
+			entityFieldType: EEntityFieldType.STRING,
+			id: 'objectDefinitionExternalReferenceCode',
+			itemKey: 'externalReferenceCode',
 			itemLabel: 'label.LANG',
 			label: Liferay.Language.get('type'),
 			multiple: true,
@@ -134,13 +134,19 @@ export function getCMSItemSelectorFilters(
 
 /**
  * Returns the grouped filters configuration for CMS Item Selector data sets.
+ *
+ * The space/group filter ID can be customized via spaceFilterId so the same
+ * groupings can be reused by data sets that register the space filter under a
+ * different ID (e.g. the CMS "Contents" FDS uses "scopeGroupId").
  */
-export function getCMSItemSelectorGroupedFilters(): IGroupedFilterConfig[] {
+export function getCMSItemSelectorGroupedFilters(
+	spaceFilterId: 'groupIds' | 'scopeGroupId' = 'groupIds'
+): IGroupedFilterConfig[] {
 	return [
 		{
 			filters: [
-				'groupIds',
-				'objectDefinitionId',
+				spaceFilterId,
+				'objectDefinitionExternalReferenceCode',
 				'taxonomyCategoryIds',
 				'keywords',
 				'creatorId',

@@ -44,7 +44,7 @@ public interface FaroPreferencesPersistence
 	 * Returns a range of all the faro preferenceses where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FaroPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.faro.model.impl.FaroPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -59,7 +59,7 @@ public interface FaroPreferencesPersistence
 	 * Returns an ordered range of all the faro preferenceses where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FaroPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.faro.model.impl.FaroPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -77,7 +77,7 @@ public interface FaroPreferencesPersistence
 	 * Returns an ordered range of all the faro preferenceses where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FaroPreferencesModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.osb.faro.model.impl.FaroPreferencesModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -236,73 +236,5 @@ public interface FaroPreferencesPersistence
 	 */
 	public FaroPreferences fetchByPrimaryKey(long faroPreferencesId);
 
-	/**
-	 * Returns all the faro preferenceses.
-	 *
-	 * @return the faro preferenceses
-	 */
-	public java.util.List<FaroPreferences> findAll();
-
-	/**
-	 * Returns a range of all the faro preferenceses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FaroPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of faro preferenceses
-	 * @param end the upper bound of the range of faro preferenceses (not inclusive)
-	 * @return the range of faro preferenceses
-	 */
-	public java.util.List<FaroPreferences> findAll(int start, int end);
-
-	/**
-	 * Returns an ordered range of all the faro preferenceses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FaroPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of faro preferenceses
-	 * @param end the upper bound of the range of faro preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of faro preferenceses
-	 */
-	public java.util.List<FaroPreferences> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<FaroPreferences>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the faro preferenceses.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>FaroPreferencesModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of faro preferenceses
-	 * @param end the upper bound of the range of faro preferenceses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of faro preferenceses
-	 */
-	public java.util.List<FaroPreferences> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<FaroPreferences>
-			orderByComparator,
-		boolean useFinderCache);
-
-	/**
-	 * Removes all the faro preferenceses from the database.
-	 */
-	public void removeAll();
-
-	/**
-	 * Returns the number of faro preferenceses.
-	 *
-	 * @return the number of faro preferenceses
-	 */
-	public int countAll();
-
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1954669726
+// LIFERAY-SERVICE-BUILDER-HASH:1146518298

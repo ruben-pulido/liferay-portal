@@ -5,7 +5,10 @@
 
 package com.liferay.portal.search.internal.permission;
 
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.RelatedEntryIndexerRegistry;
@@ -16,13 +19,16 @@ import com.liferay.portal.kernel.search.SearchResultPermissionFilterFactory;
 import com.liferay.portal.kernel.search.SearchResultPermissionFilterSearcher;
 import com.liferay.portal.kernel.search.facet.FacetPostProcessor;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.search.configuration.DefaultSearchResultPermissionFilterConfiguration;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 
 import java.util.Map;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
@@ -43,21 +49,36 @@ public class SearchResultPermissionFilterFactoryImpl
 		PermissionChecker permissionChecker) {
 
 		return new DefaultSearchResultPermissionFilter(
+			_defaultSearchResultPermissionFilterConfiguration,
 			facetPostProcessor, indexerRegistry, permissionChecker,
 			relatedEntryIndexerRegistry,
 			searchContext -> _search(
 				searchResultPermissionFilterSearcher, searchContext),
-			searchRequestBuilderFactory,
-			_defaultSearchResultPermissionFilterConfiguration);
+			searchRequestBuilderFactory, _serviceTrackerMap);
 	}
 
 	@Activate
 	@Modified
-	protected void activate(Map<String, Object> properties) {
+	protected void activate(
+		BundleContext bundleContext, Map<String, Object> properties) {
+
 		_defaultSearchResultPermissionFilterConfiguration =
 			ConfigurableUtil.createConfigurable(
 				DefaultSearchResultPermissionFilterConfiguration.class,
 				properties);
+
+		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
+			bundleContext,
+			(Class<ModelResourcePermission<? extends ClassedModel>>)
+				(Class<?>)ModelResourcePermission.class,
+			"(permissions.view.dynamic.inheritance.checking=true)",
+			(serviceReference, emitter) -> emitter.emit(
+				(String)serviceReference.getProperty("model.class.name")));
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_serviceTrackerMap.close();
 	}
 
 	@Reference
@@ -87,5 +108,8 @@ public class SearchResultPermissionFilterFactoryImpl
 
 	private volatile DefaultSearchResultPermissionFilterConfiguration
 		_defaultSearchResultPermissionFilterConfiguration;
+	private volatile ServiceTrackerMap
+		<String, ModelResourcePermission<? extends ClassedModel>>
+			_serviceTrackerMap;
 
 }

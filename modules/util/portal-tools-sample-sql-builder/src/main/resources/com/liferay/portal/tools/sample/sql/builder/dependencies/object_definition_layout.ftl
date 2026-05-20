@@ -24,7 +24,19 @@
 		</#list>
 
 		<#list contentLayoutModels as contentLayoutModel>
-			<#assign layoutPageTemplateStructureModel = dataFactory.newLayoutPageTemplateStructureModel(contentLayoutModel) />
+			<@insertAssetEntry _entry = contentLayoutModel />
+
+			<#assign
+				friendlyURLEntryModel = dataFactory.newFriendlyURLEntryModel(contentLayoutModel.groupId, contentLayoutModel.plid)
+
+				layoutPageTemplateStructureModel = dataFactory.newLayoutPageTemplateStructureModel(contentLayoutModel)
+			/>
+
+			${dataFactory.toInsertSQL(friendlyURLEntryModel)}
+
+			${dataFactory.toInsertSQL(dataFactory.newFriendlyURLEntryLocalizationModel(friendlyURLEntryModel, contentLayoutModel.friendlyURL))}
+
+			${dataFactory.toInsertSQL(dataFactory.newFriendlyURLEntryMapping(friendlyURLEntryModel))}
 
 			${dataFactory.toInsertSQL(contentLayoutModel)}
 

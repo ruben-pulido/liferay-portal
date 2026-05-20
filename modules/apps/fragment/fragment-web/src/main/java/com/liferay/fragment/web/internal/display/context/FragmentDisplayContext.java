@@ -445,6 +445,8 @@ public class FragmentDisplayContext {
 			).setMVCRenderCommandName(
 				"/fragment/view_fragment_collections"
 			).setParameter(
+				"action", "delete"
+			).setParameter(
 				"includeMarketplaceFragmentCollections", true
 			).setWindowState(
 				LiferayWindowState.POP_UP
@@ -454,7 +456,7 @@ public class FragmentDisplayContext {
 			() -> PortletURLBuilder.createRenderURL(
 				_renderResponse
 			).setMVCRenderCommandName(
-				"/fragment/view_fragment_collections"
+				"/fragment/view_exportable_fragment_collections"
 			).setParameter(
 				"includeGlobalFragmentCollections", true
 			).setParameter(

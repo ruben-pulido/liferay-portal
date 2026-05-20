@@ -93,12 +93,18 @@ export class WebContentDisplayPage {
 			.locator('li')
 			.filter({hasText: 'Web Content Display'})
 			.getByLabel('Add Content');
-		this.webContentDisplayContent = page.locator(
-			'[id^="portlet_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE"]'
+		this.webContentDisplayConfig = page.frameLocator(
+			'iframe[title*="Web Content Display"]'
 		);
+		this.webContentDisplayContent = page
+			.locator(
+				'[id^="portlet_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE"]'
+			)
+			.filter({hasText: 'Select web content to make it visible'})
+			.first();
 		this.webContentDisplayOptionsContent =
 			this.webContentDisplayContent.getByLabel('Options');
-		this.webContentDisplayOptionsWidget = page
+		this.webContentDisplayOptionsWidget = this.webContentDisplayContent
 			.locator(
 				'[id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]'
 			)
@@ -128,17 +134,16 @@ export class WebContentDisplayPage {
 		await this.configurationOption.click();
 	}
 
-	async addWebContentWithDisplay(
-		options: {pageType?: 'content' | 'widget'; webContentName?: string} = {
-			pageType: 'content',
-			webContentName: '',
-		}
-	) {
+	async addWebContentWithDisplay({
+		pageType = 'content',
+		webContentName,
+	}: {
+		pageType?: 'content' | 'widget';
+		webContentName?: string;
+	} = {}) {
 		await this.webContentDisplay.waitFor();
 		await this.webContentDisplayContent.hover();
 		await this.webContentDisplayContent.click();
-
-		const {pageType, webContentName} = options;
 
 		if (pageType === 'widget') {
 			await this.page
@@ -166,17 +171,17 @@ export class WebContentDisplayPage {
 
 		if (webContentName) {
 			await this.selectWebContentInConfigurationFrame
-				.getByText(webContentName)
+				.getByText(webContentName, {exact: true})
 				.hover();
 
 			// Wait for the Item Selector's nested iframe to resolve the selection
 
 			await clickAndExpectToBeVisible({
 				target: this.configurationFrameChangeButton,
-				trigger:
-					this.selectWebContentInConfigurationFrame.getByText(
-						webContentName
-					),
+				trigger: this.selectWebContentInConfigurationFrame.getByText(
+					webContentName,
+					{exact: true}
+				),
 			});
 		}
 		else {
@@ -255,6 +260,7 @@ export class WebContentDisplayPage {
 				'[id^="portlet_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"] header'
 			)
 			.filter({hasText: 'Web Content Display'})
+			.first()
 			.waitFor();
 	}
 }

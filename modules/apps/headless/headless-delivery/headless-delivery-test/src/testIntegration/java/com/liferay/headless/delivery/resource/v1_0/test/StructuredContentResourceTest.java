@@ -134,6 +134,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -533,6 +534,7 @@ public class StructuredContentResourceTest
 
 		_testPatchStructuredContentWithDateExpired();
 		_testPatchStructuredContentWithLocalizedContentFields();
+		_testPatchStructuredContentWithNewLocale();
 		_testPatchStructuredContentWithRandomTitle();
 		_testPatchStructuredContentWithUnlocalizedContentFields();
 	}
@@ -2948,6 +2950,71 @@ public class StructuredContentResourceTest
 			GetterUtil.getString(postFrenchData.get("data")), "fr-FR");
 	}
 
+	private void _testPatchStructuredContentWithNewLocale() throws Exception {
+		Locale locale = LocaleUtil.US;
+
+		StructuredContent structuredContent = _randomStructuredContent(
+			locale, true);
+
+		StructuredContent postStructuredContent =
+			structuredContentResource.postSiteStructuredContent(
+				testGroup.getGroupId(), structuredContent);
+
+		ContentField postContentField =
+			postStructuredContent.getContentFields()[0];
+
+		ContentFieldValue postContentFieldValue =
+			postContentField.getContentFieldValue();
+
+		String englishData = postContentFieldValue.getData();
+
+		String germanData = RandomTestUtil.randomString(10);
+
+		Map<String, ContentFieldValue> contentFieldValues = HashMapBuilder.put(
+			"de-DE",
+			(ContentFieldValue)new ContentFieldValue() {
+
+				{
+					data = germanData;
+				}
+			}
+		).build();
+
+		structuredContent.setContentFields(
+			new ContentField[] {
+				new ContentField() {
+					{
+						contentFieldValue = contentFieldValues.get("de-DE");
+						contentFieldValue_i18n = contentFieldValues;
+						fieldReference = "MyText";
+						name = "MyText";
+					}
+				}
+			});
+
+		StructuredContentResource germanStructuredContentResource =
+			_buildStructureContentResource(LocaleUtil.GERMANY);
+
+		StructuredContent patchStructuredContent =
+			germanStructuredContentResource.patchStructuredContent(
+				postStructuredContent.getId(), structuredContent);
+
+		ContentField patchContentField =
+			patchStructuredContent.getContentFields()[0];
+
+		Map<String, ContentFieldValue> patchContentFieldValue_I18n =
+			patchContentField.getContentFieldValue_i18n();
+
+		Map<String, ContentFieldValue> sortedContentFieldValues = new TreeMap<>(
+			patchContentFieldValue_I18n);
+
+		Assert.assertTrue(sortedContentFieldValues.containsKey("de-DE"));
+		Assert.assertTrue(sortedContentFieldValues.containsKey("en-US"));
+
+		_assertData(sortedContentFieldValues, germanData, "de-DE");
+		_assertData(sortedContentFieldValues, englishData, "en-US");
+	}
+
 	private void _testPatchStructuredContentWithRandomTitle() throws Exception {
 		StructuredContent structuredContent = randomStructuredContent();
 
@@ -3527,9 +3594,6 @@ public class StructuredContentResourceTest
 	private static final String _JOURNAL_ARTICLE_TITLE_FR =
 		RandomTestUtil.randomString();
 
-	@Inject(filter = "ddm.form.deserializer.type=json")
-	private static DDMFormDeserializer _jsonDDMFormDeserializer;
-
 	@Inject
 	private AssetCategoryLocalService _assetCategoryLocalService;
 
@@ -3583,6 +3647,9 @@ public class StructuredContentResourceTest
 	private JournalConverter _journalConverter;
 
 	private JournalFolder _journalFolder;
+
+	@Inject(filter = "ddm.form.deserializer.type=json")
+	private DDMFormDeserializer _jsonDDMFormDeserializer;
 
 	@Inject
 	private Language _language;

@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
+import com.liferay.portal.kernel.search.NestedQuery;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryTerm;
 import com.liferay.portal.kernel.search.TermQuery;
@@ -34,11 +35,6 @@ import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.RangeTermFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.NestedQuery;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
-import com.liferay.portal.kernel.search.generic.TermRangeQueryImpl;
-import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
 
 import java.util.List;
 import java.util.function.Function;
@@ -131,7 +127,7 @@ public class FilterUtil {
 
 				return _createNestedQueryFilter(
 					queryTerm.getField(), queryFilter,
-					nestedFieldName -> new TermQueryImpl(
+					nestedFieldName -> new TermQuery(
 						nestedFieldName, queryTerm.getValue()));
 			}
 			else if (query instanceof TermRangeQuery) {
@@ -139,7 +135,7 @@ public class FilterUtil {
 
 				return _createNestedQueryFilter(
 					termRangeQuery.getField(), queryFilter,
-					nestedFieldName -> new TermRangeQueryImpl(
+					nestedFieldName -> new TermRangeQuery(
 						nestedFieldName, termRangeQuery.getLowerTerm(),
 						termRangeQuery.getUpperTerm(),
 						termRangeQuery.includesLower(),
@@ -152,7 +148,7 @@ public class FilterUtil {
 
 				return _createNestedQueryFilter(
 					queryTerm.getField(), queryFilter,
-					nestedFieldName -> new WildcardQueryImpl(
+					nestedFieldName -> new WildcardQuery(
 						nestedFieldName, queryTerm.getValue()));
 			}
 
@@ -163,7 +159,7 @@ public class FilterUtil {
 		public Filter visit(RangeTermFilter rangeTermFilter) {
 			return _createNestedQueryFilter(
 				rangeTermFilter.getField(), rangeTermFilter,
-				nestedFieldName -> new TermRangeQueryImpl(
+				nestedFieldName -> new TermRangeQuery(
 					nestedFieldName, rangeTermFilter.getLowerBound(),
 					rangeTermFilter.getUpperBound(),
 					rangeTermFilter.isIncludesLower(),
@@ -174,7 +170,7 @@ public class FilterUtil {
 		public Filter visit(TermFilter termFilter) {
 			return _createNestedQueryFilter(
 				termFilter.getField(), termFilter,
-				nestedFieldName -> new TermQueryImpl(
+				nestedFieldName -> new TermQuery(
 					nestedFieldName, termFilter.getValue()));
 		}
 
@@ -204,7 +200,7 @@ public class FilterUtil {
 			}
 
 			try {
-				BooleanQuery booleanQuery = new BooleanQueryImpl();
+				BooleanQuery booleanQuery = new BooleanQuery();
 
 				DDMStructureField ddmStructureField = DDMStructureField.from(
 					fieldName);

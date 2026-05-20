@@ -24,6 +24,19 @@ class ProvisioningOAuth2 extends MarketplaceSpringBootOAuth2 {
 		});
 	}
 
+	async licenseKeyTypeFreeDomainsCheck(payload: {
+		domains: string;
+		owner: string;
+	}) {
+		return this.post<Response>(
+			'/license-key-type-free-domains-check',
+			payload,
+			{
+				earlyReturn: false,
+			}
+		);
+	}
+
 	async downloadLicenseKey(id: number) {
 		const response = await this.get<Response>(
 			`/license-keys/${id}/download`,

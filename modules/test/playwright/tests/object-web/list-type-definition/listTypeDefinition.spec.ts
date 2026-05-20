@@ -13,7 +13,6 @@ import path from 'path';
 
 import {accountSettingsPagesTest} from '../../../fixtures/accountSettingsPagesTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {formsPagesTest} from '../../../fixtures/formsPagesTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {listTypeDefinitionsPagesTest} from '../../../fixtures/listTypeDefinitionsPagesTest';
@@ -30,9 +29,6 @@ import {postListTypeDefinitionListTypeEntries} from '../utils/postListTypeDefini
 export const test = mergeTests(
 	accountSettingsPagesTest,
 	dataApiHelpersTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	formsPagesTest,
 	isolatedSiteTest,
 	listTypeDefinitionsPagesTest,
@@ -77,7 +73,9 @@ async function importPicklistFromFile(
 
 	await page.waitForLoadState('networkidle');
 
-	await expect(page.getByText('Picklists')).toBeVisible({timeout: 30000});
+	await expect(page.getByRole('heading', {name: 'Picklists'})).toBeVisible({
+		timeout: 30000,
+	});
 
 	await page.locator('button[aria-haspopup="true"]').first().click();
 

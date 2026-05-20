@@ -31,6 +31,7 @@ import com.liferay.headless.commerce.admin.order.client.resource.v1_0.OrderResou
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.net.URL;
@@ -77,6 +78,8 @@ public class MarketplaceCommandLineRunner
 		_invoke(this::_processOnHoldTrials, "On Hold Trials");
 
 		_invoke(this::_processPendingOrders, "Pending Orders");
+
+		_invoke(this::_processMostPurchasedProducts, "Most Purchased Products");
 
 		_invoke(
 			this::_processProjectsUsingMarketplaceApps,
@@ -643,6 +646,72 @@ public class MarketplaceCommandLineRunner
 
 			_assignRoleToUserAccount(role, userAccount);
 			_assignAccountToUserAccount(account, userAccount);
+		}
+	}
+
+	private void _processMostPurchasedProducts() throws Exception {
+		ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+
+		if ((zonedDateTime.getHour() / _WINDOW_SIZE_HOURS) != 0) {
+			return;
+		}
+
+		Map<String, JSONObject> productPurchases = new HashMap<>();
+
+		String filterString = StringBundler.concat(
+			"orderStatus/any(x:(x eq ", _ORDER_STATUS_COMPLETED,
+			")) or orderTypeExternalReferenceCode eq 'AI_HUB'");
+
+		_forEachOrder(
+			filterString,
+			order -> {
+				OrderItem[] orderItems = order.getOrderItems();
+
+				if (ArrayUtil.isEmpty(orderItems)) {
+					return;
+				}
+
+				OrderItem orderItem = orderItems[0];
+
+				String productName = orderItem.getName(
+				).get(
+					"en_US"
+				);
+
+				JSONObject productJSONObject = productPurchases.get(
+					productName);
+
+				if (productJSONObject == null) {
+					productJSONObject = new JSONObject(
+					).put(
+						"orderTypeExternalReferenceCode",
+						order.getOrderTypeExternalReferenceCode()
+					).put(
+						"productId", orderItem.getProductId()
+					).put(
+						"total", 1
+					);
+
+					productPurchases.put(productName, productJSONObject);
+				}
+				else {
+					productJSONObject.put(
+						"total", productJSONObject.getInt("total") + 1);
+				}
+			});
+
+		_patchReport(
+			new JSONObject(
+			).put(
+				"value",
+				new JSONObject(
+					productPurchases
+				).toString()
+			).toString(),
+			"PRODUCT-PURCHASES-COUNT");
+
+		if (_log.isInfoEnabled()) {
+			_log.info("Processed most purchased products");
 		}
 	}
 

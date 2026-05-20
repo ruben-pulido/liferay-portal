@@ -14,6 +14,7 @@ import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.commerce.constants.CommerceOrderConstants;
 import com.liferay.commerce.constants.CommerceOrderPaymentConstants;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
@@ -57,17 +58,15 @@ import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.field.builder.AssigneeObjectFieldBuilder;
 import com.liferay.object.field.builder.PicklistObjectFieldBuilder;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
+import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManager;
-import com.liferay.object.service.ObjectActionLocalService;
-import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
-import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.object.test.util.ObjectEntryFolderTestUtil;
 import com.liferay.object.util.HttpServletRequestThreadLocal;
@@ -97,13 +96,11 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
-import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
 import com.liferay.portal.kernel.test.AssertUtils;
@@ -280,7 +277,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		_assertNotificationQueueEntryBody(
 			_getObjectEntryNotificationQueueEntryBody(objectEntry));
 
-		_objectActionLocalService.deleteObjectAction(objectAction);
+		objectActionLocalService.deleteObjectAction(objectAction);
 
 		// Notification triggered by guest user
 
@@ -337,7 +334,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		_assertNotificationQueueEntryBody(
 			_getObjectEntryNotificationQueueEntryBody(objectEntry));
 
-		_objectActionLocalService.deleteObjectAction(objectAction);
+		objectActionLocalService.deleteObjectAction(objectAction);
 	}
 
 	@Test
@@ -413,22 +410,13 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 	@Test
 	public void testFreeMarkerNotificationWithCommerceOrder() throws Exception {
-		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(
-				TestPropsValues.getCompanyId());
-
-		CommerceChannel commerceChannel = CommerceTestUtil.addCommerceChannel(
-			TestPropsValues.getGroupId(), commerceCurrency.getCode());
-
-		CommerceOrder commerceOrder = CommerceTestUtil.addB2CCommerceOrder(
-			TestPropsValues.getUserId(), commerceChannel.getGroupId(),
-			commerceCurrency);
+		CommerceOrder commerceOrder = _addCommerceOrder();
 
 		commerceOrder = CommerceTestUtil.addCheckoutDetailsToCommerceOrder(
 			commerceOrder, TestPropsValues.getUserId(), true, true);
 
 		ObjectDefinition commerceOrderObjectDefinition =
-			_objectDefinitionLocalService.fetchObjectDefinitionByClassName(
+			objectDefinitionLocalService.fetchObjectDefinitionByClassName(
 				TestPropsValues.getCompanyId(), CommerceOrder.class.getName());
 
 		ObjectAction objectAction = _addNotificationTemplateObjectAction(
@@ -444,14 +432,9 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		_assertNotificationQueueEntryBody(
 			_getCommerceOrderNotificationQueueEntryBody(commerceOrder));
 
-		_objectActionLocalService.deleteObjectAction(objectAction);
+		objectActionLocalService.deleteObjectAction(objectAction);
 
-		_commerceOrderLocalService.deleteCommerceOrder(
-			commerceOrder.getCommerceOrderId());
-
-		_accountEntryLocalService.deleteAccountEntry(
-			_accountEntryLocalService.fetchPersonAccountEntry(
-				TestPropsValues.getUserId()));
+		_deleteCommerceOrder(commerceOrder.getCommerceOrderId());
 	}
 
 	@Test
@@ -500,7 +483,58 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		finally {
 			PrincipalThreadLocal.setName(originalName);
 
-			_objectActionLocalService.deleteObjectAction(objectAction);
+			objectActionLocalService.deleteObjectAction(objectAction);
+		}
+	}
+
+	@Test
+	public void testRichTextNotificationWithCommerceOrder() throws Exception {
+		ObjectDefinition objectDefinition =
+			objectDefinitionLocalService.fetchObjectDefinitionByClassName(
+				TestPropsValues.getCompanyId(), CommerceOrder.class.getName());
+
+		ObjectField objectField = ObjectFieldUtil.addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"a" + RandomTestUtil.randomString()
+			).build());
+
+		ObjectAction objectAction = _addNotificationTemplateObjectAction(
+			_getTermName(objectDefinition, objectField.getName()),
+			NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT,
+			DestinationNames.COMMERCE_ORDER_STATUS, objectDefinition);
+
+		CommerceOrder commerceOrder = _addCommerceOrder();
+
+		try {
+			String objectFieldValue = RandomTestUtil.randomString();
+
+			_objectEntryLocalService.
+				addOrUpdateExtensionDynamicObjectDefinitionTableValues(
+					TestPropsValues.getUserId(), objectDefinition,
+					commerceOrder.getCommerceOrderId(),
+					HashMapBuilder.<String, Serializable>put(
+						objectField.getName(), objectFieldValue
+					).build(),
+					ServiceContextTestUtil.getServiceContext());
+
+			commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
+				commerceOrder, CommerceOrderConstants.ORDER_STATUS_PENDING,
+				TestPropsValues.getUserId(), true);
+
+			_assertNotificationQueueEntryBody(objectFieldValue);
+		}
+		finally {
+			_deleteCommerceOrder(commerceOrder.getCommerceOrderId());
+
+			objectActionLocalService.deleteObjectAction(objectAction);
+			objectFieldLocalService.deleteObjectField(objectField);
 		}
 	}
 
@@ -589,14 +623,14 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 		User user = UserTestUtil.addUser();
 
-		_userLocalService.updateStatus(
+		userLocalService.updateStatus(
 			user.getUserId(), WorkflowConstants.STATUS_INACTIVE,
 			ServiceContextThreadLocal.getServiceContext());
 
 		_testSendNotification(
 			0, Collections.emptyList(), true, user.getEmailAddress());
 
-		_userLocalService.deleteUser(user.getUserId());
+		userLocalService.deleteUser(user.getUserId());
 
 		// One email including all main recipients
 
@@ -790,13 +824,13 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
 
-		_resourcePermissionLocalService.setResourcePermissions(
+		resourcePermissionLocalService.setResourcePermissions(
 			role.getCompanyId(), AccountEntry.class.getName(),
 			ResourceConstants.SCOPE_COMPANY,
 			String.valueOf(role.getCompanyId()), role.getRoleId(),
 			new String[] {ActionKeys.VIEW});
 
-		_userLocalService.addRoleUser(
+		userLocalService.addRoleUser(
 			role.getRoleId(), BaseNotificationTypeTest.user2);
 
 		_testSendNotification(
@@ -1174,15 +1208,15 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			name = objectDefinition.getResourceName();
 		}
 
-		_resourcePermissionLocalService.setResourcePermissions(
+		resourcePermissionLocalService.setResourcePermissions(
 			TestPropsValues.getCompanyId(), name,
 			ResourceConstants.SCOPE_COMPANY,
 			String.valueOf(TestPropsValues.getCompanyId()), role.getRoleId(),
 			actionIds);
 
-		_userLocalService.addRoleUser(role.getRoleId(), _user);
+		userLocalService.addRoleUser(role.getRoleId(), _user);
 
-		_resourcePermissionLocalService.addResourcePermission(
+		resourcePermissionLocalService.addResourcePermission(
 			TestPropsValues.getCompanyId(), objectDefinition.getClassName(),
 			ResourceConstants.SCOPE_COMPANY, "0", role.getRoleId(),
 			ActionKeys.UPDATE);
@@ -1347,11 +1381,11 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 					).build()),
 				ObjectDefinitionConstants.SCOPE_SITE);
 
-		ObjectField objectField = _objectFieldLocalService.getObjectField(
+		ObjectField objectField = objectFieldLocalService.getObjectField(
 			objectDefinition.getObjectDefinitionId(), "firstName");
 
 		objectDefinition =
-			_objectDefinitionLocalService.updateTitleObjectFieldId(
+			objectDefinitionLocalService.updateTitleObjectFieldId(
 				objectDefinition.getObjectDefinitionId(),
 				objectField.getObjectFieldId());
 
@@ -1471,7 +1505,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 		_setUser(user2);
 
-		_objectDefinitionLocalService.deleteObjectDefinition(
+		objectDefinitionLocalService.deleteObjectDefinition(
 			objectDefinition.getObjectDefinitionId());
 		_objectEntryFolderLocalService.deleteObjectEntryFolder(
 			objectEntryFolder1.getObjectEntryFolderId());
@@ -1499,7 +1533,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		Role guestRole = _roleLocalService.fetchRole(
 			TestPropsValues.getCompanyId(), RoleConstants.GUEST);
 
-		_resourcePermissionLocalService.setResourcePermissions(
+		resourcePermissionLocalService.setResourcePermissions(
 			TestPropsValues.getCompanyId(), objectDefinition.getClassName(),
 			ResourceConstants.SCOPE_COMPANY,
 			String.valueOf(TestPropsValues.getCompanyId()),
@@ -1611,6 +1645,39 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			listTypeDefinition);
 	}
 
+	@Test
+	public void testSendNotificationWithStandaloneObjectAction()
+		throws Exception {
+
+		String body = RandomTestUtil.randomString();
+
+		ObjectAction objectAction = _addNotificationTemplateObjectAction(
+			body, NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT,
+			ObjectActionTriggerConstants.KEY_STANDALONE, childObjectDefinition);
+
+		ObjectEntry objectEntry = objectEntryManager.addObjectEntry(
+			dtoConverterContext, childObjectDefinition,
+			new ObjectEntry() {
+				{
+					properties = HashMapBuilder.putAll(
+						childObjectEntryValues
+					).build();
+				}
+			},
+			group.getGroupKey());
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			(DefaultObjectEntryManager)objectEntryManager;
+
+		defaultObjectEntryManager.executeObjectAction(
+			dtoConverterContext, objectAction.getName(), childObjectDefinition,
+			objectEntry.getId());
+
+		_assertNotificationQueueEntryBody(body);
+
+		objectActionLocalService.deleteObjectAction(objectAction);
+	}
+
 	private static void _pushServiceContext() throws Exception {
 		HttpServletRequest httpServletRequest = new MockHttpServletRequest(
 			null, StringPool.BLANK, RandomTestUtil.randomString());
@@ -1716,6 +1783,19 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		return objectDefinition;
 	}
 
+	private CommerceOrder _addCommerceOrder() throws Exception {
+		CommerceCurrency commerceCurrency =
+			CommerceCurrencyTestUtil.addCommerceCurrency(
+				TestPropsValues.getCompanyId());
+
+		CommerceChannel commerceChannel = CommerceTestUtil.addCommerceChannel(
+			TestPropsValues.getGroupId(), commerceCurrency.getCode());
+
+		return CommerceTestUtil.addB2CCommerceOrder(
+			TestPropsValues.getUserId(), commerceChannel.getGroupId(),
+			commerceCurrency);
+	}
+
 	private NotificationTemplate _addNotificationTemplate(
 			String body, String editorType, Map<Locale, String> fromName,
 			boolean singleRecipient, Map<Locale, String> to)
@@ -1802,7 +1882,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			notificationTemplateLocalService.addNotificationTemplate(
 				notificationContext);
 
-		return _objectActionLocalService.addObjectAction(
+		return objectActionLocalService.addObjectAction(
 			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
 			objectDefinition.getObjectDefinitionId(), true, StringPool.BLANK,
 			RandomTestUtil.randomString(),
@@ -2011,6 +2091,14 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 				ObjectActionThreadLocal.class, "_objectEntryIdsMap");
 
 		threadLocal.set(new HashMap<>());
+	}
+
+	private void _deleteCommerceOrder(long commerceOrderId) throws Exception {
+		_commerceOrderLocalService.deleteCommerceOrder(commerceOrderId);
+
+		_accountEntryLocalService.deleteAccountEntry(
+			_accountEntryLocalService.fetchPersonAccountEntry(
+				TestPropsValues.getUserId()));
 	}
 
 	private String _formatDate(Date date) {
@@ -2300,7 +2388,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 			long notificationTemplateId, ObjectAction objectAction)
 		throws Exception {
 
-		_objectActionLocalService.updateObjectAction(
+		objectActionLocalService.updateObjectAction(
 			objectAction.getExternalReferenceCode(),
 			objectAction.getObjectActionId(), objectAction.isActive(),
 			objectAction.getConditionExpression(),
@@ -2369,13 +2457,7 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		_notificationQueueEntryAttachmentLocalService;
 
 	@Inject
-	private ObjectActionLocalService _objectActionLocalService;
-
-	@Inject
 	private ObjectActionTriggerRegistry _objectActionTriggerRegistry;
-
-	@Inject
-	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Inject
 	private ObjectEntryFolderLocalService _objectEntryFolderLocalService;
@@ -2384,16 +2466,10 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Inject
-	private ObjectFieldLocalService _objectFieldLocalService;
-
-	@Inject
 	private OrganizationLocalService _organizationLocalService;
 
 	@Inject
 	private PortletFileRepository _portletFileRepository;
-
-	@Inject
-	private ResourcePermissionLocalService _resourcePermissionLocalService;
 
 	@Inject
 	private RoleLocalService _roleLocalService;
@@ -2409,9 +2485,6 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 	@Inject
 	private UserGroupRoleLocalService _userGroupRoleLocalService;
-
-	@Inject
-	private UserLocalService _userLocalService;
 
 	private static class TestTemplateContextContributor
 		implements TemplateContextContributor {

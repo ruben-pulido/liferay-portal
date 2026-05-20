@@ -51,17 +51,6 @@ resource "kubernetes_manifest" "infrastructure_applicationset" {
 						namespace="liferay-${var.infrastructure_git_repo_config.target.namespaceSuffix}"
 						server="https://kubernetes.default.svc"
 					}
-					ignoreDifferences=[
-						{
-							group="gcp.liferay.com"
-							jsonPointers=[
-								"/spec/database/snapshotIdentifier",
-								"/spec/restorePhase",
-								"/spec/targetActiveDataPlane",
-							]
-							kind="LiferayInfrastructure"
-						},
-					]
 					project=local.infrastructure_appproject_name
 					sources=[
 						merge(
@@ -229,6 +218,10 @@ resource "kubernetes_manifest" "infrastructure_provider_application" {
 						helm={
 							parameters=[
 								{
+									name="crossplaneGsaEmail"
+									value=google_service_account.cloudplatform_gsa.email
+								},
+								{
 									name="crossplaneNamespace"
 									value=var.crossplane_namespace
 								},
@@ -245,12 +238,16 @@ resource "kubernetes_manifest" "infrastructure_provider_application" {
 									value=var.gateway_namespace
 								},
 								{
-									name="gcp.projectId"
+									name="global.gcp.projectId"
 									value=var.project_id
 								},
 								{
-									name="gcp.projectNumber"
+									name="global.gcp.projectNumber"
 									value=data.google_project.project.number
+								},
+								{
+									name="global.gcp.vpcName"
+									value=var.vpc_name
 								},
 							]
 							valueFiles=[

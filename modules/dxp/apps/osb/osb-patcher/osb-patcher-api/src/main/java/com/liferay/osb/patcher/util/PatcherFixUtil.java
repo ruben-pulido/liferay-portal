@@ -396,7 +396,8 @@ public class PatcherFixUtil {
 		}
 
 		for (PatcherFix patcherFix : patcherFixes) {
-			if ((patcherFix.getType() != PatcherFixConstants.TYPE_PATCH) &&
+			if ((patcherFix.getType() != PatcherFixConstants.TYPE_AUTO_FIX) &&
+				(patcherFix.getType() != PatcherFixConstants.TYPE_PATCH) &&
 				(patcherFix.getType() != PatcherFixConstants.TYPE_WORKAROUND) &&
 				(patcherFix.getType() != PatcherFixConstants.TYPE_REBASE)) {
 
@@ -663,6 +664,7 @@ public class PatcherFixUtil {
 			PatcherFixLocalServiceUtil.getPatcherFixes(
 				calendar.getTime(), false,
 				new int[] {
+					PatcherFixConstants.TYPE_AUTO_FIX,
 					PatcherFixConstants.TYPE_PATCH,
 					PatcherFixConstants.TYPE_WORKAROUND
 				},
@@ -1031,7 +1033,7 @@ public class PatcherFixUtil {
 	}
 
 	protected static void validateOSBPatcherFixAddJenkinsStatus(
-			PatcherFix patcherFix, String jenkinsStatusJSONString)
+			PatcherFix patcherFix, String jenkinsStatusJSON)
 		throws Exception {
 
 		if (patcherFix == null) {
@@ -1039,7 +1041,7 @@ public class PatcherFixUtil {
 		}
 
 		JenkinsUtil.validateJenkinsRequestKey(
-			patcherFix, jenkinsStatusJSONString, patcherFix.getRequestKey());
+			patcherFix, jenkinsStatusJSON, patcherFix.getRequestKey());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(PatcherFixUtil.class);

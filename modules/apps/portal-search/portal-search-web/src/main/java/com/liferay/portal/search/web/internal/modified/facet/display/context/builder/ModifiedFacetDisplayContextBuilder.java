@@ -308,6 +308,12 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 	}
 
 	private String _getCustomRangeURL() {
+		String rangeURL = HttpComponentsUtil.removeParameter(
+			_currentURL, "modified");
+
+		rangeURL = HttpComponentsUtil.removeParameter(
+			rangeURL, _paginationStartParameterName);
+
 		DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyy-MM-dd", LocaleUtil.US);
 
@@ -319,16 +325,12 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 
 		String from = dateFormat.format(calendar.getTime());
 
-		String rangeURL = HttpComponentsUtil.removeParameter(
-			_currentURL, "modified");
-
-		rangeURL = HttpComponentsUtil.removeParameter(
-			rangeURL, _paginationStartParameterName);
-
 		rangeURL = HttpComponentsUtil.setParameter(
 			rangeURL, "modifiedFrom", from);
 
-		return HttpComponentsUtil.setParameter(rangeURL, "modifiedTo", to);
+		rangeURL = HttpComponentsUtil.setParameter(rangeURL, "modifiedTo", to);
+
+		return HttpComponentsUtil.sortParameters(rangeURL);
 	}
 
 	private String _getLabeledRangeURL(String label) {
@@ -336,11 +338,11 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 			_currentURL, "modifiedFrom");
 
 		rangeURL = HttpComponentsUtil.removeParameter(rangeURL, "modifiedTo");
-
 		rangeURL = HttpComponentsUtil.removeParameter(
 			rangeURL, _paginationStartParameterName);
+		rangeURL = HttpComponentsUtil.setParameter(rangeURL, "modified", label);
 
-		return HttpComponentsUtil.setParameter(rangeURL, "modified", label);
+		return HttpComponentsUtil.sortParameters(rangeURL);
 	}
 
 	private JSONArray _getRangesJSONArray() {

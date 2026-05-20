@@ -3,10 +3,12 @@ provider "grafana" {
 	url="https://${var.grafana_workspace_endpoint}"
 }
 terraform {
+	backend "s3" {}
 	required_providers {
 		grafana={
 			source="grafana/grafana"
 			version="~> 3.15.2"
 		}
 	}
+	required_version=">=1.5.0"
 }

@@ -5,12 +5,9 @@
 
 package com.liferay.portal.tools.service.builder.test.compat740.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
-import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
@@ -63,7 +60,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = MappingEntryPersistence.class)
 public class MappingEntryPersistenceImpl
-	extends BasePersistenceImpl<MappingEntry>
+	extends BasePersistenceImpl<MappingEntry, NoSuchMappingEntryException>
 	implements MappingEntryPersistence {
 
 	/*
@@ -79,10 +76,6 @@ public class MappingEntryPersistenceImpl
 
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
-
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 
 	public MappingEntryPersistenceImpl() {
 		setModelClass(MappingEntry.class);
@@ -131,48 +124,6 @@ public class MappingEntryPersistenceImpl
 	}
 
 	/**
-	 * Clears the cache for all mapping entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(MappingEntryImpl.class);
-
-		finderCache.clearCache(MappingEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the mapping entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(MappingEntry mappingEntry) {
-		entityCache.removeResult(MappingEntryImpl.class, mappingEntry);
-	}
-
-	@Override
-	public void clearCache(List<MappingEntry> mappingEntries) {
-		for (MappingEntry mappingEntry : mappingEntries) {
-			entityCache.removeResult(MappingEntryImpl.class, mappingEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(MappingEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(MappingEntryImpl.class, primaryKey);
-		}
-	}
-
-	/**
 	 * Creates a new mapping entry with the primary key. Does not add the mapping entry to the database.
 	 *
 	 * @param mappingEntryId the primary key for the new mapping entry
@@ -202,47 +153,6 @@ public class MappingEntryPersistenceImpl
 		throws NoSuchMappingEntryException {
 
 		return remove((Serializable)mappingEntryId);
-	}
-
-	/**
-	 * Removes the mapping entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the mapping entry
-	 * @return the mapping entry that was removed
-	 * @throws NoSuchMappingEntryException if a mapping entry with the primary key could not be found
-	 */
-	@Override
-	public MappingEntry remove(Serializable primaryKey)
-		throws NoSuchMappingEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			MappingEntry mappingEntry = (MappingEntry)session.get(
-				MappingEntryImpl.class, primaryKey);
-
-			if (mappingEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchMappingEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(mappingEntry);
-		}
-		catch (NoSuchMappingEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -314,31 +224,6 @@ public class MappingEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the mapping entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the mapping entry
-	 * @return the mapping entry
-	 * @throws NoSuchMappingEntryException if a mapping entry with the primary key could not be found
-	 */
-	@Override
-	public MappingEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchMappingEntryException {
-
-		MappingEntry mappingEntry = fetchByPrimaryKey(primaryKey);
-
-		if (mappingEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchMappingEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return mappingEntry;
-	}
-
-	/**
 	 * Returns the mapping entry with the primary key or throws a <code>NoSuchMappingEntryException</code> if it could not be found.
 	 *
 	 * @param mappingEntryId the primary key of the mapping entry
@@ -361,185 +246,6 @@ public class MappingEntryPersistenceImpl
 	@Override
 	public MappingEntry fetchByPrimaryKey(long mappingEntryId) {
 		return fetchByPrimaryKey((Serializable)mappingEntryId);
-	}
-
-	/**
-	 * Returns all the mapping entries.
-	 *
-	 * @return the mapping entries
-	 */
-	@Override
-	public List<MappingEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the mapping entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MappingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mapping entries
-	 * @param end the upper bound of the range of mapping entries (not inclusive)
-	 * @return the range of mapping entries
-	 */
-	@Override
-	public List<MappingEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the mapping entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MappingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mapping entries
-	 * @param end the upper bound of the range of mapping entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of mapping entries
-	 */
-	@Override
-	public List<MappingEntry> findAll(
-		int start, int end, OrderByComparator<MappingEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the mapping entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>MappingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of mapping entries
-	 * @param end the upper bound of the range of mapping entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of mapping entries
-	 */
-	@Override
-	public List<MappingEntry> findAll(
-		int start, int end, OrderByComparator<MappingEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<MappingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<MappingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_MAPPINGENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_MAPPINGENTRY;
-
-				sql = sql.concat(MappingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<MappingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the mapping entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (MappingEntry mappingEntry : findAll()) {
-			remove(mappingEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of mapping entries.
-	 *
-	 * @return the number of mapping entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_MAPPINGENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	/**
@@ -895,18 +601,6 @@ public class MappingEntryPersistenceImpl
 			"MappingEntries_BasicEntries", "companyId", "mappingEntryId",
 			"basicEntryId", this, BasicEntry.class);
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		MappingEntryUtil.setPersistence(this);
 	}
 
@@ -955,16 +649,11 @@ public class MappingEntryPersistenceImpl
 	protected TableMapper<MappingEntry, BasicEntry>
 		mappingEntryToBasicEntryTableMapper;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		MappingEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_MAPPINGENTRY =
 		"SELECT mappingEntry FROM MappingEntry mappingEntry";
-
-	private static final String _SQL_COUNT_MAPPINGENTRY =
-		"SELECT COUNT(mappingEntry) FROM MappingEntry mappingEntry";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "mappingEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No MappingEntry exists with the primary key ";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		MappingEntryPersistenceImpl.class);
@@ -975,4 +664,4 @@ public class MappingEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1920790335
+// LIFERAY-SERVICE-BUILDER-HASH:556691525

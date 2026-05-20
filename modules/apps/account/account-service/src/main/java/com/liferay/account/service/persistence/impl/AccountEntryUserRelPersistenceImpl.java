@@ -13,13 +13,10 @@ import com.liferay.account.model.impl.AccountEntryUserRelModelImpl;
 import com.liferay.account.service.persistence.AccountEntryUserRelPersistence;
 import com.liferay.account.service.persistence.AccountEntryUserRelUtil;
 import com.liferay.account.service.persistence.impl.constants.AccountPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
@@ -27,6 +24,9 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -39,7 +39,6 @@ import java.lang.reflect.InvocationHandler;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -60,7 +59,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = AccountEntryUserRelPersistence.class)
 public class AccountEntryUserRelPersistenceImpl
-	extends BasePersistenceImpl<AccountEntryUserRel>
+	extends BasePersistenceImpl
+		<AccountEntryUserRel, NoSuchEntryUserRelException>
 	implements AccountEntryUserRelPersistence {
 
 	/*
@@ -77,12 +77,11 @@ public class AccountEntryUserRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByAccountEntryId;
 	private FinderPath _finderPathWithoutPaginationFindByAccountEntryId;
 	private FinderPath _finderPathCountByAccountEntryId;
+	private CollectionPersistenceFinder<AccountEntryUserRel>
+		_collectionPersistenceFinderByAccountEntryId;
 
 	/**
 	 * Returns all the account entry user rels where accountEntryId = &#63;.
@@ -157,97 +156,9 @@ public class AccountEntryUserRelPersistenceImpl
 		OrderByComparator<AccountEntryUserRel> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByAccountEntryId;
-				finderArgs = new Object[] {accountEntryId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByAccountEntryId;
-			finderArgs = new Object[] {
-				accountEntryId, start, end, orderByComparator
-			};
-		}
-
-		List<AccountEntryUserRel> list = null;
-
-		if (useFinderCache) {
-			list = (List<AccountEntryUserRel>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (AccountEntryUserRel accountEntryUserRel : list) {
-					if (accountEntryId !=
-							accountEntryUserRel.getAccountEntryId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_ACCOUNTENTRYID_ACCOUNTENTRYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(AccountEntryUserRelModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(accountEntryId);
-
-				list = (List<AccountEntryUserRel>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByAccountEntryId.find(
+			finderCache, new Object[] {accountEntryId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -271,16 +182,9 @@ public class AccountEntryUserRelPersistenceImpl
 			return accountEntryUserRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("accountEntryId=");
-		sb.append(accountEntryId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryUserRelException(sb.toString());
+		throw new NoSuchEntryUserRelException(
+			_collectionPersistenceFinderByAccountEntryId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {accountEntryId}));
 	}
 
 	/**
@@ -295,14 +199,8 @@ public class AccountEntryUserRelPersistenceImpl
 		long accountEntryId,
 		OrderByComparator<AccountEntryUserRel> orderByComparator) {
 
-		List<AccountEntryUserRel> list = findByAccountEntryId(
-			accountEntryId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByAccountEntryId.fetchFirst(
+			finderCache, new Object[] {accountEntryId}, orderByComparator);
 	}
 
 	/**
@@ -312,13 +210,8 @@ public class AccountEntryUserRelPersistenceImpl
 	 */
 	@Override
 	public void removeByAccountEntryId(long accountEntryId) {
-		for (AccountEntryUserRel accountEntryUserRel :
-				findByAccountEntryId(
-					accountEntryId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(accountEntryUserRel);
-		}
+		_collectionPersistenceFinderByAccountEntryId.remove(
+			finderCache, new Object[] {accountEntryId});
 	}
 
 	/**
@@ -329,53 +222,15 @@ public class AccountEntryUserRelPersistenceImpl
 	 */
 	@Override
 	public int countByAccountEntryId(long accountEntryId) {
-		FinderPath finderPath = _finderPathCountByAccountEntryId;
-
-		Object[] finderArgs = new Object[] {accountEntryId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_ACCOUNTENTRYUSERREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_ACCOUNTENTRYID_ACCOUNTENTRYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(accountEntryId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByAccountEntryId.count(
+			finderCache, new Object[] {accountEntryId});
 	}
-
-	private static final String _FINDER_COLUMN_ACCOUNTENTRYID_ACCOUNTENTRYID_2 =
-		"accountEntryUserRel.accountEntryId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByAccountUserId;
 	private FinderPath _finderPathWithoutPaginationFindByAccountUserId;
 	private FinderPath _finderPathCountByAccountUserId;
+	private CollectionPersistenceFinder<AccountEntryUserRel>
+		_collectionPersistenceFinderByAccountUserId;
 
 	/**
 	 * Returns all the account entry user rels where accountUserId = &#63;.
@@ -450,97 +305,9 @@ public class AccountEntryUserRelPersistenceImpl
 		OrderByComparator<AccountEntryUserRel> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByAccountUserId;
-				finderArgs = new Object[] {accountUserId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByAccountUserId;
-			finderArgs = new Object[] {
-				accountUserId, start, end, orderByComparator
-			};
-		}
-
-		List<AccountEntryUserRel> list = null;
-
-		if (useFinderCache) {
-			list = (List<AccountEntryUserRel>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (AccountEntryUserRel accountEntryUserRel : list) {
-					if (accountUserId !=
-							accountEntryUserRel.getAccountUserId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_ACCOUNTUSERID_ACCOUNTUSERID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(AccountEntryUserRelModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(accountUserId);
-
-				list = (List<AccountEntryUserRel>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByAccountUserId.find(
+			finderCache, new Object[] {accountUserId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -564,16 +331,9 @@ public class AccountEntryUserRelPersistenceImpl
 			return accountEntryUserRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("accountUserId=");
-		sb.append(accountUserId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryUserRelException(sb.toString());
+		throw new NoSuchEntryUserRelException(
+			_collectionPersistenceFinderByAccountUserId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {accountUserId}));
 	}
 
 	/**
@@ -588,14 +348,8 @@ public class AccountEntryUserRelPersistenceImpl
 		long accountUserId,
 		OrderByComparator<AccountEntryUserRel> orderByComparator) {
 
-		List<AccountEntryUserRel> list = findByAccountUserId(
-			accountUserId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByAccountUserId.fetchFirst(
+			finderCache, new Object[] {accountUserId}, orderByComparator);
 	}
 
 	/**
@@ -605,13 +359,8 @@ public class AccountEntryUserRelPersistenceImpl
 	 */
 	@Override
 	public void removeByAccountUserId(long accountUserId) {
-		for (AccountEntryUserRel accountEntryUserRel :
-				findByAccountUserId(
-					accountUserId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(accountEntryUserRel);
-		}
+		_collectionPersistenceFinderByAccountUserId.remove(
+			finderCache, new Object[] {accountUserId});
 	}
 
 	/**
@@ -622,51 +371,13 @@ public class AccountEntryUserRelPersistenceImpl
 	 */
 	@Override
 	public int countByAccountUserId(long accountUserId) {
-		FinderPath finderPath = _finderPathCountByAccountUserId;
-
-		Object[] finderArgs = new Object[] {accountUserId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_ACCOUNTENTRYUSERREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_ACCOUNTUSERID_ACCOUNTUSERID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(accountUserId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByAccountUserId.count(
+			finderCache, new Object[] {accountUserId});
 	}
 
-	private static final String _FINDER_COLUMN_ACCOUNTUSERID_ACCOUNTUSERID_2 =
-		"accountEntryUserRel.accountUserId = ?";
-
 	private FinderPath _finderPathFetchByAEI_AUI;
+	private UniquePersistenceFinder<AccountEntryUserRel>
+		_uniquePersistenceFinderByAEI_AUI;
 
 	/**
 	 * Returns the account entry user rel where accountEntryId = &#63; and accountUserId = &#63; or throws a <code>NoSuchEntryUserRelException</code> if it could not be found.
@@ -685,23 +396,16 @@ public class AccountEntryUserRelPersistenceImpl
 			accountEntryId, accountUserId);
 
 		if (accountEntryUserRel == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("accountEntryId=");
-			sb.append(accountEntryId);
-
-			sb.append(", accountUserId=");
-			sb.append(accountUserId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByAEI_AUI.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {accountEntryId, accountUserId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchEntryUserRelException(sb.toString());
+			throw new NoSuchEntryUserRelException(message);
 		}
 
 		return accountEntryUserRel;
@@ -733,84 +437,9 @@ public class AccountEntryUserRelPersistenceImpl
 	public AccountEntryUserRel fetchByAEI_AUI(
 		long accountEntryId, long accountUserId, boolean useFinderCache) {
 
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {accountEntryId, accountUserId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByAEI_AUI, finderArgs, this);
-		}
-
-		if (result instanceof AccountEntryUserRel) {
-			AccountEntryUserRel accountEntryUserRel =
-				(AccountEntryUserRel)result;
-
-			if ((accountEntryId != accountEntryUserRel.getAccountEntryId()) ||
-				(accountUserId != accountEntryUserRel.getAccountUserId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_AEI_AUI_ACCOUNTENTRYID_2);
-
-			sb.append(_FINDER_COLUMN_AEI_AUI_ACCOUNTUSERID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(accountEntryId);
-
-				queryPos.add(accountUserId);
-
-				List<AccountEntryUserRel> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByAEI_AUI, finderArgs, list);
-					}
-				}
-				else {
-					AccountEntryUserRel accountEntryUserRel = list.get(0);
-
-					result = accountEntryUserRel;
-
-					cacheResult(accountEntryUserRel);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (AccountEntryUserRel)result;
-		}
+		return _uniquePersistenceFinderByAEI_AUI.fetch(
+			finderCache, new Object[] {accountEntryId, accountUserId},
+			useFinderCache);
 	}
 
 	/**
@@ -840,21 +469,9 @@ public class AccountEntryUserRelPersistenceImpl
 	 */
 	@Override
 	public int countByAEI_AUI(long accountEntryId, long accountUserId) {
-		AccountEntryUserRel accountEntryUserRel = fetchByAEI_AUI(
-			accountEntryId, accountUserId);
-
-		if (accountEntryUserRel == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByAEI_AUI.count(
+			finderCache, new Object[] {accountEntryId, accountUserId});
 	}
-
-	private static final String _FINDER_COLUMN_AEI_AUI_ACCOUNTENTRYID_2 =
-		"accountEntryUserRel.accountEntryId = ? AND ";
-
-	private static final String _FINDER_COLUMN_AEI_AUI_ACCOUNTUSERID_2 =
-		"accountEntryUserRel.accountUserId = ?";
 
 	public AccountEntryUserRelPersistenceImpl() {
 		setModelClass(AccountEntryUserRel.class);
@@ -912,50 +529,6 @@ public class AccountEntryUserRelPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all account entry user rels.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(AccountEntryUserRelImpl.class);
-
-		finderCache.clearCache(AccountEntryUserRelImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the account entry user rel.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(AccountEntryUserRel accountEntryUserRel) {
-		entityCache.removeResult(
-			AccountEntryUserRelImpl.class, accountEntryUserRel);
-	}
-
-	@Override
-	public void clearCache(List<AccountEntryUserRel> accountEntryUserRels) {
-		for (AccountEntryUserRel accountEntryUserRel : accountEntryUserRels) {
-			entityCache.removeResult(
-				AccountEntryUserRelImpl.class, accountEntryUserRel);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(AccountEntryUserRelImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(AccountEntryUserRelImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		AccountEntryUserRelModelImpl accountEntryUserRelModelImpl) {
 
@@ -998,48 +571,6 @@ public class AccountEntryUserRelPersistenceImpl
 		throws NoSuchEntryUserRelException {
 
 		return remove((Serializable)accountEntryUserRelId);
-	}
-
-	/**
-	 * Removes the account entry user rel with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the account entry user rel
-	 * @return the account entry user rel that was removed
-	 * @throws NoSuchEntryUserRelException if a account entry user rel with the primary key could not be found
-	 */
-	@Override
-	public AccountEntryUserRel remove(Serializable primaryKey)
-		throws NoSuchEntryUserRelException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			AccountEntryUserRel accountEntryUserRel =
-				(AccountEntryUserRel)session.get(
-					AccountEntryUserRelImpl.class, primaryKey);
-
-			if (accountEntryUserRel == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchEntryUserRelException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(accountEntryUserRel);
-		}
-		catch (NoSuchEntryUserRelException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1137,31 +668,6 @@ public class AccountEntryUserRelPersistenceImpl
 	}
 
 	/**
-	 * Returns the account entry user rel with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the account entry user rel
-	 * @return the account entry user rel
-	 * @throws NoSuchEntryUserRelException if a account entry user rel with the primary key could not be found
-	 */
-	@Override
-	public AccountEntryUserRel findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchEntryUserRelException {
-
-		AccountEntryUserRel accountEntryUserRel = fetchByPrimaryKey(primaryKey);
-
-		if (accountEntryUserRel == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchEntryUserRelException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return accountEntryUserRel;
-	}
-
-	/**
 	 * Returns the account entry user rel with the primary key or throws a <code>NoSuchEntryUserRelException</code> if it could not be found.
 	 *
 	 * @param accountEntryUserRelId the primary key of the account entry user rel
@@ -1184,188 +690,6 @@ public class AccountEntryUserRelPersistenceImpl
 	@Override
 	public AccountEntryUserRel fetchByPrimaryKey(long accountEntryUserRelId) {
 		return fetchByPrimaryKey((Serializable)accountEntryUserRelId);
-	}
-
-	/**
-	 * Returns all the account entry user rels.
-	 *
-	 * @return the account entry user rels
-	 */
-	@Override
-	public List<AccountEntryUserRel> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the account entry user rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AccountEntryUserRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of account entry user rels
-	 * @param end the upper bound of the range of account entry user rels (not inclusive)
-	 * @return the range of account entry user rels
-	 */
-	@Override
-	public List<AccountEntryUserRel> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the account entry user rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AccountEntryUserRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of account entry user rels
-	 * @param end the upper bound of the range of account entry user rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of account entry user rels
-	 */
-	@Override
-	public List<AccountEntryUserRel> findAll(
-		int start, int end,
-		OrderByComparator<AccountEntryUserRel> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the account entry user rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AccountEntryUserRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of account entry user rels
-	 * @param end the upper bound of the range of account entry user rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of account entry user rels
-	 */
-	@Override
-	public List<AccountEntryUserRel> findAll(
-		int start, int end,
-		OrderByComparator<AccountEntryUserRel> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<AccountEntryUserRel> list = null;
-
-		if (useFinderCache) {
-			list = (List<AccountEntryUserRel>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_ACCOUNTENTRYUSERREL);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_ACCOUNTENTRYUSERREL;
-
-				sql = sql.concat(AccountEntryUserRelModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<AccountEntryUserRel>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the account entry user rels from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (AccountEntryUserRel accountEntryUserRel : findAll()) {
-			remove(accountEntryUserRel);
-		}
-	}
-
-	/**
-	 * Returns the number of account entry user rels.
-	 *
-	 * @return the number of account entry user rels
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_ACCOUNTENTRYUSERREL);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -1396,18 +720,6 @@ public class AccountEntryUserRelPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByAccountEntryId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAccountEntryId",
 			new String[] {
@@ -1425,6 +737,20 @@ public class AccountEntryUserRelPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByAccountEntryId",
 			new String[] {Long.class.getName()},
 			new String[] {"accountEntryId"}, false);
+
+		_collectionPersistenceFinderByAccountEntryId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByAccountEntryId,
+				_finderPathWithoutPaginationFindByAccountEntryId,
+				_finderPathCountByAccountEntryId,
+				_SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE,
+				_SQL_COUNT_ACCOUNTENTRYUSERREL_WHERE,
+				AccountEntryUserRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"accountEntryUserRel.", "accountEntryId",
+					FinderColumn.Type.LONG, "=", true, true,
+					AccountEntryUserRel::getAccountEntryId));
 
 		_finderPathWithPaginationFindByAccountUserId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAccountUserId",
@@ -1444,10 +770,35 @@ public class AccountEntryUserRelPersistenceImpl
 			new String[] {Long.class.getName()}, new String[] {"accountUserId"},
 			false);
 
+		_collectionPersistenceFinderByAccountUserId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByAccountUserId,
+				_finderPathWithoutPaginationFindByAccountUserId,
+				_finderPathCountByAccountUserId,
+				_SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE,
+				_SQL_COUNT_ACCOUNTENTRYUSERREL_WHERE,
+				AccountEntryUserRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"accountEntryUserRel.", "accountUserId",
+					FinderColumn.Type.LONG, "=", true, true,
+					AccountEntryUserRel::getAccountUserId));
+
 		_finderPathFetchByAEI_AUI = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByAEI_AUI",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"accountEntryId", "accountUserId"}, true);
+
+		_uniquePersistenceFinderByAEI_AUI = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByAEI_AUI,
+			_SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE,
+			new FinderColumn<>(
+				"accountEntryUserRel.", "accountEntryId",
+				FinderColumn.Type.LONG, "=", true, false,
+				AccountEntryUserRel::getAccountEntryId),
+			new FinderColumn<>(
+				"accountEntryUserRel.", "accountUserId", FinderColumn.Type.LONG,
+				"=", true, true, AccountEntryUserRel::getAccountUserId));
 
 		AccountEntryUserRelUtil.setPersistence(this);
 	}
@@ -1491,22 +842,17 @@ public class AccountEntryUserRelPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		AccountEntryUserRelModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_ACCOUNTENTRYUSERREL =
 		"SELECT accountEntryUserRel FROM AccountEntryUserRel accountEntryUserRel";
 
 	private static final String _SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE =
 		"SELECT accountEntryUserRel FROM AccountEntryUserRel accountEntryUserRel WHERE ";
 
-	private static final String _SQL_COUNT_ACCOUNTENTRYUSERREL =
-		"SELECT COUNT(accountEntryUserRel) FROM AccountEntryUserRel accountEntryUserRel";
-
 	private static final String _SQL_COUNT_ACCOUNTENTRYUSERREL_WHERE =
 		"SELECT COUNT(accountEntryUserRel) FROM AccountEntryUserRel accountEntryUserRel WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "accountEntryUserRel.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No AccountEntryUserRel exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No AccountEntryUserRel exists with the key {";
@@ -1520,4 +866,4 @@ public class AccountEntryUserRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:291448512
+// LIFERAY-SERVICE-BUILDER-HASH:199911571

@@ -198,10 +198,10 @@ public class DDMStorageAdapterTest {
 
 	private static final String _STORAGE_TYPE_TEST = "test";
 
-	@Inject
-	private static DDMStorageAdapterRegistry _ddmStorageAdapterRegistry;
-
 	private static ServiceRegistration<DDMStorageAdapter> _serviceRegistration;
+
+	@Inject
+	private DDMStorageAdapterRegistry _ddmStorageAdapterRegistry;
 
 	private static class DDMTestStorageAdapter implements DDMStorageAdapter {
 

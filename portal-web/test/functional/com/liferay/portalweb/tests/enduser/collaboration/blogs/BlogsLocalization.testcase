@@ -33,23 +33,31 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-136776. It checks that a blog can be properly displayed in Arabic in the Blogs widget."
+	@description = "This is a test for LPS-136776 and LPS-136777. It checks that a blog can be properly displayed in Arabic and Japanese in the Blogs widget."
 	@priority = 3
-	test CanViewBlogInArabic {
+	test CanViewBlogsEntryInArabicAndJapanese {
 		JSONBlog.addEntry(
 			entryContent = "محتوى دخول المدونات",
 			entryTitle = "عنوان إدخال المدونات");
+
+		JSONBlog.addEntry(
+			entryContent = "ブログエントリコンテンツ",
+			entryTitle = "ブログエントリタイトル");
 
 		Navigator.gotoPage(pageName = "Blogs Page");
 
 		BlogsEntry.viewPG(
 			entryContent = "محتوى دخول المدونات",
 			entryTitle = "عنوان إدخال المدونات");
+
+		BlogsEntry.viewPG(
+			entryContent = "ブログエントリコンテンツ",
+			entryTitle = "ブログエントリタイトル");
 	}
 
-	@description = "This is a test for LPS-136774. It checks that a blog can be properly displayed in Arabic in the Blogs Aggregator."
+	@description = "This is a test for LPS-136774 and LPS-136775. It checks that a blog can be properly displayed in Arabic and Japanese in the Blogs Aggregator."
 	@priority = 3
-	test CanViewBlogInArabicViaBlogsAggregator {
+	test CanViewBlogsEntryInArabicAndJapaneseViaBlogsAggregator {
 		JSONLayout.addWidgetToPublicLayout(
 			column = 1,
 			groupName = "Guest",
@@ -59,42 +67,16 @@ definition {
 		JSONBlog.addEntry(
 			entryContent = "محتوى دخول المدونات",
 			entryTitle = "عنوان إدخال المدونات");
+
+		JSONBlog.addEntry(
+			entryContent = "ブログエントリコンテンツ",
+			entryTitle = "ブログエントリタイトル");
 
 		Navigator.gotoPage(pageName = "Blogs Page");
 
 		BlogsAggregatorPortlet.viewBlogsEntryViaBAPortletPG(
 			entryContent = "محتوى دخول المدونات",
 			entryTitle = "عنوان إدخال المدونات");
-	}
-
-	@description = "This is a test for LPS-136777. It checks that a blog can be properly displayed in Japanese in the Blogs widget."
-	@priority = 3
-	test CanViewBlogInJapanese {
-		JSONBlog.addEntry(
-			entryContent = "ブログエントリコンテンツ",
-			entryTitle = "ブログエントリタイトル");
-
-		Navigator.gotoPage(pageName = "Blogs Page");
-
-		BlogsEntry.viewPG(
-			entryContent = "ブログエントリコンテンツ",
-			entryTitle = "ブログエントリタイトル");
-	}
-
-	@description = "This is a test for LPS-136775. It checks that a blog can be properly displayed in Japanese in the Blogs Aggregator."
-	@priority = 3
-	test CanViewBlogInJapaneseViaBlogsAggregator {
-		JSONLayout.addWidgetToPublicLayout(
-			column = 1,
-			groupName = "Guest",
-			layoutName = "Blogs Page",
-			widgetName = "Blogs Aggregator");
-
-		JSONBlog.addEntry(
-			entryContent = "ブログエントリコンテンツ",
-			entryTitle = "ブログエントリタイトル");
-
-		Navigator.gotoPage(pageName = "Blogs Page");
 
 		BlogsAggregatorPortlet.viewBlogsEntryViaBAPortletPG(
 			entryContent = "ブログエントリコンテンツ",

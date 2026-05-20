@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
 set -o errexit
+set -o errtrace
 set -o nounset
 set -o pipefail
+
+trap "_recover_kubectl_context \${?}" ERR
+
+_GCP_DEPLOYMENT_NAME=""
+_GCP_PROJECT_ID=""
+_GITOPS_RESOURCE_TF_VARS=()
 
 _SCRIPTS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -18,17 +25,20 @@ function main {
 
 	_generate_tfvars "${1}" "${_SCRIPTS_DIR}/global_terraform.tfvars"
 
+	_GCP_DEPLOYMENT_NAME="$(jq --raw-output '.variables.deployment_name' "${1}")"
+	_GCP_PROJECT_ID="$(jq --raw-output '.variables.project_id' "${1}")"
+
 	echo "Attempting to login to your Google Cloud account via application default credentials."
 
 	gcloud auth application-default login
 
 	local terraform_args
 
-	terraform_args="$(_get_terraform_apply_args "${1}" "${2}")"
+	readarray -t terraform_args < <(_get_terraform_apply_args "${1}" "${2}")
 
-	_set_up_gcp_gke "${terraform_args}"
+	_set_up_gcp_gke "${terraform_args[@]}"
 
-	_set_up_gcp_gitops "${terraform_args}"
+	_set_up_gcp_gitops "${terraform_args[@]}"
 }
 
 function _generate_tfvars {
@@ -120,7 +130,7 @@ function _get_terraform_apply_args {
 		apply_args+=("-parallelism=${parallelism}")
 	fi
 
-	echo "${apply_args[@]}"
+	printf '%s\n' "${apply_args[@]}"
 }
 
 function _popd {
@@ -131,12 +141,54 @@ function _pushd {
 	pushd "${1}" > /dev/null
 }
 
+function _recover_kubectl_context {
+	local exit_code="${1}"
+
+	if [ -z "${_GCP_DEPLOYMENT_NAME:-}" ] || [ "${_GCP_DEPLOYMENT_NAME}" = "null" ] || [ -z "${_GCP_PROJECT_ID:-}" ] || [ "${_GCP_PROJECT_ID}" = "null" ]
+	then
+		exit "${exit_code}"
+	fi
+
+	echo "Unable to apply Terraform. Attempting to recover the kubectl context via fleet membership ${_GCP_DEPLOYMENT_NAME}-membership." >&2
+
+	if ! gcloud \
+		container \
+		fleet \
+		memberships \
+		describe \
+		"${_GCP_DEPLOYMENT_NAME}-membership" \
+		--project "${_GCP_PROJECT_ID}" \
+		> /dev/null 2>&1
+	then
+		echo "Fleet membership ${_GCP_DEPLOYMENT_NAME}-membership does not exist. No kubectl context can be recovered." >&2
+
+		exit "${exit_code}"
+	fi
+
+	if ! gcloud \
+		container \
+		fleet \
+		memberships \
+		get-credentials \
+		"${_GCP_DEPLOYMENT_NAME}-membership" \
+		--project "${_GCP_PROJECT_ID}"
+	then
+		echo "Unable to recover the kubectl context for fleet membership ${_GCP_DEPLOYMENT_NAME}-membership." >&2
+
+		exit "${exit_code}"
+	fi
+
+	echo "Recovered the kubectl context via fleet membership ${_GCP_DEPLOYMENT_NAME}-membership." >&2
+
+	exit "${exit_code}"
+}
+
 function _set_up_gcp_gke {
 	_pushd "${_ROOT_CLOUD_DIR}/terraform/gcp/gke"
 
 	echo "Setting up the Google GKE cluster."
 
-	_terraform_init_and_apply "." "${1}"
+	_terraform_init_and_apply "." "$@"
 
 	gcloud auth login
 
@@ -148,6 +200,8 @@ function _set_up_gcp_gke {
 		"$(terraform output -raw membership_name)" \
 		--project "$(terraform output -raw project_id)"
 
+	_GITOPS_RESOURCE_TF_VARS+=(-var "vpc_name=$(terraform output -raw network_name)")
+
 	echo "Google GKE cluster setup complete."
 
 	_popd
@@ -158,9 +212,9 @@ function _set_up_gcp_gitops {
 
 	echo "Setting up the Google GCP GitOps infrastructure."
 
-	_terraform_init_and_apply "./platform" "${1}"
+	_terraform_init_and_apply "./platform" "$@"
 
-	_terraform_init_and_apply "./resources" "${1}"
+	_terraform_init_and_apply "./resources" "$@" "${_GITOPS_RESOURCE_TF_VARS[@]}"
 
 	echo "Google GCP GitOps infrastructure setup complete."
 
@@ -172,7 +226,7 @@ function _terraform_init_and_apply {
 
 	terraform init -upgrade
 
-	terraform apply ${@:2}
+	terraform apply "${@:2}"
 
 	_popd
 }

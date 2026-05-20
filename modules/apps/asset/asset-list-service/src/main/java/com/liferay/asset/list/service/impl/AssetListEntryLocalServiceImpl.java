@@ -144,8 +144,6 @@ public class AssetListEntryLocalServiceImpl
 
 		// Asset list entry
 
-		assetListEntry.setModifiedDate(new Date());
-
 		if (Validator.isNull(assetListEntry.getAssetEntryType())) {
 			String assetEntryType = _getManualAssetEntryType(assetListEntryId);
 
@@ -192,11 +190,13 @@ public class AssetListEntryLocalServiceImpl
 		assetListEntry.setCompanyId(user.getCompanyId());
 		assetListEntry.setUserId(user.getUserId());
 		assetListEntry.setUserName(user.getFullName());
-		assetListEntry.setCreateDate(serviceContext.getCreateDate(new Date()));
-		assetListEntry.setModifiedDate(
-			serviceContext.getModifiedDate(new Date()));
-		assetListEntry.setAssetListEntryKey(
-			_generateAssetListEntryKey(groupId, title));
+
+		_updateAssetListEntryKey(
+			assetListEntry,
+			GetterUtil.getString(
+				serviceContext.getAttribute("assetListEntryKey")),
+			groupId, title);
+
 		assetListEntry.setTitle(title);
 		assetListEntry.setType(type);
 
@@ -423,8 +423,6 @@ public class AssetListEntryLocalServiceImpl
 		AssetListEntry assetListEntry =
 			assetListEntryPersistence.findByPrimaryKey(assetListEntryId);
 
-		assetListEntry.setModifiedDate(new Date());
-
 		if (assetListEntry.getType() ==
 				AssetListEntryTypeConstants.TYPE_DYNAMIC) {
 
@@ -468,18 +466,35 @@ public class AssetListEntryLocalServiceImpl
 			long assetListEntryId, String title)
 		throws PortalException {
 
+		return updateAssetListEntry(
+			assetListEntryId, title, new ServiceContext());
+	}
+
+	@Override
+	public AssetListEntry updateAssetListEntry(
+			long assetListEntryId, String title, ServiceContext serviceContext)
+		throws PortalException {
+
 		AssetListEntry assetListEntry =
 			assetListEntryPersistence.findByPrimaryKey(assetListEntryId);
 
-		if (Objects.equals(assetListEntry.getTitle(), title)) {
+		String assetListEntryKey = GetterUtil.getString(
+			serviceContext.getAttribute("assetListEntryKey"));
+
+		if (Objects.equals(assetListEntry.getTitle(), title) &&
+			(Validator.isNull(assetListEntryKey) ||
+			 Objects.equals(
+				 assetListEntry.getAssetListEntryKey(), assetListEntryKey))) {
+
 			return assetListEntry;
 		}
 
 		_validateTitle(assetListEntry.getGroupId(), title);
 
-		assetListEntry.setModifiedDate(new Date());
-		assetListEntry.setAssetListEntryKey(
-			_generateAssetListEntryKey(assetListEntry.getGroupId(), title));
+		_updateAssetListEntryKey(
+			assetListEntry, assetListEntryKey, assetListEntry.getGroupId(),
+			title);
+
 		assetListEntry.setTitle(title);
 
 		return assetListEntryPersistence.update(assetListEntry);
@@ -813,6 +828,23 @@ public class AssetListEntryLocalServiceImpl
 		}
 
 		return false;
+	}
+
+	private void _updateAssetListEntryKey(
+		AssetListEntry assetListEntry, String assetListEntryKey, long groupId,
+		String title) {
+
+		if (Validator.isNull(assetListEntryKey) ||
+			!(ExportImportThreadLocal.isImportInProcess() ||
+			  ExportImportThreadLocal.isStagingInProcess())) {
+
+			assetListEntry.setAssetListEntryKey(
+				_generateAssetListEntryKey(groupId, title));
+
+			return;
+		}
+
+		assetListEntry.setAssetListEntryKey(assetListEntryKey);
 	}
 
 	private void _updateAssetListEntryTypeSettings(

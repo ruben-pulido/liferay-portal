@@ -40,10 +40,8 @@ public interface PortletContainer {
 		throws PortletContainerException;
 
 	public void processPublicRenderParameters(
-		HttpServletRequest httpServletRequest, Layout layout);
-
-	public void processPublicRenderParameters(
-		HttpServletRequest httpServletRequest, Layout layout, Portlet portlet);
+		HttpServletRequest httpServletRequest, Layout layout,
+		List<Portlet> portlets);
 
 	public void render(
 			HttpServletRequest httpServletRequest,

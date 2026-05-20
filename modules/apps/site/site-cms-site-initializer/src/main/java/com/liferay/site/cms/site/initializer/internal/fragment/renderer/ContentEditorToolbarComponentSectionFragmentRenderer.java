@@ -14,6 +14,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -111,9 +112,20 @@ public class ContentEditorToolbarComponentSectionFragmentRenderer
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
+		String title = _getTitle(
+			layoutDisplayPageObjectProvider, objectDefinition, themeDisplay);
+
 		return hashMapWrapper.put(
 			"displayDate",
 			() -> {
+				String restoredDisplayDate =
+					InfoItemUtil.getRestoredInfoFieldValue(
+						httpServletRequest, "ObjectEntry_displayDate");
+
+				if (restoredDisplayDate != null) {
+					return restoredDisplayDate;
+				}
+
 				Date displayDate = objectEntry.getDisplayDate();
 
 				if (displayDate == null) {
@@ -124,6 +136,12 @@ public class ContentEditorToolbarComponentSectionFragmentRenderer
 					displayDate, "yyyy-MM-dd'T'HH:mm", themeDisplay.getLocale(),
 					themeDisplay.getTimeZone());
 			}
+		).put(
+			"getPreviewDataURL",
+			StringBundler.concat(
+				themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+				"/cms/get_preview_data?objectEntryId=",
+				objectEntry.getObjectEntryId())
 		).put(
 			"hasWorkflow",
 			() -> {
@@ -140,9 +158,6 @@ public class ContentEditorToolbarComponentSectionFragmentRenderer
 		).put(
 			"headerTitle",
 			() -> {
-				String title = _getTitle(
-					layoutDisplayPageObjectProvider, objectEntry, themeDisplay);
-
 				Layout layout = themeDisplay.getLayout();
 
 				LayoutPageTemplateEntry layoutPageTemplateEntry =
@@ -172,6 +187,8 @@ public class ContentEditorToolbarComponentSectionFragmentRenderer
 					themeDisplay.getLocale(), "edit-x", title);
 			}
 		).put(
+			"title", title
+		).put(
 			"type",
 			() -> {
 				if (objectDefinition == null) {
@@ -185,16 +202,12 @@ public class ContentEditorToolbarComponentSectionFragmentRenderer
 
 	private String _getTitle(
 		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider,
-		ObjectEntry objectEntry, ThemeDisplay themeDisplay) {
+		ObjectDefinition objectDefinition, ThemeDisplay themeDisplay) {
 
 		String title = layoutDisplayPageObjectProvider.getTitle(
 			themeDisplay.getLocale());
 
 		if (Validator.isNull(title)) {
-			ObjectDefinition objectDefinition =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					objectEntry.getObjectDefinitionId());
-
 			return objectDefinition.getLabel(themeDisplay.getLocale());
 		}
 

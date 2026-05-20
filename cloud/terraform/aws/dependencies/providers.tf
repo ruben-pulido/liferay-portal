@@ -9,6 +9,7 @@ provider "aws" {
 provider "kubernetes" {
 }
 terraform {
+	backend "s3" {}
 	required_providers {
 		aws={
 			source="hashicorp/aws"
@@ -17,6 +18,10 @@ terraform {
 		kubernetes={
 			source="hashicorp/kubernetes"
 			version="~> 2.36.0"
+		}
+		null={
+			source="hashicorp/null"
+			version="~> 3.0"
 		}
 		random={
 			source="hashicorp/random"

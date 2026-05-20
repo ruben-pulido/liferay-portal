@@ -19,8 +19,6 @@ import com.liferay.commerce.tax.service.CommerceTaxMethodLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.catapult.PortalCatapult;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -32,6 +30,7 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
@@ -40,7 +39,6 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -126,45 +124,43 @@ public class FunctionCommerceTaxEngine implements CommerceTaxEngine {
 	}
 
 	@Deactivate
-	protected void deactivate() throws PortalException {
-		String key = _functionCommerceTaxEngineConfiguration.key();
+	protected void deactivate() {
+		_functionCommerceTaxEngineConfiguration = null;
+	}
 
-		if (key == null) {
-			return;
-		}
+	protected JSONObject getPayloadJSONObject(
+			CommerceTaxCalculateRequest commerceTaxCalculateRequest)
+		throws Exception {
 
-		List<CommerceTaxMethod> commerceTaxMethods =
-			_commerceTaxMethodLocalService.getCommerceTaxMethods(
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
-		for (CommerceTaxMethod commerceTaxMethod : commerceTaxMethods) {
-			if (key.equals(commerceTaxMethod.getEngineKey())) {
-				_commerceTaxMethodLocalService.deleteCommerceTaxMethod(
-					commerceTaxMethod.getCommerceTaxMethodId());
-			}
-		}
+		CommerceChannel commerceChannel =
+			_commerceChannelLocalService.getCommerceChannelByGroupId(
+				commerceTaxCalculateRequest.getCommerceChannelGroupId());
+
+		CommerceTaxMethod commerceTaxMethod =
+			_commerceTaxMethodLocalService.fetchCommerceTaxMethod(
+				commerceChannel.getGroupId(), getKey());
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			commerceTaxMethod.getTypeSettingsUnicodeProperties();
+
+		typeSettingsUnicodeProperties.forEach(jsonObject::put);
+
+		return JSONUtil.put(
+			"commerceTaxCalculateRequest",
+			_getCommerceTaxCalculateRequestJSONObject(
+				commerceChannel, commerceTaxCalculateRequest)
+		).put(
+			"typeSettings", jsonObject
+		);
 	}
 
 	@Modified
-	protected void modified(Map<String, Object> properties)
-		throws PortalException {
-
+	protected void modified(Map<String, Object> properties) {
 		_functionCommerceTaxEngineConfiguration =
 			ConfigurableUtil.createConfigurable(
 				FunctionCommerceTaxEngineConfiguration.class, properties);
-
-		List<CommerceTaxMethod> commerceTaxMethods =
-			_commerceTaxMethodLocalService.getCommerceTaxMethods(
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
-		for (CommerceTaxMethod commerceTaxMethod : commerceTaxMethods) {
-			String key = (String)properties.get("key");
-
-			if (key.equals(commerceTaxMethod.getEngineKey())) {
-				_commerceTaxMethodLocalService.deleteCommerceTaxMethod(
-					commerceTaxMethod.getCommerceTaxMethodId());
-			}
-		}
 	}
 
 	private JSONObject _getCommerceTaxCalculateRequestJSONObject(
@@ -191,10 +187,17 @@ public class FunctionCommerceTaxEngine implements CommerceTaxEngine {
 				_jsonFactory.looseSerializeDeep(
 					billingAddressrDTOConverter.toDTO(dtoConverterContext)));
 
+		String commerceCurrencyCode =
+			commerceTaxCalculateRequest.getCommerceCurrencyCode();
+
+		if (Validator.isNull(commerceCurrencyCode)) {
+			commerceCurrencyCode = commerceChannel.getCommerceCurrencyCode();
+		}
+
 		commerceTaxCalculateRequestJSONObject.put(
 			"billingAddress", commerceBillingAddressJSONObject
 		).put(
-			"currencyCode", commerceChannel.getCommerceCurrencyCode()
+			"currencyCode", commerceCurrencyCode
 		).put(
 			"price", commerceTaxCalculateRequest.getPrice()
 		);
@@ -253,34 +256,6 @@ public class FunctionCommerceTaxEngine implements CommerceTaxEngine {
 				).get()));
 	}
 
-	private JSONObject _getPayloadJSONObject(
-			CommerceTaxCalculateRequest commerceTaxCalculateRequest)
-		throws Exception {
-
-		JSONObject typeSettingsJSONObject = _jsonFactory.createJSONObject();
-
-		CommerceChannel commerceChannel =
-			_commerceChannelLocalService.getCommerceChannelByGroupId(
-				commerceTaxCalculateRequest.getCommerceChannelGroupId());
-
-		CommerceTaxMethod commerceTaxMethod =
-			_commerceTaxMethodLocalService.fetchCommerceTaxMethod(
-				commerceChannel.getGroupId(), getKey());
-
-		UnicodeProperties typeSettingsUnicodeProperties =
-			commerceTaxMethod.getTypeSettingsUnicodeProperties();
-
-		typeSettingsUnicodeProperties.forEach(typeSettingsJSONObject::put);
-
-		return JSONUtil.put(
-			"commerceTaxCalculateRequest",
-			_getCommerceTaxCalculateRequestJSONObject(
-				commerceChannel, commerceTaxCalculateRequest)
-		).put(
-			"typeSettings", typeSettingsJSONObject
-		);
-	}
-
 	private CommerceTaxValue _setCommerceTaxCalculateRequest(
 		CommerceTaxCalculateRequest commerceTaxCalculateRequest) {
 
@@ -288,7 +263,7 @@ public class FunctionCommerceTaxEngine implements CommerceTaxEngine {
 
 		try {
 			JSONObject jsonObject = _getJSONObject(
-				_getPayloadJSONObject(commerceTaxCalculateRequest),
+				getPayloadJSONObject(commerceTaxCalculateRequest),
 				"/calculate-tax");
 
 			BigDecimal rate = BigDecimal.valueOf(

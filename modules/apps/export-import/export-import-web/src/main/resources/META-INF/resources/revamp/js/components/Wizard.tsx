@@ -15,6 +15,7 @@ interface WizardStepProps {
 	children: React.ReactNode;
 	description: string;
 	initialValues?: FormikValues;
+	isStepValid?: (values: FormikValues) => boolean;
 	onSubmit?: FormikConfig<FormikValues>['onSubmit'];
 	title: string;
 	validate?: FormikConfig<FormikValues>['validate'];
@@ -43,14 +44,17 @@ export function Wizard({
 	const totalSteps = steps.length;
 
 	const step = steps[stepNumber] as React.ReactElement<WizardStepProps>;
-	const {
-		actionButton,
-		description,
-		initialValues,
-		onSubmit,
-		title,
-		validate,
-	} = step.props;
+
+	const {actionButton, description, isStepValid, onSubmit, title, validate} =
+		step.props;
+
+	const initialValues = steps.reduce(
+		(accumulator, {props}) => ({
+			...accumulator,
+			...props.initialValues,
+		}),
+		{} as FormikValues
+	);
 
 	const next = () => {
 		setStepNumber((stepNumber) => Math.min(stepNumber + 1, totalSteps - 1));
@@ -132,9 +136,10 @@ export function Wizard({
 						actionButton={actionButton}
 						backURL={backURL}
 						continueDisabled={
-							formik.isValidating ||
 							formik.isSubmitting ||
-							!formik.isValid
+							(isStepValid
+								? !isStepValid(formik.values)
+								: !formik.isValid)
 						}
 						onPrevious={stepNumber > 0 ? previous : undefined}
 					/>

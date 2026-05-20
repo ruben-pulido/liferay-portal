@@ -56,6 +56,9 @@ public interface CookiesConfigurationProvider {
 	public String getCookiesPreferenceHandlingFloatingIcon(
 		ExtendedObjectClassDefinition.Scope scope, long scopePK);
 
+	public long getCookiesPreferenceHandlingModifiedDate(
+		ExtendedObjectClassDefinition.Scope scope, long scopePK);
+
 	public String getGroupConfigurationURL(
 			HttpServletRequest httpServletRequest)
 		throws PortalException;
@@ -75,6 +78,9 @@ public interface CookiesConfigurationProvider {
 		ExtendedObjectClassDefinition.Scope scope, long scopePK);
 
 	public boolean isCookiesPreferenceHandlingFloatingIconEnabled(
+		ExtendedObjectClassDefinition.Scope scope, long scopePK);
+
+	public boolean isCookiesPreferenceHandlingGlobalPrivacyControlEnabled(
 		ExtendedObjectClassDefinition.Scope scope, long scopePK);
 
 	public boolean isCookiesPreferenceHandlingStoreConsent(

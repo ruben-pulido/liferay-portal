@@ -18,7 +18,6 @@ import {API_ENDPOINT_PATH} from './utils/constants';
 export const test = mergeTests(
 	dataSetManagerApiHelpersTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-164563': {enabled: true},
 	}),
 	loginTest(),
@@ -92,3 +91,19 @@ test('URL Preview encodes the parameters input @LPD-25241', async ({
 		);
 	});
 });
+
+test(
+	'Data Set ERC is shown as part of the Details page',
+	{tag: '@LPD-86377'},
+	async ({detailsPage}) => {
+		await test.step('Navigate to Details section', async () => {
+			await detailsPage.goto({
+				dataSetLabel,
+			});
+		});
+
+		await test.step('Check that the Data Set ERC is shown as part of the Details page', async () => {
+			await expect(detailsPage.dataSetERC).toHaveValue(detailsDataSetERC);
+		});
+	}
+);

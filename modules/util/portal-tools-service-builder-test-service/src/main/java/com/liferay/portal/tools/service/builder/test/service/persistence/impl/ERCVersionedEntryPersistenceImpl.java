@@ -5,12 +5,9 @@
 
 package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -22,6 +19,9 @@ import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -62,7 +62,8 @@ import java.util.Set;
  * @generated
  */
 public class ERCVersionedEntryPersistenceImpl
-	extends BasePersistenceImpl<ERCVersionedEntry>
+	extends BasePersistenceImpl
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
 	implements ERCVersionedEntryPersistence {
 
 	/*
@@ -79,12 +80,11 @@ public class ERCVersionedEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByUuid;
 	private FinderPath _finderPathWithoutPaginationFindByUuid;
 	private FinderPath _finderPathCountByUuid;
+	private CollectionPersistenceFinder<ERCVersionedEntry>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns all the erc versioned entries where uuid = &#63;.
@@ -155,106 +155,9 @@ public class ERCVersionedEntryPersistenceImpl
 		OrderByComparator<ERCVersionedEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<ERCVersionedEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<ERCVersionedEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ERCVersionedEntry ercVersionedEntry : list) {
-					if (!uuid.equals(ercVersionedEntry.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ERCVersionedEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<ERCVersionedEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -277,16 +180,9 @@ public class ERCVersionedEntryPersistenceImpl
 			return ercVersionedEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchERCVersionedEntryException(sb.toString());
+		throw new NoSuchERCVersionedEntryException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -300,14 +196,8 @@ public class ERCVersionedEntryPersistenceImpl
 	public ERCVersionedEntry fetchByUuid_First(
 		String uuid, OrderByComparator<ERCVersionedEntry> orderByComparator) {
 
-		List<ERCVersionedEntry> list = findByUuid(
-			uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -317,11 +207,8 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (ERCVersionedEntry ercVersionedEntry :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(ercVersionedEntry);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -332,69 +219,15 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"ercVersionedEntry.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(ercVersionedEntry.uuid IS NULL OR ercVersionedEntry.uuid = '')";
 
 	private FinderPath _finderPathWithPaginationFindByUuid_Head;
 	private FinderPath _finderPathWithoutPaginationFindByUuid_Head;
 	private FinderPath _finderPathCountByUuid_Head;
+	private CollectionPersistenceFinder<ERCVersionedEntry>
+		_collectionPersistenceFinderByUuid_Head;
 
 	/**
 	 * Returns all the erc versioned entries where uuid = &#63; and head = &#63;.
@@ -472,114 +305,9 @@ public class ERCVersionedEntryPersistenceImpl
 		OrderByComparator<ERCVersionedEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_Head;
-				finderArgs = new Object[] {uuid, head};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_Head;
-			finderArgs = new Object[] {
-				uuid, head, start, end, orderByComparator
-			};
-		}
-
-		List<ERCVersionedEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<ERCVersionedEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ERCVersionedEntry ercVersionedEntry : list) {
-					if (!uuid.equals(ercVersionedEntry.getUuid()) ||
-						(head != ercVersionedEntry.isHead())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_HEAD_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_HEAD_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_HEAD_HEAD_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ERCVersionedEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(head);
-
-				list = (List<ERCVersionedEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_Head.find(
+			finderCache, new Object[] {uuid, head}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -604,19 +332,9 @@ public class ERCVersionedEntryPersistenceImpl
 			return ercVersionedEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", head=");
-		sb.append(head);
-
-		sb.append("}");
-
-		throw new NoSuchERCVersionedEntryException(sb.toString());
+		throw new NoSuchERCVersionedEntryException(
+			_collectionPersistenceFinderByUuid_Head.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, head}));
 	}
 
 	/**
@@ -632,14 +350,8 @@ public class ERCVersionedEntryPersistenceImpl
 		String uuid, boolean head,
 		OrderByComparator<ERCVersionedEntry> orderByComparator) {
 
-		List<ERCVersionedEntry> list = findByUuid_Head(
-			uuid, head, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_Head.fetchFirst(
+			finderCache, new Object[] {uuid, head}, orderByComparator);
 	}
 
 	/**
@@ -650,12 +362,8 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_Head(String uuid, boolean head) {
-		for (ERCVersionedEntry ercVersionedEntry :
-				findByUuid_Head(
-					uuid, head, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(ercVersionedEntry);
-		}
+		_collectionPersistenceFinderByUuid_Head.remove(
+			finderCache, new Object[] {uuid, head});
 	}
 
 	/**
@@ -667,76 +375,15 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_Head(String uuid, boolean head) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_Head;
-
-		Object[] finderArgs = new Object[] {uuid, head};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_HEAD_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_HEAD_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_HEAD_HEAD_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(head);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_Head.count(
+			finderCache, new Object[] {uuid, head});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_HEAD_UUID_2 =
-		"ercVersionedEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_HEAD_UUID_3 =
-		"(ercVersionedEntry.uuid IS NULL OR ercVersionedEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_HEAD_HEAD_2 =
-		"ercVersionedEntry.head = ?";
 
 	private FinderPath _finderPathWithPaginationFindByUUID_G;
 	private FinderPath _finderPathWithoutPaginationFindByUUID_G;
 	private FinderPath _finderPathCountByUUID_G;
+	private CollectionPersistenceFinder<ERCVersionedEntry>
+		_collectionPersistenceFinderByUUID_G;
 
 	/**
 	 * Returns all the erc versioned entries where uuid = &#63; and groupId = &#63;.
@@ -814,114 +461,9 @@ public class ERCVersionedEntryPersistenceImpl
 		OrderByComparator<ERCVersionedEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUUID_G;
-				finderArgs = new Object[] {uuid, groupId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUUID_G;
-			finderArgs = new Object[] {
-				uuid, groupId, start, end, orderByComparator
-			};
-		}
-
-		List<ERCVersionedEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<ERCVersionedEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ERCVersionedEntry ercVersionedEntry : list) {
-					if (!uuid.equals(ercVersionedEntry.getUuid()) ||
-						(groupId != ercVersionedEntry.getGroupId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ERCVersionedEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(groupId);
-
-				list = (List<ERCVersionedEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -946,19 +488,9 @@ public class ERCVersionedEntryPersistenceImpl
 			return ercVersionedEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchERCVersionedEntryException(sb.toString());
+		throw new NoSuchERCVersionedEntryException(
+			_collectionPersistenceFinderByUUID_G.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId}));
 	}
 
 	/**
@@ -974,14 +506,8 @@ public class ERCVersionedEntryPersistenceImpl
 		String uuid, long groupId,
 		OrderByComparator<ERCVersionedEntry> orderByComparator) {
 
-		List<ERCVersionedEntry> list = findByUUID_G(
-			uuid, groupId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUUID_G.fetchFirst(
+			finderCache, new Object[] {uuid, groupId}, orderByComparator);
 	}
 
 	/**
@@ -992,13 +518,8 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUUID_G(String uuid, long groupId) {
-		for (ERCVersionedEntry ercVersionedEntry :
-				findByUUID_G(
-					uuid, groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(ercVersionedEntry);
-		}
+		_collectionPersistenceFinderByUUID_G.remove(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -1010,74 +531,13 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUUID_G;
-
-		Object[] finderArgs = new Object[] {uuid, groupId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(groupId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUUID_G.count(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
-		"ercVersionedEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
-		"(ercVersionedEntry.uuid IS NULL OR ercVersionedEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
-		"ercVersionedEntry.groupId = ?";
-
 	private FinderPath _finderPathFetchByUUID_G_Head;
+	private UniquePersistenceFinder<ERCVersionedEntry>
+		_uniquePersistenceFinderByUUID_G_Head;
 
 	/**
 	 * Returns the erc versioned entry where uuid = &#63; and groupId = &#63; and head = &#63; or throws a <code>NoSuchERCVersionedEntryException</code> if it could not be found.
@@ -1097,26 +557,16 @@ public class ERCVersionedEntryPersistenceImpl
 			uuid, groupId, head);
 
 		if (ercVersionedEntry == null) {
-			StringBundler sb = new StringBundler(8);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("uuid=");
-			sb.append(uuid);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append(", head=");
-			sb.append(head);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByUUID_G_Head.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {uuid, groupId, head});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchERCVersionedEntryException(sb.toString());
+			throw new NoSuchERCVersionedEntryException(message);
 		}
 
 		return ercVersionedEntry;
@@ -1150,101 +600,8 @@ public class ERCVersionedEntryPersistenceImpl
 	public ERCVersionedEntry fetchByUUID_G_Head(
 		String uuid, long groupId, boolean head, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {uuid, groupId, head};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByUUID_G_Head, finderArgs, this);
-		}
-
-		if (result instanceof ERCVersionedEntry) {
-			ERCVersionedEntry ercVersionedEntry = (ERCVersionedEntry)result;
-
-			if (!Objects.equals(uuid, ercVersionedEntry.getUuid()) ||
-				(groupId != ercVersionedEntry.getGroupId()) ||
-				(head != ercVersionedEntry.isHead())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(5);
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_G_HEAD_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_G_HEAD_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_G_HEAD_GROUPID_2);
-
-			sb.append(_FINDER_COLUMN_UUID_G_HEAD_HEAD_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(groupId);
-
-				queryPos.add(head);
-
-				List<ERCVersionedEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByUUID_G_Head, finderArgs, list);
-					}
-				}
-				else {
-					ERCVersionedEntry ercVersionedEntry = list.get(0);
-
-					result = ercVersionedEntry;
-
-					cacheResult(ercVersionedEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (ERCVersionedEntry)result;
-		}
+		return _uniquePersistenceFinderByUUID_G_Head.fetch(
+			finderCache, new Object[] {uuid, groupId, head}, useFinderCache);
 	}
 
 	/**
@@ -1276,31 +633,15 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G_Head(String uuid, long groupId, boolean head) {
-		ERCVersionedEntry ercVersionedEntry = fetchByUUID_G_Head(
-			uuid, groupId, head);
-
-		if (ercVersionedEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByUUID_G_Head.count(
+			finderCache, new Object[] {uuid, groupId, head});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_G_HEAD_UUID_2 =
-		"ercVersionedEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_HEAD_UUID_3 =
-		"(ercVersionedEntry.uuid IS NULL OR ercVersionedEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_HEAD_GROUPID_2 =
-		"ercVersionedEntry.groupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_HEAD_HEAD_2 =
-		"ercVersionedEntry.head = ?";
 
 	private FinderPath _finderPathWithPaginationFindByUuid_C;
 	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
 	private FinderPath _finderPathCountByUuid_C;
+	private CollectionPersistenceFinder<ERCVersionedEntry>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns all the erc versioned entries where uuid = &#63; and companyId = &#63;.
@@ -1379,114 +720,9 @@ public class ERCVersionedEntryPersistenceImpl
 		OrderByComparator<ERCVersionedEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<ERCVersionedEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<ERCVersionedEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ERCVersionedEntry ercVersionedEntry : list) {
-					if (!uuid.equals(ercVersionedEntry.getUuid()) ||
-						(companyId != ercVersionedEntry.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ERCVersionedEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<ERCVersionedEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1511,19 +747,9 @@ public class ERCVersionedEntryPersistenceImpl
 			return ercVersionedEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchERCVersionedEntryException(sb.toString());
+		throw new NoSuchERCVersionedEntryException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -1539,14 +765,8 @@ public class ERCVersionedEntryPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<ERCVersionedEntry> orderByComparator) {
 
-		List<ERCVersionedEntry> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -1557,13 +777,8 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (ERCVersionedEntry ercVersionedEntry :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(ercVersionedEntry);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -1575,76 +790,15 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"ercVersionedEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(ercVersionedEntry.uuid IS NULL OR ercVersionedEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"ercVersionedEntry.companyId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByUuid_C_Head;
 	private FinderPath _finderPathWithoutPaginationFindByUuid_C_Head;
 	private FinderPath _finderPathCountByUuid_C_Head;
+	private CollectionPersistenceFinder<ERCVersionedEntry>
+		_collectionPersistenceFinderByUuid_C_Head;
 
 	/**
 	 * Returns all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
@@ -1729,119 +883,9 @@ public class ERCVersionedEntryPersistenceImpl
 		OrderByComparator<ERCVersionedEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C_Head;
-				finderArgs = new Object[] {uuid, companyId, head};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C_Head;
-			finderArgs = new Object[] {
-				uuid, companyId, head, start, end, orderByComparator
-			};
-		}
-
-		List<ERCVersionedEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<ERCVersionedEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ERCVersionedEntry ercVersionedEntry : list) {
-					if (!uuid.equals(ercVersionedEntry.getUuid()) ||
-						(companyId != ercVersionedEntry.getCompanyId()) ||
-						(head != ercVersionedEntry.isHead())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					5 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(5);
-			}
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_HEAD_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_HEAD_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_HEAD_COMPANYID_2);
-
-			sb.append(_FINDER_COLUMN_UUID_C_HEAD_HEAD_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ERCVersionedEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				queryPos.add(head);
-
-				list = (List<ERCVersionedEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C_Head.find(
+			finderCache, new Object[] {uuid, companyId, head}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1867,22 +911,10 @@ public class ERCVersionedEntryPersistenceImpl
 			return ercVersionedEntry;
 		}
 
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append(", head=");
-		sb.append(head);
-
-		sb.append("}");
-
-		throw new NoSuchERCVersionedEntryException(sb.toString());
+		throw new NoSuchERCVersionedEntryException(
+			_collectionPersistenceFinderByUuid_C_Head.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {uuid, companyId, head}));
 	}
 
 	/**
@@ -1899,14 +931,9 @@ public class ERCVersionedEntryPersistenceImpl
 		String uuid, long companyId, boolean head,
 		OrderByComparator<ERCVersionedEntry> orderByComparator) {
 
-		List<ERCVersionedEntry> list = findByUuid_C_Head(
-			uuid, companyId, head, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C_Head.fetchFirst(
+			finderCache, new Object[] {uuid, companyId, head},
+			orderByComparator);
 	}
 
 	/**
@@ -1918,13 +945,8 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C_Head(String uuid, long companyId, boolean head) {
-		for (ERCVersionedEntry ercVersionedEntry :
-				findByUuid_C_Head(
-					uuid, companyId, head, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(ercVersionedEntry);
-		}
+		_collectionPersistenceFinderByUuid_C_Head.remove(
+			finderCache, new Object[] {uuid, companyId, head});
 	}
 
 	/**
@@ -1937,83 +959,15 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C_Head(String uuid, long companyId, boolean head) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C_Head;
-
-		Object[] finderArgs = new Object[] {uuid, companyId, head};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_COUNT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_HEAD_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_HEAD_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_HEAD_COMPANYID_2);
-
-			sb.append(_FINDER_COLUMN_UUID_C_HEAD_HEAD_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				queryPos.add(head);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C_Head.count(
+			finderCache, new Object[] {uuid, companyId, head});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_C_HEAD_UUID_2 =
-		"ercVersionedEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_HEAD_UUID_3 =
-		"(ercVersionedEntry.uuid IS NULL OR ercVersionedEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_HEAD_COMPANYID_2 =
-		"ercVersionedEntry.companyId = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_HEAD_HEAD_2 =
-		"ercVersionedEntry.head = ?";
 
 	private FinderPath _finderPathWithPaginationFindByERC_G;
 	private FinderPath _finderPathWithoutPaginationFindByERC_G;
 	private FinderPath _finderPathCountByERC_G;
+	private CollectionPersistenceFinder<ERCVersionedEntry>
+		_collectionPersistenceFinderByERC_G;
 
 	/**
 	 * Returns all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
@@ -2096,115 +1050,9 @@ public class ERCVersionedEntryPersistenceImpl
 		OrderByComparator<ERCVersionedEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByERC_G;
-				finderArgs = new Object[] {externalReferenceCode, groupId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByERC_G;
-			finderArgs = new Object[] {
-				externalReferenceCode, groupId, start, end, orderByComparator
-			};
-		}
-
-		List<ERCVersionedEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<ERCVersionedEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (ERCVersionedEntry ercVersionedEntry : list) {
-					if (!externalReferenceCode.equals(
-							ercVersionedEntry.getExternalReferenceCode()) ||
-						(groupId != ercVersionedEntry.getGroupId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindExternalReferenceCode = false;
-
-			if (externalReferenceCode.isEmpty()) {
-				sb.append(_FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_3);
-			}
-			else {
-				bindExternalReferenceCode = true;
-
-				sb.append(_FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_ERC_G_GROUPID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(ERCVersionedEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExternalReferenceCode) {
-					queryPos.add(externalReferenceCode);
-				}
-
-				queryPos.add(groupId);
-
-				list = (List<ERCVersionedEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId}, start,
+			end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2229,19 +1077,10 @@ public class ERCVersionedEntryPersistenceImpl
 			return ercVersionedEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("externalReferenceCode=");
-		sb.append(externalReferenceCode);
-
-		sb.append(", groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchERCVersionedEntryException(sb.toString());
+		throw new NoSuchERCVersionedEntryException(
+			_collectionPersistenceFinderByERC_G.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {externalReferenceCode, groupId}));
 	}
 
 	/**
@@ -2257,14 +1096,9 @@ public class ERCVersionedEntryPersistenceImpl
 		String externalReferenceCode, long groupId,
 		OrderByComparator<ERCVersionedEntry> orderByComparator) {
 
-		List<ERCVersionedEntry> list = findByERC_G(
-			externalReferenceCode, groupId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByERC_G.fetchFirst(
+			finderCache, new Object[] {externalReferenceCode, groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -2275,13 +1109,8 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByERC_G(String externalReferenceCode, long groupId) {
-		for (ERCVersionedEntry ercVersionedEntry :
-				findByERC_G(
-					externalReferenceCode, groupId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(ercVersionedEntry);
-		}
+		_collectionPersistenceFinderByERC_G.remove(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -2293,74 +1122,13 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public int countByERC_G(String externalReferenceCode, long groupId) {
-		externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-		FinderPath finderPath = _finderPathCountByERC_G;
-
-		Object[] finderArgs = new Object[] {externalReferenceCode, groupId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindExternalReferenceCode = false;
-
-			if (externalReferenceCode.isEmpty()) {
-				sb.append(_FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_3);
-			}
-			else {
-				bindExternalReferenceCode = true;
-
-				sb.append(_FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_ERC_G_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExternalReferenceCode) {
-					queryPos.add(externalReferenceCode);
-				}
-
-				queryPos.add(groupId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByERC_G.count(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
-	private static final String _FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_2 =
-		"ercVersionedEntry.externalReferenceCode = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_3 =
-		"(ercVersionedEntry.externalReferenceCode IS NULL OR ercVersionedEntry.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_G_GROUPID_2 =
-		"ercVersionedEntry.groupId = ?";
-
 	private FinderPath _finderPathFetchByERC_G_Head;
+	private UniquePersistenceFinder<ERCVersionedEntry>
+		_uniquePersistenceFinderByERC_G_Head;
 
 	/**
 	 * Returns the erc versioned entry where externalReferenceCode = &#63; and groupId = &#63; and head = &#63; or throws a <code>NoSuchERCVersionedEntryException</code> if it could not be found.
@@ -2380,26 +1148,16 @@ public class ERCVersionedEntryPersistenceImpl
 			externalReferenceCode, groupId, head);
 
 		if (ercVersionedEntry == null) {
-			StringBundler sb = new StringBundler(8);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("externalReferenceCode=");
-			sb.append(externalReferenceCode);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append(", head=");
-			sb.append(head);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByERC_G_Head.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {externalReferenceCode, groupId, head});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchERCVersionedEntryException(sb.toString());
+			throw new NoSuchERCVersionedEntryException(message);
 		}
 
 		return ercVersionedEntry;
@@ -2434,103 +1192,9 @@ public class ERCVersionedEntryPersistenceImpl
 		String externalReferenceCode, long groupId, boolean head,
 		boolean useFinderCache) {
 
-		externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {externalReferenceCode, groupId, head};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByERC_G_Head, finderArgs, this);
-		}
-
-		if (result instanceof ERCVersionedEntry) {
-			ERCVersionedEntry ercVersionedEntry = (ERCVersionedEntry)result;
-
-			if (!Objects.equals(
-					externalReferenceCode,
-					ercVersionedEntry.getExternalReferenceCode()) ||
-				(groupId != ercVersionedEntry.getGroupId()) ||
-				(head != ercVersionedEntry.isHead())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(5);
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			boolean bindExternalReferenceCode = false;
-
-			if (externalReferenceCode.isEmpty()) {
-				sb.append(_FINDER_COLUMN_ERC_G_HEAD_EXTERNALREFERENCECODE_3);
-			}
-			else {
-				bindExternalReferenceCode = true;
-
-				sb.append(_FINDER_COLUMN_ERC_G_HEAD_EXTERNALREFERENCECODE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_ERC_G_HEAD_GROUPID_2);
-
-			sb.append(_FINDER_COLUMN_ERC_G_HEAD_HEAD_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExternalReferenceCode) {
-					queryPos.add(externalReferenceCode);
-				}
-
-				queryPos.add(groupId);
-
-				queryPos.add(head);
-
-				List<ERCVersionedEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByERC_G_Head, finderArgs, list);
-					}
-				}
-				else {
-					ERCVersionedEntry ercVersionedEntry = list.get(0);
-
-					result = ercVersionedEntry;
-
-					cacheResult(ercVersionedEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (ERCVersionedEntry)result;
-		}
+		return _uniquePersistenceFinderByERC_G_Head.fetch(
+			finderCache, new Object[] {externalReferenceCode, groupId, head},
+			useFinderCache);
 	}
 
 	/**
@@ -2564,31 +1228,13 @@ public class ERCVersionedEntryPersistenceImpl
 	public int countByERC_G_Head(
 		String externalReferenceCode, long groupId, boolean head) {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByERC_G_Head(
-			externalReferenceCode, groupId, head);
-
-		if (ercVersionedEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByERC_G_Head.count(
+			finderCache, new Object[] {externalReferenceCode, groupId, head});
 	}
 
-	private static final String
-		_FINDER_COLUMN_ERC_G_HEAD_EXTERNALREFERENCECODE_2 =
-			"ercVersionedEntry.externalReferenceCode = ? AND ";
-
-	private static final String
-		_FINDER_COLUMN_ERC_G_HEAD_EXTERNALREFERENCECODE_3 =
-			"(ercVersionedEntry.externalReferenceCode IS NULL OR ercVersionedEntry.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_G_HEAD_GROUPID_2 =
-		"ercVersionedEntry.groupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_G_HEAD_HEAD_2 =
-		"ercVersionedEntry.head = ?";
-
 	private FinderPath _finderPathFetchByHeadId;
+	private UniquePersistenceFinder<ERCVersionedEntry>
+		_uniquePersistenceFinderByHeadId;
 
 	/**
 	 * Returns the erc versioned entry where headId = &#63; or throws a <code>NoSuchERCVersionedEntryException</code> if it could not be found.
@@ -2604,20 +1250,15 @@ public class ERCVersionedEntryPersistenceImpl
 		ERCVersionedEntry ercVersionedEntry = fetchByHeadId(headId);
 
 		if (ercVersionedEntry == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("headId=");
-			sb.append(headId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByHeadId.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {headId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchERCVersionedEntryException(sb.toString());
+			throw new NoSuchERCVersionedEntryException(message);
 		}
 
 		return ercVersionedEntry;
@@ -2645,77 +1286,8 @@ public class ERCVersionedEntryPersistenceImpl
 	public ERCVersionedEntry fetchByHeadId(
 		long headId, boolean useFinderCache) {
 
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {headId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByHeadId, finderArgs, this);
-		}
-
-		if (result instanceof ERCVersionedEntry) {
-			ERCVersionedEntry ercVersionedEntry = (ERCVersionedEntry)result;
-
-			if (headId != ercVersionedEntry.getHeadId()) {
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_SELECT_ERCVERSIONEDENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_HEADID_HEADID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(headId);
-
-				List<ERCVersionedEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByHeadId, finderArgs, list);
-					}
-				}
-				else {
-					ERCVersionedEntry ercVersionedEntry = list.get(0);
-
-					result = ercVersionedEntry;
-
-					cacheResult(ercVersionedEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (ERCVersionedEntry)result;
-		}
+		return _uniquePersistenceFinderByHeadId.fetch(
+			finderCache, new Object[] {headId}, useFinderCache);
 	}
 
 	/**
@@ -2741,17 +1313,9 @@ public class ERCVersionedEntryPersistenceImpl
 	 */
 	@Override
 	public int countByHeadId(long headId) {
-		ERCVersionedEntry ercVersionedEntry = fetchByHeadId(headId);
-
-		if (ercVersionedEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByHeadId.count(
+			finderCache, new Object[] {headId});
 	}
-
-	private static final String _FINDER_COLUMN_HEADID_HEADID_2 =
-		"ercVersionedEntry.headId = ?";
 
 	public ERCVersionedEntryPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -2827,50 +1391,6 @@ public class ERCVersionedEntryPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all erc versioned entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(ERCVersionedEntryImpl.class);
-
-		finderCache.clearCache(ERCVersionedEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the erc versioned entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(ERCVersionedEntry ercVersionedEntry) {
-		entityCache.removeResult(
-			ERCVersionedEntryImpl.class, ercVersionedEntry);
-	}
-
-	@Override
-	public void clearCache(List<ERCVersionedEntry> ercVersionedEntries) {
-		for (ERCVersionedEntry ercVersionedEntry : ercVersionedEntries) {
-			entityCache.removeResult(
-				ERCVersionedEntryImpl.class, ercVersionedEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(ERCVersionedEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(ERCVersionedEntryImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		ERCVersionedEntryModelImpl ercVersionedEntryModelImpl) {
 
@@ -2932,48 +1452,6 @@ public class ERCVersionedEntryPersistenceImpl
 		throws NoSuchERCVersionedEntryException {
 
 		return remove((Serializable)ercVersionedEntryId);
-	}
-
-	/**
-	 * Removes the erc versioned entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the erc versioned entry
-	 * @return the erc versioned entry that was removed
-	 * @throws NoSuchERCVersionedEntryException if a erc versioned entry with the primary key could not be found
-	 */
-	@Override
-	public ERCVersionedEntry remove(Serializable primaryKey)
-		throws NoSuchERCVersionedEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			ERCVersionedEntry ercVersionedEntry =
-				(ERCVersionedEntry)session.get(
-					ERCVersionedEntryImpl.class, primaryKey);
-
-			if (ercVersionedEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchERCVersionedEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(ercVersionedEntry);
-		}
-		catch (NoSuchERCVersionedEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -3139,31 +1617,6 @@ public class ERCVersionedEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the erc versioned entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the erc versioned entry
-	 * @return the erc versioned entry
-	 * @throws NoSuchERCVersionedEntryException if a erc versioned entry with the primary key could not be found
-	 */
-	@Override
-	public ERCVersionedEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchERCVersionedEntryException {
-
-		ERCVersionedEntry ercVersionedEntry = fetchByPrimaryKey(primaryKey);
-
-		if (ercVersionedEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchERCVersionedEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return ercVersionedEntry;
-	}
-
-	/**
 	 * Returns the erc versioned entry with the primary key or throws a <code>NoSuchERCVersionedEntryException</code> if it could not be found.
 	 *
 	 * @param ercVersionedEntryId the primary key of the erc versioned entry
@@ -3186,187 +1639,6 @@ public class ERCVersionedEntryPersistenceImpl
 	@Override
 	public ERCVersionedEntry fetchByPrimaryKey(long ercVersionedEntryId) {
 		return fetchByPrimaryKey((Serializable)ercVersionedEntryId);
-	}
-
-	/**
-	 * Returns all the erc versioned entries.
-	 *
-	 * @return the erc versioned entries
-	 */
-	@Override
-	public List<ERCVersionedEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the erc versioned entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @return the range of erc versioned entries
-	 */
-	@Override
-	public List<ERCVersionedEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the erc versioned entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of erc versioned entries
-	 */
-	@Override
-	public List<ERCVersionedEntry> findAll(
-		int start, int end,
-		OrderByComparator<ERCVersionedEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the erc versioned entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>ERCVersionedEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of erc versioned entries
-	 * @param end the upper bound of the range of erc versioned entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of erc versioned entries
-	 */
-	@Override
-	public List<ERCVersionedEntry> findAll(
-		int start, int end,
-		OrderByComparator<ERCVersionedEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<ERCVersionedEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<ERCVersionedEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_ERCVERSIONEDENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_ERCVERSIONEDENTRY;
-
-				sql = sql.concat(ERCVersionedEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<ERCVersionedEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the erc versioned entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (ERCVersionedEntry ercVersionedEntry : findAll()) {
-			remove(ercVersionedEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of erc versioned entries.
-	 *
-	 * @return the number of erc versioned entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_ERCVERSIONEDENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -3401,18 +1673,6 @@ public class ERCVersionedEntryPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByUuid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
 			new String[] {
@@ -3430,6 +1690,16 @@ public class ERCVersionedEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
 			new String[] {String.class.getName()}, new String[] {"uuid_"},
 			false);
+
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByUuid,
+			_finderPathWithoutPaginationFindByUuid, _finderPathCountByUuid,
+			_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+			_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
+			ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
+				true, true, ERCVersionedEntry::getUuid));
 
 		_finderPathWithPaginationFindByUuid_Head = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_Head",
@@ -3450,6 +1720,21 @@ public class ERCVersionedEntryPersistenceImpl
 			new String[] {String.class.getName(), Boolean.class.getName()},
 			new String[] {"uuid_", "head"}, false);
 
+		_collectionPersistenceFinderByUuid_Head =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUuid_Head,
+				_finderPathWithoutPaginationFindByUuid_Head,
+				_finderPathCountByUuid_Head,
+				_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+				_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
+				ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
+					true, false, ERCVersionedEntry::getUuid),
+				new FinderColumn<>(
+					"ercVersionedEntry.", "head", FinderColumn.Type.BOOLEAN,
+					"=", true, true, ERCVersionedEntry::isHead));
+
 		_finderPathWithPaginationFindByUUID_G = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUUID_G",
 			new String[] {
@@ -3469,6 +1754,20 @@ public class ERCVersionedEntryPersistenceImpl
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "groupId"}, false);
 
+		_collectionPersistenceFinderByUUID_G =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUUID_G,
+				_finderPathWithoutPaginationFindByUUID_G,
+				_finderPathCountByUUID_G, _SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+				_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
+				ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
+					true, false, ERCVersionedEntry::getUuid),
+				new FinderColumn<>(
+					"ercVersionedEntry.", "groupId", FinderColumn.Type.LONG,
+					"=", true, true, ERCVersionedEntry::getGroupId));
+
 		_finderPathFetchByUUID_G_Head = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G_Head",
 			new String[] {
@@ -3476,6 +1775,19 @@ public class ERCVersionedEntryPersistenceImpl
 				Boolean.class.getName()
 			},
 			new String[] {"uuid_", "groupId", "head"}, true);
+
+		_uniquePersistenceFinderByUUID_G_Head = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByUUID_G_Head,
+			_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+			new FinderColumn<>(
+				"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
+				true, false, ERCVersionedEntry::getUuid),
+			new FinderColumn<>(
+				"ercVersionedEntry.", "groupId", FinderColumn.Type.LONG, "=",
+				true, false, ERCVersionedEntry::getGroupId),
+			new FinderColumn<>(
+				"ercVersionedEntry.", "head", FinderColumn.Type.BOOLEAN, "=",
+				true, true, ERCVersionedEntry::isHead));
 
 		_finderPathWithPaginationFindByUuid_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
@@ -3495,6 +1807,20 @@ public class ERCVersionedEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "companyId"}, false);
+
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUuid_C,
+				_finderPathWithoutPaginationFindByUuid_C,
+				_finderPathCountByUuid_C, _SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+				_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
+				ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
+					true, false, ERCVersionedEntry::getUuid),
+				new FinderColumn<>(
+					"ercVersionedEntry.", "companyId", FinderColumn.Type.LONG,
+					"=", true, true, ERCVersionedEntry::getCompanyId));
 
 		_finderPathWithPaginationFindByUuid_C_Head = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C_Head",
@@ -3521,6 +1847,24 @@ public class ERCVersionedEntryPersistenceImpl
 			},
 			new String[] {"uuid_", "companyId", "head"}, false);
 
+		_collectionPersistenceFinderByUuid_C_Head =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUuid_C_Head,
+				_finderPathWithoutPaginationFindByUuid_C_Head,
+				_finderPathCountByUuid_C_Head,
+				_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+				_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
+				ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
+					true, false, ERCVersionedEntry::getUuid),
+				new FinderColumn<>(
+					"ercVersionedEntry.", "companyId", FinderColumn.Type.LONG,
+					"=", true, false, ERCVersionedEntry::getCompanyId),
+				new FinderColumn<>(
+					"ercVersionedEntry.", "head", FinderColumn.Type.BOOLEAN,
+					"=", true, true, ERCVersionedEntry::isHead));
+
 		_finderPathWithPaginationFindByERC_G = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByERC_G",
 			new String[] {
@@ -3540,6 +1884,20 @@ public class ERCVersionedEntryPersistenceImpl
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"externalReferenceCode", "groupId"}, false);
 
+		_collectionPersistenceFinderByERC_G = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByERC_G,
+			_finderPathWithoutPaginationFindByERC_G, _finderPathCountByERC_G,
+			_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+			_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
+			ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"ercVersionedEntry.", "externalReferenceCode",
+				FinderColumn.Type.STRING, "=", true, false,
+				ERCVersionedEntry::getExternalReferenceCode),
+			new FinderColumn<>(
+				"ercVersionedEntry.", "groupId", FinderColumn.Type.LONG, "=",
+				true, true, ERCVersionedEntry::getGroupId));
+
 		_finderPathFetchByERC_G_Head = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByERC_G_Head",
 			new String[] {
@@ -3548,9 +1906,29 @@ public class ERCVersionedEntryPersistenceImpl
 			},
 			new String[] {"externalReferenceCode", "groupId", "head"}, true);
 
+		_uniquePersistenceFinderByERC_G_Head = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByERC_G_Head,
+			_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+			new FinderColumn<>(
+				"ercVersionedEntry.", "externalReferenceCode",
+				FinderColumn.Type.STRING, "=", true, false,
+				ERCVersionedEntry::getExternalReferenceCode),
+			new FinderColumn<>(
+				"ercVersionedEntry.", "groupId", FinderColumn.Type.LONG, "=",
+				true, false, ERCVersionedEntry::getGroupId),
+			new FinderColumn<>(
+				"ercVersionedEntry.", "head", FinderColumn.Type.BOOLEAN, "=",
+				true, true, ERCVersionedEntry::isHead));
+
 		_finderPathFetchByHeadId = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByHeadId",
 			new String[] {Long.class.getName()}, new String[] {"headId"}, true);
+
+		_uniquePersistenceFinderByHeadId = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByHeadId, _SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
+			new FinderColumn<>(
+				"ercVersionedEntry.", "headId", FinderColumn.Type.LONG, "=",
+				true, true, ERCVersionedEntry::getHeadId));
 
 		ERCVersionedEntryUtil.setPersistence(this);
 	}
@@ -3567,22 +1945,17 @@ public class ERCVersionedEntryPersistenceImpl
 	@ServiceReference(type = FinderCache.class)
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		ERCVersionedEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_ERCVERSIONEDENTRY =
 		"SELECT ercVersionedEntry FROM ERCVersionedEntry ercVersionedEntry";
 
 	private static final String _SQL_SELECT_ERCVERSIONEDENTRY_WHERE =
 		"SELECT ercVersionedEntry FROM ERCVersionedEntry ercVersionedEntry WHERE ";
 
-	private static final String _SQL_COUNT_ERCVERSIONEDENTRY =
-		"SELECT COUNT(ercVersionedEntry) FROM ERCVersionedEntry ercVersionedEntry";
-
 	private static final String _SQL_COUNT_ERCVERSIONEDENTRY_WHERE =
 		"SELECT COUNT(ercVersionedEntry) FROM ERCVersionedEntry ercVersionedEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "ercVersionedEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No ERCVersionedEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No ERCVersionedEntry exists with the key {";
@@ -3599,4 +1972,4 @@ public class ERCVersionedEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-826555329
+// LIFERAY-SERVICE-BUILDER-HASH:955352763

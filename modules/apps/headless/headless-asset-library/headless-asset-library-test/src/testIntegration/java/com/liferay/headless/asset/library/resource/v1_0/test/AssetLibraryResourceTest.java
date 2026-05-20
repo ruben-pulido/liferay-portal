@@ -106,6 +106,32 @@ public class AssetLibraryResourceTest extends BaseAssetLibraryResourceTestCase {
 			assetLibrary.getExternalReferenceCode());
 	}
 
+	@Test
+	public void testGetAssetLibrariesPageFilterBySiteId() throws Exception {
+		AssetLibrary randomAssetLibrary = randomAssetLibrary();
+
+		randomAssetLibrary.setType(AssetLibrary.Type.SPACE);
+
+		AssetLibrary assetLibrary = testGetAssetLibrariesPage_addAssetLibrary(
+			randomAssetLibrary);
+
+		Page<AssetLibrary> page = assetLibraryResource.getAssetLibrariesPage(
+			null, null, "siteId eq " + assetLibrary.getSiteId(),
+			Pagination.of(1, 10), null);
+
+		Assert.assertEquals(1, page.getTotalCount());
+
+		List<AssetLibrary> assetLibraries = (List<AssetLibrary>)page.getItems();
+
+		AssetLibrary filteredAssetLibrary = assetLibraries.get(0);
+
+		Assert.assertEquals(
+			assetLibrary.getSiteId(), filteredAssetLibrary.getSiteId());
+
+		assetLibraryResource.deleteAssetLibrary(
+			assetLibrary.getExternalReferenceCode());
+	}
+
 	@Override
 	@Test
 	public void testGetAssetLibrariesPageWithFilterDateTimeEquals()

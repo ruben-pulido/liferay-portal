@@ -35,6 +35,12 @@ const Sidebar: React.FC<ISidebarProps> = ({
 		{
 			items: [
 				{
+					icon: 'polls',
+					label: Liferay.Language.get('lifecycles'),
+					route: Routes.LIFECYCLE,
+					url: toRoute(Routes.LIFECYCLE, {channelId, groupId})
+				},
+				{
 					icon: 'ac_page',
 					label: Liferay.Language.get('sites'),
 					route: Routes.SITES,
@@ -155,15 +161,16 @@ const Sidebar: React.FC<ISidebarProps> = ({
 							active,
 							label,
 							onClick: active
-								? null
-								: () =>
+								? undefined
+								: () => {
 										API.user
 											.updateLanguage({
 												languageId: id
 											})
 											.then(() =>
 												window.location.reload()
-											)
+											);
+								  }
 						};
 					})
 				}

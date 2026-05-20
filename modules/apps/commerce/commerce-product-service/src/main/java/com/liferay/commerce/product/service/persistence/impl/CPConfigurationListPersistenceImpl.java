@@ -39,6 +39,9 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -55,15 +58,12 @@ import java.io.Serializable;
 
 import java.lang.reflect.InvocationHandler;
 
-import java.sql.Timestamp;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -88,7 +88,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CPConfigurationListPersistence.class)
 public class CPConfigurationListPersistenceImpl
-	extends BasePersistenceImpl<CPConfigurationList>
+	extends BasePersistenceImpl
+		<CPConfigurationList, NoSuchCPConfigurationListException>
 	implements CPConfigurationListPersistence {
 
 	/*
@@ -105,12 +106,11 @@ public class CPConfigurationListPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByUuid;
 	private FinderPath _finderPathWithoutPaginationFindByUuid;
 	private FinderPath _finderPathCountByUuid;
+	private CollectionPersistenceFinder<CPConfigurationList>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns all the cp configuration lists where uuid = &#63;.
@@ -187,106 +187,9 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUuid;
-					finderArgs = new Object[] {uuid};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUuid;
-				finderArgs = new Object[] {uuid, start, end, orderByComparator};
-			}
-
-			List<CPConfigurationList> list = null;
-
-			if (useFinderCache) {
-				list = (List<CPConfigurationList>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CPConfigurationList cpConfigurationList : list) {
-						if (!uuid.equals(cpConfigurationList.getUuid())) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_CPCONFIGURATIONLIST_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_UUID_2);
-				}
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					list = (List<CPConfigurationList>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByUuid.find(
+				finderCache, new Object[] {uuid}, start, end, orderByComparator,
+				useFinderCache);
 		}
 	}
 
@@ -311,16 +214,9 @@ public class CPConfigurationListPersistenceImpl
 			return cpConfigurationList;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchCPConfigurationListException(sb.toString());
+		throw new NoSuchCPConfigurationListException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -334,14 +230,8 @@ public class CPConfigurationListPersistenceImpl
 	public CPConfigurationList fetchByUuid_First(
 		String uuid, OrderByComparator<CPConfigurationList> orderByComparator) {
 
-		List<CPConfigurationList> list = findByUuid(
-			uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -351,11 +241,8 @@ public class CPConfigurationListPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (CPConfigurationList cpConfigurationList :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(cpConfigurationList);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -370,69 +257,14 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = _finderPathCountByUuid;
-
-			Object[] finderArgs = new Object[] {uuid};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_CPCONFIGURATIONLIST_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_UUID_2);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByUuid.count(
+				finderCache, new Object[] {uuid});
 		}
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"cpConfigurationList.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(cpConfigurationList.uuid IS NULL OR cpConfigurationList.uuid = '')";
-
 	private FinderPath _finderPathFetchByUUID_G;
+	private UniquePersistenceFinder<CPConfigurationList>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the cp configuration list where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCPConfigurationListException</code> if it could not be found.
@@ -449,23 +281,15 @@ public class CPConfigurationListPersistenceImpl
 		CPConfigurationList cpConfigurationList = fetchByUUID_G(uuid, groupId);
 
 		if (cpConfigurationList == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("uuid=");
-			sb.append(uuid);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCPConfigurationListException(sb.toString());
+			throw new NoSuchCPConfigurationListException(message);
 		}
 
 		return cpConfigurationList;
@@ -499,97 +323,8 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			uuid = Objects.toString(uuid, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {uuid, groupId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByUUID_G, finderArgs, this);
-			}
-
-			if (result instanceof CPConfigurationList) {
-				CPConfigurationList cpConfigurationList =
-					(CPConfigurationList)result;
-
-				if (!Objects.equals(uuid, cpConfigurationList.getUuid()) ||
-					(groupId != cpConfigurationList.getGroupId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_CPCONFIGURATIONLIST_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(groupId);
-
-					List<CPConfigurationList> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByUUID_G, finderArgs, list);
-						}
-					}
-					else {
-						CPConfigurationList cpConfigurationList = list.get(0);
-
-						result = cpConfigurationList;
-
-						cacheResult(cpConfigurationList);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (CPConfigurationList)result;
-			}
+			return _uniquePersistenceFinderByUUID_G.fetch(
+				finderCache, new Object[] {uuid, groupId}, useFinderCache);
 		}
 	}
 
@@ -618,27 +353,15 @@ public class CPConfigurationListPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		CPConfigurationList cpConfigurationList = fetchByUUID_G(uuid, groupId);
-
-		if (cpConfigurationList == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByUUID_G.count(
+			finderCache, new Object[] {uuid, groupId});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
-		"cpConfigurationList.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
-		"(cpConfigurationList.uuid IS NULL OR cpConfigurationList.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
-		"cpConfigurationList.groupId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByUuid_C;
 	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
 	private FinderPath _finderPathCountByUuid_C;
+	private CollectionPersistenceFinder<CPConfigurationList>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns all the cp configuration lists where uuid = &#63; and companyId = &#63;.
@@ -721,114 +444,9 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByUuid_C;
-					finderArgs = new Object[] {uuid, companyId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByUuid_C;
-				finderArgs = new Object[] {
-					uuid, companyId, start, end, orderByComparator
-				};
-			}
-
-			List<CPConfigurationList> list = null;
-
-			if (useFinderCache) {
-				list = (List<CPConfigurationList>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CPConfigurationList cpConfigurationList : list) {
-						if (!uuid.equals(cpConfigurationList.getUuid()) ||
-							(companyId != cpConfigurationList.getCompanyId())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_CPCONFIGURATIONLIST_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(companyId);
-
-					list = (List<CPConfigurationList>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByUuid_C.find(
+				finderCache, new Object[] {uuid, companyId}, start, end,
+				orderByComparator, useFinderCache);
 		}
 	}
 
@@ -854,19 +472,9 @@ public class CPConfigurationListPersistenceImpl
 			return cpConfigurationList;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchCPConfigurationListException(sb.toString());
+		throw new NoSuchCPConfigurationListException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -882,14 +490,8 @@ public class CPConfigurationListPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<CPConfigurationList> orderByComparator) {
 
-		List<CPConfigurationList> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -900,13 +502,8 @@ public class CPConfigurationListPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (CPConfigurationList cpConfigurationList :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(cpConfigurationList);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -922,78 +519,16 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			uuid = Objects.toString(uuid, "");
-
-			FinderPath finderPath = _finderPathCountByUuid_C;
-
-			Object[] finderArgs = new Object[] {uuid, companyId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_CPCONFIGURATIONLIST_WHERE);
-
-				boolean bindUuid = false;
-
-				if (uuid.isEmpty()) {
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-				}
-				else {
-					bindUuid = true;
-
-					sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-				}
-
-				sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindUuid) {
-						queryPos.add(uuid);
-					}
-
-					queryPos.add(companyId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByUuid_C.count(
+				finderCache, new Object[] {uuid, companyId});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"cpConfigurationList.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(cpConfigurationList.uuid IS NULL OR cpConfigurationList.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"cpConfigurationList.companyId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByCompanyId;
 	private FinderPath _finderPathWithoutPaginationFindByCompanyId;
 	private FinderPath _finderPathCountByCompanyId;
+	private CollectionPersistenceFinder<CPConfigurationList>
+		_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns all the cp configuration lists where companyId = &#63;.
@@ -1071,95 +606,9 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByCompanyId;
-					finderArgs = new Object[] {companyId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByCompanyId;
-				finderArgs = new Object[] {
-					companyId, start, end, orderByComparator
-				};
-			}
-
-			List<CPConfigurationList> list = null;
-
-			if (useFinderCache) {
-				list = (List<CPConfigurationList>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CPConfigurationList cpConfigurationList : list) {
-						if (companyId != cpConfigurationList.getCompanyId()) {
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_CPCONFIGURATIONLIST_WHERE);
-
-				sb.append(_FINDER_COLUMN_COMPANYID_COMPANYID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					list = (List<CPConfigurationList>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByCompanyId.find(
+				finderCache, new Object[] {companyId}, start, end,
+				orderByComparator, useFinderCache);
 		}
 	}
 
@@ -1184,16 +633,9 @@ public class CPConfigurationListPersistenceImpl
 			return cpConfigurationList;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchCPConfigurationListException(sb.toString());
+		throw new NoSuchCPConfigurationListException(
+			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
 	}
 
 	/**
@@ -1208,14 +650,8 @@ public class CPConfigurationListPersistenceImpl
 		long companyId,
 		OrderByComparator<CPConfigurationList> orderByComparator) {
 
-		List<CPConfigurationList> list = findByCompanyId(
-			companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCompanyId.fetchFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -1225,12 +661,8 @@ public class CPConfigurationListPersistenceImpl
 	 */
 	@Override
 	public void removeByCompanyId(long companyId) {
-		for (CPConfigurationList cpConfigurationList :
-				findByCompanyId(
-					companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(cpConfigurationList);
-		}
+		_collectionPersistenceFinderByCompanyId.remove(
+			finderCache, new Object[] {companyId});
 	}
 
 	/**
@@ -1245,57 +677,18 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			FinderPath finderPath = _finderPathCountByCompanyId;
-
-			Object[] finderArgs = new Object[] {companyId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_CPCONFIGURATIONLIST_WHERE);
-
-				sb.append(_FINDER_COLUMN_COMPANYID_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(companyId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByCompanyId.count(
+				finderCache, new Object[] {companyId});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_COMPANYID_COMPANYID_2 =
-		"cpConfigurationList.companyId = ?";
 
 	private FinderPath
 		_finderPathWithPaginationFindByParentCPConfigurationListId;
 	private FinderPath
 		_finderPathWithoutPaginationFindByParentCPConfigurationListId;
 	private FinderPath _finderPathCountByParentCPConfigurationListId;
+	private CollectionPersistenceFinder<CPConfigurationList>
+		_collectionPersistenceFinderByParentCPConfigurationListId;
 
 	/**
 	 * Returns all the cp configuration lists where parentCPConfigurationListId = &#63;.
@@ -1378,101 +771,10 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath =
-						_finderPathWithoutPaginationFindByParentCPConfigurationListId;
-					finderArgs = new Object[] {parentCPConfigurationListId};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath =
-					_finderPathWithPaginationFindByParentCPConfigurationListId;
-				finderArgs = new Object[] {
-					parentCPConfigurationListId, start, end, orderByComparator
-				};
-			}
-
-			List<CPConfigurationList> list = null;
-
-			if (useFinderCache) {
-				list = (List<CPConfigurationList>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CPConfigurationList cpConfigurationList : list) {
-						if (parentCPConfigurationListId !=
-								cpConfigurationList.
-									getParentCPConfigurationListId()) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						3 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(3);
-				}
-
-				sb.append(_SQL_SELECT_CPCONFIGURATIONLIST_WHERE);
-
-				sb.append(
-					_FINDER_COLUMN_PARENTCPCONFIGURATIONLISTID_PARENTCPCONFIGURATIONLISTID_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(parentCPConfigurationListId);
-
-					list = (List<CPConfigurationList>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByParentCPConfigurationListId.
+				find(
+					finderCache, new Object[] {parentCPConfigurationListId},
+					start, end, orderByComparator, useFinderCache);
 		}
 	}
 
@@ -1498,16 +800,11 @@ public class CPConfigurationListPersistenceImpl
 			return cpConfigurationList;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("parentCPConfigurationListId=");
-		sb.append(parentCPConfigurationListId);
-
-		sb.append("}");
-
-		throw new NoSuchCPConfigurationListException(sb.toString());
+		throw new NoSuchCPConfigurationListException(
+			_collectionPersistenceFinderByParentCPConfigurationListId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {parentCPConfigurationListId}));
 	}
 
 	/**
@@ -1522,14 +819,10 @@ public class CPConfigurationListPersistenceImpl
 		long parentCPConfigurationListId,
 		OrderByComparator<CPConfigurationList> orderByComparator) {
 
-		List<CPConfigurationList> list = findByParentCPConfigurationListId(
-			parentCPConfigurationListId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByParentCPConfigurationListId.
+			fetchFirst(
+				finderCache, new Object[] {parentCPConfigurationListId},
+				orderByComparator);
 	}
 
 	/**
@@ -1541,13 +834,8 @@ public class CPConfigurationListPersistenceImpl
 	public void removeByParentCPConfigurationListId(
 		long parentCPConfigurationListId) {
 
-		for (CPConfigurationList cpConfigurationList :
-				findByParentCPConfigurationListId(
-					parentCPConfigurationListId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(cpConfigurationList);
-		}
+		_collectionPersistenceFinderByParentCPConfigurationListId.remove(
+			finderCache, new Object[] {parentCPConfigurationListId});
 	}
 
 	/**
@@ -1564,54 +852,10 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			FinderPath finderPath =
-				_finderPathCountByParentCPConfigurationListId;
-
-			Object[] finderArgs = new Object[] {parentCPConfigurationListId};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(2);
-
-				sb.append(_SQL_COUNT_CPCONFIGURATIONLIST_WHERE);
-
-				sb.append(
-					_FINDER_COLUMN_PARENTCPCONFIGURATIONLISTID_PARENTCPCONFIGURATIONLISTID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(parentCPConfigurationListId);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByParentCPConfigurationListId.
+				count(finderCache, new Object[] {parentCPConfigurationListId});
 		}
 	}
-
-	private static final String
-		_FINDER_COLUMN_PARENTCPCONFIGURATIONLISTID_PARENTCPCONFIGURATIONLISTID_2 =
-			"cpConfigurationList.parentCPConfigurationListId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByG_C;
 	private FinderPath _finderPathWithoutPaginationFindByG_C;
@@ -1755,7 +999,7 @@ public class CPConfigurationListPersistenceImpl
 
 				if (orderByComparator != null) {
 					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+						sb, _ENTITY_ALIAS_PREFIX, orderByComparator);
 				}
 				else {
 					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
@@ -2021,7 +1265,7 @@ public class CPConfigurationListPersistenceImpl
 
 				if (orderByComparator != null) {
 					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+						sb, _ENTITY_ALIAS_PREFIX, orderByComparator);
 				}
 				else {
 					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
@@ -2234,6 +1478,8 @@ public class CPConfigurationListPersistenceImpl
 	private FinderPath _finderPathWithPaginationFindByG_M;
 	private FinderPath _finderPathWithoutPaginationFindByG_M;
 	private FinderPath _finderPathCountByG_M;
+	private CollectionPersistenceFinder<CPConfigurationList>
+		_collectionPersistenceFinderByG_M;
 
 	/**
 	 * Returns all the cp configuration lists where groupId = &#63; and master = &#63;.
@@ -2315,101 +1561,9 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindByG_M;
-					finderArgs = new Object[] {groupId, master};
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindByG_M;
-				finderArgs = new Object[] {
-					groupId, master, start, end, orderByComparator
-				};
-			}
-
-			List<CPConfigurationList> list = null;
-
-			if (useFinderCache) {
-				list = (List<CPConfigurationList>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CPConfigurationList cpConfigurationList : list) {
-						if ((groupId != cpConfigurationList.getGroupId()) ||
-							(master != cpConfigurationList.isMaster())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_CPCONFIGURATIONLIST_WHERE);
-
-				sb.append(_FINDER_COLUMN_G_M_GROUPID_2);
-
-				sb.append(_FINDER_COLUMN_G_M_MASTER_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					queryPos.add(master);
-
-					list = (List<CPConfigurationList>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByG_M.find(
+				finderCache, new Object[] {groupId, master}, start, end,
+				orderByComparator, useFinderCache);
 		}
 	}
 
@@ -2435,19 +1589,9 @@ public class CPConfigurationListPersistenceImpl
 			return cpConfigurationList;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", master=");
-		sb.append(master);
-
-		sb.append("}");
-
-		throw new NoSuchCPConfigurationListException(sb.toString());
+		throw new NoSuchCPConfigurationListException(
+			_collectionPersistenceFinderByG_M.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, master}));
 	}
 
 	/**
@@ -2463,14 +1607,8 @@ public class CPConfigurationListPersistenceImpl
 		long groupId, boolean master,
 		OrderByComparator<CPConfigurationList> orderByComparator) {
 
-		List<CPConfigurationList> list = findByG_M(
-			groupId, master, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByG_M.fetchFirst(
+			finderCache, new Object[] {groupId, master}, orderByComparator);
 	}
 
 	/**
@@ -2481,13 +1619,8 @@ public class CPConfigurationListPersistenceImpl
 	 */
 	@Override
 	public void removeByG_M(long groupId, boolean master) {
-		for (CPConfigurationList cpConfigurationList :
-				findByG_M(
-					groupId, master, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(cpConfigurationList);
-		}
+		_collectionPersistenceFinderByG_M.remove(
+			finderCache, new Object[] {groupId, master});
 	}
 
 	/**
@@ -2503,61 +1636,15 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			FinderPath finderPath = _finderPathCountByG_M;
-
-			Object[] finderArgs = new Object[] {groupId, master};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_CPCONFIGURATIONLIST_WHERE);
-
-				sb.append(_FINDER_COLUMN_G_M_GROUPID_2);
-
-				sb.append(_FINDER_COLUMN_G_M_MASTER_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					queryPos.add(groupId);
-
-					queryPos.add(master);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByG_M.count(
+				finderCache, new Object[] {groupId, master});
 		}
 	}
 
-	private static final String _FINDER_COLUMN_G_M_GROUPID_2 =
-		"cpConfigurationList.groupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_G_M_MASTER_2 =
-		"cpConfigurationList.master = ?";
-
 	private FinderPath _finderPathWithPaginationFindByLtD_S;
 	private FinderPath _finderPathWithPaginationCountByLtD_S;
+	private CollectionPersistenceFinder<CPConfigurationList>
+		_collectionPersistenceFinderByLtD_S;
 
 	/**
 	 * Returns all the cp configuration lists where displayDate &lt; &#63; and status = &#63;.
@@ -2640,104 +1727,9 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			finderPath = _finderPathWithPaginationFindByLtD_S;
-			finderArgs = new Object[] {
-				_getTime(displayDate), status, start, end, orderByComparator
-			};
-
-			List<CPConfigurationList> list = null;
-
-			if (useFinderCache) {
-				list = (List<CPConfigurationList>)finderCache.getResult(
-					finderPath, finderArgs, this);
-
-				if ((list != null) && !list.isEmpty()) {
-					for (CPConfigurationList cpConfigurationList : list) {
-						if ((displayDate.getTime() <=
-								cpConfigurationList.getDisplayDate(
-								).getTime()) ||
-							(status != cpConfigurationList.getStatus())) {
-
-							list = null;
-
-							break;
-						}
-					}
-				}
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						4 + (orderByComparator.getOrderByFields().length * 2));
-				}
-				else {
-					sb = new StringBundler(4);
-				}
-
-				sb.append(_SQL_SELECT_CPCONFIGURATIONLIST_WHERE);
-
-				boolean bindDisplayDate = false;
-
-				if (displayDate == null) {
-					sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_1);
-				}
-				else {
-					bindDisplayDate = true;
-
-					sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_2);
-				}
-
-				sb.append(_FINDER_COLUMN_LTD_S_STATUS_2);
-
-				if (orderByComparator != null) {
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-				}
-				else {
-					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
-				}
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindDisplayDate) {
-						queryPos.add(new Timestamp(displayDate.getTime()));
-					}
-
-					queryPos.add(status);
-
-					list = (List<CPConfigurationList>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
+			return _collectionPersistenceFinderByLtD_S.find(
+				finderCache, new Object[] {displayDate, status}, start, end,
+				orderByComparator, useFinderCache);
 		}
 	}
 
@@ -2763,19 +1755,9 @@ public class CPConfigurationListPersistenceImpl
 			return cpConfigurationList;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("displayDate<");
-		sb.append(displayDate);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchCPConfigurationListException(sb.toString());
+		throw new NoSuchCPConfigurationListException(
+			_collectionPersistenceFinderByLtD_S.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {displayDate, status}));
 	}
 
 	/**
@@ -2791,14 +1773,8 @@ public class CPConfigurationListPersistenceImpl
 		Date displayDate, int status,
 		OrderByComparator<CPConfigurationList> orderByComparator) {
 
-		List<CPConfigurationList> list = findByLtD_S(
-			displayDate, status, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByLtD_S.fetchFirst(
+			finderCache, new Object[] {displayDate, status}, orderByComparator);
 	}
 
 	/**
@@ -2809,13 +1785,8 @@ public class CPConfigurationListPersistenceImpl
 	 */
 	@Override
 	public void removeByLtD_S(Date displayDate, int status) {
-		for (CPConfigurationList cpConfigurationList :
-				findByLtD_S(
-					displayDate, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(cpConfigurationList);
-		}
+		_collectionPersistenceFinderByLtD_S.remove(
+			finderCache, new Object[] {displayDate, status});
 	}
 
 	/**
@@ -2831,72 +1802,10 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			FinderPath finderPath = _finderPathWithPaginationCountByLtD_S;
-
-			Object[] finderArgs = new Object[] {_getTime(displayDate), status};
-
-			Long count = (Long)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if (count == null) {
-				StringBundler sb = new StringBundler(3);
-
-				sb.append(_SQL_COUNT_CPCONFIGURATIONLIST_WHERE);
-
-				boolean bindDisplayDate = false;
-
-				if (displayDate == null) {
-					sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_1);
-				}
-				else {
-					bindDisplayDate = true;
-
-					sb.append(_FINDER_COLUMN_LTD_S_DISPLAYDATE_2);
-				}
-
-				sb.append(_FINDER_COLUMN_LTD_S_STATUS_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindDisplayDate) {
-						queryPos.add(new Timestamp(displayDate.getTime()));
-					}
-
-					queryPos.add(status);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
+			return _collectionPersistenceFinderByLtD_S.count(
+				finderCache, new Object[] {displayDate, status});
 		}
 	}
-
-	private static final String _FINDER_COLUMN_LTD_S_DISPLAYDATE_1 =
-		"cpConfigurationList.displayDate IS NULL AND ";
-
-	private static final String _FINDER_COLUMN_LTD_S_DISPLAYDATE_2 =
-		"cpConfigurationList.displayDate < ? AND ";
-
-	private static final String _FINDER_COLUMN_LTD_S_STATUS_2 =
-		"cpConfigurationList.status = ?";
 
 	private FinderPath _finderPathWithPaginationFindByG_C_S;
 	private FinderPath _finderPathWithoutPaginationFindByG_C_S;
@@ -3050,7 +1959,7 @@ public class CPConfigurationListPersistenceImpl
 
 				if (orderByComparator != null) {
 					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+						sb, _ENTITY_ALIAS_PREFIX, orderByComparator);
 				}
 				else {
 					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
@@ -3331,7 +2240,7 @@ public class CPConfigurationListPersistenceImpl
 
 				if (orderByComparator != null) {
 					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+						sb, _ENTITY_ALIAS_PREFIX, orderByComparator);
 				}
 				else {
 					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
@@ -3698,7 +2607,7 @@ public class CPConfigurationListPersistenceImpl
 
 				if (orderByComparator != null) {
 					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+						sb, _ENTITY_ALIAS_PREFIX, orderByComparator);
 				}
 				else {
 					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
@@ -3979,7 +2888,7 @@ public class CPConfigurationListPersistenceImpl
 
 				if (orderByComparator != null) {
 					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+						sb, _ENTITY_ALIAS_PREFIX, orderByComparator);
 				}
 				else {
 					sb.append(CPConfigurationListModelImpl.ORDER_BY_JPQL);
@@ -4207,6 +3116,8 @@ public class CPConfigurationListPersistenceImpl
 		"cpConfigurationList.status != ?";
 
 	private FinderPath _finderPathFetchByERC_C;
+	private UniquePersistenceFinder<CPConfigurationList>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the cp configuration list where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCPConfigurationListException</code> if it could not be found.
@@ -4225,23 +3136,16 @@ public class CPConfigurationListPersistenceImpl
 			externalReferenceCode, companyId);
 
 		if (cpConfigurationList == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("externalReferenceCode=");
-			sb.append(externalReferenceCode);
-
-			sb.append(", companyId=");
-			sb.append(companyId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {externalReferenceCode, companyId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchCPConfigurationListException(sb.toString());
+			throw new NoSuchCPConfigurationListException(message);
 		}
 
 		return cpConfigurationList;
@@ -4277,99 +3181,9 @@ public class CPConfigurationListPersistenceImpl
 				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
 					CPConfigurationList.class)) {
 
-			externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-			Object[] finderArgs = null;
-
-			if (useFinderCache) {
-				finderArgs = new Object[] {externalReferenceCode, companyId};
-			}
-
-			Object result = null;
-
-			if (useFinderCache) {
-				result = finderCache.getResult(
-					_finderPathFetchByERC_C, finderArgs, this);
-			}
-
-			if (result instanceof CPConfigurationList) {
-				CPConfigurationList cpConfigurationList =
-					(CPConfigurationList)result;
-
-				if (!Objects.equals(
-						externalReferenceCode,
-						cpConfigurationList.getExternalReferenceCode()) ||
-					(companyId != cpConfigurationList.getCompanyId())) {
-
-					result = null;
-				}
-			}
-
-			if (result == null) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(_SQL_SELECT_CPCONFIGURATIONLIST_WHERE);
-
-				boolean bindExternalReferenceCode = false;
-
-				if (externalReferenceCode.isEmpty()) {
-					sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3);
-				}
-				else {
-					bindExternalReferenceCode = true;
-
-					sb.append(_FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2);
-				}
-
-				sb.append(_FINDER_COLUMN_ERC_C_COMPANYID_2);
-
-				String sql = sb.toString();
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					QueryPos queryPos = QueryPos.getInstance(query);
-
-					if (bindExternalReferenceCode) {
-						queryPos.add(externalReferenceCode);
-					}
-
-					queryPos.add(companyId);
-
-					List<CPConfigurationList> list = query.list();
-
-					if (list.isEmpty()) {
-						if (useFinderCache) {
-							finderCache.putResult(
-								_finderPathFetchByERC_C, finderArgs, list);
-						}
-					}
-					else {
-						CPConfigurationList cpConfigurationList = list.get(0);
-
-						result = cpConfigurationList;
-
-						cacheResult(cpConfigurationList);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			if (result instanceof List<?>) {
-				return null;
-			}
-			else {
-				return (CPConfigurationList)result;
-			}
+			return _uniquePersistenceFinderByERC_C.fetch(
+				finderCache, new Object[] {externalReferenceCode, companyId},
+				useFinderCache);
 		}
 	}
 
@@ -4400,24 +3214,9 @@ public class CPConfigurationListPersistenceImpl
 	 */
 	@Override
 	public int countByERC_C(String externalReferenceCode, long companyId) {
-		CPConfigurationList cpConfigurationList = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (cpConfigurationList == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByERC_C.count(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_2 =
-		"cpConfigurationList.externalReferenceCode = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_EXTERNALREFERENCECODE_3 =
-		"(cpConfigurationList.externalReferenceCode IS NULL OR cpConfigurationList.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_C_COMPANYID_2 =
-		"cpConfigurationList.companyId = ?";
 
 	public CPConfigurationListPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -4499,50 +3298,6 @@ public class CPConfigurationListPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all cp configuration lists.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(CPConfigurationListImpl.class);
-
-		finderCache.clearCache(CPConfigurationListImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the cp configuration list.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(CPConfigurationList cpConfigurationList) {
-		entityCache.removeResult(
-			CPConfigurationListImpl.class, cpConfigurationList);
-	}
-
-	@Override
-	public void clearCache(List<CPConfigurationList> cpConfigurationLists) {
-		for (CPConfigurationList cpConfigurationList : cpConfigurationLists) {
-			entityCache.removeResult(
-				CPConfigurationListImpl.class, cpConfigurationList);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(CPConfigurationListImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(CPConfigurationListImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		CPConfigurationListModelImpl cpConfigurationListModelImpl) {
 
@@ -4602,48 +3357,6 @@ public class CPConfigurationListPersistenceImpl
 		throws NoSuchCPConfigurationListException {
 
 		return remove((Serializable)CPConfigurationListId);
-	}
-
-	/**
-	 * Removes the cp configuration list with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the cp configuration list
-	 * @return the cp configuration list that was removed
-	 * @throws NoSuchCPConfigurationListException if a cp configuration list with the primary key could not be found
-	 */
-	@Override
-	public CPConfigurationList remove(Serializable primaryKey)
-		throws NoSuchCPConfigurationListException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			CPConfigurationList cpConfigurationList =
-				(CPConfigurationList)session.get(
-					CPConfigurationListImpl.class, primaryKey);
-
-			if (cpConfigurationList == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchCPConfigurationListException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(cpConfigurationList);
-		}
-		catch (NoSuchCPConfigurationListException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -4846,31 +3559,6 @@ public class CPConfigurationListPersistenceImpl
 	}
 
 	/**
-	 * Returns the cp configuration list with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the cp configuration list
-	 * @return the cp configuration list
-	 * @throws NoSuchCPConfigurationListException if a cp configuration list with the primary key could not be found
-	 */
-	@Override
-	public CPConfigurationList findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchCPConfigurationListException {
-
-		CPConfigurationList cpConfigurationList = fetchByPrimaryKey(primaryKey);
-
-		if (cpConfigurationList == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchCPConfigurationListException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return cpConfigurationList;
-	}
-
-	/**
 	 * Returns the cp configuration list with the primary key or throws a <code>NoSuchCPConfigurationListException</code> if it could not be found.
 	 *
 	 * @param CPConfigurationListId the primary key of the cp configuration list
@@ -4884,53 +3572,9 @@ public class CPConfigurationListPersistenceImpl
 		return findByPrimaryKey((Serializable)CPConfigurationListId);
 	}
 
-	/**
-	 * Returns the cp configuration list with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the cp configuration list
-	 * @return the cp configuration list, or <code>null</code> if a cp configuration list with the primary key could not be found
-	 */
 	@Override
-	public CPConfigurationList fetchByPrimaryKey(Serializable primaryKey) {
-		if (ctPersistenceHelper.isProductionMode(
-				CPConfigurationList.class, primaryKey)) {
-
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKey(primaryKey);
-			}
-		}
-
-		CPConfigurationList cpConfigurationList =
-			(CPConfigurationList)entityCache.getResult(
-				CPConfigurationListImpl.class, primaryKey);
-
-		if (cpConfigurationList != null) {
-			return cpConfigurationList;
-		}
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			cpConfigurationList = (CPConfigurationList)session.get(
-				CPConfigurationListImpl.class, primaryKey);
-
-			if (cpConfigurationList != null) {
-				cacheResult(cpConfigurationList);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return cpConfigurationList;
+	protected CTPersistenceHelper getCTPersistenceHelper() {
+		return ctPersistenceHelper;
 	}
 
 	/**
@@ -4942,328 +3586,6 @@ public class CPConfigurationListPersistenceImpl
 	@Override
 	public CPConfigurationList fetchByPrimaryKey(long CPConfigurationListId) {
 		return fetchByPrimaryKey((Serializable)CPConfigurationListId);
-	}
-
-	@Override
-	public Map<Serializable, CPConfigurationList> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (ctPersistenceHelper.isProductionMode(CPConfigurationList.class)) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
-
-				return super.fetchByPrimaryKeys(primaryKeys);
-			}
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, CPConfigurationList> map =
-			new HashMap<Serializable, CPConfigurationList>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			CPConfigurationList cpConfigurationList = fetchByPrimaryKey(
-				primaryKey);
-
-			if (cpConfigurationList != null) {
-				map.put(primaryKey, cpConfigurationList);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			try (SafeCloseable safeCloseable =
-					ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-						CPConfigurationList.class, primaryKey)) {
-
-				CPConfigurationList cpConfigurationList =
-					(CPConfigurationList)entityCache.getResult(
-						CPConfigurationListImpl.class, primaryKey);
-
-				if (cpConfigurationList == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, cpConfigurationList);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		if ((databaseInMaxParameters > 0) &&
-			(primaryKeys.size() > databaseInMaxParameters)) {
-
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			while (iterator.hasNext()) {
-				Set<Serializable> page = new HashSet<>();
-
-				for (int i = 0;
-					 (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
-
-					page.add(iterator.next());
-				}
-
-				map.putAll(fetchByPrimaryKeys(page));
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler((primaryKeys.size() * 2) + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (CPConfigurationList cpConfigurationList :
-					(List<CPConfigurationList>)query.list()) {
-
-				map.put(
-					cpConfigurationList.getPrimaryKeyObj(),
-					cpConfigurationList);
-
-				cacheResult(cpConfigurationList);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
-	}
-
-	/**
-	 * Returns all the cp configuration lists.
-	 *
-	 * @return the cp configuration lists
-	 */
-	@Override
-	public List<CPConfigurationList> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the cp configuration lists.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPConfigurationListModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cp configuration lists
-	 * @param end the upper bound of the range of cp configuration lists (not inclusive)
-	 * @return the range of cp configuration lists
-	 */
-	@Override
-	public List<CPConfigurationList> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp configuration lists.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPConfigurationListModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cp configuration lists
-	 * @param end the upper bound of the range of cp configuration lists (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of cp configuration lists
-	 */
-	@Override
-	public List<CPConfigurationList> findAll(
-		int start, int end,
-		OrderByComparator<CPConfigurationList> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the cp configuration lists.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CPConfigurationListModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of cp configuration lists
-	 * @param end the upper bound of the range of cp configuration lists (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of cp configuration lists
-	 */
-	@Override
-	public List<CPConfigurationList> findAll(
-		int start, int end,
-		OrderByComparator<CPConfigurationList> orderByComparator,
-		boolean useFinderCache) {
-
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CPConfigurationList.class)) {
-
-			FinderPath finderPath = null;
-			Object[] finderArgs = null;
-
-			if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-
-				if (useFinderCache) {
-					finderPath = _finderPathWithoutPaginationFindAll;
-					finderArgs = FINDER_ARGS_EMPTY;
-				}
-			}
-			else if (useFinderCache) {
-				finderPath = _finderPathWithPaginationFindAll;
-				finderArgs = new Object[] {start, end, orderByComparator};
-			}
-
-			List<CPConfigurationList> list = null;
-
-			if (useFinderCache) {
-				list = (List<CPConfigurationList>)finderCache.getResult(
-					finderPath, finderArgs, this);
-			}
-
-			if (list == null) {
-				StringBundler sb = null;
-				String sql = null;
-
-				if (orderByComparator != null) {
-					sb = new StringBundler(
-						2 + (orderByComparator.getOrderByFields().length * 2));
-
-					sb.append(_SQL_SELECT_CPCONFIGURATIONLIST);
-
-					appendOrderByComparator(
-						sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-					sql = sb.toString();
-				}
-				else {
-					sql = _SQL_SELECT_CPCONFIGURATIONLIST;
-
-					sql = sql.concat(
-						CPConfigurationListModelImpl.ORDER_BY_JPQL);
-				}
-
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(sql);
-
-					list = (List<CPConfigurationList>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-					cacheResult(list);
-
-					if (useFinderCache) {
-						finderCache.putResult(finderPath, finderArgs, list);
-					}
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return list;
-		}
-	}
-
-	/**
-	 * Removes all the cp configuration lists from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (CPConfigurationList cpConfigurationList : findAll()) {
-			remove(cpConfigurationList);
-		}
-	}
-
-	/**
-	 * Returns the number of cp configuration lists.
-	 *
-	 * @return the number of cp configuration lists
-	 */
-	@Override
-	public int countAll() {
-		try (SafeCloseable safeCloseable =
-				ctPersistenceHelper.setCTCollectionIdWithSafeCloseable(
-					CPConfigurationList.class)) {
-
-			Long count = (Long)finderCache.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-			if (count == null) {
-				Session session = null;
-
-				try {
-					session = openSession();
-
-					Query query = session.createQuery(
-						_SQL_COUNT_CPCONFIGURATIONLIST);
-
-					count = (Long)query.uniqueResult();
-
-					finderCache.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
-				catch (Exception exception) {
-					throw processException(exception);
-				}
-				finally {
-					closeSession(session);
-				}
-			}
-
-			return count.intValue();
-		}
 	}
 
 	@Override
@@ -5375,18 +3697,6 @@ public class CPConfigurationListPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByUuid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
 			new String[] {
@@ -5405,10 +3715,30 @@ public class CPConfigurationListPersistenceImpl
 			new String[] {String.class.getName()}, new String[] {"uuid_"},
 			false);
 
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByUuid,
+			_finderPathWithoutPaginationFindByUuid, _finderPathCountByUuid,
+			_SQL_SELECT_CPCONFIGURATIONLIST_WHERE,
+			_SQL_COUNT_CPCONFIGURATIONLIST_WHERE,
+			CPConfigurationListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"cpConfigurationList.", "uuid", FinderColumn.Type.STRING, "=",
+				true, true, CPConfigurationList::getUuid));
+
 		_finderPathFetchByUUID_G = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "groupId"}, true);
+
+		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByUUID_G,
+			_SQL_SELECT_CPCONFIGURATIONLIST_WHERE,
+			new FinderColumn<>(
+				"cpConfigurationList.", "uuid", FinderColumn.Type.STRING, "=",
+				true, false, CPConfigurationList::getUuid),
+			new FinderColumn<>(
+				"cpConfigurationList.", "groupId", FinderColumn.Type.LONG, "=",
+				true, true, CPConfigurationList::getGroupId));
 
 		_finderPathWithPaginationFindByUuid_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
@@ -5429,6 +3759,21 @@ public class CPConfigurationListPersistenceImpl
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "companyId"}, false);
 
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUuid_C,
+				_finderPathWithoutPaginationFindByUuid_C,
+				_finderPathCountByUuid_C, _SQL_SELECT_CPCONFIGURATIONLIST_WHERE,
+				_SQL_COUNT_CPCONFIGURATIONLIST_WHERE,
+				CPConfigurationListModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"cpConfigurationList.", "uuid", FinderColumn.Type.STRING,
+					"=", true, false, CPConfigurationList::getUuid),
+				new FinderColumn<>(
+					"cpConfigurationList.", "companyId", FinderColumn.Type.LONG,
+					"=", true, true, CPConfigurationList::getCompanyId));
+
 		_finderPathWithPaginationFindByCompanyId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCompanyId",
 			new String[] {
@@ -5446,6 +3791,19 @@ public class CPConfigurationListPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCompanyId",
 			new String[] {Long.class.getName()}, new String[] {"companyId"},
 			false);
+
+		_collectionPersistenceFinderByCompanyId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByCompanyId,
+				_finderPathWithoutPaginationFindByCompanyId,
+				_finderPathCountByCompanyId,
+				_SQL_SELECT_CPCONFIGURATIONLIST_WHERE,
+				_SQL_COUNT_CPCONFIGURATIONLIST_WHERE,
+				CPConfigurationListModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"cpConfigurationList.", "companyId", FinderColumn.Type.LONG,
+					"=", true, true, CPConfigurationList::getCompanyId));
 
 		_finderPathWithPaginationFindByParentCPConfigurationListId =
 			new FinderPath(
@@ -5469,6 +3827,21 @@ public class CPConfigurationListPersistenceImpl
 			"countByParentCPConfigurationListId",
 			new String[] {Long.class.getName()},
 			new String[] {"parentCPConfigurationListId"}, false);
+
+		_collectionPersistenceFinderByParentCPConfigurationListId =
+			new CollectionPersistenceFinder<>(
+				this,
+				_finderPathWithPaginationFindByParentCPConfigurationListId,
+				_finderPathWithoutPaginationFindByParentCPConfigurationListId,
+				_finderPathCountByParentCPConfigurationListId,
+				_SQL_SELECT_CPCONFIGURATIONLIST_WHERE,
+				_SQL_COUNT_CPCONFIGURATIONLIST_WHERE,
+				CPConfigurationListModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"cpConfigurationList.", "parentCPConfigurationListId",
+					FinderColumn.Type.LONG, "=", true, true,
+					CPConfigurationList::getParentCPConfigurationListId));
 
 		_finderPathWithPaginationFindByG_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C",
@@ -5513,6 +3886,19 @@ public class CPConfigurationListPersistenceImpl
 			new String[] {Long.class.getName(), Boolean.class.getName()},
 			new String[] {"groupId", "master"}, false);
 
+		_collectionPersistenceFinderByG_M = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByG_M,
+			_finderPathWithoutPaginationFindByG_M, _finderPathCountByG_M,
+			_SQL_SELECT_CPCONFIGURATIONLIST_WHERE,
+			_SQL_COUNT_CPCONFIGURATIONLIST_WHERE,
+			CPConfigurationListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"cpConfigurationList.", "groupId", FinderColumn.Type.LONG, "=",
+				true, false, CPConfigurationList::getGroupId),
+			new FinderColumn<>(
+				"cpConfigurationList.", "master", FinderColumn.Type.BOOLEAN,
+				"=", true, true, CPConfigurationList::isMaster));
+
 		_finderPathWithPaginationFindByLtD_S = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByLtD_S",
 			new String[] {
@@ -5526,6 +3912,19 @@ public class CPConfigurationListPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByLtD_S",
 			new String[] {Date.class.getName(), Integer.class.getName()},
 			new String[] {"displayDate", "status"}, false);
+
+		_collectionPersistenceFinderByLtD_S = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByLtD_S, null,
+			_finderPathWithPaginationCountByLtD_S,
+			_SQL_SELECT_CPCONFIGURATIONLIST_WHERE,
+			_SQL_COUNT_CPCONFIGURATIONLIST_WHERE,
+			CPConfigurationListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"cpConfigurationList.", "displayDate", FinderColumn.Type.DATE,
+				"<", true, false, CPConfigurationList::getDisplayDate),
+			new FinderColumn<>(
+				"cpConfigurationList.", "status", FinderColumn.Type.INTEGER,
+				"=", true, true, CPConfigurationList::getStatus));
 
 		_finderPathWithPaginationFindByG_C_S = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_C_S",
@@ -5582,6 +3981,17 @@ public class CPConfigurationListPersistenceImpl
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"externalReferenceCode", "companyId"}, true);
 
+		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByERC_C,
+			_SQL_SELECT_CPCONFIGURATIONLIST_WHERE,
+			new FinderColumn<>(
+				"cpConfigurationList.", "externalReferenceCode",
+				FinderColumn.Type.STRING, "=", true, false,
+				CPConfigurationList::getExternalReferenceCode),
+			new FinderColumn<>(
+				"cpConfigurationList.", "companyId", FinderColumn.Type.LONG,
+				"=", true, true, CPConfigurationList::getCompanyId));
+
 		CPConfigurationListUtil.setPersistence(this);
 	}
 
@@ -5627,13 +4037,8 @@ public class CPConfigurationListPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
-	private static Long _getTime(Date date) {
-		if (date == null) {
-			return null;
-		}
-
-		return date.getTime();
-	}
+	private static final String _ENTITY_ALIAS_PREFIX =
+		CPConfigurationListModelImpl.ENTITY_ALIAS + ".";
 
 	private static final String _SQL_SELECT_CPCONFIGURATIONLIST =
 		"SELECT cpConfigurationList FROM CPConfigurationList cpConfigurationList";
@@ -5641,16 +4046,8 @@ public class CPConfigurationListPersistenceImpl
 	private static final String _SQL_SELECT_CPCONFIGURATIONLIST_WHERE =
 		"SELECT cpConfigurationList FROM CPConfigurationList cpConfigurationList WHERE ";
 
-	private static final String _SQL_COUNT_CPCONFIGURATIONLIST =
-		"SELECT COUNT(cpConfigurationList) FROM CPConfigurationList cpConfigurationList";
-
 	private static final String _SQL_COUNT_CPCONFIGURATIONLIST_WHERE =
 		"SELECT COUNT(cpConfigurationList) FROM CPConfigurationList cpConfigurationList WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "cpConfigurationList.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No CPConfigurationList exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No CPConfigurationList exists with the key {";
@@ -5667,4 +4064,4 @@ public class CPConfigurationListPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1576613495
+// LIFERAY-SERVICE-BUILDER-HASH:-1820942657

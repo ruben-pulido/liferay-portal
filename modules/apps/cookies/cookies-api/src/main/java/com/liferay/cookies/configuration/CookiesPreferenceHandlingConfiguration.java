@@ -7,7 +7,6 @@ package com.liferay.cookies.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.portal.configuration.metatype.annotations.ExtendedAttributeDefinition;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
@@ -78,10 +77,15 @@ public interface CookiesPreferenceHandlingConfiguration {
 	)
 	public boolean floatingIconEnabled();
 
+	@Meta.AD(
+		deflt = "false", description = "global-privacy-control-enabled-help",
+		name = "global-privacy-control-enabled", required = false
+	)
+	public boolean globalPrivacyControlEnabled();
+
 	@Meta.AD(deflt = "0", name = "modified-date", required = false)
 	public long modifiedDate();
 
-	@ExtendedAttributeDefinition(featureFlagKey = "LPD-75032")
 	@Meta.AD(
 		deflt = "false", description = "cookie-store-consent-help",
 		name = "cookie-store-consent", required = false

@@ -177,7 +177,15 @@ public class WebServerServlet extends HttpServlet {
 				return true;
 			}
 			else if (Validator.isNumber(pathArray[0])) {
-				_checkFileEntry(pathArray);
+				try (SafeCloseable safeCloseable =
+						CTCollectionThreadLocal.
+							setCTCollectionIdWithSafeCloseable(
+								ParamUtil.getLong(
+									httpServletRequest,
+									"previewCTCollectionId"))) {
+
+					_checkFileEntry(pathArray);
+				}
 			}
 			else if (_PATH_SEPARATOR_FILE_ENTRY.equals(pathArray[0])) {
 				FileEntry fileEntry = _resolveFileEntry(
@@ -369,7 +377,6 @@ public class WebServerServlet extends HttpServlet {
 
 			TransactionConfig.Builder builder = new TransactionConfig.Builder();
 
-			builder.setReadOnly(true);
 			builder.setRollbackForClasses(Exception.class);
 
 			TransactionInvokerUtil.invoke(
@@ -1354,6 +1361,9 @@ public class WebServerServlet extends HttpServlet {
 			TrashHelper trashTitleResolver = _trashTitleResolverSnapshot.get();
 
 			fileName = trashTitleResolver.getOriginalTitle(fileName);
+		}
+		else if (ParamUtil.getBoolean(httpServletRequest, "useTitle")) {
+			fileName = fileEntry.getTitle();
 		}
 
 		httpServletResponse.setHeader(

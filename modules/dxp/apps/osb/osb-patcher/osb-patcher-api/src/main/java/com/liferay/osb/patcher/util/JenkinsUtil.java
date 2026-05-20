@@ -10,6 +10,7 @@ import com.liferay.osb.patcher.constants.JenkinsConstants;
 import com.liferay.osb.patcher.constants.PatcherActionKeys;
 import com.liferay.osb.patcher.constants.PatcherBuildConstants;
 import com.liferay.osb.patcher.constants.PatcherConstants;
+import com.liferay.osb.patcher.constants.PatcherFixConstants;
 import com.liferay.osb.patcher.constants.PatcherProductVersionConstants;
 import com.liferay.osb.patcher.constants.PatcherProjectVersionConstants;
 import com.liferay.osb.patcher.constants.WorkflowConstants;
@@ -80,33 +81,31 @@ public class JenkinsUtil {
 		).put(
 			"osb.patcher.fixIds", patcherFixIds
 		).put(
-			"osb.patcher.type",
-			patcherConfiguration.patcherSharedRequestBuildPatchPatcherType()
-		).build();
+			"osb.patcher.siblingCommittish",
+			() -> {
+				if (patcherProjectVersion.isCombinedBranch()) {
+					return null;
+				}
 
-		if (!patcherProjectVersion.isCombinedBranch()) {
-			String siblingCommittish = StringPool.BLANK;
+				PatcherFix siblingMainPatcherFix =
+					PatcherFixUtil.fetchSiblingChildPatcherBuildMainFix(
+						patcherFix);
 
-			PatcherFix siblingMainPatcherFix =
-				PatcherFixUtil.fetchSiblingChildPatcherBuildMainFix(patcherFix);
-
-			if (siblingMainPatcherFix != null) {
-				siblingCommittish =
-					patcherConfiguration.patcherGitTagPrefix() +
+				if (siblingMainPatcherFix != null) {
+					return patcherConfiguration.patcherGitTagPrefix() +
 						siblingMainPatcherFix.getPatcherFixId();
-			}
-			else {
+				}
+
 				PatcherProjectVersion siblingPatcherProjectVersion =
 					PatcherProjectVersionUtil.getSiblingPatcherProjectVersion(
 						patcherProjectVersion.getCommittish());
 
-				siblingCommittish =
-					siblingPatcherProjectVersion.getCommittish();
+				return siblingPatcherProjectVersion.getCommittish();
 			}
-
-			jenkinsRequestParameters.put(
-				"osb.patcher.siblingCommittish", siblingCommittish);
-		}
+		).put(
+			"osb.patcher.type",
+			patcherConfiguration.patcherSharedRequestBuildPatchPatcherType()
+		).build();
 
 		return getAgentJenkinsRequestParameters(
 			patcherProjectVersion, patcherFix, jenkinsRequestParameters);
@@ -118,35 +117,66 @@ public class JenkinsUtil {
 				PatcherFix patcherFix)
 		throws Exception {
 
-		Map<String, String> jenkinsRequestParameters = HashMapBuilder.put(
-			"osb.patcher.committish", String.valueOf(patcherFix.getCommittish())
-		).build();
-
-		if (patcherFix.getStatus() == WorkflowConstants.STATUS_FIX_REBASING) {
-			List<Long> parentPatcherFixIds =
-				PatcherFixRelUtil.getParentPatcherFixIds(
-					patcherFix.getPatcherFixId());
-
-			long rebaseFromPatcherFixId = parentPatcherFixIds.get(0);
-
-			jenkinsRequestParameters.put(
-				"osb.patcher.fixId", String.valueOf(rebaseFromPatcherFixId));
-
-			jenkinsRequestParameters.put("osb.patcher.rebase", "true");
-		}
-
-		jenkinsRequestParameters.put(
-			"osb.patcher.fixIds", String.valueOf(patcherFix.getPatcherFixId()));
-		jenkinsRequestParameters.put(
-			"osb.patcher.gitRemoteURL", patcherFix.getGitRemoteURL());
-
 		PatcherConfiguration patcherConfiguration =
 			ConfigurationProviderUtil.getCompanyConfiguration(
 				PatcherConfiguration.class, patcherFix.getCompanyId());
 
-		jenkinsRequestParameters.put(
+		Map<String, String> jenkinsRequestParameters = HashMapBuilder.put(
+			"osb.patcher.autoFix",
+			() -> {
+				if (patcherFix.getType() == PatcherFixConstants.TYPE_AUTO_FIX) {
+					return "true";
+				}
+
+				return null;
+			}
+		).put(
+			"osb.patcher.committish", String.valueOf(patcherFix.getCommittish())
+		).put(
+			"osb.patcher.fixId",
+			() -> {
+				if (patcherFix.getStatus() !=
+						WorkflowConstants.STATUS_FIX_REBASING) {
+
+					return null;
+				}
+
+				List<Long> parentPatcherFixIds =
+					PatcherFixRelUtil.getParentPatcherFixIds(
+						patcherFix.getPatcherFixId());
+
+				long rebaseFromPatcherFixId = parentPatcherFixIds.get(0);
+
+				return String.valueOf(rebaseFromPatcherFixId);
+			}
+		).put(
+			"osb.patcher.fixIds", String.valueOf(patcherFix.getPatcherFixId())
+		).put(
+			"osb.patcher.gitRemoteURL", patcherFix.getGitRemoteURL()
+		).put(
+			"osb.patcher.rebase",
+			() -> {
+				if (patcherFix.getStatus() ==
+						WorkflowConstants.STATUS_FIX_REBASING) {
+
+					return "true";
+				}
+
+				return null;
+			}
+		).put(
+			"osb.patcher.tickets",
+			() -> {
+				if (patcherFix.getType() == PatcherFixConstants.TYPE_AUTO_FIX) {
+					return patcherFix.getName();
+				}
+
+				return null;
+			}
+		).put(
 			"osb.patcher.type",
-			patcherConfiguration.patcherSharedRequestAddFixPatcherType());
+			patcherConfiguration.patcherSharedRequestAddFixPatcherType()
+		).build();
 
 		return getAgentJenkinsRequestParameters(
 			patcherProjectVersion, patcherFix, jenkinsRequestParameters);
@@ -604,7 +634,7 @@ public class JenkinsUtil {
 			DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
 				"yyyyMMddHHmmss");
 
-			PatcherFixLocalServiceUtil.updateRequestKey(
+			patcherFix = PatcherFixLocalServiceUtil.updateRequestKey(
 				patcherFix.getPatcherFixId(),
 				PatcherUtil.generatePatcherKey(
 					PatcherFix.class.getName(), patcherFix.getPatcherFixId(),
@@ -874,8 +904,7 @@ public class JenkinsUtil {
 	}
 
 	protected static void validateJenkinsRequestKey(
-			BaseModel<?> baseModel, String jenkinsStatusJSONString,
-			String requestKey)
+			BaseModel<?> baseModel, String jenkinsStatusJSON, String requestKey)
 		throws Exception {
 
 		if (Validator.isNull(requestKey)) {
@@ -886,7 +915,7 @@ public class JenkinsUtil {
 		}
 
 		JSONObject jenkinsStatusJSONObject = JSONFactoryUtil.createJSONObject(
-			jenkinsStatusJSONString);
+			jenkinsStatusJSON);
 
 		String jenkinsStatusRequestKey = jenkinsStatusJSONObject.getString(
 			"patcherRequestKey");
@@ -901,7 +930,7 @@ public class JenkinsUtil {
 			sb.append(" with request key ");
 			sb.append(requestKey);
 			sb.append(" is not contained in the status file ");
-			sb.append(jenkinsStatusJSONString);
+			sb.append(jenkinsStatusJSON);
 
 			throw new Exception(sb.toString());
 		}

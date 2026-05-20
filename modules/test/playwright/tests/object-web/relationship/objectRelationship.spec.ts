@@ -1380,6 +1380,66 @@ test.describe('Manage object relationships through Model Builder', () => {
 });
 
 test.describe('Manage object relationships through Objects Admin UI', () => {
+	test(
+		'can create many to many relationship',
+		{tag: '@LPS-135401'},
+		async ({
+			addNewObjectRelationshipModalPage,
+			apiHelpers,
+			objectRelationshipsPage,
+			page,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await objectRelationshipsPage.addObjectRelationshipButton.click();
+
+			const relationshipLabel = `Relationship${getRandomInt()}`;
+
+			const objectRelationship =
+				await addNewObjectRelationshipModalPage.handleForm({
+					manyRecordsOf: objectDefinition2.label['en_US'],
+					objectRelationshipLabel: relationshipLabel,
+					type: 'Many to Many',
+				});
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await waitForAlert(
+				page,
+				'Success:Relationship was created successfully'
+			);
+
+			await expect(
+				page.getByRole('link', {name: relationshipLabel})
+			).toBeVisible();
+		}
+	);
+
 	test('can create object relationship with parameter', async ({
 		addNewObjectRelationshipModalPage,
 		apiHelpers,
@@ -1458,6 +1518,621 @@ test.describe('Manage object relationships through Objects Admin UI', () => {
 		).toHaveText(objectRelationship1.label['en_US']);
 	});
 
+	test(
+		'can create one to many relationship',
+		{tag: '@LPS-135400'},
+		async ({
+			addNewObjectRelationshipModalPage,
+			apiHelpers,
+			objectRelationshipsPage,
+			page,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await objectRelationshipsPage.addObjectRelationshipButton.click();
+
+			const relationshipLabel = `Relationship${getRandomInt()}`;
+
+			const objectRelationship =
+				await addNewObjectRelationshipModalPage.handleForm({
+					manyRecordsOf: objectDefinition2.label['en_US'],
+					objectRelationshipLabel: relationshipLabel,
+					type: 'One to Many',
+				});
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await waitForAlert(
+				page,
+				'Success:Relationship was created successfully'
+			);
+
+			await expect(
+				page.getByRole('link', {name: relationshipLabel})
+			).toBeVisible();
+		}
+	);
+
+	test(
+		'can delete relationship',
+		{tag: '@LPS-135400'},
+		async ({apiHelpers, objectRelationshipsPage, page}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const relationshipLabel = `Relationship${getRandomInt()}`;
+			const relationshipName = `relationship${getRandomInt()}`;
+
+			await (
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI)
+			).postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+				objectDefinition1.externalReferenceCode,
+				{
+					label: {en_US: relationshipLabel},
+					name: relationshipName,
+					objectDefinitionExternalReferenceCode2:
+						objectDefinition2.externalReferenceCode,
+					objectDefinitionId2: objectDefinition2.id,
+					objectDefinitionName2: objectDefinition2.name,
+					type: 'oneToMany',
+				}
+			);
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await objectRelationshipsPage.actionsButton.click();
+
+			await objectRelationshipsPage.deleteObjectRelationshipOption.click();
+
+			await page
+				.getByPlaceholder('Confirm relationship name', {exact: false})
+				.fill(relationshipName);
+
+			await page.getByRole('button', {name: 'Delete'}).click();
+
+			await expect(page.getByText('No Results Found')).toBeVisible();
+		}
+	);
+
+	test(
+		'can update relationship',
+		{tag: '@LPS-135400'},
+		async ({apiHelpers, objectRelationshipsPage, page}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const relationshipLabel = `Relationship${getRandomInt()}`;
+
+			const {body: objectRelationship} =
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					objectDefinition1.externalReferenceCode,
+					{
+						label: {en_US: relationshipLabel},
+						name: `relationship${getRandomInt()}`,
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
+						type: 'oneToMany',
+					}
+				);
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await page.getByRole('link', {name: relationshipLabel}).click();
+
+			const newLabel = `UpdatedRelationship${getRandomInt()}`;
+			const iframe = page.frameLocator('iframe');
+
+			await iframe.getByLabel('LabelMandatory').fill(newLabel);
+			await objectRelationshipsPage.saveObjectRelationshipButton.click();
+
+			await waitForAlert(
+				page,
+				'Success:The object relationship was updated successfully.'
+			);
+
+			await expect(
+				page.getByRole('link', {name: newLabel})
+			).toBeVisible();
+		}
+	);
+
+	test(
+		'can view relationship',
+		{tag: '@LPS-135400'},
+		async ({apiHelpers, objectRelationshipsPage, page}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const relationshipLabel = `ViewRelationship${getRandomInt()}`;
+
+			const {body: objectRelationship} =
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					objectDefinition1.externalReferenceCode,
+					{
+						label: {en_US: relationshipLabel},
+						name: `viewRelationship${getRandomInt()}`,
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
+						type: 'oneToMany',
+					}
+				);
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await expect(
+				page.getByRole('link', {name: relationshipLabel})
+			).toBeVisible();
+		}
+	);
+
+	test(
+		'cannot create duplicated relationship name',
+		{tag: '@LPS-135400'},
+		async ({apiHelpers, objectRelationshipsPage, page}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const relationshipLabel = `Relationship${getRandomInt()}`;
+			const relationshipName = `relationship${getRandomInt()}`;
+
+			const {body: objectRelationship} =
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					objectDefinition1.externalReferenceCode,
+					{
+						label: {en_US: relationshipLabel},
+						name: relationshipName,
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
+						type: 'oneToMany',
+					}
+				);
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await objectRelationshipsPage.addObjectRelationshipButton.click();
+
+			const objectRelationshipFormPage = new ObjectRelationshipFormPage(
+				page,
+				'.modal-content'
+			);
+
+			await objectRelationshipFormPage.labelInput.fill(relationshipLabel);
+
+			await objectRelationshipFormPage.nameInput.fill(relationshipName);
+
+			await objectRelationshipFormPage.selectType('One to Many');
+
+			await objectRelationshipFormPage.selectManyRecordsOf(
+				objectDefinition2.label['en_US']
+			);
+
+			await objectRelationshipFormPage.saveButton.click();
+
+			await waitForAlert(
+				page,
+				`Error:There is already an object relationship with this name in the object definition "${objectDefinition1.name}"`,
+				{autoClose: false, type: 'danger'}
+			);
+		}
+	);
+
+	test(
+		'cannot leave relationship fields blank',
+		{tag: '@LPS-135400'},
+		async ({apiHelpers, objectRelationshipsPage, page}) => {
+			const objectDefinition =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition.id,
+				type: 'objectDefinition',
+			});
+
+			await objectRelationshipsPage.goto(objectDefinition.label['en_US']);
+
+			await objectRelationshipsPage.addObjectRelationshipButton.click();
+
+			const objectRelationshipFormPage = new ObjectRelationshipFormPage(
+				page,
+				'.modal-content'
+			);
+
+			await objectRelationshipFormPage.saveButton.click();
+
+			await expect(page.getByText('Required')).toHaveCount(3);
+		}
+	);
+
+	test(
+		'creates relationship on both objects for many to many',
+		{tag: '@LPS-135401'},
+		async ({
+			addNewObjectRelationshipModalPage,
+			apiHelpers,
+			objectRelationshipsPage,
+			page,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await objectRelationshipsPage.addObjectRelationshipButton.click();
+
+			const relationshipLabel = `Relationship${getRandomInt()}`;
+
+			const objectRelationship =
+				await addNewObjectRelationshipModalPage.handleForm({
+					manyRecordsOf: objectDefinition2.label['en_US'],
+					objectRelationshipLabel: relationshipLabel,
+					type: 'Many to Many',
+				});
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await waitForAlert(
+				page,
+				'Success:Relationship was created successfully'
+			);
+
+			await objectRelationshipsPage.goto(
+				objectDefinition2.label['en_US']
+			);
+
+			await expect(
+				page.getByRole('link', {name: relationshipLabel})
+			).toBeVisible();
+		}
+	);
+
+	test(
+		'does not create relationship field on many to many',
+		{tag: '@LPS-135401'},
+		async ({
+			addNewObjectRelationshipModalPage,
+			apiHelpers,
+			objectRelationshipsPage,
+			page,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await objectRelationshipsPage.addObjectRelationshipButton.click();
+
+			const relationshipLabel = `Relationship${getRandomInt()}`;
+
+			const objectRelationship =
+				await addNewObjectRelationshipModalPage.handleForm({
+					manyRecordsOf: objectDefinition2.label['en_US'],
+					objectRelationshipLabel: relationshipLabel,
+					type: 'Many to Many',
+				});
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await waitForAlert(
+				page,
+				'Success:Relationship was created successfully'
+			);
+
+			await page.getByRole('link', {name: 'Fields'}).click();
+
+			await expect(
+				page.getByRole('link', {name: relationshipLabel})
+			).not.toBeVisible();
+		}
+	);
+
+	test(
+		'does not delete other fields when relationship field is deleted',
+		{tag: '@LPS-135400'},
+		async ({
+			apiHelpers,
+			objectFieldsPage,
+			objectRelationshipsPage,
+			page,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const relationshipName = `relationship${getRandomInt()}`;
+
+			await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+				objectDefinition1.externalReferenceCode,
+				{
+					label: {en_US: `Relationship${getRandomInt()}`},
+					name: relationshipName,
+					objectDefinitionExternalReferenceCode2:
+						objectDefinition2.externalReferenceCode,
+					objectDefinitionId2: objectDefinition2.id,
+					objectDefinitionName2: objectDefinition2.name,
+					type: 'oneToMany',
+				}
+			);
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await objectRelationshipsPage.actionsButton.click();
+
+			await objectRelationshipsPage.deleteObjectRelationshipOption.click();
+
+			await page
+				.getByPlaceholder('Confirm relationship name', {exact: false})
+				.fill(relationshipName);
+
+			await page.getByRole('button', {name: 'Delete'}).click();
+
+			await objectFieldsPage.goto(objectDefinition2.label['en_US']);
+
+			await expect(
+				page.getByRole('link', {name: 'textField'})
+			).toBeVisible();
+		}
+	);
+
+	test(
+		'has prevent deletion type selected by default',
+		{tag: '@LPS-135400'},
+		async ({
+			addNewObjectRelationshipModalPage,
+			apiHelpers,
+			objectRelationshipsPage,
+			page,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await objectRelationshipsPage.addObjectRelationshipButton.click();
+
+			const relationshipLabel = `Relationship${getRandomInt()}`;
+
+			const objectRelationship =
+				await addNewObjectRelationshipModalPage.handleForm({
+					manyRecordsOf: objectDefinition2.label['en_US'],
+					objectRelationshipLabel: relationshipLabel,
+					type: 'One to Many',
+				});
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await waitForAlert(
+				page,
+				'Success:Relationship was created successfully'
+			);
+
+			await page.getByRole('link', {name: relationshipLabel}).click();
+
+			await expect(
+				page.frameLocator('iframe').getByLabel('Deletion Type')
+			).toContainText('Prevent');
+		}
+	);
+
 	test('object relationship autocomplete field filters object definition by label', async ({
 		apiHelpers,
 		objectRelationshipsPage,
@@ -1529,4 +2204,80 @@ test.describe('Manage object relationships through Objects Admin UI', () => {
 			'Success:Relationship was created successfully.'
 		);
 	});
+
+	test(
+		'shows empty state when there is no relationship',
+		{tag: '@LPS-135400'},
+		async ({apiHelpers, objectRelationshipsPage, page}) => {
+			const objectDefinition =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition.id,
+				type: 'objectDefinition',
+			});
+
+			await objectRelationshipsPage.goto(objectDefinition.label['en_US']);
+
+			await expect(page.getByText('No Results Found')).toBeVisible();
+		}
+	);
+
+	test(
+		'shows name of related object definition on relationship tab',
+		{tag: '@LPS-135400'},
+		async ({apiHelpers, objectRelationshipsPage, page}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const {body: objectRelationship} =
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					objectDefinition1.externalReferenceCode,
+					{
+						label: {en_US: `Relationship${getRandomInt()}`},
+						name: `relationship${getRandomInt()}`,
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
+						type: 'oneToMany',
+					}
+				);
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await objectRelationshipsPage.goto(
+				objectDefinition1.label['en_US']
+			);
+
+			await expect(
+				page.getByText(objectDefinition2.label['en_US'])
+			).toBeVisible();
+		}
+	);
 });

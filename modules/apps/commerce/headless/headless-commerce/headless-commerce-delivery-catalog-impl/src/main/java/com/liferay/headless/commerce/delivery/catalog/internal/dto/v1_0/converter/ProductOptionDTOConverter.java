@@ -9,6 +9,7 @@ import com.liferay.commerce.product.model.CPDefinitionOptionRel;
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
 import com.liferay.commerce.product.model.CPOption;
 import com.liferay.commerce.product.service.CPDefinitionOptionRelLocalService;
+import com.liferay.commerce.product.service.CPDefinitionOptionValueRelLocalService;
 import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.ProductOption;
 import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.ProductOptionValue;
 import com.liferay.headless.commerce.delivery.catalog.internal.dto.v1_0.converter.constants.DTOConverterConstants;
@@ -80,8 +81,21 @@ public class ProductOptionDTOConverter
 
 		List<ProductOptionValue> productOptionValues = new ArrayList<>();
 
+		List<CPDefinitionOptionValueRel> cpDefinitionOptionValueRels = null;
+
+		if (cpDefinitionOptionRel.isSkuContributor()) {
+			cpDefinitionOptionValueRels =
+				_cpDefinitionOptionValueRelLocalService.
+					getApprovedCPInstanceCPDefinitionOptionValueRels(
+						cpDefinitionOptionRel.getCPDefinitionOptionRelId());
+		}
+		else {
+			cpDefinitionOptionValueRels =
+				cpDefinitionOptionRel.getCPDefinitionOptionValueRels();
+		}
+
 		for (CPDefinitionOptionValueRel cpDefinitionOptionValueRel :
-				cpDefinitionOptionRel.getCPDefinitionOptionValueRels()) {
+				cpDefinitionOptionValueRels) {
 
 			if (cpDefinitionOptionValueRel.getCPDefinitionOptionRelId() == 0) {
 				cpDefinitionOptionValueRel.setCPDefinitionOptionRelId(
@@ -114,6 +128,10 @@ public class ProductOptionDTOConverter
 	@Reference
 	private CPDefinitionOptionRelLocalService
 		_cpDefinitionOptionRelLocalService;
+
+	@Reference
+	private CPDefinitionOptionValueRelLocalService
+		_cpDefinitionOptionValueRelLocalService;
 
 	@Reference
 	private Language _language;

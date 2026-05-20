@@ -3,31 +3,49 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {IInternalRenderer} from '@liferay/frontend-data-set-web';
+import {
+	IBulkActionItem,
+	IInternalRenderer,
+} from '@liferay/frontend-data-set-web';
 import {sub} from 'frontend-js-web';
 
-import {OBJECT_ENTRY_FOLDER_CLASS_NAME} from '../../common/utils/constants';
+import {
+	FDS_EVENT_UPDATE_DISPLAY,
+	OBJECT_ENTRY_FOLDER_CLASS_NAME,
+} from '../../common/utils/constants';
 import {openGenericFDSDeleteConfirmationModal} from '../../common/utils/genericOpenModalUtil';
 import {getFormattedLabel} from '../../common/utils/getFormattedText';
 import {getScopeExternalReferenceCode} from '../../common/utils/getScopeExternalReferenceCode';
 import {displayDeleteSuccessToast} from '../../common/utils/toastUtil';
 import deleteAssetEntriesBulkAction from './actions/deleteAssetEntriesBulkAction';
+import restoreAssetEntriesBulkAction from './actions/restoreAssetEntriesBulkAction';
 import restoreItemAction from './actions/restoreItemAction';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
 import SimpleActionLinkRenderer from './cell_renderers/SimpleActionLinkRenderer';
 import SpaceRendererWithCache from './cell_renderers/SpaceRendererWithCache';
+import transformFDSBulkActions from './utils/transformFDSBulkActions';
 
 export default function RecycleBinFDSPropsTransformer({
+	additionalProps,
+	bulkActions = [],
 	itemsActions = [],
 	...otherProps
 }: {
+	additionalProps: {additionalAPIURLParameters?: string};
 	apiURL: string;
+	bulkActions: Array<IBulkActionItem>;
 	id: string;
 	itemsActions?: any[];
 	otherProps: any;
 }) {
+	const {additionalAPIURLParameters, ...remainingAdditionalProps} =
+		additionalProps || {};
+
 	return {
 		...otherProps,
+		additionalAPIURLParameters,
+		additionalProps: remainingAdditionalProps,
+		bulkActions: transformFDSBulkActions(bulkActions),
 		customRenderers: {
 			tableCell: [
 				{
@@ -125,6 +143,31 @@ export default function RecycleBinFDSPropsTransformer({
 					dataSetId: otherProps.id,
 					selectedData,
 				});
+			}
+			else if (action?.data?.id === 'restore') {
+				if (selectedData?.items?.length === 1) {
+					const item = selectedData.items[0];
+					const title =
+						item.embedded?.title ||
+						Liferay.Language.get('untitled-asset');
+
+					await restoreItemAction(
+						title,
+						() =>
+							Liferay.fire(FDS_EVENT_UPDATE_DISPLAY, {
+								id: otherProps.id,
+							}),
+						item.actions?.restore?.method,
+						item.actions?.restore?.href
+					);
+				}
+				else {
+					restoreAssetEntriesBulkAction({
+						apiURL: otherProps.apiURL,
+						dataSetId: otherProps.id,
+						selectedData,
+					});
+				}
 			}
 		},
 	};

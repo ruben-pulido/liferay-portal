@@ -28,6 +28,8 @@ export class CheckoutPage extends CommerceDNDTablePage {
 	readonly assertDataDeliveryGroupModal: (data: string) => Locator;
 	readonly addressInput: Locator;
 	readonly cityInput: Locator;
+	readonly commerceAddressOptions: Locator;
+	readonly commerceAddressSelect: Locator;
 	readonly commerceBillingAddress: Locator;
 	readonly commerceShippingAddress: Locator;
 	readonly configurationIFrame: FrameLocator;
@@ -37,6 +39,8 @@ export class CheckoutPage extends CommerceDNDTablePage {
 	readonly configurationMenuItem: Locator;
 	readonly continueButton: Locator;
 	readonly countryInput: Locator;
+	readonly deliveryTermLink: (label: string) => Locator;
+	readonly deliveryTermOption: (label: string) => Locator;
 	readonly emailInput: Locator;
 	readonly goToOrderDetailsButton: Locator;
 	readonly headingDeliveryGroupModal: (name: string) => Locator;
@@ -55,6 +59,9 @@ export class CheckoutPage extends CommerceDNDTablePage {
 		strictEqual?: boolean
 	) => Promise<{column: Locator; row: Locator}>;
 	readonly page: Page;
+	readonly paymentMethodRadio: (name: string) => Locator;
+	readonly paymentTermLink: (label: string) => Locator;
+	readonly paymentTermOption: (label: string) => Locator;
 	readonly phoneNumberInput: Locator;
 	readonly previousButton: Locator;
 	readonly regionInput: Locator;
@@ -82,6 +89,11 @@ export class CheckoutPage extends CommerceDNDTablePage {
 		);
 		this.addressInput = page.getByPlaceholder('Address', {exact: true});
 		this.cityInput = page.getByPlaceholder('City', {exact: true});
+		this.commerceAddressSelect = page.locator(
+			'select[id$="_commerceAddress"]'
+		);
+		this.commerceAddressOptions =
+			this.commerceAddressSelect.locator('option');
 		this.commerceBillingAddress = page.getByTestId(
 			'commerceBillingAddress'
 		);
@@ -111,6 +123,9 @@ export class CheckoutPage extends CommerceDNDTablePage {
 			name: 'Configuration',
 		});
 		this.countryInput = page.getByTitle('Country');
+		this.deliveryTermLink = (label: string) =>
+			page.getByRole('link', {name: label});
+		this.deliveryTermOption = (label: string) => page.getByLabel(label);
 		this.emailInput = page.locator('input[id*="_email"]');
 		this.headingDeliveryGroupModal = (name: string) => {
 			return page.getByRole('heading', {exact: true, name});
@@ -158,6 +173,11 @@ export class CheckoutPage extends CommerceDNDTablePage {
 			);
 		};
 		this.page = page;
+		this.paymentMethodRadio = (name: string) =>
+			page.getByRole('radio', {name});
+		this.paymentTermLink = (label: string) =>
+			page.getByRole('link', {name: label});
+		this.paymentTermOption = (label: string) => page.getByLabel(label);
 		this.phoneNumberInput = page.getByPlaceholder('Phone Number', {
 			exact: true,
 		});

@@ -18,6 +18,9 @@ export class CommerceAdminOrderDetailsPage extends CommerceDNDTablePage {
 		action: string
 	) => Promise<Locator>;
 	readonly editPaymentMethodFrame: FrameLocator;
+	readonly editPaymentStatusFrame: FrameLocator;
+	readonly editPaymentStatusSelect: Locator;
+	readonly editPaymentStatusSubmitButton: Locator;
 	readonly expandProductButton: Locator;
 	readonly headerDetailsTitle: Locator;
 	readonly orderDetailsEntryDescription: (
@@ -39,6 +42,7 @@ export class CommerceAdminOrderDetailsPage extends CommerceDNDTablePage {
 	readonly orderNote: (note: string) => Promise<Locator>;
 	readonly orderNotesLink: Locator;
 	readonly orderNotesTextArea: Locator;
+	readonly orderStatusProcessing: Locator;
 	readonly orderSummaryFrame: FrameLocator;
 	readonly orderSummaryLink: Locator;
 	readonly orderSummarySaveButton: Locator;
@@ -48,6 +52,7 @@ export class CommerceAdminOrderDetailsPage extends CommerceDNDTablePage {
 	readonly paymentMethodRadioButton: (
 		paymentMethod: string
 	) => Promise<Locator>;
+	readonly paymentStatusText: (status: string) => Locator;
 	readonly recalculateButton: Locator;
 	readonly recalculateOrderSummaryModalTitle: Locator;
 	readonly recalculateOrderSummaryModalCancelButton: Locator;
@@ -94,6 +99,14 @@ export class CommerceAdminOrderDetailsPage extends CommerceDNDTablePage {
 		this.editPaymentMethodFrame = page.frameLocator(
 			'iframe[title="Edit Payment Method"]'
 		);
+		this.editPaymentStatusFrame = page.frameLocator(
+			'iframe[title="Edit Payment Status"]'
+		);
+		this.editPaymentStatusSelect =
+			this.editPaymentStatusFrame.getByLabel('Payment Status');
+		this.editPaymentStatusSubmitButton = page.getByRole('button', {
+			name: 'Submit',
+		});
 		this.expandProductButton = page
 			.locator('.autofit-col-toggle')
 			.getByRole('button');
@@ -139,6 +152,9 @@ export class CommerceAdminOrderDetailsPage extends CommerceDNDTablePage {
 			name: 'Questions and Answers',
 		});
 		this.orderNotesTextArea = page.getByPlaceholder('Type your note here.');
+		this.orderStatusProcessing = page.getByText('Processing', {
+			exact: true,
+		});
 		this.orderSummaryFrame = page.frameLocator(
 			'iframe[title="Order Summary"]'
 		);
@@ -162,6 +178,8 @@ export class CommerceAdminOrderDetailsPage extends CommerceDNDTablePage {
 				.filter({hasText: paymentMethod})
 				.getByLabel('');
 		};
+		this.paymentStatusText = (status: string) =>
+			page.getByText(status).first();
 		this.recalculateButton = page
 			.getByText('Order Summary')
 			.getByRole('link', {name: 'Recalculate'});

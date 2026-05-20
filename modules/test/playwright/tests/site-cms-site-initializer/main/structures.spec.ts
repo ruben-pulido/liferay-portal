@@ -12,6 +12,7 @@ import {loginTest} from '../../../fixtures/loginTest';
 import {clickAndExpectToBeHidden} from '../../../utils/clickAndExpectToBeHidden';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
+import {performUserSwitch, userData} from '../../../utils/performLogin';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import postSingleApproverCopy from '../../portal-workflow-kaleo-designer-web/main/utils/postSingleApproverCopy';
 import {structureBuilderPagesTest} from '../structure-builder/fixtures/structureBuilderPagesTest';
@@ -27,27 +28,6 @@ const test = mergeTests(
 	loginTest()
 );
 
-let workflowDefinitionIds: number[] = [];
-
-let workflowDefinitionName: string;
-
-test.beforeEach(async ({apiHelpers}) => {
-	const workFlowDefinition = await postSingleApproverCopy(apiHelpers);
-
-	workflowDefinitionIds.push(workFlowDefinition.id);
-	workflowDefinitionName = workFlowDefinition.name;
-});
-
-test.afterEach(async ({apiHelpers}) => {
-	for (const workflowDefinitionId of workflowDefinitionIds) {
-		await apiHelpers.headlessAdminWorkflow.deleteWorkflowDefinition(
-			workflowDefinitionId
-		);
-	}
-
-	workflowDefinitionIds = [];
-});
-
 test(
 	'Structure can be deleted without confirmation if it does not have an approved status',
 	{tag: '@LPD-51516'},
@@ -55,6 +35,7 @@ test(
 		const objectDefinition =
 			(await apiHelpers.objectAdmin.postRandomObjectDefinition({
 				objectFolderExternalReferenceCode: 'L_CMS_FILE_TYPES',
+				scope: 'depot',
 				status: {code: 2},
 			})) as ObjectDefinition;
 		const structureName = objectDefinition.name;
@@ -80,6 +61,7 @@ test(
 		const objectDefinition =
 			(await apiHelpers.objectAdmin.postRandomObjectDefinition({
 				objectFolderExternalReferenceCode: 'L_CMS_FILE_TYPES',
+				scope: 'depot',
 				status: {code: 0},
 			})) as ObjectDefinition;
 		const structureName = objectDefinition.name;
@@ -197,6 +179,7 @@ test(
 		const objectDefinition =
 			(await apiHelpers.objectAdmin.postRandomObjectDefinition({
 				objectFolderExternalReferenceCode: 'L_CMS_FILE_TYPES',
+				scope: 'depot',
 				status: {code: 0},
 			})) as ObjectDefinition;
 
@@ -234,7 +217,40 @@ test(
 test(
 	'Bulk assign default workflow modal',
 	{tag: '@LPD-76635'},
-	async ({page, structuresPage}) => {
+	async ({apiHelpers, page, structuresPage}) => {
+		let workflowDefinition: WorkflowDefinition;
+
+		await test.step('Create a custom workflow definition', async () => {
+			workflowDefinition = await postSingleApproverCopy(apiHelpers);
+
+			apiHelpers.data.push({
+				id: workflowDefinition.id,
+				type: 'workflowDefinition',
+			});
+		});
+
+		await test.step('Log in as an CMS Administrator', async () => {
+			const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+			userData[user.alternateName] = {
+				name: user.givenName,
+				password: 'test',
+				surname: user.familyName,
+			};
+
+			const cmsAdminRole =
+				await apiHelpers.headlessAdminUser.getRoleByName(
+					'CMS Administrator'
+				);
+
+			await apiHelpers.headlessAdminUser.postRoleUserAccountAssociation(
+				cmsAdminRole.id,
+				Number(user.id)
+			);
+
+			await performUserSwitch(page, user.alternateName);
+		});
+
 		await test.step('Check if the modal show the correct value default value', async () => {
 			await structuresPage.goto();
 
@@ -245,7 +261,7 @@ test(
 			await page
 				.getByLabel('Select Workflow')
 				.first()
-				.selectOption(workflowDefinitionName);
+				.selectOption(workflowDefinition.name);
 
 			await page.getByRole('button', {name: 'Publish'}).click();
 
@@ -296,7 +312,7 @@ test(
 
 			await expect(
 				page.getByLabel('Select Workflow').first()
-			).toHaveValue(workflowDefinitionName);
+			).toHaveValue(workflowDefinition.name);
 
 			await page.getByLabel('Select Workflow').first().selectOption('');
 
@@ -340,7 +356,7 @@ test(
 		await test.step('Check if the Bulk action can update multiple structures', async () => {
 			await page
 				.getByLabel('Default Workflow', {exact: true})
-				.selectOption(workflowDefinitionName);
+				.selectOption(workflowDefinition.name);
 
 			await expect(
 				page.getByRole('button', {name: 'Assign Workflow'})
@@ -363,7 +379,7 @@ test(
 			await expect(page.getByLabel('Default Workflow')).toBeVisible();
 
 			await expect(page.getByLabel('Default Workflow')).toHaveValue(
-				workflowDefinitionName
+				workflowDefinition.name
 			);
 
 			await structuresPage.goto();
@@ -375,9 +391,10 @@ test(
 			await expect(page.getByLabel('Default Workflow')).toBeVisible();
 
 			await expect(page.getByLabel('Default Workflow')).toHaveValue(
-				workflowDefinitionName
+				workflowDefinition.name
 			);
 		});
+
 		await test.step('Check if the Bulk action can clear multiple structures', async () => {
 			await structuresPage.goto();
 
@@ -429,5 +446,71 @@ test(
 
 			await expect(page.getByLabel('Default Workflow')).toHaveValue('');
 		});
+	}
+);
+
+test(
+	'Export and Import Content Structures actions open the export modal from the breadcrumb',
+	{tag: '@LPD-78381'},
+	async ({page, structuresPage}) => {
+		await structuresPage.openMenuItem('Export');
+
+		await expect(page.locator('.modal-title')).toHaveText(
+			'Export Content Structures'
+		);
+
+		await structuresPage.openMenuItem('Import');
+
+		await expect(page.locator('.modal-title')).toHaveText(
+			'Import Content Structures'
+		);
+	}
+);
+
+test(
+	'Export Content Structures list includes only object definitions from CMS folders',
+	{tag: '@LPD-78381'},
+	async ({apiHelpers, page, structuresPage}) => {
+		const contentCountBadge = page
+			.getByRole('dialog', {name: 'Export Content Structures'})
+			.frameLocator('iframe')
+			.locator(
+				'label[for="_com_liferay_exportimport_web_portlet_ExportImportPortlet_PORTLET_DATA_com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet"] .badge-info'
+			);
+
+		await structuresPage.openMenuItem('Export');
+
+		await contentCountBadge.waitFor({state: 'visible'});
+
+		const initialCount = parseInt(
+			(await contentCountBadge.textContent()) ?? '0',
+			10
+		);
+
+		const objectDefinition1 =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFolderExternalReferenceCode: 'L_CMS_FILE_TYPES',
+				scope: 'depot',
+				status: {code: 2},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition1.id,
+			type: 'objectDefinition',
+		});
+
+		const objectDefinition2 =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				status: {code: 2},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition2.id,
+			type: 'objectDefinition',
+		});
+
+		await structuresPage.openMenuItem('Export');
+
+		await expect(contentCountBadge).toHaveText(String(initialCount + 1));
 	}
 );

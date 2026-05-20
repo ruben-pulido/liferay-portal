@@ -31,6 +31,7 @@ import {HeadlessCommerceAdminCatalogApiHelper} from './HeadlessCommerceAdminCata
 import {HeadlessCommerceAdminChannelApiHelper} from './HeadlessCommerceAdminChannelApiHelper';
 import {HeadlessCommerceAdminInventoryApiHelper} from './HeadlessCommerceAdminInventoryApiHelper';
 import {HeadlessCommerceAdminOrderApiHelper} from './HeadlessCommerceAdminOrderApiHelper';
+import {HeadlessCommerceAdminOrderAttachmentApiHelper} from './HeadlessCommerceAdminOrderAttachmentApiHelper';
 import {HeadlessCommerceAdminPaymentApiHelper} from './HeadlessCommerceAdminPaymentApiHelper';
 import {HeadlessCommerceAdminPricingApiHelper} from './HeadlessCommerceAdminPricingApiHelper';
 import {HeadlessCommerceAdminShipmentApiHelper} from './HeadlessCommerceAdminShipmentApiHelper';
@@ -137,6 +138,7 @@ export class ApiHelpers {
 	readonly headlessCommerceAdminChannel: HeadlessCommerceAdminChannelApiHelper;
 	readonly headlessCommerceAdminInventoryApiHelper: HeadlessCommerceAdminInventoryApiHelper;
 	readonly headlessCommerceAdminOrder: HeadlessCommerceAdminOrderApiHelper;
+	readonly headlessCommerceAdminOrderAttachment: HeadlessCommerceAdminOrderAttachmentApiHelper;
 	readonly headlessCommerceAdminPaymentApiHelper: HeadlessCommerceAdminPaymentApiHelper;
 	readonly headlessCommerceAdminPricing: HeadlessCommerceAdminPricingApiHelper;
 	readonly headlessCommerceAdminShipment: HeadlessCommerceAdminShipmentApiHelper;
@@ -219,6 +221,8 @@ export class ApiHelpers {
 			new HeadlessCommerceAdminInventoryApiHelper(this);
 		this.headlessCommerceAdminOrder =
 			new HeadlessCommerceAdminOrderApiHelper(this);
+		this.headlessCommerceAdminOrderAttachment =
+			new HeadlessCommerceAdminOrderAttachmentApiHelper(this);
 		this.headlessCommerceAdminPaymentApiHelper =
 			new HeadlessCommerceAdminPaymentApiHelper(this);
 		this.headlessCommerceAdminPricing =
@@ -510,6 +514,11 @@ export class DataApiHelpers extends ApiHelpers {
 			else if (item.type === 'document') {
 				await this.headlessDelivery.deleteDocument(item.id);
 			}
+			else if (item.type === 'keyword') {
+				await this.headlessAdminTaxonomy.deleteKeyword({
+					id: item.id,
+				});
+			}
 			else if (item.type === 'layoutSetPrototype') {
 				await this.jsonWebServicesLayoutSetPrototype.deleteLayoutSetPrototypes(
 					item.id
@@ -597,6 +606,16 @@ export class DataApiHelpers extends ApiHelpers {
 			}
 			else if (item.type === 'order') {
 				await this.headlessCommerceAdminOrder.deleteOrder(item.id);
+			}
+			else if (item.type === 'orderAttachment') {
+				const [orderId, attachmentId] = String(item.id)
+					.split('_')
+					.map(Number);
+
+				await this.headlessCommerceAdminOrderAttachment.deleteOrderAttachment(
+					attachmentId,
+					orderId
+				);
 			}
 			else if (item.type === 'orderRule') {
 				await this.headlessCommerceAdminOrder.deleteOrderRules(item.id);
@@ -729,6 +748,11 @@ export class DataApiHelpers extends ApiHelpers {
 			}
 			else if (item.type === 'wishList') {
 				await this.headlessCommerceDeliveryCatalog.deleteWishList(
+					item.id
+				);
+			}
+			else if (item.type === 'workflowDefinition') {
+				await this.headlessAdminWorkflow.deleteWorkflowDefinition(
 					item.id
 				);
 			}

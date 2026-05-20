@@ -1,8 +1,5 @@
 resource "google_container_cluster" "primary" {
 	addons_config {
-		gcs_fuse_csi_driver_config {
-			enabled=true
-		}
 		horizontal_pod_autoscaling {
 			disabled=false
 		}
@@ -17,7 +14,7 @@ resource "google_container_cluster" "primary" {
 		evaluation_mode="PROJECT_SINGLETON_POLICY_ENFORCE"
 	}
 	datapath_provider="ADVANCED_DATAPATH"
-	deletion_protection=false
+	deletion_protection=var.deletion_protection
 	depends_on=[google_compute_subnetwork.subnet]
 	dynamic "authenticator_groups_config" {
 		content {

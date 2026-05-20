@@ -78,11 +78,13 @@ public interface FragmentCollectionLocalService
 	public FragmentCollection addFragmentCollection(
 		FragmentCollection fragmentCollection);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public FragmentCollection addFragmentCollection(
 			String externalReferenceCode, long userId, long groupId,
 			String name, String description, ServiceContext serviceContext)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
 	public FragmentCollection addFragmentCollection(
 			String externalReferenceCode, long userId, long groupId,
 			String fragmentCollectionKey, String name, String description,
@@ -250,6 +252,31 @@ public interface FragmentCollectionLocalService
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getExportableFragmentCollections(
+		long[] fragmentCollectionIds);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getExportableFragmentCollectionsByGroupId(
+		long[] groupIds, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getExportableFragmentCollectionsByGroupId(
+		long[] groupIds, String name, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getExportableFragmentCollectionsCount(
+		long[] fragmentCollectionIds);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getExportableFragmentCollectionsCountByGroupId(long[] groupIds);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getExportableFragmentCollectionsCountByGroupId(
+		long[] groupIds, String name);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		PortletDataContext portletDataContext);
 
@@ -297,6 +324,18 @@ public interface FragmentCollectionLocalService
 	public List<FragmentCollection> getFragmentCollections(int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(
+		long groupId, boolean includeSystem);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(
+		long groupId, boolean includeSystem, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<FragmentCollection> getFragmentCollections(
 		long groupId, int start, int end);
 
@@ -307,7 +346,35 @@ public interface FragmentCollectionLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<FragmentCollection> getFragmentCollections(
+		long groupId, String name, boolean includeSystem, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(
 		long groupId, String name, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(long[] groupIds);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(
+		long[] groupIds, boolean marketplace, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(
+		long[] groupIds, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(
+		long[] groupIds, String name, boolean marketplace, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentCollection> getFragmentCollections(
+		long[] groupIds, String name, int start, int end,
 		OrderByComparator<FragmentCollection> orderByComparator);
 
 	/**
@@ -343,6 +410,30 @@ public interface FragmentCollectionLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getFragmentCollectionsCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getFragmentCollectionsCount(long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getFragmentCollectionsCount(long groupId, boolean includeSystem);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getFragmentCollectionsCount(
+		long groupId, String name, boolean includeSystem);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getFragmentCollectionsCount(long[] groupIds);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getFragmentCollectionsCount(
+		long[] groupIds, boolean marketplace);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getFragmentCollectionsCount(long[] groupIds, String name);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getFragmentCollectionsCount(
+		long[] groupIds, String name, boolean marketplace);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
@@ -384,6 +475,7 @@ public interface FragmentCollectionLocalService
 	public FragmentCollection updateFragmentCollection(
 		FragmentCollection fragmentCollection);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public FragmentCollection updateFragmentCollection(
 			long fragmentCollectionId, String name, String description)
 		throws PortalException;
@@ -404,4 +496,4 @@ public interface FragmentCollectionLocalService
 		throws E;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1786451978
+// LIFERAY-SERVICE-BUILDER-HASH:604461299

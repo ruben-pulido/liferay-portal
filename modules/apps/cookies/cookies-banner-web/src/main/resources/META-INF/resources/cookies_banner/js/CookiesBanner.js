@@ -67,11 +67,7 @@ export default function ({
 			}
 		);
 
-		if (
-			Liferay.FeatureFlags['LPD-75032'] &&
-			Liferay.ThemeDisplay.isSignedIn() &&
-			hasGuestUserConfigCookie()
-		) {
+		if (Liferay.ThemeDisplay.isSignedIn() && hasGuestUserConfigCookie()) {
 			hasPreviouslyStoredConsent().then((hasPreviouslyStoredConsent) => {
 				if (hasPreviouslyStoredConsent) {
 					removeAllCookies(
@@ -356,7 +352,7 @@ function checkFloatingIcon(cookieBanner, namespace) {
 			floatingIconButton.classList.remove('d-inline-flex');
 			floatingIconButton.classList.add('d-none');
 		}
-		else if (Liferay.FeatureFlags['LPD-75027']) {
+		else {
 			floatingIconButton.classList.remove('d-none');
 			floatingIconButton.classList.add('d-inline-flex');
 		}

@@ -14,7 +14,9 @@ import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
+import {waitForModal} from '../../../utils/waitFor';
 import {waitForAlert} from '../../../utils/waitForAlert';
+import {checkInZip} from '../../../utils/zip';
 import {structureBuilderPagesTest} from '../structure-builder/fixtures/structureBuilderPagesTest';
 import {cmsPagesTest} from './fixtures/cmsPagesTest';
 import {PicklistBuilderPage} from './pages/PicklistBuilderPage';
@@ -560,6 +562,214 @@ test(
 				applicationName,
 				String(objectEntry.id)
 			);
+		});
+	}
+);
+
+test(
+	'Contents section places most recently modified content at the top',
+	{tag: '@LPD-85725'},
+	async ({apiHelpers, contentsPage, page}) => {
+		const applicationName = 'cms/basic-web-contents';
+		const spaceName = 'Default';
+		const firstTitle = getRandomString();
+		const secondTitle = getRandomString();
+		const thirdTitle = getRandomString();
+
+		let firstEntry;
+		let secondEntry;
+		let thirdEntry;
+
+		try {
+			firstEntry = await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: firstTitle,
+				},
+				applicationName,
+				spaceName
+			);
+
+			secondEntry = await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: secondTitle,
+				},
+				applicationName,
+				spaceName
+			);
+
+			thirdEntry = await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: thirdTitle,
+				},
+				applicationName,
+				spaceName
+			);
+
+			await expect(async () => {
+				await contentsPage.goto();
+
+				await expect(page.locator('tbody tr').first()).toContainText(
+					thirdTitle
+				);
+			}).toPass();
+		}
+		finally {
+			for (const entry of [firstEntry, secondEntry, thirdEntry]) {
+				if (entry) {
+					await apiHelpers.objectEntry.deleteObjectEntry(
+						applicationName,
+						String(entry.id)
+					);
+				}
+			}
+		}
+	}
+);
+
+test(
+	'Export for Translation a content asset',
+	{tag: '@LPD-85361'},
+	async ({apiHelpers, assetsPage, page}) => {
+		const basicWebContentTitle = `Basic Web Content ${getRandomString()}`;
+
+		await test.step('Create CMS asset', async () => {
+			await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: basicWebContentTitle,
+				},
+				'cms/basic-web-contents',
+				'Default'
+			);
+		});
+
+		await test.step('Exporting for Translation with a single target language', async () => {
+			await assetsPage.gotoContents();
+
+			await assetsPage.execItemAction({
+				action: 'Export for Translation',
+				filter: basicWebContentTitle,
+			});
+
+			await waitForModal({
+				page,
+			});
+
+			await expect(
+				page
+					.locator('.modal-header')
+					.getByText('Export for Translation')
+			).toBeVisible();
+
+			const filePath = await assetsPage.exportForTranslation(false, [
+				'Spanish (Spain)',
+			]);
+
+			await expect(
+				checkInZip(filePath, `${basicWebContentTitle}-en_US-es_ES.xlf`)
+			).resolves.toBe(true);
+		});
+
+		await test.step('Exporting for Translation with a multiple target languages', async () => {
+			await assetsPage.execItemAction({
+				action: 'Export for Translation',
+				filter: basicWebContentTitle,
+			});
+
+			await waitForModal({
+				page,
+			});
+
+			await expect(
+				page
+					.locator('.modal-header')
+					.getByText('Export for Translation')
+			).toBeVisible();
+
+			const filePath = await assetsPage.exportForTranslation(false, [
+				'Chinese (China)',
+				'Spanish (Spain)',
+			]);
+
+			await expect(
+				checkInZip(filePath, `${basicWebContentTitle}-en_US-es_ES.xlf`)
+			).resolves.toBe(true);
+
+			await expect(
+				checkInZip(filePath, `${basicWebContentTitle}-en_US-zh_CN.xlf`)
+			).resolves.toBe(true);
+		});
+	}
+);
+
+test(
+	'Creation menu for structure restricted to specific spaces lists only those spaces',
+	{tag: '@LPD-87258'},
+	async ({
+		apiHelpers,
+		contentsPage,
+		homePage,
+		page,
+		structureBuilderPage,
+	}) => {
+		const allowedSpace =
+			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+				name: `Allowed ${getRandomString()}`,
+				type: 'Space',
+			});
+		const forbiddenSpace =
+			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+				name: `Forbidden ${getRandomString()}`,
+				type: 'Space',
+			});
+
+		const structureLabel = `Restricted${getRandomInt()}`;
+
+		await structureBuilderPage.createStructureFromData({
+			label: structureLabel,
+			page: structureBuilderPage,
+			spaces: ['Default', allowedSpace.name],
+		});
+
+		const expectOnlyAcceptedSpaces = async () => {
+			const dropdown = page.getByRole('listbox');
+
+			await dropdown.waitFor({state: 'visible'});
+
+			await expect(
+				dropdown.getByRole('option', {name: 'Default'})
+			).toBeVisible();
+			await expect(
+				dropdown.getByRole('option', {name: allowedSpace.name})
+			).toBeVisible();
+			await expect(
+				dropdown.getByRole('option', {name: forbiddenSpace.name})
+			).toHaveCount(0);
+		};
+
+		await test.step('From Contents creation menu', async () => {
+			await contentsPage.goto();
+
+			await contentsPage.newButton.click();
+
+			await page.getByRole('menuitem', {name: structureLabel}).click();
+
+			await page.getByRole('dialog').getByLabel('Space').click();
+
+			await expectOnlyAcceptedSpaces();
+		});
+
+		await test.step('From Home Quick Actions', async () => {
+			await homePage.goto();
+
+			await page.getByRole('button', {name: structureLabel}).click();
+
+			await page.getByLabel('SpaceMandatory').click();
+
+			await expectOnlyAcceptedSpaces();
 		});
 	}
 );

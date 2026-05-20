@@ -39,8 +39,10 @@ const renderComponent = () => {
 			<ContentEditorToolbar
 				backURL=""
 				displayDate="2025-10-31T13:00"
+				getPreviewDataURL="getPreviewDataURL"
 				hasWorkflow={false}
-				headerTitle="New Content"
+				headerTitle="New Content edit"
+				title="New Content"
 				type="Basic Web Content"
 			/>
 
@@ -91,6 +93,9 @@ describe('ContentEditorToolbar', () => {
 					return result;
 				}),
 			},
+			detach: jest.fn(),
+			fire: jest.fn(),
+			on: jest.fn(),
 		};
 	});
 

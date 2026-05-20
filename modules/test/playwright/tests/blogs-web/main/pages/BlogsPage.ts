@@ -13,6 +13,7 @@ export class BlogsPage {
 	readonly deleteAllBlogEntriesButton: Locator;
 	readonly page: Page;
 	readonly permissionsFrameLocator: FrameLocator;
+	readonly searchInput: Locator;
 	readonly selectAllBlogEntriesCheckBox: Locator;
 	readonly successMessage: Locator;
 
@@ -25,6 +26,7 @@ export class BlogsPage {
 		this.permissionsFrameLocator = page.frameLocator(
 			'iframe[title="Permissions"]'
 		);
+		this.searchInput = page.getByPlaceholder('Search');
 		this.selectAllBlogEntriesCheckBox = page.getByLabel(
 			'Select All Items on the Page'
 		);
@@ -42,7 +44,11 @@ export class BlogsPage {
 	}
 
 	async goToBlogEntryAction(action: string, title: string) {
-		await this.page.getByLabel('More actions').waitFor();
+		await this.page
+			.locator('.card')
+			.filter({hasText: title})
+			.getByLabel('More actions')
+			.waitFor();
 
 		await clickAndExpectToBeVisible({
 			autoClick: true,
@@ -89,6 +95,45 @@ export class BlogsPage {
 		await this.permissionsFrameLocator
 			.getByRole('button', {name: 'Cancel'})
 			.click();
+	}
+
+	async searchEntry(term: string) {
+		await this.searchInput.fill(term);
+		await this.searchInput.press('Enter');
+	}
+
+	async moveEntryToRecycleBin(title: string) {
+		const card = this.page.locator('.card').filter({hasText: title});
+
+		await this.goToBlogEntryAction('Delete', title);
+
+		const okButton = this.page
+			.getByRole('dialog')
+			.getByRole('button', {name: 'OK'});
+
+		try {
+			await okButton.click({timeout: 2000});
+		}
+		catch {
+
+			// This will happen when the recycle bin is disabled.  Let's
+			// ignore it so that tests pass in local installations where
+			// the recycle bin has been disabled.
+
+		}
+
+		await expect(card).toHaveCount(0);
+	}
+
+	async assertEntryPresent(title: string, expected: boolean = true) {
+		const card = this.page.locator('.card').filter({hasText: title});
+
+		if (expected) {
+			await expect(card.first()).toBeVisible();
+		}
+		else {
+			await expect(card).toHaveCount(0);
+		}
 	}
 
 	async deleteAllBlogEntries() {

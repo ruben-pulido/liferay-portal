@@ -170,7 +170,7 @@ info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
         'com.liferay.exportimport.report.rest', and version '1.0.0'.. A Java client JAR is available for use with the
-        group ID 'com.liferay', artifact ID 'com.liferay.exportimport.rest.client', and version '1.0.5'."
+        group ID 'com.liferay', artifact ID 'com.liferay.exportimport.rest.client', and version '1.0.6'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -437,7 +437,11 @@ paths:
                 content:
                     multipart/form-data:
                         schema:
-                            $ref: "#/components/schemas/ValidationRequest"
+                            properties:
+                                file:
+                                    format: binary
+                                    type: string
+                            type: object
             responses:
                 200:
                     content:
@@ -510,22 +514,4 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/ImportProcess"
                                 type: array
-            tags: ["ImportProcess"]
-    "/validate":
-        post:
-            operationId: postValidate
-            requestBody:
-                content:
-                    multipart/form-data:
-                        schema:
-                            $ref: "#/components/schemas/ValidationRequest"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ValidationResponse"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/ValidationResponse"
             tags: ["ImportProcess"]

@@ -5,12 +5,9 @@
 
 package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
@@ -18,12 +15,14 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.tools.service.builder.test.exception.NoSuchUndefinedDefaultOrderEntryException;
 import com.liferay.portal.tools.service.builder.test.model.UndefinedDefaultOrderEntry;
@@ -37,12 +36,9 @@ import java.io.Serializable;
 
 import java.lang.reflect.InvocationHandler;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * The persistence implementation for the undefined default order entry service.
@@ -55,7 +51,8 @@ import java.util.Set;
  * @generated
  */
 public class UndefinedDefaultOrderEntryPersistenceImpl
-	extends BasePersistenceImpl<UndefinedDefaultOrderEntry>
+	extends BasePersistenceImpl
+		<UndefinedDefaultOrderEntry, NoSuchUndefinedDefaultOrderEntryException>
 	implements UndefinedDefaultOrderEntryPersistence {
 
 	/*
@@ -72,10 +69,9 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathFetchByName;
+	private UniquePersistenceFinder<UndefinedDefaultOrderEntry>
+		_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the undefined default order entry where name = &#63; or throws a <code>NoSuchUndefinedDefaultOrderEntryException</code> if it could not be found.
@@ -92,20 +88,15 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 			name);
 
 		if (undefinedDefaultOrderEntry == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("name=");
-			sb.append(name);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchUndefinedDefaultOrderEntryException(sb.toString());
+			throw new NoSuchUndefinedDefaultOrderEntryException(message);
 		}
 
 		return undefinedDefaultOrderEntry;
@@ -133,107 +124,8 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	public UndefinedDefaultOrderEntry fetchByName(
 		String name, boolean useFinderCache) {
 
-		name = Objects.toString(name, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {name};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByName, finderArgs, this);
-		}
-
-		if (result instanceof UndefinedDefaultOrderEntry) {
-			UndefinedDefaultOrderEntry undefinedDefaultOrderEntry =
-				(UndefinedDefaultOrderEntry)result;
-
-			if (!Objects.equals(name, undefinedDefaultOrderEntry.getName())) {
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY_WHERE);
-
-			boolean bindName = false;
-
-			if (name.isEmpty()) {
-				sb.append(_FINDER_COLUMN_NAME_NAME_3);
-			}
-			else {
-				bindName = true;
-
-				sb.append(_FINDER_COLUMN_NAME_NAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindName) {
-					queryPos.add(name);
-				}
-
-				List<UndefinedDefaultOrderEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByName, finderArgs, list);
-					}
-				}
-				else {
-					if (list.size() > 1) {
-						Collections.sort(list, Collections.reverseOrder());
-
-						if (_log.isWarnEnabled()) {
-							if (!useFinderCache) {
-								finderArgs = new Object[] {name};
-							}
-
-							_log.warn(
-								"UndefinedDefaultOrderEntryPersistenceImpl.fetchByName(String, boolean) with parameters (" +
-									StringUtil.merge(finderArgs) +
-										") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
-						}
-					}
-
-					UndefinedDefaultOrderEntry undefinedDefaultOrderEntry =
-						list.get(0);
-
-					result = undefinedDefaultOrderEntry;
-
-					cacheResult(undefinedDefaultOrderEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (UndefinedDefaultOrderEntry)result;
-		}
+		return _uniquePersistenceFinderByName.fetch(
+			finderCache, new Object[] {name}, useFinderCache);
 	}
 
 	/**
@@ -260,25 +152,15 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	 */
 	@Override
 	public int countByName(String name) {
-		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry = fetchByName(
-			name);
-
-		if (undefinedDefaultOrderEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByName.count(
+			finderCache, new Object[] {name});
 	}
-
-	private static final String _FINDER_COLUMN_NAME_NAME_2 =
-		"undefinedDefaultOrderEntry.name = ?";
-
-	private static final String _FINDER_COLUMN_NAME_NAME_3 =
-		"(undefinedDefaultOrderEntry.name IS NULL OR undefinedDefaultOrderEntry.name = '')";
 
 	private FinderPath _finderPathWithPaginationFindByName_Collection;
 	private FinderPath _finderPathWithoutPaginationFindByName_Collection;
 	private FinderPath _finderPathCountByName_Collection;
+	private CollectionPersistenceFinder<UndefinedDefaultOrderEntry>
+		_collectionPersistenceFinderByName_Collection;
 
 	/**
 	 * Returns all the undefined default order entries where name = &#63;.
@@ -352,108 +234,9 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 		OrderByComparator<UndefinedDefaultOrderEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		name = Objects.toString(name, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByName_Collection;
-				finderArgs = new Object[] {name};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByName_Collection;
-			finderArgs = new Object[] {name, start, end, orderByComparator};
-		}
-
-		List<UndefinedDefaultOrderEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<UndefinedDefaultOrderEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (UndefinedDefaultOrderEntry undefinedDefaultOrderEntry :
-						list) {
-
-					if (!name.equals(undefinedDefaultOrderEntry.getName())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY_WHERE);
-
-			boolean bindName = false;
-
-			if (name.isEmpty()) {
-				sb.append(_FINDER_COLUMN_NAME_COLLECTION_NAME_3);
-			}
-			else {
-				bindName = true;
-
-				sb.append(_FINDER_COLUMN_NAME_COLLECTION_NAME_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(UndefinedDefaultOrderEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindName) {
-					queryPos.add(name);
-				}
-
-				list = (List<UndefinedDefaultOrderEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByName_Collection.find(
+			finderCache, new Object[] {name}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -477,16 +260,9 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 			return undefinedDefaultOrderEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("name=");
-		sb.append(name);
-
-		sb.append("}");
-
-		throw new NoSuchUndefinedDefaultOrderEntryException(sb.toString());
+		throw new NoSuchUndefinedDefaultOrderEntryException(
+			_collectionPersistenceFinderByName_Collection.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name}));
 	}
 
 	/**
@@ -501,14 +277,8 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 		String name,
 		OrderByComparator<UndefinedDefaultOrderEntry> orderByComparator) {
 
-		List<UndefinedDefaultOrderEntry> list = findByName_Collection(
-			name, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByName_Collection.fetchFirst(
+			finderCache, new Object[] {name}, orderByComparator);
 	}
 
 	/**
@@ -518,12 +288,8 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByName_Collection(String name) {
-		for (UndefinedDefaultOrderEntry undefinedDefaultOrderEntry :
-				findByName_Collection(
-					name, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(undefinedDefaultOrderEntry);
-		}
+		_collectionPersistenceFinderByName_Collection.remove(
+			finderCache, new Object[] {name});
 	}
 
 	/**
@@ -534,65 +300,9 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	 */
 	@Override
 	public int countByName_Collection(String name) {
-		name = Objects.toString(name, "");
-
-		FinderPath finderPath = _finderPathCountByName_Collection;
-
-		Object[] finderArgs = new Object[] {name};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_UNDEFINEDDEFAULTORDERENTRY_WHERE);
-
-			boolean bindName = false;
-
-			if (name.isEmpty()) {
-				sb.append(_FINDER_COLUMN_NAME_COLLECTION_NAME_3);
-			}
-			else {
-				bindName = true;
-
-				sb.append(_FINDER_COLUMN_NAME_COLLECTION_NAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindName) {
-					queryPos.add(name);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByName_Collection.count(
+			finderCache, new Object[] {name});
 	}
-
-	private static final String _FINDER_COLUMN_NAME_COLLECTION_NAME_2 =
-		"undefinedDefaultOrderEntry.name = ?";
-
-	private static final String _FINDER_COLUMN_NAME_COLLECTION_NAME_3 =
-		"(undefinedDefaultOrderEntry.name IS NULL OR undefinedDefaultOrderEntry.name = '')";
 
 	public UndefinedDefaultOrderEntryPersistenceImpl() {
 		setModelClass(UndefinedDefaultOrderEntry.class);
@@ -654,58 +364,6 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all undefined default order entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(UndefinedDefaultOrderEntryImpl.class);
-
-		finderCache.clearCache(UndefinedDefaultOrderEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the undefined default order entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(
-		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry) {
-
-		entityCache.removeResult(
-			UndefinedDefaultOrderEntryImpl.class, undefinedDefaultOrderEntry);
-	}
-
-	@Override
-	public void clearCache(
-		List<UndefinedDefaultOrderEntry> undefinedDefaultOrderEntries) {
-
-		for (UndefinedDefaultOrderEntry undefinedDefaultOrderEntry :
-				undefinedDefaultOrderEntries) {
-
-			entityCache.removeResult(
-				UndefinedDefaultOrderEntryImpl.class,
-				undefinedDefaultOrderEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(UndefinedDefaultOrderEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				UndefinedDefaultOrderEntryImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		UndefinedDefaultOrderEntryModelImpl
 			undefinedDefaultOrderEntryModelImpl) {
@@ -749,50 +407,6 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 		throws NoSuchUndefinedDefaultOrderEntryException {
 
 		return remove((Serializable)undefinedDefaultOrderEntryId);
-	}
-
-	/**
-	 * Removes the undefined default order entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the undefined default order entry
-	 * @return the undefined default order entry that was removed
-	 * @throws NoSuchUndefinedDefaultOrderEntryException if a undefined default order entry with the primary key could not be found
-	 */
-	@Override
-	public UndefinedDefaultOrderEntry remove(Serializable primaryKey)
-		throws NoSuchUndefinedDefaultOrderEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			UndefinedDefaultOrderEntry undefinedDefaultOrderEntry =
-				(UndefinedDefaultOrderEntry)session.get(
-					UndefinedDefaultOrderEntryImpl.class, primaryKey);
-
-			if (undefinedDefaultOrderEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchUndefinedDefaultOrderEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(undefinedDefaultOrderEntry);
-		}
-		catch (NoSuchUndefinedDefaultOrderEntryException
-					noSuchEntityException) {
-
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -910,32 +524,6 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the undefined default order entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the undefined default order entry
-	 * @return the undefined default order entry
-	 * @throws NoSuchUndefinedDefaultOrderEntryException if a undefined default order entry with the primary key could not be found
-	 */
-	@Override
-	public UndefinedDefaultOrderEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchUndefinedDefaultOrderEntryException {
-
-		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry =
-			fetchByPrimaryKey(primaryKey);
-
-		if (undefinedDefaultOrderEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchUndefinedDefaultOrderEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return undefinedDefaultOrderEntry;
-	}
-
-	/**
 	 * Returns the undefined default order entry with the primary key or throws a <code>NoSuchUndefinedDefaultOrderEntryException</code> if it could not be found.
 	 *
 	 * @param undefinedDefaultOrderEntryId the primary key of the undefined default order entry
@@ -961,191 +549,6 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 		long undefinedDefaultOrderEntryId) {
 
 		return fetchByPrimaryKey((Serializable)undefinedDefaultOrderEntryId);
-	}
-
-	/**
-	 * Returns all the undefined default order entries.
-	 *
-	 * @return the undefined default order entries
-	 */
-	@Override
-	public List<UndefinedDefaultOrderEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the undefined default order entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UndefinedDefaultOrderEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of undefined default order entries
-	 * @param end the upper bound of the range of undefined default order entries (not inclusive)
-	 * @return the range of undefined default order entries
-	 */
-	@Override
-	public List<UndefinedDefaultOrderEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the undefined default order entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UndefinedDefaultOrderEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of undefined default order entries
-	 * @param end the upper bound of the range of undefined default order entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of undefined default order entries
-	 */
-	@Override
-	public List<UndefinedDefaultOrderEntry> findAll(
-		int start, int end,
-		OrderByComparator<UndefinedDefaultOrderEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the undefined default order entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>UndefinedDefaultOrderEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of undefined default order entries
-	 * @param end the upper bound of the range of undefined default order entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of undefined default order entries
-	 */
-	@Override
-	public List<UndefinedDefaultOrderEntry> findAll(
-		int start, int end,
-		OrderByComparator<UndefinedDefaultOrderEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<UndefinedDefaultOrderEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<UndefinedDefaultOrderEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY;
-
-				sql = sql.concat(
-					UndefinedDefaultOrderEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<UndefinedDefaultOrderEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the undefined default order entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (UndefinedDefaultOrderEntry undefinedDefaultOrderEntry :
-				findAll()) {
-
-			remove(undefinedDefaultOrderEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of undefined default order entries.
-	 *
-	 * @return the number of undefined default order entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_UNDEFINEDDEFAULTORDERENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -1175,21 +578,16 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathFetchByName = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByName",
 			new String[] {String.class.getName()}, new String[] {"name"}, true);
+
+		_uniquePersistenceFinderByName = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByName,
+			_SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY_WHERE,
+			new FinderColumn<>(
+				"undefinedDefaultOrderEntry.", "name", FinderColumn.Type.STRING,
+				"=", true, true, UndefinedDefaultOrderEntry::getName));
 
 		_finderPathWithPaginationFindByName_Collection = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByName_Collection",
@@ -1208,6 +606,20 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 			new String[] {String.class.getName()}, new String[] {"name"},
 			false);
 
+		_collectionPersistenceFinderByName_Collection =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByName_Collection,
+				_finderPathWithoutPaginationFindByName_Collection,
+				_finderPathCountByName_Collection,
+				_SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY_WHERE,
+				_SQL_COUNT_UNDEFINEDDEFAULTORDERENTRY_WHERE,
+				UndefinedDefaultOrderEntryModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"undefinedDefaultOrderEntry.", "name",
+					FinderColumn.Type.STRING, "=", true, true,
+					UndefinedDefaultOrderEntry::getName));
+
 		UndefinedDefaultOrderEntryUtil.setPersistence(this);
 	}
 
@@ -1223,23 +635,17 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	@ServiceReference(type = FinderCache.class)
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		UndefinedDefaultOrderEntryModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY =
 		"SELECT undefinedDefaultOrderEntry FROM UndefinedDefaultOrderEntry undefinedDefaultOrderEntry";
 
 	private static final String _SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY_WHERE =
 		"SELECT undefinedDefaultOrderEntry FROM UndefinedDefaultOrderEntry undefinedDefaultOrderEntry WHERE ";
 
-	private static final String _SQL_COUNT_UNDEFINEDDEFAULTORDERENTRY =
-		"SELECT COUNT(undefinedDefaultOrderEntry) FROM UndefinedDefaultOrderEntry undefinedDefaultOrderEntry";
-
 	private static final String _SQL_COUNT_UNDEFINEDDEFAULTORDERENTRY_WHERE =
 		"SELECT COUNT(undefinedDefaultOrderEntry) FROM UndefinedDefaultOrderEntry undefinedDefaultOrderEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"undefinedDefaultOrderEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No UndefinedDefaultOrderEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No UndefinedDefaultOrderEntry exists with the key {";
@@ -1253,4 +659,4 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2073967241
+// LIFERAY-SERVICE-BUILDER-HASH:1883425178

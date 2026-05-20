@@ -151,6 +151,8 @@ public abstract class BulkAction implements Cloneable, Serializable {
 			"PermissionObjectBulkSelectionAction"),
 		RESET_PERMISSION_OBJECT_BULK_SELECTION_ACTION(
 			"ResetPermissionObjectBulkSelectionAction"),
+		RESTORE_OBJECT_BULK_SELECTION_ACTION(
+			"RestoreObjectBulkSelectionAction"),
 		STATUS_OBJECT_BULK_SELECTION_ACTION("StatusObjectBulkSelectionAction"),
 		EDIT_OBJECT_CATEGORIES_BULK_SELECTION_ACTION(
 			"EditObjectCategoriesBulkSelectionAction"),
@@ -187,4 +189,4 @@ public abstract class BulkAction implements Cloneable, Serializable {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:1503687640
+// LIFERAY-REST-BUILDER-HASH:-867626296

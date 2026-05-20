@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
@@ -31,6 +30,9 @@ import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -44,8 +46,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -66,7 +66,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = PatcherProductVersionPersistence.class)
 public class PatcherProductVersionPersistenceImpl
-	extends BasePersistenceImpl<PatcherProductVersion>
+	extends BasePersistenceImpl
+		<PatcherProductVersion, NoSuchPatcherProductVersionException>
 	implements PatcherProductVersionPersistence {
 
 	/*
@@ -83,12 +84,11 @@ public class PatcherProductVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByFixDeliveryMethod;
 	private FinderPath _finderPathWithoutPaginationFindByFixDeliveryMethod;
 	private FinderPath _finderPathCountByFixDeliveryMethod;
+	private CollectionPersistenceFinder<PatcherProductVersion>
+		_collectionPersistenceFinderByFixDeliveryMethod;
 
 	/**
 	 * Returns all the patcher product versions where fixDeliveryMethod = &#63;.
@@ -165,98 +165,9 @@ public class PatcherProductVersionPersistenceImpl
 		OrderByComparator<PatcherProductVersion> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByFixDeliveryMethod;
-				finderArgs = new Object[] {fixDeliveryMethod};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByFixDeliveryMethod;
-			finderArgs = new Object[] {
-				fixDeliveryMethod, start, end, orderByComparator
-			};
-		}
-
-		List<PatcherProductVersion> list = null;
-
-		if (useFinderCache) {
-			list = (List<PatcherProductVersion>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (PatcherProductVersion patcherProductVersion : list) {
-					if (fixDeliveryMethod !=
-							patcherProductVersion.getFixDeliveryMethod()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_PATCHERPRODUCTVERSION_WHERE);
-
-			sb.append(_FINDER_COLUMN_FIXDELIVERYMETHOD_FIXDELIVERYMETHOD_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(PatcherProductVersionModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(fixDeliveryMethod);
-
-				list = (List<PatcherProductVersion>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByFixDeliveryMethod.find(
+			finderCache, new Object[] {fixDeliveryMethod}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -281,16 +192,11 @@ public class PatcherProductVersionPersistenceImpl
 			return patcherProductVersion;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("fixDeliveryMethod=");
-		sb.append(fixDeliveryMethod);
-
-		sb.append("}");
-
-		throw new NoSuchPatcherProductVersionException(sb.toString());
+		throw new NoSuchPatcherProductVersionException(
+			_collectionPersistenceFinderByFixDeliveryMethod.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {fixDeliveryMethod}));
 	}
 
 	/**
@@ -305,14 +211,8 @@ public class PatcherProductVersionPersistenceImpl
 		int fixDeliveryMethod,
 		OrderByComparator<PatcherProductVersion> orderByComparator) {
 
-		List<PatcherProductVersion> list = findByFixDeliveryMethod(
-			fixDeliveryMethod, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByFixDeliveryMethod.fetchFirst(
+			finderCache, new Object[] {fixDeliveryMethod}, orderByComparator);
 	}
 
 	/**
@@ -409,7 +309,7 @@ public class PatcherProductVersionPersistenceImpl
 		if (orderByComparator != null) {
 			if (getDB().isSupportsInlineDistinct()) {
 				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+					sb, _ENTITY_ALIAS_PREFIX, orderByComparator, true);
 			}
 			else {
 				appendOrderByComparator(
@@ -469,13 +369,8 @@ public class PatcherProductVersionPersistenceImpl
 	 */
 	@Override
 	public void removeByFixDeliveryMethod(int fixDeliveryMethod) {
-		for (PatcherProductVersion patcherProductVersion :
-				findByFixDeliveryMethod(
-					fixDeliveryMethod, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(patcherProductVersion);
-		}
+		_collectionPersistenceFinderByFixDeliveryMethod.remove(
+			finderCache, new Object[] {fixDeliveryMethod});
 	}
 
 	/**
@@ -486,45 +381,8 @@ public class PatcherProductVersionPersistenceImpl
 	 */
 	@Override
 	public int countByFixDeliveryMethod(int fixDeliveryMethod) {
-		FinderPath finderPath = _finderPathCountByFixDeliveryMethod;
-
-		Object[] finderArgs = new Object[] {fixDeliveryMethod};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_PATCHERPRODUCTVERSION_WHERE);
-
-			sb.append(_FINDER_COLUMN_FIXDELIVERYMETHOD_FIXDELIVERYMETHOD_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(fixDeliveryMethod);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByFixDeliveryMethod.count(
+			finderCache, new Object[] {fixDeliveryMethod});
 	}
 
 	/**
@@ -590,6 +448,8 @@ public class PatcherProductVersionPersistenceImpl
 			"patcherProductVersion.fixDeliveryMethod = ?";
 
 	private FinderPath _finderPathFetchByName;
+	private UniquePersistenceFinder<PatcherProductVersion>
+		_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the patcher product version where name = &#63; or throws a <code>NoSuchPatcherProductVersionException</code> if it could not be found.
@@ -605,20 +465,15 @@ public class PatcherProductVersionPersistenceImpl
 		PatcherProductVersion patcherProductVersion = fetchByName(name);
 
 		if (patcherProductVersion == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("name=");
-			sb.append(name);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchPatcherProductVersionException(sb.toString());
+			throw new NoSuchPatcherProductVersionException(message);
 		}
 
 		return patcherProductVersion;
@@ -646,91 +501,8 @@ public class PatcherProductVersionPersistenceImpl
 	public PatcherProductVersion fetchByName(
 		String name, boolean useFinderCache) {
 
-		name = Objects.toString(name, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {name};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByName, finderArgs, this);
-		}
-
-		if (result instanceof PatcherProductVersion) {
-			PatcherProductVersion patcherProductVersion =
-				(PatcherProductVersion)result;
-
-			if (!Objects.equals(name, patcherProductVersion.getName())) {
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_SELECT_PATCHERPRODUCTVERSION_WHERE);
-
-			boolean bindName = false;
-
-			if (name.isEmpty()) {
-				sb.append(_FINDER_COLUMN_NAME_NAME_3);
-			}
-			else {
-				bindName = true;
-
-				sb.append(_FINDER_COLUMN_NAME_NAME_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindName) {
-					queryPos.add(name);
-				}
-
-				List<PatcherProductVersion> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByName, finderArgs, list);
-					}
-				}
-				else {
-					PatcherProductVersion patcherProductVersion = list.get(0);
-
-					result = patcherProductVersion;
-
-					cacheResult(patcherProductVersion);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (PatcherProductVersion)result;
-		}
+		return _uniquePersistenceFinderByName.fetch(
+			finderCache, new Object[] {name}, useFinderCache);
 	}
 
 	/**
@@ -756,20 +528,9 @@ public class PatcherProductVersionPersistenceImpl
 	 */
 	@Override
 	public int countByName(String name) {
-		PatcherProductVersion patcherProductVersion = fetchByName(name);
-
-		if (patcherProductVersion == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByName.count(
+			finderCache, new Object[] {name});
 	}
-
-	private static final String _FINDER_COLUMN_NAME_NAME_2 =
-		"patcherProductVersion.name = ?";
-
-	private static final String _FINDER_COLUMN_NAME_NAME_3 =
-		"(patcherProductVersion.name IS NULL OR patcherProductVersion.name = '')";
 
 	public PatcherProductVersionPersistenceImpl() {
 		setModelClass(PatcherProductVersion.class);
@@ -828,53 +589,6 @@ public class PatcherProductVersionPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all patcher product versions.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(PatcherProductVersionImpl.class);
-
-		finderCache.clearCache(PatcherProductVersionImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the patcher product version.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(PatcherProductVersion patcherProductVersion) {
-		entityCache.removeResult(
-			PatcherProductVersionImpl.class, patcherProductVersion);
-	}
-
-	@Override
-	public void clearCache(List<PatcherProductVersion> patcherProductVersions) {
-		for (PatcherProductVersion patcherProductVersion :
-				patcherProductVersions) {
-
-			entityCache.removeResult(
-				PatcherProductVersionImpl.class, patcherProductVersion);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(PatcherProductVersionImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				PatcherProductVersionImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		PatcherProductVersionModelImpl patcherProductVersionModelImpl) {
 
@@ -915,48 +629,6 @@ public class PatcherProductVersionPersistenceImpl
 		throws NoSuchPatcherProductVersionException {
 
 		return remove((Serializable)patcherProductVersionId);
-	}
-
-	/**
-	 * Removes the patcher product version with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the patcher product version
-	 * @return the patcher product version that was removed
-	 * @throws NoSuchPatcherProductVersionException if a patcher product version with the primary key could not be found
-	 */
-	@Override
-	public PatcherProductVersion remove(Serializable primaryKey)
-		throws NoSuchPatcherProductVersionException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			PatcherProductVersion patcherProductVersion =
-				(PatcherProductVersion)session.get(
-					PatcherProductVersionImpl.class, primaryKey);
-
-			if (patcherProductVersion == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchPatcherProductVersionException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(patcherProductVersion);
-		}
-		catch (NoSuchPatcherProductVersionException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1081,32 +753,6 @@ public class PatcherProductVersionPersistenceImpl
 	}
 
 	/**
-	 * Returns the patcher product version with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the patcher product version
-	 * @return the patcher product version
-	 * @throws NoSuchPatcherProductVersionException if a patcher product version with the primary key could not be found
-	 */
-	@Override
-	public PatcherProductVersion findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchPatcherProductVersionException {
-
-		PatcherProductVersion patcherProductVersion = fetchByPrimaryKey(
-			primaryKey);
-
-		if (patcherProductVersion == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchPatcherProductVersionException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return patcherProductVersion;
-	}
-
-	/**
 	 * Returns the patcher product version with the primary key or throws a <code>NoSuchPatcherProductVersionException</code> if it could not be found.
 	 *
 	 * @param patcherProductVersionId the primary key of the patcher product version
@@ -1131,188 +777,6 @@ public class PatcherProductVersionPersistenceImpl
 		long patcherProductVersionId) {
 
 		return fetchByPrimaryKey((Serializable)patcherProductVersionId);
-	}
-
-	/**
-	 * Returns all the patcher product versions.
-	 *
-	 * @return the patcher product versions
-	 */
-	@Override
-	public List<PatcherProductVersion> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the patcher product versions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherProductVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher product versions
-	 * @param end the upper bound of the range of patcher product versions (not inclusive)
-	 * @return the range of patcher product versions
-	 */
-	@Override
-	public List<PatcherProductVersion> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher product versions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherProductVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher product versions
-	 * @param end the upper bound of the range of patcher product versions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of patcher product versions
-	 */
-	@Override
-	public List<PatcherProductVersion> findAll(
-		int start, int end,
-		OrderByComparator<PatcherProductVersion> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the patcher product versions.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>PatcherProductVersionModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of patcher product versions
-	 * @param end the upper bound of the range of patcher product versions (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of patcher product versions
-	 */
-	@Override
-	public List<PatcherProductVersion> findAll(
-		int start, int end,
-		OrderByComparator<PatcherProductVersion> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<PatcherProductVersion> list = null;
-
-		if (useFinderCache) {
-			list = (List<PatcherProductVersion>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_PATCHERPRODUCTVERSION);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_PATCHERPRODUCTVERSION;
-
-				sql = sql.concat(PatcherProductVersionModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<PatcherProductVersion>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the patcher product versions from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (PatcherProductVersion patcherProductVersion : findAll()) {
-			remove(patcherProductVersion);
-		}
-	}
-
-	/**
-	 * Returns the number of patcher product versions.
-	 *
-	 * @return the number of patcher product versions
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_PATCHERPRODUCTVERSION);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -1343,18 +807,6 @@ public class PatcherProductVersionPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByFixDeliveryMethod = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByFixDeliveryMethod",
 			new String[] {
@@ -1373,9 +825,30 @@ public class PatcherProductVersionPersistenceImpl
 			"countByFixDeliveryMethod", new String[] {Integer.class.getName()},
 			new String[] {"fixDeliveryMethod"}, false);
 
+		_collectionPersistenceFinderByFixDeliveryMethod =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByFixDeliveryMethod,
+				_finderPathWithoutPaginationFindByFixDeliveryMethod,
+				_finderPathCountByFixDeliveryMethod,
+				_SQL_SELECT_PATCHERPRODUCTVERSION_WHERE,
+				_SQL_COUNT_PATCHERPRODUCTVERSION_WHERE,
+				PatcherProductVersionModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"patcherProductVersion.", "fixDeliveryMethod",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					PatcherProductVersion::getFixDeliveryMethod));
+
 		_finderPathFetchByName = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByName",
 			new String[] {String.class.getName()}, new String[] {"name"}, true);
+
+		_uniquePersistenceFinderByName = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByName,
+			_SQL_SELECT_PATCHERPRODUCTVERSION_WHERE,
+			new FinderColumn<>(
+				"patcherProductVersion.", "name", FinderColumn.Type.STRING, "=",
+				true, true, PatcherProductVersion::getName));
 
 		PatcherProductVersionUtil.setPersistence(this);
 	}
@@ -1419,14 +892,14 @@ public class PatcherProductVersionPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		PatcherProductVersionModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String _SQL_SELECT_PATCHERPRODUCTVERSION =
 		"SELECT patcherProductVersion FROM PatcherProductVersion patcherProductVersion";
 
 	private static final String _SQL_SELECT_PATCHERPRODUCTVERSION_WHERE =
 		"SELECT patcherProductVersion FROM PatcherProductVersion patcherProductVersion WHERE ";
-
-	private static final String _SQL_COUNT_PATCHERPRODUCTVERSION =
-		"SELECT COUNT(patcherProductVersion) FROM PatcherProductVersion patcherProductVersion";
 
 	private static final String _SQL_COUNT_PATCHERPRODUCTVERSION_WHERE =
 		"SELECT COUNT(patcherProductVersion) FROM PatcherProductVersion patcherProductVersion WHERE ";
@@ -1453,14 +926,8 @@ public class PatcherProductVersionPersistenceImpl
 	private static final String _FILTER_ENTITY_TABLE =
 		"OSBPatcher_PProductVersion";
 
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"patcherProductVersion.";
-
 	private static final String _ORDER_BY_ENTITY_TABLE =
 		"OSBPatcher_PProductVersion.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No PatcherProductVersion exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No PatcherProductVersion exists with the key {";
@@ -1474,4 +941,4 @@ public class PatcherProductVersionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-21488990
+// LIFERAY-SERVICE-BUILDER-HASH:-1752740538

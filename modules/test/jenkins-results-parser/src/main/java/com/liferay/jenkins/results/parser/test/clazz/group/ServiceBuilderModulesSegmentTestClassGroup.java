@@ -19,6 +19,12 @@ public class ServiceBuilderModulesSegmentTestClassGroup
 
 		sb.append(super.getTestCasePropertiesContent());
 
+		if (_serviceBuilderModulesBatchTestClassGroup.
+				isUnifiedBuilderSupported()) {
+
+			return sb.toString();
+		}
+
 		ServiceBuilderModulesBatchTestClassGroup.BuildType buildType =
 			_serviceBuilderModulesBatchTestClassGroup.getBuildType();
 

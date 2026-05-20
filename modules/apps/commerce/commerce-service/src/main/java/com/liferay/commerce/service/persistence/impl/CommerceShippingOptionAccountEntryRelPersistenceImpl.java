@@ -13,13 +13,10 @@ import com.liferay.commerce.model.impl.CommerceShippingOptionAccountEntryRelMode
 import com.liferay.commerce.service.persistence.CommerceShippingOptionAccountEntryRelPersistence;
 import com.liferay.commerce.service.persistence.CommerceShippingOptionAccountEntryRelUtil;
 import com.liferay.commerce.service.persistence.impl.constants.CommercePersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
@@ -29,6 +26,9 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -44,7 +44,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -66,7 +65,9 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CommerceShippingOptionAccountEntryRelPersistence.class)
 public class CommerceShippingOptionAccountEntryRelPersistenceImpl
-	extends BasePersistenceImpl<CommerceShippingOptionAccountEntryRel>
+	extends BasePersistenceImpl
+		<CommerceShippingOptionAccountEntryRel,
+		 NoSuchShippingOptionAccountEntryRelException>
 	implements CommerceShippingOptionAccountEntryRelPersistence {
 
 	/*
@@ -83,12 +84,11 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByAccountEntryId;
 	private FinderPath _finderPathWithoutPaginationFindByAccountEntryId;
 	private FinderPath _finderPathCountByAccountEntryId;
+	private CollectionPersistenceFinder<CommerceShippingOptionAccountEntryRel>
+		_collectionPersistenceFinderByAccountEntryId;
 
 	/**
 	 * Returns all the commerce shipping option account entry rels where accountEntryId = &#63;.
@@ -167,104 +167,9 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByAccountEntryId;
-				finderArgs = new Object[] {accountEntryId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByAccountEntryId;
-			finderArgs = new Object[] {
-				accountEntryId, start, end, orderByComparator
-			};
-		}
-
-		List<CommerceShippingOptionAccountEntryRel> list = null;
-
-		if (useFinderCache) {
-			list =
-				(List<CommerceShippingOptionAccountEntryRel>)
-					finderCache.getResult(finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShippingOptionAccountEntryRel
-						commerceShippingOptionAccountEntryRel : list) {
-
-					if (accountEntryId !=
-							commerceShippingOptionAccountEntryRel.
-								getAccountEntryId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_ACCOUNTENTRYID_ACCOUNTENTRYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(
-					CommerceShippingOptionAccountEntryRelModelImpl.
-						ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(accountEntryId);
-
-				list =
-					(List<CommerceShippingOptionAccountEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByAccountEntryId.find(
+			finderCache, new Object[] {accountEntryId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -290,16 +195,9 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			return commerceShippingOptionAccountEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("accountEntryId=");
-		sb.append(accountEntryId);
-
-		sb.append("}");
-
-		throw new NoSuchShippingOptionAccountEntryRelException(sb.toString());
+		throw new NoSuchShippingOptionAccountEntryRelException(
+			_collectionPersistenceFinderByAccountEntryId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {accountEntryId}));
 	}
 
 	/**
@@ -315,14 +213,8 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 		OrderByComparator<CommerceShippingOptionAccountEntryRel>
 			orderByComparator) {
 
-		List<CommerceShippingOptionAccountEntryRel> list = findByAccountEntryId(
-			accountEntryId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByAccountEntryId.fetchFirst(
+			finderCache, new Object[] {accountEntryId}, orderByComparator);
 	}
 
 	/**
@@ -332,14 +224,8 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	 */
 	@Override
 	public void removeByAccountEntryId(long accountEntryId) {
-		for (CommerceShippingOptionAccountEntryRel
-				commerceShippingOptionAccountEntryRel :
-					findByAccountEntryId(
-						accountEntryId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-						null)) {
-
-			remove(commerceShippingOptionAccountEntryRel);
-		}
+		_collectionPersistenceFinderByAccountEntryId.remove(
+			finderCache, new Object[] {accountEntryId});
 	}
 
 	/**
@@ -350,53 +236,15 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByAccountEntryId(long accountEntryId) {
-		FinderPath finderPath = _finderPathCountByAccountEntryId;
-
-		Object[] finderArgs = new Object[] {accountEntryId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_ACCOUNTENTRYID_ACCOUNTENTRYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(accountEntryId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByAccountEntryId.count(
+			finderCache, new Object[] {accountEntryId});
 	}
-
-	private static final String _FINDER_COLUMN_ACCOUNTENTRYID_ACCOUNTENTRYID_2 =
-		"commerceShippingOptionAccountEntryRel.accountEntryId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByCommerceChannelId;
 	private FinderPath _finderPathWithoutPaginationFindByCommerceChannelId;
 	private FinderPath _finderPathCountByCommerceChannelId;
+	private CollectionPersistenceFinder<CommerceShippingOptionAccountEntryRel>
+		_collectionPersistenceFinderByCommerceChannelId;
 
 	/**
 	 * Returns all the commerce shipping option account entry rels where commerceChannelId = &#63;.
@@ -475,105 +323,9 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByCommerceChannelId;
-				finderArgs = new Object[] {commerceChannelId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByCommerceChannelId;
-			finderArgs = new Object[] {
-				commerceChannelId, start, end, orderByComparator
-			};
-		}
-
-		List<CommerceShippingOptionAccountEntryRel> list = null;
-
-		if (useFinderCache) {
-			list =
-				(List<CommerceShippingOptionAccountEntryRel>)
-					finderCache.getResult(finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShippingOptionAccountEntryRel
-						commerceShippingOptionAccountEntryRel : list) {
-
-					if (commerceChannelId !=
-							commerceShippingOptionAccountEntryRel.
-								getCommerceChannelId()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_COMMERCECHANNELID_COMMERCECHANNELID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(
-					CommerceShippingOptionAccountEntryRelModelImpl.
-						ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(commerceChannelId);
-
-				list =
-					(List<CommerceShippingOptionAccountEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByCommerceChannelId.find(
+			finderCache, new Object[] {commerceChannelId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -600,16 +352,11 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			return commerceShippingOptionAccountEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("commerceChannelId=");
-		sb.append(commerceChannelId);
-
-		sb.append("}");
-
-		throw new NoSuchShippingOptionAccountEntryRelException(sb.toString());
+		throw new NoSuchShippingOptionAccountEntryRelException(
+			_collectionPersistenceFinderByCommerceChannelId.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {commerceChannelId}));
 	}
 
 	/**
@@ -625,14 +372,8 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 		OrderByComparator<CommerceShippingOptionAccountEntryRel>
 			orderByComparator) {
 
-		List<CommerceShippingOptionAccountEntryRel> list =
-			findByCommerceChannelId(commerceChannelId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCommerceChannelId.fetchFirst(
+			finderCache, new Object[] {commerceChannelId}, orderByComparator);
 	}
 
 	/**
@@ -642,14 +383,8 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	 */
 	@Override
 	public void removeByCommerceChannelId(long commerceChannelId) {
-		for (CommerceShippingOptionAccountEntryRel
-				commerceShippingOptionAccountEntryRel :
-					findByCommerceChannelId(
-						commerceChannelId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-						null)) {
-
-			remove(commerceShippingOptionAccountEntryRel);
-		}
+		_collectionPersistenceFinderByCommerceChannelId.remove(
+			finderCache, new Object[] {commerceChannelId});
 	}
 
 	/**
@@ -660,55 +395,16 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByCommerceChannelId(long commerceChannelId) {
-		FinderPath finderPath = _finderPathCountByCommerceChannelId;
-
-		Object[] finderArgs = new Object[] {commerceChannelId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_COMMERCECHANNELID_COMMERCECHANNELID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(commerceChannelId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByCommerceChannelId.count(
+			finderCache, new Object[] {commerceChannelId});
 	}
-
-	private static final String
-		_FINDER_COLUMN_COMMERCECHANNELID_COMMERCECHANNELID_2 =
-			"commerceShippingOptionAccountEntryRel.commerceChannelId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByCommerceShippingOptionKey;
 	private FinderPath
 		_finderPathWithoutPaginationFindByCommerceShippingOptionKey;
 	private FinderPath _finderPathCountByCommerceShippingOptionKey;
+	private CollectionPersistenceFinder<CommerceShippingOptionAccountEntryRel>
+		_collectionPersistenceFinderByCommerceShippingOptionKey;
 
 	/**
 	 * Returns all the commerce shipping option account entry rels where commerceShippingOptionKey = &#63;.
@@ -792,122 +488,9 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 				orderByComparator,
 			boolean useFinderCache) {
 
-		commerceShippingOptionKey = Objects.toString(
-			commerceShippingOptionKey, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByCommerceShippingOptionKey;
-				finderArgs = new Object[] {commerceShippingOptionKey};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath =
-				_finderPathWithPaginationFindByCommerceShippingOptionKey;
-			finderArgs = new Object[] {
-				commerceShippingOptionKey, start, end, orderByComparator
-			};
-		}
-
-		List<CommerceShippingOptionAccountEntryRel> list = null;
-
-		if (useFinderCache) {
-			list =
-				(List<CommerceShippingOptionAccountEntryRel>)
-					finderCache.getResult(finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (CommerceShippingOptionAccountEntryRel
-						commerceShippingOptionAccountEntryRel : list) {
-
-					if (!commerceShippingOptionKey.equals(
-							commerceShippingOptionAccountEntryRel.
-								getCommerceShippingOptionKey())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE);
-
-			boolean bindCommerceShippingOptionKey = false;
-
-			if (commerceShippingOptionKey.isEmpty()) {
-				sb.append(
-					_FINDER_COLUMN_COMMERCESHIPPINGOPTIONKEY_COMMERCESHIPPINGOPTIONKEY_3);
-			}
-			else {
-				bindCommerceShippingOptionKey = true;
-
-				sb.append(
-					_FINDER_COLUMN_COMMERCESHIPPINGOPTIONKEY_COMMERCESHIPPINGOPTIONKEY_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(
-					CommerceShippingOptionAccountEntryRelModelImpl.
-						ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindCommerceShippingOptionKey) {
-					queryPos.add(commerceShippingOptionKey);
-				}
-
-				list =
-					(List<CommerceShippingOptionAccountEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByCommerceShippingOptionKey.find(
+			finderCache, new Object[] {commerceShippingOptionKey}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -935,16 +518,11 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			return commerceShippingOptionAccountEntryRel;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("commerceShippingOptionKey=");
-		sb.append(commerceShippingOptionKey);
-
-		sb.append("}");
-
-		throw new NoSuchShippingOptionAccountEntryRelException(sb.toString());
+		throw new NoSuchShippingOptionAccountEntryRelException(
+			_collectionPersistenceFinderByCommerceShippingOptionKey.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {commerceShippingOptionKey}));
 	}
 
 	/**
@@ -961,15 +539,10 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			OrderByComparator<CommerceShippingOptionAccountEntryRel>
 				orderByComparator) {
 
-		List<CommerceShippingOptionAccountEntryRel> list =
-			findByCommerceShippingOptionKey(
-				commerceShippingOptionKey, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByCommerceShippingOptionKey.
+			fetchFirst(
+				finderCache, new Object[] {commerceShippingOptionKey},
+				orderByComparator);
 	}
 
 	/**
@@ -981,14 +554,8 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	public void removeByCommerceShippingOptionKey(
 		String commerceShippingOptionKey) {
 
-		for (CommerceShippingOptionAccountEntryRel
-				commerceShippingOptionAccountEntryRel :
-					findByCommerceShippingOptionKey(
-						commerceShippingOptionKey, QueryUtil.ALL_POS,
-						QueryUtil.ALL_POS, null)) {
-
-			remove(commerceShippingOptionAccountEntryRel);
-		}
+		_collectionPersistenceFinderByCommerceShippingOptionKey.remove(
+			finderCache, new Object[] {commerceShippingOptionKey});
 	}
 
 	/**
@@ -1001,72 +568,13 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	public int countByCommerceShippingOptionKey(
 		String commerceShippingOptionKey) {
 
-		commerceShippingOptionKey = Objects.toString(
-			commerceShippingOptionKey, "");
-
-		FinderPath finderPath = _finderPathCountByCommerceShippingOptionKey;
-
-		Object[] finderArgs = new Object[] {commerceShippingOptionKey};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE);
-
-			boolean bindCommerceShippingOptionKey = false;
-
-			if (commerceShippingOptionKey.isEmpty()) {
-				sb.append(
-					_FINDER_COLUMN_COMMERCESHIPPINGOPTIONKEY_COMMERCESHIPPINGOPTIONKEY_3);
-			}
-			else {
-				bindCommerceShippingOptionKey = true;
-
-				sb.append(
-					_FINDER_COLUMN_COMMERCESHIPPINGOPTIONKEY_COMMERCESHIPPINGOPTIONKEY_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindCommerceShippingOptionKey) {
-					queryPos.add(commerceShippingOptionKey);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByCommerceShippingOptionKey.count(
+			finderCache, new Object[] {commerceShippingOptionKey});
 	}
 
-	private static final String
-		_FINDER_COLUMN_COMMERCESHIPPINGOPTIONKEY_COMMERCESHIPPINGOPTIONKEY_2 =
-			"commerceShippingOptionAccountEntryRel.commerceShippingOptionKey = ?";
-
-	private static final String
-		_FINDER_COLUMN_COMMERCESHIPPINGOPTIONKEY_COMMERCESHIPPINGOPTIONKEY_3 =
-			"(commerceShippingOptionAccountEntryRel.commerceShippingOptionKey IS NULL OR commerceShippingOptionAccountEntryRel.commerceShippingOptionKey = '')";
-
 	private FinderPath _finderPathFetchByA_C;
+	private UniquePersistenceFinder<CommerceShippingOptionAccountEntryRel>
+		_uniquePersistenceFinderByA_C;
 
 	/**
 	 * Returns the commerce shipping option account entry rel where accountEntryId = &#63; and commerceChannelId = &#63; or throws a <code>NoSuchShippingOptionAccountEntryRelException</code> if it could not be found.
@@ -1086,24 +594,16 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 				accountEntryId, commerceChannelId);
 
 		if (commerceShippingOptionAccountEntryRel == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("accountEntryId=");
-			sb.append(accountEntryId);
-
-			sb.append(", commerceChannelId=");
-			sb.append(commerceChannelId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByA_C.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {accountEntryId, commerceChannelId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchShippingOptionAccountEntryRelException(
-				sb.toString());
+			throw new NoSuchShippingOptionAccountEntryRelException(message);
 		}
 
 		return commerceShippingOptionAccountEntryRel;
@@ -1135,90 +635,9 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	public CommerceShippingOptionAccountEntryRel fetchByA_C(
 		long accountEntryId, long commerceChannelId, boolean useFinderCache) {
 
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {accountEntryId, commerceChannelId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByA_C, finderArgs, this);
-		}
-
-		if (result instanceof CommerceShippingOptionAccountEntryRel) {
-			CommerceShippingOptionAccountEntryRel
-				commerceShippingOptionAccountEntryRel =
-					(CommerceShippingOptionAccountEntryRel)result;
-
-			if ((accountEntryId !=
-					commerceShippingOptionAccountEntryRel.
-						getAccountEntryId()) ||
-				(commerceChannelId !=
-					commerceShippingOptionAccountEntryRel.
-						getCommerceChannelId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE);
-
-			sb.append(_FINDER_COLUMN_A_C_ACCOUNTENTRYID_2);
-
-			sb.append(_FINDER_COLUMN_A_C_COMMERCECHANNELID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(accountEntryId);
-
-				queryPos.add(commerceChannelId);
-
-				List<CommerceShippingOptionAccountEntryRel> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByA_C, finderArgs, list);
-					}
-				}
-				else {
-					CommerceShippingOptionAccountEntryRel
-						commerceShippingOptionAccountEntryRel = list.get(0);
-
-					result = commerceShippingOptionAccountEntryRel;
-
-					cacheResult(commerceShippingOptionAccountEntryRel);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (CommerceShippingOptionAccountEntryRel)result;
-		}
+		return _uniquePersistenceFinderByA_C.fetch(
+			finderCache, new Object[] {accountEntryId, commerceChannelId},
+			useFinderCache);
 	}
 
 	/**
@@ -1249,22 +668,9 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	 */
 	@Override
 	public int countByA_C(long accountEntryId, long commerceChannelId) {
-		CommerceShippingOptionAccountEntryRel
-			commerceShippingOptionAccountEntryRel = fetchByA_C(
-				accountEntryId, commerceChannelId);
-
-		if (commerceShippingOptionAccountEntryRel == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByA_C.count(
+			finderCache, new Object[] {accountEntryId, commerceChannelId});
 	}
-
-	private static final String _FINDER_COLUMN_A_C_ACCOUNTENTRYID_2 =
-		"commerceShippingOptionAccountEntryRel.accountEntryId = ? AND ";
-
-	private static final String _FINDER_COLUMN_A_C_COMMERCECHANNELID_2 =
-		"commerceShippingOptionAccountEntryRel.commerceChannelId = ?";
 
 	public CommerceShippingOptionAccountEntryRelPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -1341,62 +747,6 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all commerce shipping option account entry rels.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(CommerceShippingOptionAccountEntryRelImpl.class);
-
-		finderCache.clearCache(CommerceShippingOptionAccountEntryRelImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the commerce shipping option account entry rel.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(
-		CommerceShippingOptionAccountEntryRel
-			commerceShippingOptionAccountEntryRel) {
-
-		entityCache.removeResult(
-			CommerceShippingOptionAccountEntryRelImpl.class,
-			commerceShippingOptionAccountEntryRel);
-	}
-
-	@Override
-	public void clearCache(
-		List<CommerceShippingOptionAccountEntryRel>
-			commerceShippingOptionAccountEntryRels) {
-
-		for (CommerceShippingOptionAccountEntryRel
-				commerceShippingOptionAccountEntryRel :
-					commerceShippingOptionAccountEntryRels) {
-
-			entityCache.removeResult(
-				CommerceShippingOptionAccountEntryRelImpl.class,
-				commerceShippingOptionAccountEntryRel);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(CommerceShippingOptionAccountEntryRelImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(
-				CommerceShippingOptionAccountEntryRelImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		CommerceShippingOptionAccountEntryRelModelImpl
 			commerceShippingOptionAccountEntryRelModelImpl) {
@@ -1449,52 +799,6 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 		throws NoSuchShippingOptionAccountEntryRelException {
 
 		return remove((Serializable)CommerceShippingOptionAccountEntryRelId);
-	}
-
-	/**
-	 * Removes the commerce shipping option account entry rel with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the commerce shipping option account entry rel
-	 * @return the commerce shipping option account entry rel that was removed
-	 * @throws NoSuchShippingOptionAccountEntryRelException if a commerce shipping option account entry rel with the primary key could not be found
-	 */
-	@Override
-	public CommerceShippingOptionAccountEntryRel remove(Serializable primaryKey)
-		throws NoSuchShippingOptionAccountEntryRelException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			CommerceShippingOptionAccountEntryRel
-				commerceShippingOptionAccountEntryRel =
-					(CommerceShippingOptionAccountEntryRel)session.get(
-						CommerceShippingOptionAccountEntryRelImpl.class,
-						primaryKey);
-
-			if (commerceShippingOptionAccountEntryRel == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchShippingOptionAccountEntryRelException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(commerceShippingOptionAccountEntryRel);
-		}
-		catch (NoSuchShippingOptionAccountEntryRelException
-					noSuchEntityException) {
-
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -1632,34 +936,6 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	}
 
 	/**
-	 * Returns the commerce shipping option account entry rel with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the commerce shipping option account entry rel
-	 * @return the commerce shipping option account entry rel
-	 * @throws NoSuchShippingOptionAccountEntryRelException if a commerce shipping option account entry rel with the primary key could not be found
-	 */
-	@Override
-	public CommerceShippingOptionAccountEntryRel findByPrimaryKey(
-			Serializable primaryKey)
-		throws NoSuchShippingOptionAccountEntryRelException {
-
-		CommerceShippingOptionAccountEntryRel
-			commerceShippingOptionAccountEntryRel = fetchByPrimaryKey(
-				primaryKey);
-
-		if (commerceShippingOptionAccountEntryRel == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchShippingOptionAccountEntryRelException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return commerceShippingOptionAccountEntryRel;
-	}
-
-	/**
 	 * Returns the commerce shipping option account entry rel with the primary key or throws a <code>NoSuchShippingOptionAccountEntryRelException</code> if it could not be found.
 	 *
 	 * @param CommerceShippingOptionAccountEntryRelId the primary key of the commerce shipping option account entry rel
@@ -1687,198 +963,6 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 
 		return fetchByPrimaryKey(
 			(Serializable)CommerceShippingOptionAccountEntryRelId);
-	}
-
-	/**
-	 * Returns all the commerce shipping option account entry rels.
-	 *
-	 * @return the commerce shipping option account entry rels
-	 */
-	@Override
-	public List<CommerceShippingOptionAccountEntryRel> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the commerce shipping option account entry rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingOptionAccountEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce shipping option account entry rels
-	 * @param end the upper bound of the range of commerce shipping option account entry rels (not inclusive)
-	 * @return the range of commerce shipping option account entry rels
-	 */
-	@Override
-	public List<CommerceShippingOptionAccountEntryRel> findAll(
-		int start, int end) {
-
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipping option account entry rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingOptionAccountEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce shipping option account entry rels
-	 * @param end the upper bound of the range of commerce shipping option account entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of commerce shipping option account entry rels
-	 */
-	@Override
-	public List<CommerceShippingOptionAccountEntryRel> findAll(
-		int start, int end,
-		OrderByComparator<CommerceShippingOptionAccountEntryRel>
-			orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the commerce shipping option account entry rels.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceShippingOptionAccountEntryRelModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of commerce shipping option account entry rels
-	 * @param end the upper bound of the range of commerce shipping option account entry rels (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of commerce shipping option account entry rels
-	 */
-	@Override
-	public List<CommerceShippingOptionAccountEntryRel> findAll(
-		int start, int end,
-		OrderByComparator<CommerceShippingOptionAccountEntryRel>
-			orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<CommerceShippingOptionAccountEntryRel> list = null;
-
-		if (useFinderCache) {
-			list =
-				(List<CommerceShippingOptionAccountEntryRel>)
-					finderCache.getResult(finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL;
-
-				sql = sql.concat(
-					CommerceShippingOptionAccountEntryRelModelImpl.
-						ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list =
-					(List<CommerceShippingOptionAccountEntryRel>)QueryUtil.list(
-						query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the commerce shipping option account entry rels from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (CommerceShippingOptionAccountEntryRel
-				commerceShippingOptionAccountEntryRel : findAll()) {
-
-			remove(commerceShippingOptionAccountEntryRel);
-		}
-	}
-
-	/**
-	 * Returns the number of commerce shipping option account entry rels.
-	 *
-	 * @return the number of commerce shipping option account entry rels
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(
-					_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -1914,18 +998,6 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByAccountEntryId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAccountEntryId",
 			new String[] {
@@ -1944,6 +1016,20 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			new String[] {Long.class.getName()},
 			new String[] {"accountEntryId"}, false);
 
+		_collectionPersistenceFinderByAccountEntryId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByAccountEntryId,
+				_finderPathWithoutPaginationFindByAccountEntryId,
+				_finderPathCountByAccountEntryId,
+				_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE,
+				_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE,
+				CommerceShippingOptionAccountEntryRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"commerceShippingOptionAccountEntryRel.", "accountEntryId",
+					FinderColumn.Type.LONG, "=", true, true,
+					CommerceShippingOptionAccountEntryRel::getAccountEntryId));
+
 		_finderPathWithPaginationFindByCommerceChannelId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCommerceChannelId",
 			new String[] {
@@ -1961,6 +1047,22 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByCommerceChannelId", new String[] {Long.class.getName()},
 			new String[] {"commerceChannelId"}, false);
+
+		_collectionPersistenceFinderByCommerceChannelId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByCommerceChannelId,
+				_finderPathWithoutPaginationFindByCommerceChannelId,
+				_finderPathCountByCommerceChannelId,
+				_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE,
+				_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE,
+				CommerceShippingOptionAccountEntryRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"commerceShippingOptionAccountEntryRel.",
+					"commerceChannelId", FinderColumn.Type.LONG, "=", true,
+					true,
+					CommerceShippingOptionAccountEntryRel::
+						getCommerceChannelId));
 
 		_finderPathWithPaginationFindByCommerceShippingOptionKey =
 			new FinderPath(
@@ -1985,10 +1087,38 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			new String[] {String.class.getName()},
 			new String[] {"commerceShippingOptionKey"}, false);
 
+		_collectionPersistenceFinderByCommerceShippingOptionKey =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByCommerceShippingOptionKey,
+				_finderPathWithoutPaginationFindByCommerceShippingOptionKey,
+				_finderPathCountByCommerceShippingOptionKey,
+				_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE,
+				_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE,
+				CommerceShippingOptionAccountEntryRelModelImpl.ORDER_BY_JPQL,
+				_ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"commerceShippingOptionAccountEntryRel.",
+					"commerceShippingOptionKey", FinderColumn.Type.STRING, "=",
+					true, true,
+					CommerceShippingOptionAccountEntryRel::
+						getCommerceShippingOptionKey));
+
 		_finderPathFetchByA_C = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByA_C",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"accountEntryId", "commerceChannelId"}, true);
+
+		_uniquePersistenceFinderByA_C = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByA_C,
+			_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE,
+			new FinderColumn<>(
+				"commerceShippingOptionAccountEntryRel.", "accountEntryId",
+				FinderColumn.Type.LONG, "=", true, false,
+				CommerceShippingOptionAccountEntryRel::getAccountEntryId),
+			new FinderColumn<>(
+				"commerceShippingOptionAccountEntryRel.", "commerceChannelId",
+				FinderColumn.Type.LONG, "=", true, true,
+				CommerceShippingOptionAccountEntryRel::getCommerceChannelId));
 
 		CommerceShippingOptionAccountEntryRelUtil.setPersistence(this);
 	}
@@ -2033,6 +1163,9 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
+	private static final String _ENTITY_ALIAS_PREFIX =
+		CommerceShippingOptionAccountEntryRelModelImpl.ENTITY_ALIAS + ".";
+
 	private static final String
 		_SQL_SELECT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL =
 			"SELECT commerceShippingOptionAccountEntryRel FROM CommerceShippingOptionAccountEntryRel commerceShippingOptionAccountEntryRel";
@@ -2042,18 +1175,8 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 			"SELECT commerceShippingOptionAccountEntryRel FROM CommerceShippingOptionAccountEntryRel commerceShippingOptionAccountEntryRel WHERE ";
 
 	private static final String
-		_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL =
-			"SELECT COUNT(commerceShippingOptionAccountEntryRel) FROM CommerceShippingOptionAccountEntryRel commerceShippingOptionAccountEntryRel";
-
-	private static final String
 		_SQL_COUNT_COMMERCESHIPPINGOPTIONACCOUNTENTRYREL_WHERE =
 			"SELECT COUNT(commerceShippingOptionAccountEntryRel) FROM CommerceShippingOptionAccountEntryRel commerceShippingOptionAccountEntryRel WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS =
-		"commerceShippingOptionAccountEntryRel.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No CommerceShippingOptionAccountEntryRel exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No CommerceShippingOptionAccountEntryRel exists with the key {";
@@ -2070,4 +1193,4 @@ public class CommerceShippingOptionAccountEntryRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1590153028
+// LIFERAY-SERVICE-BUILDER-HASH:285094605

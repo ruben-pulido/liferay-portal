@@ -8,7 +8,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {changeTrackingPagesTest} from '../../../fixtures/changeTrackingPagesTest';
 import {customFieldsPagesTest} from '../../../fixtures/customFieldsPagesTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {TCustomField} from '../../../helpers/CustomFieldTypesHelper';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
@@ -23,9 +22,6 @@ export const test = mergeTests(
 	blogsPagesTest,
 	changeTrackingPagesTest,
 	customFieldsPagesTest,
-	featureFlagsTest({
-		'LPD-36105': {enabled: true},
-	}),
 	journalPagesTest,
 	pageEditorPagesTest
 );
@@ -170,7 +166,7 @@ test('LPD-54602 Edit in Production action should not be visible if entity does n
 		page.getByText('Test Test added a Custom Field')
 	).toBeVisible();
 
-	await expect(page.getByRole('menuitem')).not.toBeVisible();
+	await expect(page.getByRole('menuitem', {name: 'Home'})).not.toBeVisible();
 
 	await expect(
 		page.getByRole('link', {name: 'Discard Change'})

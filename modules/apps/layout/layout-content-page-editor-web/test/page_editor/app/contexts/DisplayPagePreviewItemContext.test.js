@@ -65,8 +65,23 @@ describe('DisplayPagePreviewItemContext', () => {
 		});
 
 		expect(hook.result.current.recentItemList).toEqual([
-			{data: {}, label: 'First'},
 			{data: {}, label: 'Second'},
+			{data: {}, label: 'First'},
+		]);
+	});
+
+	it('maintains ordering when selecting existing item', () => {
+		const hook = getHook();
+
+		act(() => {
+			hook.result.current.selectItem({data: {}, label: 'First'});
+			hook.result.current.selectItem({data: {}, label: 'Second'});
+			hook.result.current.selectItem({data: {}, label: 'Second'});
+		});
+
+		expect(hook.result.current.recentItemList).toEqual([
+			{data: {}, label: 'Second'},
+			{data: {}, label: 'First'},
 		]);
 	});
 

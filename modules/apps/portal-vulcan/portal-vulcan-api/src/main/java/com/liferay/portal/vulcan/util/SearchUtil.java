@@ -11,7 +11,6 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -20,6 +19,7 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.IndexSearcherHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.MatchAllQuery;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.Sort;
@@ -27,8 +27,6 @@ import com.liferay.portal.kernel.search.facet.SimpleFacet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -241,7 +239,7 @@ public class SearchUtil {
 			Filter filter)
 		throws Exception {
 
-		BooleanQuery booleanQuery = new BooleanQueryImpl() {
+		BooleanQuery booleanQuery = new BooleanQuery() {
 			{
 				add(new MatchAllQuery(), BooleanClauseOccur.MUST);
 
@@ -257,8 +255,7 @@ public class SearchUtil {
 
 		booleanQueryUnsafeConsumer.accept(booleanQuery);
 
-		return BooleanClauseFactoryUtil.create(
-			booleanQuery, BooleanClauseOccur.MUST.getName());
+		return new BooleanClause<>(booleanQuery, BooleanClauseOccur.MUST);
 	}
 
 	private static List<Facet> _getFacets(SearchContext searchContext) {

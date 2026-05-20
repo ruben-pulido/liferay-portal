@@ -20,8 +20,10 @@ import com.liferay.portal.kernel.model.ReleaseConstants;
 import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.upgrade.ReleaseManager;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.upgrade.recorder.UpgradeLogProgressTracker;
 import com.liferay.portal.kernel.upgrade.recorder.UpgradeSQLRecorder;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.EnvPropertiesUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -57,13 +59,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +75,10 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.felix.cm.PersistenceManager;
@@ -107,8 +113,7 @@ public class UpgradeReport {
 		}
 
 		_executionDateString = _getExecutionDateString();
-		_executionTimeString =
-			(DBUpgrader.getUpgradeTime() / Time.SECOND) + " seconds";
+		_executionTimeString = _getExecutionTimeString();
 		_rootDir = _getRootDir();
 
 		Map<String, Object> reportData = _getReportData(upgradeRecorder);
@@ -139,14 +144,52 @@ public class UpgradeReport {
 	}
 
 	private String _getExecutionDateString() {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-			"EEE, MMM dd, yyyy hh:mm:ss z");
+		DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
+			"EEE, MMM dd, yyyy HH:mm:ss z", LocaleUtil.US,
+			TimeZone.getTimeZone("UTC"));
 
-		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return dateFormat.format(new Date());
+	}
 
-		Calendar calendar = Calendar.getInstance();
+	private String _getExecutionTimeString() {
+		long upgradeTime = DBUpgrader.getUpgradeTime();
 
-		return simpleDateFormat.format(calendar.getTime());
+		List<String> parts = new ArrayList<>();
+
+		long hours = upgradeTime / Time.HOUR;
+
+		if (hours > 0) {
+			parts.add(
+				hours + " hour" + ((hours == 1) ? StringPool.BLANK : "s"));
+		}
+
+		long minutes = (upgradeTime % Time.HOUR) / Time.MINUTE;
+
+		if (minutes > 0) {
+			parts.add(
+				minutes + " minute" +
+					((minutes == 1) ? StringPool.BLANK : "s"));
+		}
+
+		long totalSeconds = upgradeTime / Time.SECOND;
+
+		if (parts.isEmpty()) {
+			return totalSeconds + " second" +
+				((totalSeconds == 1) ? StringPool.BLANK : "s");
+		}
+
+		long seconds = (upgradeTime % Time.MINUTE) / Time.SECOND;
+
+		if (seconds > 0) {
+			parts.add(
+				seconds + " second" +
+					((seconds == 1) ? StringPool.BLANK : "s"));
+		}
+
+		return StringBundler.concat(
+			totalSeconds, " seconds (",
+			StringUtil.merge(parts, StringPool.SPACE),
+			StringPool.CLOSE_PARENTHESIS);
 	}
 
 	private List<MessagesPrinter> _getMessagesPrinters(
@@ -346,23 +389,27 @@ public class UpgradeReport {
 							"\"rootDir\" was not set";
 					}
 
-					_dlSize = 0;
+					FutureTask<Long> dlSizeFutureTask = new FutureTask<>(
+						() -> FileUtils.sizeOfDirectory(new File(_rootDir)));
 
 					try {
-						_dlSizeThread.start();
-						_dlSizeThread.join(
-							PropsValues.UPGRADE_REPORT_DL_STORAGE_SIZE_TIMEOUT *
-								Time.SECOND);
-					}
-					catch (Exception exception) {
-						_log.error(
-							"Unable to determine the document library size",
-							exception);
+						Thread dlSizeThread = new Thread(
+							dlSizeFutureTask, "Liferay DL Size Thread");
 
-						return "Unable to determine";
-					}
+						dlSizeThread.setDaemon(true);
 
-					if (_dlSizeThread.isAlive()) {
+						dlSizeThread.start();
+
+						long dlSize = dlSizeFutureTask.get(
+							PropsValues.UPGRADE_REPORT_DL_STORAGE_SIZE_TIMEOUT,
+							TimeUnit.SECONDS);
+
+						return LanguageUtil.formatStorageSize(
+							dlSize, LocaleUtil.US);
+					}
+					catch (TimeoutException timeoutException) {
+						dlSizeFutureTask.cancel(true);
+
 						if (_log.isInfoEnabled()) {
 							_log.info(
 								"Unable to determine the document library " +
@@ -370,11 +417,22 @@ public class UpgradeReport {
 										"manually.");
 						}
 
-						return "Unable to determine";
+						if (_log.isDebugEnabled()) {
+							_log.debug(timeoutException);
+						}
+					}
+					catch (ExecutionException executionException) {
+						_log.error(
+							"Unable to determine the document library size",
+							executionException.getCause());
+					}
+					catch (Exception exception) {
+						_log.error(
+							"Unable to determine the document library size",
+							exception);
 					}
 
-					return LanguageUtil.formatStorageSize(
-						_dlSize, LocaleUtil.US);
+					return "Unable to determine";
 				}
 			).build()
 		).put(
@@ -562,6 +620,22 @@ public class UpgradeReport {
 			"warnings",
 			_getMessagesPrinters(true, upgradeRecorder.getWarningMessages())
 		).put(
+			"last.known.progresses",
+			() -> {
+				Map<String, Long> lastKnownProgresses =
+					UpgradeLogProgressTracker.getLastKnownProgresses();
+
+				if (lastKnownProgresses.isEmpty()) {
+					return null;
+				}
+
+				return TransformUtil.transform(
+					lastKnownProgresses.entrySet(),
+					entry -> StringBundler.concat(
+						entry.getKey(), " processed approximately ",
+						entry.getValue(), " rows"));
+			}
+		).put(
 			"longest.upgrade.processes",
 			() -> {
 				Map<String, ArrayList<String>> eventMessages =
@@ -679,10 +753,14 @@ public class UpgradeReport {
 		File reportFile = new File(reportsDir, reportFileName);
 
 		if (reportFile.exists()) {
+			DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
+				"yyyyMMdd_HHmmss", LocaleUtil.US, TimeZone.getTimeZone("UTC"));
+
+			String timestamp = dateFormat.format(
+				new Date(reportFile.lastModified()));
+
 			reportFile.renameTo(
-				new File(
-					reportsDir,
-					reportFileName + "." + reportFile.lastModified()));
+				new File(reportsDir, reportFileName + "." + timestamp));
 
 			reportFile = new File(reportsDir, reportFileName);
 		}
@@ -1007,22 +1085,11 @@ public class UpgradeReport {
 	private static final Snapshot<ReleaseManager> _releaseManagerSnapshot =
 		new Snapshot<>(UpgradeReport.class, ReleaseManager.class);
 
-	private double _dlSize;
-	private final Thread _dlSizeThread = new DLSizeThread();
 	private String _executionDateString;
 	private String _executionTimeString;
 	private final int _initialBuildNumber;
 	private Map<String, Long> _initialTableCounts;
 	private String _rootDir;
-
-	private class DLSizeThread extends Thread {
-
-		@Override
-		public void run() {
-			_dlSize = FileUtils.sizeOfDirectory(new File(_rootDir));
-		}
-
-	}
 
 	private class MessagesPrinter {
 

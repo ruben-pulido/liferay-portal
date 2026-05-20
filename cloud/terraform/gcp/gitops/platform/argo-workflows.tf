@@ -20,6 +20,46 @@ resource "helm_release" "argo_workflows" {
 							memory="128Mi"
 						}
 					}
+					workflowDefaults={
+						spec={
+							securityContext={
+								runAsNonRoot=true
+								runAsUser=8737
+								seccompProfile={
+									type="RuntimeDefault"
+								}
+							}
+						}
+					}
+				}
+				executor={
+					image={
+						tag="v4.0.4-nonroot"
+					}
+					securityContext={
+						allowPrivilegeEscalation=false
+						capabilities={
+							drop=["ALL"]
+						}
+						runAsNonRoot=true
+						runAsUser=8737
+						seccompProfile={
+							type="RuntimeDefault"
+						}
+					}
+				}
+				mainContainer={
+					securityContext={
+						allowPrivilegeEscalation=false
+						capabilities={
+							drop=["ALL"]
+						}
+						runAsNonRoot=true
+						runAsUser=8737
+						seccompProfile={
+							type="RuntimeDefault"
+						}
+					}
 				}
 				server={
 					resources={

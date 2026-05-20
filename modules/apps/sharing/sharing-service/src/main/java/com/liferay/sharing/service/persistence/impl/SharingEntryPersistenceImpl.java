@@ -5,13 +5,10 @@
 
 package com.liferay.sharing.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
-import com.liferay.portal.kernel.dao.orm.Query;
-import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
@@ -26,6 +23,9 @@ import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
+import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
+import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -48,8 +48,6 @@ import com.liferay.sharing.service.persistence.impl.constants.SharingPersistence
 import java.io.Serializable;
 
 import java.lang.reflect.InvocationHandler;
-
-import java.sql.Timestamp;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -77,7 +75,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = SharingEntryPersistence.class)
 public class SharingEntryPersistenceImpl
-	extends BasePersistenceImpl<SharingEntry>
+	extends BasePersistenceImpl<SharingEntry, NoSuchEntryException>
 	implements SharingEntryPersistence {
 
 	/*
@@ -94,12 +92,11 @@ public class SharingEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FinderPath _finderPathWithPaginationFindAll;
-	private FinderPath _finderPathWithoutPaginationFindAll;
-	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithPaginationFindByUuid;
 	private FinderPath _finderPathWithoutPaginationFindByUuid;
 	private FinderPath _finderPathCountByUuid;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns all the sharing entries where uuid = &#63;.
@@ -170,106 +167,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid;
-				finderArgs = new Object[] {uuid};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid;
-			finderArgs = new Object[] {uuid, start, end, orderByComparator};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if (!uuid.equals(sharingEntry.getUuid())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid.find(
+			finderCache, new Object[] {uuid}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -291,16 +191,9 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
 	}
 
 	/**
@@ -314,13 +207,8 @@ public class SharingEntryPersistenceImpl
 	public SharingEntry fetchByUuid_First(
 		String uuid, OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByUuid(uuid, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid.fetchFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -330,11 +218,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (SharingEntry sharingEntry :
-				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByUuid.remove(
+			finderCache, new Object[] {uuid});
 	}
 
 	/**
@@ -345,67 +230,13 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid(String uuid) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid;
-
-		Object[] finderArgs = new Object[] {uuid};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_UUID_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid.count(
+			finderCache, new Object[] {uuid});
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_2 =
-		"sharingEntry.uuid = ?";
-
-	private static final String _FINDER_COLUMN_UUID_UUID_3 =
-		"(sharingEntry.uuid IS NULL OR sharingEntry.uuid = '')";
-
 	private FinderPath _finderPathFetchByUUID_G;
+	private UniquePersistenceFinder<SharingEntry>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the sharing entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
@@ -422,23 +253,15 @@ public class SharingEntryPersistenceImpl
 		SharingEntry sharingEntry = fetchByUUID_G(uuid, groupId);
 
 		if (sharingEntry == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("uuid=");
-			sb.append(uuid);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchEntryException(sb.toString());
+			throw new NoSuchEntryException(message);
 		}
 
 		return sharingEntry;
@@ -468,96 +291,8 @@ public class SharingEntryPersistenceImpl
 	public SharingEntry fetchByUUID_G(
 		String uuid, long groupId, boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {uuid, groupId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
-		}
-
-		if (result instanceof SharingEntry) {
-			SharingEntry sharingEntry = (SharingEntry)result;
-
-			if (!Objects.equals(uuid, sharingEntry.getUuid()) ||
-				(groupId != sharingEntry.getGroupId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_G_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_G_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(groupId);
-
-				List<SharingEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByUUID_G, finderArgs, list);
-					}
-				}
-				else {
-					SharingEntry sharingEntry = list.get(0);
-
-					result = sharingEntry;
-
-					cacheResult(sharingEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (SharingEntry)result;
-		}
+		return _uniquePersistenceFinderByUUID_G.fetch(
+			finderCache, new Object[] {uuid, groupId}, useFinderCache);
 	}
 
 	/**
@@ -585,27 +320,15 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
-		SharingEntry sharingEntry = fetchByUUID_G(uuid, groupId);
-
-		if (sharingEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByUUID_G.count(
+			finderCache, new Object[] {uuid, groupId});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
-		"sharingEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
-		"(sharingEntry.uuid IS NULL OR sharingEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
-		"sharingEntry.groupId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByUuid_C;
 	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
 	private FinderPath _finderPathCountByUuid_C;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns all the sharing entries where uuid = &#63; and companyId = &#63;.
@@ -684,114 +407,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUuid_C;
-				finderArgs = new Object[] {uuid, companyId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUuid_C;
-			finderArgs = new Object[] {
-				uuid, companyId, start, end, orderByComparator
-			};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if (!uuid.equals(sharingEntry.getUuid()) ||
-						(companyId != sharingEntry.getCompanyId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUuid_C.find(
+			finderCache, new Object[] {uuid, companyId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -816,19 +434,9 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("uuid=");
-		sb.append(uuid);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
 	}
 
 	/**
@@ -844,14 +452,8 @@ public class SharingEntryPersistenceImpl
 		String uuid, long companyId,
 		OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByUuid_C(
-			uuid, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUuid_C.fetchFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -862,13 +464,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (SharingEntry sharingEntry :
-				findByUuid_C(
-					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByUuid_C.remove(
+			finderCache, new Object[] {uuid, companyId});
 	}
 
 	/**
@@ -880,76 +477,15 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
-		uuid = Objects.toString(uuid, "");
-
-		FinderPath finderPath = _finderPathCountByUuid_C;
-
-		Object[] finderArgs = new Object[] {uuid, companyId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			boolean bindUuid = false;
-
-			if (uuid.isEmpty()) {
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_3);
-			}
-			else {
-				bindUuid = true;
-
-				sb.append(_FINDER_COLUMN_UUID_C_UUID_2);
-			}
-
-			sb.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindUuid) {
-					queryPos.add(uuid);
-				}
-
-				queryPos.add(companyId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUuid_C.count(
+			finderCache, new Object[] {uuid, companyId});
 	}
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
-		"sharingEntry.uuid = ? AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
-		"(sharingEntry.uuid IS NULL OR sharingEntry.uuid = '') AND ";
-
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
-		"sharingEntry.companyId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByGroupId;
 	private FinderPath _finderPathWithoutPaginationFindByGroupId;
 	private FinderPath _finderPathCountByGroupId;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns all the sharing entries where groupId = &#63;.
@@ -1021,93 +557,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByGroupId;
-				finderArgs = new Object[] {groupId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByGroupId;
-			finderArgs = new Object[] {groupId, start, end, orderByComparator};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if (groupId != sharingEntry.getGroupId()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByGroupId.find(
+			finderCache, new Object[] {groupId}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -1130,16 +582,9 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
 	}
 
 	/**
@@ -1153,14 +598,8 @@ public class SharingEntryPersistenceImpl
 	public SharingEntry fetchByGroupId_First(
 		long groupId, OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByGroupId(
-			groupId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByGroupId.fetchFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -1170,12 +609,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByGroupId(long groupId) {
-		for (SharingEntry sharingEntry :
-				findByGroupId(
-					groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByGroupId.remove(
+			finderCache, new Object[] {groupId});
 	}
 
 	/**
@@ -1186,53 +621,15 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByGroupId(long groupId) {
-		FinderPath finderPath = _finderPathCountByGroupId;
-
-		Object[] finderArgs = new Object[] {groupId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByGroupId.count(
+			finderCache, new Object[] {groupId});
 	}
-
-	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 =
-		"sharingEntry.groupId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByUserId;
 	private FinderPath _finderPathWithoutPaginationFindByUserId;
 	private FinderPath _finderPathCountByUserId;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns all the sharing entries where userId = &#63;.
@@ -1303,93 +700,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByUserId;
-				finderArgs = new Object[] {userId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUserId;
-			finderArgs = new Object[] {userId, start, end, orderByComparator};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if (userId != sharingEntry.getUserId()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_USERID_USERID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(userId);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByUserId.find(
+			finderCache, new Object[] {userId}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -1412,16 +725,9 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId=");
-		sb.append(userId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
 	}
 
 	/**
@@ -1435,13 +741,8 @@ public class SharingEntryPersistenceImpl
 	public SharingEntry fetchByUserId_First(
 		long userId, OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByUserId(userId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByUserId.fetchFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -1451,12 +752,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByUserId(long userId) {
-		for (SharingEntry sharingEntry :
-				findByUserId(
-					userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByUserId.remove(
+			finderCache, new Object[] {userId});
 	}
 
 	/**
@@ -1467,53 +764,15 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByUserId(long userId) {
-		FinderPath finderPath = _finderPathCountByUserId;
-
-		Object[] finderArgs = new Object[] {userId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_USERID_USERID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(userId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByUserId.count(
+			finderCache, new Object[] {userId});
 	}
-
-	private static final String _FINDER_COLUMN_USERID_USERID_2 =
-		"sharingEntry.userId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByToUserId;
 	private FinderPath _finderPathWithoutPaginationFindByToUserId;
 	private FinderPath _finderPathCountByToUserId;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByToUserId;
 
 	/**
 	 * Returns all the sharing entries where toUserId = &#63;.
@@ -1587,93 +846,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByToUserId;
-				finderArgs = new Object[] {toUserId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByToUserId;
-			finderArgs = new Object[] {toUserId, start, end, orderByComparator};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if (toUserId != sharingEntry.getToUserId()) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_TOUSERID_TOUSERID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(toUserId);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByToUserId.find(
+			finderCache, new Object[] {toUserId}, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -1696,16 +871,9 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("toUserId=");
-		sb.append(toUserId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByToUserId.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {toUserId}));
 	}
 
 	/**
@@ -1719,14 +887,8 @@ public class SharingEntryPersistenceImpl
 	public SharingEntry fetchByToUserId_First(
 		long toUserId, OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByToUserId(
-			toUserId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByToUserId.fetchFirst(
+			finderCache, new Object[] {toUserId}, orderByComparator);
 	}
 
 	/**
@@ -1736,12 +898,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByToUserId(long toUserId) {
-		for (SharingEntry sharingEntry :
-				findByToUserId(
-					toUserId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByToUserId.remove(
+			finderCache, new Object[] {toUserId});
 	}
 
 	/**
@@ -1752,52 +910,14 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByToUserId(long toUserId) {
-		FinderPath finderPath = _finderPathCountByToUserId;
-
-		Object[] finderArgs = new Object[] {toUserId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_TOUSERID_TOUSERID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(toUserId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByToUserId.count(
+			finderCache, new Object[] {toUserId});
 	}
-
-	private static final String _FINDER_COLUMN_TOUSERID_TOUSERID_2 =
-		"sharingEntry.toUserId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByLtExpirationDate;
 	private FinderPath _finderPathWithPaginationCountByLtExpirationDate;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByLtExpirationDate;
 
 	/**
 	 * Returns all the sharing entries where expirationDate &lt; &#63;.
@@ -1872,99 +992,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		finderPath = _finderPathWithPaginationFindByLtExpirationDate;
-		finderArgs = new Object[] {
-			_getTime(expirationDate), start, end, orderByComparator
-		};
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if (expirationDate.getTime() <=
-							sharingEntry.getExpirationDate(
-							).getTime()) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					3 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(3);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			boolean bindExpirationDate = false;
-
-			if (expirationDate == null) {
-				sb.append(_FINDER_COLUMN_LTEXPIRATIONDATE_EXPIRATIONDATE_1);
-			}
-			else {
-				bindExpirationDate = true;
-
-				sb.append(_FINDER_COLUMN_LTEXPIRATIONDATE_EXPIRATIONDATE_2);
-			}
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExpirationDate) {
-					queryPos.add(new Timestamp(expirationDate.getTime()));
-				}
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByLtExpirationDate.find(
+			finderCache, new Object[] {expirationDate}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1988,16 +1018,10 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("expirationDate<");
-		sb.append(expirationDate);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByLtExpirationDate.
+				buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {expirationDate}));
 	}
 
 	/**
@@ -2012,14 +1036,8 @@ public class SharingEntryPersistenceImpl
 		Date expirationDate,
 		OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByLtExpirationDate(
-			expirationDate, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByLtExpirationDate.fetchFirst(
+			finderCache, new Object[] {expirationDate}, orderByComparator);
 	}
 
 	/**
@@ -2029,13 +1047,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByLtExpirationDate(Date expirationDate) {
-		for (SharingEntry sharingEntry :
-				findByLtExpirationDate(
-					expirationDate, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByLtExpirationDate.remove(
+			finderCache, new Object[] {expirationDate});
 	}
 
 	/**
@@ -2046,70 +1059,15 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByLtExpirationDate(Date expirationDate) {
-		FinderPath finderPath =
-			_finderPathWithPaginationCountByLtExpirationDate;
-
-		Object[] finderArgs = new Object[] {_getTime(expirationDate)};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			boolean bindExpirationDate = false;
-
-			if (expirationDate == null) {
-				sb.append(_FINDER_COLUMN_LTEXPIRATIONDATE_EXPIRATIONDATE_1);
-			}
-			else {
-				bindExpirationDate = true;
-
-				sb.append(_FINDER_COLUMN_LTEXPIRATIONDATE_EXPIRATIONDATE_2);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExpirationDate) {
-					queryPos.add(new Timestamp(expirationDate.getTime()));
-				}
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByLtExpirationDate.count(
+			finderCache, new Object[] {expirationDate});
 	}
-
-	private static final String
-		_FINDER_COLUMN_LTEXPIRATIONDATE_EXPIRATIONDATE_1 =
-			"sharingEntry.expirationDate IS NULL";
-
-	private static final String
-		_FINDER_COLUMN_LTEXPIRATIONDATE_EXPIRATIONDATE_2 =
-			"sharingEntry.expirationDate < ?";
 
 	private FinderPath _finderPathWithPaginationFindByC_CN;
 	private FinderPath _finderPathWithoutPaginationFindByC_CN;
 	private FinderPath _finderPathCountByC_CN;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByC_CN;
 
 	/**
 	 * Returns all the sharing entries where companyId = &#63; and classNameId = &#63;.
@@ -2188,101 +1146,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByC_CN;
-				finderArgs = new Object[] {companyId, classNameId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByC_CN;
-			finderArgs = new Object[] {
-				companyId, classNameId, start, end, orderByComparator
-			};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if ((companyId != sharingEntry.getCompanyId()) ||
-						(classNameId != sharingEntry.getClassNameId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_CN_COMPANYID_2);
-
-			sb.append(_FINDER_COLUMN_C_CN_CLASSNAMEID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				queryPos.add(classNameId);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByC_CN.find(
+			finderCache, new Object[] {companyId, classNameId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2307,19 +1173,10 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByC_CN.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {companyId, classNameId}));
 	}
 
 	/**
@@ -2335,14 +1192,9 @@ public class SharingEntryPersistenceImpl
 		long companyId, long classNameId,
 		OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByC_CN(
-			companyId, classNameId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_CN.fetchFirst(
+			finderCache, new Object[] {companyId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -2353,13 +1205,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByC_CN(long companyId, long classNameId) {
-		for (SharingEntry sharingEntry :
-				findByC_CN(
-					companyId, classNameId, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByC_CN.remove(
+			finderCache, new Object[] {companyId, classNameId});
 	}
 
 	/**
@@ -2371,60 +1218,15 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByC_CN(long companyId, long classNameId) {
-		FinderPath finderPath = _finderPathCountByC_CN;
-
-		Object[] finderArgs = new Object[] {companyId, classNameId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_CN_COMPANYID_2);
-
-			sb.append(_FINDER_COLUMN_C_CN_CLASSNAMEID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(companyId);
-
-				queryPos.add(classNameId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByC_CN.count(
+			finderCache, new Object[] {companyId, classNameId});
 	}
-
-	private static final String _FINDER_COLUMN_C_CN_COMPANYID_2 =
-		"sharingEntry.companyId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_CN_CLASSNAMEID_2 =
-		"sharingEntry.classNameId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByU_C;
 	private FinderPath _finderPathWithoutPaginationFindByU_C;
 	private FinderPath _finderPathCountByU_C;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByU_C;
 
 	/**
 	 * Returns all the sharing entries where userId = &#63; and classNameId = &#63;.
@@ -2503,101 +1305,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByU_C;
-				finderArgs = new Object[] {userId, classNameId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByU_C;
-			finderArgs = new Object[] {
-				userId, classNameId, start, end, orderByComparator
-			};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if ((userId != sharingEntry.getUserId()) ||
-						(classNameId != sharingEntry.getClassNameId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_U_C_USERID_2);
-
-			sb.append(_FINDER_COLUMN_U_C_CLASSNAMEID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(userId);
-
-				queryPos.add(classNameId);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByU_C.find(
+			finderCache, new Object[] {userId, classNameId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2622,19 +1332,9 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId=");
-		sb.append(userId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByU_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId, classNameId}));
 	}
 
 	/**
@@ -2650,14 +1350,8 @@ public class SharingEntryPersistenceImpl
 		long userId, long classNameId,
 		OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByU_C(
-			userId, classNameId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByU_C.fetchFirst(
+			finderCache, new Object[] {userId, classNameId}, orderByComparator);
 	}
 
 	/**
@@ -2668,13 +1362,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByU_C(long userId, long classNameId) {
-		for (SharingEntry sharingEntry :
-				findByU_C(
-					userId, classNameId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByU_C.remove(
+			finderCache, new Object[] {userId, classNameId});
 	}
 
 	/**
@@ -2686,60 +1375,15 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByU_C(long userId, long classNameId) {
-		FinderPath finderPath = _finderPathCountByU_C;
-
-		Object[] finderArgs = new Object[] {userId, classNameId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_U_C_USERID_2);
-
-			sb.append(_FINDER_COLUMN_U_C_CLASSNAMEID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(userId);
-
-				queryPos.add(classNameId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByU_C.count(
+			finderCache, new Object[] {userId, classNameId});
 	}
-
-	private static final String _FINDER_COLUMN_U_C_USERID_2 =
-		"sharingEntry.userId = ? AND ";
-
-	private static final String _FINDER_COLUMN_U_C_CLASSNAMEID_2 =
-		"sharingEntry.classNameId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByTU_C;
 	private FinderPath _finderPathWithoutPaginationFindByTU_C;
 	private FinderPath _finderPathCountByTU_C;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByTU_C;
 
 	/**
 	 * Returns all the sharing entries where toUserId = &#63; and classNameId = &#63;.
@@ -2818,101 +1462,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByTU_C;
-				finderArgs = new Object[] {toUserId, classNameId};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByTU_C;
-			finderArgs = new Object[] {
-				toUserId, classNameId, start, end, orderByComparator
-			};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if ((toUserId != sharingEntry.getToUserId()) ||
-						(classNameId != sharingEntry.getClassNameId())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_TU_C_TOUSERID_2);
-
-			sb.append(_FINDER_COLUMN_TU_C_CLASSNAMEID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(toUserId);
-
-				queryPos.add(classNameId);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByTU_C.find(
+			finderCache, new Object[] {toUserId, classNameId}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2937,19 +1489,10 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("toUserId=");
-		sb.append(toUserId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByTU_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY,
+				new Object[] {toUserId, classNameId}));
 	}
 
 	/**
@@ -2965,14 +1508,9 @@ public class SharingEntryPersistenceImpl
 		long toUserId, long classNameId,
 		OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByTU_C(
-			toUserId, classNameId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByTU_C.fetchFirst(
+			finderCache, new Object[] {toUserId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -2983,13 +1521,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByTU_C(long toUserId, long classNameId) {
-		for (SharingEntry sharingEntry :
-				findByTU_C(
-					toUserId, classNameId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByTU_C.remove(
+			finderCache, new Object[] {toUserId, classNameId});
 	}
 
 	/**
@@ -3001,60 +1534,15 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByTU_C(long toUserId, long classNameId) {
-		FinderPath finderPath = _finderPathCountByTU_C;
-
-		Object[] finderArgs = new Object[] {toUserId, classNameId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_TU_C_TOUSERID_2);
-
-			sb.append(_FINDER_COLUMN_TU_C_CLASSNAMEID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(toUserId);
-
-				queryPos.add(classNameId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByTU_C.count(
+			finderCache, new Object[] {toUserId, classNameId});
 	}
-
-	private static final String _FINDER_COLUMN_TU_C_TOUSERID_2 =
-		"sharingEntry.toUserId = ? AND ";
-
-	private static final String _FINDER_COLUMN_TU_C_CLASSNAMEID_2 =
-		"sharingEntry.classNameId = ?";
 
 	private FinderPath _finderPathWithPaginationFindByC_C;
 	private FinderPath _finderPathWithoutPaginationFindByC_C;
 	private FinderPath _finderPathCountByC_C;
+	private CollectionPersistenceFinder<SharingEntry>
+		_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns all the sharing entries where classNameId = &#63; and classPK = &#63;.
@@ -3133,101 +1621,9 @@ public class SharingEntryPersistenceImpl
 		OrderByComparator<SharingEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByC_C;
-				finderArgs = new Object[] {classNameId, classPK};
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByC_C;
-			finderArgs = new Object[] {
-				classNameId, classPK, start, end, orderByComparator
-			};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (SharingEntry sharingEntry : list) {
-					if ((classNameId != sharingEntry.getClassNameId()) ||
-						(classPK != sharingEntry.getClassPK())) {
-
-						list = null;
-
-						break;
-					}
-				}
-			}
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				sb = new StringBundler(4);
-			}
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_C_CLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_C_C_CLASSPK_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-			}
-			else {
-				sb.append(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(classNameId);
-
-				queryPos.add(classPK);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
+		return _collectionPersistenceFinderByC_C.find(
+			finderCache, new Object[] {classNameId, classPK}, start, end,
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -3252,19 +1648,9 @@ public class SharingEntryPersistenceImpl
 			return sharingEntry;
 		}
 
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("classNameId=");
-		sb.append(classNameId);
-
-		sb.append(", classPK=");
-		sb.append(classPK);
-
-		sb.append("}");
-
-		throw new NoSuchEntryException(sb.toString());
+		throw new NoSuchEntryException(
+			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
+				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
 	}
 
 	/**
@@ -3280,14 +1666,9 @@ public class SharingEntryPersistenceImpl
 		long classNameId, long classPK,
 		OrderByComparator<SharingEntry> orderByComparator) {
 
-		List<SharingEntry> list = findByC_C(
-			classNameId, classPK, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
+		return _collectionPersistenceFinderByC_C.fetchFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -3298,13 +1679,8 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public void removeByC_C(long classNameId, long classPK) {
-		for (SharingEntry sharingEntry :
-				findByC_C(
-					classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
-
-			remove(sharingEntry);
-		}
+		_collectionPersistenceFinderByC_C.remove(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -3316,62 +1692,18 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByC_C(long classNameId, long classPK) {
-		FinderPath finderPath = _finderPathCountByC_C;
-
-		Object[] finderArgs = new Object[] {classNameId, classPK};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_C_C_CLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_C_C_CLASSPK_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(classNameId);
-
-				queryPos.add(classPK);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
+		return _collectionPersistenceFinderByC_C.count(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private static final String _FINDER_COLUMN_C_C_CLASSNAMEID_2 =
-		"sharingEntry.classNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_C_C_CLASSPK_2 =
-		"sharingEntry.classPK = ?";
-
-	private FinderPath _finderPathFetchByTUG_TU_C_C;
+	private FinderPath _finderPathFetchByTT_TUG_TU_C_C;
+	private UniquePersistenceFinder<SharingEntry>
+		_uniquePersistenceFinderByTT_TUG_TU_C_C;
 
 	/**
-	 * Returns the sharing entry where toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
+	 * Returns the sharing entry where toTicketId = &#63; and toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
 	 *
+	 * @param toTicketId the to ticket ID
 	 * @param toUserGroupId the to user group ID
 	 * @param toUserId the to user ID
 	 * @param classNameId the class name ID
@@ -3380,45 +1712,37 @@ public class SharingEntryPersistenceImpl
 	 * @throws NoSuchEntryException if a matching sharing entry could not be found
 	 */
 	@Override
-	public SharingEntry findByTUG_TU_C_C(
-			long toUserGroupId, long toUserId, long classNameId, long classPK)
+	public SharingEntry findByTT_TUG_TU_C_C(
+			long toTicketId, long toUserGroupId, long toUserId,
+			long classNameId, long classPK)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByTUG_TU_C_C(
-			toUserGroupId, toUserId, classNameId, classPK);
+		SharingEntry sharingEntry = fetchByTT_TUG_TU_C_C(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
 
 		if (sharingEntry == null) {
-			StringBundler sb = new StringBundler(10);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("toUserGroupId=");
-			sb.append(toUserGroupId);
-
-			sb.append(", toUserId=");
-			sb.append(toUserId);
-
-			sb.append(", classNameId=");
-			sb.append(classNameId);
-
-			sb.append(", classPK=");
-			sb.append(classPK);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByTT_TUG_TU_C_C.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {
+						toTicketId, toUserGroupId, toUserId, classNameId,
+						classPK
+					});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchEntryException(sb.toString());
+			throw new NoSuchEntryException(message);
 		}
 
 		return sharingEntry;
 	}
 
 	/**
-	 * Returns the sharing entry where toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the sharing entry where toTicketId = &#63; and toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
+	 * @param toTicketId the to ticket ID
 	 * @param toUserGroupId the to user group ID
 	 * @param toUserId the to user ID
 	 * @param classNameId the class name ID
@@ -3426,16 +1750,18 @@ public class SharingEntryPersistenceImpl
 	 * @return the matching sharing entry, or <code>null</code> if a matching sharing entry could not be found
 	 */
 	@Override
-	public SharingEntry fetchByTUG_TU_C_C(
-		long toUserGroupId, long toUserId, long classNameId, long classPK) {
+	public SharingEntry fetchByTT_TUG_TU_C_C(
+		long toTicketId, long toUserGroupId, long toUserId, long classNameId,
+		long classPK) {
 
-		return fetchByTUG_TU_C_C(
-			toUserGroupId, toUserId, classNameId, classPK, true);
+		return fetchByTT_TUG_TU_C_C(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK, true);
 	}
 
 	/**
-	 * Returns the sharing entry where toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the sharing entry where toTicketId = &#63; and toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @param toTicketId the to ticket ID
 	 * @param toUserGroupId the to user group ID
 	 * @param toUserId the to user ID
 	 * @param classNameId the class name ID
@@ -3444,104 +1770,22 @@ public class SharingEntryPersistenceImpl
 	 * @return the matching sharing entry, or <code>null</code> if a matching sharing entry could not be found
 	 */
 	@Override
-	public SharingEntry fetchByTUG_TU_C_C(
-		long toUserGroupId, long toUserId, long classNameId, long classPK,
-		boolean useFinderCache) {
+	public SharingEntry fetchByTT_TUG_TU_C_C(
+		long toTicketId, long toUserGroupId, long toUserId, long classNameId,
+		long classPK, boolean useFinderCache) {
 
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {
-				toUserGroupId, toUserId, classNameId, classPK
-			};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByTUG_TU_C_C, finderArgs, this);
-		}
-
-		if (result instanceof SharingEntry) {
-			SharingEntry sharingEntry = (SharingEntry)result;
-
-			if ((toUserGroupId != sharingEntry.getToUserGroupId()) ||
-				(toUserId != sharingEntry.getToUserId()) ||
-				(classNameId != sharingEntry.getClassNameId()) ||
-				(classPK != sharingEntry.getClassPK())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			sb.append(_FINDER_COLUMN_TUG_TU_C_C_TOUSERGROUPID_2);
-
-			sb.append(_FINDER_COLUMN_TUG_TU_C_C_TOUSERID_2);
-
-			sb.append(_FINDER_COLUMN_TUG_TU_C_C_CLASSNAMEID_2);
-
-			sb.append(_FINDER_COLUMN_TUG_TU_C_C_CLASSPK_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(toUserGroupId);
-
-				queryPos.add(toUserId);
-
-				queryPos.add(classNameId);
-
-				queryPos.add(classPK);
-
-				List<SharingEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByTUG_TU_C_C, finderArgs, list);
-					}
-				}
-				else {
-					SharingEntry sharingEntry = list.get(0);
-
-					result = sharingEntry;
-
-					cacheResult(sharingEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (SharingEntry)result;
-		}
+		return _uniquePersistenceFinderByTT_TUG_TU_C_C.fetch(
+			finderCache,
+			new Object[] {
+				toTicketId, toUserGroupId, toUserId, classNameId, classPK
+			},
+			useFinderCache);
 	}
 
 	/**
-	 * Removes the sharing entry where toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
+	 * Removes the sharing entry where toTicketId = &#63; and toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
 	 *
+	 * @param toTicketId the to ticket ID
 	 * @param toUserGroupId the to user group ID
 	 * @param toUserId the to user ID
 	 * @param classNameId the class name ID
@@ -3549,19 +1793,21 @@ public class SharingEntryPersistenceImpl
 	 * @return the sharing entry that was removed
 	 */
 	@Override
-	public SharingEntry removeByTUG_TU_C_C(
-			long toUserGroupId, long toUserId, long classNameId, long classPK)
+	public SharingEntry removeByTT_TUG_TU_C_C(
+			long toTicketId, long toUserGroupId, long toUserId,
+			long classNameId, long classPK)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = findByTUG_TU_C_C(
-			toUserGroupId, toUserId, classNameId, classPK);
+		SharingEntry sharingEntry = findByTT_TUG_TU_C_C(
+			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
 
 		return remove(sharingEntry);
 	}
 
 	/**
-	 * Returns the number of sharing entries where toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63;.
+	 * Returns the number of sharing entries where toTicketId = &#63; and toUserGroupId = &#63; and toUserId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
+	 * @param toTicketId the to ticket ID
 	 * @param toUserGroupId the to user group ID
 	 * @param toUserId the to user ID
 	 * @param classNameId the class name ID
@@ -3569,32 +1815,20 @@ public class SharingEntryPersistenceImpl
 	 * @return the number of matching sharing entries
 	 */
 	@Override
-	public int countByTUG_TU_C_C(
-		long toUserGroupId, long toUserId, long classNameId, long classPK) {
+	public int countByTT_TUG_TU_C_C(
+		long toTicketId, long toUserGroupId, long toUserId, long classNameId,
+		long classPK) {
 
-		SharingEntry sharingEntry = fetchByTUG_TU_C_C(
-			toUserGroupId, toUserId, classNameId, classPK);
-
-		if (sharingEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByTT_TUG_TU_C_C.count(
+			finderCache,
+			new Object[] {
+				toTicketId, toUserGroupId, toUserId, classNameId, classPK
+			});
 	}
 
-	private static final String _FINDER_COLUMN_TUG_TU_C_C_TOUSERGROUPID_2 =
-		"sharingEntry.toUserGroupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_TUG_TU_C_C_TOUSERID_2 =
-		"sharingEntry.toUserId = ? AND ";
-
-	private static final String _FINDER_COLUMN_TUG_TU_C_C_CLASSNAMEID_2 =
-		"sharingEntry.classNameId = ? AND ";
-
-	private static final String _FINDER_COLUMN_TUG_TU_C_C_CLASSPK_2 =
-		"sharingEntry.classPK = ?";
-
 	private FinderPath _finderPathFetchByERC_G;
+	private UniquePersistenceFinder<SharingEntry>
+		_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the sharing entry where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
@@ -3612,23 +1846,16 @@ public class SharingEntryPersistenceImpl
 			externalReferenceCode, groupId);
 
 		if (sharingEntry == null) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			sb.append("externalReferenceCode=");
-			sb.append(externalReferenceCode);
-
-			sb.append(", groupId=");
-			sb.append(groupId);
-
-			sb.append("}");
+			String message =
+				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
+					_NO_SUCH_ENTITY_WITH_KEY,
+					new Object[] {externalReferenceCode, groupId});
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(sb.toString());
+				_log.debug(message);
 			}
 
-			throw new NoSuchEntryException(sb.toString());
+			throw new NoSuchEntryException(message);
 		}
 
 		return sharingEntry;
@@ -3660,98 +1887,9 @@ public class SharingEntryPersistenceImpl
 	public SharingEntry fetchByERC_G(
 		String externalReferenceCode, long groupId, boolean useFinderCache) {
 
-		externalReferenceCode = Objects.toString(externalReferenceCode, "");
-
-		Object[] finderArgs = null;
-
-		if (useFinderCache) {
-			finderArgs = new Object[] {externalReferenceCode, groupId};
-		}
-
-		Object result = null;
-
-		if (useFinderCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByERC_G, finderArgs, this);
-		}
-
-		if (result instanceof SharingEntry) {
-			SharingEntry sharingEntry = (SharingEntry)result;
-
-			if (!Objects.equals(
-					externalReferenceCode,
-					sharingEntry.getExternalReferenceCode()) ||
-				(groupId != sharingEntry.getGroupId())) {
-
-				result = null;
-			}
-		}
-
-		if (result == null) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(_SQL_SELECT_SHARINGENTRY_WHERE);
-
-			boolean bindExternalReferenceCode = false;
-
-			if (externalReferenceCode.isEmpty()) {
-				sb.append(_FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_3);
-			}
-			else {
-				bindExternalReferenceCode = true;
-
-				sb.append(_FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_2);
-			}
-
-			sb.append(_FINDER_COLUMN_ERC_G_GROUPID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				if (bindExternalReferenceCode) {
-					queryPos.add(externalReferenceCode);
-				}
-
-				queryPos.add(groupId);
-
-				List<SharingEntry> list = query.list();
-
-				if (list.isEmpty()) {
-					if (useFinderCache) {
-						finderCache.putResult(
-							_finderPathFetchByERC_G, finderArgs, list);
-					}
-				}
-				else {
-					SharingEntry sharingEntry = list.get(0);
-
-					result = sharingEntry;
-
-					cacheResult(sharingEntry);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (SharingEntry)result;
-		}
+		return _uniquePersistenceFinderByERC_G.fetch(
+			finderCache, new Object[] {externalReferenceCode, groupId},
+			useFinderCache);
 	}
 
 	/**
@@ -3780,24 +1918,9 @@ public class SharingEntryPersistenceImpl
 	 */
 	@Override
 	public int countByERC_G(String externalReferenceCode, long groupId) {
-		SharingEntry sharingEntry = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (sharingEntry == null) {
-			return 0;
-		}
-
-		return 1;
+		return _uniquePersistenceFinderByERC_G.count(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
-
-	private static final String _FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_2 =
-		"sharingEntry.externalReferenceCode = ? AND ";
-
-	private static final String _FINDER_COLUMN_ERC_G_EXTERNALREFERENCECODE_3 =
-		"(sharingEntry.externalReferenceCode IS NULL OR sharingEntry.externalReferenceCode = '') AND ";
-
-	private static final String _FINDER_COLUMN_ERC_G_GROUPID_2 =
-		"sharingEntry.groupId = ?";
 
 	public SharingEntryPersistenceImpl() {
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
@@ -3830,10 +1953,11 @@ public class SharingEntryPersistenceImpl
 			sharingEntry);
 
 		finderCache.putResult(
-			_finderPathFetchByTUG_TU_C_C,
+			_finderPathFetchByTT_TUG_TU_C_C,
 			new Object[] {
-				sharingEntry.getToUserGroupId(), sharingEntry.getToUserId(),
-				sharingEntry.getClassNameId(), sharingEntry.getClassPK()
+				sharingEntry.getToTicketId(), sharingEntry.getToUserGroupId(),
+				sharingEntry.getToUserId(), sharingEntry.getClassNameId(),
+				sharingEntry.getClassPK()
 			},
 			sharingEntry);
 
@@ -3872,48 +1996,6 @@ public class SharingEntryPersistenceImpl
 		}
 	}
 
-	/**
-	 * Clears the cache for all sharing entries.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache() {
-		entityCache.clearCache(SharingEntryImpl.class);
-
-		finderCache.clearCache(SharingEntryImpl.class);
-	}
-
-	/**
-	 * Clears the cache for the sharing entry.
-	 *
-	 * <p>
-	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
-	 * </p>
-	 */
-	@Override
-	public void clearCache(SharingEntry sharingEntry) {
-		entityCache.removeResult(SharingEntryImpl.class, sharingEntry);
-	}
-
-	@Override
-	public void clearCache(List<SharingEntry> sharingEntries) {
-		for (SharingEntry sharingEntry : sharingEntries) {
-			entityCache.removeResult(SharingEntryImpl.class, sharingEntry);
-		}
-	}
-
-	@Override
-	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(SharingEntryImpl.class);
-
-		for (Serializable primaryKey : primaryKeys) {
-			entityCache.removeResult(SharingEntryImpl.class, primaryKey);
-		}
-	}
-
 	protected void cacheUniqueFindersCache(
 		SharingEntryModelImpl sharingEntryModelImpl) {
 
@@ -3925,6 +2007,7 @@ public class SharingEntryPersistenceImpl
 			_finderPathFetchByUUID_G, args, sharingEntryModelImpl);
 
 		args = new Object[] {
+			sharingEntryModelImpl.getToTicketId(),
 			sharingEntryModelImpl.getToUserGroupId(),
 			sharingEntryModelImpl.getToUserId(),
 			sharingEntryModelImpl.getClassNameId(),
@@ -3932,7 +2015,7 @@ public class SharingEntryPersistenceImpl
 		};
 
 		finderCache.putResult(
-			_finderPathFetchByTUG_TU_C_C, args, sharingEntryModelImpl);
+			_finderPathFetchByTT_TUG_TU_C_C, args, sharingEntryModelImpl);
 
 		args = new Object[] {
 			sharingEntryModelImpl.getExternalReferenceCode(),
@@ -3977,47 +2060,6 @@ public class SharingEntryPersistenceImpl
 		throws NoSuchEntryException {
 
 		return remove((Serializable)sharingEntryId);
-	}
-
-	/**
-	 * Removes the sharing entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param primaryKey the primary key of the sharing entry
-	 * @return the sharing entry that was removed
-	 * @throws NoSuchEntryException if a sharing entry with the primary key could not be found
-	 */
-	@Override
-	public SharingEntry remove(Serializable primaryKey)
-		throws NoSuchEntryException {
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SharingEntry sharingEntry = (SharingEntry)session.get(
-				SharingEntryImpl.class, primaryKey);
-
-			if (sharingEntry == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-				}
-
-				throw new NoSuchEntryException(
-					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			return remove(sharingEntry);
-		}
-		catch (NoSuchEntryException noSuchEntityException) {
-			throw noSuchEntityException;
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
 	}
 
 	@Override
@@ -4200,31 +2242,6 @@ public class SharingEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the sharing entry with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the sharing entry
-	 * @return the sharing entry
-	 * @throws NoSuchEntryException if a sharing entry with the primary key could not be found
-	 */
-	@Override
-	public SharingEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchEntryException {
-
-		SharingEntry sharingEntry = fetchByPrimaryKey(primaryKey);
-
-		if (sharingEntry == null) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-			}
-
-			throw new NoSuchEntryException(
-				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
-		}
-
-		return sharingEntry;
-	}
-
-	/**
 	 * Returns the sharing entry with the primary key or throws a <code>NoSuchEntryException</code> if it could not be found.
 	 *
 	 * @param sharingEntryId the primary key of the sharing entry
@@ -4247,185 +2264,6 @@ public class SharingEntryPersistenceImpl
 	@Override
 	public SharingEntry fetchByPrimaryKey(long sharingEntryId) {
 		return fetchByPrimaryKey((Serializable)sharingEntryId);
-	}
-
-	/**
-	 * Returns all the sharing entries.
-	 *
-	 * @return the sharing entries
-	 */
-	@Override
-	public List<SharingEntry> findAll() {
-		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	/**
-	 * Returns a range of all the sharing entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SharingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of sharing entries
-	 * @param end the upper bound of the range of sharing entries (not inclusive)
-	 * @return the range of sharing entries
-	 */
-	@Override
-	public List<SharingEntry> findAll(int start, int end) {
-		return findAll(start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the sharing entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SharingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of sharing entries
-	 * @param end the upper bound of the range of sharing entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of sharing entries
-	 */
-	@Override
-	public List<SharingEntry> findAll(
-		int start, int end, OrderByComparator<SharingEntry> orderByComparator) {
-
-		return findAll(start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the sharing entries.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SharingEntryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param start the lower bound of the range of sharing entries
-	 * @param end the upper bound of the range of sharing entries (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the ordered range of sharing entries
-	 */
-	@Override
-	public List<SharingEntry> findAll(
-		int start, int end, OrderByComparator<SharingEntry> orderByComparator,
-		boolean useFinderCache) {
-
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
-
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-			(orderByComparator == null)) {
-
-			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindAll;
-				finderArgs = FINDER_ARGS_EMPTY;
-			}
-		}
-		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindAll;
-			finderArgs = new Object[] {start, end, orderByComparator};
-		}
-
-		List<SharingEntry> list = null;
-
-		if (useFinderCache) {
-			list = (List<SharingEntry>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
-
-		if (list == null) {
-			StringBundler sb = null;
-			String sql = null;
-
-			if (orderByComparator != null) {
-				sb = new StringBundler(
-					2 + (orderByComparator.getOrderByFields().length * 2));
-
-				sb.append(_SQL_SELECT_SHARINGENTRY);
-
-				appendOrderByComparator(
-					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
-
-				sql = sb.toString();
-			}
-			else {
-				sql = _SQL_SELECT_SHARINGENTRY;
-
-				sql = sql.concat(SharingEntryModelImpl.ORDER_BY_JPQL);
-			}
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				list = (List<SharingEntry>)QueryUtil.list(
-					query, getDialect(), start, end);
-
-				cacheResult(list);
-
-				if (useFinderCache) {
-					finderCache.putResult(finderPath, finderArgs, list);
-				}
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all the sharing entries from the database.
-	 *
-	 */
-	@Override
-	public void removeAll() {
-		for (SharingEntry sharingEntry : findAll()) {
-			remove(sharingEntry);
-		}
-	}
-
-	/**
-	 * Returns the number of sharing entries.
-	 *
-	 * @return the number of sharing entries
-	 */
-	@Override
-	public int countAll() {
-		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-
-		if (count == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(_SQL_COUNT_SHARINGENTRY);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return count.intValue();
 	}
 
 	@Override
@@ -4461,18 +2299,6 @@ public class SharingEntryPersistenceImpl
 		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_finderPathWithPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathWithoutPaginationFindAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
-			new String[0], true);
-
-		_finderPathCountAll = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0], new String[0], false);
-
 		_finderPathWithPaginationFindByUuid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
 			new String[] {
@@ -4491,10 +2317,28 @@ public class SharingEntryPersistenceImpl
 			new String[] {String.class.getName()}, new String[] {"uuid_"},
 			false);
 
+		_collectionPersistenceFinderByUuid = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByUuid,
+			_finderPathWithoutPaginationFindByUuid, _finderPathCountByUuid,
+			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"sharingEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
+				true, SharingEntry::getUuid));
+
 		_finderPathFetchByUUID_G = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "groupId"}, true);
+
+		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByUUID_G, _SQL_SELECT_SHARINGENTRY_WHERE,
+			new FinderColumn<>(
+				"sharingEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
+				false, SharingEntry::getUuid),
+			new FinderColumn<>(
+				"sharingEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
+				true, SharingEntry::getGroupId));
 
 		_finderPathWithPaginationFindByUuid_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
@@ -4515,6 +2359,20 @@ public class SharingEntryPersistenceImpl
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "companyId"}, false);
 
+		_collectionPersistenceFinderByUuid_C =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUuid_C,
+				_finderPathWithoutPaginationFindByUuid_C,
+				_finderPathCountByUuid_C, _SQL_SELECT_SHARINGENTRY_WHERE,
+				_SQL_COUNT_SHARINGENTRY_WHERE,
+				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"sharingEntry.", "uuid", FinderColumn.Type.STRING, "=",
+					true, false, SharingEntry::getUuid),
+				new FinderColumn<>(
+					"sharingEntry.", "companyId", FinderColumn.Type.LONG, "=",
+					true, true, SharingEntry::getCompanyId));
+
 		_finderPathWithPaginationFindByGroupId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupId",
 			new String[] {
@@ -4533,6 +2391,17 @@ public class SharingEntryPersistenceImpl
 			new String[] {Long.class.getName()}, new String[] {"groupId"},
 			false);
 
+		_collectionPersistenceFinderByGroupId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByGroupId,
+				_finderPathWithoutPaginationFindByGroupId,
+				_finderPathCountByGroupId, _SQL_SELECT_SHARINGENTRY_WHERE,
+				_SQL_COUNT_SHARINGENTRY_WHERE,
+				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"sharingEntry.", "groupId", FinderColumn.Type.LONG, "=",
+					true, true, SharingEntry::getGroupId));
+
 		_finderPathWithPaginationFindByUserId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId",
 			new String[] {
@@ -4549,6 +2418,17 @@ public class SharingEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId",
 			new String[] {Long.class.getName()}, new String[] {"userId"},
 			false);
+
+		_collectionPersistenceFinderByUserId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByUserId,
+				_finderPathWithoutPaginationFindByUserId,
+				_finderPathCountByUserId, _SQL_SELECT_SHARINGENTRY_WHERE,
+				_SQL_COUNT_SHARINGENTRY_WHERE,
+				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"sharingEntry.", "userId", FinderColumn.Type.LONG, "=",
+					true, true, SharingEntry::getUserId));
 
 		_finderPathWithPaginationFindByToUserId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByToUserId",
@@ -4568,6 +2448,17 @@ public class SharingEntryPersistenceImpl
 			new String[] {Long.class.getName()}, new String[] {"toUserId"},
 			false);
 
+		_collectionPersistenceFinderByToUserId =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByToUserId,
+				_finderPathWithoutPaginationFindByToUserId,
+				_finderPathCountByToUserId, _SQL_SELECT_SHARINGENTRY_WHERE,
+				_SQL_COUNT_SHARINGENTRY_WHERE,
+				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"sharingEntry.", "toUserId", FinderColumn.Type.LONG, "=",
+					true, true, SharingEntry::getToUserId));
+
 		_finderPathWithPaginationFindByLtExpirationDate = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByLtExpirationDate",
 			new String[] {
@@ -4580,6 +2471,16 @@ public class SharingEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByLtExpirationDate",
 			new String[] {Date.class.getName()},
 			new String[] {"expirationDate"}, false);
+
+		_collectionPersistenceFinderByLtExpirationDate =
+			new CollectionPersistenceFinder<>(
+				this, _finderPathWithPaginationFindByLtExpirationDate, null,
+				_finderPathWithPaginationCountByLtExpirationDate,
+				_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
+				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+				new FinderColumn<>(
+					"sharingEntry.", "expirationDate", FinderColumn.Type.DATE,
+					"<", true, true, SharingEntry::getExpirationDate));
 
 		_finderPathWithPaginationFindByC_CN = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_CN",
@@ -4600,6 +2501,18 @@ public class SharingEntryPersistenceImpl
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"companyId", "classNameId"}, false);
 
+		_collectionPersistenceFinderByC_CN = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByC_CN,
+			_finderPathWithoutPaginationFindByC_CN, _finderPathCountByC_CN,
+			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"sharingEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
+				false, SharingEntry::getCompanyId),
+			new FinderColumn<>(
+				"sharingEntry.", "classNameId", FinderColumn.Type.LONG, "=",
+				true, true, SharingEntry::getClassNameId));
+
 		_finderPathWithPaginationFindByU_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByU_C",
 			new String[] {
@@ -4618,6 +2531,18 @@ public class SharingEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByU_C",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"userId", "classNameId"}, false);
+
+		_collectionPersistenceFinderByU_C = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByU_C,
+			_finderPathWithoutPaginationFindByU_C, _finderPathCountByU_C,
+			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"sharingEntry.", "userId", FinderColumn.Type.LONG, "=", true,
+				false, SharingEntry::getUserId),
+			new FinderColumn<>(
+				"sharingEntry.", "classNameId", FinderColumn.Type.LONG, "=",
+				true, true, SharingEntry::getClassNameId));
 
 		_finderPathWithPaginationFindByTU_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByTU_C",
@@ -4638,6 +2563,18 @@ public class SharingEntryPersistenceImpl
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"toUserId", "classNameId"}, false);
 
+		_collectionPersistenceFinderByTU_C = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByTU_C,
+			_finderPathWithoutPaginationFindByTU_C, _finderPathCountByTU_C,
+			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"sharingEntry.", "toUserId", FinderColumn.Type.LONG, "=", true,
+				false, SharingEntry::getToUserId),
+			new FinderColumn<>(
+				"sharingEntry.", "classNameId", FinderColumn.Type.LONG, "=",
+				true, true, SharingEntry::getClassNameId));
+
 		_finderPathWithPaginationFindByC_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_C",
 			new String[] {
@@ -4657,21 +2594,63 @@ public class SharingEntryPersistenceImpl
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"classNameId", "classPK"}, false);
 
-		_finderPathFetchByTUG_TU_C_C = new FinderPath(
-			FINDER_CLASS_NAME_ENTITY, "fetchByTUG_TU_C_C",
+		_collectionPersistenceFinderByC_C = new CollectionPersistenceFinder<>(
+			this, _finderPathWithPaginationFindByC_C,
+			_finderPathWithoutPaginationFindByC_C, _finderPathCountByC_C,
+			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
+			new FinderColumn<>(
+				"sharingEntry.", "classNameId", FinderColumn.Type.LONG, "=",
+				true, false, SharingEntry::getClassNameId),
+			new FinderColumn<>(
+				"sharingEntry.", "classPK", FinderColumn.Type.LONG, "=", true,
+				true, SharingEntry::getClassPK));
+
+		_finderPathFetchByTT_TUG_TU_C_C = new FinderPath(
+			FINDER_CLASS_NAME_ENTITY, "fetchByTT_TUG_TU_C_C",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
-				Long.class.getName(), Long.class.getName()
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
 			},
 			new String[] {
-				"toUserGroupId", "toUserId", "classNameId", "classPK"
+				"toTicketId", "toUserGroupId", "toUserId", "classNameId",
+				"classPK"
 			},
 			true);
+
+		_uniquePersistenceFinderByTT_TUG_TU_C_C = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByTT_TUG_TU_C_C,
+			_SQL_SELECT_SHARINGENTRY_WHERE,
+			new FinderColumn<>(
+				"sharingEntry.", "toTicketId", FinderColumn.Type.LONG, "=",
+				true, false, SharingEntry::getToTicketId),
+			new FinderColumn<>(
+				"sharingEntry.", "toUserGroupId", FinderColumn.Type.LONG, "=",
+				true, false, SharingEntry::getToUserGroupId),
+			new FinderColumn<>(
+				"sharingEntry.", "toUserId", FinderColumn.Type.LONG, "=", true,
+				false, SharingEntry::getToUserId),
+			new FinderColumn<>(
+				"sharingEntry.", "classNameId", FinderColumn.Type.LONG, "=",
+				true, false, SharingEntry::getClassNameId),
+			new FinderColumn<>(
+				"sharingEntry.", "classPK", FinderColumn.Type.LONG, "=", true,
+				true, SharingEntry::getClassPK));
 
 		_finderPathFetchByERC_G = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByERC_G",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"externalReferenceCode", "groupId"}, true);
+
+		_uniquePersistenceFinderByERC_G = new UniquePersistenceFinder<>(
+			this, _finderPathFetchByERC_G, _SQL_SELECT_SHARINGENTRY_WHERE,
+			new FinderColumn<>(
+				"sharingEntry.", "externalReferenceCode",
+				FinderColumn.Type.STRING, "=", true, false,
+				SharingEntry::getExternalReferenceCode),
+			new FinderColumn<>(
+				"sharingEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
+				true, SharingEntry::getGroupId));
 
 		SharingEntryUtil.setPersistence(this);
 	}
@@ -4715,13 +2694,8 @@ public class SharingEntryPersistenceImpl
 	@Reference
 	protected FinderCache finderCache;
 
-	private static Long _getTime(Date date) {
-		if (date == null) {
-			return null;
-		}
-
-		return date.getTime();
-	}
+	private static final String _ENTITY_ALIAS_PREFIX =
+		SharingEntryModelImpl.ENTITY_ALIAS + ".";
 
 	private static final String _SQL_SELECT_SHARINGENTRY =
 		"SELECT sharingEntry FROM SharingEntry sharingEntry";
@@ -4729,16 +2703,8 @@ public class SharingEntryPersistenceImpl
 	private static final String _SQL_SELECT_SHARINGENTRY_WHERE =
 		"SELECT sharingEntry FROM SharingEntry sharingEntry WHERE ";
 
-	private static final String _SQL_COUNT_SHARINGENTRY =
-		"SELECT COUNT(sharingEntry) FROM SharingEntry sharingEntry";
-
 	private static final String _SQL_COUNT_SHARINGENTRY_WHERE =
 		"SELECT COUNT(sharingEntry) FROM SharingEntry sharingEntry WHERE ";
-
-	private static final String _ORDER_BY_ENTITY_ALIAS = "sharingEntry.";
-
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
-		"No SharingEntry exists with the primary key ";
 
 	private static final String _NO_SUCH_ENTITY_WITH_KEY =
 		"No SharingEntry exists with the key {";
@@ -4755,4 +2721,4 @@ public class SharingEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1899815425
+// LIFERAY-SERVICE-BUILDER-HASH:1772236288

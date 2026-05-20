@@ -29,8 +29,8 @@ export class CommerceAdminProductDetailsSkusPage extends CommerceDNDTablePage {
 	readonly sidePanelNestedFrame: FrameLocator;
 	readonly sidePanelNestedPriceListPrice: Locator;
 	readonly sidePanelNestedSaveButton: Locator;
-	readonly sidePanelSkuInventoryQuantity: Locator;
 	readonly sidePanelSaveButton: Locator;
+	readonly sidePanelSkuInventoryQuantity: Locator;
 	readonly sidePanelSkuPriceTableRowLink: (priceListName: string) => Locator;
 	readonly skuAddButton: Locator;
 	readonly skuAddModal: FrameLocator;

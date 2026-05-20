@@ -1622,14 +1622,6 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 						LayoutsImportStrategy.OVERWRITE,
 						layoutsImportStrategy)) {
 
-				_fragmentEntryLinkLocalService.
-					deleteLayoutPageTemplateEntryFragmentEntryLinks(
-						layoutPageTemplateEntry.getGroupId(),
-						layoutPageTemplateEntry.getPlid());
-
-				_deleteExistingPortletPreferences(
-					layoutPageTemplateEntry.getPlid());
-
 				layoutPageTemplateEntry =
 					_layoutPageTemplateEntryService.
 						updateLayoutPageTemplateEntry(
@@ -1795,11 +1787,18 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 		try {
 			boolean added = false;
 
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			if (serviceContext == null) {
+				serviceContext = new ServiceContext();
+			}
+
 			if (layoutUtilityPageEntry == null) {
 				layoutUtilityPageEntry =
 					_layoutUtilityPageEntryService.addLayoutUtilityPageEntry(
 						externalReferenceCode, groupId, 0, 0, false, name, type,
-						null, ServiceContextThreadLocal.getServiceContext());
+						null, serviceContext);
 
 				added = true;
 			}
@@ -1807,18 +1806,10 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 						LayoutsImportStrategy.OVERWRITE,
 						layoutsImportStrategy)) {
 
-				_fragmentEntryLinkLocalService.
-					deleteLayoutPageTemplateEntryFragmentEntryLinks(
-						layoutUtilityPageEntry.getGroupId(),
-						layoutUtilityPageEntry.getPlid());
-
-				_deleteExistingPortletPreferences(
-					layoutUtilityPageEntry.getPlid());
-
 				layoutUtilityPageEntry =
 					_layoutUtilityPageEntryService.updateLayoutUtilityPageEntry(
 						layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
-						name);
+						name, serviceContext);
 
 				added = true;
 			}
@@ -1838,7 +1829,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 				if (previewFileEntryId > 0) {
 					_layoutUtilityPageEntryService.updateLayoutUtilityPageEntry(
 						layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
-						previewFileEntryId);
+						previewFileEntryId, serviceContext);
 				}
 
 				layoutsImporterResultEntries.add(
@@ -1960,6 +1951,14 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 
 		Layout layout = _layoutLocalService.getLayout(plid);
 
+		Layout draftLayout = layout.fetchDraftLayout();
+
+		_fragmentEntryLinkLocalService.
+			deleteLayoutPageTemplateEntryFragmentEntryLinks(
+				draftLayout.getGroupId(), draftLayout.getPlid());
+
+		_deleteExistingPortletPreferences(draftLayout.getPlid());
+
 		LayoutStructure layoutStructure = new LayoutStructure();
 
 		if (pageDefinition != null) {
@@ -1979,13 +1978,13 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 						pageElement.getPageElements()) {
 
 					if (_processPageElement(
-							new ArrayList<>(), layout, layoutStructure,
+							new ArrayList<>(), draftLayout, layoutStructure,
 							pageDefinitionVersion, childPageElement,
 							rootLayoutStructureItem.getItemId(), position,
 							preserveItemIds,
 							_segmentsExperienceLocalService.
 								fetchDefaultSegmentsExperienceId(
-									layout.getPlid()),
+									draftLayout.getPlid()),
 							warningMessages)) {
 
 						position++;
@@ -2000,19 +1999,16 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 				}
 			}
 
-			Settings settings = pageDefinition.getSettings();
-
-			layout = _layoutLocalService.fetchLayout(layout.getPlid());
-
-			layout = _updateLayoutSettings(userId, layout, settings);
+			draftLayout = _updateLayoutSettings(
+				userId, draftLayout, pageDefinition.getSettings());
 		}
 		else {
 			layoutStructure.addRootLayoutStructureItem();
 		}
 
-		_updateLayoutPageTemplateStructure(layout, layoutStructure);
+		_updateLayoutPageTemplateStructure(draftLayout, layoutStructure);
 
-		_updateLayouts(plid, userId);
+		_publishLayout(draftLayout, layout, userId);
 	}
 
 	private boolean _processPageElement(
@@ -2125,6 +2121,20 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 		}
 	}
 
+	private void _publishLayout(Layout draftLayout, Layout layout, long userId)
+		throws Exception {
+
+		_layoutLocalService.copyLayoutContent(draftLayout, layout);
+
+		_layoutLocalService.updateStatus(
+			userId, draftLayout.getPlid(), WorkflowConstants.STATUS_APPROVED,
+			ServiceContextThreadLocal.getServiceContext());
+
+		_layoutLocalService.updateStatus(
+			userId, layout.getPlid(), WorkflowConstants.STATUS_APPROVED,
+			ServiceContextThreadLocal.getServiceContext());
+	}
+
 	private String _toTypeName(int layoutPageTemplateEntryType) {
 		if (layoutPageTemplateEntryType ==
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE) {
@@ -2189,23 +2199,6 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 				}
 			}
 		}
-	}
-
-	private void _updateLayouts(long plid, long userId) throws Exception {
-		Layout layout = _layoutLocalService.fetchLayout(plid);
-
-		Layout draftLayout = layout.fetchDraftLayout();
-
-		draftLayout = _layoutLocalService.copyLayoutContent(
-			layout, draftLayout);
-
-		_layoutLocalService.updateStatus(
-			userId, draftLayout.getPlid(), WorkflowConstants.STATUS_APPROVED,
-			ServiceContextThreadLocal.getServiceContext());
-
-		_layoutLocalService.updateStatus(
-			userId, plid, WorkflowConstants.STATUS_APPROVED,
-			ServiceContextThreadLocal.getServiceContext());
 	}
 
 	private Layout _updateLayoutSettings(

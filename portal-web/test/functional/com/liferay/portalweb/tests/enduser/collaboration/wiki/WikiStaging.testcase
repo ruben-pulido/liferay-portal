@@ -36,123 +36,10 @@ definition {
 		}
 	}
 
-	@description = "This ensures that the deleted page can not be viewed in the live site after publishing."
+	@description = "This test also covers LPS-95501 and LPS-73992. It asserts that an added wiki attachment file can be viewed and a removed wiki attachment file or a deleted page can not be viewed in the live site after publishing."
 	@priority = 4
 	@refactordone
-	test CannotViewDeletedWikiPageAfterPublishing {
-		JSONLayout.addWidgetToPublicLayout(
-			column = 1,
-			groupName = "Site Name (Staging)",
-			layoutName = "Staging Test Page",
-			site = "false",
-			widgetName = "Wiki");
-
-		JSONWiki.addWikiPage(
-			groupName = "Site Name (Staging)",
-			site = "false",
-			wikiNodeName = "Main",
-			wikiPageContent = "Wiki Page Content",
-			wikiPageName = "Wiki Page Title");
-
-		Navigator.gotoStagedSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
-
-		Staging.gotoPublishToLive();
-
-		Staging.publishToLive();
-
-		WikiNavigator.gotoWidgetSpecificTabByURL(
-			layoutURLKey = "staging-test-page",
-			siteURLKey = "site-name-staging",
-			tabURLKey = "all_pages",
-			wikiNodeName = "Main");
-
-		WikiPage.deletePG(wikiPageTitle = "Wiki Page Title");
-
-		Navigator.gotoStagedSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
-
-		Staging.gotoPublishToLive();
-
-		Staging.publishToLive();
-
-		WikiNavigator.gotoWidgetSpecificTabByURL(
-			layoutURLKey = "staging-test-page",
-			siteURLKey = "site-name",
-			tabURLKey = "all_pages",
-			wikiNodeName = "Main");
-
-		WikiPage.viewNoPagePG(wikiPageTitle = "Wiki Page Title");
-	}
-
-	@description = "This is a use case for LPS-73992. It asserts removed wiki attachment file can not be viewed after publishing."
-	@priority = 4
-	@refactordone
-	test CannotViewRemovedAttachmentAfterPublishing {
-		JSONLayout.addWidgetToPublicLayout(
-			column = 1,
-			groupName = "Site Name (Staging)",
-			layoutName = "Staging Test Page",
-			site = "false",
-			widgetName = "Wiki");
-
-		JSONWiki.addWikiPage(
-			groupName = "Site Name (Staging)",
-			site = "false",
-			wikiNodeName = "Main",
-			wikiPageContent = "Wiki Page Content",
-			wikiPageName = "Wiki Page Title");
-
-		JSONWiki.addAttachmentToWikiPage(
-			fileName = "Document_1.jpg",
-			groupName = "Site Name (Staging)",
-			mimeType = "image/jpeg",
-			site = "false",
-			wikiNodeName = "Main",
-			wikiPageName = "Wiki Page Title");
-
-		Navigator.gotoStagedSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
-
-		Staging.gotoPublishToLive();
-
-		Staging.publishToLive();
-
-		Navigator.gotoStagedSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
-
-		WikiNavigator.gotoPG(wikiPageTitle = "Wiki Page Title");
-
-		WikiPage.removeAttachmentViaPageEdit(attachmentFileName = "Document_1.jpg");
-
-		Navigator.gotoStagedSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
-
-		Staging.gotoPublishToLive();
-
-		Staging.publishToLive();
-
-		Navigator.gotoSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
-
-		WikiNavigator.gotoPG(wikiPageTitle = "Wiki Page Title");
-
-		WikiPage.viewPageNoAttachment(
-			attachmentFileName = "Document_1.jpg",
-			wikiPageContent = "Wiki Page Content",
-			wikiPageTitle = "Wiki Page Title");
-	}
-
-	@description = "This test covers LPS-95501. It asserts added wiki attachment file can be viewed after publishing."
-	@priority = 4
-	@refactordone
-	test CanViewAttachmentAfterPublish {
+	test CanPublishWikiPageLifecycleToLive {
 		JSONLayout.addWidgetToPublicLayout(
 			column = 1,
 			groupName = "Site Name (Staging)",
@@ -206,11 +93,63 @@ definition {
 			wikiPageTitle = "Wiki Page Title");
 
 		ItemSelector.viewWikiAttachment(imageFileName = "Document_1.jpg");
+
+		Navigator.gotoStagedSitePage(
+			pageName = "Staging Test Page",
+			siteName = "Site Name");
+
+		WikiNavigator.gotoPG(wikiPageTitle = "Wiki Page Title");
+
+		WikiPage.removeAttachmentViaPageEdit(attachmentFileName = "Document_1.jpg");
+
+		Navigator.gotoStagedSitePage(
+			pageName = "Staging Test Page",
+			siteName = "Site Name");
+
+		Staging.gotoPublishToLive();
+
+		Staging.publishToLive();
+
+		Navigator.gotoSitePage(
+			pageName = "Staging Test Page",
+			siteName = "Site Name");
+
+		WikiNavigator.gotoPG(wikiPageTitle = "Wiki Page Title");
+
+		WikiPage.viewPageNoAttachment(
+			attachmentFileName = "Document_1.jpg",
+			wikiPageContent = "Wiki Page Content",
+			wikiPageTitle = "Wiki Page Title");
+
+		WikiNavigator.gotoWidgetSpecificTabByURL(
+			layoutURLKey = "staging-test-page",
+			siteURLKey = "site-name-staging",
+			tabURLKey = "all_pages",
+			wikiNodeName = "Main");
+
+		WikiPage.deletePG(wikiPageTitle = "Wiki Page Title");
+
+		Navigator.gotoStagedSitePage(
+			pageName = "Staging Test Page",
+			siteName = "Site Name");
+
+		Staging.gotoPublishToLive();
+
+		Staging.publishToLive();
+
+		WikiNavigator.gotoWidgetSpecificTabByURL(
+			layoutURLKey = "staging-test-page",
+			siteURLKey = "site-name",
+			tabURLKey = "all_pages",
+			wikiNodeName = "Main");
+
+		WikiPage.viewNoPagePG(wikiPageTitle = "Wiki Page Title");
 	}
 
-	@description = "This is a test for LPS-95709. It ensures that an attachment for a Wiki frontpage is intact after the entry is published."
+	@description = "This test also covers LPS-95709. It ensures that an added front page and an added attachment can be viewed in the live site after publishing."
 	@priority = 4
-	test CanViewAttachmentForFrontPageAfterPublish {
+	@refactordone
+	test CanViewFrontPageAndAttachmentAfterPublishing {
 		JSONLayout.addWidgetToPublicLayout(
 			column = 1,
 			groupName = "Site Name (Staging)",
@@ -221,6 +160,28 @@ definition {
 		Navigator.gotoStagedSitePage(
 			pageName = "Staging Test Page",
 			siteName = "Site Name");
+
+		WikiPage.addFrontPagePG(wikiPageContent = "Wiki FrontPage Content");
+
+		Navigator.gotoStagedSitePage(
+			pageName = "Staging Test Page",
+			siteName = "Site Name");
+
+		Staging.gotoPublishToLive();
+
+		Staging.publishToLive();
+
+		WikiNavigator.gotoWidgetSpecificTabByURL(
+			layoutURLKey = "staging-test-page",
+			siteURLKey = "site-name",
+			tabURLKey = "all_pages",
+			wikiNodeName = "Main");
+
+		WikiNavigator.gotoPG(wikiPageTitle = "FrontPage");
+
+		WikiPage.viewPG(
+			wikiPageContent = "Wiki FrontPage Content",
+			wikiPageTitle = "FrontPage");
 
 		JSONWiki.updateWikiPage(
 			groupName = "Site Name (Staging)",
@@ -254,44 +215,6 @@ definition {
 		WikiPage.viewPageWithAttachment(
 			attachmentFileName = "Document_1.jpg",
 			inlineImage = "true",
-			wikiPageContent = "Wiki FrontPage Content",
-			wikiPageTitle = "FrontPage");
-	}
-
-	@description = "This ensures that the added front page can be viewed in the live site after publishing."
-	@priority = 4
-	@refactordone
-	test CanViewFrontPageAfterPublishing {
-		JSONLayout.addWidgetToPublicLayout(
-			column = 1,
-			groupName = "Site Name (Staging)",
-			layoutName = "Staging Test Page",
-			site = "false",
-			widgetName = "Wiki");
-
-		Navigator.gotoStagedSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
-
-		WikiPage.addFrontPagePG(wikiPageContent = "Wiki FrontPage Content");
-
-		Navigator.gotoStagedSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
-
-		Staging.gotoPublishToLive();
-
-		Staging.publishToLive();
-
-		WikiNavigator.gotoWidgetSpecificTabByURL(
-			layoutURLKey = "staging-test-page",
-			siteURLKey = "site-name",
-			tabURLKey = "all_pages",
-			wikiNodeName = "Main");
-
-		WikiNavigator.gotoPG(wikiPageTitle = "FrontPage");
-
-		WikiPage.viewPG(
 			wikiPageContent = "Wiki FrontPage Content",
 			wikiPageTitle = "FrontPage");
 	}

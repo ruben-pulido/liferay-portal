@@ -28,7 +28,6 @@ export const test = mergeTests(
 	systemDataSetsPageTest,
 	visualizationModesPageTest,
 	featureFlagsTest({
-		'LPD-36105': {enabled: true},
 		'LPS-164563': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
@@ -420,7 +419,7 @@ test(
 			];
 
 			await assertTableSectionEntries('Advanced Sample', {
-				'color': buildTableRowSpec('false', 'Default'),
+				'color': buildTableRowSpec('false', ''),
 				'creator.name': buildTableRowSpec(
 					'false',
 					'customAuthorTableCellRenderer'
@@ -428,7 +427,7 @@ test(
 				'date': buildTableRowSpec('false', 'Date and Time'),
 				'description': buildTableRowSpec('false', 'Default'),
 				'id': buildTableRowSpec('true', 'Action Link'),
-				'size': buildTableRowSpec('false', 'Default'),
+				'size': buildTableRowSpec('false', ''),
 				'status': buildTableRowSpec('false', 'Status'),
 				'title': buildTableRowSpec('true', 'Action Link'),
 			});

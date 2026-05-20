@@ -1,17 +1,37 @@
 affinity: {}
 annotations: {}
 autoscaling:
-    annotations: {}
     enabled: false
-    maxReplicas: 100
-    metrics:
-        -   resource:
-                name: cpu
-                target:
-                    averageUtilization: 80
-                    type: Utilization
-            type: Resource
-    minReplicas: 1
+    hpa:
+        annotations: {}
+        maxReplicas: 100
+        metrics:
+            -   resource:
+                    name: cpu
+                    target:
+                        averageUtilization: 80
+                        type: Utilization
+                type: Resource
+        minReplicas: 1
+    keda:
+        customTriggers: []
+        maxReplicaCount: 100
+        minReplicaCount: 1
+        pollingInterval: 30
+        prometheusServerAddress: ""
+        triggerAuthentication:
+            annotations: {}
+            spec: {}
+        triggers:
+            -   metadata:
+                    metricName: hikari_active_connections
+                    query: max({__name__=~"com_zaxxer_hikari_pool_hikaripool_.*_activeconnections"})
+                    threshold: "50"
+            -   metadata:
+                    metricName: jvm_threads_current
+                    query: jvm_threads_current
+                    threshold: "500"
+    type: hpa
 configmap:
     annotations: {}
     data: {}
@@ -21,44 +41,35 @@ customEnvFrom: {}
 customInitContainers:
     x-liferay-overlay:
         -   containerTemplate: |
+                {{- if and .overlay.enabled .overlay.copy }}
                 -   command:
-                        -   bash
+                        -   sh
                         -   -c
                         -   |
-                            {{- if and .overlay .overlay.enabled }}
-                            {{- $overlay := .overlay -}}
-                            {{- range $overlay.copy }}
-                            mkdir \
-                                --parents \
-                                --verbose \
-                                /temp/{{ .into }}
-
-                            cp \
-                                --recursive \
-                                --verbose \
-                                /mnt/liferay/overlay/{{ .from }} \
-                                /temp/{{ .into }}
+                            {{- range .overlay.copy }}
+                            /liferay-init-scripts/overlay-sync.sh {{ $.overlay.type | quote }} {{ .from | quote }} {{ .into | quote }}
                             {{- end }}
-                            {{- else }}
-                            echo "Overlay is not enabled."
-                            {{- end }}
-                    image: {{ printf "%s:%s" .image.repository (.image.tag | toString) }}
-                    imagePullPolicy: {{ .image.pullPolicy }}
+                    envFrom:
+                        -   secretRef:
+                                name: managed-service-details
+                    image: {{ printf "%s:%s" .overlay.image.repository (.overlay.image.tag | toString) }}
                     name: liferay-overlay
                     securityContext:
                         allowPrivilegeEscalation: false
                         capabilities:
                             drop:
                                 -   ALL
+                        runAsNonRoot: true
+                        runAsUser: 1000
                         seccompProfile:
                             type: RuntimeDefault
-                    {{- if and .overlay .overlay.enabled }}
                     volumeMounts:
-                        -   mountPath: /mnt/liferay/overlay
-                            name: {{ .overlay.bucketName }}
+                        -   mountPath: /liferay-init-scripts/overlay-sync.sh
+                            name: {{ .overlay.initScriptsVolumeName }}
+                            subPath: overlay-sync.sh
                         -   mountPath: /temp
                             name: liferay-persistent-volume
-                    {{- end }}
+                {{- end }}
     x-liferay-prepopulate-data:
         -   containerTemplate: |
                 -   command:
@@ -188,7 +199,12 @@ customPullSecrets: {}
 customServicePorts: {}
 customVolumeClaimTemplates: {}
 customVolumeMounts: {}
-customVolumes: {}
+customVolumes:
+    x-liferay-init-scripts-default:
+        -   configMap:
+                defaultMode: 0755
+                name: liferay-init-scripts-default
+            name: liferay-init-scripts-default
 dependencies: {}
 env:
     -   name: DNS_MEMBERSHIP_SERVICE_NAME
@@ -245,7 +261,9 @@ global:
                     resources:
                         -   configmaps
                     verbs:
-                        -   "*"
+                        -   get
+                        -   list
+                        -   watch
 image:
     pullPolicy: IfNotPresent
     pullSecrets: []
@@ -270,12 +288,28 @@ network:
     forceHttpsRedirect: false
     gatewayName: ""
     hostnames: []
+    perHostnameRoutes: false
+    securityPolicyAuthorizationSpec: {}
     timeouts: {}
+networkPolicy:
+    allowGatewayIngress: true
+    annotations: {}
+    cluster:
+        kubernetesEndpointCidrs: ""
+    enabled: false
+    extraEgress: []
+    extraIngress: []
+    gatewayNamespace: envoy-gateway-system
+    gatewayPodLabel: envoy
 nodeSelector: {}
 overlay:
-    bucketName: ""
     copy: []
     enabled: false
+    image:
+        repository: rclone/rclone
+        tag: "1.66"
+    initScriptsVolumeName: liferay-init-scripts-default
+    type: ""
 podLabels: {}
 podSecurityContext:
     fsGroup: 1000
@@ -309,7 +343,13 @@ readinessProbe:
     periodSeconds: 10
     timeoutSeconds: 5
 replicaCount: 1
-resources: {}
+resources:
+    limits:
+        cpu: 4000m
+        memory: 8Gi
+    requests:
+        cpu: 2000m
+        memory: 6Gi
 schedulingGates: []
 securityContext:
     allowPrivilegeEscalation: false
@@ -377,9 +417,6 @@ volumeMounts:
     -   mountPath: /opt/liferay/osgi/configs
         name: liferay-persistent-volume
         subPath: osgi/configs
-    -   mountPath: /opt/liferay/osgi/configs/com.liferay.portal.k8s.agent.configuration.PortalK8sAgentConfiguration.config
-        name: liferay-configmap
-        subPath: com.liferay.portal.k8s.agent.configuration.PortalK8sAgentConfiguration.config
     -   mountPath: /opt/liferay/osgi/modules
         name: liferay-persistent-volume
         subPath: osgi/modules
