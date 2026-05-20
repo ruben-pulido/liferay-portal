@@ -77,6 +77,7 @@ public class FragmentEntryVersionUpgradeProcessTest {
 	@Test
 	public void testUpgrade() throws Exception {
 		_testUpgradeDeletesOldVersions();
+		_testUpgradePreservesVersionsPerCtCollection();
 		_testUpgradeSkipsCleanup();
 	}
 
@@ -96,16 +97,18 @@ public class FragmentEntryVersionUpgradeProcessTest {
 				_group.getGroupId(), TestPropsValues.getUserId()));
 	}
 
-	private long _countFragmentEntryVersions(FragmentEntry fragmentEntry)
+	private long _countFragmentEntryVersions(
+			long ctCollectionId, FragmentEntry fragmentEntry)
 		throws Exception {
 
 		try (Connection connection = DataAccess.getConnection();
 
 			PreparedStatement preparedStatement = connection.prepareStatement(
 				"select count(*) as count from FragmentEntryVersion where " +
-					"fragmentEntryId = ?")) {
+					"ctCollectionId = ? and fragmentEntryId = ?")) {
 
-			preparedStatement.setLong(1, fragmentEntry.getFragmentEntryId());
+			preparedStatement.setLong(1, ctCollectionId);
+			preparedStatement.setLong(2, fragmentEntry.getFragmentEntryId());
 
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
 				if (resultSet.next()) {
@@ -141,7 +144,7 @@ public class FragmentEntryVersionUpgradeProcessTest {
 	}
 
 	private void _insertFragmentEntryVersions(
-			int count, FragmentEntry fragmentEntry)
+			int count, long ctCollectionId, FragmentEntry fragmentEntry)
 		throws Exception {
 
 		try (Connection connection = DataAccess.getConnection();
@@ -154,7 +157,7 @@ public class FragmentEntryVersionUpgradeProcessTest {
 						"ctCollectionId, fragmentEntryVersionId, version, ",
 						"fragmentEntryId, groupId, companyId, userId, ",
 						"createDate, modifiedDate, name, status) values (0, ",
-						"0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))) {
+						"?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))) {
 
 			for (int i = 0; i < count; i++) {
 				Timestamp modifiedDateTimestamp = new Timestamp(
@@ -162,20 +165,21 @@ public class FragmentEntryVersionUpgradeProcessTest {
 
 				_modifiedDateCounter += 1000L;
 
+				preparedStatement.setLong(1, ctCollectionId);
 				preparedStatement.setLong(
-					1,
+					2,
 					_counterLocalService.increment(
 						FragmentEntryVersion.class.getName()));
-				preparedStatement.setInt(2, _versionCounter++);
+				preparedStatement.setInt(3, _versionCounter++);
 				preparedStatement.setLong(
-					3, fragmentEntry.getFragmentEntryId());
-				preparedStatement.setLong(4, fragmentEntry.getGroupId());
-				preparedStatement.setLong(5, fragmentEntry.getCompanyId());
-				preparedStatement.setLong(6, fragmentEntry.getUserId());
-				preparedStatement.setTimestamp(7, _createDateTimestamp);
-				preparedStatement.setTimestamp(8, modifiedDateTimestamp);
-				preparedStatement.setString(9, RandomTestUtil.randomString());
-				preparedStatement.setInt(10, WorkflowConstants.STATUS_APPROVED);
+					4, fragmentEntry.getFragmentEntryId());
+				preparedStatement.setLong(5, fragmentEntry.getGroupId());
+				preparedStatement.setLong(6, fragmentEntry.getCompanyId());
+				preparedStatement.setLong(7, fragmentEntry.getUserId());
+				preparedStatement.setTimestamp(8, _createDateTimestamp);
+				preparedStatement.setTimestamp(9, modifiedDateTimestamp);
+				preparedStatement.setString(10, RandomTestUtil.randomString());
+				preparedStatement.setInt(11, WorkflowConstants.STATUS_APPROVED);
 
 				preparedStatement.addBatch();
 			}
@@ -202,7 +206,7 @@ public class FragmentEntryVersionUpgradeProcessTest {
 	private void _testUpgradeDeletesOldVersions() throws Exception {
 		FragmentEntry fragmentEntry = _addFragmentEntry();
 
-		_insertFragmentEntryVersions(20, fragmentEntry);
+		_insertFragmentEntryVersions(20, 0L, fragmentEntry);
 
 		_runUpgrade();
 
@@ -220,20 +224,49 @@ public class FragmentEntryVersionUpgradeProcessTest {
 			expectedVersions, _getFragmentEntryVersions(fragmentEntry));
 	}
 
+	private void _testUpgradePreservesVersionsPerCtCollection()
+		throws Exception {
+
+		int ctCollectionVersionsToGenerate = 8;
+		int productionVersionsToGenerate = 5;
+
+		long ctCollectionId = RandomTestUtil.randomLong();
+		FragmentEntry fragmentEntry = _addFragmentEntry();
+
+		long initialCtCollectionCount = _countFragmentEntryVersions(
+			ctCollectionId, fragmentEntry);
+		long initialProductionCount = _countFragmentEntryVersions(
+			0L, fragmentEntry);
+
+		_insertFragmentEntryVersions(
+			ctCollectionVersionsToGenerate, ctCollectionId, fragmentEntry);
+		_insertFragmentEntryVersions(
+			productionVersionsToGenerate, 0L, fragmentEntry);
+
+		_runUpgrade();
+
+		Assert.assertEquals(
+			ctCollectionVersionsToGenerate + initialCtCollectionCount,
+			_countFragmentEntryVersions(ctCollectionId, fragmentEntry));
+		Assert.assertEquals(
+			productionVersionsToGenerate + initialProductionCount,
+			_countFragmentEntryVersions(0L, fragmentEntry));
+	}
+
 	private void _testUpgradeSkipsCleanup() throws Exception {
 		int versionsToGenerate = 5;
 
 		FragmentEntry fragmentEntry = _addFragmentEntry();
 
-		long initialCount = _countFragmentEntryVersions(fragmentEntry);
+		long initialCount = _countFragmentEntryVersions(0L, fragmentEntry);
 
-		_insertFragmentEntryVersions(versionsToGenerate, fragmentEntry);
+		_insertFragmentEntryVersions(versionsToGenerate, 0L, fragmentEntry);
 
 		_runUpgrade();
 
 		Assert.assertEquals(
 			versionsToGenerate + initialCount,
-			_countFragmentEntryVersions(fragmentEntry));
+			_countFragmentEntryVersions(0L, fragmentEntry));
 	}
 
 	@Inject(
