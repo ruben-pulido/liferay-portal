@@ -540,7 +540,7 @@ components:
                             $ref: "#/components/schemas/Settings"
             # @review
             description:
-                A page specification of a content page. A content page will contain 1 page specification for its draft
+                A page specification of a content page. A content page contains 1 page specification for its draft
                 layout and 1 page specification for its published layout.
             type: object
         ContentPageTemplate:
@@ -792,7 +792,7 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The display page template's specifications. A display page template will contain 1 page
+                        The display page template's specifications. A display page template contains 1 page
                         specification for its draft layout and 1 page specification for its published layout. This field
                         is not returned by default. It can be requested via nestedFields.
                     items:
@@ -2343,7 +2343,7 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The master page's specifications. A master page will contain 1 page specification for its draft
+                        The master page's specifications. A master page contains 1 page specification for its draft
                         layout and 1 page specification for its published layout. This field is not returned by default.
                         It can be requested via nestedFields.
                     items:
@@ -2944,7 +2944,7 @@ components:
             # @review
             description:
                 A page specification of a content page, content page template, widget page, or widget page template. A
-                content page will contain 1 page specification for its draft layout and 1 page specification for its
+                content page contains 1 page specification for its draft layout and 1 page specification for its
                 published layout. A widget page contains only 1 page specification for its published layout.
             discriminator:
                 mapping:
@@ -3049,7 +3049,7 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The page template's specifications. A page template of type content will contain 1 page
+                        The page template's specifications. A page template of type content contains 1 page
                         specification for its draft layout and 1 page specification for its published layout. A page
                         template of type widget contains only 1 page specification for its published layout. This field
                         is not returned by default. It can be requested via nestedFields.
@@ -3580,10 +3580,10 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The page's specifications. A page of type content will contain 1 page specification for its
-                        draft layout and 1 page specification for its published layout. A page of type widget contains
-                        only 1 page specification for its published layout. On creation (POST), a content page may also
-                        be created by sending a single ContentPageSpecification. The single-specification form is only
+                        The page's specifications. A page of type content contains 1 page specification for its draft
+                        layout and 1 page specification for its published layout. A page of type widget contains only 1
+                        page specification for its published layout. On creation (POST), a content page may also be
+                        created by sending a single ContentPageSpecification. The single-specification form is only
                         accepted on POST. This field is not returned by default. It can be requested via nestedFields.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
@@ -4185,9 +4185,9 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The utility page's specifications. A utility page will contain 1 page specification for its
-                        draft layout and 1 page specification for its published layout. This field is not returned by
-                        default. It can be requested via nestedFields.
+                        The utility page's specifications. A utility page contains 1 page specification for its draft
+                        layout and 1 page specification for its published layout. This field is not returned by default.
+                        It can be requested via nestedFields.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
