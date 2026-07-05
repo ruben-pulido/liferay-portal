@@ -663,5 +663,6 @@ YMLDefinitionOrderCheck | [Styling](styling_checks.md#styling-checks) | .tpl, .y
 YMLEmptyLinesCheck | [Styling](styling_checks.md#styling-checks) | .tpl, .yaml, or .yml | Finds missing and unnecessary empty lines. |
 YMLIndentationCheck | [Styling](styling_checks.md#styling-checks) | .tpl, .yaml, or .yml | Finds incorrect indentation in YAML files. |
 YMLRESTConfigFileBreakingChangeCommitMessageCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .tpl, .yaml, or .yml | Checks that commit message should contain the schematized breaking changes. |
+YMLRESTOpenAPIUpsertDescriptionCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .tpl, .yaml, or .yml | Checks that a `put` description lists every writable field as honored or ignored. |
 YMLStylingCheck | [Styling](styling_checks.md#styling-checks) | .tpl, .yaml, or .yml | Applies rules to enforce consistency in code style. |
 YMLWhitespaceCheck | [Styling](styling_checks.md#styling-checks) | .tpl, .yaml, or .yml | Finds missing and unnecessary whitespace in `.yml` files. |

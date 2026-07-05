@@ -2352,6 +2352,10 @@
 			<description name="Checks that commit message should contain the schematized breaking changes." />
 			<property name="enabled" value="false" />
 		</check>
+		<check name="YMLRESTOpenAPIUpsertDescriptionCheck">
+			<category name="Bug Prevention" />
+			<description name="Checks that a `put` description lists every writable field as honored or ignored." />
+		</check>
 		<check name="YMLStylingCheck">
 			<category name="Styling" />
 			<description name="Applies rules to enforce consistency in code style." />

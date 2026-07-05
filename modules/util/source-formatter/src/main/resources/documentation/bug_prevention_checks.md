@@ -262,3 +262,4 @@ XMLSuppressionsFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .pr
 XMLTagAttributesCheck | .action, .function, .html, .jelly, .jrxml, .macro, .path, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on tag attributes. |
 XMLWebFileCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `web.xml` file. |
 YMLRESTConfigFileBreakingChangeCommitMessageCheck | .tpl, .yaml, or .yml | Checks that commit message should contain the schematized breaking changes. |
+YMLRESTOpenAPIUpsertDescriptionCheck | .tpl, .yaml, or .yml | Checks that a `put` description lists every writable field as honored or ignored. |
