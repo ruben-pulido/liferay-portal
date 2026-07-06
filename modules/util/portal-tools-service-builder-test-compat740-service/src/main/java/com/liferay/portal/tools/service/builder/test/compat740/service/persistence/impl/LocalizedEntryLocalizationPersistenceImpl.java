@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
 import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
@@ -72,8 +70,9 @@ public class LocalizedEntryLocalizationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LocalizedEntryLocalization>
-		_collectionPersistenceFinderByLocalizedEntryId;
+	private CollectionPersistenceFinder
+		<LocalizedEntryLocalization, NoSuchLocalizedEntryLocalizationException>
+			_collectionPersistenceFinderByLocalizedEntryId;
 
 	/**
 	 * Returns an ordered range of all the localized entry localizations where localizedEntryId = &#63;.
@@ -114,17 +113,8 @@ public class LocalizedEntryLocalizationPersistenceImpl
 			OrderByComparator<LocalizedEntryLocalization> orderByComparator)
 		throws NoSuchLocalizedEntryLocalizationException {
 
-		LocalizedEntryLocalization localizedEntryLocalization =
-			fetchByLocalizedEntryId_First(localizedEntryId, orderByComparator);
-
-		if (localizedEntryLocalization != null) {
-			return localizedEntryLocalization;
-		}
-
-		throw new NoSuchLocalizedEntryLocalizationException(
-			_collectionPersistenceFinderByLocalizedEntryId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {localizedEntryId}));
+		return _collectionPersistenceFinderByLocalizedEntryId.findFirst(
+			finderCache, new Object[] {localizedEntryId}, orderByComparator);
 	}
 
 	/**
@@ -166,8 +156,9 @@ public class LocalizedEntryLocalizationPersistenceImpl
 			finderCache, new Object[] {localizedEntryId});
 	}
 
-	private UniquePersistenceFinder<LocalizedEntryLocalization>
-		_uniquePersistenceFinderByLocalizedEntryId_LanguageId;
+	private UniquePersistenceFinder
+		<LocalizedEntryLocalization, NoSuchLocalizedEntryLocalizationException>
+			_uniquePersistenceFinderByLocalizedEntryId_LanguageId;
 
 	/**
 	 * Returns the localized entry localization where localizedEntryId = &#63; and languageId = &#63; or throws a <code>NoSuchLocalizedEntryLocalizationException</code> if it could not be found.
@@ -182,24 +173,8 @@ public class LocalizedEntryLocalizationPersistenceImpl
 			long localizedEntryId, String languageId)
 		throws NoSuchLocalizedEntryLocalizationException {
 
-		LocalizedEntryLocalization localizedEntryLocalization =
-			fetchByLocalizedEntryId_LanguageId(localizedEntryId, languageId);
-
-		if (localizedEntryLocalization == null) {
-			String message =
-				_uniquePersistenceFinderByLocalizedEntryId_LanguageId.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {localizedEntryId, languageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLocalizedEntryLocalizationException(message);
-		}
-
-		return localizedEntryLocalization;
+		return _uniquePersistenceFinderByLocalizedEntryId_LanguageId.find(
+			finderCache, new Object[] {localizedEntryId, languageId});
 	}
 
 	/**
@@ -467,7 +442,7 @@ public class LocalizedEntryLocalizationPersistenceImpl
 				_SQL_SELECT_LOCALIZEDENTRYLOCALIZATION_WHERE,
 				_SQL_COUNT_LOCALIZEDENTRYLOCALIZATION_WHERE,
 				LocalizedEntryLocalizationModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"localizedEntryLocalization.", "localizedEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -548,16 +523,10 @@ public class LocalizedEntryLocalizationPersistenceImpl
 	private static final String _SQL_COUNT_LOCALIZEDENTRYLOCALIZATION_WHERE =
 		"SELECT COUNT(localizedEntryLocalization) FROM LocalizedEntryLocalization localizedEntryLocalization WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LocalizedEntryLocalization exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LocalizedEntryLocalizationPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:412304633
+// LIFERAY-SERVICE-BUILDER-HASH:139627070

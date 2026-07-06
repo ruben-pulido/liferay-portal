@@ -79,7 +79,7 @@ public class KaleoTimerPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoTimer>
+	private CollectionPersistenceFinder<KaleoTimer, NoSuchTimerException>
 		_collectionPersistenceFinderByKCN_KCPK;
 
 	/**
@@ -123,17 +123,9 @@ public class KaleoTimerPersistenceImpl
 			OrderByComparator<KaleoTimer> orderByComparator)
 		throws NoSuchTimerException {
 
-		KaleoTimer kaleoTimer = fetchByKCN_KCPK_First(
-			kaleoClassName, kaleoClassPK, orderByComparator);
-
-		if (kaleoTimer != null) {
-			return kaleoTimer;
-		}
-
-		throw new NoSuchTimerException(
-			_collectionPersistenceFinderByKCN_KCPK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {kaleoClassName, kaleoClassPK}));
+		return _collectionPersistenceFinderByKCN_KCPK.findFirst(
+			finderCache, new Object[] {kaleoClassName, kaleoClassPK},
+			orderByComparator);
 	}
 
 	/**
@@ -179,7 +171,7 @@ public class KaleoTimerPersistenceImpl
 			finderCache, new Object[] {kaleoClassName, kaleoClassPK});
 	}
 
-	private CollectionPersistenceFinder<KaleoTimer>
+	private CollectionPersistenceFinder<KaleoTimer, NoSuchTimerException>
 		_collectionPersistenceFinderByKCN_KDVI;
 
 	/**
@@ -224,17 +216,10 @@ public class KaleoTimerPersistenceImpl
 			OrderByComparator<KaleoTimer> orderByComparator)
 		throws NoSuchTimerException {
 
-		KaleoTimer kaleoTimer = fetchByKCN_KDVI_First(
-			kaleoClassName, kaleoDefinitionVersionId, orderByComparator);
-
-		if (kaleoTimer != null) {
-			return kaleoTimer;
-		}
-
-		throw new NoSuchTimerException(
-			_collectionPersistenceFinderByKCN_KDVI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {kaleoClassName, kaleoDefinitionVersionId}));
+		return _collectionPersistenceFinderByKCN_KDVI.findFirst(
+			finderCache,
+			new Object[] {kaleoClassName, kaleoDefinitionVersionId},
+			orderByComparator);
 	}
 
 	/**
@@ -287,7 +272,7 @@ public class KaleoTimerPersistenceImpl
 			new Object[] {kaleoClassName, kaleoDefinitionVersionId});
 	}
 
-	private CollectionPersistenceFinder<KaleoTimer>
+	private CollectionPersistenceFinder<KaleoTimer, NoSuchTimerException>
 		_collectionPersistenceFinderByKCN_KCPK_Blocking;
 
 	/**
@@ -333,18 +318,9 @@ public class KaleoTimerPersistenceImpl
 			OrderByComparator<KaleoTimer> orderByComparator)
 		throws NoSuchTimerException {
 
-		KaleoTimer kaleoTimer = fetchByKCN_KCPK_Blocking_First(
-			kaleoClassName, kaleoClassPK, blocking, orderByComparator);
-
-		if (kaleoTimer != null) {
-			return kaleoTimer;
-		}
-
-		throw new NoSuchTimerException(
-			_collectionPersistenceFinderByKCN_KCPK_Blocking.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {kaleoClassName, kaleoClassPK, blocking}));
+		return _collectionPersistenceFinderByKCN_KCPK_Blocking.findFirst(
+			finderCache, new Object[] {kaleoClassName, kaleoClassPK, blocking},
+			orderByComparator);
 	}
 
 	/**
@@ -696,7 +672,8 @@ public class KaleoTimerPersistenceImpl
 					new String[] {"kaleoClassName", "kaleoClassPK"}, 0, 1,
 					false, null),
 				_SQL_SELECT_KALEOTIMER_WHERE, _SQL_COUNT_KALEOTIMER_WHERE,
-				KaleoTimerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				KaleoTimerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"kaleoTimer.", "kaleoClassName", FinderColumn.Type.STRING,
 					"=", true, true, KaleoTimer::getKaleoClassName),
@@ -728,7 +705,8 @@ public class KaleoTimerPersistenceImpl
 					new String[] {"kaleoClassName", "kaleoDefinitionVersionId"},
 					0, 1, false, null),
 				_SQL_SELECT_KALEOTIMER_WHERE, _SQL_COUNT_KALEOTIMER_WHERE,
-				KaleoTimerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				KaleoTimerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"kaleoTimer.", "kaleoClassName", FinderColumn.Type.STRING,
 					"=", true, true, KaleoTimer::getKaleoClassName),
@@ -770,7 +748,8 @@ public class KaleoTimerPersistenceImpl
 					new String[] {"kaleoClassName", "kaleoClassPK", "blocking"},
 					0, 1, false, null),
 				_SQL_SELECT_KALEOTIMER_WHERE, _SQL_COUNT_KALEOTIMER_WHERE,
-				KaleoTimerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				KaleoTimerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"kaleoTimer.", "kaleoClassName", FinderColumn.Type.STRING,
 					"=", true, true, KaleoTimer::getKaleoClassName),
@@ -838,13 +817,10 @@ public class KaleoTimerPersistenceImpl
 	private static final String _SQL_COUNT_KALEOTIMER_WHERE =
 		"SELECT COUNT(kaleoTimer) FROM KaleoTimer kaleoTimer WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoTimer exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:480748292
+// LIFERAY-SERVICE-BUILDER-HASH:-556436503

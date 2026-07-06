@@ -73,6 +73,7 @@ export async function handleClickMenuItem(menuitem: string, page) {
 					exact: true,
 					name: 'Permissions',
 				})
+				.and(page.locator('[aria-haspopup="true"]'))
 				.click({timeout: 1000});
 
 			await page
@@ -80,6 +81,7 @@ export async function handleClickMenuItem(menuitem: string, page) {
 					exact: true,
 					name: menuitem,
 				})
+				.and(page.locator(':not([aria-haspopup="true"])'))
 				.click({timeout: 1000});
 		}
 		else {
@@ -91,4 +93,22 @@ export async function handleClickMenuItem(menuitem: string, page) {
 				.click({timeout: 1000});
 		}
 	}).toPass({timeout: 5000});
+}
+
+export async function updateSpaceExternalReferenceCode(
+	apiHelpers,
+	spaceName: string,
+	externalReferenceCode: string
+) {
+	const assetLibraries =
+		await apiHelpers.headlessAssetLibrary.getAssetLibrariesPage(
+			`type eq 'Space'`
+		);
+
+	const assetLibrary = assetLibraries.find(({name}) => name === spaceName);
+
+	await apiHelpers.headlessAssetLibrary.patchAssetLibrary(
+		assetLibrary.externalReferenceCode,
+		{externalReferenceCode}
+	);
 }

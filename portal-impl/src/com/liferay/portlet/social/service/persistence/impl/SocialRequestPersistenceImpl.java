@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelperUtil;
@@ -75,7 +73,7 @@ public class SocialRequestPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -116,16 +114,9 @@ public class SocialRequestPersistenceImpl
 			String uuid, OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -167,7 +158,7 @@ public class SocialRequestPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<SocialRequest>
+	private UniquePersistenceFinder<SocialRequest, NoSuchRequestException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -182,21 +173,8 @@ public class SocialRequestPersistenceImpl
 	public SocialRequest findByUUID_G(String uuid, long groupId)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByUUID_G(uuid, groupId);
-
-		if (socialRequest == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRequestException(message);
-		}
-
-		return socialRequest;
+		return _uniquePersistenceFinderByUUID_G.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -245,7 +223,7 @@ public class SocialRequestPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -289,16 +267,9 @@ public class SocialRequestPersistenceImpl
 			OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -344,7 +315,7 @@ public class SocialRequestPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -385,16 +356,9 @@ public class SocialRequestPersistenceImpl
 			long companyId, OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -436,7 +400,7 @@ public class SocialRequestPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -477,16 +441,9 @@ public class SocialRequestPersistenceImpl
 			long userId, OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId},
+			orderByComparator);
 	}
 
 	/**
@@ -528,7 +485,7 @@ public class SocialRequestPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByReceiverUserId;
 
 	/**
@@ -570,16 +527,9 @@ public class SocialRequestPersistenceImpl
 			OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByReceiverUserId_First(
-			receiverUserId, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByReceiverUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {receiverUserId}));
+		return _collectionPersistenceFinderByReceiverUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {receiverUserId},
+			orderByComparator);
 	}
 
 	/**
@@ -622,7 +572,7 @@ public class SocialRequestPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {receiverUserId});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByU_S;
 
 	/**
@@ -666,16 +616,9 @@ public class SocialRequestPersistenceImpl
 			OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByU_S_First(
-			userId, status, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByU_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId, status}));
+		return _collectionPersistenceFinderByU_S.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -721,7 +664,7 @@ public class SocialRequestPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {userId, status});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -766,16 +709,9 @@ public class SocialRequestPersistenceImpl
 			OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {classNameId, classPK}, orderByComparator);
 	}
 
 	/**
@@ -823,7 +759,7 @@ public class SocialRequestPersistenceImpl
 			new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByR_S;
 
 	/**
@@ -868,17 +804,9 @@ public class SocialRequestPersistenceImpl
 			OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByR_S_First(
-			receiverUserId, status, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByR_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {receiverUserId, status}));
+		return _collectionPersistenceFinderByR_S.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {receiverUserId, status}, orderByComparator);
 	}
 
 	/**
@@ -926,7 +854,7 @@ public class SocialRequestPersistenceImpl
 			new Object[] {receiverUserId, status});
 	}
 
-	private UniquePersistenceFinder<SocialRequest>
+	private UniquePersistenceFinder<SocialRequest, NoSuchRequestException>
 		_uniquePersistenceFinderByU_C_C_T_R;
 
 	/**
@@ -946,25 +874,9 @@ public class SocialRequestPersistenceImpl
 			long receiverUserId)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByU_C_C_T_R(
-			userId, classNameId, classPK, type, receiverUserId);
-
-		if (socialRequest == null) {
-			String message =
-				_uniquePersistenceFinderByU_C_C_T_R.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						userId, classNameId, classPK, type, receiverUserId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRequestException(message);
-		}
-
-		return socialRequest;
+		return _uniquePersistenceFinderByU_C_C_T_R.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {userId, classNameId, classPK, type, receiverUserId});
 	}
 
 	/**
@@ -1031,7 +943,7 @@ public class SocialRequestPersistenceImpl
 			new Object[] {userId, classNameId, classPK, type, receiverUserId});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByU_C_C_T_S;
 
 	/**
@@ -1082,17 +994,10 @@ public class SocialRequestPersistenceImpl
 			OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByU_C_C_T_S_First(
-			userId, classNameId, classPK, type, status, orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByU_C_C_T_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {userId, classNameId, classPK, type, status}));
+		return _collectionPersistenceFinderByU_C_C_T_S.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {userId, classNameId, classPK, type, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1154,7 +1059,7 @@ public class SocialRequestPersistenceImpl
 			new Object[] {userId, classNameId, classPK, type, status});
 	}
 
-	private CollectionPersistenceFinder<SocialRequest>
+	private CollectionPersistenceFinder<SocialRequest, NoSuchRequestException>
 		_collectionPersistenceFinderByC_C_T_R_S;
 
 	/**
@@ -1206,20 +1111,10 @@ public class SocialRequestPersistenceImpl
 			int status, OrderByComparator<SocialRequest> orderByComparator)
 		throws NoSuchRequestException {
 
-		SocialRequest socialRequest = fetchByC_C_T_R_S_First(
-			classNameId, classPK, type, receiverUserId, status,
+		return _collectionPersistenceFinderByC_C_T_R_S.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {classNameId, classPK, type, receiverUserId, status},
 			orderByComparator);
-
-		if (socialRequest != null) {
-			return socialRequest;
-		}
-
-		throw new NoSuchRequestException(
-			_collectionPersistenceFinderByC_C_T_R_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					classNameId, classPK, type, receiverUserId, status
-				}));
 	}
 
 	/**
@@ -1575,10 +1470,11 @@ public class SocialRequestPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
-			SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"socialRequest.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, SocialRequest::getUuid));
+				"socialRequest.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, SocialRequest::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1590,8 +1486,8 @@ public class SocialRequestPersistenceImpl
 				SocialRequest::getGroupId),
 			_SQL_SELECT_SOCIALREQUEST_WHERE, "",
 			new FinderColumn<>(
-				"socialRequest.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, SocialRequest::getUuid),
+				"socialRequest.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, SocialRequest::getUuid),
 			new FinderColumn<>(
 				"socialRequest.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, SocialRequest::getGroupId));
@@ -1617,9 +1513,10 @@ public class SocialRequestPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
 				SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"socialRequest.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, SocialRequest::getUuid),
+					"socialRequest.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, SocialRequest::getUuid),
 				new FinderColumn<>(
 					"socialRequest.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SocialRequest::getCompanyId));
@@ -1645,6 +1542,7 @@ public class SocialRequestPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
 				SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialRequest.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SocialRequest::getCompanyId));
@@ -1670,6 +1568,7 @@ public class SocialRequestPersistenceImpl
 					new String[] {"userId"}, false),
 				_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
 				SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialRequest.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, SocialRequest::getUserId));
@@ -1697,6 +1596,7 @@ public class SocialRequestPersistenceImpl
 					new String[] {"receiverUserId"}, false),
 				_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
 				SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialRequest.", "receiverUserId", FinderColumn.Type.LONG,
 					"=", true, true, SocialRequest::getReceiverUserId));
@@ -1720,7 +1620,8 @@ public class SocialRequestPersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"userId", "status"}, false),
 			_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
-			SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"socialRequest.", "userId", FinderColumn.Type.LONG, "=", true,
 				true, SocialRequest::getUserId),
@@ -1747,7 +1648,8 @@ public class SocialRequestPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"classNameId", "classPK"}, false),
 			_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
-			SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"socialRequest.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, SocialRequest::getClassNameId),
@@ -1774,7 +1676,8 @@ public class SocialRequestPersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"receiverUserId", "status"}, false),
 			_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
-			SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"socialRequest.", "receiverUserId", FinderColumn.Type.LONG, "=",
 				true, true, SocialRequest::getReceiverUserId),
@@ -1809,8 +1712,8 @@ public class SocialRequestPersistenceImpl
 				"socialRequest.", "classPK", FinderColumn.Type.LONG, "=", true,
 				true, SocialRequest::getClassPK),
 			new FinderColumn<>(
-				"socialRequest.", "type", FinderColumn.Type.INTEGER, "=", true,
-				true, SocialRequest::getType),
+				"socialRequest.", "type", "type_", FinderColumn.Type.INTEGER,
+				"=", true, true, SocialRequest::getType),
 			new FinderColumn<>(
 				"socialRequest.", "receiverUserId", FinderColumn.Type.LONG, "=",
 				true, true, SocialRequest::getReceiverUserId));
@@ -1857,6 +1760,7 @@ public class SocialRequestPersistenceImpl
 					false),
 				_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
 				SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialRequest.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, SocialRequest::getUserId),
@@ -1867,8 +1771,9 @@ public class SocialRequestPersistenceImpl
 					"socialRequest.", "classPK", FinderColumn.Type.LONG, "=",
 					true, true, SocialRequest::getClassPK),
 				new FinderColumn<>(
-					"socialRequest.", "type", FinderColumn.Type.INTEGER, "=",
-					true, true, SocialRequest::getType),
+					"socialRequest.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					SocialRequest::getType),
 				new FinderColumn<>(
 					"socialRequest.", "status", FinderColumn.Type.INTEGER, "=",
 					true, true, SocialRequest::getStatus));
@@ -1918,6 +1823,7 @@ public class SocialRequestPersistenceImpl
 					false),
 				_SQL_SELECT_SOCIALREQUEST_WHERE, _SQL_COUNT_SOCIALREQUEST_WHERE,
 				SocialRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialRequest.", "classNameId", FinderColumn.Type.LONG,
 					"=", true, true, SocialRequest::getClassNameId),
@@ -1925,8 +1831,9 @@ public class SocialRequestPersistenceImpl
 					"socialRequest.", "classPK", FinderColumn.Type.LONG, "=",
 					true, true, SocialRequest::getClassPK),
 				new FinderColumn<>(
-					"socialRequest.", "type", FinderColumn.Type.INTEGER, "=",
-					true, true, SocialRequest::getType),
+					"socialRequest.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					SocialRequest::getType),
 				new FinderColumn<>(
 					"socialRequest.", "receiverUserId", FinderColumn.Type.LONG,
 					"=", true, true, SocialRequest::getReceiverUserId),
@@ -1955,12 +1862,6 @@ public class SocialRequestPersistenceImpl
 	private static final String _SQL_COUNT_SOCIALREQUEST_WHERE =
 		"SELECT COUNT(socialRequest) FROM SocialRequest socialRequest WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SocialRequest exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SocialRequestPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -1970,4 +1871,4 @@ public class SocialRequestPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:523380299
+// LIFERAY-SERVICE-BUILDER-HASH:-621330472

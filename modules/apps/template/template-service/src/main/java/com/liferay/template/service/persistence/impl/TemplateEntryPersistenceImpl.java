@@ -5,7 +5,6 @@
 
 package com.liferay.template.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -14,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -98,8 +95,9 @@ public class TemplateEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<TemplateEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<TemplateEntry, NoSuchTemplateEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the template entries where uuid = &#63;.
@@ -139,16 +137,8 @@ public class TemplateEntryPersistenceImpl
 			String uuid, OrderByComparator<TemplateEntry> orderByComparator)
 		throws NoSuchTemplateEntryException {
 
-		TemplateEntry templateEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (templateEntry != null) {
-			return templateEntry;
-		}
-
-		throw new NoSuchTemplateEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -189,7 +179,7 @@ public class TemplateEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<TemplateEntry>
+	private UniquePersistenceFinder<TemplateEntry, NoSuchTemplateEntryException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -204,21 +194,8 @@ public class TemplateEntryPersistenceImpl
 	public TemplateEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchTemplateEntryException {
 
-		TemplateEntry templateEntry = fetchByUUID_G(uuid, groupId);
-
-		if (templateEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateEntryException(message);
-		}
-
-		return templateEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -266,8 +243,9 @@ public class TemplateEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<TemplateEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<TemplateEntry, NoSuchTemplateEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the template entries where uuid = &#63; and companyId = &#63;.
@@ -310,16 +288,8 @@ public class TemplateEntryPersistenceImpl
 			OrderByComparator<TemplateEntry> orderByComparator)
 		throws NoSuchTemplateEntryException {
 
-		TemplateEntry templateEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (templateEntry != null) {
-			return templateEntry;
-		}
-
-		throw new NoSuchTemplateEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -364,8 +334,9 @@ public class TemplateEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<TemplateEntry>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<TemplateEntry, NoSuchTemplateEntryException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the template entries where groupId = &#63;.
@@ -405,23 +376,9 @@ public class TemplateEntryPersistenceImpl
 			long groupId, OrderByComparator<TemplateEntry> orderByComparator)
 		throws NoSuchTemplateEntryException {
 
-		TemplateEntry templateEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (templateEntry != null) {
-			return templateEntry;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchTemplateEntryException(sb.toString());
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {new long[] {groupId}},
+			orderByComparator);
 	}
 
 	/**
@@ -500,7 +457,7 @@ public class TemplateEntryPersistenceImpl
 			finderCache, new Object[] {ArrayUtil.sortedUnique(groupIds)});
 	}
 
-	private UniquePersistenceFinder<TemplateEntry>
+	private UniquePersistenceFinder<TemplateEntry, NoSuchTemplateEntryException>
 		_uniquePersistenceFinderByDDMTemplateId;
 
 	/**
@@ -514,21 +471,8 @@ public class TemplateEntryPersistenceImpl
 	public TemplateEntry findByDDMTemplateId(long ddmTemplateId)
 		throws NoSuchTemplateEntryException {
 
-		TemplateEntry templateEntry = fetchByDDMTemplateId(ddmTemplateId);
-
-		if (templateEntry == null) {
-			String message =
-				_uniquePersistenceFinderByDDMTemplateId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ddmTemplateId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateEntryException(message);
-		}
-
-		return templateEntry;
+		return _uniquePersistenceFinderByDDMTemplateId.find(
+			finderCache, new Object[] {ddmTemplateId});
 	}
 
 	/**
@@ -573,8 +517,9 @@ public class TemplateEntryPersistenceImpl
 			finderCache, new Object[] {ddmTemplateId});
 	}
 
-	private CollectionPersistenceFinder<TemplateEntry>
-		_collectionPersistenceFinderByG_IICN;
+	private CollectionPersistenceFinder
+		<TemplateEntry, NoSuchTemplateEntryException>
+			_collectionPersistenceFinderByG_IICN;
 
 	/**
 	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63;.
@@ -617,17 +562,9 @@ public class TemplateEntryPersistenceImpl
 			OrderByComparator<TemplateEntry> orderByComparator)
 		throws NoSuchTemplateEntryException {
 
-		TemplateEntry templateEntry = fetchByG_IICN_First(
-			groupId, infoItemClassName, orderByComparator);
-
-		if (templateEntry != null) {
-			return templateEntry;
-		}
-
-		throw new NoSuchTemplateEntryException(
-			_collectionPersistenceFinderByG_IICN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, infoItemClassName}));
+		return _collectionPersistenceFinderByG_IICN.findFirst(
+			finderCache, new Object[] {groupId, infoItemClassName},
+			orderByComparator);
 	}
 
 	/**
@@ -673,8 +610,9 @@ public class TemplateEntryPersistenceImpl
 			finderCache, new Object[] {groupId, infoItemClassName});
 	}
 
-	private CollectionPersistenceFinder<TemplateEntry>
-		_collectionPersistenceFinderByG_IICN_IIFVK;
+	private CollectionPersistenceFinder
+		<TemplateEntry, NoSuchTemplateEntryException>
+			_collectionPersistenceFinderByG_IICN_IIFVK;
 
 	/**
 	 * Returns an ordered range of all the template entries where groupId = &#63; and infoItemClassName = &#63; and infoItemFormVariationKey = &#63;.
@@ -724,30 +662,13 @@ public class TemplateEntryPersistenceImpl
 			OrderByComparator<TemplateEntry> orderByComparator)
 		throws NoSuchTemplateEntryException {
 
-		TemplateEntry templateEntry = fetchByG_IICN_IIFVK_First(
-			groupId, infoItemClassName, infoItemFormVariationKey,
+		return _collectionPersistenceFinderByG_IICN_IIFVK.findFirst(
+			finderCache,
+			new Object[] {
+				new long[] {groupId}, infoItemClassName,
+				infoItemFormVariationKey
+			},
 			orderByComparator);
-
-		if (templateEntry != null) {
-			return templateEntry;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", infoItemClassName=");
-		sb.append(infoItemClassName);
-
-		sb.append(", infoItemFormVariationKey=");
-		sb.append(infoItemFormVariationKey);
-
-		sb.append("}");
-
-		throw new NoSuchTemplateEntryException(sb.toString());
 	}
 
 	/**
@@ -867,7 +788,7 @@ public class TemplateEntryPersistenceImpl
 			});
 	}
 
-	private UniquePersistenceFinder<TemplateEntry>
+	private UniquePersistenceFinder<TemplateEntry, NoSuchTemplateEntryException>
 		_uniquePersistenceFinderByERC_G;
 
 	/**
@@ -882,23 +803,8 @@ public class TemplateEntryPersistenceImpl
 	public TemplateEntry findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchTemplateEntryException {
 
-		TemplateEntry templateEntry = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (templateEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateEntryException(message);
-		}
-
-		return templateEntry;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1332,10 +1238,11 @@ public class TemplateEntryPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_TEMPLATEENTRY_WHERE, _SQL_COUNT_TEMPLATEENTRY_WHERE,
-			TemplateEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			TemplateEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"templateEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, TemplateEntry::getUuid));
+				"templateEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, TemplateEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1347,8 +1254,8 @@ public class TemplateEntryPersistenceImpl
 				TemplateEntry::getGroupId),
 			_SQL_SELECT_TEMPLATEENTRY_WHERE, "",
 			new FinderColumn<>(
-				"templateEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, TemplateEntry::getUuid),
+				"templateEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, TemplateEntry::getUuid),
 			new FinderColumn<>(
 				"templateEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, TemplateEntry::getGroupId));
@@ -1374,9 +1281,10 @@ public class TemplateEntryPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_TEMPLATEENTRY_WHERE, _SQL_COUNT_TEMPLATEENTRY_WHERE,
 				TemplateEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"templateEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, TemplateEntry::getUuid),
+					"templateEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, TemplateEntry::getUuid),
 				new FinderColumn<>(
 					"templateEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, TemplateEntry::getCompanyId));
@@ -1402,6 +1310,7 @@ public class TemplateEntryPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_TEMPLATEENTRY_WHERE, _SQL_COUNT_TEMPLATEENTRY_WHERE,
 				TemplateEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new ArrayableFinderColumn<>(
 					"templateEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					false, true, true, TemplateEntry::getGroupId));
@@ -1441,6 +1350,7 @@ public class TemplateEntryPersistenceImpl
 					null),
 				_SQL_SELECT_TEMPLATEENTRY_WHERE, _SQL_COUNT_TEMPLATEENTRY_WHERE,
 				TemplateEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"templateEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, TemplateEntry::getGroupId),
@@ -1492,6 +1402,7 @@ public class TemplateEntryPersistenceImpl
 					0, 6, false, null),
 				_SQL_SELECT_TEMPLATEENTRY_WHERE, _SQL_COUNT_TEMPLATEENTRY_WHERE,
 				TemplateEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new ArrayableFinderColumn<>(
 					"templateEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					false, true, true, TemplateEntry::getGroupId),
@@ -1578,12 +1489,6 @@ public class TemplateEntryPersistenceImpl
 	private static final String _SQL_COUNT_TEMPLATEENTRY_WHERE =
 		"SELECT COUNT(templateEntry) FROM TemplateEntry templateEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No TemplateEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		TemplateEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1593,4 +1498,4 @@ public class TemplateEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1274880141
+// LIFERAY-SERVICE-BUILDER-HASH:-670487924

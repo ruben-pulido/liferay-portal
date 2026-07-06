@@ -18,8 +18,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -71,7 +69,7 @@ public class MFAEmailOTPEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<MFAEmailOTPEntry>
+	private UniquePersistenceFinder<MFAEmailOTPEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByUserId;
 
 	/**
@@ -85,21 +83,8 @@ public class MFAEmailOTPEntryPersistenceImpl
 	public MFAEmailOTPEntry findByUserId(long userId)
 		throws NoSuchEntryException {
 
-		MFAEmailOTPEntry mfaEmailOTPEntry = fetchByUserId(userId);
-
-		if (mfaEmailOTPEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUserId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return mfaEmailOTPEntry;
+		return _uniquePersistenceFinderByUserId.find(
+			finderCache, new Object[] {userId});
 	}
 
 	/**
@@ -403,16 +388,10 @@ public class MFAEmailOTPEntryPersistenceImpl
 	private static final String _SQL_SELECT_MFAEMAILOTPENTRY_WHERE =
 		"SELECT mfaEmailOTPEntry FROM MFAEmailOTPEntry mfaEmailOTPEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No MFAEmailOTPEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		MFAEmailOTPEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:523919200
+// LIFERAY-SERVICE-BUILDER-HASH:-861074614

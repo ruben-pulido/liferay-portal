@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -79,7 +77,7 @@ public class CTEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTEntry>
+	private CollectionPersistenceFinder<CTEntry, NoSuchCTEntryException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -119,15 +117,8 @@ public class CTEntryPersistenceImpl
 			long companyId, OrderByComparator<CTEntry> orderByComparator)
 		throws NoSuchCTEntryException {
 
-		CTEntry ctEntry = fetchByCompanyId_First(companyId, orderByComparator);
-
-		if (ctEntry != null) {
-			return ctEntry;
-		}
-
-		throw new NoSuchCTEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			dummyFinderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -168,7 +159,8 @@ public class CTEntryPersistenceImpl
 			dummyFinderCache, new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<CTEntry> _uniquePersistenceFinderByC_N;
+	private UniquePersistenceFinder<CTEntry, NoSuchCTEntryException>
+		_uniquePersistenceFinderByC_N;
 
 	/**
 	 * Returns the ct entry where companyId = &#63; and name = &#63; or throws a <code>NoSuchCTEntryException</code> if it could not be found.
@@ -182,21 +174,8 @@ public class CTEntryPersistenceImpl
 	public CTEntry findByC_N(long companyId, String name)
 		throws NoSuchCTEntryException {
 
-		CTEntry ctEntry = fetchByC_N(companyId, name);
-
-		if (ctEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCTEntryException(message);
-		}
-
-		return ctEntry;
+		return _uniquePersistenceFinderByC_N.find(
+			dummyFinderCache, new Object[] {companyId, name});
 	}
 
 	/**
@@ -497,7 +476,8 @@ public class CTEntryPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_CTENTRY_WHERE, _SQL_COUNT_CTENTRY_WHERE,
-				CTEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CTEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ctEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, CTEntry::getCompanyId));
@@ -568,16 +548,10 @@ public class CTEntryPersistenceImpl
 	private static final String _SQL_COUNT_CTENTRY_WHERE =
 		"SELECT COUNT(ctEntry) FROM CTEntry ctEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CTEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return dummyFinderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:482549931
+// LIFERAY-SERVICE-BUILDER-HASH:-1065349374

@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -87,8 +85,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPInstanceUnitOfMeasure>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPInstanceUnitOfMeasure, NoSuchCPInstanceUnitOfMeasureException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp instance unit of measures where uuid = &#63;.
@@ -129,16 +128,8 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			OrderByComparator<CPInstanceUnitOfMeasure> orderByComparator)
 		throws NoSuchCPInstanceUnitOfMeasureException {
 
-		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (cpInstanceUnitOfMeasure != null) {
-			return cpInstanceUnitOfMeasure;
-		}
-
-		throw new NoSuchCPInstanceUnitOfMeasureException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -180,8 +171,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<CPInstanceUnitOfMeasure>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPInstanceUnitOfMeasure, NoSuchCPInstanceUnitOfMeasureException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp instance unit of measures where uuid = &#63; and companyId = &#63;.
@@ -224,16 +216,8 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			OrderByComparator<CPInstanceUnitOfMeasure> orderByComparator)
 		throws NoSuchCPInstanceUnitOfMeasureException {
 
-		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cpInstanceUnitOfMeasure != null) {
-			return cpInstanceUnitOfMeasure;
-		}
-
-		throw new NoSuchCPInstanceUnitOfMeasureException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -278,8 +262,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CPInstanceUnitOfMeasure>
-		_collectionPersistenceFinderByCPInstanceId;
+	private CollectionPersistenceFinder
+		<CPInstanceUnitOfMeasure, NoSuchCPInstanceUnitOfMeasureException>
+			_collectionPersistenceFinderByCPInstanceId;
 
 	/**
 	 * Returns an ordered range of all the cp instance unit of measures where CPInstanceId = &#63;.
@@ -320,16 +305,8 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			OrderByComparator<CPInstanceUnitOfMeasure> orderByComparator)
 		throws NoSuchCPInstanceUnitOfMeasureException {
 
-		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure =
-			fetchByCPInstanceId_First(CPInstanceId, orderByComparator);
-
-		if (cpInstanceUnitOfMeasure != null) {
-			return cpInstanceUnitOfMeasure;
-		}
-
-		throw new NoSuchCPInstanceUnitOfMeasureException(
-			_collectionPersistenceFinderByCPInstanceId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPInstanceId}));
+		return _collectionPersistenceFinderByCPInstanceId.findFirst(
+			finderCache, new Object[] {CPInstanceId}, orderByComparator);
 	}
 
 	/**
@@ -371,8 +348,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			finderCache, new Object[] {CPInstanceId});
 	}
 
-	private CollectionPersistenceFinder<CPInstanceUnitOfMeasure>
-		_collectionPersistenceFinderByC_S;
+	private CollectionPersistenceFinder
+		<CPInstanceUnitOfMeasure, NoSuchCPInstanceUnitOfMeasureException>
+			_collectionPersistenceFinderByC_S;
 
 	/**
 	 * Returns an ordered range of all the cp instance unit of measures where companyId = &#63; and sku = &#63;.
@@ -415,16 +393,8 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			OrderByComparator<CPInstanceUnitOfMeasure> orderByComparator)
 		throws NoSuchCPInstanceUnitOfMeasureException {
 
-		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure = fetchByC_S_First(
-			companyId, sku, orderByComparator);
-
-		if (cpInstanceUnitOfMeasure != null) {
-			return cpInstanceUnitOfMeasure;
-		}
-
-		throw new NoSuchCPInstanceUnitOfMeasureException(
-			_collectionPersistenceFinderByC_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, sku}));
+		return _collectionPersistenceFinderByC_S.findFirst(
+			finderCache, new Object[] {companyId, sku}, orderByComparator);
 	}
 
 	/**
@@ -469,8 +439,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			finderCache, new Object[] {companyId, sku});
 	}
 
-	private CollectionPersistenceFinder<CPInstanceUnitOfMeasure>
-		_collectionPersistenceFinderByC_A;
+	private CollectionPersistenceFinder
+		<CPInstanceUnitOfMeasure, NoSuchCPInstanceUnitOfMeasureException>
+			_collectionPersistenceFinderByC_A;
 
 	/**
 	 * Returns an ordered range of all the cp instance unit of measures where CPInstanceId = &#63; and active = &#63;.
@@ -513,16 +484,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			OrderByComparator<CPInstanceUnitOfMeasure> orderByComparator)
 		throws NoSuchCPInstanceUnitOfMeasureException {
 
-		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure = fetchByC_A_First(
-			CPInstanceId, active, orderByComparator);
-
-		if (cpInstanceUnitOfMeasure != null) {
-			return cpInstanceUnitOfMeasure;
-		}
-
-		throw new NoSuchCPInstanceUnitOfMeasureException(
-			_collectionPersistenceFinderByC_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPInstanceId, active}));
+		return _collectionPersistenceFinderByC_A.findFirst(
+			finderCache, new Object[] {CPInstanceId, active},
+			orderByComparator);
 	}
 
 	/**
@@ -568,8 +532,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			finderCache, new Object[] {CPInstanceId, active});
 	}
 
-	private UniquePersistenceFinder<CPInstanceUnitOfMeasure>
-		_uniquePersistenceFinderByC_K;
+	private UniquePersistenceFinder
+		<CPInstanceUnitOfMeasure, NoSuchCPInstanceUnitOfMeasureException>
+			_uniquePersistenceFinderByC_K;
 
 	/**
 	 * Returns the cp instance unit of measure where CPInstanceId = &#63; and key = &#63; or throws a <code>NoSuchCPInstanceUnitOfMeasureException</code> if it could not be found.
@@ -583,22 +548,8 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 	public CPInstanceUnitOfMeasure findByC_K(long CPInstanceId, String key)
 		throws NoSuchCPInstanceUnitOfMeasureException {
 
-		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure = fetchByC_K(
-			CPInstanceId, key);
-
-		if (cpInstanceUnitOfMeasure == null) {
-			String message =
-				_uniquePersistenceFinderByC_K.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPInstanceId, key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPInstanceUnitOfMeasureException(message);
-		}
-
-		return cpInstanceUnitOfMeasure;
+		return _uniquePersistenceFinderByC_K.find(
+			finderCache, new Object[] {CPInstanceId, key});
 	}
 
 	/**
@@ -647,8 +598,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			finderCache, new Object[] {CPInstanceId, key});
 	}
 
-	private CollectionPersistenceFinder<CPInstanceUnitOfMeasure>
-		_collectionPersistenceFinderByC_P;
+	private CollectionPersistenceFinder
+		<CPInstanceUnitOfMeasure, NoSuchCPInstanceUnitOfMeasureException>
+			_collectionPersistenceFinderByC_P;
 
 	/**
 	 * Returns an ordered range of all the cp instance unit of measures where CPInstanceId = &#63; and primary = &#63;.
@@ -691,17 +643,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			OrderByComparator<CPInstanceUnitOfMeasure> orderByComparator)
 		throws NoSuchCPInstanceUnitOfMeasureException {
 
-		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure = fetchByC_P_First(
-			CPInstanceId, primary, orderByComparator);
-
-		if (cpInstanceUnitOfMeasure != null) {
-			return cpInstanceUnitOfMeasure;
-		}
-
-		throw new NoSuchCPInstanceUnitOfMeasureException(
-			_collectionPersistenceFinderByC_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {CPInstanceId, primary}));
+		return _collectionPersistenceFinderByC_P.findFirst(
+			finderCache, new Object[] {CPInstanceId, primary},
+			orderByComparator);
 	}
 
 	/**
@@ -747,8 +691,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			finderCache, new Object[] {CPInstanceId, primary});
 	}
 
-	private CollectionPersistenceFinder<CPInstanceUnitOfMeasure>
-		_collectionPersistenceFinderByC_K_S;
+	private CollectionPersistenceFinder
+		<CPInstanceUnitOfMeasure, NoSuchCPInstanceUnitOfMeasureException>
+			_collectionPersistenceFinderByC_K_S;
 
 	/**
 	 * Returns an ordered range of all the cp instance unit of measures where companyId = &#63; and key = &#63; and sku = &#63;.
@@ -793,16 +738,8 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			OrderByComparator<CPInstanceUnitOfMeasure> orderByComparator)
 		throws NoSuchCPInstanceUnitOfMeasureException {
 
-		CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure = fetchByC_K_S_First(
-			companyId, key, sku, orderByComparator);
-
-		if (cpInstanceUnitOfMeasure != null) {
-			return cpInstanceUnitOfMeasure;
-		}
-
-		throw new NoSuchCPInstanceUnitOfMeasureException(
-			_collectionPersistenceFinderByC_K_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, key, sku}));
+		return _collectionPersistenceFinderByC_K_S.findFirst(
+			finderCache, new Object[] {companyId, key, sku}, orderByComparator);
 	}
 
 	/**
@@ -1088,6 +1025,11 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "CPInstanceUnitOfMeasureId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_CPINSTANCEUNITOFMEASURE;
 	}
@@ -1193,10 +1135,11 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			_SQL_SELECT_CPINSTANCEUNITOFMEASURE_WHERE,
 			_SQL_COUNT_CPINSTANCEUNITOFMEASURE_WHERE,
 			CPInstanceUnitOfMeasureModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"cpInstanceUnitOfMeasure.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CPInstanceUnitOfMeasure::getUuid));
+				"cpInstanceUnitOfMeasure.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPInstanceUnitOfMeasure::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1220,9 +1163,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 				_SQL_SELECT_CPINSTANCEUNITOFMEASURE_WHERE,
 				_SQL_COUNT_CPINSTANCEUNITOFMEASURE_WHERE,
 				CPInstanceUnitOfMeasureModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpInstanceUnitOfMeasure.", "uuid",
+					"cpInstanceUnitOfMeasure.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CPInstanceUnitOfMeasure::getUuid),
 				new FinderColumn<>(
@@ -1253,7 +1196,7 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 				_SQL_SELECT_CPINSTANCEUNITOFMEASURE_WHERE,
 				_SQL_COUNT_CPINSTANCEUNITOFMEASURE_WHERE,
 				CPInstanceUnitOfMeasureModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpInstanceUnitOfMeasure.", "CPInstanceId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1280,7 +1223,7 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			_SQL_SELECT_CPINSTANCEUNITOFMEASURE_WHERE,
 			_SQL_COUNT_CPINSTANCEUNITOFMEASURE_WHERE,
 			CPInstanceUnitOfMeasureModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"cpInstanceUnitOfMeasure.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, CPInstanceUnitOfMeasure::getCompanyId),
@@ -1309,14 +1252,15 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			_SQL_SELECT_CPINSTANCEUNITOFMEASURE_WHERE,
 			_SQL_COUNT_CPINSTANCEUNITOFMEASURE_WHERE,
 			CPInstanceUnitOfMeasureModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"cpInstanceUnitOfMeasure.", "CPInstanceId",
 				FinderColumn.Type.LONG, "=", true, true,
 				CPInstanceUnitOfMeasure::getCPInstanceId),
 			new FinderColumn<>(
-				"cpInstanceUnitOfMeasure.", "active", FinderColumn.Type.BOOLEAN,
-				"=", true, true, CPInstanceUnitOfMeasure::isActive));
+				"cpInstanceUnitOfMeasure.", "active", "active_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				CPInstanceUnitOfMeasure::isActive));
 
 		_uniquePersistenceFinderByC_K = new UniquePersistenceFinder<>(
 			this,
@@ -1332,8 +1276,9 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 				FinderColumn.Type.LONG, "=", true, true,
 				CPInstanceUnitOfMeasure::getCPInstanceId),
 			new FinderColumn<>(
-				"cpInstanceUnitOfMeasure.", "key", FinderColumn.Type.STRING,
-				"=", true, true, CPInstanceUnitOfMeasure::getKey));
+				"cpInstanceUnitOfMeasure.", "key", "key_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPInstanceUnitOfMeasure::getKey));
 
 		_collectionPersistenceFinderByC_P = new CollectionPersistenceFinder<>(
 			this,
@@ -1356,13 +1301,13 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			_SQL_SELECT_CPINSTANCEUNITOFMEASURE_WHERE,
 			_SQL_COUNT_CPINSTANCEUNITOFMEASURE_WHERE,
 			CPInstanceUnitOfMeasureModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"cpInstanceUnitOfMeasure.", "CPInstanceId",
 				FinderColumn.Type.LONG, "=", true, true,
 				CPInstanceUnitOfMeasure::getCPInstanceId),
 			new FinderColumn<>(
-				"cpInstanceUnitOfMeasure.", "primary",
+				"cpInstanceUnitOfMeasure.", "primary", "primary_",
 				FinderColumn.Type.BOOLEAN, "=", true, true,
 				CPInstanceUnitOfMeasure::isPrimary));
 
@@ -1393,13 +1338,14 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 			_SQL_SELECT_CPINSTANCEUNITOFMEASURE_WHERE,
 			_SQL_COUNT_CPINSTANCEUNITOFMEASURE_WHERE,
 			CPInstanceUnitOfMeasureModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"cpInstanceUnitOfMeasure.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, CPInstanceUnitOfMeasure::getCompanyId),
 			new FinderColumn<>(
-				"cpInstanceUnitOfMeasure.", "key", FinderColumn.Type.STRING,
-				"=", true, true, CPInstanceUnitOfMeasure::getKey),
+				"cpInstanceUnitOfMeasure.", "key", "key_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPInstanceUnitOfMeasure::getKey),
 			new FinderColumn<>(
 				"cpInstanceUnitOfMeasure.", "sku", FinderColumn.Type.STRING,
 				"=", true, true, CPInstanceUnitOfMeasure::getSku));
@@ -1461,12 +1407,6 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 	private static final String _SQL_COUNT_CPINSTANCEUNITOFMEASURE_WHERE =
 		"SELECT COUNT(cpInstanceUnitOfMeasure) FROM CPInstanceUnitOfMeasure cpInstanceUnitOfMeasure WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPInstanceUnitOfMeasure exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPInstanceUnitOfMeasurePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {
 			"uuid", "CPInstanceUnitOfMeasureId", "active", "key", "precision",
@@ -1479,4 +1419,4 @@ public class CPInstanceUnitOfMeasurePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1983223487
+// LIFERAY-SERVICE-BUILDER-HASH:1487064181

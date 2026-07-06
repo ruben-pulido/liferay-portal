@@ -664,9 +664,9 @@ test(
 
 		await expect(async () => {
 			await accountUserSelectorPage.usersTable.orderButton.click();
-			await accountUserSelectorPage.usersTable
-				.orderMenuItem('First Name')
-				.click({timeout: 1000});
+			await accountUserSelectorPage.usersTable.clickOrderMenuItem(
+				'First Name'
+			);
 		}).toPass();
 
 		await expect(
@@ -681,9 +681,9 @@ test(
 
 		await expect(async () => {
 			await accountUserSelectorPage.usersTable.orderButton.click();
-			await accountUserSelectorPage.usersTable
-				.orderMenuItem('Last Name')
-				.click({timeout: 1000});
+			await accountUserSelectorPage.usersTable.clickOrderMenuItem(
+				'Last Name'
+			);
 		}).toPass();
 
 		await expect(
@@ -698,9 +698,9 @@ test(
 
 		await expect(async () => {
 			await accountUserSelectorPage.usersTable.orderButton.click();
-			await accountUserSelectorPage.usersTable
-				.orderMenuItem('Email Address')
-				.click({timeout: 1000});
+			await accountUserSelectorPage.usersTable.clickOrderMenuItem(
+				'Email Address'
+			);
 		}).toPass();
 
 		await expect(
@@ -715,9 +715,9 @@ test(
 
 		await expect(async () => {
 			await accountUserSelectorPage.usersTable.orderButton.click();
-			await accountUserSelectorPage.usersTable
-				.orderMenuItem('Last Name')
-				.click({timeout: 1000});
+			await accountUserSelectorPage.usersTable.clickOrderMenuItem(
+				'Last Name'
+			);
 		}).toPass();
 
 		await expect(
@@ -1051,39 +1051,47 @@ test(
 				accountUserSelectorPage.usersTable.searchInput
 			).toBeEditable();
 
-			await accountUserSelectorPage.usersTable.filterButton.click();
-			await accountUserSelectorPage.usersTable
-				.filterMenuItem('Valid Domain Users')
-				.click();
+			await accountUserSelectorPage.usersTable.changeFilter(
+				'Valid Domain Users'
+			);
 
-			await page.waitForTimeout(100);
+			await expect(async () => {
+				expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user1.name
+					)
+				).toBeNull();
+				expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user2.name
+					)
+				).toBeNull();
+			}).toPass();
 
-			expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user1.name)
-			).toBeNull();
-			expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user2.name)
-			).toBeNull();
+			await accountUserSelectorPage.usersTable.changeFilter('All Users');
 
-			await accountUserSelectorPage.usersTable.filterButton.click();
-			await accountUserSelectorPage.usersTable
-				.filterMenuItem('All Users')
-				.click();
-
-			await page.waitForTimeout(100);
-
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user1.name)
-			).toBeVisible();
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user1.name)
-			).toBeEnabled();
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user2.name)
-			).toBeVisible();
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user2.name)
-			).toBeEnabled();
+			await expect(async () => {
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user1.name
+					)
+				).toBeVisible({timeout: 1000});
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user1.name
+					)
+				).toBeEnabled({timeout: 1000});
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user2.name
+					)
+				).toBeVisible({timeout: 1000});
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user2.name
+					)
+				).toBeEnabled({timeout: 1000});
+			}).toPass();
 
 			await accountUserSelectorPage.usersTable.selectAllItemsCheckbox.check();
 			await accountUserSelectorPage.assignButton.click();
@@ -1123,42 +1131,55 @@ test(
 				accountUserSelectorPage.usersTable.searchInput
 			).toBeEditable();
 
-			await accountUserSelectorPage.usersTable.filterButton.click();
-			await accountUserSelectorPage.usersTable
-				.filterMenuItem('Valid Domain Users')
-				.click();
+			await expect(async () => {
+				await accountUserSelectorPage.usersTable.changeFilter(
+					'All Users'
+				);
+				await accountUserSelectorPage.usersTable.changeFilter(
+					'Valid Domain Users'
+				);
 
-			await page.waitForTimeout(100);
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user1.name
+					)
+				).toBeVisible({timeout: 1000});
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user1.name
+					)
+				).toBeEnabled({timeout: 1000});
+				expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user2.name
+					)
+				).toBeNull();
+			}).toPass();
 
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user1.name)
-			).toBeVisible();
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user1.name)
-			).toBeEnabled();
-			expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user2.name)
-			).toBeNull();
+			await accountUserSelectorPage.usersTable.changeFilter('All Users');
 
-			await accountUserSelectorPage.usersTable.filterButton.click();
-			await accountUserSelectorPage.usersTable
-				.filterMenuItem('All Users')
-				.click();
-
-			await page.waitForTimeout(100);
-
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user1.name)
-			).toBeVisible();
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user1.name)
-			).toBeEnabled();
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user2.name)
-			).toBeVisible();
-			await expect(
-				await accountUserSelectorPage.usersTable.rowCheckbox(user2.name)
-			).toBeDisabled();
+			await expect(async () => {
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user1.name
+					)
+				).toBeVisible({timeout: 1000});
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user1.name
+					)
+				).toBeEnabled({timeout: 1000});
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user2.name
+					)
+				).toBeVisible({timeout: 1000});
+				await expect(
+					await accountUserSelectorPage.usersTable.rowCheckbox(
+						user2.name
+					)
+				).toBeDisabled({timeout: 1000});
+			}).toPass();
 
 			await accountUserSelectorPage.usersTable.selectAllItemsCheckbox.check();
 			await accountUserSelectorPage.assignButton.click();
@@ -1179,10 +1200,9 @@ test(
 				accountUserSelectorPage.usersTable.searchInput
 			).toBeEditable();
 
-			await accountUserSelectorPage.usersTable.filterButton.click();
-			await accountUserSelectorPage.usersTable
-				.filterMenuItem('Valid Domain Users')
-				.click();
+			await accountUserSelectorPage.usersTable.changeFilter(
+				'Valid Domain Users'
+			);
 		}
 		finally {
 			await emailDomainsInstanceSettingsPage.enableEmailDomainValidation(
@@ -1934,7 +1954,7 @@ test(
 
 		await accountUsersPage.usersTable
 			.filterMenuItem('No Assigned Account')
-			.click();
+			.click({force: true});
 
 		await expect(
 			accountUsersPage.usersTable.cell(user1.emailAddress)
@@ -1956,7 +1976,7 @@ test(
 
 		await accountUsersPage.usersTable
 			.filterMenuItem('Selected Accounts')
-			.click();
+			.click({force: true});
 
 		await expect(
 			accountUsersAccountSelectorPage.accountsTable.searchInput
@@ -2007,6 +2027,8 @@ test(
 			accountUsersPage.usersTable.cell(user3.emailAddress)
 		).toHaveCount(0);
 
+		await accountUsersPage.usersTable.clearButton.click();
+
 		await expect(async () => {
 			await accountUsersPage.usersTable.filterButton.click();
 
@@ -2017,7 +2039,7 @@ test(
 
 		await accountUsersPage.usersTable
 			.filterMenuItem('Selected Accounts')
-			.click();
+			.click({force: true});
 
 		await expect(
 			accountUsersAccountSelectorPage.accountsTable.searchInput

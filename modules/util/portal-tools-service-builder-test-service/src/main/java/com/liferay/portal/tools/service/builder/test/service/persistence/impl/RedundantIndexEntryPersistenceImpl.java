@@ -8,8 +8,6 @@ package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
@@ -59,8 +57,9 @@ public class RedundantIndexEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<RedundantIndexEntry>
-		_uniquePersistenceFinderByC_N;
+	private UniquePersistenceFinder
+		<RedundantIndexEntry, NoSuchRedundantIndexEntryException>
+			_uniquePersistenceFinderByC_N;
 
 	/**
 	 * Returns the redundant index entry where companyId = &#63; and name = &#63; or throws a <code>NoSuchRedundantIndexEntryException</code> if it could not be found.
@@ -74,21 +73,8 @@ public class RedundantIndexEntryPersistenceImpl
 	public RedundantIndexEntry findByC_N(long companyId, String name)
 		throws NoSuchRedundantIndexEntryException {
 
-		RedundantIndexEntry redundantIndexEntry = fetchByC_N(companyId, name);
-
-		if (redundantIndexEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRedundantIndexEntryException(message);
-		}
-
-		return redundantIndexEntry;
+		return _uniquePersistenceFinderByC_N.find(
+			finderCache, new Object[] {companyId, name});
 	}
 
 	/**
@@ -353,16 +339,10 @@ public class RedundantIndexEntryPersistenceImpl
 	private static final String _SQL_SELECT_REDUNDANTINDEXENTRY_WHERE =
 		"SELECT redundantIndexEntry FROM RedundantIndexEntry redundantIndexEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No RedundantIndexEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		RedundantIndexEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1980813396
+// LIFERAY-SERVICE-BUILDER-HASH:-2043332171

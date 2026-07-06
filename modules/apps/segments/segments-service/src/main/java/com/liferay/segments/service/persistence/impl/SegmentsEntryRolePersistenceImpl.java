@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class SegmentsEntryRolePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SegmentsEntryRole>
-		_collectionPersistenceFinderBySegmentsEntryId;
+	private CollectionPersistenceFinder
+		<SegmentsEntryRole, NoSuchEntryRoleException>
+			_collectionPersistenceFinderBySegmentsEntryId;
 
 	/**
 	 * Returns an ordered range of all the segments entry roles where segmentsEntryId = &#63;.
@@ -124,16 +123,8 @@ public class SegmentsEntryRolePersistenceImpl
 			OrderByComparator<SegmentsEntryRole> orderByComparator)
 		throws NoSuchEntryRoleException {
 
-		SegmentsEntryRole segmentsEntryRole = fetchBySegmentsEntryId_First(
-			segmentsEntryId, orderByComparator);
-
-		if (segmentsEntryRole != null) {
-			return segmentsEntryRole;
-		}
-
-		throw new NoSuchEntryRoleException(
-			_collectionPersistenceFinderBySegmentsEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {segmentsEntryId}));
+		return _collectionPersistenceFinderBySegmentsEntryId.findFirst(
+			finderCache, new Object[] {segmentsEntryId}, orderByComparator);
 	}
 
 	/**
@@ -175,8 +166,9 @@ public class SegmentsEntryRolePersistenceImpl
 			finderCache, new Object[] {segmentsEntryId});
 	}
 
-	private CollectionPersistenceFinder<SegmentsEntryRole>
-		_collectionPersistenceFinderByRoleId;
+	private CollectionPersistenceFinder
+		<SegmentsEntryRole, NoSuchEntryRoleException>
+			_collectionPersistenceFinderByRoleId;
 
 	/**
 	 * Returns an ordered range of all the segments entry roles where roleId = &#63;.
@@ -216,16 +208,8 @@ public class SegmentsEntryRolePersistenceImpl
 			long roleId, OrderByComparator<SegmentsEntryRole> orderByComparator)
 		throws NoSuchEntryRoleException {
 
-		SegmentsEntryRole segmentsEntryRole = fetchByRoleId_First(
-			roleId, orderByComparator);
-
-		if (segmentsEntryRole != null) {
-			return segmentsEntryRole;
-		}
-
-		throw new NoSuchEntryRoleException(
-			_collectionPersistenceFinderByRoleId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {roleId}));
+		return _collectionPersistenceFinderByRoleId.findFirst(
+			finderCache, new Object[] {roleId}, orderByComparator);
 	}
 
 	/**
@@ -266,7 +250,7 @@ public class SegmentsEntryRolePersistenceImpl
 			finderCache, new Object[] {roleId});
 	}
 
-	private UniquePersistenceFinder<SegmentsEntryRole>
+	private UniquePersistenceFinder<SegmentsEntryRole, NoSuchEntryRoleException>
 		_uniquePersistenceFinderByS_R;
 
 	/**
@@ -281,23 +265,8 @@ public class SegmentsEntryRolePersistenceImpl
 	public SegmentsEntryRole findByS_R(long segmentsEntryId, long roleId)
 		throws NoSuchEntryRoleException {
 
-		SegmentsEntryRole segmentsEntryRole = fetchByS_R(
-			segmentsEntryId, roleId);
-
-		if (segmentsEntryRole == null) {
-			String message =
-				_uniquePersistenceFinderByS_R.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {segmentsEntryId, roleId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryRoleException(message);
-		}
-
-		return segmentsEntryRole;
+		return _uniquePersistenceFinderByS_R.find(
+			finderCache, new Object[] {segmentsEntryId, roleId});
 	}
 
 	/**
@@ -650,7 +619,7 @@ public class SegmentsEntryRolePersistenceImpl
 				_SQL_SELECT_SEGMENTSENTRYROLE_WHERE,
 				_SQL_COUNT_SEGMENTSENTRYROLE_WHERE,
 				SegmentsEntryRoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"segmentsEntryRole.", "segmentsEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -678,7 +647,7 @@ public class SegmentsEntryRolePersistenceImpl
 				_SQL_SELECT_SEGMENTSENTRYROLE_WHERE,
 				_SQL_COUNT_SEGMENTSENTRYROLE_WHERE,
 				SegmentsEntryRoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"segmentsEntryRole.", "roleId", FinderColumn.Type.LONG, "=",
 					true, true, SegmentsEntryRole::getRoleId));
@@ -756,16 +725,10 @@ public class SegmentsEntryRolePersistenceImpl
 	private static final String _SQL_COUNT_SEGMENTSENTRYROLE_WHERE =
 		"SELECT COUNT(segmentsEntryRole) FROM SegmentsEntryRole segmentsEntryRole WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SegmentsEntryRole exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SegmentsEntryRolePersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-628875955
+// LIFERAY-SERVICE-BUILDER-HASH:-570740937

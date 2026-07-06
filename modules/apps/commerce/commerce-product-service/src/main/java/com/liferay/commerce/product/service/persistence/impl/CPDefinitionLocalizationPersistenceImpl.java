@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -87,8 +85,9 @@ public class CPDefinitionLocalizationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPDefinitionLocalization>
-		_collectionPersistenceFinderByCPDefinitionId;
+	private CollectionPersistenceFinder
+		<CPDefinitionLocalization, NoSuchCPDefinitionLocalizationException>
+			_collectionPersistenceFinderByCPDefinitionId;
 
 	/**
 	 * Returns an ordered range of all the cp definition localizations where CPDefinitionId = &#63;.
@@ -129,16 +128,8 @@ public class CPDefinitionLocalizationPersistenceImpl
 			OrderByComparator<CPDefinitionLocalization> orderByComparator)
 		throws NoSuchCPDefinitionLocalizationException {
 
-		CPDefinitionLocalization cpDefinitionLocalization =
-			fetchByCPDefinitionId_First(CPDefinitionId, orderByComparator);
-
-		if (cpDefinitionLocalization != null) {
-			return cpDefinitionLocalization;
-		}
-
-		throw new NoSuchCPDefinitionLocalizationException(
-			_collectionPersistenceFinderByCPDefinitionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPDefinitionId}));
+		return _collectionPersistenceFinderByCPDefinitionId.findFirst(
+			finderCache, new Object[] {CPDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -180,8 +171,9 @@ public class CPDefinitionLocalizationPersistenceImpl
 			finderCache, new Object[] {CPDefinitionId});
 	}
 
-	private UniquePersistenceFinder<CPDefinitionLocalization>
-		_uniquePersistenceFinderByCPDefinitionId_LanguageId;
+	private UniquePersistenceFinder
+		<CPDefinitionLocalization, NoSuchCPDefinitionLocalizationException>
+			_uniquePersistenceFinderByCPDefinitionId_LanguageId;
 
 	/**
 	 * Returns the cp definition localization where CPDefinitionId = &#63; and languageId = &#63; or throws a <code>NoSuchCPDefinitionLocalizationException</code> if it could not be found.
@@ -196,24 +188,8 @@ public class CPDefinitionLocalizationPersistenceImpl
 			long CPDefinitionId, String languageId)
 		throws NoSuchCPDefinitionLocalizationException {
 
-		CPDefinitionLocalization cpDefinitionLocalization =
-			fetchByCPDefinitionId_LanguageId(CPDefinitionId, languageId);
-
-		if (cpDefinitionLocalization == null) {
-			String message =
-				_uniquePersistenceFinderByCPDefinitionId_LanguageId.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {CPDefinitionId, languageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDefinitionLocalizationException(message);
-		}
-
-		return cpDefinitionLocalization;
+		return _uniquePersistenceFinderByCPDefinitionId_LanguageId.find(
+			finderCache, new Object[] {CPDefinitionId, languageId});
 	}
 
 	/**
@@ -623,7 +599,7 @@ public class CPDefinitionLocalizationPersistenceImpl
 				_SQL_SELECT_CPDEFINITIONLOCALIZATION_WHERE,
 				_SQL_COUNT_CPDEFINITIONLOCALIZATION_WHERE,
 				CPDefinitionLocalizationModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpDefinitionLocalization.", "CPDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -707,16 +683,10 @@ public class CPDefinitionLocalizationPersistenceImpl
 	private static final String _SQL_COUNT_CPDEFINITIONLOCALIZATION_WHERE =
 		"SELECT COUNT(cpDefinitionLocalization) FROM CPDefinitionLocalization cpDefinitionLocalization WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPDefinitionLocalization exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPDefinitionLocalizationPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:337359310
+// LIFERAY-SERVICE-BUILDER-HASH:-350605903

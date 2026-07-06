@@ -76,7 +76,7 @@ public class CTSParentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTSParent>
+	private CollectionPersistenceFinder<CTSParent, NoSuchCTSParentException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -117,16 +117,8 @@ public class CTSParentPersistenceImpl
 			long companyId, OrderByComparator<CTSParent> orderByComparator)
 		throws NoSuchCTSParentException {
 
-		CTSParent ctsParent = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (ctsParent != null) {
-			return ctsParent;
-		}
-
-		throw new NoSuchCTSParentException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -167,7 +159,7 @@ public class CTSParentPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<CTSParent>
+	private CollectionPersistenceFinder<CTSParent, NoSuchCTSParentException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -211,17 +203,9 @@ public class CTSParentPersistenceImpl
 			OrderByComparator<CTSParent> orderByComparator)
 		throws NoSuchCTSParentException {
 
-		CTSParent ctsParent = fetchByC_C_First(
-			companyId, ctsGrandParentId, orderByComparator);
-
-		if (ctsParent != null) {
-			return ctsParent;
-		}
-
-		throw new NoSuchCTSParentException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, ctsGrandParentId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {companyId, ctsGrandParentId},
+			orderByComparator);
 	}
 
 	/**
@@ -521,7 +505,8 @@ public class CTSParentPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_CTSPARENT_WHERE, _SQL_COUNT_CTSPARENT_WHERE,
-				CTSParentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CTSParentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ctsParent.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTSParent::getCompanyId));
@@ -545,7 +530,8 @@ public class CTSParentPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "ctsGrandParentId"}, false),
 			_SQL_SELECT_CTSPARENT_WHERE, _SQL_COUNT_CTSPARENT_WHERE,
-			CTSParentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			CTSParentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"ctsParent.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, CTSParent::getCompanyId),
@@ -610,13 +596,10 @@ public class CTSParentPersistenceImpl
 	private static final String _SQL_COUNT_CTSPARENT_WHERE =
 		"SELECT COUNT(ctsParent) FROM CTSParent ctsParent WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTSParent exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2098938542
+// LIFERAY-SERVICE-BUILDER-HASH:-1041992044

@@ -1,5 +1,3 @@
-@import 'cadmin-variables';
-
 html#{$cadmin-selector} {
 	.cadmin {
 		.page-editor__sidebar__page-design-options__tabs {
@@ -14,6 +12,10 @@ html#{$cadmin-selector} {
 		.page-editor__sidebar__design-options__tab-card--active .card {
 			box-shadow: 0 0 0 2px $cadmin-primary-l1;
 			cursor: pointer;
+		}
+
+		.page-editor__sidebar__design-options__design-library-icon {
+			color: $cadmin-purple;
 		}
 	}
 }

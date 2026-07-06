@@ -115,12 +115,8 @@ public class KaleoTaskFormInstancePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		KaleoTaskFormInstance newKaleoTaskFormInstance = _persistence.create(
-			pk);
-
-		newKaleoTaskFormInstance.setMvccVersion(RandomTestUtil.nextLong());
+		KaleoTaskFormInstance newKaleoTaskFormInstance =
+			addKaleoTaskFormInstance();
 
 		newKaleoTaskFormInstance.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -163,8 +159,10 @@ public class KaleoTaskFormInstancePersistenceTest {
 
 		newKaleoTaskFormInstance.setMetadata(RandomTestUtil.randomString());
 
-		_kaleoTaskFormInstances.add(
-			_persistence.update(newKaleoTaskFormInstance));
+		newKaleoTaskFormInstance = _persistence.update(
+			newKaleoTaskFormInstance);
+
+		_kaleoTaskFormInstances.add(newKaleoTaskFormInstance);
 
 		KaleoTaskFormInstance existingKaleoTaskFormInstance =
 			_persistence.findByPrimaryKey(
@@ -622,8 +620,6 @@ public class KaleoTaskFormInstancePersistenceTest {
 
 		KaleoTaskFormInstance kaleoTaskFormInstance = _persistence.create(pk);
 
-		kaleoTaskFormInstance.setMvccVersion(RandomTestUtil.nextLong());
-
 		kaleoTaskFormInstance.setCtCollectionId(RandomTestUtil.nextLong());
 
 		kaleoTaskFormInstance.setGroupId(RandomTestUtil.nextLong());
@@ -675,4 +671,4 @@ public class KaleoTaskFormInstancePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:18670087
+// LIFERAY-SERVICE-BUILDER-HASH:549252802

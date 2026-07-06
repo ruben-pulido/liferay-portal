@@ -14,7 +14,6 @@ import com.liferay.message.boards.model.impl.MBCategoryModelImpl;
 import com.liferay.message.boards.service.persistence.MBCategoryPersistence;
 import com.liferay.message.boards.service.persistence.MBCategoryUtil;
 import com.liferay.message.boards.service.persistence.impl.constants.MBPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -24,8 +23,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -100,7 +97,7 @@ public class MBCategoryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<MBCategory>
+	private CollectionPersistenceFinder<MBCategory, NoSuchCategoryException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -141,15 +138,8 @@ public class MBCategoryPersistenceImpl
 			String uuid, OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByUuid_First(uuid, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		throw new NoSuchCategoryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -190,7 +180,7 @@ public class MBCategoryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<MBCategory>
+	private UniquePersistenceFinder<MBCategory, NoSuchCategoryException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -205,21 +195,8 @@ public class MBCategoryPersistenceImpl
 	public MBCategory findByUUID_G(String uuid, long groupId)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByUUID_G(uuid, groupId);
-
-		if (mbCategory == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCategoryException(message);
-		}
-
-		return mbCategory;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -267,7 +244,7 @@ public class MBCategoryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<MBCategory>
+	private CollectionPersistenceFinder<MBCategory, NoSuchCategoryException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -311,16 +288,8 @@ public class MBCategoryPersistenceImpl
 			OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		throw new NoSuchCategoryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -365,8 +334,9 @@ public class MBCategoryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<MBCategory>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<MBCategory, NoSuchCategoryException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the message boards categories where groupId = &#63;.
@@ -406,16 +376,8 @@ public class MBCategoryPersistenceImpl
 			long groupId, OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		throw new NoSuchCategoryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -491,7 +453,7 @@ public class MBCategoryPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<MBCategory>
+	private CollectionPersistenceFinder<MBCategory, NoSuchCategoryException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -532,16 +494,8 @@ public class MBCategoryPersistenceImpl
 			long companyId, OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		throw new NoSuchCategoryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -582,8 +536,8 @@ public class MBCategoryPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<MBCategory>
-		_collectionPersistenceFinderByG_P;
+	private FilterCollectionPersistenceFinder
+		<MBCategory, NoSuchCategoryException> _collectionPersistenceFinderByG_P;
 
 	/**
 	 * Returns an ordered range of all the message boards categories where groupId = &#63; and parentCategoryId = &#63;.
@@ -626,26 +580,9 @@ public class MBCategoryPersistenceImpl
 			OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByG_P_First(
-			groupId, parentCategoryId, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", parentCategoryId=");
-		sb.append(parentCategoryId);
-
-		sb.append("}");
-
-		throw new NoSuchCategoryException(sb.toString());
+		return _collectionPersistenceFinderByG_P.findFirst(
+			finderCache, new Object[] {groupId, new long[] {parentCategoryId}},
+			orderByComparator);
 	}
 
 	/**
@@ -810,7 +747,8 @@ public class MBCategoryPersistenceImpl
 			groupId);
 	}
 
-	private UniquePersistenceFinder<MBCategory> _uniquePersistenceFinderByG_F;
+	private UniquePersistenceFinder<MBCategory, NoSuchCategoryException>
+		_uniquePersistenceFinderByG_F;
 
 	/**
 	 * Returns the message boards category where groupId = &#63; and friendlyURL = &#63; or throws a <code>NoSuchCategoryException</code> if it could not be found.
@@ -824,22 +762,8 @@ public class MBCategoryPersistenceImpl
 	public MBCategory findByG_F(long groupId, String friendlyURL)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByG_F(groupId, friendlyURL);
-
-		if (mbCategory == null) {
-			String message =
-				_uniquePersistenceFinderByG_F.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, friendlyURL});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCategoryException(message);
-		}
-
-		return mbCategory;
+		return _uniquePersistenceFinderByG_F.find(
+			finderCache, new Object[] {groupId, friendlyURL});
 	}
 
 	/**
@@ -887,8 +811,8 @@ public class MBCategoryPersistenceImpl
 			finderCache, new Object[] {groupId, friendlyURL});
 	}
 
-	private FilterCollectionPersistenceFinder<MBCategory>
-		_collectionPersistenceFinderByG_S;
+	private FilterCollectionPersistenceFinder
+		<MBCategory, NoSuchCategoryException> _collectionPersistenceFinderByG_S;
 
 	/**
 	 * Returns an ordered range of all the message boards categories where groupId = &#63; and status = &#63;.
@@ -931,16 +855,8 @@ public class MBCategoryPersistenceImpl
 			OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByG_S_First(
-			groupId, status, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		throw new NoSuchCategoryException(
-			_collectionPersistenceFinderByG_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, status}));
+		return _collectionPersistenceFinderByG_S.findFirst(
+			finderCache, new Object[] {groupId, status}, orderByComparator);
 	}
 
 	/**
@@ -1022,7 +938,7 @@ public class MBCategoryPersistenceImpl
 			finderCache, new Object[] {groupId, status}, groupId);
 	}
 
-	private CollectionPersistenceFinder<MBCategory>
+	private CollectionPersistenceFinder<MBCategory, NoSuchCategoryException>
 		_collectionPersistenceFinderByC_S;
 
 	/**
@@ -1066,16 +982,8 @@ public class MBCategoryPersistenceImpl
 			OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByC_S_First(
-			companyId, status, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		throw new NoSuchCategoryException(
-			_collectionPersistenceFinderByC_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, status}));
+		return _collectionPersistenceFinderByC_S.findFirst(
+			finderCache, new Object[] {companyId, status}, orderByComparator);
 	}
 
 	/**
@@ -1120,8 +1028,9 @@ public class MBCategoryPersistenceImpl
 			finderCache, new Object[] {companyId, status});
 	}
 
-	private FilterCollectionPersistenceFinder<MBCategory>
-		_collectionPersistenceFinderByNotC_G_P;
+	private FilterCollectionPersistenceFinder
+		<MBCategory, NoSuchCategoryException>
+			_collectionPersistenceFinderByNotC_G_P;
 
 	/**
 	 * Returns all the message boards categories where categoryId &ne; &#63; and groupId = &#63; and parentCategoryId = &#63;.
@@ -1234,29 +1143,12 @@ public class MBCategoryPersistenceImpl
 			OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByNotC_G_P_First(
-			categoryId, groupId, parentCategoryId, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("categoryId!=");
-		sb.append(categoryId);
-
-		sb.append(", groupId=");
-		sb.append(groupId);
-
-		sb.append(", parentCategoryId=");
-		sb.append(parentCategoryId);
-
-		sb.append("}");
-
-		throw new NoSuchCategoryException(sb.toString());
+		return _collectionPersistenceFinderByNotC_G_P.findFirst(
+			finderCache,
+			new Object[] {
+				new long[] {categoryId}, groupId, new long[] {parentCategoryId}
+			},
+			orderByComparator);
 	}
 
 	/**
@@ -1616,8 +1508,9 @@ public class MBCategoryPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBCategory>
-		_collectionPersistenceFinderByG_P_S;
+	private FilterCollectionPersistenceFinder
+		<MBCategory, NoSuchCategoryException>
+			_collectionPersistenceFinderByG_P_S;
 
 	/**
 	 * Returns an ordered range of all the message boards categories where groupId = &#63; and parentCategoryId = &#63; and status = &#63;.
@@ -1663,29 +1556,10 @@ public class MBCategoryPersistenceImpl
 			OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByG_P_S_First(
-			groupId, parentCategoryId, status, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", parentCategoryId=");
-		sb.append(parentCategoryId);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchCategoryException(sb.toString());
+		return _collectionPersistenceFinderByG_P_S.findFirst(
+			finderCache,
+			new Object[] {groupId, new long[] {parentCategoryId}, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1878,8 +1752,9 @@ public class MBCategoryPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBCategory>
-		_collectionPersistenceFinderByG_P_NotS;
+	private FilterCollectionPersistenceFinder
+		<MBCategory, NoSuchCategoryException>
+			_collectionPersistenceFinderByG_P_NotS;
 
 	/**
 	 * Returns all the message boards categories where groupId = &#63; and parentCategoryId = &#63; and status &ne; &#63;.
@@ -1989,29 +1864,10 @@ public class MBCategoryPersistenceImpl
 			OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByG_P_NotS_First(
-			groupId, parentCategoryId, status, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", parentCategoryId=");
-		sb.append(parentCategoryId);
-
-		sb.append(", status!=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchCategoryException(sb.toString());
+		return _collectionPersistenceFinderByG_P_NotS.findFirst(
+			finderCache,
+			new Object[] {groupId, new long[] {parentCategoryId}, status},
+			orderByComparator);
 	}
 
 	/**
@@ -2356,8 +2212,9 @@ public class MBCategoryPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBCategory>
-		_collectionPersistenceFinderByNotC_G_P_S;
+	private FilterCollectionPersistenceFinder
+		<MBCategory, NoSuchCategoryException>
+			_collectionPersistenceFinderByNotC_G_P_S;
 
 	/**
 	 * Returns all the message boards categories where categoryId &ne; &#63; and groupId = &#63; and parentCategoryId = &#63; and status = &#63;.
@@ -2476,32 +2333,13 @@ public class MBCategoryPersistenceImpl
 			OrderByComparator<MBCategory> orderByComparator)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByNotC_G_P_S_First(
-			categoryId, groupId, parentCategoryId, status, orderByComparator);
-
-		if (mbCategory != null) {
-			return mbCategory;
-		}
-
-		StringBundler sb = new StringBundler(10);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("categoryId!=");
-		sb.append(categoryId);
-
-		sb.append(", groupId=");
-		sb.append(groupId);
-
-		sb.append(", parentCategoryId=");
-		sb.append(parentCategoryId);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchCategoryException(sb.toString());
+		return _collectionPersistenceFinderByNotC_G_P_S.findFirst(
+			finderCache,
+			new Object[] {
+				new long[] {categoryId}, groupId, new long[] {parentCategoryId},
+				status
+			},
+			orderByComparator);
 	}
 
 	/**
@@ -2886,7 +2724,8 @@ public class MBCategoryPersistenceImpl
 			groupId);
 	}
 
-	private UniquePersistenceFinder<MBCategory> _uniquePersistenceFinderByERC_G;
+	private UniquePersistenceFinder<MBCategory, NoSuchCategoryException>
+		_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the message boards category where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchCategoryException</code> if it could not be found.
@@ -2900,22 +2739,8 @@ public class MBCategoryPersistenceImpl
 	public MBCategory findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchCategoryException {
 
-		MBCategory mbCategory = fetchByERC_G(externalReferenceCode, groupId);
-
-		if (mbCategory == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCategoryException(message);
-		}
-
-		return mbCategory;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -3348,10 +3173,11 @@ public class MBCategoryPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-			MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"mbCategory.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, MBCategory::getUuid));
+				"mbCategory.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, MBCategory::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -3363,8 +3189,8 @@ public class MBCategoryPersistenceImpl
 				MBCategory::getGroupId),
 			_SQL_SELECT_MBCATEGORY_WHERE, "",
 			new FinderColumn<>(
-				"mbCategory.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, MBCategory::getUuid),
+				"mbCategory.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, MBCategory::getUuid),
 			new FinderColumn<>(
 				"mbCategory.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, MBCategory::getGroupId));
@@ -3389,10 +3215,11 @@ public class MBCategoryPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"mbCategory.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, MBCategory::getUuid),
+					"mbCategory.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, MBCategory::getUuid),
 				new FinderColumn<>(
 					"mbCategory.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, MBCategory::getCompanyId));
@@ -3417,16 +3244,8 @@ public class MBCategoryPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBCategoryImpl.class, MBCategory.class, "mbCategory",
-					"MBCategory", "mbCategory.categoryId",
-					"SELECT DISTINCT {mbCategory.*} FROM MBCategory mbCategory WHERE ",
-					"SELECT {MBCategory.*} FROM (SELECT DISTINCT mbCategory.categoryId FROM MBCategory mbCategory WHERE ",
-					") TEMP_TABLE INNER JOIN MBCategory ON TEMP_TABLE.categoryId = MBCategory.categoryId",
-					"SELECT COUNT(DISTINCT mbCategory.categoryId) AS COUNT_VALUE FROM MBCategory mbCategory WHERE ",
-					MBCategoryModelImpl.ORDER_BY_SQL,
-					MBCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbCategory.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBCategory::getGroupId));
@@ -3451,7 +3270,8 @@ public class MBCategoryPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbCategory.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, MBCategory::getCompanyId));
@@ -3476,16 +3296,8 @@ public class MBCategoryPersistenceImpl
 					new String[] {Long.class.getName(), Long.class.getName()},
 					new String[] {"groupId", "parentCategoryId"}, false),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBCategoryImpl.class, MBCategory.class, "mbCategory",
-					"MBCategory", "mbCategory.categoryId",
-					"SELECT DISTINCT {mbCategory.*} FROM MBCategory mbCategory WHERE ",
-					"SELECT {MBCategory.*} FROM (SELECT DISTINCT mbCategory.categoryId FROM MBCategory mbCategory WHERE ",
-					") TEMP_TABLE INNER JOIN MBCategory ON TEMP_TABLE.categoryId = MBCategory.categoryId",
-					"SELECT COUNT(DISTINCT mbCategory.categoryId) AS COUNT_VALUE FROM MBCategory mbCategory WHERE ",
-					MBCategoryModelImpl.ORDER_BY_SQL,
-					MBCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbCategory.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBCategory::getGroupId),
@@ -3533,16 +3345,8 @@ public class MBCategoryPersistenceImpl
 					},
 					new String[] {"groupId", "status"}, false),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBCategoryImpl.class, MBCategory.class, "mbCategory",
-					"MBCategory", "mbCategory.categoryId",
-					"SELECT DISTINCT {mbCategory.*} FROM MBCategory mbCategory WHERE ",
-					"SELECT {MBCategory.*} FROM (SELECT DISTINCT mbCategory.categoryId FROM MBCategory mbCategory WHERE ",
-					") TEMP_TABLE INNER JOIN MBCategory ON TEMP_TABLE.categoryId = MBCategory.categoryId",
-					"SELECT COUNT(DISTINCT mbCategory.categoryId) AS COUNT_VALUE FROM MBCategory mbCategory WHERE ",
-					MBCategoryModelImpl.ORDER_BY_SQL,
-					MBCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbCategory.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBCategory::getGroupId),
@@ -3569,7 +3373,8 @@ public class MBCategoryPersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"companyId", "status"}, false),
 			_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-			MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbCategory.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, MBCategory::getCompanyId),
@@ -3600,16 +3405,8 @@ public class MBCategoryPersistenceImpl
 					new String[] {"categoryId", "groupId", "parentCategoryId"},
 					false),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBCategoryImpl.class, MBCategory.class, "mbCategory",
-					"MBCategory", "mbCategory.categoryId",
-					"SELECT DISTINCT {mbCategory.*} FROM MBCategory mbCategory WHERE ",
-					"SELECT {MBCategory.*} FROM (SELECT DISTINCT mbCategory.categoryId FROM MBCategory mbCategory WHERE ",
-					") TEMP_TABLE INNER JOIN MBCategory ON TEMP_TABLE.categoryId = MBCategory.categoryId",
-					"SELECT COUNT(DISTINCT mbCategory.categoryId) AS COUNT_VALUE FROM MBCategory mbCategory WHERE ",
-					MBCategoryModelImpl.ORDER_BY_SQL,
-					MBCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new ArrayableFinderColumn<>(
 					"mbCategory.", "categoryId", FinderColumn.Type.LONG, "!=",
 					true, true, true, MBCategory::getCategoryId),
@@ -3650,16 +3447,8 @@ public class MBCategoryPersistenceImpl
 					new String[] {"groupId", "parentCategoryId", "status"},
 					false),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBCategoryImpl.class, MBCategory.class, "mbCategory",
-					"MBCategory", "mbCategory.categoryId",
-					"SELECT DISTINCT {mbCategory.*} FROM MBCategory mbCategory WHERE ",
-					"SELECT {MBCategory.*} FROM (SELECT DISTINCT mbCategory.categoryId FROM MBCategory mbCategory WHERE ",
-					") TEMP_TABLE INNER JOIN MBCategory ON TEMP_TABLE.categoryId = MBCategory.categoryId",
-					"SELECT COUNT(DISTINCT mbCategory.categoryId) AS COUNT_VALUE FROM MBCategory mbCategory WHERE ",
-					MBCategoryModelImpl.ORDER_BY_SQL,
-					MBCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbCategory.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBCategory::getGroupId),
@@ -3693,16 +3482,8 @@ public class MBCategoryPersistenceImpl
 					new String[] {"groupId", "parentCategoryId", "status"},
 					false),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBCategoryImpl.class, MBCategory.class, "mbCategory",
-					"MBCategory", "mbCategory.categoryId",
-					"SELECT DISTINCT {mbCategory.*} FROM MBCategory mbCategory WHERE ",
-					"SELECT {MBCategory.*} FROM (SELECT DISTINCT mbCategory.categoryId FROM MBCategory mbCategory WHERE ",
-					") TEMP_TABLE INNER JOIN MBCategory ON TEMP_TABLE.categoryId = MBCategory.categoryId",
-					"SELECT COUNT(DISTINCT mbCategory.categoryId) AS COUNT_VALUE FROM MBCategory mbCategory WHERE ",
-					MBCategoryModelImpl.ORDER_BY_SQL,
-					MBCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbCategory.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBCategory::getGroupId),
@@ -3740,16 +3521,8 @@ public class MBCategoryPersistenceImpl
 					},
 					false),
 				_SQL_SELECT_MBCATEGORY_WHERE, _SQL_COUNT_MBCATEGORY_WHERE,
-				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBCategoryImpl.class, MBCategory.class, "mbCategory",
-					"MBCategory", "mbCategory.categoryId",
-					"SELECT DISTINCT {mbCategory.*} FROM MBCategory mbCategory WHERE ",
-					"SELECT {MBCategory.*} FROM (SELECT DISTINCT mbCategory.categoryId FROM MBCategory mbCategory WHERE ",
-					") TEMP_TABLE INNER JOIN MBCategory ON TEMP_TABLE.categoryId = MBCategory.categoryId",
-					"SELECT COUNT(DISTINCT mbCategory.categoryId) AS COUNT_VALUE FROM MBCategory mbCategory WHERE ",
-					MBCategoryModelImpl.ORDER_BY_SQL,
-					MBCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new ArrayableFinderColumn<>(
 					"mbCategory.", "categoryId", FinderColumn.Type.LONG, "!=",
 					true, true, true, MBCategory::getCategoryId),
@@ -3837,12 +3610,6 @@ public class MBCategoryPersistenceImpl
 	private static final String _SQL_COUNT_MBCATEGORY_WHERE =
 		"SELECT COUNT(mbCategory) FROM MBCategory mbCategory WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No MBCategory exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		MBCategoryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -3852,4 +3619,4 @@ public class MBCategoryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1818123651
+// LIFERAY-SERVICE-BUILDER-HASH:990794388

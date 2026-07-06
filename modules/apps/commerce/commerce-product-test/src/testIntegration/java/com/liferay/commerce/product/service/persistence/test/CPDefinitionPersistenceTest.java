@@ -116,11 +116,7 @@ public class CPDefinitionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CPDefinition newCPDefinition = _persistence.create(pk);
-
-		newCPDefinition.setMvccVersion(RandomTestUtil.nextLong());
+		CPDefinition newCPDefinition = addCPDefinition();
 
 		newCPDefinition.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -222,7 +218,9 @@ public class CPDefinitionPersistenceTest {
 
 		newCPDefinition.setStatusDate(RandomTestUtil.nextDate());
 
-		_cpDefinitions.add(_persistence.update(newCPDefinition));
+		newCPDefinition = _persistence.update(newCPDefinition);
+
+		_cpDefinitions.add(newCPDefinition);
 
 		CPDefinition existingCPDefinition = _persistence.findByPrimaryKey(
 			newCPDefinition.getPrimaryKey());
@@ -818,8 +816,6 @@ public class CPDefinitionPersistenceTest {
 
 		CPDefinition cpDefinition = _persistence.create(pk);
 
-		cpDefinition.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpDefinition.setCtCollectionId(RandomTestUtil.nextLong());
 
 		cpDefinition.setUuid(RandomTestUtil.randomString());
@@ -926,4 +922,4 @@ public class CPDefinitionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-653082843
+// LIFERAY-SERVICE-BUILDER-HASH:1555603426

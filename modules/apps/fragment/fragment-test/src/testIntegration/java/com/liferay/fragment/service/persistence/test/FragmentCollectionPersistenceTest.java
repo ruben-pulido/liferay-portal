@@ -113,11 +113,7 @@ public class FragmentCollectionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		FragmentCollection newFragmentCollection = _persistence.create(pk);
-
-		newFragmentCollection.setMvccVersion(RandomTestUtil.nextLong());
+		FragmentCollection newFragmentCollection = addFragmentCollection();
 
 		newFragmentCollection.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -149,7 +145,9 @@ public class FragmentCollectionPersistenceTest {
 
 		newFragmentCollection.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_fragmentCollections.add(_persistence.update(newFragmentCollection));
+		newFragmentCollection = _persistence.update(newFragmentCollection);
+
+		_fragmentCollections.add(newFragmentCollection);
 
 		FragmentCollection existingFragmentCollection =
 			_persistence.findByPrimaryKey(
@@ -685,8 +683,6 @@ public class FragmentCollectionPersistenceTest {
 
 		FragmentCollection fragmentCollection = _persistence.create(pk);
 
-		fragmentCollection.setMvccVersion(RandomTestUtil.nextLong());
-
 		fragmentCollection.setCtCollectionId(RandomTestUtil.nextLong());
 
 		fragmentCollection.setUuid(RandomTestUtil.randomString());
@@ -728,4 +724,4 @@ public class FragmentCollectionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2027776509
+// LIFERAY-SERVICE-BUILDER-HASH:-1344627558

@@ -216,6 +216,17 @@
 	},
 	{
 		"classNames": [
+			"InfoItemReference"
+		],
+		"from": "regex:(?<infoItemReference>\\w+)\\.getClassPK\\(\\)",
+		"issueKey": "LPD-8019",
+		"newImports": [
+			"com.liferay.info.item.ClassPKInfoItemIdentifier"
+		],
+		"to": "((ClassPKInfoItemIdentifier)${infoItemReference}.getInfoItemIdentifier()).getClassPK()"
+	},
+	{
+		"classNames": [
 			"HttpServletRequest"
 		],
 		"from": "regex:\t*(?s)\\b\\w+\\s*\\.setAttribute\\s*\\(\\s*InfoDisplayWebKeys\\s*\\.INFO_ITEM_FIELD_VALUES_PROVIDER\\s*,.*?\\);\n",
@@ -241,6 +252,15 @@
 		"from": "destroy(ClassLoader paramName)",
 		"issueKey": "LPD-8036",
 		"to": ""
+	},
+	{
+		"from": "ContentUtil.get(ClassLoader paramName, String paramName)",
+		"hasMessage": true,
+		"issueKey": "LPD-8037",
+		"validExtensions": [
+			"java",
+			"jsp"
+		]
 	},
 	{
 		"classNames": [
@@ -3541,6 +3561,22 @@
 	},
 	{
 		"classNames": [
+			"MessageBus"
+		],
+		"from": "registerMessageListener(String paramName, MessageListener paramName)",
+		"hasMessage": true,
+		"issueKey": "LPD-34692"
+	},
+	{
+		"classNames": [
+			"MessageBus"
+		],
+		"from": "unregisterMessageListener(String paramName, MessageListener paramName)",
+		"hasMessage": true,
+		"issueKey": "LPD-34692"
+	},
+	{
+		"classNames": [
 			"MentionsUserFinder"
 		],
 		"classStructurePattern": true,
@@ -3664,6 +3700,22 @@
 			"com.liferay.portal.kernel.security.auth.CompanyThreadLocal"
 		],
 		"to": "addListType(CompanyThreadLocal.getCompanyId(), param#0#, param#1#)"
+	},
+	{
+		"classNames": [
+			"SoyDataFactory"
+		],
+		"from": "createSoyHTMLData(String paramName)",
+		"hasMessage": true,
+		"issueKey": "LPD-35240"
+	},
+	{
+		"classNames": [
+			"SoyDataFactory"
+		],
+		"from": "createSoyRawData(String paramName)",
+		"hasMessage": true,
+		"issueKey": "LPD-35240"
 	},
 	{
 		"classNames": [
@@ -5321,6 +5373,14 @@
 		"to": "updateFileEntryAndCheckIn(param#0#, param#1#, param#2#, param#3#, null, param#4#, param#5#, param#6#, param#7#, param#8#, null, null, null, param#9#)"
 	},
 	{
+		"classNames": [
+			"PropsKeys"
+		],
+		"from": "COMPANY_SECURITY_AUTH_REQUIRES_HTTPS",
+		"hasMessage": true,
+		"issueKey": "LPD-58508"
+	},
+	{
 		"ClassNames": [
 			"UserLocalService",
 			"UserLocalServiceUtil"
@@ -5496,6 +5556,27 @@
 		"from": "addFileAttachment(File paramName, String paramName)",
 		"hasMessage": true,
 		"issueKey": "LPD-61575"
+	},
+	{
+		"classNames": [
+			"ParamAndPropertyAncestorTagImpl"
+		],
+		"classStructurePattern": true,
+		"issueKey": "LPD-61579",
+		"methodsToFormat": [
+			{
+				"from": "regex:FileAvailabilityUtil\\.isAvailable\\(servletContext, (?<page>[^)]+)\\)",
+				"to": "FileAvailabilityUtil.isAvailable(getServletContext(), ${page})"
+			},
+			{
+				"from": "servletContext = ServletContextUtil.getServletContext()",
+				"to": "setServletContext(ServletContextUtil.getServletContext())"
+			},
+			{
+				"from": "setAttributes(request)",
+				"to": "setAttributes(getRequest())"
+			}
+		]
 	},
 	{
 		"classNames": [
@@ -5718,6 +5799,27 @@
 	},
 	{
 		"classNames": [
+			"Language",
+			"LanguageUtil"
+		],
+		"from": "get(PageContext paramName, String paramName)",
+		"hasMessage": true,
+		"issueKey": "LPD-70233",
+		"validExtensions": [
+			"java"
+		]
+	},
+	{
+		"from": "regex:(?<class>Language(?:Util)?)\\.(?<method>format|get)\\(pageContext,",
+		"issueKey": "LPD-70233",
+		"to": "${class}.${method}(request,",
+		"validExtensions": [
+			"jsp",
+			"jspf"
+		]
+	},
+	{
+		"classNames": [
 			"FFDocumentLibraryDDMEditorConfigurationUtil"
 		],
 		"from": "useDataEngineEditor()",
@@ -5778,6 +5880,19 @@
 	},
 	{
 		"classNames": [
+			"BasePortletProvider"
+		],
+		"classStructurePattern": true,
+		"issueKey": "LPD-81227",
+		"newImports": [
+			"com.liferay.portal.kernel.portlet.PortletProvider"
+		],
+		"newMethods": [
+			"@Override\n\tpublic Action[] getSupportedActions() {\n\t\treturn PortletProvider.Action.values();\n\t}"
+		]
+	},
+	{
+		"classNames": [
 			"AssetEntryLocalService",
 			"AssetEntryLocalServiceUtil"
 		],
@@ -5797,6 +5912,18 @@
 		"issueKey": "LPD-82354"
 	},
 	{
+		"from": "CustomFieldsUtil.hasVisibleCustomFields",
+		"issueKey": "LPD-85980",
+		"newImports": [
+			"com.liferay.expando.util.ExpandoAttributesUtil"
+		],
+		"to": "ExpandoAttributesUtil.hasVisibleAttributes",
+		"validExtensions": [
+			"java",
+			"jsp"
+		]
+	},
+	{
 		"from": "regex:MultiVMPoolUtil\\s*.\\s*getPortalCache\\(\\s*(?<prefixMethodName>[\\s\\S]*?)\\)",
 		"issueKey": "LPS-153962",
 		"newImports": [
@@ -5804,14 +5931,6 @@
 			"com.liferay.portal.kernel.cache.PortalCacheManagerNames"
 		],
 		"to": "PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.MULTI_VM, ${prefixMethodName})"
-	},
-	{
-		"from": "CookieKeys.COMMERCE_CONTINUE_AS_GUEST",
-		"issueKey": "LPS-159679",
-		"newImports": [
-			"com.liferay.portal.kernel.cookies.constants.CookiesConstants"
-		],
-		"to": "CookiesConstants.NAME_COMMERCE_CONTINUE_AS_GUEST"
 	},
 	{
 		"from": "CookieKeys.getCookie(HttpServletRequest paramName, String paramName)",

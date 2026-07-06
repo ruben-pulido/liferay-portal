@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchCompanyException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.CompanyTable;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -68,7 +66,8 @@ public class CompanyPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<Company> _uniquePersistenceFinderByWebId;
+	private UniquePersistenceFinder<Company, NoSuchCompanyException>
+		_uniquePersistenceFinderByWebId;
 
 	/**
 	 * Returns the company where webId = &#63; or throws a <code>NoSuchCompanyException</code> if it could not be found.
@@ -79,21 +78,8 @@ public class CompanyPersistenceImpl
 	 */
 	@Override
 	public Company findByWebId(String webId) throws NoSuchCompanyException {
-		Company company = fetchByWebId(webId);
-
-		if (company == null) {
-			String message =
-				_uniquePersistenceFinderByWebId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {webId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCompanyException(message);
-		}
-
-		return company;
+		return _uniquePersistenceFinderByWebId.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {webId});
 	}
 
 	/**
@@ -135,7 +121,7 @@ public class CompanyPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {webId});
 	}
 
-	private CollectionPersistenceFinder<Company>
+	private CollectionPersistenceFinder<Company, NoSuchCompanyException>
 		_collectionPersistenceFinderByLogoId;
 
 	/**
@@ -175,15 +161,9 @@ public class CompanyPersistenceImpl
 			long logoId, OrderByComparator<Company> orderByComparator)
 		throws NoSuchCompanyException {
 
-		Company company = fetchByLogoId_First(logoId, orderByComparator);
-
-		if (company != null) {
-			return company;
-		}
-
-		throw new NoSuchCompanyException(
-			_collectionPersistenceFinderByLogoId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {logoId}));
+		return _collectionPersistenceFinderByLogoId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {logoId},
+			orderByComparator);
 	}
 
 	/**
@@ -460,7 +440,8 @@ public class CompanyPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"logoId"}, false),
 				_SQL_SELECT_COMPANY_WHERE, _SQL_COUNT_COMPANY_WHERE,
-				CompanyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CompanyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"company.", "logoId", FinderColumn.Type.LONG, "=", true,
 					true, Company::getLogoId));
@@ -486,12 +467,6 @@ public class CompanyPersistenceImpl
 	private static final String _SQL_COUNT_COMPANY_WHERE =
 		"SELECT COUNT(company) FROM Company company WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Company exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CompanyPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"active", "type", "size"});
 
@@ -501,4 +476,4 @@ public class CompanyPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1649774719
+// LIFERAY-SERVICE-BUILDER-HASH:169398529

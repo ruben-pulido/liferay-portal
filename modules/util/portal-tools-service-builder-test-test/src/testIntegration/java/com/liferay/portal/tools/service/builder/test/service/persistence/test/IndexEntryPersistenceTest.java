@@ -109,11 +109,7 @@ public class IndexEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		IndexEntry newIndexEntry = _persistence.create(pk);
-
-		newIndexEntry.setMvccVersion(RandomTestUtil.nextLong());
+		IndexEntry newIndexEntry = addIndexEntry();
 
 		newIndexEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -129,7 +125,9 @@ public class IndexEntryPersistenceTest {
 
 		newIndexEntry.setPortletId(RandomTestUtil.randomString());
 
-		_indexEntries.add(_persistence.update(newIndexEntry));
+		newIndexEntry = _persistence.update(newIndexEntry);
+
+		_indexEntries.add(newIndexEntry);
 
 		IndexEntry existingIndexEntry = _persistence.findByPrimaryKey(
 			newIndexEntry.getPrimaryKey());
@@ -584,8 +582,6 @@ public class IndexEntryPersistenceTest {
 
 		IndexEntry indexEntry = _persistence.create(pk);
 
-		indexEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		indexEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		indexEntry.setExternalReferenceCode(RandomTestUtil.randomString());
@@ -610,4 +606,4 @@ public class IndexEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2103639179
+// LIFERAY-SERVICE-BUILDER-HASH:1098283934

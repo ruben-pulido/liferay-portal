@@ -10,6 +10,7 @@ import com.liferay.headless.object.resource.v1_0.CollaboratorResource;
 import com.liferay.headless.object.util.v1_0.CollaboratorUtil;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectEntryFolderLocalService;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -236,11 +237,11 @@ public class CollaboratorResourceImpl extends BaseCollaboratorResourceImpl {
 			_classNameLocalService.getClassNameId(
 				ObjectEntryFolder.class.getName()),
 			objectEntryFolder.getObjectEntryFolderId(), collaborators,
-			contextCompany.getCompanyId(), _collaboratorDTOConverter,
-			_dtoConverterRegistry, objectEntryFolder.getGroupId(),
-			contextHttpServletRequest, _sharingEntryService,
-			_ticketLocalService, contextUriInfo, contextUser,
-			_userGroupLocalService, _userLocalService);
+			contextCompany.getCompanyId(), _configurationProvider,
+			_collaboratorDTOConverter, _dtoConverterRegistry,
+			objectEntryFolder.getGroupId(), contextHttpServletRequest,
+			_sharingEntryService, _ticketLocalService, contextUriInfo,
+			contextUser, _userGroupLocalService, _userLocalService);
 	}
 
 	@Override
@@ -276,11 +277,11 @@ public class CollaboratorResourceImpl extends BaseCollaboratorResourceImpl {
 			_classNameLocalService.getClassNameId(
 				ObjectEntryFolder.class.getName()),
 			objectEntryFolder.getObjectEntryFolderId(), collaborators,
-			contextCompany.getCompanyId(), _collaboratorDTOConverter,
-			_dtoConverterRegistry, objectEntryFolder.getGroupId(),
-			contextHttpServletRequest, _sharingEntryService,
-			_ticketLocalService, contextUriInfo, contextUser,
-			_userGroupLocalService, _userLocalService);
+			contextCompany.getCompanyId(), _configurationProvider,
+			_collaboratorDTOConverter, _dtoConverterRegistry,
+			objectEntryFolder.getGroupId(), contextHttpServletRequest,
+			_sharingEntryService, _ticketLocalService, contextUriInfo,
+			contextUser, _userGroupLocalService, _userLocalService);
 	}
 
 	@Override
@@ -306,10 +307,11 @@ public class CollaboratorResourceImpl extends BaseCollaboratorResourceImpl {
 				ObjectEntryFolder.class.getName()),
 			objectEntryFolder.getObjectEntryFolderId(), collaborator,
 			collaboratorId, contextCompany.getCompanyId(),
-			_collaboratorDTOConverter, _dtoConverterRegistry,
-			objectEntryFolder.getGroupId(), contextHttpServletRequest,
-			_sharingEntryService, _ticketLocalService, type, contextUriInfo,
-			contextUser, _userGroupLocalService, _userLocalService);
+			_configurationProvider, _collaboratorDTOConverter,
+			_dtoConverterRegistry, objectEntryFolder.getGroupId(),
+			contextHttpServletRequest, _sharingEntryService,
+			_ticketLocalService, type, contextUriInfo, contextUser,
+			_userGroupLocalService, _userLocalService);
 	}
 
 	@Override
@@ -341,10 +343,11 @@ public class CollaboratorResourceImpl extends BaseCollaboratorResourceImpl {
 				ObjectEntryFolder.class.getName()),
 			objectEntryFolder.getObjectEntryFolderId(), collaborator,
 			collaboratorId, contextCompany.getCompanyId(),
-			_collaboratorDTOConverter, _dtoConverterRegistry,
-			objectEntryFolder.getGroupId(), contextHttpServletRequest,
-			_sharingEntryService, _ticketLocalService, type, contextUriInfo,
-			contextUser, _userGroupLocalService, _userLocalService);
+			_configurationProvider, _collaboratorDTOConverter,
+			_dtoConverterRegistry, objectEntryFolder.getGroupId(),
+			contextHttpServletRequest, _sharingEntryService,
+			_ticketLocalService, type, contextUriInfo, contextUser,
+			_userGroupLocalService, _userLocalService);
 	}
 
 	@Reference
@@ -354,6 +357,9 @@ public class CollaboratorResourceImpl extends BaseCollaboratorResourceImpl {
 		target = "(component.name=com.liferay.headless.object.internal.dto.v1_0.converter.CollaboratorDTOConverter)"
 	)
 	private DTOConverter<SharingEntry, Collaborator> _collaboratorDTOConverter;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;

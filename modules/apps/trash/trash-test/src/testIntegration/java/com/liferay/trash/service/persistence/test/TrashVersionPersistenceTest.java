@@ -110,11 +110,7 @@ public class TrashVersionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		TrashVersion newTrashVersion = _persistence.create(pk);
-
-		newTrashVersion.setMvccVersion(RandomTestUtil.nextLong());
+		TrashVersion newTrashVersion = addTrashVersion();
 
 		newTrashVersion.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -130,7 +126,9 @@ public class TrashVersionPersistenceTest {
 
 		newTrashVersion.setStatus(RandomTestUtil.nextInt());
 
-		_trashVersions.add(_persistence.update(newTrashVersion));
+		newTrashVersion = _persistence.update(newTrashVersion);
+
+		_trashVersions.add(newTrashVersion);
 
 		TrashVersion existingTrashVersion = _persistence.findByPrimaryKey(
 			newTrashVersion.getPrimaryKey());
@@ -492,8 +490,6 @@ public class TrashVersionPersistenceTest {
 
 		TrashVersion trashVersion = _persistence.create(pk);
 
-		trashVersion.setMvccVersion(RandomTestUtil.nextLong());
-
 		trashVersion.setCtCollectionId(RandomTestUtil.nextLong());
 
 		trashVersion.setCompanyId(RandomTestUtil.nextLong());
@@ -518,4 +514,4 @@ public class TrashVersionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1488533120
+// LIFERAY-SERVICE-BUILDER-HASH:2061438851

@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class KaleoConditionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoCondition>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<KaleoCondition, NoSuchConditionException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the kaleo conditions where companyId = &#63;.
@@ -123,16 +122,8 @@ public class KaleoConditionPersistenceImpl
 			long companyId, OrderByComparator<KaleoCondition> orderByComparator)
 		throws NoSuchConditionException {
 
-		KaleoCondition kaleoCondition = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (kaleoCondition != null) {
-			return kaleoCondition;
-		}
-
-		throw new NoSuchConditionException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -173,8 +164,9 @@ public class KaleoConditionPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<KaleoCondition>
-		_collectionPersistenceFinderByKaleoDefinitionVersionId;
+	private CollectionPersistenceFinder
+		<KaleoCondition, NoSuchConditionException>
+			_collectionPersistenceFinderByKaleoDefinitionVersionId;
 
 	/**
 	 * Returns an ordered range of all the kaleo conditions where kaleoDefinitionVersionId = &#63;.
@@ -215,18 +207,9 @@ public class KaleoConditionPersistenceImpl
 			OrderByComparator<KaleoCondition> orderByComparator)
 		throws NoSuchConditionException {
 
-		KaleoCondition kaleoCondition = fetchByKaleoDefinitionVersionId_First(
-			kaleoDefinitionVersionId, orderByComparator);
-
-		if (kaleoCondition != null) {
-			return kaleoCondition;
-		}
-
-		throw new NoSuchConditionException(
-			_collectionPersistenceFinderByKaleoDefinitionVersionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {kaleoDefinitionVersionId}));
+		return _collectionPersistenceFinderByKaleoDefinitionVersionId.findFirst(
+			finderCache, new Object[] {kaleoDefinitionVersionId},
+			orderByComparator);
 	}
 
 	/**
@@ -272,7 +255,7 @@ public class KaleoConditionPersistenceImpl
 			finderCache, new Object[] {kaleoDefinitionVersionId});
 	}
 
-	private UniquePersistenceFinder<KaleoCondition>
+	private UniquePersistenceFinder<KaleoCondition, NoSuchConditionException>
 		_uniquePersistenceFinderByKaleoNodeId;
 
 	/**
@@ -286,21 +269,8 @@ public class KaleoConditionPersistenceImpl
 	public KaleoCondition findByKaleoNodeId(long kaleoNodeId)
 		throws NoSuchConditionException {
 
-		KaleoCondition kaleoCondition = fetchByKaleoNodeId(kaleoNodeId);
-
-		if (kaleoCondition == null) {
-			String message =
-				_uniquePersistenceFinderByKaleoNodeId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {kaleoNodeId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchConditionException(message);
-		}
-
-		return kaleoCondition;
+		return _uniquePersistenceFinderByKaleoNodeId.find(
+			finderCache, new Object[] {kaleoNodeId});
 	}
 
 	/**
@@ -645,6 +615,7 @@ public class KaleoConditionPersistenceImpl
 				_SQL_SELECT_KALEOCONDITION_WHERE,
 				_SQL_COUNT_KALEOCONDITION_WHERE,
 				KaleoConditionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"kaleoCondition.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, KaleoCondition::getCompanyId));
@@ -674,6 +645,7 @@ public class KaleoConditionPersistenceImpl
 				_SQL_SELECT_KALEOCONDITION_WHERE,
 				_SQL_COUNT_KALEOCONDITION_WHERE,
 				KaleoConditionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"kaleoCondition.", "kaleoDefinitionVersionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -748,16 +720,10 @@ public class KaleoConditionPersistenceImpl
 	private static final String _SQL_COUNT_KALEOCONDITION_WHERE =
 		"SELECT COUNT(kaleoCondition) FROM KaleoCondition kaleoCondition WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoCondition exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		KaleoConditionPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1336503793
+// LIFERAY-SERVICE-BUILDER-HASH:866032211

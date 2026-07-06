@@ -112,9 +112,7 @@ public class SamlSpAuthRequestPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SamlSpAuthRequest newSamlSpAuthRequest = _persistence.create(pk);
+		SamlSpAuthRequest newSamlSpAuthRequest = addSamlSpAuthRequest();
 
 		newSamlSpAuthRequest.setCompanyId(RandomTestUtil.nextLong());
 
@@ -127,7 +125,9 @@ public class SamlSpAuthRequestPersistenceTest {
 		newSamlSpAuthRequest.setSamlSpAuthRequestKey(
 			RandomTestUtil.randomString());
 
-		_samlSpAuthRequests.add(_persistence.update(newSamlSpAuthRequest));
+		newSamlSpAuthRequest = _persistence.update(newSamlSpAuthRequest);
+
+		_samlSpAuthRequests.add(newSamlSpAuthRequest);
 
 		SamlSpAuthRequest existingSamlSpAuthRequest =
 			_persistence.findByPrimaryKey(newSamlSpAuthRequest.getPrimaryKey());
@@ -511,4 +511,4 @@ public class SamlSpAuthRequestPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1878784493
+// LIFERAY-SERVICE-BUILDER-HASH:-738323699

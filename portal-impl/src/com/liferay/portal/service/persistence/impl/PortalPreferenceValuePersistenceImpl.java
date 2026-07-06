@@ -5,14 +5,11 @@
 
 package com.liferay.portal.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchPreferenceValueException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.PortalPreferenceValue;
 import com.liferay.portal.kernel.model.PortalPreferenceValueTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -68,8 +65,9 @@ public class PortalPreferenceValuePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<PortalPreferenceValue>
-		_collectionPersistenceFinderByPortalPreferencesId;
+	private CollectionPersistenceFinder
+		<PortalPreferenceValue, NoSuchPreferenceValueException>
+			_collectionPersistenceFinderByPortalPreferencesId;
 
 	/**
 	 * Returns an ordered range of all the portal preference values where portalPreferencesId = &#63;.
@@ -110,24 +108,9 @@ public class PortalPreferenceValuePersistenceImpl
 			OrderByComparator<PortalPreferenceValue> orderByComparator)
 		throws NoSuchPreferenceValueException {
 
-		PortalPreferenceValue portalPreferenceValue =
-			fetchByPortalPreferencesId_First(
-				portalPreferencesId, orderByComparator);
-
-		if (portalPreferenceValue != null) {
-			return portalPreferenceValue;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("portalPreferencesId=");
-		sb.append(portalPreferencesId);
-
-		sb.append("}");
-
-		throw new NoSuchPreferenceValueException(sb.toString());
+		return _collectionPersistenceFinderByPortalPreferencesId.findFirst(
+			dummyFinderCache, new Object[] {new long[] {portalPreferencesId}},
+			orderByComparator);
 	}
 
 	/**
@@ -209,8 +192,9 @@ public class PortalPreferenceValuePersistenceImpl
 			new Object[] {ArrayUtil.sortedUnique(portalPreferencesIds)});
 	}
 
-	private CollectionPersistenceFinder<PortalPreferenceValue>
-		_collectionPersistenceFinderByP_N;
+	private CollectionPersistenceFinder
+		<PortalPreferenceValue, NoSuchPreferenceValueException>
+			_collectionPersistenceFinderByP_N;
 
 	/**
 	 * Returns an ordered range of all the portal preference values where portalPreferencesId = &#63; and namespace = &#63;.
@@ -253,17 +237,9 @@ public class PortalPreferenceValuePersistenceImpl
 			OrderByComparator<PortalPreferenceValue> orderByComparator)
 		throws NoSuchPreferenceValueException {
 
-		PortalPreferenceValue portalPreferenceValue = fetchByP_N_First(
-			portalPreferencesId, namespace, orderByComparator);
-
-		if (portalPreferenceValue != null) {
-			return portalPreferenceValue;
-		}
-
-		throw new NoSuchPreferenceValueException(
-			_collectionPersistenceFinderByP_N.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {portalPreferencesId, namespace}));
+		return _collectionPersistenceFinderByP_N.findFirst(
+			dummyFinderCache, new Object[] {portalPreferencesId, namespace},
+			orderByComparator);
 	}
 
 	/**
@@ -309,8 +285,9 @@ public class PortalPreferenceValuePersistenceImpl
 			dummyFinderCache, new Object[] {portalPreferencesId, namespace});
 	}
 
-	private CollectionPersistenceFinder<PortalPreferenceValue>
-		_collectionPersistenceFinderByP_K_N;
+	private CollectionPersistenceFinder
+		<PortalPreferenceValue, NoSuchPreferenceValueException>
+			_collectionPersistenceFinderByP_K_N;
 
 	/**
 	 * Returns an ordered range of all the portal preference values where portalPreferencesId = &#63; and key = &#63; and namespace = &#63;.
@@ -356,17 +333,10 @@ public class PortalPreferenceValuePersistenceImpl
 			OrderByComparator<PortalPreferenceValue> orderByComparator)
 		throws NoSuchPreferenceValueException {
 
-		PortalPreferenceValue portalPreferenceValue = fetchByP_K_N_First(
-			portalPreferencesId, key, namespace, orderByComparator);
-
-		if (portalPreferenceValue != null) {
-			return portalPreferenceValue;
-		}
-
-		throw new NoSuchPreferenceValueException(
-			_collectionPersistenceFinderByP_K_N.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {portalPreferencesId, key, namespace}));
+		return _collectionPersistenceFinderByP_K_N.findFirst(
+			dummyFinderCache,
+			new Object[] {portalPreferencesId, key, namespace},
+			orderByComparator);
 	}
 
 	/**
@@ -422,8 +392,9 @@ public class PortalPreferenceValuePersistenceImpl
 			new Object[] {portalPreferencesId, key, namespace});
 	}
 
-	private UniquePersistenceFinder<PortalPreferenceValue>
-		_uniquePersistenceFinderByP_I_K_N;
+	private UniquePersistenceFinder
+		<PortalPreferenceValue, NoSuchPreferenceValueException>
+			_uniquePersistenceFinderByP_I_K_N;
 
 	/**
 	 * Returns the portal preference value where portalPreferencesId = &#63; and index = &#63; and key = &#63; and namespace = &#63; or throws a <code>NoSuchPreferenceValueException</code> if it could not be found.
@@ -440,23 +411,9 @@ public class PortalPreferenceValuePersistenceImpl
 			long portalPreferencesId, int index, String key, String namespace)
 		throws NoSuchPreferenceValueException {
 
-		PortalPreferenceValue portalPreferenceValue = fetchByP_I_K_N(
-			portalPreferencesId, index, key, namespace);
-
-		if (portalPreferenceValue == null) {
-			String message =
-				_uniquePersistenceFinderByP_I_K_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {portalPreferencesId, index, key, namespace});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPreferenceValueException(message);
-		}
-
-		return portalPreferenceValue;
+		return _uniquePersistenceFinderByP_I_K_N.find(
+			dummyFinderCache,
+			new Object[] {portalPreferencesId, index, key, namespace});
 	}
 
 	/**
@@ -518,8 +475,9 @@ public class PortalPreferenceValuePersistenceImpl
 			new Object[] {portalPreferencesId, index, key, namespace});
 	}
 
-	private CollectionPersistenceFinder<PortalPreferenceValue>
-		_collectionPersistenceFinderByP_K_N_SV;
+	private CollectionPersistenceFinder
+		<PortalPreferenceValue, NoSuchPreferenceValueException>
+			_collectionPersistenceFinderByP_K_N_SV;
 
 	/**
 	 * Returns an ordered range of all the portal preference values where portalPreferencesId = &#63; and key = &#63; and namespace = &#63; and smallValue = &#63;.
@@ -569,19 +527,10 @@ public class PortalPreferenceValuePersistenceImpl
 			OrderByComparator<PortalPreferenceValue> orderByComparator)
 		throws NoSuchPreferenceValueException {
 
-		PortalPreferenceValue portalPreferenceValue = fetchByP_K_N_SV_First(
-			portalPreferencesId, key, namespace, smallValue, orderByComparator);
-
-		if (portalPreferenceValue != null) {
-			return portalPreferenceValue;
-		}
-
-		throw new NoSuchPreferenceValueException(
-			_collectionPersistenceFinderByP_K_N_SV.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					portalPreferencesId, key, namespace, smallValue
-				}));
+		return _collectionPersistenceFinderByP_K_N_SV.findFirst(
+			dummyFinderCache,
+			new Object[] {portalPreferencesId, key, namespace, smallValue},
+			orderByComparator);
 	}
 
 	/**
@@ -865,7 +814,7 @@ public class PortalPreferenceValuePersistenceImpl
 				_SQL_SELECT_PORTALPREFERENCEVALUE_WHERE,
 				_SQL_COUNT_PORTALPREFERENCEVALUE_WHERE,
 				PortalPreferenceValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new ArrayableFinderColumn<>(
 					"portalPreferenceValue.", "portalPreferencesId",
 					FinderColumn.Type.LONG, "=", false, true, true,
@@ -894,7 +843,7 @@ public class PortalPreferenceValuePersistenceImpl
 			_SQL_SELECT_PORTALPREFERENCEVALUE_WHERE,
 			_SQL_COUNT_PORTALPREFERENCEVALUE_WHERE,
 			PortalPreferenceValueModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"portalPreferenceValue.", "portalPreferencesId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -933,14 +882,15 @@ public class PortalPreferenceValuePersistenceImpl
 			_SQL_SELECT_PORTALPREFERENCEVALUE_WHERE,
 			_SQL_COUNT_PORTALPREFERENCEVALUE_WHERE,
 			PortalPreferenceValueModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"portalPreferenceValue.", "portalPreferencesId",
 				FinderColumn.Type.LONG, "=", true, true,
 				PortalPreferenceValue::getPortalPreferencesId),
 			new FinderColumn<>(
-				"portalPreferenceValue.", "key", FinderColumn.Type.STRING, "=",
-				true, true, PortalPreferenceValue::getKey),
+				"portalPreferenceValue.", "key", "key_",
+				FinderColumn.Type.STRING, "=", true, true,
+				PortalPreferenceValue::getKey),
 			new FinderColumn<>(
 				"portalPreferenceValue.", "namespace", FinderColumn.Type.STRING,
 				"=", true, true, PortalPreferenceValue::getNamespace));
@@ -966,11 +916,13 @@ public class PortalPreferenceValuePersistenceImpl
 				FinderColumn.Type.LONG, "=", true, true,
 				PortalPreferenceValue::getPortalPreferencesId),
 			new FinderColumn<>(
-				"portalPreferenceValue.", "index", FinderColumn.Type.INTEGER,
-				"=", true, true, PortalPreferenceValue::getIndex),
+				"portalPreferenceValue.", "index", "index_",
+				FinderColumn.Type.INTEGER, "=", true, true,
+				PortalPreferenceValue::getIndex),
 			new FinderColumn<>(
-				"portalPreferenceValue.", "key", FinderColumn.Type.STRING, "=",
-				true, true, PortalPreferenceValue::getKey),
+				"portalPreferenceValue.", "key", "key_",
+				FinderColumn.Type.STRING, "=", true, true,
+				PortalPreferenceValue::getKey),
 			new FinderColumn<>(
 				"portalPreferenceValue.", "namespace", FinderColumn.Type.STRING,
 				"=", true, true, PortalPreferenceValue::getNamespace));
@@ -1014,14 +966,15 @@ public class PortalPreferenceValuePersistenceImpl
 				_SQL_SELECT_PORTALPREFERENCEVALUE_WHERE,
 				_SQL_COUNT_PORTALPREFERENCEVALUE_WHERE,
 				PortalPreferenceValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"portalPreferenceValue.", "portalPreferencesId",
 					FinderColumn.Type.LONG, "=", true, true,
 					PortalPreferenceValue::getPortalPreferencesId),
 				new FinderColumn<>(
-					"portalPreferenceValue.", "key", FinderColumn.Type.STRING,
-					"=", true, true, PortalPreferenceValue::getKey),
+					"portalPreferenceValue.", "key", "key_",
+					FinderColumn.Type.STRING, "=", true, true,
+					PortalPreferenceValue::getKey),
 				new FinderColumn<>(
 					"portalPreferenceValue.", "namespace",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1052,12 +1005,6 @@ public class PortalPreferenceValuePersistenceImpl
 	private static final String _SQL_COUNT_PORTALPREFERENCEVALUE_WHERE =
 		"SELECT COUNT(portalPreferenceValue) FROM PortalPreferenceValue portalPreferenceValue WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PortalPreferenceValue exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PortalPreferenceValuePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"index", "key"});
 
@@ -1067,4 +1014,4 @@ public class PortalPreferenceValuePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1130231732
+// LIFERAY-SERVICE-BUILDER-HASH:553219297

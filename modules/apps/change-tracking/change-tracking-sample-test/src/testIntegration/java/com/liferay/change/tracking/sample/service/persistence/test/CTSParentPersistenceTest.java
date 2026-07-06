@@ -109,11 +109,7 @@ public class CTSParentPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CTSParent newCTSParent = _persistence.create(pk);
-
-		newCTSParent.setMvccVersion(RandomTestUtil.nextLong());
+		CTSParent newCTSParent = addCTSParent();
 
 		newCTSParent.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -123,7 +119,9 @@ public class CTSParentPersistenceTest {
 
 		newCTSParent.setName(RandomTestUtil.randomString());
 
-		_ctsParents.add(_persistence.update(newCTSParent));
+		newCTSParent = _persistence.update(newCTSParent);
+
+		_ctsParents.add(newCTSParent);
 
 		CTSParent existingCTSParent = _persistence.findByPrimaryKey(
 			newCTSParent.getPrimaryKey());
@@ -403,8 +401,6 @@ public class CTSParentPersistenceTest {
 
 		CTSParent ctsParent = _persistence.create(pk);
 
-		ctsParent.setMvccVersion(RandomTestUtil.nextLong());
-
 		ctsParent.setCtCollectionId(RandomTestUtil.nextLong());
 
 		ctsParent.setCompanyId(RandomTestUtil.nextLong());
@@ -423,4 +419,4 @@ public class CTSParentPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:229871821
+// LIFERAY-SERVICE-BUILDER-HASH:-750146600

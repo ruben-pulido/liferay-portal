@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -79,8 +77,9 @@ public class ExportImportReportEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ExportImportReportEntry>
-		_collectionPersistenceFinderByC_E;
+	private CollectionPersistenceFinder
+		<ExportImportReportEntry, NoSuchExportImportReportEntryException>
+			_collectionPersistenceFinderByC_E;
 
 	/**
 	 * Returns an ordered range of all the export import report entries where companyId = &#63; and exportImportConfigurationId = &#63;.
@@ -123,17 +122,9 @@ public class ExportImportReportEntryPersistenceImpl
 			OrderByComparator<ExportImportReportEntry> orderByComparator)
 		throws NoSuchExportImportReportEntryException {
 
-		ExportImportReportEntry exportImportReportEntry = fetchByC_E_First(
-			companyId, exportImportConfigurationId, orderByComparator);
-
-		if (exportImportReportEntry != null) {
-			return exportImportReportEntry;
-		}
-
-		throw new NoSuchExportImportReportEntryException(
-			_collectionPersistenceFinderByC_E.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, exportImportConfigurationId}));
+		return _collectionPersistenceFinderByC_E.findFirst(
+			finderCache, new Object[] {companyId, exportImportConfigurationId},
+			orderByComparator);
 	}
 
 	/**
@@ -179,8 +170,9 @@ public class ExportImportReportEntryPersistenceImpl
 			finderCache, new Object[] {companyId, exportImportConfigurationId});
 	}
 
-	private UniquePersistenceFinder<ExportImportReportEntry>
-		_uniquePersistenceFinderByG_C_C_C_E_T;
+	private UniquePersistenceFinder
+		<ExportImportReportEntry, NoSuchExportImportReportEntryException>
+			_uniquePersistenceFinderByG_C_C_C_E_T;
 
 	/**
 	 * Returns the export import report entry where groupId = &#63; and companyId = &#63; and classExternalReferenceCode = &#63; and classNameId = &#63; and exportImportConfigurationId = &#63; and type = &#63; or throws a <code>NoSuchExportImportReportEntryException</code> if it could not be found.
@@ -200,27 +192,12 @@ public class ExportImportReportEntryPersistenceImpl
 			long classNameId, long exportImportConfigurationId, int type)
 		throws NoSuchExportImportReportEntryException {
 
-		ExportImportReportEntry exportImportReportEntry = fetchByG_C_C_C_E_T(
-			groupId, companyId, classExternalReferenceCode, classNameId,
-			exportImportConfigurationId, type);
-
-		if (exportImportReportEntry == null) {
-			String message =
-				_uniquePersistenceFinderByG_C_C_C_E_T.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						groupId, companyId, classExternalReferenceCode,
-						classNameId, exportImportConfigurationId, type
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchExportImportReportEntryException(message);
-		}
-
-		return exportImportReportEntry;
+		return _uniquePersistenceFinderByG_C_C_C_E_T.find(
+			finderCache,
+			new Object[] {
+				groupId, companyId, classExternalReferenceCode, classNameId,
+				exportImportConfigurationId, type
+			});
 	}
 
 	/**
@@ -546,7 +523,7 @@ public class ExportImportReportEntryPersistenceImpl
 			_SQL_SELECT_EXPORTIMPORTREPORTENTRY_WHERE,
 			_SQL_COUNT_EXPORTIMPORTREPORTENTRY_WHERE,
 			ExportImportReportEntryModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"exportImportReportEntry.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, ExportImportReportEntry::getCompanyId),
@@ -595,8 +572,9 @@ public class ExportImportReportEntryPersistenceImpl
 				FinderColumn.Type.LONG, "=", true, true,
 				ExportImportReportEntry::getExportImportConfigurationId),
 			new FinderColumn<>(
-				"exportImportReportEntry.", "type", FinderColumn.Type.INTEGER,
-				"=", true, true, ExportImportReportEntry::getType));
+				"exportImportReportEntry.", "type", "type_",
+				FinderColumn.Type.INTEGER, "=", true, true,
+				ExportImportReportEntry::getType));
 
 		ExportImportReportEntryUtil.setPersistence(this);
 	}
@@ -652,12 +630,6 @@ public class ExportImportReportEntryPersistenceImpl
 	private static final String _SQL_COUNT_EXPORTIMPORTREPORTENTRY_WHERE =
 		"SELECT COUNT(exportImportReportEntry) FROM ExportImportReportEntry exportImportReportEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ExportImportReportEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ExportImportReportEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
 
@@ -667,4 +639,4 @@ public class ExportImportReportEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-401319354
+// LIFERAY-SERVICE-BUILDER-HASH:348109357

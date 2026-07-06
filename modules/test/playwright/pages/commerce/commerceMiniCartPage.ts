@@ -14,10 +14,12 @@ export class CommerceMiniCartPage {
 	readonly miniCartButton: Locator;
 	readonly miniCartButtonClose: Locator;
 	readonly miniCartInvalidQuantityMessage: Locator;
+	readonly miniCartPriceOnApplicationInfoMessage: Locator;
 	readonly miniCartItem: (productName: string) => Locator;
 	readonly miniCartItemsContainer: Locator;
 	readonly miniCartItemPrice: (text: RegExp) => Locator;
 	readonly miniCartSaveButton: Locator;
+	readonly miniCartSku: (skuName: string) => Locator;
 	readonly miniCartTotalPrice: Locator;
 	readonly miniCartUnitOfMeasureSelector: Locator;
 	readonly page: Page;
@@ -63,6 +65,9 @@ export class CommerceMiniCartPage {
 			'The product quantity is not valid.',
 			{exact: true}
 		);
+		this.miniCartPriceOnApplicationInfoMessage = page.getByText(
+			'Your cart has products that require a quote to complete the checkout.'
+		);
 		this.miniCartItemsContainer = page.locator('div.mini-cart-cart-items');
 		this.miniCartItem = (productName: string) =>
 			page.locator('div.mini-cart-item').filter({hasText: productName});
@@ -74,6 +79,8 @@ export class CommerceMiniCartPage {
 				exact: true,
 				name: 'Save',
 			});
+		this.miniCartSku = (skuName: string) =>
+			page.getByText(skuName, {exact: true});
 		this.miniCartTotalPrice = page.locator(
 			`xpath=//div[text()='Total']/../following-sibling::div/div`
 		);

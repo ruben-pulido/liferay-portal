@@ -132,7 +132,7 @@ export class AssetsPage {
 					{externalReferenceCode: 'L_CONTENTS', scopeKey: spaceName}
 				);
 
-			this.gotoFolder(rootFolder.id, rootFolder.title);
+			await this.gotoFolder(rootFolder.id, rootFolder.title);
 		}
 		else {
 			await this.page.goto(PORTLET_URLS.cmsContents);
@@ -152,7 +152,7 @@ export class AssetsPage {
 			);
 
 		await this.page.goto(
-			`${PORTLET_URLS.cmsViewFolder}${className.classNameId}/${folderId}`
+			`${PORTLET_URLS.cmsViewFolder}/${className.classNameId}/${folderId}`
 		);
 
 		await this.page.getByTestId(`testId${folderTitle}`).waitFor();
@@ -172,6 +172,10 @@ export class AssetsPage {
 
 	async execBulkItemAction(action: string) {
 		await this.dataSetFragmentPage.execBulkItemAction({action});
+	}
+
+	async expectBulkItemActionHidden(action: string) {
+		await this.dataSetFragmentPage.expectBulkItemActionHidden({action});
 	}
 
 	async bulkCopyTo(args: CopyOrMoveDestinationArgs) {

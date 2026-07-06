@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchListTypeException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ListType;
 import com.liferay.portal.kernel.model.ListTypeTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -71,7 +69,7 @@ public class ListTypePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ListType>
+	private CollectionPersistenceFinder<ListType, NoSuchListTypeException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -111,15 +109,9 @@ public class ListTypePersistenceImpl
 			String uuid, OrderByComparator<ListType> orderByComparator)
 		throws NoSuchListTypeException {
 
-		ListType listType = fetchByUuid_First(uuid, orderByComparator);
-
-		if (listType != null) {
-			return listType;
-		}
-
-		throw new NoSuchListTypeException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -161,7 +153,7 @@ public class ListTypePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ListType>
+	private CollectionPersistenceFinder<ListType, NoSuchListTypeException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -204,16 +196,9 @@ public class ListTypePersistenceImpl
 			OrderByComparator<ListType> orderByComparator)
 		throws NoSuchListTypeException {
 
-		ListType listType = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (listType != null) {
-			return listType;
-		}
-
-		throw new NoSuchListTypeException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -259,7 +244,7 @@ public class ListTypePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ListType>
+	private CollectionPersistenceFinder<ListType, NoSuchListTypeException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -299,16 +284,9 @@ public class ListTypePersistenceImpl
 			long companyId, OrderByComparator<ListType> orderByComparator)
 		throws NoSuchListTypeException {
 
-		ListType listType = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (listType != null) {
-			return listType;
-		}
-
-		throw new NoSuchListTypeException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -350,7 +328,7 @@ public class ListTypePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<ListType>
+	private CollectionPersistenceFinder<ListType, NoSuchListTypeException>
 		_collectionPersistenceFinderByC_T;
 
 	/**
@@ -393,16 +371,9 @@ public class ListTypePersistenceImpl
 			OrderByComparator<ListType> orderByComparator)
 		throws NoSuchListTypeException {
 
-		ListType listType = fetchByC_T_First(
-			companyId, type, orderByComparator);
-
-		if (listType != null) {
-			return listType;
-		}
-
-		throw new NoSuchListTypeException(
-			_collectionPersistenceFinderByC_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, type}));
+		return _collectionPersistenceFinderByC_T.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, type},
+			orderByComparator);
 	}
 
 	/**
@@ -448,7 +419,8 @@ public class ListTypePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId, type});
 	}
 
-	private UniquePersistenceFinder<ListType> _uniquePersistenceFinderByC_N_T;
+	private UniquePersistenceFinder<ListType, NoSuchListTypeException>
+		_uniquePersistenceFinderByC_N_T;
 
 	/**
 	 * Returns the list type where companyId = &#63; and name = &#63; and type = &#63; or throws a <code>NoSuchListTypeException</code> if it could not be found.
@@ -463,22 +435,9 @@ public class ListTypePersistenceImpl
 	public ListType findByC_N_T(long companyId, String name, String type)
 		throws NoSuchListTypeException {
 
-		ListType listType = fetchByC_N_T(companyId, name, type);
-
-		if (listType == null) {
-			String message =
-				_uniquePersistenceFinderByC_N_T.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, name, type});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchListTypeException(message);
-		}
-
-		return listType;
+		return _uniquePersistenceFinderByC_N_T.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, name, type});
 	}
 
 	/**
@@ -764,10 +723,10 @@ public class ListTypePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_LISTTYPE_WHERE, _SQL_COUNT_LISTTYPE_WHERE,
-			ListTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ListTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"listType.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				ListType::getUuid));
+				"listType.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, ListType::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -789,10 +748,11 @@ public class ListTypePersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_LISTTYPE_WHERE, _SQL_COUNT_LISTTYPE_WHERE,
-				ListTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ListTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"listType.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, ListType::getUuid),
+					"listType.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, ListType::getUuid),
 				new FinderColumn<>(
 					"listType.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, ListType::getCompanyId));
@@ -817,7 +777,8 @@ public class ListTypePersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_LISTTYPE_WHERE, _SQL_COUNT_LISTTYPE_WHERE,
-				ListTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ListTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"listType.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, ListType::getCompanyId));
@@ -841,13 +802,13 @@ public class ListTypePersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"companyId", "type_"}, 0, 2, false, null),
 			_SQL_SELECT_LISTTYPE_WHERE, _SQL_COUNT_LISTTYPE_WHERE,
-			ListTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ListTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"listType.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, ListType::getCompanyId),
 			new FinderColumn<>(
-				"listType.", "type", FinderColumn.Type.STRING, "=", true, true,
-				ListType::getType));
+				"listType.", "type", "type_", FinderColumn.Type.STRING, "=",
+				true, true, ListType::getType));
 
 		_uniquePersistenceFinderByC_N_T = new UniquePersistenceFinder<>(
 			this,
@@ -868,8 +829,8 @@ public class ListTypePersistenceImpl
 				"listType.", "name", FinderColumn.Type.STRING, "=", true, true,
 				ListType::getName),
 			new FinderColumn<>(
-				"listType.", "type", FinderColumn.Type.STRING, "=", true, true,
-				ListType::getType));
+				"listType.", "type", "type_", FinderColumn.Type.STRING, "=",
+				true, true, ListType::getType));
 
 		ListTypeUtil.setPersistence(this);
 	}
@@ -892,12 +853,6 @@ public class ListTypePersistenceImpl
 	private static final String _SQL_COUNT_LISTTYPE_WHERE =
 		"SELECT COUNT(listType) FROM ListType listType WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ListType exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ListTypePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -907,4 +862,4 @@ public class ListTypePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-656537747
+// LIFERAY-SERVICE-BUILDER-HASH:-1740296449

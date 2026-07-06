@@ -76,8 +76,9 @@ public class CommerceDiscountRulePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceDiscountRule>
-		_collectionPersistenceFinderByCommerceDiscountId;
+	private CollectionPersistenceFinder
+		<CommerceDiscountRule, NoSuchDiscountRuleException>
+			_collectionPersistenceFinderByCommerceDiscountId;
 
 	/**
 	 * Returns an ordered range of all the commerce discount rules where commerceDiscountId = &#63;.
@@ -118,19 +119,8 @@ public class CommerceDiscountRulePersistenceImpl
 			OrderByComparator<CommerceDiscountRule> orderByComparator)
 		throws NoSuchDiscountRuleException {
 
-		CommerceDiscountRule commerceDiscountRule =
-			fetchByCommerceDiscountId_First(
-				commerceDiscountId, orderByComparator);
-
-		if (commerceDiscountRule != null) {
-			return commerceDiscountRule;
-		}
-
-		throw new NoSuchDiscountRuleException(
-			_collectionPersistenceFinderByCommerceDiscountId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceDiscountId}));
+		return _collectionPersistenceFinderByCommerceDiscountId.findFirst(
+			finderCache, new Object[] {commerceDiscountId}, orderByComparator);
 	}
 
 	/**
@@ -415,7 +405,7 @@ public class CommerceDiscountRulePersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNTRULE_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNTRULE_WHERE,
 				CommerceDiscountRuleModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceDiscountRule.", "commerceDiscountId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -475,9 +465,6 @@ public class CommerceDiscountRulePersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEDISCOUNTRULE_WHERE =
 		"SELECT COUNT(commerceDiscountRule) FROM CommerceDiscountRule commerceDiscountRule WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceDiscountRule exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
 
@@ -487,4 +474,4 @@ public class CommerceDiscountRulePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1004838979
+// LIFERAY-SERVICE-BUILDER-HASH:584126556

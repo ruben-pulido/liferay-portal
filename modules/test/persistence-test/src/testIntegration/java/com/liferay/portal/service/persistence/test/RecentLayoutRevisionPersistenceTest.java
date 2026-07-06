@@ -112,11 +112,8 @@ public class RecentLayoutRevisionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		RecentLayoutRevision newRecentLayoutRevision = _persistence.create(pk);
-
-		newRecentLayoutRevision.setMvccVersion(RandomTestUtil.nextLong());
+		RecentLayoutRevision newRecentLayoutRevision =
+			addRecentLayoutRevision();
 
 		newRecentLayoutRevision.setGroupId(RandomTestUtil.nextLong());
 
@@ -130,8 +127,9 @@ public class RecentLayoutRevisionPersistenceTest {
 
 		newRecentLayoutRevision.setPlid(RandomTestUtil.nextLong());
 
-		_recentLayoutRevisions.add(
-			_persistence.update(newRecentLayoutRevision));
+		newRecentLayoutRevision = _persistence.update(newRecentLayoutRevision);
+
+		_recentLayoutRevisions.add(newRecentLayoutRevision);
 
 		RecentLayoutRevision existingRecentLayoutRevision =
 			_persistence.findByPrimaryKey(
@@ -540,8 +538,6 @@ public class RecentLayoutRevisionPersistenceTest {
 
 		RecentLayoutRevision recentLayoutRevision = _persistence.create(pk);
 
-		recentLayoutRevision.setMvccVersion(RandomTestUtil.nextLong());
-
 		recentLayoutRevision.setGroupId(RandomTestUtil.nextLong());
 
 		recentLayoutRevision.setCompanyId(RandomTestUtil.nextLong());
@@ -565,4 +561,4 @@ public class RecentLayoutRevisionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-513817560
+// LIFERAY-SERVICE-BUILDER-HASH:-1068676635

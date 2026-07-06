@@ -113,11 +113,8 @@ public class WorkflowInstanceLinkPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		WorkflowInstanceLink newWorkflowInstanceLink = _persistence.create(pk);
-
-		newWorkflowInstanceLink.setMvccVersion(RandomTestUtil.nextLong());
+		WorkflowInstanceLink newWorkflowInstanceLink =
+			addWorkflowInstanceLink();
 
 		newWorkflowInstanceLink.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -140,8 +137,9 @@ public class WorkflowInstanceLinkPersistenceTest {
 		newWorkflowInstanceLink.setWorkflowInstanceId(
 			RandomTestUtil.nextLong());
 
-		_workflowInstanceLinks.add(
-			_persistence.update(newWorkflowInstanceLink));
+		newWorkflowInstanceLink = _persistence.update(newWorkflowInstanceLink);
+
+		_workflowInstanceLinks.add(newWorkflowInstanceLink);
 
 		WorkflowInstanceLink existingWorkflowInstanceLink =
 			_persistence.findByPrimaryKey(
@@ -558,8 +556,6 @@ public class WorkflowInstanceLinkPersistenceTest {
 
 		WorkflowInstanceLink workflowInstanceLink = _persistence.create(pk);
 
-		workflowInstanceLink.setMvccVersion(RandomTestUtil.nextLong());
-
 		workflowInstanceLink.setCtCollectionId(RandomTestUtil.nextLong());
 
 		workflowInstanceLink.setGroupId(RandomTestUtil.nextLong());
@@ -591,4 +587,4 @@ public class WorkflowInstanceLinkPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1188178718
+// LIFERAY-SERVICE-BUILDER-HASH:-932931013

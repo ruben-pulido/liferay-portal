@@ -112,11 +112,7 @@ public class AddressPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Address newAddress = _persistence.create(pk);
-
-		newAddress.setMvccVersion(RandomTestUtil.nextLong());
+		Address newAddress = addAddress();
 
 		newAddress.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -174,7 +170,9 @@ public class AddressPersistenceTest {
 
 		newAddress.setStatus(RandomTestUtil.nextInt());
 
-		_addresses.add(_persistence.update(newAddress));
+		newAddress = _persistence.update(newAddress);
+
+		_addresses.add(newAddress);
 
 		Address existingAddress = _persistence.findByPrimaryKey(
 			newAddress.getPrimaryKey());
@@ -682,8 +680,6 @@ public class AddressPersistenceTest {
 
 		Address address = _persistence.create(pk);
 
-		address.setMvccVersion(RandomTestUtil.nextLong());
-
 		address.setCtCollectionId(RandomTestUtil.nextLong());
 
 		address.setUuid(RandomTestUtil.randomString());
@@ -750,4 +746,4 @@ public class AddressPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1220507916
+// LIFERAY-SERVICE-BUILDER-HASH:1751152363

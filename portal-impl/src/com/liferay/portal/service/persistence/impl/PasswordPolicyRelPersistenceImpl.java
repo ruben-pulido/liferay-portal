@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchPasswordPolicyRelException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.PasswordPolicyRel;
 import com.liferay.portal.kernel.model.PasswordPolicyRelTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -64,8 +62,9 @@ public class PasswordPolicyRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<PasswordPolicyRel>
-		_collectionPersistenceFinderByPasswordPolicyId;
+	private CollectionPersistenceFinder
+		<PasswordPolicyRel, NoSuchPasswordPolicyRelException>
+			_collectionPersistenceFinderByPasswordPolicyId;
 
 	/**
 	 * Returns an ordered range of all the password policy rels where passwordPolicyId = &#63;.
@@ -106,17 +105,9 @@ public class PasswordPolicyRelPersistenceImpl
 			OrderByComparator<PasswordPolicyRel> orderByComparator)
 		throws NoSuchPasswordPolicyRelException {
 
-		PasswordPolicyRel passwordPolicyRel = fetchByPasswordPolicyId_First(
-			passwordPolicyId, orderByComparator);
-
-		if (passwordPolicyRel != null) {
-			return passwordPolicyRel;
-		}
-
-		throw new NoSuchPasswordPolicyRelException(
-			_collectionPersistenceFinderByPasswordPolicyId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {passwordPolicyId}));
+		return _collectionPersistenceFinderByPasswordPolicyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {passwordPolicyId},
+			orderByComparator);
 	}
 
 	/**
@@ -159,8 +150,9 @@ public class PasswordPolicyRelPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {passwordPolicyId});
 	}
 
-	private UniquePersistenceFinder<PasswordPolicyRel>
-		_uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder
+		<PasswordPolicyRel, NoSuchPasswordPolicyRelException>
+			_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the password policy rel where classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchPasswordPolicyRelException</code> if it could not be found.
@@ -174,22 +166,9 @@ public class PasswordPolicyRelPersistenceImpl
 	public PasswordPolicyRel findByC_C(long classNameId, long classPK)
 		throws NoSuchPasswordPolicyRelException {
 
-		PasswordPolicyRel passwordPolicyRel = fetchByC_C(classNameId, classPK);
-
-		if (passwordPolicyRel == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPasswordPolicyRelException(message);
-		}
-
-		return passwordPolicyRel;
+		return _uniquePersistenceFinderByC_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -442,7 +421,7 @@ public class PasswordPolicyRelPersistenceImpl
 				_SQL_SELECT_PASSWORDPOLICYREL_WHERE,
 				_SQL_COUNT_PASSWORDPOLICYREL_WHERE,
 				PasswordPolicyRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"passwordPolicyRel.", "passwordPolicyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -485,16 +464,10 @@ public class PasswordPolicyRelPersistenceImpl
 	private static final String _SQL_COUNT_PASSWORDPOLICYREL_WHERE =
 		"SELECT COUNT(passwordPolicyRel) FROM PasswordPolicyRel passwordPolicyRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PasswordPolicyRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PasswordPolicyRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-347803962
+// LIFERAY-SERVICE-BUILDER-HASH:-542502086

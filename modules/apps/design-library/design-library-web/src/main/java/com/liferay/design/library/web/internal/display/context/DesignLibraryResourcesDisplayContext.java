@@ -8,7 +8,9 @@ package com.liferay.design.library.web.internal.display.context;
 import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalServiceUtil;
 import com.liferay.design.library.web.internal.constants.DesignLibraryConstants;
+import com.liferay.exportimport.constants.ExportImportPortletKeys;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -17,7 +19,9 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -26,6 +30,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.style.book.constants.StyleBookActionKeys;
 import com.liferay.style.book.constants.StyleBookConstants;
 import com.liferay.style.book.constants.StyleBookPortletKeys;
+import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.util.StyleBookUtil;
 
 import jakarta.portlet.PortletRequest;
@@ -52,18 +57,24 @@ public class DesignLibraryResourcesDisplayContext {
 			WebKeys.THEME_DISPLAY);
 	}
 
-	public String getAPIURL() {
-		return "/o/search/v1.0/search?cmsRoot=true&cmsSection='files'" +
-			"&emptySearch=true&filter=cmsRoot eq true and cmsSection eq " +
-				"'files'&nestedFields=embedded&page=1&pageSize=20";
+	public String getAPIURL(long designLibraryEntryId) throws PortalException {
+		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
+			designLibraryEntryId);
+
+		return StringBundler.concat(
+			"/o/search/v1.0/search?emptySearch=true",
+			"&entryClassNames=com.liferay.style.book.model.StyleBookEntry",
+			"&filter=groupIds/any(g:g eq ", depotEntry.getGroupId(), ")",
+			"&nestedFields=embedded&page=1&pageSize=20");
 	}
 
 	public Map<String, Object> getBreadcrumbProps(long designLibraryEntryId)
 		throws PortalException {
 
-		Group group = DepotEntryLocalServiceUtil.fetchDepotEntry(
-			designLibraryEntryId
-		).getGroup();
+		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
+			designLibraryEntryId);
+
+		Group group = depotEntry.getGroup();
 
 		return HashMapBuilder.<String, Object>put(
 			"actionItems", _getActionItemsJSONArray(group, designLibraryEntryId)
@@ -86,16 +97,50 @@ public class DesignLibraryResourcesDisplayContext {
 		).build();
 	}
 
-	public List<FDSActionDropdownItem> getFDSActionDropdownItems() {
+	public List<FDSActionDropdownItem> getFDSActionDropdownItems(
+			long designLibraryEntryId)
+		throws PortalException {
+
+		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
+			designLibraryEntryId);
+
+		Group depotGroup = depotEntry.getGroup();
+
+		String editStyleBookEntryURL = PortletURLBuilder.create(
+			PortalUtil.getControlPanelPortletURL(
+				_httpServletRequest, depotGroup,
+				StyleBookPortletKeys.STYLE_BOOK, 0, 0,
+				PortletRequest.RENDER_PHASE)
+		).setMVCRenderCommandName(
+			"/style_book/edit_style_book_entry"
+		).setRedirect(
+			() -> PortletURLBuilder.createRenderURL(
+				_liferayPortletResponse
+			).setMVCRenderCommandName(
+				"/design_library/design_library_resources"
+			).setParameter(
+				DesignLibraryConstants.DESIGN_LIBRARY_ENTRY_ID_KEY,
+				designLibraryEntryId
+			).buildString()
+		).setParameter(
+			"backURLTitle", depotGroup.getName(_themeDisplay.getLocale())
+		).setParameter(
+			"styleBookEntryId", "{embedded.id}"
+		).buildString();
+
 		return ListUtil.fromArray(
 			new FDSActionDropdownItem(
-				"#edit/{embedded.id}", "pencil", "edit",
-				LanguageUtil.get(_httpServletRequest, "edit"), null, null,
-				"link"),
+				editStyleBookEntryURL, "pencil", "edit",
+				LanguageUtil.get(
+					_httpServletRequest, "edit-in-style-book-editor"),
+				null, "get", "link",
+				HashMapBuilder.<String, Object>put(
+					"entryClassName", StyleBookEntry.class.getName()
+				).build()),
 			new FDSActionDropdownItem(
-				"#remove/{embedded.id}", "trash", "remove",
-				LanguageUtil.get(_httpServletRequest, "remove"), null, null,
-				"link"));
+				"{actions.delete.href}", "trash", "delete",
+				LanguageUtil.get(_httpServletRequest, "delete"), "delete",
+				"delete", "async"));
 	}
 
 	public Map<String, Object> getFDSAdditionalProps(long designLibraryEntryId)
@@ -104,9 +149,7 @@ public class DesignLibraryResourcesDisplayContext {
 		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
 			designLibraryEntryId);
 
-		long depotGroupId = depotEntry.getGroupId();
-
-		if (!_hasManageStyleBookEntriesPermission(depotGroupId)) {
+		if (!_hasManageStyleBookEntriesPermission(depotEntry.getGroupId())) {
 			return HashMapBuilder.<String, Object>put(
 				"canAddStyleBook", false
 			).build();
@@ -162,25 +205,40 @@ public class DesignLibraryResourcesDisplayContext {
 				"target", "connected-sites"
 			),
 			JSONUtil.put(
+				"externalReferenceCode", group.getExternalReferenceCode()
+			).put(
+				"hasAssignMembersPermission",
+				GroupPermissionUtil.contains(
+					_themeDisplay.getPermissionChecker(), group.getGroupId(),
+					ActionKeys.ASSIGN_MEMBERS)
+			).put(
 				"href", "#manage-members"
 			).put(
 				"label", LanguageUtil.get(_httpServletRequest, "manage-members")
 			).put(
+				"ownerId", String.valueOf(group.getCreatorUserId())
+			).put(
 				"symbolLeft", "users"
+			).put(
+				"target", "manage-members"
 			),
 			JSONUtil.put(
-				"href", "#import"
-			).put(
-				"label", LanguageUtil.get(_httpServletRequest, "import")
-			).put(
-				"symbolLeft", "import"
-			),
-			JSONUtil.put(
-				"href", "#export"
+				"href",
+				_getExportImportPortletURL(
+					group, ExportImportPortletKeys.EXPORT)
 			).put(
 				"label", LanguageUtil.get(_httpServletRequest, "export")
 			).put(
 				"symbolLeft", "export"
+			),
+			JSONUtil.put(
+				"href",
+				_getExportImportPortletURL(
+					group, ExportImportPortletKeys.IMPORT)
+			).put(
+				"label", LanguageUtil.get(_httpServletRequest, "import")
+			).put(
+				"symbolLeft", "import"
 			),
 			JSONUtil.put(
 				"descriptiveName", group.getDescriptiveName()
@@ -246,6 +304,16 @@ public class DesignLibraryResourcesDisplayContext {
 			).put(
 				"label", group.getName(_httpServletRequest.getLocale())
 			));
+	}
+
+	private String _getExportImportPortletURL(Group group, String portletId) {
+		return PortletURLBuilder.create(
+			PortalUtil.getControlPanelPortletURL(
+				_httpServletRequest, group, portletId, 0, 0,
+				PortletRequest.RENDER_PHASE)
+		).setBackURL(
+			PortalUtil.getCurrentURL(_httpServletRequest)
+		).buildString();
 	}
 
 	private boolean _hasManageStyleBookEntriesPermission(long groupId) {

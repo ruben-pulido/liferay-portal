@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -84,8 +82,9 @@ public class PatcherAccountPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<PatcherAccount>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<PatcherAccount, NoSuchPatcherAccountException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the patcher accounts where companyId = &#63;.
@@ -125,16 +124,8 @@ public class PatcherAccountPersistenceImpl
 			long companyId, OrderByComparator<PatcherAccount> orderByComparator)
 		throws NoSuchPatcherAccountException {
 
-		PatcherAccount patcherAccount = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (patcherAccount != null) {
-			return patcherAccount;
-		}
-
-		throw new NoSuchPatcherAccountException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -210,8 +201,9 @@ public class PatcherAccountPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<PatcherAccount>
-		_uniquePersistenceFinderByAccountEntryCode;
+	private UniquePersistenceFinder
+		<PatcherAccount, NoSuchPatcherAccountException>
+			_uniquePersistenceFinderByAccountEntryCode;
 
 	/**
 	 * Returns the patcher account where accountEntryCode = &#63; or throws a <code>NoSuchPatcherAccountException</code> if it could not be found.
@@ -224,24 +216,8 @@ public class PatcherAccountPersistenceImpl
 	public PatcherAccount findByAccountEntryCode(String accountEntryCode)
 		throws NoSuchPatcherAccountException {
 
-		PatcherAccount patcherAccount = fetchByAccountEntryCode(
-			accountEntryCode);
-
-		if (patcherAccount == null) {
-			String message =
-				_uniquePersistenceFinderByAccountEntryCode.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {accountEntryCode});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPatcherAccountException(message);
-		}
-
-		return patcherAccount;
+		return _uniquePersistenceFinderByAccountEntryCode.find(
+			finderCache, new Object[] {accountEntryCode});
 	}
 
 	/**
@@ -287,8 +263,9 @@ public class PatcherAccountPersistenceImpl
 			finderCache, new Object[] {accountEntryCode});
 	}
 
-	private FilterCollectionPersistenceFinder<PatcherAccount>
-		_collectionPersistenceFinderByC_LikeA;
+	private FilterCollectionPersistenceFinder
+		<PatcherAccount, NoSuchPatcherAccountException>
+			_collectionPersistenceFinderByC_LikeA;
 
 	/**
 	 * Returns all the patcher accounts where companyId = &#63; and accountEntryCode LIKE &#63;.
@@ -390,17 +367,9 @@ public class PatcherAccountPersistenceImpl
 			OrderByComparator<PatcherAccount> orderByComparator)
 		throws NoSuchPatcherAccountException {
 
-		PatcherAccount patcherAccount = fetchByC_LikeA_First(
-			companyId, accountEntryCode, orderByComparator);
-
-		if (patcherAccount != null) {
-			return patcherAccount;
-		}
-
-		throw new NoSuchPatcherAccountException(
-			_collectionPersistenceFinderByC_LikeA.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, accountEntryCode}));
+		return _collectionPersistenceFinderByC_LikeA.findFirst(
+			finderCache, new Object[] {companyId, accountEntryCode},
+			orderByComparator);
 	}
 
 	/**
@@ -1075,16 +1044,7 @@ public class PatcherAccountPersistenceImpl
 				_SQL_SELECT_PATCHERACCOUNT_WHERE,
 				_SQL_COUNT_PATCHERACCOUNT_WHERE,
 				PatcherAccountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherAccountImpl.class, PatcherAccount.class,
-					"patcherAccount", "OSBPatcher_PatcherAccount",
-					"patcherAccount.patcherAccountId",
-					"SELECT DISTINCT {patcherAccount.*} FROM OSBPatcher_PatcherAccount patcherAccount WHERE ",
-					"SELECT {OSBPatcher_PatcherAccount.*} FROM (SELECT DISTINCT patcherAccount.patcherAccountId FROM OSBPatcher_PatcherAccount patcherAccount WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherAccount ON TEMP_TABLE.patcherAccountId = OSBPatcher_PatcherAccount.patcherAccountId",
-					"SELECT COUNT(DISTINCT patcherAccount.patcherAccountId) AS COUNT_VALUE FROM OSBPatcher_PatcherAccount patcherAccount WHERE ",
-					PatcherAccountModelImpl.ORDER_BY_SQL,
-					PatcherAccountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherAccount.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, PatcherAccount::getCompanyId));
@@ -1122,16 +1082,7 @@ public class PatcherAccountPersistenceImpl
 				_SQL_SELECT_PATCHERACCOUNT_WHERE,
 				_SQL_COUNT_PATCHERACCOUNT_WHERE,
 				PatcherAccountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherAccountImpl.class, PatcherAccount.class,
-					"patcherAccount", "OSBPatcher_PatcherAccount",
-					"patcherAccount.patcherAccountId",
-					"SELECT DISTINCT {patcherAccount.*} FROM OSBPatcher_PatcherAccount patcherAccount WHERE ",
-					"SELECT {OSBPatcher_PatcherAccount.*} FROM (SELECT DISTINCT patcherAccount.patcherAccountId FROM OSBPatcher_PatcherAccount patcherAccount WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherAccount ON TEMP_TABLE.patcherAccountId = OSBPatcher_PatcherAccount.patcherAccountId",
-					"SELECT COUNT(DISTINCT patcherAccount.patcherAccountId) AS COUNT_VALUE FROM OSBPatcher_PatcherAccount patcherAccount WHERE ",
-					PatcherAccountModelImpl.ORDER_BY_SQL,
-					PatcherAccountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherAccount.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, PatcherAccount::getCompanyId),
@@ -1200,16 +1151,10 @@ public class PatcherAccountPersistenceImpl
 	private static final String _SQL_COUNT_PATCHERACCOUNT_WHERE =
 		"SELECT COUNT(patcherAccount) FROM PatcherAccount patcherAccount WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PatcherAccount exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PatcherAccountPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:376982841
+// LIFERAY-SERVICE-BUILDER-HASH:1839201068

@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,8 +79,9 @@ public class ObjectEntryVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectEntryVersion>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ObjectEntryVersion, NoSuchObjectEntryVersionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the object entry versions where uuid = &#63;.
@@ -123,16 +122,8 @@ public class ObjectEntryVersionPersistenceImpl
 			OrderByComparator<ObjectEntryVersion> orderByComparator)
 		throws NoSuchObjectEntryVersionException {
 
-		ObjectEntryVersion objectEntryVersion = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (objectEntryVersion != null) {
-			return objectEntryVersion;
-		}
-
-		throw new NoSuchObjectEntryVersionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -173,8 +164,9 @@ public class ObjectEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntryVersion>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ObjectEntryVersion, NoSuchObjectEntryVersionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the object entry versions where uuid = &#63; and companyId = &#63;.
@@ -217,16 +209,8 @@ public class ObjectEntryVersionPersistenceImpl
 			OrderByComparator<ObjectEntryVersion> orderByComparator)
 		throws NoSuchObjectEntryVersionException {
 
-		ObjectEntryVersion objectEntryVersion = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectEntryVersion != null) {
-			return objectEntryVersion;
-		}
-
-		throw new NoSuchObjectEntryVersionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -271,8 +255,9 @@ public class ObjectEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntryVersion>
-		_collectionPersistenceFinderByObjectDefinitionId;
+	private CollectionPersistenceFinder
+		<ObjectEntryVersion, NoSuchObjectEntryVersionException>
+			_collectionPersistenceFinderByObjectDefinitionId;
 
 	/**
 	 * Returns an ordered range of all the object entry versions where objectDefinitionId = &#63;.
@@ -313,18 +298,8 @@ public class ObjectEntryVersionPersistenceImpl
 			OrderByComparator<ObjectEntryVersion> orderByComparator)
 		throws NoSuchObjectEntryVersionException {
 
-		ObjectEntryVersion objectEntryVersion = fetchByObjectDefinitionId_First(
-			objectDefinitionId, orderByComparator);
-
-		if (objectEntryVersion != null) {
-			return objectEntryVersion;
-		}
-
-		throw new NoSuchObjectEntryVersionException(
-			_collectionPersistenceFinderByObjectDefinitionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectDefinitionId}));
+		return _collectionPersistenceFinderByObjectDefinitionId.findFirst(
+			finderCache, new Object[] {objectDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -366,8 +341,9 @@ public class ObjectEntryVersionPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntryVersion>
-		_collectionPersistenceFinderByObjectEntryId;
+	private CollectionPersistenceFinder
+		<ObjectEntryVersion, NoSuchObjectEntryVersionException>
+			_collectionPersistenceFinderByObjectEntryId;
 
 	/**
 	 * Returns an ordered range of all the object entry versions where objectEntryId = &#63;.
@@ -408,16 +384,8 @@ public class ObjectEntryVersionPersistenceImpl
 			OrderByComparator<ObjectEntryVersion> orderByComparator)
 		throws NoSuchObjectEntryVersionException {
 
-		ObjectEntryVersion objectEntryVersion = fetchByObjectEntryId_First(
-			objectEntryId, orderByComparator);
-
-		if (objectEntryVersion != null) {
-			return objectEntryVersion;
-		}
-
-		throw new NoSuchObjectEntryVersionException(
-			_collectionPersistenceFinderByObjectEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {objectEntryId}));
+		return _collectionPersistenceFinderByObjectEntryId.findFirst(
+			finderCache, new Object[] {objectEntryId}, orderByComparator);
 	}
 
 	/**
@@ -459,8 +427,9 @@ public class ObjectEntryVersionPersistenceImpl
 			finderCache, new Object[] {objectEntryId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntryVersion>
-		_collectionPersistenceFinderByC_CD;
+	private CollectionPersistenceFinder
+		<ObjectEntryVersion, NoSuchObjectEntryVersionException>
+			_collectionPersistenceFinderByC_CD;
 
 	/**
 	 * Returns an ordered range of all the object entry versions where companyId = &#63; and createDate = &#63;.
@@ -503,17 +472,9 @@ public class ObjectEntryVersionPersistenceImpl
 			OrderByComparator<ObjectEntryVersion> orderByComparator)
 		throws NoSuchObjectEntryVersionException {
 
-		ObjectEntryVersion objectEntryVersion = fetchByC_CD_First(
-			companyId, createDate, orderByComparator);
-
-		if (objectEntryVersion != null) {
-			return objectEntryVersion;
-		}
-
-		throw new NoSuchObjectEntryVersionException(
-			_collectionPersistenceFinderByC_CD.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, createDate}));
+		return _collectionPersistenceFinderByC_CD.findFirst(
+			finderCache, new Object[] {companyId, createDate},
+			orderByComparator);
 	}
 
 	/**
@@ -559,8 +520,9 @@ public class ObjectEntryVersionPersistenceImpl
 			finderCache, new Object[] {companyId, createDate});
 	}
 
-	private UniquePersistenceFinder<ObjectEntryVersion>
-		_uniquePersistenceFinderByOEI_V;
+	private UniquePersistenceFinder
+		<ObjectEntryVersion, NoSuchObjectEntryVersionException>
+			_uniquePersistenceFinderByOEI_V;
 
 	/**
 	 * Returns the object entry version where objectEntryId = &#63; and version = &#63; or throws a <code>NoSuchObjectEntryVersionException</code> if it could not be found.
@@ -574,23 +536,8 @@ public class ObjectEntryVersionPersistenceImpl
 	public ObjectEntryVersion findByOEI_V(long objectEntryId, int version)
 		throws NoSuchObjectEntryVersionException {
 
-		ObjectEntryVersion objectEntryVersion = fetchByOEI_V(
-			objectEntryId, version);
-
-		if (objectEntryVersion == null) {
-			String message =
-				_uniquePersistenceFinderByOEI_V.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectEntryId, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectEntryVersionException(message);
-		}
-
-		return objectEntryVersion;
+		return _uniquePersistenceFinderByOEI_V.find(
+			finderCache, new Object[] {objectEntryId, version});
 	}
 
 	/**
@@ -639,8 +586,9 @@ public class ObjectEntryVersionPersistenceImpl
 			finderCache, new Object[] {objectEntryId, version});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntryVersion>
-		_collectionPersistenceFinderByOEI_S;
+	private CollectionPersistenceFinder
+		<ObjectEntryVersion, NoSuchObjectEntryVersionException>
+			_collectionPersistenceFinderByOEI_S;
 
 	/**
 	 * Returns an ordered range of all the object entry versions where objectEntryId = &#63; and status = &#63;.
@@ -683,17 +631,9 @@ public class ObjectEntryVersionPersistenceImpl
 			OrderByComparator<ObjectEntryVersion> orderByComparator)
 		throws NoSuchObjectEntryVersionException {
 
-		ObjectEntryVersion objectEntryVersion = fetchByOEI_S_First(
-			objectEntryId, status, orderByComparator);
-
-		if (objectEntryVersion != null) {
-			return objectEntryVersion;
-		}
-
-		throw new NoSuchObjectEntryVersionException(
-			_collectionPersistenceFinderByOEI_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectEntryId, status}));
+		return _collectionPersistenceFinderByOEI_S.findFirst(
+			finderCache, new Object[] {objectEntryId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -986,9 +926,11 @@ public class ObjectEntryVersionPersistenceImpl
 			_SQL_SELECT_OBJECTENTRYVERSION_WHERE,
 			_SQL_COUNT_OBJECTENTRYVERSION_WHERE,
 			ObjectEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"objectEntryVersion.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, ObjectEntryVersion::getUuid));
+				"objectEntryVersion.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				ObjectEntryVersion::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1012,10 +954,11 @@ public class ObjectEntryVersionPersistenceImpl
 				_SQL_SELECT_OBJECTENTRYVERSION_WHERE,
 				_SQL_COUNT_OBJECTENTRYVERSION_WHERE,
 				ObjectEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"objectEntryVersion.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, ObjectEntryVersion::getUuid),
+					"objectEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ObjectEntryVersion::getUuid),
 				new FinderColumn<>(
 					"objectEntryVersion.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectEntryVersion::getCompanyId));
@@ -1045,7 +988,7 @@ public class ObjectEntryVersionPersistenceImpl
 				_SQL_SELECT_OBJECTENTRYVERSION_WHERE,
 				_SQL_COUNT_OBJECTENTRYVERSION_WHERE,
 				ObjectEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"objectEntryVersion.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1074,7 +1017,7 @@ public class ObjectEntryVersionPersistenceImpl
 				_SQL_SELECT_OBJECTENTRYVERSION_WHERE,
 				_SQL_COUNT_OBJECTENTRYVERSION_WHERE,
 				ObjectEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"objectEntryVersion.", "objectEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1101,6 +1044,7 @@ public class ObjectEntryVersionPersistenceImpl
 			_SQL_SELECT_OBJECTENTRYVERSION_WHERE,
 			_SQL_COUNT_OBJECTENTRYVERSION_WHERE,
 			ObjectEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"objectEntryVersion.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, ObjectEntryVersion::getCompanyId),
@@ -1145,6 +1089,7 @@ public class ObjectEntryVersionPersistenceImpl
 			_SQL_SELECT_OBJECTENTRYVERSION_WHERE,
 			_SQL_COUNT_OBJECTENTRYVERSION_WHERE,
 			ObjectEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"objectEntryVersion.", "objectEntryId", FinderColumn.Type.LONG,
 				"=", true, true, ObjectEntryVersion::getObjectEntryId),
@@ -1206,12 +1151,6 @@ public class ObjectEntryVersionPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTENTRYVERSION_WHERE =
 		"SELECT COUNT(objectEntryVersion) FROM ObjectEntryVersion objectEntryVersion WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectEntryVersion exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ObjectEntryVersionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1221,4 +1160,4 @@ public class ObjectEntryVersionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1095713243
+// LIFERAY-SERVICE-BUILDER-HASH:-1771205620

@@ -13,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -96,7 +94,7 @@ public class WikiNodePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<WikiNode>
+	private CollectionPersistenceFinder<WikiNode, NoSuchNodeException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -136,15 +134,8 @@ public class WikiNodePersistenceImpl
 			String uuid, OrderByComparator<WikiNode> orderByComparator)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByUuid_First(uuid, orderByComparator);
-
-		if (wikiNode != null) {
-			return wikiNode;
-		}
-
-		throw new NoSuchNodeException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -185,7 +176,8 @@ public class WikiNodePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<WikiNode> _uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder<WikiNode, NoSuchNodeException>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the wiki node where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchNodeException</code> if it could not be found.
@@ -199,21 +191,8 @@ public class WikiNodePersistenceImpl
 	public WikiNode findByUUID_G(String uuid, long groupId)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByUUID_G(uuid, groupId);
-
-		if (wikiNode == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNodeException(message);
-		}
-
-		return wikiNode;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -261,7 +240,7 @@ public class WikiNodePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<WikiNode>
+	private CollectionPersistenceFinder<WikiNode, NoSuchNodeException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -304,16 +283,8 @@ public class WikiNodePersistenceImpl
 			OrderByComparator<WikiNode> orderByComparator)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (wikiNode != null) {
-			return wikiNode;
-		}
-
-		throw new NoSuchNodeException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -358,7 +329,7 @@ public class WikiNodePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<WikiNode>
+	private FilterCollectionPersistenceFinder<WikiNode, NoSuchNodeException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -398,15 +369,8 @@ public class WikiNodePersistenceImpl
 			long groupId, OrderByComparator<WikiNode> orderByComparator)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByGroupId_First(groupId, orderByComparator);
-
-		if (wikiNode != null) {
-			return wikiNode;
-		}
-
-		throw new NoSuchNodeException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -482,7 +446,7 @@ public class WikiNodePersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<WikiNode>
+	private CollectionPersistenceFinder<WikiNode, NoSuchNodeException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -522,16 +486,8 @@ public class WikiNodePersistenceImpl
 			long companyId, OrderByComparator<WikiNode> orderByComparator)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (wikiNode != null) {
-			return wikiNode;
-		}
-
-		throw new NoSuchNodeException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -572,7 +528,8 @@ public class WikiNodePersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<WikiNode> _uniquePersistenceFinderByG_N;
+	private UniquePersistenceFinder<WikiNode, NoSuchNodeException>
+		_uniquePersistenceFinderByG_N;
 
 	/**
 	 * Returns the wiki node where groupId = &#63; and name = &#63; or throws a <code>NoSuchNodeException</code> if it could not be found.
@@ -586,21 +543,8 @@ public class WikiNodePersistenceImpl
 	public WikiNode findByG_N(long groupId, String name)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByG_N(groupId, name);
-
-		if (wikiNode == null) {
-			String message =
-				_uniquePersistenceFinderByG_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNodeException(message);
-		}
-
-		return wikiNode;
+		return _uniquePersistenceFinderByG_N.find(
+			finderCache, new Object[] {groupId, name});
 	}
 
 	/**
@@ -648,7 +592,7 @@ public class WikiNodePersistenceImpl
 			finderCache, new Object[] {groupId, name});
 	}
 
-	private FilterCollectionPersistenceFinder<WikiNode>
+	private FilterCollectionPersistenceFinder<WikiNode, NoSuchNodeException>
 		_collectionPersistenceFinderByG_S;
 
 	/**
@@ -691,16 +635,8 @@ public class WikiNodePersistenceImpl
 			OrderByComparator<WikiNode> orderByComparator)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByG_S_First(
-			groupId, status, orderByComparator);
-
-		if (wikiNode != null) {
-			return wikiNode;
-		}
-
-		throw new NoSuchNodeException(
-			_collectionPersistenceFinderByG_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, status}));
+		return _collectionPersistenceFinderByG_S.findFirst(
+			finderCache, new Object[] {groupId, status}, orderByComparator);
 	}
 
 	/**
@@ -782,7 +718,7 @@ public class WikiNodePersistenceImpl
 			finderCache, new Object[] {groupId, status}, groupId);
 	}
 
-	private CollectionPersistenceFinder<WikiNode>
+	private CollectionPersistenceFinder<WikiNode, NoSuchNodeException>
 		_collectionPersistenceFinderByC_S;
 
 	/**
@@ -825,16 +761,8 @@ public class WikiNodePersistenceImpl
 			OrderByComparator<WikiNode> orderByComparator)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByC_S_First(
-			companyId, status, orderByComparator);
-
-		if (wikiNode != null) {
-			return wikiNode;
-		}
-
-		throw new NoSuchNodeException(
-			_collectionPersistenceFinderByC_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, status}));
+		return _collectionPersistenceFinderByC_S.findFirst(
+			finderCache, new Object[] {companyId, status}, orderByComparator);
 	}
 
 	/**
@@ -879,7 +807,8 @@ public class WikiNodePersistenceImpl
 			finderCache, new Object[] {companyId, status});
 	}
 
-	private UniquePersistenceFinder<WikiNode> _uniquePersistenceFinderByERC_G;
+	private UniquePersistenceFinder<WikiNode, NoSuchNodeException>
+		_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the wiki node where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchNodeException</code> if it could not be found.
@@ -893,22 +822,8 @@ public class WikiNodePersistenceImpl
 	public WikiNode findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchNodeException {
 
-		WikiNode wikiNode = fetchByERC_G(externalReferenceCode, groupId);
-
-		if (wikiNode == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNodeException(message);
-		}
-
-		return wikiNode;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1334,10 +1249,10 @@ public class WikiNodePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_WIKINODE_WHERE, _SQL_COUNT_WIKINODE_WHERE,
-			WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"wikiNode.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				WikiNode::getUuid));
+				"wikiNode.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, WikiNode::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1348,8 +1263,8 @@ public class WikiNodePersistenceImpl
 				convertNullFunction(WikiNode::getUuid), WikiNode::getGroupId),
 			_SQL_SELECT_WIKINODE_WHERE, "",
 			new FinderColumn<>(
-				"wikiNode.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				WikiNode::getUuid),
+				"wikiNode.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, WikiNode::getUuid),
 			new FinderColumn<>(
 				"wikiNode.", "groupId", FinderColumn.Type.LONG, "=", true, true,
 				WikiNode::getGroupId));
@@ -1374,10 +1289,11 @@ public class WikiNodePersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_WIKINODE_WHERE, _SQL_COUNT_WIKINODE_WHERE,
-				WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"wikiNode.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, WikiNode::getUuid),
+					"wikiNode.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, WikiNode::getUuid),
 				new FinderColumn<>(
 					"wikiNode.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, WikiNode::getCompanyId));
@@ -1402,16 +1318,8 @@ public class WikiNodePersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_WIKINODE_WHERE, _SQL_COUNT_WIKINODE_WHERE,
-				WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					WikiNodeImpl.class, WikiNode.class, "wikiNode", "WikiNode",
-					"wikiNode.nodeId",
-					"SELECT DISTINCT {wikiNode.*} FROM WikiNode wikiNode WHERE ",
-					"SELECT {WikiNode.*} FROM (SELECT DISTINCT wikiNode.nodeId FROM WikiNode wikiNode WHERE ",
-					") TEMP_TABLE INNER JOIN WikiNode ON TEMP_TABLE.nodeId = WikiNode.nodeId",
-					"SELECT COUNT(DISTINCT wikiNode.nodeId) AS COUNT_VALUE FROM WikiNode wikiNode WHERE ",
-					WikiNodeModelImpl.ORDER_BY_SQL,
-					WikiNodeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"wikiNode.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, WikiNode::getGroupId));
@@ -1436,7 +1344,8 @@ public class WikiNodePersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_WIKINODE_WHERE, _SQL_COUNT_WIKINODE_WHERE,
-				WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"wikiNode.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, WikiNode::getCompanyId));
@@ -1480,16 +1389,8 @@ public class WikiNodePersistenceImpl
 					},
 					new String[] {"groupId", "status"}, false),
 				_SQL_SELECT_WIKINODE_WHERE, _SQL_COUNT_WIKINODE_WHERE,
-				WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					WikiNodeImpl.class, WikiNode.class, "wikiNode", "WikiNode",
-					"wikiNode.nodeId",
-					"SELECT DISTINCT {wikiNode.*} FROM WikiNode wikiNode WHERE ",
-					"SELECT {WikiNode.*} FROM (SELECT DISTINCT wikiNode.nodeId FROM WikiNode wikiNode WHERE ",
-					") TEMP_TABLE INNER JOIN WikiNode ON TEMP_TABLE.nodeId = WikiNode.nodeId",
-					"SELECT COUNT(DISTINCT wikiNode.nodeId) AS COUNT_VALUE FROM WikiNode wikiNode WHERE ",
-					WikiNodeModelImpl.ORDER_BY_SQL,
-					WikiNodeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"wikiNode.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, WikiNode::getGroupId),
@@ -1516,7 +1417,7 @@ public class WikiNodePersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"companyId", "status"}, false),
 			_SQL_SELECT_WIKINODE_WHERE, _SQL_COUNT_WIKINODE_WHERE,
-			WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			WikiNodeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"wikiNode.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, WikiNode::getCompanyId),
@@ -1597,12 +1498,6 @@ public class WikiNodePersistenceImpl
 	private static final String _SQL_COUNT_WIKINODE_WHERE =
 		"SELECT COUNT(wikiNode) FROM WikiNode wikiNode WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No WikiNode exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		WikiNodePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1612,4 +1507,4 @@ public class WikiNodePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:50053944
+// LIFERAY-SERVICE-BUILDER-HASH:63305576

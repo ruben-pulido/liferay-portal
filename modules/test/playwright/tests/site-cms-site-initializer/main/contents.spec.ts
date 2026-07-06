@@ -388,7 +388,18 @@ test(
 	{tag: '@LPD-83177'},
 	async ({contentsPage, page, structureBuilderPage, structuresPage}) => {
 
-		// Create a structure that references Basic Web Content
+		// Create a referenced structure
+
+		const referencedStructureLabel = `ReferencedStructureName${getRandomInt()}`;
+
+		await structureBuilderPage.createStructureFromData({
+			label: referencedStructureLabel,
+			name: referencedStructureLabel,
+			page: structureBuilderPage,
+			publish: true,
+		});
+
+		// Create a structure that references the previous one
 
 		const structureLabel = getRandomString();
 
@@ -400,7 +411,7 @@ test(
 		});
 
 		await structureBuilderPage.addReferencedStructures([
-			'Basic Web Content',
+			referencedStructureLabel,
 		]);
 
 		await structureBuilderPage.publishStructure();
@@ -423,13 +434,13 @@ test(
 
 		await contentsPage.saveContent();
 
-		// Navigate to structures and view usages of Basic Web Content
+		// Navigate to structures and view usages of the referenced structure
 
 		await structuresPage.goto();
 
 		await structuresPage.execItemAction({
 			action: 'View Usages',
-			filter: 'Basic Web Content',
+			filter: referencedStructureLabel,
 		});
 
 		// Assert the nested entry title is not shown
@@ -454,11 +465,6 @@ test(
 			trigger: card.locator('button'),
 		});
 
-		await page
-			.getByRole('dialog')
-			.getByRole('button', {name: 'Delete Entry'})
-			.click();
-
 		await waitForAlert(page, `Success:${contentTitle} was moved`, {
 			autoClose: false,
 		});
@@ -467,7 +473,7 @@ test(
 
 test(
 	'Content with Upload fragment opens new Item Selector',
-	{tag: '@LPD-67215'},
+	{tag: ['@LPD-67215', '@LPD-92364']},
 	async ({apiHelpers, contentsPage, page, structureBuilderPage}) => {
 		const applicationName = 'cms/basic-documents';
 		const fileName = `file_${getRandomString()}.png`;
@@ -539,7 +545,7 @@ test(
 
 			await contentsPage.saveContent();
 
-			await page.getByLabel(contentTitle).click();
+			await page.getByRole('link', {name: contentTitle}).click();
 
 			await expect(page.getByText(`Edit ${contentTitle}`)).toBeVisible();
 
@@ -555,7 +561,9 @@ test(
 
 			await expect(page.getByText(`${fileName} Selected`)).toBeVisible();
 
-			await expect(page.getByLabel(`Select ${fileName}`)).toBeChecked();
+			await expect(
+				page.getByRole('button', {name: 'Clear'})
+			).toBeVisible();
 		});
 
 		await test.step('Delete file', async () => {

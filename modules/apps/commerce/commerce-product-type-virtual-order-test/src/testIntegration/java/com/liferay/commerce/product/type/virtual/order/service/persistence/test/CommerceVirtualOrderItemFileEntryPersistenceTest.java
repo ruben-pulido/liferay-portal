@@ -118,13 +118,8 @@ public class CommerceVirtualOrderItemFileEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommerceVirtualOrderItemFileEntry newCommerceVirtualOrderItemFileEntry =
-			_persistence.create(pk);
-
-		newCommerceVirtualOrderItemFileEntry.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCommerceVirtualOrderItemFileEntry();
 
 		newCommerceVirtualOrderItemFileEntry.setUuid(
 			RandomTestUtil.randomString());
@@ -162,8 +157,11 @@ public class CommerceVirtualOrderItemFileEntryPersistenceTest {
 		newCommerceVirtualOrderItemFileEntry.setVersion(
 			RandomTestUtil.randomString());
 
+		newCommerceVirtualOrderItemFileEntry = _persistence.update(
+			newCommerceVirtualOrderItemFileEntry);
+
 		_commerceVirtualOrderItemFileEntries.add(
-			_persistence.update(newCommerceVirtualOrderItemFileEntry));
+			newCommerceVirtualOrderItemFileEntry);
 
 		CommerceVirtualOrderItemFileEntry
 			existingCommerceVirtualOrderItemFileEntry =
@@ -639,9 +637,6 @@ public class CommerceVirtualOrderItemFileEntryPersistenceTest {
 		CommerceVirtualOrderItemFileEntry commerceVirtualOrderItemFileEntry =
 			_persistence.create(pk);
 
-		commerceVirtualOrderItemFileEntry.setMvccVersion(
-			RandomTestUtil.nextLong());
-
 		commerceVirtualOrderItemFileEntry.setUuid(
 			RandomTestUtil.randomString());
 
@@ -687,4 +682,4 @@ public class CommerceVirtualOrderItemFileEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:855079443
+// LIFERAY-SERVICE-BUILDER-HASH:-2117508729

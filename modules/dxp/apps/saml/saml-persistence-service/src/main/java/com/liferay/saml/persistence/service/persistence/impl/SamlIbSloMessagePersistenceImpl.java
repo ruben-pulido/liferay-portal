@@ -10,8 +10,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -71,8 +69,9 @@ public class SamlIbSloMessagePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<SamlIbSloMessage>
-		_uniquePersistenceFinderBySamlIdpSessionIndex;
+	private UniquePersistenceFinder
+		<SamlIbSloMessage, NoSuchIbSloMessageException>
+			_uniquePersistenceFinderBySamlIdpSessionIndex;
 
 	/**
 	 * Returns the saml ib slo message where samlIdpSessionIndex = &#63; or throws a <code>NoSuchIbSloMessageException</code> if it could not be found.
@@ -86,24 +85,8 @@ public class SamlIbSloMessagePersistenceImpl
 			String samlIdpSessionIndex)
 		throws NoSuchIbSloMessageException {
 
-		SamlIbSloMessage samlIbSloMessage = fetchBySamlIdpSessionIndex(
-			samlIdpSessionIndex);
-
-		if (samlIbSloMessage == null) {
-			String message =
-				_uniquePersistenceFinderBySamlIdpSessionIndex.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {samlIdpSessionIndex});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchIbSloMessageException(message);
-		}
-
-		return samlIbSloMessage;
+		return _uniquePersistenceFinderBySamlIdpSessionIndex.find(
+			finderCache, new Object[] {samlIdpSessionIndex});
 	}
 
 	/**
@@ -405,16 +388,10 @@ public class SamlIbSloMessagePersistenceImpl
 	private static final String _SQL_SELECT_SAMLIBSLOMESSAGE_WHERE =
 		"SELECT samlIbSloMessage FROM SamlIbSloMessage samlIbSloMessage WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SamlIbSloMessage exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SamlIbSloMessagePersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:164097953
+// LIFERAY-SERVICE-BUILDER-HASH:-2110614387

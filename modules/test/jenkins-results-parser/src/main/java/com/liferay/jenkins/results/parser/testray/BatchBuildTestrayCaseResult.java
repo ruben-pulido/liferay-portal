@@ -19,6 +19,9 @@ import com.liferay.jenkins.results.parser.job.property.JobPropertyFactory;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassMethod;
 import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.FunctionalAxisTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.JUnitAxisTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.PlaywrightAxisTestClassGroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -250,16 +253,54 @@ public class BatchBuildTestrayCaseResult
 
 		testrayAttachments.add(_getGradlePluginsAttachment());
 		testrayAttachments.add(_getJenkinsConsoleTestrayAttachment());
-		testrayAttachments.add(getTopLevelBuildDatabaseTestrayAttachment());
-		testrayAttachments.add(getTopLevelBuildReportTestrayAttachment());
-		testrayAttachments.add(getTopLevelJenkinsConsoleTestrayAttachment());
-		testrayAttachments.add(getTopLevelJenkinsReportTestrayAttachment());
-		testrayAttachments.add(getTopLevelJobSummaryTestrayAttachment());
-		testrayAttachments.add(_getWarningsTestrayAttachment());
+		testrayAttachments.add(getParentTestrayCaseResultTestrayAttachment());
+		testrayAttachments.add(getWarningsTestrayAttachment());
+
+		AxisTestClassGroup axisTestClassGroup = getAxisTestClassGroup();
+
+		if (axisTestClassGroup instanceof FunctionalAxisTestClassGroup ||
+			axisTestClassGroup instanceof JUnitAxisTestClassGroup) {
+
+			testrayAttachments.addAll(getLiferayLogTestrayAttachments());
+			testrayAttachments.addAll(getLiferayOSGiLogTestrayAttachments());
+		}
+		else if (axisTestClassGroup instanceof PlaywrightAxisTestClassGroup) {
+			testrayAttachments.addAll(getLiferayLogTestrayAttachments());
+		}
 
 		testrayAttachments.removeAll(Collections.singleton(null));
 
 		return testrayAttachments;
+	}
+
+	@Override
+	public TestrayComponent getTestrayComponent() {
+		TestrayComponent testrayComponent = super.getTestrayComponent();
+
+		if (testrayComponent != null) {
+			return testrayComponent;
+		}
+
+		String componentName = getComponentName();
+
+		if (JenkinsResultsParserUtil.isNullOrEmpty(componentName)) {
+			return null;
+		}
+
+		TestrayBuild testrayBuild = getTestrayBuild();
+
+		if (testrayBuild == null) {
+			return null;
+		}
+
+		TestrayProject testrayProject = testrayBuild.getTestrayProject();
+
+		testrayComponent = testrayProject.getTestrayComponentByName(
+			componentName);
+
+		setTestrayComponent(testrayComponent);
+
+		return testrayComponent;
 	}
 
 	@Override
@@ -276,7 +317,7 @@ public class BatchBuildTestrayCaseResult
 
 	@Override
 	public String[] getWarnings() {
-		TestrayAttachment testrayAttachment = _getWarningsTestrayAttachment();
+		TestrayAttachment testrayAttachment = getWarningsTestrayAttachment();
 
 		if (testrayAttachment == null) {
 			return null;
@@ -315,6 +356,10 @@ public class BatchBuildTestrayCaseResult
 			return null;
 		}
 
+		return null;
+	}
+
+	protected TestReport findTestReport() {
 		return null;
 	}
 
@@ -389,7 +434,12 @@ public class BatchBuildTestrayCaseResult
 	}
 
 	protected TestReport getTestReport() {
-		return null;
+		if (!_testReportComputed) {
+			_testReport = findTestReport();
+			_testReportComputed = true;
+		}
+
+		return _testReport;
 	}
 
 	protected long getTestResultDuration() {
@@ -571,6 +621,11 @@ public class BatchBuildTestrayCaseResult
 				getTestrayBuild(), getTopLevelBuildReport());
 
 		return _topLevelStandaloneBuildTestrayCaseResult;
+	}
+
+	protected TestrayAttachment getWarningsTestrayAttachment() {
+		return getTestrayAttachment(
+			getBuildReport(), "Warnings", getAxisName() + "/warnings.html.gz");
 	}
 
 	@Override
@@ -762,11 +817,6 @@ public class BatchBuildTestrayCaseResult
 		return testrayAttachments;
 	}
 
-	private TestrayAttachment _getWarningsTestrayAttachment() {
-		return getTestrayAttachment(
-			getBuildReport(), "Warnings", getAxisName() + "/warnings.html.gz");
-	}
-
 	private String _upperCaseFirstLetterOfEachWord(String string) {
 		StringBuilder sb = new StringBuilder(string);
 
@@ -789,6 +839,8 @@ public class BatchBuildTestrayCaseResult
 	private final AxisTestClassGroup _axisTestClassGroup;
 	private A _testClass;
 	private B _testClassMethod;
+	private TestReport _testReport;
+	private boolean _testReportComputed;
 	private TopLevelStandaloneBuildTestrayCaseResult
 		_topLevelStandaloneBuildTestrayCaseResult;
 

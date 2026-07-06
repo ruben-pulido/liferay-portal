@@ -86,6 +86,7 @@ import java.io.Serializable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
 import java.math.BigDecimal;
@@ -108,6 +109,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -658,9 +660,29 @@ public class BasePersistenceImpl
 		return _db;
 	}
 
+	public String getDefaultOrderBySQL() {
+		return _defaultOrderBySQL;
+	}
+
+	public String getDefaultOrderBySQLInlineDistinct() {
+		return _defaultOrderBySQLInlineDistinct;
+	}
+
 	@Override
 	public Dialect getDialect() {
 		return _sessionFactory.getDialect();
+	}
+
+	public String getEntityAlias() {
+		return _entityAlias;
+	}
+
+	public String getEntityAliasPrefix() {
+		return _entityAliasPrefix;
+	}
+
+	public String getFilterPKColumnName() {
+		return _filterPKColumnName;
 	}
 
 	@Override
@@ -671,6 +693,37 @@ public class BasePersistenceImpl
 	@Override
 	public Class<T> getModelClass() {
 		return _modelClass;
+	}
+
+	public Class<? extends T> getModelImplClass() {
+		return _modelImplClass;
+	}
+
+	public String getNoSuchEntityWithKeyPrefix() {
+		if (_noSuchEntityWithKeyPrefix == null) {
+			_noSuchEntityWithKeyPrefix = StringBundler.concat(
+				"No ", _modelClass.getSimpleName(), " exists with the key {");
+		}
+
+		return _noSuchEntityWithKeyPrefix;
+	}
+
+	public String getPKColumnName() {
+		if (_pkColumnName == null) {
+			for (Column<?, ?> column : _table.getColumns()) {
+				if (column.isPrimaryKey()) {
+					_pkColumnName = column.getName();
+
+					break;
+				}
+			}
+		}
+
+		return _pkColumnName;
+	}
+
+	public String getTableName() {
+		return _table.getTableName();
 	}
 
 	@Override
@@ -1098,6 +1151,10 @@ public class BasePersistenceImpl
 		throw new UnsupportedOperationException();
 	}
 
+	protected String getPKFieldName() {
+		return getPKDBName();
+	}
+
 	protected String getSelectSQL() {
 		throw new UnsupportedOperationException();
 	}
@@ -1187,17 +1244,35 @@ public class BasePersistenceImpl
 				null
 			);
 
-			String entityAlias = (String)modelImplClass.getField(
+			_entityAlias = (String)modelImplClass.getField(
 				"ENTITY_ALIAS"
 			).get(
 				null
 			);
 
-			_entityAliasPrefix = entityAlias.concat(".");
+			_entityAliasPrefix = _entityAlias.concat(".");
 
 			_countSQL = StringBundler.concat(
-				"SELECT COUNT(", entityAlias, ") FROM ",
-				_modelClass.getSimpleName(), " ", entityAlias);
+				"SELECT COUNT(", _entityAlias, ") FROM ",
+				_modelClass.getSimpleName(), " ", _entityAlias);
+
+			Field filterPKColumnNameField = ReflectionUtil.fetchField(
+				modelImplClass, "FILTER_PK_COLUMN_NAME");
+
+			if (filterPKColumnNameField != null) {
+				_filterPKColumnName = (String)filterPKColumnNameField.get(null);
+
+				Field defaultOrderBySQLField = modelImplClass.getField(
+					"ORDER_BY_SQL");
+
+				_defaultOrderBySQL = (String)defaultOrderBySQLField.get(null);
+
+				Field defaultOrderBySQLInlineDistinctField =
+					modelImplClass.getField("ORDER_BY_SQL_INLINE_DISTINCT");
+
+				_defaultOrderBySQLInlineDistinct =
+					(String)defaultOrderBySQLInlineDistinctField.get(null);
+			}
 		}
 		catch (ReflectiveOperationException reflectiveOperationException) {
 			ReflectionUtil.throwException(reflectiveOperationException);
@@ -1432,7 +1507,7 @@ public class BasePersistenceImpl
 			if (serializable != nullModel) {
 				if (serializable == null) {
 					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<>();
+						uncachedPrimaryKeys = new TreeSet<>();
 					}
 
 					uncachedPrimaryKeys.add(primaryKey);
@@ -1468,11 +1543,12 @@ public class BasePersistenceImpl
 		}
 
 		StringBundler sb = new StringBundler(
-			(2 * uncachedPrimaryKeys.size()) + 4);
+			(2 * uncachedPrimaryKeys.size()) + 5);
 
 		sb.append(getSelectSQL());
 		sb.append(" WHERE ");
-		sb.append(getPKDBName());
+		sb.append(_entityAliasPrefix);
+		sb.append(getPKFieldName());
 		sb.append(" IN (");
 
 		if (_modelPKType == ModelPKType.STRING) {
@@ -1840,15 +1916,21 @@ public class BasePersistenceImpl
 	private DB _db;
 	private Map<String, String> _dbColumnNames = Collections.emptyMap();
 	private String _defaultOrderByJPQL;
+	private String _defaultOrderBySQL;
+	private String _defaultOrderBySQLInlineDistinct;
+	private String _entityAlias;
 	private String _entityAliasPrefix;
+	private String _filterPKColumnName;
 	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathWithoutPaginationFindAll;
 	private FinderPath _finderPathWithPaginationFindAll;
 	private Class<T> _modelClass;
 	private Class<? extends T> _modelImplClass;
 	private ModelPKType _modelPKType = ModelPKType.COMPOUND;
+	private String _noSuchEntityWithKeyPrefix;
 	private final MethodHandle _noSuchModelExceptionMethodHandle;
 	private Boolean _permissionsInMemoryFilterEnabled;
+	private String _pkColumnName;
 	private SessionFactory _sessionFactory;
 	private Table<?> _table;
 	private final List<FinderPath> _uniqueFinderPaths = new ArrayList<>();

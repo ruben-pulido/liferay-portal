@@ -18,12 +18,15 @@ import {
 	wrapInCriteriaGroup
 } from './utils/odata';
 import {Criteria, CriterionGroup} from './utils/types';
-import {HTML5Backend} from 'react-dnd-html5-backend';
 import {
+	hasNestedOrExceeded,
+	hasRootAndExceeded,
 	invalidateCriterionWithMissingProperty,
 	validateSegmentInputs
 } from './utils/utils';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 import {List} from 'immutable';
+import {NESTED_OR_LIMIT_ALERT, SEQUENTIAL_LIMIT_ALERT} from './utils/constants';
 import {PropertyGroup, Segment} from 'shared/util/records';
 import {
 	ReferencedObjectsContext,
@@ -34,9 +37,13 @@ import {SegmentStates, SegmentTypes} from 'shared/util/constants';
 import {v4 as uuidv4} from 'uuid';
 
 /**
- * Returns an error message if the criteria contains an invalid row.
+ * Returns an error message if the criteria contains an invalid row,
+ * or if sequential mode is enabled and the criteria exceed the limit.
  */
-export function validateSegmentEditor(criteria: CriterionGroup | null) {
+export function validateSegmentEditor(
+	criteria: CriterionGroup | null,
+	sequential?: boolean
+) {
 	let error;
 
 	if (
@@ -45,6 +52,12 @@ export function validateSegmentEditor(criteria: CriterionGroup | null) {
 		!validateSegmentInputs(criteria)
 	) {
 		error = Liferay.Language.get('empty-fields');
+	} else if (sequential) {
+		if (hasNestedOrExceeded(criteria)) {
+			error = NESTED_OR_LIMIT_ALERT.exceedsLimit.text;
+		} else if (hasRootAndExceeded(criteria)) {
+			error = SEQUENTIAL_LIMIT_ALERT.exceedsLimit.text;
+		}
 	}
 
 	return error;
@@ -239,6 +252,15 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 						}}
 						innerRef={this._formRef as any}
 						onSubmit={this.handleSubmit}
+						validate={(values: FormValues) => {
+							const error = validateSegmentEditor(
+								values.criteria,
+								values.sequential
+							);
+
+							return error ? {criteria: error} : {};
+						}}
+						validateOnMount
 					>
 						{({
 							handleSubmit,
@@ -394,9 +416,6 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 															segmentType={type}
 															sequential={
 																sequential
-															}
-															validate={
-																validateSegmentEditor
 															}
 														/>
 													</div>

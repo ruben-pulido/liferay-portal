@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -89,8 +87,9 @@ public class DLFileShortcutPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the document library file shortcuts where uuid = &#63;.
@@ -130,16 +129,9 @@ public class DLFileShortcutPersistenceImpl
 			String uuid, OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -181,7 +173,7 @@ public class DLFileShortcutPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DLFileShortcut>
+	private UniquePersistenceFinder<DLFileShortcut, NoSuchFileShortcutException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -196,21 +188,8 @@ public class DLFileShortcutPersistenceImpl
 	public DLFileShortcut findByUUID_G(String uuid, long groupId)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByUUID_G(uuid, groupId);
-
-		if (dlFileShortcut == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileShortcutException(message);
-		}
-
-		return dlFileShortcut;
+		return _uniquePersistenceFinderByUUID_G.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -259,8 +238,9 @@ public class DLFileShortcutPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the document library file shortcuts where uuid = &#63; and companyId = &#63;.
@@ -303,16 +283,9 @@ public class DLFileShortcutPersistenceImpl
 			OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -358,8 +331,9 @@ public class DLFileShortcutPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the document library file shortcuts where groupId = &#63;.
@@ -399,16 +373,9 @@ public class DLFileShortcutPersistenceImpl
 			long groupId, OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -485,8 +452,9 @@ public class DLFileShortcutPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the document library file shortcuts where companyId = &#63;.
@@ -526,16 +494,9 @@ public class DLFileShortcutPersistenceImpl
 			long companyId, OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -577,8 +538,9 @@ public class DLFileShortcutPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByToFileEntryId;
+	private CollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByToFileEntryId;
 
 	/**
 	 * Returns an ordered range of all the document library file shortcuts where toFileEntryId = &#63;.
@@ -619,16 +581,9 @@ public class DLFileShortcutPersistenceImpl
 			OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByToFileEntryId_First(
-			toFileEntryId, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByToFileEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {toFileEntryId}));
+		return _collectionPersistenceFinderByToFileEntryId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {toFileEntryId},
+			orderByComparator);
 	}
 
 	/**
@@ -671,8 +626,9 @@ public class DLFileShortcutPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {toFileEntryId});
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByG_F;
+	private FilterCollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByG_F;
 
 	/**
 	 * Returns an ordered range of all the document library file shortcuts where groupId = &#63; and folderId = &#63;.
@@ -715,16 +671,9 @@ public class DLFileShortcutPersistenceImpl
 			OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByG_F_First(
-			groupId, folderId, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByG_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, folderId}));
+		return _collectionPersistenceFinderByG_F.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId, folderId},
+			orderByComparator);
 	}
 
 	/**
@@ -808,8 +757,9 @@ public class DLFileShortcutPersistenceImpl
 			groupId);
 	}
 
-	private CollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByC_NotS;
+	private CollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByC_NotS;
 
 	/**
 	 * Returns all the document library file shortcuts where companyId = &#63; and status &ne; &#63;.
@@ -908,16 +858,9 @@ public class DLFileShortcutPersistenceImpl
 			OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByC_NotS_First(
-			companyId, status, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByC_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, status}));
+		return _collectionPersistenceFinderByC_NotS.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -963,8 +906,9 @@ public class DLFileShortcutPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId, status});
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByG_F_A;
+	private FilterCollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByG_F_A;
 
 	/**
 	 * Returns an ordered range of all the document library file shortcuts where groupId = &#63; and folderId = &#63; and active = &#63;.
@@ -1010,17 +954,9 @@ public class DLFileShortcutPersistenceImpl
 			OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByG_F_A_First(
-			groupId, folderId, active, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByG_F_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, folderId, active}));
+		return _collectionPersistenceFinderByG_F_A.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, folderId, active}, orderByComparator);
 	}
 
 	/**
@@ -1112,8 +1048,9 @@ public class DLFileShortcutPersistenceImpl
 			new Object[] {groupId, folderId, active}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileShortcut>
-		_collectionPersistenceFinderByG_F_A_S;
+	private FilterCollectionPersistenceFinder
+		<DLFileShortcut, NoSuchFileShortcutException>
+			_collectionPersistenceFinderByG_F_A_S;
 
 	/**
 	 * Returns an ordered range of all the document library file shortcuts where groupId = &#63; and folderId = &#63; and active = &#63; and status = &#63;.
@@ -1161,17 +1098,10 @@ public class DLFileShortcutPersistenceImpl
 			OrderByComparator<DLFileShortcut> orderByComparator)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByG_F_A_S_First(
-			groupId, folderId, active, status, orderByComparator);
-
-		if (dlFileShortcut != null) {
-			return dlFileShortcut;
-		}
-
-		throw new NoSuchFileShortcutException(
-			_collectionPersistenceFinderByG_F_A_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, folderId, active, status}));
+		return _collectionPersistenceFinderByG_F_A_S.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, folderId, active, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1275,7 +1205,7 @@ public class DLFileShortcutPersistenceImpl
 			new Object[] {groupId, folderId, active, status}, groupId);
 	}
 
-	private UniquePersistenceFinder<DLFileShortcut>
+	private UniquePersistenceFinder<DLFileShortcut, NoSuchFileShortcutException>
 		_uniquePersistenceFinderByERC_G;
 
 	/**
@@ -1291,23 +1221,9 @@ public class DLFileShortcutPersistenceImpl
 			String externalReferenceCode, long groupId)
 		throws NoSuchFileShortcutException {
 
-		DLFileShortcut dlFileShortcut = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (dlFileShortcut == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileShortcutException(message);
-		}
-
-		return dlFileShortcut;
+		return _uniquePersistenceFinderByERC_G.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1749,10 +1665,11 @@ public class DLFileShortcutPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_DLFILESHORTCUT_WHERE, _SQL_COUNT_DLFILESHORTCUT_WHERE,
-			DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"dlFileShortcut.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DLFileShortcut::getUuid));
+				"dlFileShortcut.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DLFileShortcut::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1764,8 +1681,8 @@ public class DLFileShortcutPersistenceImpl
 				DLFileShortcut::getGroupId),
 			_SQL_SELECT_DLFILESHORTCUT_WHERE, "",
 			new FinderColumn<>(
-				"dlFileShortcut.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DLFileShortcut::getUuid),
+				"dlFileShortcut.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DLFileShortcut::getUuid),
 			new FinderColumn<>(
 				"dlFileShortcut.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, DLFileShortcut::getGroupId));
@@ -1792,9 +1709,11 @@ public class DLFileShortcutPersistenceImpl
 				_SQL_SELECT_DLFILESHORTCUT_WHERE,
 				_SQL_COUNT_DLFILESHORTCUT_WHERE,
 				DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"dlFileShortcut.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, DLFileShortcut::getUuid),
+					"dlFileShortcut.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					DLFileShortcut::getUuid),
 				new FinderColumn<>(
 					"dlFileShortcut.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getCompanyId));
@@ -1821,16 +1740,7 @@ public class DLFileShortcutPersistenceImpl
 				_SQL_SELECT_DLFILESHORTCUT_WHERE,
 				_SQL_COUNT_DLFILESHORTCUT_WHERE,
 				DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileShortcutImpl.class, DLFileShortcut.class,
-					"dlFileShortcut", "DLFileShortcut",
-					"dlFileShortcut.fileShortcutId",
-					"SELECT DISTINCT {dlFileShortcut.*} FROM DLFileShortcut dlFileShortcut WHERE ",
-					"SELECT {DLFileShortcut.*} FROM (SELECT DISTINCT dlFileShortcut.fileShortcutId FROM DLFileShortcut dlFileShortcut WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileShortcut ON TEMP_TABLE.fileShortcutId = DLFileShortcut.fileShortcutId",
-					"SELECT COUNT(DISTINCT dlFileShortcut.fileShortcutId) AS COUNT_VALUE FROM DLFileShortcut dlFileShortcut WHERE ",
-					DLFileShortcutModelImpl.ORDER_BY_SQL,
-					DLFileShortcutModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileShortcut.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getGroupId));
@@ -1857,6 +1767,7 @@ public class DLFileShortcutPersistenceImpl
 				_SQL_SELECT_DLFILESHORTCUT_WHERE,
 				_SQL_COUNT_DLFILESHORTCUT_WHERE,
 				DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileShortcut.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getCompanyId));
@@ -1884,6 +1795,7 @@ public class DLFileShortcutPersistenceImpl
 				_SQL_SELECT_DLFILESHORTCUT_WHERE,
 				_SQL_COUNT_DLFILESHORTCUT_WHERE,
 				DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileShortcut.", "toFileEntryId", FinderColumn.Type.LONG,
 					"=", true, true, DLFileShortcut::getToFileEntryId));
@@ -1910,16 +1822,7 @@ public class DLFileShortcutPersistenceImpl
 				_SQL_SELECT_DLFILESHORTCUT_WHERE,
 				_SQL_COUNT_DLFILESHORTCUT_WHERE,
 				DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileShortcutImpl.class, DLFileShortcut.class,
-					"dlFileShortcut", "DLFileShortcut",
-					"dlFileShortcut.fileShortcutId",
-					"SELECT DISTINCT {dlFileShortcut.*} FROM DLFileShortcut dlFileShortcut WHERE ",
-					"SELECT {DLFileShortcut.*} FROM (SELECT DISTINCT dlFileShortcut.fileShortcutId FROM DLFileShortcut dlFileShortcut WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileShortcut ON TEMP_TABLE.fileShortcutId = DLFileShortcut.fileShortcutId",
-					"SELECT COUNT(DISTINCT dlFileShortcut.fileShortcutId) AS COUNT_VALUE FROM DLFileShortcut dlFileShortcut WHERE ",
-					DLFileShortcutModelImpl.ORDER_BY_SQL,
-					DLFileShortcutModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileShortcut.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getGroupId),
@@ -1948,6 +1851,7 @@ public class DLFileShortcutPersistenceImpl
 				_SQL_SELECT_DLFILESHORTCUT_WHERE,
 				_SQL_COUNT_DLFILESHORTCUT_WHERE,
 				DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileShortcut.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getCompanyId),
@@ -1984,16 +1888,7 @@ public class DLFileShortcutPersistenceImpl
 				_SQL_SELECT_DLFILESHORTCUT_WHERE,
 				_SQL_COUNT_DLFILESHORTCUT_WHERE,
 				DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileShortcutImpl.class, DLFileShortcut.class,
-					"dlFileShortcut", "DLFileShortcut",
-					"dlFileShortcut.fileShortcutId",
-					"SELECT DISTINCT {dlFileShortcut.*} FROM DLFileShortcut dlFileShortcut WHERE ",
-					"SELECT {DLFileShortcut.*} FROM (SELECT DISTINCT dlFileShortcut.fileShortcutId FROM DLFileShortcut dlFileShortcut WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileShortcut ON TEMP_TABLE.fileShortcutId = DLFileShortcut.fileShortcutId",
-					"SELECT COUNT(DISTINCT dlFileShortcut.fileShortcutId) AS COUNT_VALUE FROM DLFileShortcut dlFileShortcut WHERE ",
-					DLFileShortcutModelImpl.ORDER_BY_SQL,
-					DLFileShortcutModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileShortcut.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getGroupId),
@@ -2001,8 +1896,9 @@ public class DLFileShortcutPersistenceImpl
 					"dlFileShortcut.", "folderId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getFolderId),
 				new FinderColumn<>(
-					"dlFileShortcut.", "active", FinderColumn.Type.BOOLEAN, "=",
-					true, true, DLFileShortcut::isActive));
+					"dlFileShortcut.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					DLFileShortcut::isActive));
 
 		_collectionPersistenceFinderByG_F_A_S =
 			new FilterCollectionPersistenceFinder<>(
@@ -2036,16 +1932,7 @@ public class DLFileShortcutPersistenceImpl
 				_SQL_SELECT_DLFILESHORTCUT_WHERE,
 				_SQL_COUNT_DLFILESHORTCUT_WHERE,
 				DLFileShortcutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileShortcutImpl.class, DLFileShortcut.class,
-					"dlFileShortcut", "DLFileShortcut",
-					"dlFileShortcut.fileShortcutId",
-					"SELECT DISTINCT {dlFileShortcut.*} FROM DLFileShortcut dlFileShortcut WHERE ",
-					"SELECT {DLFileShortcut.*} FROM (SELECT DISTINCT dlFileShortcut.fileShortcutId FROM DLFileShortcut dlFileShortcut WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileShortcut ON TEMP_TABLE.fileShortcutId = DLFileShortcut.fileShortcutId",
-					"SELECT COUNT(DISTINCT dlFileShortcut.fileShortcutId) AS COUNT_VALUE FROM DLFileShortcut dlFileShortcut WHERE ",
-					DLFileShortcutModelImpl.ORDER_BY_SQL,
-					DLFileShortcutModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileShortcut.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getGroupId),
@@ -2053,8 +1940,9 @@ public class DLFileShortcutPersistenceImpl
 					"dlFileShortcut.", "folderId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileShortcut::getFolderId),
 				new FinderColumn<>(
-					"dlFileShortcut.", "active", FinderColumn.Type.BOOLEAN, "=",
-					true, true, DLFileShortcut::isActive),
+					"dlFileShortcut.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					DLFileShortcut::isActive),
 				new FinderColumn<>(
 					"dlFileShortcut.", "status", FinderColumn.Type.INTEGER, "=",
 					true, true, DLFileShortcut::getStatus));
@@ -2097,12 +1985,6 @@ public class DLFileShortcutPersistenceImpl
 	private static final String _SQL_COUNT_DLFILESHORTCUT_WHERE =
 		"SELECT COUNT(dlFileShortcut) FROM DLFileShortcut dlFileShortcut WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DLFileShortcut exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DLFileShortcutPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "active"});
 
@@ -2112,4 +1994,4 @@ public class DLFileShortcutPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1277264771
+// LIFERAY-SERVICE-BUILDER-HASH:-1556802288

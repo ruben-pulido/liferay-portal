@@ -5,6 +5,7 @@
 
 import {Locator, Page, expect} from '@playwright/test';
 
+import {changeManagementToolbarView} from '../../../../utils/changeManagementToolbarView';
 import {clickAndExpectToBeHidden} from '../../../../utils/clickAndExpectToBeHidden';
 import {clickAndExpectToBeVisible} from '../../../../utils/clickAndExpectToBeVisible';
 import fillAndClickOutside from '../../../../utils/fillAndClickOutside';
@@ -161,21 +162,13 @@ export class JournalEditArticlePage {
 	}
 
 	async clearAllCategories(vocabulary: string) {
-		await this.openFieldSet('Categories', 'categorization');
+		await this.openFieldSet('Categorization', 'categorization');
 
 		await this.page
-			.getByRole('button', {name: `Select ${vocabulary}`})
-			.click();
-
-		const selectVocabularyIframe = this.page.frameLocator(
-			`iframe[title="Select ${vocabulary}"]`
-		);
-
-		await selectVocabularyIframe
+			.locator('.form-group')
+			.filter({has: this.page.getByLabel(vocabulary, {exact: true})})
 			.getByRole('button', {name: 'Clear All'})
 			.click();
-
-		await this.page.getByRole('button', {name: 'Done'}).click();
 	}
 
 	async createAndPublishBasicArticle(title?: string) {
@@ -241,20 +234,26 @@ export class JournalEditArticlePage {
 			title || getRandomString()
 		);
 
-		const field = this.page.locator(
+		const fields = this.page.locator(
 			'input[id^="_com_liferay_journal_web_portlet_JournalPortlet_ddm$$Text"]'
 		);
 
-		await fillAndClickOutside(this.page, field, 'Text Field');
+		// The Fields panel can load collapsed and may re-collapse while it
+		// finishes initializing, so re-expand it before each interaction.
+
+		await expect(async () => {
+			await openFieldset(this.page, 'Fields');
+
+			await fields.first().fill('Text Field', {timeout: 2000});
+		}).toPass();
 
 		await this.duplicateButton.click();
 
-		await this.page
-			.locator(
-				'input[id^="_com_liferay_journal_web_portlet_JournalPortlet_ddm$$Text"]'
-			)
-			.nth(1)
-			.fill('Duplicated Text Field');
+		await expect(async () => {
+			await openFieldset(this.page, 'Fields');
+
+			await fields.nth(1).fill('Duplicated Text Field', {timeout: 2000});
+		}).toPass();
 
 		await this.publishArticle();
 	}
@@ -300,8 +299,25 @@ export class JournalEditArticlePage {
 	}
 
 	async fillContent(content: string) {
-		await this.journalPage.articleContentTextBox.fill(content);
-		await this.journalPage.articleContentTextBox.press('Enter');
+		const ckEditor5Content = this.journalPage.articleContentTextBox;
+
+		if (await ckEditor5Content.count()) {
+			await ckEditor5Content.fill(content);
+			await ckEditor5Content.press('Enter');
+
+			return;
+		}
+
+		// Under the autosave feature flags the content field renders as a
+		// CKEditor 4 instance whose editable lives inside an iframe.
+
+		const ckEditor4Content = this.page
+			.getByRole('textbox', {exact: true, name: 'Content'})
+			.frameLocator('iframe.cke_wysiwyg_frame')
+			.locator('body');
+
+		await ckEditor4Content.fill(content);
+		await ckEditor4Content.press('Enter');
 	}
 
 	async fillFriendlyURL(friendlyURL: string) {
@@ -354,10 +370,9 @@ export class JournalEditArticlePage {
 		}
 	}
 
-	async openRelatedAsset(assetType: string) {
+	async openRelatedAsset() {
 		await this.openFieldSet('Related Assets', 'relatedAssets');
 		await this.page.getByLabel('Select Items').click();
-		await this.page.getByRole('menuitem', {name: assetType}).click();
 	}
 
 	async publishArticle(
@@ -466,11 +481,7 @@ export class JournalEditArticlePage {
 				: `Success:${title} will be published on`
 		);
 
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: this.page.getByRole('menuitem', {name: 'list'}),
-			trigger: this.page.getByLabel('Select View, Currently Selected: '),
-		});
+		await changeManagementToolbarView(this.page, 'list');
 
 		const row = this.page
 			.locator('.list-group-item')
@@ -486,47 +497,48 @@ export class JournalEditArticlePage {
 		await this.page.getByLabel('File', {exact: true}).click();
 
 		const selectDocumentIframe = this.page.frameLocator(
-			'iframe[title="Select Document"]'
+			'iframe[id$="selectDocumentLibrary_iframe_"]'
 		);
 
-		await selectDocumentIframe
-			.getByRole('link', {name: 'Sites and Libraries'})
-			.click();
+		await selectDocumentIframe.locator('.breadcrumb-link').first().click();
 
 		await selectDocumentIframe
 			.getByRole('link', {name: /^Liferay DXP( Site)?$/})
 			.click();
 
+		const searchBox = selectDocumentIframe.getByRole('searchbox');
+
+		await searchBox.fill(fileName);
+		await searchBox.press('Enter');
+
 		await selectDocumentIframe
-			.getByRole('link', {name: 'Provided by Liferay'})
-			.click();
-
-		await expect(
-			selectDocumentIframe.getByLabel('Search for', {exact: true})
-		).toBeEnabled();
-
-		await selectDocumentIframe.getByText(fileName).dblclick();
+			.getByTestId('row')
+			.getByText(fileName)
+			.dblclick();
 	}
 
 	async selectCategories(vocabulary: string, categories: string[]) {
-		await this.openFieldSet('Categories', 'categorization');
+		await this.openFieldSet('Categorization', 'categorization');
 
 		await this.page
 			.getByRole('button', {name: `Select ${vocabulary}`})
 			.click();
 
-		const selectVocabularyIframe = this.page.frameLocator(
-			`iframe[title="Select ${vocabulary}"]`
-		);
-
-		categories.forEach((category) => {
-			selectVocabularyIframe
-				.locator('li')
-				.filter({hasText: category})
-				.click();
+		const selectVocabularyModal = this.page.getByRole('dialog', {
+			name: `Select ${vocabulary}`,
 		});
 
-		await this.page.getByRole('button', {name: 'Done'}).click();
+		for (const category of categories) {
+			await expect(async () => {
+				await selectVocabularyModal
+					.locator('li')
+					.filter({hasText: category})
+					.getByRole('checkbox')
+					.check({timeout: 2000});
+			}).toPass({timeout: 10000});
+		}
+
+		await selectVocabularyModal.getByRole('button', {name: 'Done'}).click();
 	}
 
 	async selectSpecificDisplayPage(displayPageName: string) {

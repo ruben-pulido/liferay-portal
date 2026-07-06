@@ -8,8 +8,6 @@ package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
@@ -57,8 +55,9 @@ public class CacheDisabledEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<CacheDisabledEntry>
-		_uniquePersistenceFinderByName;
+	private UniquePersistenceFinder
+		<CacheDisabledEntry, NoSuchCacheDisabledEntryException>
+			_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the cache disabled entry where name = &#63; or throws a <code>NoSuchCacheDisabledEntryException</code> if it could not be found.
@@ -71,21 +70,8 @@ public class CacheDisabledEntryPersistenceImpl
 	public CacheDisabledEntry findByName(String name)
 		throws NoSuchCacheDisabledEntryException {
 
-		CacheDisabledEntry cacheDisabledEntry = fetchByName(name);
-
-		if (cacheDisabledEntry == null) {
-			String message =
-				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCacheDisabledEntryException(message);
-		}
-
-		return cacheDisabledEntry;
+		return _uniquePersistenceFinderByName.find(
+			dummyFinderCache, new Object[] {name});
 	}
 
 	/**
@@ -332,16 +318,10 @@ public class CacheDisabledEntryPersistenceImpl
 	private static final String _SQL_SELECT_CACHEDISABLEDENTRY_WHERE =
 		"SELECT cacheDisabledEntry FROM CacheDisabledEntry cacheDisabledEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CacheDisabledEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CacheDisabledEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return dummyFinderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1765215452
+// LIFERAY-SERVICE-BUILDER-HASH:-858528642

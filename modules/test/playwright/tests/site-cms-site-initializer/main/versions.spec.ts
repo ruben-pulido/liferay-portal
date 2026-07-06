@@ -4,6 +4,7 @@
  */
 
 import {expect, mergeTests} from '@playwright/test';
+import fs from 'fs';
 import path from 'path';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
@@ -65,11 +66,17 @@ test(
 		const applicationName = 'cms/basic-documents';
 		const spaceName = 'Default';
 
+		const fileBase64 = fs
+			.readFileSync(
+				path.join(__dirname, '/dependencies/file_upload_image_1.jpg')
+			)
+			.toString('base64');
+
 		const objectEntry = await apiHelpers.objectEntry.postObjectEntry(
 			{
 				file: {
-					fileBase64: 'R0lGODlhAQABAAAAACw=',
-					name: `file_${getRandomString()}.png`,
+					fileBase64,
+					name: `file_${getRandomString()}.jpg`,
 				},
 				objectEntryFolderExternalReferenceCode: 'L_FILES',
 				title: `title ${getRandomString()}`,
@@ -104,12 +111,15 @@ test(
 		const fileTitle = `title ${getRandomString()}`;
 		const spaceName = `Space ${getRandomString()}`;
 
+		let assetLibrary;
+
 		await test.step('Create a new Space', async () => {
-			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
-				name: spaceName,
-				settings: {},
-				type: 'Space',
-			});
+			assetLibrary =
+				await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+					name: spaceName,
+					settings: {},
+					type: 'Space',
+				});
 		});
 
 		await test.step('Create a file entry via UI', async () => {
@@ -149,13 +159,15 @@ test(
 				surname: user.familyName,
 			};
 
-			await spaceSummaryPage.goto(spaceName);
+			await apiHelpers.headlessAssetLibrary.putAssetLibraryUserAccount(
+				assetLibrary.externalReferenceCode,
+				user.externalReferenceCode
+			);
 
-			await spaceSummaryPage.addUserOrUserGroup(user.name, 'users');
-
-			await spaceSummaryPage.addRoleToSpaceMember(
-				'Space Administrator',
-				user.name
+			await apiHelpers.headlessAssetLibrary.putAssetLibraryUserAccountRoles(
+				assetLibrary.externalReferenceCode,
+				user.externalReferenceCode,
+				['Asset Library Administrator']
 			);
 
 			await performLogout(page);
@@ -197,7 +209,7 @@ async function testCanViewVersion(
 	title: string,
 	view: 'Table' | 'Gallery'
 ) {
-	await expect(page.getByRole('heading', {name: title})).toBeVisible();
+	await expect(page.getByText(title, {exact: true})).toBeVisible();
 
 	if (view === 'Table') {
 		assetsPage.execItemAction({action: 'View History', filter: title});

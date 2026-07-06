@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -80,8 +78,9 @@ public class ObjectStateFlowPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectStateFlow>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ObjectStateFlow, NoSuchObjectStateFlowException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the object state flows where uuid = &#63;.
@@ -121,16 +120,8 @@ public class ObjectStateFlowPersistenceImpl
 			String uuid, OrderByComparator<ObjectStateFlow> orderByComparator)
 		throws NoSuchObjectStateFlowException {
 
-		ObjectStateFlow objectStateFlow = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (objectStateFlow != null) {
-			return objectStateFlow;
-		}
-
-		throw new NoSuchObjectStateFlowException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -171,8 +162,9 @@ public class ObjectStateFlowPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ObjectStateFlow>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ObjectStateFlow, NoSuchObjectStateFlowException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the object state flows where uuid = &#63; and companyId = &#63;.
@@ -215,16 +207,8 @@ public class ObjectStateFlowPersistenceImpl
 			OrderByComparator<ObjectStateFlow> orderByComparator)
 		throws NoSuchObjectStateFlowException {
 
-		ObjectStateFlow objectStateFlow = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectStateFlow != null) {
-			return objectStateFlow;
-		}
-
-		throw new NoSuchObjectStateFlowException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -269,8 +253,9 @@ public class ObjectStateFlowPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<ObjectStateFlow>
-		_uniquePersistenceFinderByObjectFieldId;
+	private UniquePersistenceFinder
+		<ObjectStateFlow, NoSuchObjectStateFlowException>
+			_uniquePersistenceFinderByObjectFieldId;
 
 	/**
 	 * Returns the object state flow where objectFieldId = &#63; or throws a <code>NoSuchObjectStateFlowException</code> if it could not be found.
@@ -283,21 +268,8 @@ public class ObjectStateFlowPersistenceImpl
 	public ObjectStateFlow findByObjectFieldId(long objectFieldId)
 		throws NoSuchObjectStateFlowException {
 
-		ObjectStateFlow objectStateFlow = fetchByObjectFieldId(objectFieldId);
-
-		if (objectStateFlow == null) {
-			String message =
-				_uniquePersistenceFinderByObjectFieldId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {objectFieldId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectStateFlowException(message);
-		}
-
-		return objectStateFlow;
+		return _uniquePersistenceFinderByObjectFieldId.find(
+			finderCache, new Object[] {objectFieldId});
 	}
 
 	/**
@@ -584,9 +556,10 @@ public class ObjectStateFlowPersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_OBJECTSTATEFLOW_WHERE, _SQL_COUNT_OBJECTSTATEFLOW_WHERE,
 			ObjectStateFlowModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"objectStateFlow.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ObjectStateFlow::getUuid));
+				"objectStateFlow.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, ObjectStateFlow::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -610,10 +583,11 @@ public class ObjectStateFlowPersistenceImpl
 				_SQL_SELECT_OBJECTSTATEFLOW_WHERE,
 				_SQL_COUNT_OBJECTSTATEFLOW_WHERE,
 				ObjectStateFlowModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"objectStateFlow.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ObjectStateFlow::getUuid),
+					"objectStateFlow.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ObjectStateFlow::getUuid),
 				new FinderColumn<>(
 					"objectStateFlow.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectStateFlow::getCompanyId));
@@ -684,12 +658,6 @@ public class ObjectStateFlowPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTSTATEFLOW_WHERE =
 		"SELECT COUNT(objectStateFlow) FROM ObjectStateFlow objectStateFlow WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectStateFlow exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ObjectStateFlowPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -699,4 +667,4 @@ public class ObjectStateFlowPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1666559675
+// LIFERAY-SERVICE-BUILDER-HASH:-1317841832

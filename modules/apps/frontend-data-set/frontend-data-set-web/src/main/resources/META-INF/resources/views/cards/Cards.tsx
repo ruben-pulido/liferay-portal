@@ -213,7 +213,10 @@ const Card = forwardRef<HTMLDivElement, any>(
 			href: (link && item[link]) || null,
 			imgProps:
 				image &&
-				imagePropsTransformer(getLocalizedValue(item, image)?.value),
+				imagePropsTransformer(
+					getLocalizedValue(item, image)?.value,
+					accessibleName
+				),
 			labels: getLabels(item),
 			onClick: (event: React.MouseEvent) => {
 				const target = event.nativeEvent.target as Element;
@@ -263,13 +266,24 @@ const Card = forwardRef<HTMLDivElement, any>(
 			title: getLocalizedValue(item, title)?.value || '',
 		};
 
+		const finalProps = {
+			...props,
+			...(activeView.setItemComponentProps?.({item, props}) ?? {}),
+		};
+
+		// Ensure card images remain accessible even when a consumer overrides
+		// imgProps through setItemComponentProps without providing an alt
+
+		if (finalProps.imgProps && !finalProps.imgProps.alt) {
+			finalProps.imgProps = {
+				...finalProps.imgProps,
+				alt: accessibleName,
+			};
+		}
+
 		return (
 			<div ref={ref}>
-				<ClayCardWithInfo
-					{...props}
-					{...(activeView.setItemComponentProps?.({item, props}) ??
-						{})}
-				/>
+				<ClayCardWithInfo {...finalProps} />
 			</div>
 		);
 	}

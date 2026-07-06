@@ -14,7 +14,6 @@ import com.liferay.message.boards.model.impl.MBMessageModelImpl;
 import com.liferay.message.boards.service.persistence.MBMessagePersistence;
 import com.liferay.message.boards.service.persistence.MBMessageUtil;
 import com.liferay.message.boards.service.persistence.impl.constants.MBPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -24,8 +23,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -100,7 +97,7 @@ public class MBMessagePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -141,15 +138,8 @@ public class MBMessagePersistenceImpl
 			String uuid, OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByUuid_First(uuid, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -190,7 +180,8 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<MBMessage> _uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder<MBMessage, NoSuchMessageException>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the message-boards message where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchMessageException</code> if it could not be found.
@@ -204,21 +195,8 @@ public class MBMessagePersistenceImpl
 	public MBMessage findByUUID_G(String uuid, long groupId)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByUUID_G(uuid, groupId);
-
-		if (mbMessage == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMessageException(message);
-		}
-
-		return mbMessage;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -266,7 +244,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -310,16 +288,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -364,7 +334,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -405,15 +375,8 @@ public class MBMessagePersistenceImpl
 			long groupId, OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByGroupId_First(groupId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -489,7 +452,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -530,16 +493,8 @@ public class MBMessagePersistenceImpl
 			long companyId, OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -580,7 +535,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -621,15 +576,8 @@ public class MBMessagePersistenceImpl
 			long userId, OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByUserId_First(userId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -670,7 +618,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByThreadId;
 
 	/**
@@ -711,16 +659,8 @@ public class MBMessagePersistenceImpl
 			long threadId, OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByThreadId_First(
-			threadId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByThreadId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {threadId}));
+		return _collectionPersistenceFinderByThreadId.findFirst(
+			finderCache, new Object[] {threadId}, orderByComparator);
 	}
 
 	/**
@@ -761,7 +701,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {threadId});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByThreadIdReplies;
 
 	/**
@@ -802,16 +742,8 @@ public class MBMessagePersistenceImpl
 			long threadId, OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByThreadIdReplies_First(
-			threadId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByThreadIdReplies.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {threadId}));
+		return _collectionPersistenceFinderByThreadIdReplies.findFirst(
+			finderCache, new Object[] {threadId}, orderByComparator);
 	}
 
 	/**
@@ -852,7 +784,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {threadId});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByParentMessageId;
 
 	/**
@@ -894,16 +826,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByParentMessageId_First(
-			parentMessageId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByParentMessageId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {parentMessageId}));
+		return _collectionPersistenceFinderByParentMessageId.findFirst(
+			finderCache, new Object[] {parentMessageId}, orderByComparator);
 	}
 
 	/**
@@ -944,7 +868,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {parentMessageId});
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByG_U;
 
 	/**
@@ -988,16 +912,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_U_First(
-			groupId, userId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByG_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, userId}));
+		return _collectionPersistenceFinderByG_U.findFirst(
+			finderCache, new Object[] {groupId, userId}, orderByComparator);
 	}
 
 	/**
@@ -1079,7 +995,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {groupId, userId}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByG_C;
 
 	/**
@@ -1123,16 +1039,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_C_First(
-			groupId, categoryId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByG_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, categoryId}));
+		return _collectionPersistenceFinderByG_C.findFirst(
+			finderCache, new Object[] {groupId, categoryId}, orderByComparator);
 	}
 
 	/**
@@ -1214,7 +1122,8 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {groupId, categoryId}, groupId);
 	}
 
-	private UniquePersistenceFinder<MBMessage> _uniquePersistenceFinderByG_US;
+	private UniquePersistenceFinder<MBMessage, NoSuchMessageException>
+		_uniquePersistenceFinderByG_US;
 
 	/**
 	 * Returns the message-boards message where groupId = &#63; and urlSubject = &#63; or throws a <code>NoSuchMessageException</code> if it could not be found.
@@ -1228,22 +1137,8 @@ public class MBMessagePersistenceImpl
 	public MBMessage findByG_US(long groupId, String urlSubject)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_US(groupId, urlSubject);
-
-		if (mbMessage == null) {
-			String message =
-				_uniquePersistenceFinderByG_US.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, urlSubject});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMessageException(message);
-		}
-
-		return mbMessage;
+		return _uniquePersistenceFinderByG_US.find(
+			finderCache, new Object[] {groupId, urlSubject});
 	}
 
 	/**
@@ -1291,7 +1186,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {groupId, urlSubject});
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByG_S;
 
 	/**
@@ -1335,16 +1230,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_S_First(
-			groupId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByG_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, status}));
+		return _collectionPersistenceFinderByG_S.findFirst(
+			finderCache, new Object[] {groupId, status}, orderByComparator);
 	}
 
 	/**
@@ -1426,7 +1313,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {groupId, status}, groupId);
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByC_S;
 
 	/**
@@ -1470,16 +1357,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByC_S_First(
-			companyId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByC_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, status}));
+		return _collectionPersistenceFinderByC_S.findFirst(
+			finderCache, new Object[] {companyId, status}, orderByComparator);
 	}
 
 	/**
@@ -1524,7 +1403,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {companyId, status});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByU_C;
 
 	/**
@@ -1568,26 +1447,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByU_C_First(
-			userId, classNameId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId=");
-		sb.append(userId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append("}");
-
-		throw new NoSuchMessageException(sb.toString());
+		return _collectionPersistenceFinderByU_C.findFirst(
+			finderCache, new Object[] {userId, new long[] {classNameId}},
+			orderByComparator);
 	}
 
 	/**
@@ -1674,7 +1536,7 @@ public class MBMessagePersistenceImpl
 			new Object[] {userId, ArrayUtil.sortedUnique(classNameIds)});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -1718,16 +1580,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -1773,7 +1628,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByT_P;
 
 	/**
@@ -1817,17 +1672,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByT_P_First(
-			threadId, parentMessageId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByT_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {threadId, parentMessageId}));
+		return _collectionPersistenceFinderByT_P.findFirst(
+			finderCache, new Object[] {threadId, parentMessageId},
+			orderByComparator);
 	}
 
 	/**
@@ -1873,7 +1720,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {threadId, parentMessageId});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByT_A;
 
 	/**
@@ -1917,16 +1764,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByT_A_First(
-			threadId, answer, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByT_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {threadId, answer}));
+		return _collectionPersistenceFinderByT_A.findFirst(
+			finderCache, new Object[] {threadId, answer}, orderByComparator);
 	}
 
 	/**
@@ -1971,7 +1810,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {threadId, answer});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByT_S;
 
 	/**
@@ -2015,16 +1854,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByT_S_First(
-			threadId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByT_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {threadId, status}));
+		return _collectionPersistenceFinderByT_S.findFirst(
+			finderCache, new Object[] {threadId, status}, orderByComparator);
 	}
 
 	/**
@@ -2069,7 +1900,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {threadId, status});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByT_NotS;
 
 	/**
@@ -2169,16 +2000,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByT_NotS_First(
-			threadId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByT_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {threadId, status}));
+		return _collectionPersistenceFinderByT_NotS.findFirst(
+			finderCache, new Object[] {threadId, status}, orderByComparator);
 	}
 
 	/**
@@ -2223,7 +2046,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {threadId, status});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByTR_S;
 
 	/**
@@ -2267,16 +2090,8 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByTR_S_First(
-			threadId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByTR_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {threadId, status}));
+		return _collectionPersistenceFinderByTR_S.findFirst(
+			finderCache, new Object[] {threadId, status}, orderByComparator);
 	}
 
 	/**
@@ -2321,7 +2136,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {threadId, status});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByP_S;
 
 	/**
@@ -2365,17 +2180,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByP_S_First(
-			parentMessageId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByP_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {parentMessageId, status}));
+		return _collectionPersistenceFinderByP_S.findFirst(
+			finderCache, new Object[] {parentMessageId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -2421,7 +2228,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {parentMessageId, status});
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByG_U_S;
 
 	/**
@@ -2467,17 +2274,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_U_S_First(
-			groupId, userId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByG_U_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, userId, status}));
+		return _collectionPersistenceFinderByG_U_S.findFirst(
+			finderCache, new Object[] {groupId, userId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -2565,7 +2364,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {groupId, userId, status}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByG_C_T;
 
 	/**
@@ -2611,17 +2410,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_C_T_First(
-			groupId, categoryId, threadId, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByG_C_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, categoryId, threadId}));
+		return _collectionPersistenceFinderByG_C_T.findFirst(
+			finderCache, new Object[] {groupId, categoryId, threadId},
+			orderByComparator);
 	}
 
 	/**
@@ -2711,7 +2502,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {groupId, categoryId, threadId}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByG_C_S;
 
 	/**
@@ -2757,17 +2548,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_C_S_First(
-			groupId, categoryId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByG_C_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, categoryId, status}));
+		return _collectionPersistenceFinderByG_C_S.findFirst(
+			finderCache, new Object[] {groupId, categoryId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -2855,7 +2638,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {groupId, categoryId, status}, groupId);
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByU_C_C;
 
 	/**
@@ -2901,17 +2684,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByU_C_C_First(
-			userId, classNameId, classPK, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByU_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {userId, classNameId, classPK}));
+		return _collectionPersistenceFinderByU_C_C.findFirst(
+			finderCache, new Object[] {userId, classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -2960,7 +2735,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {userId, classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByU_C_S;
 
 	/**
@@ -3007,29 +2782,10 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByU_C_S_First(
-			userId, classNameId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("userId=");
-		sb.append(userId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchMessageException(sb.toString());
+		return _collectionPersistenceFinderByU_C_S.findFirst(
+			finderCache,
+			new Object[] {userId, new long[] {classNameId}, status},
+			orderByComparator);
 	}
 
 	/**
@@ -3126,7 +2882,7 @@ public class MBMessagePersistenceImpl
 			});
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByC_C_S;
 
 	/**
@@ -3172,17 +2928,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByC_C_S_First(
-			classNameId, classPK, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByC_C_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, status}));
+		return _collectionPersistenceFinderByC_C_S.findFirst(
+			finderCache, new Object[] {classNameId, classPK, status},
+			orderByComparator);
 	}
 
 	/**
@@ -3231,7 +2979,7 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {classNameId, classPK, status});
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByG_C_T_A;
 
 	/**
@@ -3279,17 +3027,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_C_T_A_First(
-			groupId, categoryId, threadId, answer, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByG_C_T_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, categoryId, threadId, answer}));
+		return _collectionPersistenceFinderByG_C_T_A.findFirst(
+			finderCache, new Object[] {groupId, categoryId, threadId, answer},
+			orderByComparator);
 	}
 
 	/**
@@ -3389,7 +3129,7 @@ public class MBMessagePersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBMessage>
+	private FilterCollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByG_C_T_S;
 
 	/**
@@ -3437,17 +3177,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByG_C_T_S_First(
-			groupId, categoryId, threadId, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByG_C_T_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, categoryId, threadId, status}));
+		return _collectionPersistenceFinderByG_C_T_S.findFirst(
+			finderCache, new Object[] {groupId, categoryId, threadId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -3547,7 +3279,7 @@ public class MBMessagePersistenceImpl
 			groupId);
 	}
 
-	private CollectionPersistenceFinder<MBMessage>
+	private CollectionPersistenceFinder<MBMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByU_C_C_S;
 
 	/**
@@ -3595,17 +3327,9 @@ public class MBMessagePersistenceImpl
 			OrderByComparator<MBMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByU_C_C_S_First(
-			userId, classNameId, classPK, status, orderByComparator);
-
-		if (mbMessage != null) {
-			return mbMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByU_C_C_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {userId, classNameId, classPK, status}));
+		return _collectionPersistenceFinderByU_C_C_S.findFirst(
+			finderCache, new Object[] {userId, classNameId, classPK, status},
+			orderByComparator);
 	}
 
 	/**
@@ -3661,7 +3385,8 @@ public class MBMessagePersistenceImpl
 			finderCache, new Object[] {userId, classNameId, classPK, status});
 	}
 
-	private UniquePersistenceFinder<MBMessage> _uniquePersistenceFinderByERC_G;
+	private UniquePersistenceFinder<MBMessage, NoSuchMessageException>
+		_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the message-boards message where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchMessageException</code> if it could not be found.
@@ -3675,22 +3400,8 @@ public class MBMessagePersistenceImpl
 	public MBMessage findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchMessageException {
 
-		MBMessage mbMessage = fetchByERC_G(externalReferenceCode, groupId);
-
-		if (mbMessage == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMessageException(message);
-		}
-
-		return mbMessage;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -4155,10 +3866,11 @@ public class MBMessagePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"mbMessage.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				MBMessage::getUuid));
+				"mbMessage.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, MBMessage::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -4169,8 +3881,8 @@ public class MBMessagePersistenceImpl
 				convertNullFunction(MBMessage::getUuid), MBMessage::getGroupId),
 			_SQL_SELECT_MBMESSAGE_WHERE, "",
 			new FinderColumn<>(
-				"mbMessage.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				MBMessage::getUuid),
+				"mbMessage.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, MBMessage::getUuid),
 			new FinderColumn<>(
 				"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, MBMessage::getGroupId));
@@ -4195,10 +3907,11 @@ public class MBMessagePersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"mbMessage.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, MBMessage::getUuid),
+					"mbMessage.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, MBMessage::getUuid),
 				new FinderColumn<>(
 					"mbMessage.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, MBMessage::getCompanyId));
@@ -4224,16 +3937,8 @@ public class MBMessagePersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"mbMessage.categoryId != -1",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"mbMessage.categoryId != -1", "mbMessage.categoryId != -1",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId));
@@ -4259,7 +3964,8 @@ public class MBMessagePersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"mbMessage.categoryId != -1",
+				"mbMessage.categoryId != -1", "mbMessage.categoryId != -1",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, MBMessage::getCompanyId));
@@ -4285,7 +3991,8 @@ public class MBMessagePersistenceImpl
 					new String[] {"userId"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"mbMessage.categoryId != -1",
+				"mbMessage.categoryId != -1", "mbMessage.categoryId != -1",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "userId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getUserId));
@@ -4310,7 +4017,8 @@ public class MBMessagePersistenceImpl
 					"countByThreadId", new String[] {Long.class.getName()},
 					new String[] {"threadId"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "threadId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getThreadId));
@@ -4340,6 +4048,7 @@ public class MBMessagePersistenceImpl
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"mbMessage.parentMessageId != 0",
+				"mbMessage.parentMessageId != 0", null,
 				new FinderColumn<>(
 					"mbMessage.", "threadId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getThreadId));
@@ -4367,7 +4076,8 @@ public class MBMessagePersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"parentMessageId"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "parentMessageId", FinderColumn.Type.LONG,
 					"=", true, true, MBMessage::getParentMessageId));
@@ -4394,15 +4104,8 @@ public class MBMessagePersistenceImpl
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"(mbMessage.categoryId != -1) AND (mbMessage.anonymous = [$FALSE$])",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"(mbMessage.categoryId != -1) AND (mbMessage.anonymous = [$FALSE$])",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId),
@@ -4430,16 +4133,8 @@ public class MBMessagePersistenceImpl
 					new String[] {Long.class.getName(), Long.class.getName()},
 					new String[] {"groupId", "categoryId"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId),
@@ -4488,16 +4183,8 @@ public class MBMessagePersistenceImpl
 					new String[] {"groupId", "status"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"mbMessage.categoryId != -1",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"mbMessage.categoryId != -1", "mbMessage.categoryId != -1",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId),
@@ -4525,7 +4212,7 @@ public class MBMessagePersistenceImpl
 				new String[] {"companyId", "status"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"mbMessage.categoryId != -1",
+			"mbMessage.categoryId != -1", "mbMessage.categoryId != -1", null,
 			new FinderColumn<>(
 				"mbMessage.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, MBMessage::getCompanyId),
@@ -4552,7 +4239,8 @@ public class MBMessagePersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"userId", "classNameId"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "userId", FinderColumn.Type.LONG, "=", true, true,
 				MBMessage::getUserId),
@@ -4579,7 +4267,8 @@ public class MBMessagePersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"classNameId", "classPK"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "classNameId", FinderColumn.Type.LONG, "=", true,
 				true, MBMessage::getClassNameId),
@@ -4606,7 +4295,8 @@ public class MBMessagePersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"threadId", "parentMessageId"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "threadId", FinderColumn.Type.LONG, "=", true,
 				true, MBMessage::getThreadId),
@@ -4633,7 +4323,8 @@ public class MBMessagePersistenceImpl
 				new String[] {Long.class.getName(), Boolean.class.getName()},
 				new String[] {"threadId", "answer"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "threadId", FinderColumn.Type.LONG, "=", true,
 				true, MBMessage::getThreadId),
@@ -4660,7 +4351,8 @@ public class MBMessagePersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"threadId", "status"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "threadId", FinderColumn.Type.LONG, "=", true,
 				true, MBMessage::getThreadId),
@@ -4687,7 +4379,8 @@ public class MBMessagePersistenceImpl
 					},
 					new String[] {"threadId", "status"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "threadId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getThreadId),
@@ -4715,7 +4408,8 @@ public class MBMessagePersistenceImpl
 				new String[] {"threadId", "status"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"mbMessage.parentMessageId != 0",
+			"mbMessage.parentMessageId != 0", "mbMessage.parentMessageId != 0",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "threadId", FinderColumn.Type.LONG, "=", true,
 				true, MBMessage::getThreadId),
@@ -4742,7 +4436,8 @@ public class MBMessagePersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"parentMessageId", "status"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "parentMessageId", FinderColumn.Type.LONG, "=",
 				true, true, MBMessage::getParentMessageId),
@@ -4779,15 +4474,8 @@ public class MBMessagePersistenceImpl
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
 				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"(mbMessage.categoryId != -1) AND (mbMessage.anonymous = [$FALSE$])",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"(mbMessage.categoryId != -1) AND (mbMessage.anonymous = [$FALSE$])",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId),
@@ -4825,16 +4513,8 @@ public class MBMessagePersistenceImpl
 					},
 					new String[] {"groupId", "categoryId", "threadId"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId),
@@ -4872,16 +4552,8 @@ public class MBMessagePersistenceImpl
 					},
 					new String[] {"groupId", "categoryId", "status"}, false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId),
@@ -4917,7 +4589,8 @@ public class MBMessagePersistenceImpl
 				},
 				new String[] {"userId", "classNameId", "classPK"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "userId", FinderColumn.Type.LONG, "=", true, true,
 				MBMessage::getUserId),
@@ -4953,7 +4626,8 @@ public class MBMessagePersistenceImpl
 				},
 				new String[] {"userId", "classNameId", "status"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "userId", FinderColumn.Type.LONG, "=", true, true,
 				MBMessage::getUserId),
@@ -4989,7 +4663,8 @@ public class MBMessagePersistenceImpl
 				},
 				new String[] {"classNameId", "classPK", "status"}, false),
 			_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"mbMessage.", "classNameId", FinderColumn.Type.LONG, "=", true,
 				true, MBMessage::getClassNameId),
@@ -5036,16 +4711,8 @@ public class MBMessagePersistenceImpl
 					},
 					false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId),
@@ -5095,16 +4762,8 @@ public class MBMessagePersistenceImpl
 					},
 					false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBMessageImpl.class, MBMessage.class, "mbMessage",
-					"MBMessage", "mbMessage.rootMessageId",
-					"SELECT DISTINCT {mbMessage.*} FROM MBMessage mbMessage WHERE ",
-					"SELECT {MBMessage.*} FROM (SELECT DISTINCT mbMessage.messageId FROM MBMessage mbMessage WHERE ",
-					") TEMP_TABLE INNER JOIN MBMessage ON TEMP_TABLE.messageId = MBMessage.messageId",
-					"SELECT COUNT(DISTINCT mbMessage.messageId) AS COUNT_VALUE FROM MBMessage mbMessage WHERE ",
-					MBMessageModelImpl.ORDER_BY_SQL,
-					MBMessageModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getGroupId),
@@ -5148,7 +4807,8 @@ public class MBMessagePersistenceImpl
 					new String[] {"userId", "classNameId", "classPK", "status"},
 					false),
 				_SQL_SELECT_MBMESSAGE_WHERE, _SQL_COUNT_MBMESSAGE_WHERE,
-				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MBMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbMessage.", "userId", FinderColumn.Type.LONG, "=", true,
 					true, MBMessage::getUserId),
@@ -5235,12 +4895,6 @@ public class MBMessagePersistenceImpl
 	private static final String _SQL_COUNT_MBMESSAGE_WHERE =
 		"SELECT COUNT(mbMessage) FROM MBMessage mbMessage WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No MBMessage exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		MBMessagePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -5250,4 +4904,4 @@ public class MBMessagePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-836260740
+// LIFERAY-SERVICE-BUILDER-HASH:-759393758

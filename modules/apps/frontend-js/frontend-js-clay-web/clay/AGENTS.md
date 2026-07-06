@@ -103,6 +103,12 @@ yarn run lint
     - internal `@clayui/*` dependency updates
     - package build/type generation (when applicable)
     - npm publish flow
+- The unified changelog boundary is derived from the most recent commit whose subject matches a recognized release phrasing. Recognized phrasings are:
+    - `Bump Clay versions to X.Y.Z` (also matches `Bump Clay version to X.Y.Z`)
+    - `Publish vX.Y.Z`
+    - `Release Clay vX.Y.Z`
+    - `Update Clay to X.Y.Z`
+- Release commits must use one of these phrasings (case insensitive) or changelog boundary detection will pick the wrong commit, causing stale commits to leak into the rendered changelog.
 
 ## DXP vs npm Consumption
 
@@ -168,6 +174,7 @@ Release notes:
 - Keep public API changes intentional and typed; match existing prop/type naming patterns in the package.
 - Never import across package source paths (for example, `../../clay-button/src`). Always import from package entry points (`@clayui/...`).
 - If a cross-package import is needed and the dependency is missing, add that package as an explicit dependency in the consuming package.
+- Reexport a package's public symbols from its entry point (`src/index.tsx`) using the specifier form — `export {Foo, Bar};` — rather than inline `export const`/`function`/`class`. DXP consumes Clay from source, and the DXP export bridge (`modules/frontend-sdk/node-scripts/util/esbuild/util/getExportedSymbols.mjs`) infers a package's exports by AST-parsing the entry module. It only recognizes export specifiers; inline `export const Foo = ...` declarations are silently dropped, so DXP modules that `import {Foo}` fail to build with `No matching export ... for import "Foo"`. Sibling packages such as `clay-drop-down` and `clay-button` follow the specifier form.
 - For CSS/Sass work, follow `clay/clay-css/CONTRIBUTING.md`:
     - hard tabs
     - alphabetical property ordering

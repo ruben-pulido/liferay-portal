@@ -17,8 +17,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelperUtil;
@@ -71,7 +69,7 @@ public class ExpandoTablePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ExpandoTable>
+	private CollectionPersistenceFinder<ExpandoTable, NoSuchTableException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -116,17 +114,9 @@ public class ExpandoTablePersistenceImpl
 			OrderByComparator<ExpandoTable> orderByComparator)
 		throws NoSuchTableException {
 
-		ExpandoTable expandoTable = fetchByC_C_First(
-			companyId, classNameId, orderByComparator);
-
-		if (expandoTable != null) {
-			return expandoTable;
-		}
-
-		throw new NoSuchTableException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId}, orderByComparator);
 	}
 
 	/**
@@ -174,7 +164,7 @@ public class ExpandoTablePersistenceImpl
 			new Object[] {companyId, classNameId});
 	}
 
-	private UniquePersistenceFinder<ExpandoTable>
+	private UniquePersistenceFinder<ExpandoTable, NoSuchTableException>
 		_uniquePersistenceFinderByC_C_N;
 
 	/**
@@ -191,22 +181,9 @@ public class ExpandoTablePersistenceImpl
 			long companyId, long classNameId, String name)
 		throws NoSuchTableException {
 
-		ExpandoTable expandoTable = fetchByC_C_N(companyId, classNameId, name);
-
-		if (expandoTable == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, classNameId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTableException(message);
-		}
-
-		return expandoTable;
+		return _uniquePersistenceFinderByC_C_N.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, name});
 	}
 
 	/**
@@ -516,7 +493,8 @@ public class ExpandoTablePersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "classNameId"}, false),
 			_SQL_SELECT_EXPANDOTABLE_WHERE, _SQL_COUNT_EXPANDOTABLE_WHERE,
-			ExpandoTableModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ExpandoTableModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"expandoTable.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, ExpandoTable::getCompanyId),
@@ -567,16 +545,10 @@ public class ExpandoTablePersistenceImpl
 	private static final String _SQL_COUNT_EXPANDOTABLE_WHERE =
 		"SELECT COUNT(expandoTable) FROM ExpandoTable expandoTable WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ExpandoTable exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ExpandoTablePersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:291434624
+// LIFERAY-SERVICE-BUILDER-HASH:1325747031

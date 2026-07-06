@@ -57,6 +57,7 @@ import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.module.service.Snapshot;
@@ -960,6 +961,10 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 					objectDefinitionId);
 
 			for (ObjectRelationship objectRelationship : objectRelationships) {
+				if (objectRelationship.isEdge()) {
+					continue;
+				}
+
 				ObjectRelatedModelsProvider objectRelatedModelsProvider =
 					_objectRelatedModelsProviderRegistry.
 						getObjectRelatedModelsProvider(
@@ -1095,7 +1100,8 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 			).build());
 		bulkActionItem.setClassExternalReferenceCode(
 			objectEntryFolder::getExternalReferenceCode);
-		bulkActionItem.setClassName(objectEntryFolder::getModelClassName);
+		bulkActionItem.setClassName(
+			((ClassedModel)objectEntryFolder)::getModelClassName);
 		bulkActionItem.setClassPK(objectEntryFolder::getObjectEntryFolderId);
 		bulkActionItem.setName(objectEntryFolder::getName);
 

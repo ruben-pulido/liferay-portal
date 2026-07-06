@@ -7,6 +7,9 @@ package com.liferay.object.rest.internal.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.headless.admin.user.dto.v1_0.UserAccount;
+import com.liferay.list.type.model.ListTypeDefinition;
+import com.liferay.list.type.service.ListTypeDefinitionLocalService;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
@@ -41,6 +44,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.HTTPTestUtil;
@@ -53,6 +57,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.log.LogCapture;
@@ -66,7 +71,9 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -102,10 +109,10 @@ public class ObjectEntryRelatedObjectsResourceTest {
 					true
 				).indexedAsKeyword(
 					true
-				).name(
-					_OBJECT_FIELD_NAME_1
 				).labelMap(
 					RandomTestUtil.randomLocaleStringMap()
+				).name(
+					_OBJECT_FIELD_NAME_1
 				).build()),
 			false);
 
@@ -121,10 +128,10 @@ public class ObjectEntryRelatedObjectsResourceTest {
 					true
 				).indexedAsKeyword(
 					true
-				).name(
-					_OBJECT_FIELD_NAME_2
 				).labelMap(
 					RandomTestUtil.randomLocaleStringMap()
+				).name(
+					_OBJECT_FIELD_NAME_2
 				).build()),
 			false);
 
@@ -142,10 +149,10 @@ public class ObjectEntryRelatedObjectsResourceTest {
 					true
 				).indexedAsKeyword(
 					true
-				).name(
-					_OBJECT_FIELD_NAME_2
 				).labelMap(
 					RandomTestUtil.randomLocaleStringMap()
+				).name(
+					_OBJECT_FIELD_NAME_2
 				).build()),
 			false);
 
@@ -1284,6 +1291,14 @@ public class ObjectEntryRelatedObjectsResourceTest {
 	}
 
 	@Test
+	public void testPostByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCodeDisassociate()
+		throws Exception {
+
+		_testDisassociateRelatedModel(
+			_objectDefinition1, _objectDefinition2, null);
+	}
+
+	@Test
 	public void testPostCustomObjectEntryWithInvalidNestedSystemObjectEntries()
 		throws Exception {
 
@@ -1428,6 +1443,41 @@ public class ObjectEntryRelatedObjectsResourceTest {
 	}
 
 	@Test
+	public void testPostScopeScopeKeyByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCodeDisassociate()
+		throws Exception {
+
+		ObjectDefinition objectDefinition1 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				List.of(
+					new TextObjectFieldBuilder(
+					).labelMap(
+						RandomTestUtil.randomLocaleStringMap()
+					).name(
+						_OBJECT_FIELD_NAME_1
+					).build()),
+				ObjectDefinitionConstants.SCOPE_SITE);
+
+		_objectDefinitions.add(objectDefinition1);
+
+		ObjectDefinition objectDefinition2 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				List.of(
+					new TextObjectFieldBuilder(
+					).labelMap(
+						RandomTestUtil.randomLocaleStringMap()
+					).name(
+						_OBJECT_FIELD_NAME_2
+					).build()),
+				ObjectDefinitionConstants.SCOPE_SITE);
+
+		_objectDefinitions.add(objectDefinition2);
+
+		_testDisassociateRelatedModel(
+			objectDefinition1, objectDefinition2,
+			String.valueOf(TestPropsValues.getGroupId()));
+	}
+
+	@Test
 	public void testPutCustomObjectEntryUnlinkNestedSystemObjectEntries()
 		throws Exception {
 
@@ -1483,6 +1533,137 @@ public class ObjectEntryRelatedObjectsResourceTest {
 			_addObjectRelationship(
 				_objectDefinition1, _userSystemObjectDefinition,
 				ObjectRelationshipConstants.TYPE_ONE_TO_MANY));
+	}
+
+	@Test
+	public void testPutCustomObjectEntryWithNestedCustomObjectEntryByExternalReferenceCode()
+		throws Exception {
+
+		ObjectDefinition parentObjectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				List.of(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING,
+						RandomTestUtil.randomString())),
+				false);
+
+		_objectDefinitions.add(parentObjectDefinition);
+
+		ListTypeDefinition listTypeDefinition =
+			_listTypeDefinitionLocalService.addListTypeDefinition(
+				null, TestPropsValues.getUserId(),
+				Collections.singletonMap(
+					LocaleUtil.US, RandomTestUtil.randomString()),
+				false, Collections.emptyList(), new ServiceContext());
+
+		String listTypeEntryKey1 = RandomTestUtil.randomString();
+		String listTypeEntryKey2 = RandomTestUtil.randomString();
+
+		_listTypeEntryLocalService.addListTypeEntry(
+			null, TestPropsValues.getUserId(),
+			listTypeDefinition.getListTypeDefinitionId(), listTypeEntryKey1,
+			Collections.singletonMap(LocaleUtil.US, listTypeEntryKey1),
+			listTypeDefinition.isSystem());
+		_listTypeEntryLocalService.addListTypeEntry(
+			null, TestPropsValues.getUserId(),
+			listTypeDefinition.getListTypeDefinitionId(), listTypeEntryKey2,
+			Collections.singletonMap(LocaleUtil.US, listTypeEntryKey2),
+			listTypeDefinition.isSystem());
+
+		String multiselectPicklistObjectFieldName =
+			"x" + RandomTestUtil.randomString();
+
+		ObjectDefinition childObjectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				List.of(
+					ObjectFieldUtil.createObjectField(
+						listTypeDefinition.getListTypeDefinitionId(),
+						ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST,
+						null, ObjectFieldConstants.DB_TYPE_CLOB, false, false,
+						null, RandomTestUtil.randomString(),
+						multiselectPicklistObjectFieldName, false, false)),
+				false);
+
+		ObjectRelationship objectRelationship =
+			ObjectRelationshipTestUtil.addObjectRelationship(
+				parentObjectDefinition, childObjectDefinition,
+				TestPropsValues.getUserId(),
+				ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
+
+		String parentExternalReferenceCode = RandomTestUtil.randomString();
+
+		HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				"externalReferenceCode", parentExternalReferenceCode
+			).toString(),
+			parentObjectDefinition.getRESTContextPath(), Http.Method.POST);
+
+		String childExternalReferenceCode = RandomTestUtil.randomString();
+
+		HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				"externalReferenceCode", childExternalReferenceCode
+			).toString(),
+			childObjectDefinition.getRESTContextPath(), Http.Method.POST);
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				"externalReferenceCode", parentExternalReferenceCode
+			).put(
+				objectRelationship.getName(),
+				JSONUtil.putAll(
+					JSONUtil.put(
+						multiselectPicklistObjectFieldName,
+						JSONUtil.putAll(
+							JSONUtil.put(
+								"key", listTypeEntryKey1
+							).put(
+								"name", listTypeEntryKey1
+							),
+							JSONUtil.put(
+								"key", listTypeEntryKey2
+							).put(
+								"name", listTypeEntryKey2
+							))
+					).put(
+						"externalReferenceCode", childExternalReferenceCode
+					))
+			).toString(),
+			StringBundler.concat(
+				parentObjectDefinition.getRESTContextPath(),
+				"/by-external-reference-code/", parentExternalReferenceCode),
+			Http.Method.PUT);
+
+		JSONArray relatedCustomObjectEntriesJSONArray = jsonObject.getJSONArray(
+			objectRelationship.getName());
+
+		Assert.assertEquals(1, relatedCustomObjectEntriesJSONArray.length());
+
+		JSONObject relatedCustomObjectEntryJSONObject =
+			relatedCustomObjectEntriesJSONArray.getJSONObject(0);
+
+		JSONArray multiselectPicklistObjectFieldJSONArray =
+			relatedCustomObjectEntryJSONObject.getJSONArray(
+				multiselectPicklistObjectFieldName);
+
+		Assert.assertEquals(
+			2, multiselectPicklistObjectFieldJSONArray.length());
+
+		Set<String> keys = new HashSet<>(
+			JSONUtil.toList(
+				multiselectPicklistObjectFieldJSONArray,
+				multiselectPicklistObjectFieldJSONObject ->
+					multiselectPicklistObjectFieldJSONObject.getString("key")));
+
+		Assert.assertEquals(
+			SetUtil.fromArray(listTypeEntryKey1, listTypeEntryKey2), keys);
+
+		_objectDefinitionLocalService.deleteObjectDefinition(
+			childObjectDefinition);
+
+		_listTypeDefinitionLocalService.deleteListTypeDefinition(
+			listTypeDefinition.getListTypeDefinitionId());
 	}
 
 	@Test
@@ -2169,6 +2350,79 @@ public class ObjectEntryRelatedObjectsResourceTest {
 		Assert.assertEquals(1, itemsJSONArray.length());
 	}
 
+	private void _testDisassociateRelatedModel(
+			ObjectDefinition objectDefinition1,
+			ObjectDefinition objectDefinition2, String scopeKey)
+		throws Exception {
+
+		ObjectEntry objectEntry1 = ObjectEntryTestUtil.addObjectEntry(
+			objectDefinition1, _OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1);
+		ObjectEntry objectEntry2 = ObjectEntryTestUtil.addObjectEntry(
+			objectDefinition2, _OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2);
+		ObjectRelationship objectRelationship = _addObjectRelationship(
+			objectDefinition1, objectDefinition2,
+			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
+
+		ObjectRelationshipTestUtil.relateObjectEntries(
+			objectEntry1.getPrimaryKey(), objectEntry2.getPrimaryKey(),
+			objectRelationship, TestPropsValues.getUserId());
+
+		ObjectEntry objectEntry3 = ObjectEntryTestUtil.addObjectEntry(
+			objectDefinition2, _OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2);
+
+		ObjectRelationshipTestUtil.relateObjectEntries(
+			objectEntry1.getPrimaryKey(), objectEntry3.getPrimaryKey(),
+			objectRelationship, TestPropsValues.getUserId());
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			null,
+			_getEndpoint(
+				objectRelationship.getName(), objectDefinition1,
+				objectEntry1.getObjectEntryId()),
+			Http.Method.GET);
+
+		JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
+
+		Assert.assertEquals(
+			itemsJSONArray.toString(), 2, itemsJSONArray.length());
+
+		_assertEquals(objectEntry2, itemsJSONArray.getJSONObject(0));
+		_assertEquals(objectEntry3, itemsJSONArray.getJSONObject(1));
+
+		String endpoint = StringBundler.concat(
+			"/by-external-reference-code/",
+			objectEntry1.getExternalReferenceCode(), StringPool.SLASH,
+			objectRelationship.getName(), StringPool.SLASH,
+			objectEntry2.getExternalReferenceCode(), "/disassociate");
+
+		if (scopeKey == null) {
+			Assert.assertEquals(
+				204,
+				HTTPTestUtil.invokeToHttpCode(
+					null, objectDefinition1.getRESTContextPath() + endpoint,
+					Http.Method.POST));
+		}
+		else {
+			Assert.assertEquals(
+				204,
+				HTTPTestUtil.invokeToHttpCode(
+					null,
+					StringBundler.concat(
+						objectDefinition1.getRESTContextPath(), "/scopes/",
+						scopeKey, endpoint),
+					Http.Method.POST));
+		}
+
+		jsonObject = HTTPTestUtil.invokeToJSONObject(
+			null,
+			_getEndpoint(
+				objectRelationship.getName(), objectDefinition1,
+				objectEntry1.getObjectEntryId()),
+			Http.Method.GET);
+
+		_assertEquals(objectEntry3, jsonObject.getJSONArray("items"));
+	}
+
 	private void _testPostCustomObjectEntryWithInvalidNestedSystemObjectEntries(
 			ObjectRelationship objectRelationship, boolean manyToOne)
 		throws Exception {
@@ -2566,6 +2820,12 @@ public class ObjectEntryRelatedObjectsResourceTest {
 
 	private static final String _SYSTEM_OBJECT_FIELD_VALUE =
 		RandomTestUtil.randomString();
+
+	@Inject
+	private ListTypeDefinitionLocalService _listTypeDefinitionLocalService;
+
+	@Inject
+	private ListTypeEntryLocalService _listTypeEntryLocalService;
 
 	private ObjectDefinition _objectDefinition1;
 	private ObjectDefinition _objectDefinition2;

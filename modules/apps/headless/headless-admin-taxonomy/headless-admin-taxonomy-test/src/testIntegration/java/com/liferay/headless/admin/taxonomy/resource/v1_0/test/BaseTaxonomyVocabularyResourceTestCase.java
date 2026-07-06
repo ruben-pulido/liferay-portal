@@ -3968,10 +3968,26 @@ public abstract class BaseTaxonomyVocabularyResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("projects", additionalAssertFieldName)) {
+				if (taxonomyVocabulary.getProjects() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals(
 					"siteExternalReferenceCode", additionalAssertFieldName)) {
 
 				if (taxonomyVocabulary.getSiteExternalReferenceCode() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("system", additionalAssertFieldName)) {
+				if (taxonomyVocabulary.getSystem() == null) {
 					valid = false;
 				}
 
@@ -4311,12 +4327,34 @@ public abstract class BaseTaxonomyVocabularyResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("projects", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						taxonomyVocabulary1.getProjects(),
+						taxonomyVocabulary2.getProjects())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals(
 					"siteExternalReferenceCode", additionalAssertFieldName)) {
 
 				if (!Objects.deepEquals(
 						taxonomyVocabulary1.getSiteExternalReferenceCode(),
 						taxonomyVocabulary2.getSiteExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("system", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						taxonomyVocabulary1.getSystem(),
+						taxonomyVocabulary2.getSystem())) {
 
 					return false;
 				}
@@ -4765,6 +4803,11 @@ public abstract class BaseTaxonomyVocabularyResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("projects")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("siteExternalReferenceCode")) {
 			Object object = taxonomyVocabulary.getSiteExternalReferenceCode();
 
@@ -4812,6 +4855,11 @@ public abstract class BaseTaxonomyVocabularyResourceTestCase {
 		}
 
 		if (entityFieldName.equals("siteId")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("system")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -4934,6 +4982,7 @@ public abstract class BaseTaxonomyVocabularyResourceTestCase {
 				siteExternalReferenceCode =
 					testGroup.getExternalReferenceCode();
 				siteId = testGroup.getGroupId();
+				system = RandomTestUtil.randomBoolean();
 				uuid = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
@@ -5245,4 +5294,4 @@ public abstract class BaseTaxonomyVocabularyResourceTestCase {
 		_vulcanCRUDItemDelegateBuilderRegistry;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-728772649
+// LIFERAY-REST-BUILDER-HASH:-1170646971

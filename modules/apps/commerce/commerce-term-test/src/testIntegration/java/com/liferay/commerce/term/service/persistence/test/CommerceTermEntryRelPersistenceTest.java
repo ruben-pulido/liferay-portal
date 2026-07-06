@@ -114,11 +114,8 @@ public class CommerceTermEntryRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CommerceTermEntryRel newCommerceTermEntryRel = _persistence.create(pk);
-
-		newCommerceTermEntryRel.setMvccVersion(RandomTestUtil.nextLong());
+		CommerceTermEntryRel newCommerceTermEntryRel =
+			addCommerceTermEntryRel();
 
 		newCommerceTermEntryRel.setCompanyId(RandomTestUtil.nextLong());
 
@@ -137,8 +134,9 @@ public class CommerceTermEntryRelPersistenceTest {
 		newCommerceTermEntryRel.setCommerceTermEntryId(
 			RandomTestUtil.nextLong());
 
-		_commerceTermEntryRels.add(
-			_persistence.update(newCommerceTermEntryRel));
+		newCommerceTermEntryRel = _persistence.update(newCommerceTermEntryRel);
+
+		_commerceTermEntryRels.add(newCommerceTermEntryRel);
 
 		CommerceTermEntryRel existingCommerceTermEntryRel =
 			_persistence.findByPrimaryKey(
@@ -549,8 +547,6 @@ public class CommerceTermEntryRelPersistenceTest {
 
 		CommerceTermEntryRel commerceTermEntryRel = _persistence.create(pk);
 
-		commerceTermEntryRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceTermEntryRel.setCompanyId(RandomTestUtil.nextLong());
 
 		commerceTermEntryRel.setUserId(RandomTestUtil.nextLong());
@@ -578,4 +574,4 @@ public class CommerceTermEntryRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1619293777
+// LIFERAY-SERVICE-BUILDER-HASH:-284860596

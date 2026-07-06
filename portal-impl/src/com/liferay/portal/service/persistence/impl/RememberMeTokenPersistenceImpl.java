@@ -64,8 +64,9 @@ public class RememberMeTokenPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<RememberMeToken>
-		_collectionPersistenceFinderByUserId;
+	private CollectionPersistenceFinder
+		<RememberMeToken, NoSuchRememberMeTokenException>
+			_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns an ordered range of all the remember me tokens where userId = &#63;.
@@ -105,16 +106,9 @@ public class RememberMeTokenPersistenceImpl
 			long userId, OrderByComparator<RememberMeToken> orderByComparator)
 		throws NoSuchRememberMeTokenException {
 
-		RememberMeToken rememberMeToken = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (rememberMeToken != null) {
-			return rememberMeToken;
-		}
-
-		throw new NoSuchRememberMeTokenException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId},
+			orderByComparator);
 	}
 
 	/**
@@ -156,8 +150,9 @@ public class RememberMeTokenPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<RememberMeToken>
-		_collectionPersistenceFinderByLteExpirationDate;
+	private CollectionPersistenceFinder
+		<RememberMeToken, NoSuchRememberMeTokenException>
+			_collectionPersistenceFinderByLteExpirationDate;
 
 	/**
 	 * Returns all the remember me tokens where expirationDate &le; &#63;.
@@ -251,17 +246,9 @@ public class RememberMeTokenPersistenceImpl
 			OrderByComparator<RememberMeToken> orderByComparator)
 		throws NoSuchRememberMeTokenException {
 
-		RememberMeToken rememberMeToken = fetchByLteExpirationDate_First(
-			expirationDate, orderByComparator);
-
-		if (rememberMeToken != null) {
-			return rememberMeToken;
-		}
-
-		throw new NoSuchRememberMeTokenException(
-			_collectionPersistenceFinderByLteExpirationDate.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {expirationDate}));
+		return _collectionPersistenceFinderByLteExpirationDate.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {expirationDate},
+			orderByComparator);
 	}
 
 	/**
@@ -517,7 +504,7 @@ public class RememberMeTokenPersistenceImpl
 				_SQL_SELECT_REMEMBERMETOKEN_WHERE,
 				_SQL_COUNT_REMEMBERMETOKEN_WHERE,
 				RememberMeTokenModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"rememberMeToken.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, RememberMeToken::getUserId));
@@ -543,7 +530,7 @@ public class RememberMeTokenPersistenceImpl
 				_SQL_SELECT_REMEMBERMETOKEN_WHERE,
 				_SQL_COUNT_REMEMBERMETOKEN_WHERE,
 				RememberMeTokenModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"rememberMeToken.", "expirationDate",
 					FinderColumn.Type.DATE, "<=", true, true,
@@ -570,13 +557,10 @@ public class RememberMeTokenPersistenceImpl
 	private static final String _SQL_COUNT_REMEMBERMETOKEN_WHERE =
 		"SELECT COUNT(rememberMeToken) FROM RememberMeToken rememberMeToken WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No RememberMeToken exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:91142264
+// LIFERAY-SERVICE-BUILDER-HASH:-1561254256

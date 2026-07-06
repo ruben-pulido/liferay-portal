@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -89,8 +87,9 @@ public class CommerceCurrencyPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceCurrency>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommerceCurrency, NoSuchCurrencyException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce currencies where uuid = &#63;.
@@ -130,16 +129,8 @@ public class CommerceCurrencyPersistenceImpl
 			String uuid, OrderByComparator<CommerceCurrency> orderByComparator)
 		throws NoSuchCurrencyException {
 
-		CommerceCurrency commerceCurrency = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (commerceCurrency != null) {
-			return commerceCurrency;
-		}
-
-		throw new NoSuchCurrencyException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -180,8 +171,9 @@ public class CommerceCurrencyPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<CommerceCurrency>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommerceCurrency, NoSuchCurrencyException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce currencies where uuid = &#63; and companyId = &#63;.
@@ -224,16 +216,8 @@ public class CommerceCurrencyPersistenceImpl
 			OrderByComparator<CommerceCurrency> orderByComparator)
 		throws NoSuchCurrencyException {
 
-		CommerceCurrency commerceCurrency = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (commerceCurrency != null) {
-			return commerceCurrency;
-		}
-
-		throw new NoSuchCurrencyException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -278,8 +262,9 @@ public class CommerceCurrencyPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CommerceCurrency>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<CommerceCurrency, NoSuchCurrencyException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the commerce currencies where companyId = &#63;.
@@ -320,16 +305,8 @@ public class CommerceCurrencyPersistenceImpl
 			OrderByComparator<CommerceCurrency> orderByComparator)
 		throws NoSuchCurrencyException {
 
-		CommerceCurrency commerceCurrency = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (commerceCurrency != null) {
-			return commerceCurrency;
-		}
-
-		throw new NoSuchCurrencyException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -370,7 +347,7 @@ public class CommerceCurrencyPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<CommerceCurrency>
+	private UniquePersistenceFinder<CommerceCurrency, NoSuchCurrencyException>
 		_uniquePersistenceFinderByC_C;
 
 	/**
@@ -385,21 +362,8 @@ public class CommerceCurrencyPersistenceImpl
 	public CommerceCurrency findByC_C(long companyId, String code)
 		throws NoSuchCurrencyException {
 
-		CommerceCurrency commerceCurrency = fetchByC_C(companyId, code);
-
-		if (commerceCurrency == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, code});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCurrencyException(message);
-		}
-
-		return commerceCurrency;
+		return _uniquePersistenceFinderByC_C.find(
+			finderCache, new Object[] {companyId, code});
 	}
 
 	/**
@@ -447,8 +411,9 @@ public class CommerceCurrencyPersistenceImpl
 			finderCache, new Object[] {companyId, code});
 	}
 
-	private CollectionPersistenceFinder<CommerceCurrency>
-		_collectionPersistenceFinderByC_P;
+	private CollectionPersistenceFinder
+		<CommerceCurrency, NoSuchCurrencyException>
+			_collectionPersistenceFinderByC_P;
 
 	/**
 	 * Returns an ordered range of all the commerce currencies where companyId = &#63; and primary = &#63;.
@@ -491,16 +456,8 @@ public class CommerceCurrencyPersistenceImpl
 			OrderByComparator<CommerceCurrency> orderByComparator)
 		throws NoSuchCurrencyException {
 
-		CommerceCurrency commerceCurrency = fetchByC_P_First(
-			companyId, primary, orderByComparator);
-
-		if (commerceCurrency != null) {
-			return commerceCurrency;
-		}
-
-		throw new NoSuchCurrencyException(
-			_collectionPersistenceFinderByC_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, primary}));
+		return _collectionPersistenceFinderByC_P.findFirst(
+			finderCache, new Object[] {companyId, primary}, orderByComparator);
 	}
 
 	/**
@@ -545,8 +502,9 @@ public class CommerceCurrencyPersistenceImpl
 			finderCache, new Object[] {companyId, primary});
 	}
 
-	private CollectionPersistenceFinder<CommerceCurrency>
-		_collectionPersistenceFinderByC_A;
+	private CollectionPersistenceFinder
+		<CommerceCurrency, NoSuchCurrencyException>
+			_collectionPersistenceFinderByC_A;
 
 	/**
 	 * Returns an ordered range of all the commerce currencies where companyId = &#63; and active = &#63;.
@@ -589,16 +547,8 @@ public class CommerceCurrencyPersistenceImpl
 			OrderByComparator<CommerceCurrency> orderByComparator)
 		throws NoSuchCurrencyException {
 
-		CommerceCurrency commerceCurrency = fetchByC_A_First(
-			companyId, active, orderByComparator);
-
-		if (commerceCurrency != null) {
-			return commerceCurrency;
-		}
-
-		throw new NoSuchCurrencyException(
-			_collectionPersistenceFinderByC_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, active}));
+		return _collectionPersistenceFinderByC_A.findFirst(
+			finderCache, new Object[] {companyId, active}, orderByComparator);
 	}
 
 	/**
@@ -643,8 +593,9 @@ public class CommerceCurrencyPersistenceImpl
 			finderCache, new Object[] {companyId, active});
 	}
 
-	private CollectionPersistenceFinder<CommerceCurrency>
-		_collectionPersistenceFinderByC_P_A;
+	private CollectionPersistenceFinder
+		<CommerceCurrency, NoSuchCurrencyException>
+			_collectionPersistenceFinderByC_P_A;
 
 	/**
 	 * Returns an ordered range of all the commerce currencies where companyId = &#63; and primary = &#63; and active = &#63;.
@@ -689,17 +640,9 @@ public class CommerceCurrencyPersistenceImpl
 			OrderByComparator<CommerceCurrency> orderByComparator)
 		throws NoSuchCurrencyException {
 
-		CommerceCurrency commerceCurrency = fetchByC_P_A_First(
-			companyId, primary, active, orderByComparator);
-
-		if (commerceCurrency != null) {
-			return commerceCurrency;
-		}
-
-		throw new NoSuchCurrencyException(
-			_collectionPersistenceFinderByC_P_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, primary, active}));
+		return _collectionPersistenceFinderByC_P_A.findFirst(
+			finderCache, new Object[] {companyId, primary, active},
+			orderByComparator);
 	}
 
 	/**
@@ -748,7 +691,7 @@ public class CommerceCurrencyPersistenceImpl
 			finderCache, new Object[] {companyId, primary, active});
 	}
 
-	private UniquePersistenceFinder<CommerceCurrency>
+	private UniquePersistenceFinder<CommerceCurrency, NoSuchCurrencyException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -764,23 +707,8 @@ public class CommerceCurrencyPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCurrencyException {
 
-		CommerceCurrency commerceCurrency = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (commerceCurrency == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCurrencyException(message);
-		}
-
-		return commerceCurrency;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1143,9 +1071,10 @@ public class CommerceCurrencyPersistenceImpl
 			_SQL_SELECT_COMMERCECURRENCY_WHERE,
 			_SQL_COUNT_COMMERCECURRENCY_WHERE,
 			CommerceCurrencyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"commerceCurrency.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CommerceCurrency::getUuid));
+				"commerceCurrency.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, CommerceCurrency::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1169,10 +1098,11 @@ public class CommerceCurrencyPersistenceImpl
 				_SQL_SELECT_COMMERCECURRENCY_WHERE,
 				_SQL_COUNT_COMMERCECURRENCY_WHERE,
 				CommerceCurrencyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"commerceCurrency.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceCurrency::getUuid),
+					"commerceCurrency.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceCurrency::getUuid),
 				new FinderColumn<>(
 					"commerceCurrency.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceCurrency::getCompanyId));
@@ -1199,7 +1129,7 @@ public class CommerceCurrencyPersistenceImpl
 				_SQL_SELECT_COMMERCECURRENCY_WHERE,
 				_SQL_COUNT_COMMERCECURRENCY_WHERE,
 				CommerceCurrencyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"commerceCurrency.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceCurrency::getCompanyId));
@@ -1217,8 +1147,8 @@ public class CommerceCurrencyPersistenceImpl
 				"commerceCurrency.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceCurrency::getCompanyId),
 			new FinderColumn<>(
-				"commerceCurrency.", "code", FinderColumn.Type.STRING, "=",
-				true, true, CommerceCurrency::getCode));
+				"commerceCurrency.", "code", "code_", FinderColumn.Type.STRING,
+				"=", true, true, CommerceCurrency::getCode));
 
 		_collectionPersistenceFinderByC_P = new CollectionPersistenceFinder<>(
 			this,
@@ -1241,12 +1171,14 @@ public class CommerceCurrencyPersistenceImpl
 			_SQL_SELECT_COMMERCECURRENCY_WHERE,
 			_SQL_COUNT_COMMERCECURRENCY_WHERE,
 			CommerceCurrencyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"commerceCurrency.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceCurrency::getCompanyId),
 			new FinderColumn<>(
-				"commerceCurrency.", "primary", FinderColumn.Type.BOOLEAN, "=",
-				true, true, CommerceCurrency::isPrimary));
+				"commerceCurrency.", "primary", "primary_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				CommerceCurrency::isPrimary));
 
 		_collectionPersistenceFinderByC_A = new CollectionPersistenceFinder<>(
 			this,
@@ -1269,12 +1201,14 @@ public class CommerceCurrencyPersistenceImpl
 			_SQL_SELECT_COMMERCECURRENCY_WHERE,
 			_SQL_COUNT_COMMERCECURRENCY_WHERE,
 			CommerceCurrencyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"commerceCurrency.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceCurrency::getCompanyId),
 			new FinderColumn<>(
-				"commerceCurrency.", "active", FinderColumn.Type.BOOLEAN, "=",
-				true, true, CommerceCurrency::isActive));
+				"commerceCurrency.", "active", "active_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				CommerceCurrency::isActive));
 
 		_collectionPersistenceFinderByC_P_A = new CollectionPersistenceFinder<>(
 			this,
@@ -1303,15 +1237,18 @@ public class CommerceCurrencyPersistenceImpl
 			_SQL_SELECT_COMMERCECURRENCY_WHERE,
 			_SQL_COUNT_COMMERCECURRENCY_WHERE,
 			CommerceCurrencyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"commerceCurrency.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceCurrency::getCompanyId),
 			new FinderColumn<>(
-				"commerceCurrency.", "primary", FinderColumn.Type.BOOLEAN, "=",
-				true, true, CommerceCurrency::isPrimary),
+				"commerceCurrency.", "primary", "primary_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				CommerceCurrency::isPrimary),
 			new FinderColumn<>(
-				"commerceCurrency.", "active", FinderColumn.Type.BOOLEAN, "=",
-				true, true, CommerceCurrency::isActive));
+				"commerceCurrency.", "active", "active_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				CommerceCurrency::isActive));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1385,12 +1322,6 @@ public class CommerceCurrencyPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCECURRENCY_WHERE =
 		"SELECT COUNT(commerceCurrency) FROM CommerceCurrency commerceCurrency WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceCurrency exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceCurrencyPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "code", "primary", "active"});
 
@@ -1400,4 +1331,4 @@ public class CommerceCurrencyPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-83946786
+// LIFERAY-SERVICE-BUILDER-HASH:657348407

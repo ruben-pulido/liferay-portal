@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,7 +80,7 @@ public class KaleoTaskFormPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoTaskForm>
+	private CollectionPersistenceFinder<KaleoTaskForm, NoSuchTaskFormException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -123,16 +121,8 @@ public class KaleoTaskFormPersistenceImpl
 			long companyId, OrderByComparator<KaleoTaskForm> orderByComparator)
 		throws NoSuchTaskFormException {
 
-		KaleoTaskForm kaleoTaskForm = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (kaleoTaskForm != null) {
-			return kaleoTaskForm;
-		}
-
-		throw new NoSuchTaskFormException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -173,7 +163,7 @@ public class KaleoTaskFormPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<KaleoTaskForm>
+	private CollectionPersistenceFinder<KaleoTaskForm, NoSuchTaskFormException>
 		_collectionPersistenceFinderByKaleoDefinitionVersionId;
 
 	/**
@@ -215,18 +205,9 @@ public class KaleoTaskFormPersistenceImpl
 			OrderByComparator<KaleoTaskForm> orderByComparator)
 		throws NoSuchTaskFormException {
 
-		KaleoTaskForm kaleoTaskForm = fetchByKaleoDefinitionVersionId_First(
-			kaleoDefinitionVersionId, orderByComparator);
-
-		if (kaleoTaskForm != null) {
-			return kaleoTaskForm;
-		}
-
-		throw new NoSuchTaskFormException(
-			_collectionPersistenceFinderByKaleoDefinitionVersionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {kaleoDefinitionVersionId}));
+		return _collectionPersistenceFinderByKaleoDefinitionVersionId.findFirst(
+			finderCache, new Object[] {kaleoDefinitionVersionId},
+			orderByComparator);
 	}
 
 	/**
@@ -272,7 +253,7 @@ public class KaleoTaskFormPersistenceImpl
 			finderCache, new Object[] {kaleoDefinitionVersionId});
 	}
 
-	private CollectionPersistenceFinder<KaleoTaskForm>
+	private CollectionPersistenceFinder<KaleoTaskForm, NoSuchTaskFormException>
 		_collectionPersistenceFinderByKaleoNodeId;
 
 	/**
@@ -314,16 +295,8 @@ public class KaleoTaskFormPersistenceImpl
 			OrderByComparator<KaleoTaskForm> orderByComparator)
 		throws NoSuchTaskFormException {
 
-		KaleoTaskForm kaleoTaskForm = fetchByKaleoNodeId_First(
-			kaleoNodeId, orderByComparator);
-
-		if (kaleoTaskForm != null) {
-			return kaleoTaskForm;
-		}
-
-		throw new NoSuchTaskFormException(
-			_collectionPersistenceFinderByKaleoNodeId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {kaleoNodeId}));
+		return _collectionPersistenceFinderByKaleoNodeId.findFirst(
+			finderCache, new Object[] {kaleoNodeId}, orderByComparator);
 	}
 
 	/**
@@ -364,7 +337,7 @@ public class KaleoTaskFormPersistenceImpl
 			finderCache, new Object[] {kaleoNodeId});
 	}
 
-	private CollectionPersistenceFinder<KaleoTaskForm>
+	private CollectionPersistenceFinder<KaleoTaskForm, NoSuchTaskFormException>
 		_collectionPersistenceFinderByKaleoTaskId;
 
 	/**
@@ -406,16 +379,8 @@ public class KaleoTaskFormPersistenceImpl
 			OrderByComparator<KaleoTaskForm> orderByComparator)
 		throws NoSuchTaskFormException {
 
-		KaleoTaskForm kaleoTaskForm = fetchByKaleoTaskId_First(
-			kaleoTaskId, orderByComparator);
-
-		if (kaleoTaskForm != null) {
-			return kaleoTaskForm;
-		}
-
-		throw new NoSuchTaskFormException(
-			_collectionPersistenceFinderByKaleoTaskId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {kaleoTaskId}));
+		return _collectionPersistenceFinderByKaleoTaskId.findFirst(
+			finderCache, new Object[] {kaleoTaskId}, orderByComparator);
 	}
 
 	/**
@@ -456,7 +421,7 @@ public class KaleoTaskFormPersistenceImpl
 			finderCache, new Object[] {kaleoTaskId});
 	}
 
-	private UniquePersistenceFinder<KaleoTaskForm>
+	private UniquePersistenceFinder<KaleoTaskForm, NoSuchTaskFormException>
 		_uniquePersistenceFinderByFormUuid_KTI;
 
 	/**
@@ -471,23 +436,8 @@ public class KaleoTaskFormPersistenceImpl
 	public KaleoTaskForm findByFormUuid_KTI(long kaleoTaskId, String formUuid)
 		throws NoSuchTaskFormException {
 
-		KaleoTaskForm kaleoTaskForm = fetchByFormUuid_KTI(
-			kaleoTaskId, formUuid);
-
-		if (kaleoTaskForm == null) {
-			String message =
-				_uniquePersistenceFinderByFormUuid_KTI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {kaleoTaskId, formUuid});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTaskFormException(message);
-		}
-
-		return kaleoTaskForm;
+		return _uniquePersistenceFinderByFormUuid_KTI.find(
+			finderCache, new Object[] {kaleoTaskId, formUuid});
 	}
 
 	/**
@@ -840,6 +790,7 @@ public class KaleoTaskFormPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_KALEOTASKFORM_WHERE, _SQL_COUNT_KALEOTASKFORM_WHERE,
 				KaleoTaskFormModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"kaleoTaskForm.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, KaleoTaskForm::getCompanyId));
@@ -868,6 +819,7 @@ public class KaleoTaskFormPersistenceImpl
 					new String[] {"kaleoDefinitionVersionId"}, false),
 				_SQL_SELECT_KALEOTASKFORM_WHERE, _SQL_COUNT_KALEOTASKFORM_WHERE,
 				KaleoTaskFormModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"kaleoTaskForm.", "kaleoDefinitionVersionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -894,6 +846,7 @@ public class KaleoTaskFormPersistenceImpl
 					new String[] {"kaleoNodeId"}, false),
 				_SQL_SELECT_KALEOTASKFORM_WHERE, _SQL_COUNT_KALEOTASKFORM_WHERE,
 				KaleoTaskFormModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"kaleoTaskForm.", "kaleoNodeId", FinderColumn.Type.LONG,
 					"=", true, true, KaleoTaskForm::getKaleoNodeId));
@@ -919,6 +872,7 @@ public class KaleoTaskFormPersistenceImpl
 					new String[] {"kaleoTaskId"}, false),
 				_SQL_SELECT_KALEOTASKFORM_WHERE, _SQL_COUNT_KALEOTASKFORM_WHERE,
 				KaleoTaskFormModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"kaleoTaskForm.", "kaleoTaskId", FinderColumn.Type.LONG,
 					"=", true, true, KaleoTaskForm::getKaleoTaskId));
@@ -996,16 +950,10 @@ public class KaleoTaskFormPersistenceImpl
 	private static final String _SQL_COUNT_KALEOTASKFORM_WHERE =
 		"SELECT COUNT(kaleoTaskForm) FROM KaleoTaskForm kaleoTaskForm WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoTaskForm exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		KaleoTaskFormPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-399059685
+// LIFERAY-SERVICE-BUILDER-HASH:698779314

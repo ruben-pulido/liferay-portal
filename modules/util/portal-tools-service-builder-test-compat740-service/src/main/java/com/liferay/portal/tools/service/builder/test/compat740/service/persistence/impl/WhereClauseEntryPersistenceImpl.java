@@ -69,8 +69,9 @@ public class WhereClauseEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<WhereClauseEntry>
-		_collectionPersistenceFinderByName_Nickname;
+	private CollectionPersistenceFinder
+		<WhereClauseEntry, NoSuchWhereClauseEntryException>
+			_collectionPersistenceFinderByName_Nickname;
 
 	/**
 	 * Returns an ordered range of all the where clause entries where name = &#63;.
@@ -110,16 +111,8 @@ public class WhereClauseEntryPersistenceImpl
 			String name, OrderByComparator<WhereClauseEntry> orderByComparator)
 		throws NoSuchWhereClauseEntryException {
 
-		WhereClauseEntry whereClauseEntry = fetchByName_Nickname_First(
-			name, orderByComparator);
-
-		if (whereClauseEntry != null) {
-			return whereClauseEntry;
-		}
-
-		throw new NoSuchWhereClauseEntryException(
-			_collectionPersistenceFinderByName_Nickname.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name}));
+		return _collectionPersistenceFinderByName_Nickname.findFirst(
+			finderCache, new Object[] {name}, orderByComparator);
 	}
 
 	/**
@@ -361,6 +354,7 @@ public class WhereClauseEntryPersistenceImpl
 				_SQL_COUNT_WHERECLAUSEENTRY_WHERE,
 				WhereClauseEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"whereClauseEntry.nickname IS NOT NULL",
+				"whereClauseEntry.nickname IS NOT NULL", null,
 				new FinderColumn<>(
 					"whereClauseEntry.", "name", FinderColumn.Type.STRING, "=",
 					true, true, WhereClauseEntry::getName));
@@ -419,13 +413,10 @@ public class WhereClauseEntryPersistenceImpl
 	private static final String _SQL_COUNT_WHERECLAUSEENTRY_WHERE =
 		"SELECT COUNT(whereClauseEntry) FROM WhereClauseEntry whereClauseEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No WhereClauseEntry exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1285341243
+// LIFERAY-SERVICE-BUILDER-HASH:1956139003

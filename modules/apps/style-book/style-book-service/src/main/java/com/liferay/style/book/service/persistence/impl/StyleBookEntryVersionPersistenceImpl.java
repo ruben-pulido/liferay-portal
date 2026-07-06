@@ -13,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -94,8 +92,9 @@ public class StyleBookEntryVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByStyleBookEntryId;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByStyleBookEntryId;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where styleBookEntryId = &#63;.
@@ -136,17 +135,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion =
-			fetchByStyleBookEntryId_First(styleBookEntryId, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByStyleBookEntryId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {styleBookEntryId}));
+		return _collectionPersistenceFinderByStyleBookEntryId.findFirst(
+			finderCache, new Object[] {styleBookEntryId}, orderByComparator);
 	}
 
 	/**
@@ -188,8 +178,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {styleBookEntryId});
 	}
 
-	private UniquePersistenceFinder<StyleBookEntryVersion>
-		_uniquePersistenceFinderByStyleBookEntryId_Version;
+	private UniquePersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_uniquePersistenceFinderByStyleBookEntryId_Version;
 
 	/**
 	 * Returns the style book entry version where styleBookEntryId = &#63; and version = &#63; or throws a <code>NoSuchEntryVersionException</code> if it could not be found.
@@ -204,24 +195,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			long styleBookEntryId, int version)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion =
-			fetchByStyleBookEntryId_Version(styleBookEntryId, version);
-
-		if (styleBookEntryVersion == null) {
-			String message =
-				_uniquePersistenceFinderByStyleBookEntryId_Version.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {styleBookEntryId, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryVersionException(message);
-		}
-
-		return styleBookEntryVersion;
+		return _uniquePersistenceFinderByStyleBookEntryId_Version.find(
+			finderCache, new Object[] {styleBookEntryId, version});
 	}
 
 	/**
@@ -274,8 +249,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {styleBookEntryId, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where uuid = &#63;.
@@ -316,16 +292,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -367,8 +335,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByUuid_Version;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByUuid_Version;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where uuid = &#63; and version = &#63;.
@@ -411,16 +380,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByUuid_Version_First(
-			uuid, version, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByUuid_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, version}));
+		return _collectionPersistenceFinderByUuid_Version.findFirst(
+			finderCache, new Object[] {uuid, version}, orderByComparator);
 	}
 
 	/**
@@ -465,8 +426,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByUUID_G;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByUUID_G;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where uuid = &#63; and groupId = &#63;.
@@ -509,16 +471,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByUUID_G_First(
-			uuid, groupId, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId}));
+		return _collectionPersistenceFinderByUUID_G.findFirst(
+			finderCache, new Object[] {uuid, groupId}, orderByComparator);
 	}
 
 	/**
@@ -563,8 +517,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private UniquePersistenceFinder<StyleBookEntryVersion>
-		_uniquePersistenceFinderByUUID_G_Version;
+	private UniquePersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_uniquePersistenceFinderByUUID_G_Version;
 
 	/**
 	 * Returns the style book entry version where uuid = &#63; and groupId = &#63; and version = &#63; or throws a <code>NoSuchEntryVersionException</code> if it could not be found.
@@ -580,23 +535,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			String uuid, long groupId, int version)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByUUID_G_Version(
-			uuid, groupId, version);
-
-		if (styleBookEntryVersion == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G_Version.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {uuid, groupId, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryVersionException(message);
-		}
-
-		return styleBookEntryVersion;
+		return _uniquePersistenceFinderByUUID_G_Version.find(
+			finderCache, new Object[] {uuid, groupId, version});
 	}
 
 	/**
@@ -649,8 +589,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, groupId, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where uuid = &#63; and companyId = &#63;.
@@ -693,16 +634,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -747,8 +680,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByUuid_C_Version;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByUuid_C_Version;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where uuid = &#63; and companyId = &#63; and version = &#63;.
@@ -793,18 +727,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion =
-			fetchByUuid_C_Version_First(
-				uuid, companyId, version, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByUuid_C_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {uuid, companyId, version}));
+		return _collectionPersistenceFinderByUuid_C_Version.findFirst(
+			finderCache, new Object[] {uuid, companyId, version},
+			orderByComparator);
 	}
 
 	/**
@@ -855,8 +780,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63;.
@@ -897,16 +823,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -948,8 +866,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByGroupId_Version;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByGroupId_Version;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and version = &#63;.
@@ -992,16 +911,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion =
-			fetchByGroupId_Version_First(groupId, version, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByGroupId_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, version}));
+		return _collectionPersistenceFinderByGroupId_Version.findFirst(
+			finderCache, new Object[] {groupId, version}, orderByComparator);
 	}
 
 	/**
@@ -1046,8 +957,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_D;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_D;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and defaultStyleBookEntry = &#63;.
@@ -1090,17 +1002,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_D_First(
-			groupId, defaultStyleBookEntry, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_D.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, defaultStyleBookEntry}));
+		return _collectionPersistenceFinderByG_D.findFirst(
+			finderCache, new Object[] {groupId, defaultStyleBookEntry},
+			orderByComparator);
 	}
 
 	/**
@@ -1146,8 +1050,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, defaultStyleBookEntry});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_D_Version;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_D_Version;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and defaultStyleBookEntry = &#63; and version = &#63;.
@@ -1192,17 +1097,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_D_Version_First(
-			groupId, defaultStyleBookEntry, version, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_D_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, defaultStyleBookEntry, version}));
+		return _collectionPersistenceFinderByG_D_Version.findFirst(
+			finderCache, new Object[] {groupId, defaultStyleBookEntry, version},
+			orderByComparator);
 	}
 
 	/**
@@ -1257,8 +1154,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			new Object[] {groupId, defaultStyleBookEntry, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_N;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_N;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and name = &#63;.
@@ -1301,16 +1199,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_N_First(
-			groupId, name, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_N.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, name}));
+		return _collectionPersistenceFinderByG_N.findFirst(
+			finderCache, new Object[] {groupId, name}, orderByComparator);
 	}
 
 	/**
@@ -1355,8 +1245,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, name});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_N_Version;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_N_Version;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and name = &#63; and version = &#63;.
@@ -1401,17 +1292,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_N_Version_First(
-			groupId, name, version, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_N_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, name, version}));
+		return _collectionPersistenceFinderByG_N_Version.findFirst(
+			finderCache, new Object[] {groupId, name, version},
+			orderByComparator);
 	}
 
 	/**
@@ -1460,8 +1343,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, name, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_LikeN;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_LikeN;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and name = &#63;.
@@ -1504,16 +1388,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_LikeN_First(
-			groupId, name, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_LikeN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, name}));
+		return _collectionPersistenceFinderByG_LikeN.findFirst(
+			finderCache, new Object[] {groupId, name}, orderByComparator);
 	}
 
 	/**
@@ -1558,8 +1434,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, name});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_LikeN_Version;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_LikeN_Version;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and name = &#63; and version = &#63;.
@@ -1604,18 +1481,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion =
-			fetchByG_LikeN_Version_First(
-				groupId, name, version, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_LikeN_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, name, version}));
+		return _collectionPersistenceFinderByG_LikeN_Version.findFirst(
+			finderCache, new Object[] {groupId, name, version},
+			orderByComparator);
 	}
 
 	/**
@@ -1666,8 +1534,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, name, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_SBEK;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_SBEK;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and styleBookEntryKey = &#63;.
@@ -1710,17 +1579,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_SBEK_First(
-			groupId, styleBookEntryKey, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_SBEK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, styleBookEntryKey}));
+		return _collectionPersistenceFinderByG_SBEK.findFirst(
+			finderCache, new Object[] {groupId, styleBookEntryKey},
+			orderByComparator);
 	}
 
 	/**
@@ -1766,8 +1627,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, styleBookEntryKey});
 	}
 
-	private UniquePersistenceFinder<StyleBookEntryVersion>
-		_uniquePersistenceFinderByG_SBEK_Version;
+	private UniquePersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_uniquePersistenceFinderByG_SBEK_Version;
 
 	/**
 	 * Returns the style book entry version where groupId = &#63; and styleBookEntryKey = &#63; and version = &#63; or throws a <code>NoSuchEntryVersionException</code> if it could not be found.
@@ -1783,23 +1645,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			long groupId, String styleBookEntryKey, int version)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_SBEK_Version(
-			groupId, styleBookEntryKey, version);
-
-		if (styleBookEntryVersion == null) {
-			String message =
-				_uniquePersistenceFinderByG_SBEK_Version.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, styleBookEntryKey, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryVersionException(message);
-		}
-
-		return styleBookEntryVersion;
+		return _uniquePersistenceFinderByG_SBEK_Version.find(
+			finderCache, new Object[] {groupId, styleBookEntryKey, version});
 	}
 
 	/**
@@ -1856,8 +1703,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, styleBookEntryKey, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_T;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_T;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and themeId = &#63;.
@@ -1900,16 +1748,8 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_T_First(
-			groupId, themeId, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, themeId}));
+		return _collectionPersistenceFinderByG_T.findFirst(
+			finderCache, new Object[] {groupId, themeId}, orderByComparator);
 	}
 
 	/**
@@ -1954,8 +1794,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, themeId});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_T_Version;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_T_Version;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and themeId = &#63; and version = &#63;.
@@ -2000,17 +1841,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_T_Version_First(
-			groupId, themeId, version, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_T_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, themeId, version}));
+		return _collectionPersistenceFinderByG_T_Version.findFirst(
+			finderCache, new Object[] {groupId, themeId, version},
+			orderByComparator);
 	}
 
 	/**
@@ -2059,8 +1892,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, themeId, version});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_D_T;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_D_T;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and defaultStyleBookEntry = &#63; and themeId = &#63;.
@@ -2105,17 +1939,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion = fetchByG_D_T_First(
-			groupId, defaultStyleBookEntry, themeId, orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_D_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, defaultStyleBookEntry, themeId}));
+		return _collectionPersistenceFinderByG_D_T.findFirst(
+			finderCache, new Object[] {groupId, defaultStyleBookEntry, themeId},
+			orderByComparator);
 	}
 
 	/**
@@ -2170,8 +1996,9 @@ public class StyleBookEntryVersionPersistenceImpl
 			new Object[] {groupId, defaultStyleBookEntry, themeId});
 	}
 
-	private CollectionPersistenceFinder<StyleBookEntryVersion>
-		_collectionPersistenceFinderByG_D_T_Version;
+	private CollectionPersistenceFinder
+		<StyleBookEntryVersion, NoSuchEntryVersionException>
+			_collectionPersistenceFinderByG_D_T_Version;
 
 	/**
 	 * Returns an ordered range of all the style book entry versions where groupId = &#63; and defaultStyleBookEntry = &#63; and themeId = &#63; and version = &#63;.
@@ -2221,21 +2048,10 @@ public class StyleBookEntryVersionPersistenceImpl
 			OrderByComparator<StyleBookEntryVersion> orderByComparator)
 		throws NoSuchEntryVersionException {
 
-		StyleBookEntryVersion styleBookEntryVersion =
-			fetchByG_D_T_Version_First(
-				groupId, defaultStyleBookEntry, themeId, version,
-				orderByComparator);
-
-		if (styleBookEntryVersion != null) {
-			return styleBookEntryVersion;
-		}
-
-		throw new NoSuchEntryVersionException(
-			_collectionPersistenceFinderByG_D_T_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					groupId, defaultStyleBookEntry, themeId, version
-				}));
+		return _collectionPersistenceFinderByG_D_T_Version.findFirst(
+			finderCache,
+			new Object[] {groupId, defaultStyleBookEntry, themeId, version},
+			orderByComparator);
 	}
 
 	/**
@@ -2677,7 +2493,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "styleBookEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2724,10 +2540,11 @@ public class StyleBookEntryVersionPersistenceImpl
 			_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 			_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 			StyleBookEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
-				"styleBookEntryVersion.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, StyleBookEntryVersion::getUuid));
+				"styleBookEntryVersion.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				StyleBookEntryVersion::getUuid));
 
 		_collectionPersistenceFinderByUuid_Version =
 			new CollectionPersistenceFinder<>(
@@ -2758,10 +2575,11 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"styleBookEntryVersion.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, StyleBookEntryVersion::getUuid),
+					"styleBookEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					StyleBookEntryVersion::getUuid),
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "version",
 					FinderColumn.Type.INTEGER, "=", true, true,
@@ -2789,10 +2607,11 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"styleBookEntryVersion.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, StyleBookEntryVersion::getUuid),
+					"styleBookEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					StyleBookEntryVersion::getUuid),
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId));
@@ -2812,8 +2631,9 @@ public class StyleBookEntryVersionPersistenceImpl
 					StyleBookEntryVersion::getVersion),
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE, "",
 				new FinderColumn<>(
-					"styleBookEntryVersion.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, StyleBookEntryVersion::getUuid),
+					"styleBookEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					StyleBookEntryVersion::getUuid),
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -2844,10 +2664,11 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"styleBookEntryVersion.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, StyleBookEntryVersion::getUuid),
+					"styleBookEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					StyleBookEntryVersion::getUuid),
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2887,10 +2708,11 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"styleBookEntryVersion.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, StyleBookEntryVersion::getUuid),
+					"styleBookEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					StyleBookEntryVersion::getUuid),
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2922,7 +2744,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId));
@@ -2956,7 +2778,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -2986,7 +2808,7 @@ public class StyleBookEntryVersionPersistenceImpl
 			_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 			_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 			StyleBookEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3035,7 +2857,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3069,7 +2891,7 @@ public class StyleBookEntryVersionPersistenceImpl
 			_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 			_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 			StyleBookEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3110,7 +2932,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3144,7 +2966,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3186,7 +3008,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3222,7 +3044,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3279,7 +3101,7 @@ public class StyleBookEntryVersionPersistenceImpl
 			_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 			_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 			StyleBookEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3320,7 +3142,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3363,7 +3185,7 @@ public class StyleBookEntryVersionPersistenceImpl
 			_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 			_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 			StyleBookEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3416,7 +3238,7 @@ public class StyleBookEntryVersionPersistenceImpl
 				_SQL_SELECT_STYLEBOOKENTRYVERSION_WHERE,
 				_SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE,
 				StyleBookEntryVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"styleBookEntryVersion.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, StyleBookEntryVersion::getGroupId),
@@ -3490,12 +3312,6 @@ public class StyleBookEntryVersionPersistenceImpl
 	private static final String _SQL_COUNT_STYLEBOOKENTRYVERSION_WHERE =
 		"SELECT COUNT(styleBookEntryVersion) FROM StyleBookEntryVersion styleBookEntryVersion WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No StyleBookEntryVersion exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		StyleBookEntryVersionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -3505,4 +3321,4 @@ public class StyleBookEntryVersionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1722424607
+// LIFERAY-SERVICE-BUILDER-HASH:852721475

@@ -112,11 +112,7 @@ public class PatcherBuildPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		PatcherBuild newPatcherBuild = _persistence.create(pk);
-
-		newPatcherBuild.setMvccVersion(RandomTestUtil.nextLong());
+		PatcherBuild newPatcherBuild = addPatcherBuild();
 
 		newPatcherBuild.setCompanyId(RandomTestUtil.nextLong());
 
@@ -196,7 +192,9 @@ public class PatcherBuildPersistenceTest {
 
 		newPatcherBuild.setStatusDate(RandomTestUtil.nextDate());
 
-		_patcherBuilds.add(_persistence.update(newPatcherBuild));
+		newPatcherBuild = _persistence.update(newPatcherBuild);
+
+		_patcherBuilds.add(newPatcherBuild);
 
 		PatcherBuild existingPatcherBuild = _persistence.findByPrimaryKey(
 			newPatcherBuild.getPrimaryKey());
@@ -776,8 +774,6 @@ public class PatcherBuildPersistenceTest {
 
 		PatcherBuild patcherBuild = _persistence.create(pk);
 
-		patcherBuild.setMvccVersion(RandomTestUtil.nextLong());
-
 		patcherBuild.setCompanyId(RandomTestUtil.nextLong());
 
 		patcherBuild.setUserId(RandomTestUtil.nextLong());
@@ -865,4 +861,4 @@ public class PatcherBuildPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:519705364
+// LIFERAY-SERVICE-BUILDER-HASH:1067061418

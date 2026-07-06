@@ -72,12 +72,21 @@ public class InvokerFilterChain implements FilterChain {
 				Filter filter = _filters.get(_index++);
 
 				if (filter instanceof LiferayFilter) {
+					boolean filterEnabled = false;
+
 					LiferayFilter liferayFilter = (LiferayFilter)filter;
 
-					if (!liferayFilter.isFilterEnabled() ||
-						!liferayFilter.isFilterEnabled(
-							httpServletRequest, httpServletResponse)) {
+					try {
+						filterEnabled =
+							liferayFilter.isFilterEnabled() &&
+							liferayFilter.isFilterEnabled(
+								httpServletRequest, httpServletResponse);
+					}
+					catch (Exception exception) {
+						throw new ServletException(exception);
+					}
 
+					if (!filterEnabled) {
 						if (_log.isDebugEnabled()) {
 							_log.debug(
 								"Skip disabled filter " + filter.getClass());

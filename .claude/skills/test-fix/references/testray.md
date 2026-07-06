@@ -8,18 +8,7 @@ Pull a single Testray case result through the REST API at `https://testray.lifer
 
 ## Authentication
 
-Fetch a bearer token once per run via the OAuth2 client credentials grant and reuse it for every call:
-
-```bash
-export ACCESS_TOKEN=$(curl \
-	--data "grant_type=client_credentials" \
-	--header "Authorization: Basic $(printf '%s:%s' "${TESTRAY_CLIENT_ID}" "${TESTRAY_CLIENT_SECRET}" | base64 --wrap 0)" \
-	--header "Content-Type: application/x-www-form-urlencoded" \
-	--request POST \
-	--silent \
-	--url "https://testray.liferay.com/o/oauth2/token" \
-	| jq --raw-output '.access_token')
-```
+Obtain a bearer token once per run through the OAuth2 client credentials grant at `https://testray.liferay.com/o/oauth2/token`, authenticating with `${TESTRAY_CLIENT_ID}` and `${TESTRAY_CLIENT_SECRET}` as HTTP Basic credentials. Read the `access_token` from the JSON response, store it in `${ACCESS_TOKEN}`, and present it as a `Bearer` token on every subsequent request.
 
 ## Resolve a Test Name to a Case Result ID
 
@@ -77,7 +66,7 @@ Skip when the input is not a Testray build URL. Otherwise, pick the first unclai
 
 Parse `<buildId>` from the URL path and read `<teamIds>` from `filter.testrayTeamIds` when present in the query string. Print the resulting `<buildId>` and `<teamIds>` before running any query, so the parse is auditable rather than asserted.
 
-1. List failed case results on the build, newest first. Append the team predicate only when `<teamIds>` is non-empty, joining multiple IDs with `or`:
+1. List failed case results on the build, newest first. Append the team predicate only when `<teamIds>` is nonempty, joining multiple IDs with `or`:
 
 	```bash
 	curl \
@@ -103,7 +92,7 @@ curl \
 	--url "https://testray.liferay.com/o/c/caseresults/<caseResultId>"
 ```
 
-When `dueStatus.key` is `PASSED`, return only **Name** below; the rest are skipped. Otherwise, return all five fields.
+When `dueStatus.key` is `PASSED` or `BLOCKED`, return only **Name** and that `dueStatus`; the rest are skipped. Otherwise, return all fields.
 
 ### Name
 
@@ -147,11 +136,11 @@ curl \
 
 ### Error Trace
 
-The `errors` field of the case result.
+Return the `errors` field of the case result.
 
 ### Failure Date
 
-The `dateCreated` field of the case result.
+Return the `dateCreated` field of the case result.
 
 ### Last Pass SHA and First Fail SHA
 
@@ -177,3 +166,7 @@ Filter to entries where `testrayRoutineId` equals `<routineId>` and walk newest-
 - `lastPassSha` is the `gitHash` of the first entry whose `status` is `PASSED`, or `null` if none.
 
 - `firstFailSha` is the `gitHash` of the oldest entry whose `status` is `FAILED` before that `PASSED`, or `null` if none.
+
+### Build SHA
+
+The `gitHash` of the build the case result belongs to — the commit the failing build was actually tested against, distinct from `firstFailSha` because later failing builds run against newer commits. Read it from the same `/o/c/builds/<buildId>` fetch used to resolve `<routineId>` above.

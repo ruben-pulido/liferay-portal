@@ -1,0 +1,19 @@
+{
+	"properties": {
+		"body": {
+			"properties": {
+				"externalReferenceCode": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+		}
+	},
+	"required": [
+		"body"
+	],
+	"type": "object"
+}

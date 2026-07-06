@@ -28,6 +28,7 @@ import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.asset.list.util.comparator.ClassNameModelResourceComparator;
 import com.liferay.asset.util.AssetRendererFactoryWrapper;
+import com.liferay.batch.engine.language.LanguageKeyResolver;
 import com.liferay.batch.engine.unit.BatchEngineUnitThreadLocal;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
@@ -308,6 +309,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		KnowledgeBaseArticleResource.Factory
 			knowledgeBaseArticleResourceFactory,
 		KnowledgeBaseFolderResource.Factory knowledgeBaseFolderResourceFactory,
+		LanguageKeyResolver languageKeyResolver,
 		LayoutLocalService layoutLocalService,
 		LayoutPageTemplateEntryLocalService layoutPageTemplateEntryLocalService,
 		LayoutsImporter layoutsImporter,
@@ -401,6 +403,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			knowledgeBaseArticleResourceFactory;
 		_knowledgeBaseFolderResourceFactory =
 			knowledgeBaseFolderResourceFactory;
+		_languageKeyResolver = languageKeyResolver;
 		_layoutLocalService = layoutLocalService;
 		_layoutPageTemplateEntryLocalService =
 			layoutPageTemplateEntryLocalService;
@@ -1053,6 +1056,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 					existingKeyword = page.fetchFirstItem();
 				}
 				else {
+					groupId = serviceContext.getScopeGroupId();
+
 					Page<Keyword> page = keywordResource.getSiteKeywordsPage(
 						groupId, null, null,
 						keywordResource.toFilter(
@@ -1060,8 +1065,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 						null, null);
 
 					existingKeyword = page.fetchFirstItem();
-
-					groupId = serviceContext.getScopeGroupId();
 				}
 
 				if (existingKeyword != null) {
@@ -1111,6 +1114,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				json = _replace(
 					SiteInitializerUtil.replace(json, serviceContext),
 					stringUtilReplaceValues);
+
+				JSONObject pageDefinitionJSONObject =
+					_jsonFactory.createJSONObject(json);
+
+				_languageKeyResolver.expand(
+					serviceContext.getCompanyId(), pageDefinitionJSONObject);
+
+				json = pageDefinitionJSONObject.toString();
 
 				String css = _replace(
 					SiteInitializerUtil.read(
@@ -1183,6 +1194,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				json = _replace(
 					SiteInitializerUtil.replace(json, serviceContext),
 					stringUtilReplaceValues);
+
+				JSONObject pageDefinitionJSONObject =
+					_jsonFactory.createJSONObject(json);
+
+				_languageKeyResolver.expand(
+					serviceContext.getCompanyId(), pageDefinitionJSONObject);
+
+				json = pageDefinitionJSONObject.toString();
 
 				String css = _replace(
 					SiteInitializerUtil.read(
@@ -1271,6 +1290,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				resourcePath, _servletContext);
 
 			json = _replace(json, stringUtilReplaceValues);
+
+			JSONObject objectDefinitionJSONObject =
+				_jsonFactory.createJSONObject(json);
+
+			_languageKeyResolver.expand(
+				serviceContext.getCompanyId(), objectDefinitionJSONObject);
+
+			json = objectDefinitionJSONObject.toString();
 
 			ObjectDefinition objectDefinition = ObjectDefinition.toDTO(json);
 
@@ -2784,6 +2811,33 @@ public class BundleSiteInitializer implements SiteInitializer {
 			pageJSONObject.getBoolean("private"),
 			pageJSONObject.getString("friendlyURL"));
 
+		if (Objects.equals(type, LayoutConstants.TYPE_PORTLET) &&
+			((layout == null) ||
+			 !Objects.equals(layout.getType(), LayoutConstants.TYPE_PORTLET))) {
+
+			if (!FeatureFlagManagerUtil.isEnabled(
+					serviceContext.getCompanyId(), "LPD-76864")) {
+
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						StringBundler.concat(
+							"Skipping page with friendly URL ",
+							pageJSONObject.getString("friendlyURL"),
+							" and any associated child pages because widget ",
+							"pages are deprecated"));
+				}
+
+				return Collections.emptyMap();
+			}
+
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					"Widget page with friendly URL " +
+						pageJSONObject.getString("friendlyURL") +
+							" is deprecated");
+			}
+		}
+
 		if ((layout != null) && !Objects.equals(layout.getType(), type)) {
 			_layoutLocalService.deleteLayout(layout);
 
@@ -2805,6 +2859,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				type, pageJSONObject.getBoolean("hidden"),
 				layout.getFriendlyURLMap(), layout.getIconImage(), null,
 				layout.getStyleBookEntryERC(),
+				layout.getStyleBookEntryScopeERC(),
 				pageJSONObject.getString("faviconFileEntryERC"),
 				pageJSONObject.getString("faviconFileEntryScopeERC"),
 				layout.getMasterLayoutPageTemplateEntryERC(), serviceContext);
@@ -2917,6 +2972,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		JSONObject pageDefinitionJSONObject = _jsonFactory.createJSONObject(
 			json);
+
+		_languageKeyResolver.expand(
+			serviceContext.getCompanyId(), pageDefinitionJSONObject);
 
 		if (!Objects.equals(type, LayoutConstants.TYPE_CONTENT) &&
 			!Objects.equals(type, LayoutConstants.TYPE_UTILITY)) {
@@ -3784,7 +3842,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				if (jsonObject.getInt("type") == RoleConstants.TYPE_ACCOUNT) {
 					com.liferay.account.model.AccountRole accountRole =
 						_accountRoleLocalService.addAccountRole(
-							null, serviceContext.getUserId(),
+							jsonObject.getString("externalReferenceCode"),
+							serviceContext.getUserId(),
 							AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT,
 							jsonObject.getString("name"),
 							SiteInitializerUtil.toMap(
@@ -3796,7 +3855,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				}
 				else {
 					role = _roleLocalService.addRole(
-						null, serviceContext.getUserId(), null, 0,
+						jsonObject.getString("externalReferenceCode"),
+						serviceContext.getUserId(), null, 0,
 						jsonObject.getString("name"),
 						SiteInitializerUtil.toMap(
 							jsonObject.getString("name_i18n")),
@@ -5416,14 +5476,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 			addLayoutPageTemplatesR,
 			_dependsOn(
 				addOrUpdateBlogPostingsR, addCPDefinitionsR,
-				addOrUpdateClientExtensionEntriesR, addOrUpdateJournalArticlesR,
-				addOrUpdateSXPBlueprintR)
+				addOrUpdateClientExtensionEntriesR, addFragmentEntriesR,
+				addOrUpdateJournalArticlesR, addOrUpdateSXPBlueprintR)
 		).put(
 			addLayoutUtilityPageEntriesR,
 			_dependsOn(
 				addOrUpdateBlogPostingsR, addCPDefinitionsR,
-				addOrUpdateClientExtensionEntriesR, addOrUpdateJournalArticlesR,
-				addOrUpdateSXPBlueprintR)
+				addOrUpdateClientExtensionEntriesR, addFragmentEntriesR,
+				addOrUpdateJournalArticlesR, addOrUpdateSXPBlueprintR)
 		).put(
 			addObjectDefinitionsR,
 			_dependsOn(
@@ -5465,7 +5525,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			addOrUpdateKnowledgeBaseArticlesR,
 			_dependsOn(addOrUpdateExpandoColumnsR)
 		).put(
-			addOrUpdateLayoutsContentR, _dependsOn(addLayoutPageTemplatesR)
+			addOrUpdateLayoutsContentR,
+			_dependsOn(addFragmentEntriesR, addLayoutPageTemplatesR)
 		).put(
 			addOrUpdateLayoutsR, _dependsOn(addOrUpdateRolesR)
 		).put(
@@ -6228,6 +6289,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_knowledgeBaseArticleResourceFactory;
 	private final KnowledgeBaseFolderResource.Factory
 		_knowledgeBaseFolderResourceFactory;
+	private final LanguageKeyResolver _languageKeyResolver;
 	private final LayoutLocalService _layoutLocalService;
 	private final LayoutPageTemplateEntryLocalService
 		_layoutPageTemplateEntryLocalService;

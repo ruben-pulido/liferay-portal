@@ -112,9 +112,7 @@ public class ERCCompanyEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ERCCompanyEntry newERCCompanyEntry = _persistence.create(pk);
+		ERCCompanyEntry newERCCompanyEntry = addERCCompanyEntry();
 
 		newERCCompanyEntry.setUuid(RandomTestUtil.randomString());
 
@@ -129,7 +127,9 @@ public class ERCCompanyEntryPersistenceTest {
 
 		newERCCompanyEntry.setColumn1(RandomTestUtil.nextInt());
 
-		_ercCompanyEntries.add(_persistence.update(newERCCompanyEntry));
+		newERCCompanyEntry = _persistence.update(newERCCompanyEntry);
+
+		_ercCompanyEntries.add(newERCCompanyEntry);
 
 		ERCCompanyEntry existingERCCompanyEntry = _persistence.findByPrimaryKey(
 			newERCCompanyEntry.getPrimaryKey());
@@ -542,4 +542,4 @@ public class ERCCompanyEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1236063282
+// LIFERAY-SERVICE-BUILDER-HASH:-1827410722

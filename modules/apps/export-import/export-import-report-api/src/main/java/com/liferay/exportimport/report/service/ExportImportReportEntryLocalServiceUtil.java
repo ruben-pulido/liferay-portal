@@ -36,27 +36,6 @@ public class ExportImportReportEntryLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>com.liferay.exportimport.report.service.impl.ExportImportReportEntryLocalServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static ExportImportReportEntry addEmptyExportImportReportEntry(
-		long groupId, long companyId, String classExternalReferenceCode,
-		long classNameId, long exportImportConfigurationId,
-		String modelNameLanguageKey) {
-
-		return getService().addEmptyExportImportReportEntry(
-			groupId, companyId, classExternalReferenceCode, classNameId,
-			exportImportConfigurationId, modelNameLanguageKey);
-	}
-
-	public static ExportImportReportEntry addErrorExportImportReportEntry(
-		long groupId, long companyId, String classExternalReferenceCode,
-		long classNameId, long classPK, long exportImportConfigurationId,
-		String errorMessage, String errorStacktrace,
-		String modelNameLanguageKey) {
-
-		return getService().addErrorExportImportReportEntry(
-			groupId, companyId, classExternalReferenceCode, classNameId,
-			classPK, exportImportConfigurationId, errorMessage, errorStacktrace,
-			modelNameLanguageKey);
-	}
 
 	/**
 	 * Adds the export import report entry to the database. Also notifies the appropriate model listeners.
@@ -72,6 +51,18 @@ public class ExportImportReportEntryLocalServiceUtil {
 		ExportImportReportEntry exportImportReportEntry) {
 
 		return getService().addExportImportReportEntry(exportImportReportEntry);
+	}
+
+	public static ExportImportReportEntry addExportImportReportEntry(
+		long groupId, long companyId, String classExternalReferenceCode,
+		long classNameId, long classPK, long exportImportConfigurationId,
+		int type, String message, String errorStacktrace,
+		String modelNameLanguageKey) {
+
+		return getService().addExportImportReportEntry(
+			groupId, companyId, classExternalReferenceCode, classNameId,
+			classPK, exportImportConfigurationId, type, message,
+			errorStacktrace, modelNameLanguageKey);
 	}
 
 	/**
@@ -303,26 +294,16 @@ public class ExportImportReportEntryLocalServiceUtil {
 		return getService().getIndexableActionableDynamicQuery();
 	}
 
-	public static ExportImportReportEntry getOrAddEmptyExportImportReportEntry(
-		long groupId, long companyId, String classExternalReferenceCode,
-		long classNameId, long exportImportConfigurationId,
-		String modelNameLanguageKey) {
-
-		return getService().getOrAddEmptyExportImportReportEntry(
-			groupId, companyId, classExternalReferenceCode, classNameId,
-			exportImportConfigurationId, modelNameLanguageKey);
-	}
-
-	public static ExportImportReportEntry getOrAddErrorExportImportReportEntry(
+	public static ExportImportReportEntry getOrAddExportImportReportEntry(
 		long groupId, long companyId, String classExternalReferenceCode,
 		long classNameId, long classPK, long exportImportConfigurationId,
-		String errorMessage, String errorStacktrace,
+		int type, String message, String errorStacktrace,
 		String modelNameLanguageKey) {
 
-		return getService().getOrAddErrorExportImportReportEntry(
+		return getService().getOrAddExportImportReportEntry(
 			groupId, companyId, classExternalReferenceCode, classNameId,
-			classPK, exportImportConfigurationId, errorMessage, errorStacktrace,
-			modelNameLanguageKey);
+			classPK, exportImportConfigurationId, type, message,
+			errorStacktrace, modelNameLanguageKey);
 	}
 
 	/**
@@ -379,4 +360,4 @@ public class ExportImportReportEntryLocalServiceUtil {
 			ExportImportReportEntryLocalService.class);
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1063489840
+// LIFERAY-SERVICE-BUILDER-HASH:-1789136324

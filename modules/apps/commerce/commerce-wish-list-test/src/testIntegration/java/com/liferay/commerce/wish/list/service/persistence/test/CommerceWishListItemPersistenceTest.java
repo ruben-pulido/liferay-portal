@@ -115,11 +115,8 @@ public class CommerceWishListItemPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CommerceWishListItem newCommerceWishListItem = _persistence.create(pk);
-
-		newCommerceWishListItem.setMvccVersion(RandomTestUtil.nextLong());
+		CommerceWishListItem newCommerceWishListItem =
+			addCommerceWishListItem();
 
 		newCommerceWishListItem.setGroupId(RandomTestUtil.nextLong());
 
@@ -143,8 +140,9 @@ public class CommerceWishListItemPersistenceTest {
 
 		newCommerceWishListItem.setJson(RandomTestUtil.randomString());
 
-		_commerceWishListItems.add(
-			_persistence.update(newCommerceWishListItem));
+		newCommerceWishListItem = _persistence.update(newCommerceWishListItem);
+
+		_commerceWishListItems.add(newCommerceWishListItem);
 
 		CommerceWishListItem existingCommerceWishListItem =
 			_persistence.findByPrimaryKey(
@@ -588,8 +586,6 @@ public class CommerceWishListItemPersistenceTest {
 
 		CommerceWishListItem commerceWishListItem = _persistence.create(pk);
 
-		commerceWishListItem.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceWishListItem.setGroupId(RandomTestUtil.nextLong());
 
 		commerceWishListItem.setCompanyId(RandomTestUtil.nextLong());
@@ -621,4 +617,4 @@ public class CommerceWishListItemPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:124842561
+// LIFERAY-SERVICE-BUILDER-HASH:1661026957

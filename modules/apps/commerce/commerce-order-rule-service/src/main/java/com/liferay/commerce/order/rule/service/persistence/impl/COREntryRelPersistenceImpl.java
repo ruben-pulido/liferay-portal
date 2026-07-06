@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -75,7 +73,7 @@ public class COREntryRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<COREntryRel>
+	private CollectionPersistenceFinder<COREntryRel, NoSuchCOREntryRelException>
 		_collectionPersistenceFinderByCOREntryId;
 
 	/**
@@ -116,16 +114,8 @@ public class COREntryRelPersistenceImpl
 			long COREntryId, OrderByComparator<COREntryRel> orderByComparator)
 		throws NoSuchCOREntryRelException {
 
-		COREntryRel corEntryRel = fetchByCOREntryId_First(
-			COREntryId, orderByComparator);
-
-		if (corEntryRel != null) {
-			return corEntryRel;
-		}
-
-		throw new NoSuchCOREntryRelException(
-			_collectionPersistenceFinderByCOREntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {COREntryId}));
+		return _collectionPersistenceFinderByCOREntryId.findFirst(
+			finderCache, new Object[] {COREntryId}, orderByComparator);
 	}
 
 	/**
@@ -166,7 +156,7 @@ public class COREntryRelPersistenceImpl
 			finderCache, new Object[] {COREntryId});
 	}
 
-	private CollectionPersistenceFinder<COREntryRel>
+	private CollectionPersistenceFinder<COREntryRel, NoSuchCOREntryRelException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -210,17 +200,9 @@ public class COREntryRelPersistenceImpl
 			OrderByComparator<COREntryRel> orderByComparator)
 		throws NoSuchCOREntryRelException {
 
-		COREntryRel corEntryRel = fetchByC_C_First(
-			classNameId, COREntryId, orderByComparator);
-
-		if (corEntryRel != null) {
-			return corEntryRel;
-		}
-
-		throw new NoSuchCOREntryRelException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, COREntryId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, COREntryId},
+			orderByComparator);
 	}
 
 	/**
@@ -266,7 +248,7 @@ public class COREntryRelPersistenceImpl
 			finderCache, new Object[] {classNameId, COREntryId});
 	}
 
-	private UniquePersistenceFinder<COREntryRel>
+	private UniquePersistenceFinder<COREntryRel, NoSuchCOREntryRelException>
 		_uniquePersistenceFinderByC_C_C;
 
 	/**
@@ -283,23 +265,8 @@ public class COREntryRelPersistenceImpl
 			long classNameId, long classPK, long COREntryId)
 		throws NoSuchCOREntryRelException {
 
-		COREntryRel corEntryRel = fetchByC_C_C(
-			classNameId, classPK, COREntryId);
-
-		if (corEntryRel == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK, COREntryId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCOREntryRelException(message);
-		}
-
-		return corEntryRel;
+		return _uniquePersistenceFinderByC_C_C.find(
+			finderCache, new Object[] {classNameId, classPK, COREntryId});
 	}
 
 	/**
@@ -572,6 +539,7 @@ public class COREntryRelPersistenceImpl
 					new String[] {"COREntryId"}, false),
 				_SQL_SELECT_CORENTRYREL_WHERE, _SQL_COUNT_CORENTRYREL_WHERE,
 				COREntryRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"corEntryRel.", "COREntryId", FinderColumn.Type.LONG, "=",
 					true, true, COREntryRel::getCOREntryId));
@@ -595,7 +563,8 @@ public class COREntryRelPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"classNameId", "COREntryId"}, false),
 			_SQL_SELECT_CORENTRYREL_WHERE, _SQL_COUNT_CORENTRYREL_WHERE,
-			COREntryRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			COREntryRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"corEntryRel.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, COREntryRel::getClassNameId),
@@ -679,16 +648,10 @@ public class COREntryRelPersistenceImpl
 	private static final String _SQL_COUNT_CORENTRYREL_WHERE =
 		"SELECT COUNT(corEntryRel) FROM COREntryRel corEntryRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No COREntryRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		COREntryRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2085641465
+// LIFERAY-SERVICE-BUILDER-HASH:-1981025977

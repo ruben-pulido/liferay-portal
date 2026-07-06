@@ -109,11 +109,7 @@ public class DDMFieldAttributePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DDMFieldAttribute newDDMFieldAttribute = _persistence.create(pk);
-
-		newDDMFieldAttribute.setMvccVersion(RandomTestUtil.nextLong());
+		DDMFieldAttribute newDDMFieldAttribute = addDDMFieldAttribute();
 
 		newDDMFieldAttribute.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -133,7 +129,9 @@ public class DDMFieldAttributePersistenceTest {
 		newDDMFieldAttribute.setSmallAttributeValue(
 			RandomTestUtil.randomString());
 
-		_ddmFieldAttributes.add(_persistence.update(newDDMFieldAttribute));
+		newDDMFieldAttribute = _persistence.update(newDDMFieldAttribute);
+
+		_ddmFieldAttributes.add(newDDMFieldAttribute);
 
 		DDMFieldAttribute existingDDMFieldAttribute =
 			_persistence.findByPrimaryKey(newDDMFieldAttribute.getPrimaryKey());
@@ -520,8 +518,6 @@ public class DDMFieldAttributePersistenceTest {
 
 		DDMFieldAttribute ddmFieldAttribute = _persistence.create(pk);
 
-		ddmFieldAttribute.setMvccVersion(RandomTestUtil.nextLong());
-
 		ddmFieldAttribute.setCtCollectionId(RandomTestUtil.nextLong());
 
 		ddmFieldAttribute.setCompanyId(RandomTestUtil.nextLong());
@@ -549,4 +545,4 @@ public class DDMFieldAttributePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1678931277
+// LIFERAY-SERVICE-BUILDER-HASH:1375402831

@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -79,8 +77,9 @@ public class DDMTemplateLinkPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDMTemplateLink>
-		_collectionPersistenceFinderByTemplateId;
+	private CollectionPersistenceFinder
+		<DDMTemplateLink, NoSuchTemplateLinkException>
+			_collectionPersistenceFinderByTemplateId;
 
 	/**
 	 * Returns an ordered range of all the ddm template links where templateId = &#63;.
@@ -121,16 +120,8 @@ public class DDMTemplateLinkPersistenceImpl
 			OrderByComparator<DDMTemplateLink> orderByComparator)
 		throws NoSuchTemplateLinkException {
 
-		DDMTemplateLink ddmTemplateLink = fetchByTemplateId_First(
-			templateId, orderByComparator);
-
-		if (ddmTemplateLink != null) {
-			return ddmTemplateLink;
-		}
-
-		throw new NoSuchTemplateLinkException(
-			_collectionPersistenceFinderByTemplateId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {templateId}));
+		return _collectionPersistenceFinderByTemplateId.findFirst(
+			finderCache, new Object[] {templateId}, orderByComparator);
 	}
 
 	/**
@@ -171,8 +162,9 @@ public class DDMTemplateLinkPersistenceImpl
 			finderCache, new Object[] {templateId});
 	}
 
-	private UniquePersistenceFinder<DDMTemplateLink>
-		_uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder
+		<DDMTemplateLink, NoSuchTemplateLinkException>
+			_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the ddm template link where classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchTemplateLinkException</code> if it could not be found.
@@ -186,22 +178,8 @@ public class DDMTemplateLinkPersistenceImpl
 	public DDMTemplateLink findByC_C(long classNameId, long classPK)
 		throws NoSuchTemplateLinkException {
 
-		DDMTemplateLink ddmTemplateLink = fetchByC_C(classNameId, classPK);
-
-		if (ddmTemplateLink == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateLinkException(message);
-		}
-
-		return ddmTemplateLink;
+		return _uniquePersistenceFinderByC_C.find(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -515,7 +493,7 @@ public class DDMTemplateLinkPersistenceImpl
 				_SQL_SELECT_DDMTEMPLATELINK_WHERE,
 				_SQL_COUNT_DDMTEMPLATELINK_WHERE,
 				DDMTemplateLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"ddmTemplateLink.", "templateId", FinderColumn.Type.LONG,
 					"=", true, true, DDMTemplateLink::getTemplateId));
@@ -592,16 +570,10 @@ public class DDMTemplateLinkPersistenceImpl
 	private static final String _SQL_COUNT_DDMTEMPLATELINK_WHERE =
 		"SELECT COUNT(ddmTemplateLink) FROM DDMTemplateLink ddmTemplateLink WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMTemplateLink exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMTemplateLinkPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:166280932
+// LIFERAY-SERVICE-BUILDER-HASH:1450186856

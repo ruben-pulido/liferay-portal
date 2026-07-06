@@ -111,11 +111,7 @@ public class ObjectEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ObjectEntry newObjectEntry = _persistence.create(pk);
-
-		newObjectEntry.setMvccVersion(RandomTestUtil.nextLong());
+		ObjectEntry newObjectEntry = addObjectEntry();
 
 		newObjectEntry.setUuid(RandomTestUtil.randomString());
 
@@ -163,7 +159,9 @@ public class ObjectEntryPersistenceTest {
 
 		newObjectEntry.setStatusDate(RandomTestUtil.nextDate());
 
-		_objectEntries.add(_persistence.update(newObjectEntry));
+		newObjectEntry = _persistence.update(newObjectEntry);
+
+		_objectEntries.add(newObjectEntry);
 
 		ObjectEntry existingObjectEntry = _persistence.findByPrimaryKey(
 			newObjectEntry.getPrimaryKey());
@@ -699,8 +697,6 @@ public class ObjectEntryPersistenceTest {
 
 		ObjectEntry objectEntry = _persistence.create(pk);
 
-		objectEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectEntry.setUuid(RandomTestUtil.randomString());
 
 		objectEntry.setExternalReferenceCode(RandomTestUtil.randomString());
@@ -757,4 +753,4 @@ public class ObjectEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:82563930
+// LIFERAY-SERVICE-BUILDER-HASH:1461355312

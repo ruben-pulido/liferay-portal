@@ -166,7 +166,8 @@ public class ObjectRelationshipLocalServiceImpl
 			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId2),
 			0, ObjectRelationshipConstants.DELETION_TYPE_PREVENT, false,
 			LocalizedMapUtil.getLocalizedMap(externalReferenceCode),
-			objectFieldName.split(StringPool.UNDERLINE)[1], false, false,
+			objectFieldName.split(StringPool.UNDERLINE)[1], false,
+			objectField.isSystem(),
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY, objectField);
 	}
 
@@ -816,6 +817,14 @@ public class ObjectRelationshipLocalServiceImpl
 
 	@Override
 	public List<ObjectRelationship> getObjectRelationships(
+		long objectDefinitionId1, boolean reverse, String type) {
+
+		return objectRelationshipPersistence.findByODI1_R_T(
+			objectDefinitionId1, reverse, type);
+	}
+
+	@Override
+	public List<ObjectRelationship> getObjectRelationships(
 		long objectDefinitionId1, int start, int end) {
 
 		return objectRelationshipPersistence.findByObjectDefinitionId1(
@@ -904,10 +913,12 @@ public class ObjectRelationshipLocalServiceImpl
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		List<ObjectRelationship> objectRelationships) {
 
+		long objectDefinitionId = objectDefinition1.getObjectDefinitionId();
+
 		if (objectRelationships == null) {
 			objectRelationships =
-				objectRelationshipLocalService.getObjectRelationships(
-					objectDefinition1.getObjectDefinitionId());
+				objectRelationshipLocalService.getAllObjectRelationships(
+					objectDefinitionId);
 		}
 
 		for (ObjectRelationship objectRelationship : objectRelationships) {
@@ -918,22 +929,37 @@ public class ObjectRelationshipLocalServiceImpl
 			}
 
 			try {
-				ObjectDefinition objectDefinition2 =
-					objectDefinitionLocalService.getObjectDefinition(
-						objectRelationship.getObjectDefinitionId2());
+				if (objectRelationship.getObjectDefinitionId1() ==
+						objectDefinitionId) {
 
-				_registerRelatedInfoItemCollectionProvider(
-					objectDefinition1, objectDefinition2, objectRelationship);
-
-				if (Objects.equals(
-						objectRelationship.getType(),
-						ObjectRelationshipConstants.TYPE_MANY_TO_MANY)) {
+					ObjectDefinition objectDefinition2 =
+						objectDefinitionLocalService.getObjectDefinition(
+							objectRelationship.getObjectDefinitionId2());
 
 					_registerRelatedInfoItemCollectionProvider(
-						objectDefinition2, objectDefinition1,
-						objectRelationshipLocalService.getObjectRelationship(
-							objectRelationship.getObjectDefinitionId2(),
-							objectRelationship.getName()));
+						objectDefinition1, objectDefinition2,
+						objectRelationship);
+
+					if (Objects.equals(
+							objectRelationship.getType(),
+							ObjectRelationshipConstants.TYPE_MANY_TO_MANY)) {
+
+						_registerRelatedInfoItemCollectionProvider(
+							objectDefinition2, objectDefinition1,
+							objectRelationshipLocalService.
+								getObjectRelationship(
+									objectRelationship.getObjectDefinitionId2(),
+									objectRelationship.getName()));
+					}
+				}
+				else if (!Objects.equals(
+							objectRelationship.getType(),
+							ObjectRelationshipConstants.TYPE_MANY_TO_MANY)) {
+
+					_registerRelatedInfoItemCollectionProvider(
+						objectDefinitionLocalService.getObjectDefinition(
+							objectRelationship.getObjectDefinitionId1()),
+						objectDefinition1, objectRelationship);
 				}
 			}
 			catch (PortalException portalException) {
@@ -1265,9 +1291,6 @@ public class ObjectRelationshipLocalServiceImpl
 			ObjectField objectField)
 		throws PortalException {
 
-		_validateInvokerBundle(
-			"Only allowed bundles can add system object relationships", system);
-
 		User user = _userLocalService.getUser(userId);
 
 		_validateExternalReferenceCode(
@@ -1300,6 +1323,8 @@ public class ObjectRelationshipLocalServiceImpl
 			ObjectField objectField)
 		throws PortalException {
 
+		_validateInvokerBundle(
+			"Only allowed bundles can add system object relationships", system);
 		_validateScope(objectDefinition1, objectDefinition2);
 
 		ObjectRelationship objectRelationship =
@@ -1696,6 +1721,32 @@ public class ObjectRelationshipLocalServiceImpl
 						arguments.get(0), arguments.get(1)),
 					"these-ongoing-workflow-instances-must-be-completed-to-" +
 						"disable-inheritance-x-(x-object-entries)");
+			}
+
+			if (!objectDefinition2.isAllowStandaloneObjectEntry() &&
+				objectDefinition2.isApproved() &&
+				objectDefinition2.isRootDescendantNode()) {
+
+				long objectRelationshipsCount =
+					objectRelationshipPersistence.countByODI2_E(
+						objectDefinition2.getObjectDefinitionId(), true);
+
+				int relatedRootDescendantNodeObjectEntriesCount =
+					_getRelatedRootDescendantNodeObjectEntriesCount(
+						objectDefinition2,
+						objectRelationship.getObjectFieldId2());
+
+				if ((objectRelationshipsCount > 1) &&
+					(relatedRootDescendantNodeObjectEntriesCount > 0)) {
+
+					throw new ObjectRelationshipEdgeException(
+						StringBundler.concat(
+							"This object requires all entries to have a ",
+							"parent. To disable inheritance, you must first ",
+							"delete linked entries or enable standalone ",
+							"entries for this object."),
+						"this-object-requires-all-entries-to-have-a-parent");
+				}
 			}
 		}
 

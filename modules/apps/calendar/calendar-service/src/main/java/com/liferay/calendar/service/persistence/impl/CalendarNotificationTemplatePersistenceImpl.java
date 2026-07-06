@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -87,8 +85,9 @@ public class CalendarNotificationTemplatePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CalendarNotificationTemplate>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CalendarNotificationTemplate, NoSuchNotificationTemplateException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the calendar notification templates where uuid = &#63;.
@@ -129,16 +128,8 @@ public class CalendarNotificationTemplatePersistenceImpl
 			OrderByComparator<CalendarNotificationTemplate> orderByComparator)
 		throws NoSuchNotificationTemplateException {
 
-		CalendarNotificationTemplate calendarNotificationTemplate =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (calendarNotificationTemplate != null) {
-			return calendarNotificationTemplate;
-		}
-
-		throw new NoSuchNotificationTemplateException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -180,8 +171,9 @@ public class CalendarNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CalendarNotificationTemplate>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CalendarNotificationTemplate, NoSuchNotificationTemplateException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the calendar notification template where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchNotificationTemplateException</code> if it could not be found.
@@ -195,22 +187,8 @@ public class CalendarNotificationTemplatePersistenceImpl
 	public CalendarNotificationTemplate findByUUID_G(String uuid, long groupId)
 		throws NoSuchNotificationTemplateException {
 
-		CalendarNotificationTemplate calendarNotificationTemplate =
-			fetchByUUID_G(uuid, groupId);
-
-		if (calendarNotificationTemplate == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNotificationTemplateException(message);
-		}
-
-		return calendarNotificationTemplate;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -260,8 +238,9 @@ public class CalendarNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CalendarNotificationTemplate>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CalendarNotificationTemplate, NoSuchNotificationTemplateException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the calendar notification templates where uuid = &#63; and companyId = &#63;.
@@ -304,16 +283,8 @@ public class CalendarNotificationTemplatePersistenceImpl
 			OrderByComparator<CalendarNotificationTemplate> orderByComparator)
 		throws NoSuchNotificationTemplateException {
 
-		CalendarNotificationTemplate calendarNotificationTemplate =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (calendarNotificationTemplate != null) {
-			return calendarNotificationTemplate;
-		}
-
-		throw new NoSuchNotificationTemplateException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -358,8 +329,9 @@ public class CalendarNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CalendarNotificationTemplate>
-		_collectionPersistenceFinderByCalendarId;
+	private CollectionPersistenceFinder
+		<CalendarNotificationTemplate, NoSuchNotificationTemplateException>
+			_collectionPersistenceFinderByCalendarId;
 
 	/**
 	 * Returns an ordered range of all the calendar notification templates where calendarId = &#63;.
@@ -400,16 +372,8 @@ public class CalendarNotificationTemplatePersistenceImpl
 			OrderByComparator<CalendarNotificationTemplate> orderByComparator)
 		throws NoSuchNotificationTemplateException {
 
-		CalendarNotificationTemplate calendarNotificationTemplate =
-			fetchByCalendarId_First(calendarId, orderByComparator);
-
-		if (calendarNotificationTemplate != null) {
-			return calendarNotificationTemplate;
-		}
-
-		throw new NoSuchNotificationTemplateException(
-			_collectionPersistenceFinderByCalendarId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {calendarId}));
+		return _collectionPersistenceFinderByCalendarId.findFirst(
+			finderCache, new Object[] {calendarId}, orderByComparator);
 	}
 
 	/**
@@ -451,8 +415,9 @@ public class CalendarNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {calendarId});
 	}
 
-	private UniquePersistenceFinder<CalendarNotificationTemplate>
-		_uniquePersistenceFinderByC_NT_NTT;
+	private UniquePersistenceFinder
+		<CalendarNotificationTemplate, NoSuchNotificationTemplateException>
+			_uniquePersistenceFinderByC_NT_NTT;
 
 	/**
 	 * Returns the calendar notification template where calendarId = &#63; and notificationType = &#63; and notificationTemplateType = &#63; or throws a <code>NoSuchNotificationTemplateException</code> if it could not be found.
@@ -469,26 +434,11 @@ public class CalendarNotificationTemplatePersistenceImpl
 			String notificationTemplateType)
 		throws NoSuchNotificationTemplateException {
 
-		CalendarNotificationTemplate calendarNotificationTemplate =
-			fetchByC_NT_NTT(
-				calendarId, notificationType, notificationTemplateType);
-
-		if (calendarNotificationTemplate == null) {
-			String message =
-				_uniquePersistenceFinderByC_NT_NTT.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						calendarId, notificationType, notificationTemplateType
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNotificationTemplateException(message);
-		}
-
-		return calendarNotificationTemplate;
+		return _uniquePersistenceFinderByC_NT_NTT.find(
+			finderCache,
+			new Object[] {
+				calendarId, notificationType, notificationTemplateType
+			});
 	}
 
 	/**
@@ -899,9 +849,9 @@ public class CalendarNotificationTemplatePersistenceImpl
 			_SQL_SELECT_CALENDARNOTIFICATIONTEMPLATE_WHERE,
 			_SQL_COUNT_CALENDARNOTIFICATIONTEMPLATE_WHERE,
 			CalendarNotificationTemplateModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"calendarNotificationTemplate.", "uuid",
+				"calendarNotificationTemplate.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CalendarNotificationTemplate::getUuid));
 
@@ -915,7 +865,7 @@ public class CalendarNotificationTemplatePersistenceImpl
 				CalendarNotificationTemplate::getGroupId),
 			_SQL_SELECT_CALENDARNOTIFICATIONTEMPLATE_WHERE, "",
 			new FinderColumn<>(
-				"calendarNotificationTemplate.", "uuid",
+				"calendarNotificationTemplate.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CalendarNotificationTemplate::getUuid),
 			new FinderColumn<>(
@@ -945,9 +895,9 @@ public class CalendarNotificationTemplatePersistenceImpl
 				_SQL_SELECT_CALENDARNOTIFICATIONTEMPLATE_WHERE,
 				_SQL_COUNT_CALENDARNOTIFICATIONTEMPLATE_WHERE,
 				CalendarNotificationTemplateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"calendarNotificationTemplate.", "uuid",
+					"calendarNotificationTemplate.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CalendarNotificationTemplate::getUuid),
 				new FinderColumn<>(
@@ -977,7 +927,7 @@ public class CalendarNotificationTemplatePersistenceImpl
 				_SQL_SELECT_CALENDARNOTIFICATIONTEMPLATE_WHERE,
 				_SQL_COUNT_CALENDARNOTIFICATIONTEMPLATE_WHERE,
 				CalendarNotificationTemplateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"calendarNotificationTemplate.", "calendarId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1071,12 +1021,6 @@ public class CalendarNotificationTemplatePersistenceImpl
 	private static final String _SQL_COUNT_CALENDARNOTIFICATIONTEMPLATE_WHERE =
 		"SELECT COUNT(calendarNotificationTemplate) FROM CalendarNotificationTemplate calendarNotificationTemplate WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CalendarNotificationTemplate exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CalendarNotificationTemplatePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1086,4 +1030,4 @@ public class CalendarNotificationTemplatePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:127902598
+// LIFERAY-SERVICE-BUILDER-HASH:-144196275

@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -87,8 +85,9 @@ public class ERCVersionedEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ERCVersionedEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63;.
@@ -128,16 +127,8 @@ public class ERCVersionedEntryPersistenceImpl
 			String uuid, OrderByComparator<ERCVersionedEntry> orderByComparator)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (ercVersionedEntry != null) {
-			return ercVersionedEntry;
-		}
-
-		throw new NoSuchERCVersionedEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -178,8 +169,9 @@ public class ERCVersionedEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ERCVersionedEntry>
-		_collectionPersistenceFinderByUuid_Head;
+	private CollectionPersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_collectionPersistenceFinderByUuid_Head;
 
 	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and head = &#63;.
@@ -222,16 +214,8 @@ public class ERCVersionedEntryPersistenceImpl
 			OrderByComparator<ERCVersionedEntry> orderByComparator)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByUuid_Head_First(
-			uuid, head, orderByComparator);
-
-		if (ercVersionedEntry != null) {
-			return ercVersionedEntry;
-		}
-
-		throw new NoSuchERCVersionedEntryException(
-			_collectionPersistenceFinderByUuid_Head.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, head}));
+		return _collectionPersistenceFinderByUuid_Head.findFirst(
+			finderCache, new Object[] {uuid, head}, orderByComparator);
 	}
 
 	/**
@@ -276,8 +260,9 @@ public class ERCVersionedEntryPersistenceImpl
 			finderCache, new Object[] {uuid, head});
 	}
 
-	private CollectionPersistenceFinder<ERCVersionedEntry>
-		_collectionPersistenceFinderByUUID_G;
+	private CollectionPersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_collectionPersistenceFinderByUUID_G;
 
 	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and groupId = &#63;.
@@ -320,16 +305,8 @@ public class ERCVersionedEntryPersistenceImpl
 			OrderByComparator<ERCVersionedEntry> orderByComparator)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByUUID_G_First(
-			uuid, groupId, orderByComparator);
-
-		if (ercVersionedEntry != null) {
-			return ercVersionedEntry;
-		}
-
-		throw new NoSuchERCVersionedEntryException(
-			_collectionPersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId}));
+		return _collectionPersistenceFinderByUUID_G.findFirst(
+			finderCache, new Object[] {uuid, groupId}, orderByComparator);
 	}
 
 	/**
@@ -374,8 +351,9 @@ public class ERCVersionedEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private UniquePersistenceFinder<ERCVersionedEntry>
-		_uniquePersistenceFinderByUUID_G_Head;
+	private UniquePersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_uniquePersistenceFinderByUUID_G_Head;
 
 	/**
 	 * Returns the erc versioned entry where uuid = &#63; and groupId = &#63; and head = &#63; or throws a <code>NoSuchERCVersionedEntryException</code> if it could not be found.
@@ -391,23 +369,8 @@ public class ERCVersionedEntryPersistenceImpl
 			String uuid, long groupId, boolean head)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByUUID_G_Head(
-			uuid, groupId, head);
-
-		if (ercVersionedEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G_Head.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {uuid, groupId, head});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchERCVersionedEntryException(message);
-		}
-
-		return ercVersionedEntry;
+		return _uniquePersistenceFinderByUUID_G_Head.find(
+			finderCache, new Object[] {uuid, groupId, head});
 	}
 
 	/**
@@ -460,8 +423,9 @@ public class ERCVersionedEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId, head});
 	}
 
-	private CollectionPersistenceFinder<ERCVersionedEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and companyId = &#63;.
@@ -504,16 +468,8 @@ public class ERCVersionedEntryPersistenceImpl
 			OrderByComparator<ERCVersionedEntry> orderByComparator)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (ercVersionedEntry != null) {
-			return ercVersionedEntry;
-		}
-
-		throw new NoSuchERCVersionedEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -558,8 +514,9 @@ public class ERCVersionedEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ERCVersionedEntry>
-		_collectionPersistenceFinderByUuid_C_Head;
+	private CollectionPersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_collectionPersistenceFinderByUuid_C_Head;
 
 	/**
 	 * Returns an ordered range of all the erc versioned entries where uuid = &#63; and companyId = &#63; and head = &#63;.
@@ -604,17 +561,9 @@ public class ERCVersionedEntryPersistenceImpl
 			OrderByComparator<ERCVersionedEntry> orderByComparator)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByUuid_C_Head_First(
-			uuid, companyId, head, orderByComparator);
-
-		if (ercVersionedEntry != null) {
-			return ercVersionedEntry;
-		}
-
-		throw new NoSuchERCVersionedEntryException(
-			_collectionPersistenceFinderByUuid_C_Head.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {uuid, companyId, head}));
+		return _collectionPersistenceFinderByUuid_C_Head.findFirst(
+			finderCache, new Object[] {uuid, companyId, head},
+			orderByComparator);
 	}
 
 	/**
@@ -663,8 +612,9 @@ public class ERCVersionedEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId, head});
 	}
 
-	private CollectionPersistenceFinder<ERCVersionedEntry>
-		_collectionPersistenceFinderByERC_G;
+	private CollectionPersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_collectionPersistenceFinderByERC_G;
 
 	/**
 	 * Returns an ordered range of all the erc versioned entries where externalReferenceCode = &#63; and groupId = &#63;.
@@ -707,17 +657,9 @@ public class ERCVersionedEntryPersistenceImpl
 			OrderByComparator<ERCVersionedEntry> orderByComparator)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByERC_G_First(
-			externalReferenceCode, groupId, orderByComparator);
-
-		if (ercVersionedEntry != null) {
-			return ercVersionedEntry;
-		}
-
-		throw new NoSuchERCVersionedEntryException(
-			_collectionPersistenceFinderByERC_G.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {externalReferenceCode, groupId}));
+		return _collectionPersistenceFinderByERC_G.findFirst(
+			finderCache, new Object[] {externalReferenceCode, groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -763,8 +705,9 @@ public class ERCVersionedEntryPersistenceImpl
 			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
-	private UniquePersistenceFinder<ERCVersionedEntry>
-		_uniquePersistenceFinderByERC_G_Head;
+	private UniquePersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_uniquePersistenceFinderByERC_G_Head;
 
 	/**
 	 * Returns the erc versioned entry where externalReferenceCode = &#63; and groupId = &#63; and head = &#63; or throws a <code>NoSuchERCVersionedEntryException</code> if it could not be found.
@@ -780,23 +723,8 @@ public class ERCVersionedEntryPersistenceImpl
 			String externalReferenceCode, long groupId, boolean head)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByERC_G_Head(
-			externalReferenceCode, groupId, head);
-
-		if (ercVersionedEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G_Head.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId, head});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchERCVersionedEntryException(message);
-		}
-
-		return ercVersionedEntry;
+		return _uniquePersistenceFinderByERC_G_Head.find(
+			finderCache, new Object[] {externalReferenceCode, groupId, head});
 	}
 
 	/**
@@ -853,8 +781,9 @@ public class ERCVersionedEntryPersistenceImpl
 			finderCache, new Object[] {externalReferenceCode, groupId, head});
 	}
 
-	private UniquePersistenceFinder<ERCVersionedEntry>
-		_uniquePersistenceFinderByHeadId;
+	private UniquePersistenceFinder
+		<ERCVersionedEntry, NoSuchERCVersionedEntryException>
+			_uniquePersistenceFinderByHeadId;
 
 	/**
 	 * Returns the erc versioned entry where headId = &#63; or throws a <code>NoSuchERCVersionedEntryException</code> if it could not be found.
@@ -867,21 +796,8 @@ public class ERCVersionedEntryPersistenceImpl
 	public ERCVersionedEntry findByHeadId(long headId)
 		throws NoSuchERCVersionedEntryException {
 
-		ERCVersionedEntry ercVersionedEntry = fetchByHeadId(headId);
-
-		if (ercVersionedEntry == null) {
-			String message =
-				_uniquePersistenceFinderByHeadId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {headId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchERCVersionedEntryException(message);
-		}
-
-		return ercVersionedEntry;
+		return _uniquePersistenceFinderByHeadId.find(
+			finderCache, new Object[] {headId});
 	}
 
 	/**
@@ -1210,9 +1126,10 @@ public class ERCVersionedEntryPersistenceImpl
 			_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
 			_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
 			ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, ERCVersionedEntry::getUuid));
+				"ercVersionedEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, ERCVersionedEntry::getUuid));
 
 		_collectionPersistenceFinderByUuid_Head =
 			new CollectionPersistenceFinder<>(
@@ -1242,10 +1159,11 @@ public class ERCVersionedEntryPersistenceImpl
 				_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
 				_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
 				ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ERCVersionedEntry::getUuid),
+					"ercVersionedEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ERCVersionedEntry::getUuid),
 				new FinderColumn<>(
 					"ercVersionedEntry.", "head", FinderColumn.Type.BOOLEAN,
 					"=", true, true, ERCVersionedEntry::isHead));
@@ -1272,10 +1190,11 @@ public class ERCVersionedEntryPersistenceImpl
 				_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
 				_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
 				ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ERCVersionedEntry::getUuid),
+					"ercVersionedEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ERCVersionedEntry::getUuid),
 				new FinderColumn<>(
 					"ercVersionedEntry.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, ERCVersionedEntry::getGroupId));
@@ -1293,8 +1212,8 @@ public class ERCVersionedEntryPersistenceImpl
 				ERCVersionedEntry::getGroupId, ERCVersionedEntry::isHead),
 			_SQL_SELECT_ERCVERSIONEDENTRY_WHERE, "",
 			new FinderColumn<>(
-				"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, ERCVersionedEntry::getUuid),
+				"ercVersionedEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, ERCVersionedEntry::getUuid),
 			new FinderColumn<>(
 				"ercVersionedEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, ERCVersionedEntry::getGroupId),
@@ -1324,10 +1243,11 @@ public class ERCVersionedEntryPersistenceImpl
 				_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
 				_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
 				ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ERCVersionedEntry::getUuid),
+					"ercVersionedEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ERCVersionedEntry::getUuid),
 				new FinderColumn<>(
 					"ercVersionedEntry.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ERCVersionedEntry::getCompanyId));
@@ -1365,10 +1285,11 @@ public class ERCVersionedEntryPersistenceImpl
 				_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
 				_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
 				ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"ercVersionedEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ERCVersionedEntry::getUuid),
+					"ercVersionedEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ERCVersionedEntry::getUuid),
 				new FinderColumn<>(
 					"ercVersionedEntry.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ERCVersionedEntry::getCompanyId),
@@ -1399,6 +1320,7 @@ public class ERCVersionedEntryPersistenceImpl
 			_SQL_SELECT_ERCVERSIONEDENTRY_WHERE,
 			_SQL_COUNT_ERCVERSIONEDENTRY_WHERE,
 			ERCVersionedEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"ercVersionedEntry.", "externalReferenceCode",
 				FinderColumn.Type.STRING, "=", true, true,
@@ -1497,12 +1419,6 @@ public class ERCVersionedEntryPersistenceImpl
 	private static final String _SQL_COUNT_ERCVERSIONEDENTRY_WHERE =
 		"SELECT COUNT(ercVersionedEntry) FROM ERCVersionedEntry ercVersionedEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ERCVersionedEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ERCVersionedEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1512,4 +1428,4 @@ public class ERCVersionedEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-6178648
+// LIFERAY-SERVICE-BUILDER-HASH:31393447

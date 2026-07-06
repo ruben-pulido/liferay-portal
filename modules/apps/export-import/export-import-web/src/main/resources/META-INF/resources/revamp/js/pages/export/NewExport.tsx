@@ -12,16 +12,18 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Footer from '../../components/Footer';
 import {
 	DateFilterValues,
+	NormalizedDateFilter,
 	Range,
 	normalizeDateFilter,
 } from '../../components/date_filter';
-import {FormikDebug} from '../../components/forms/formik';
+import {ContentSelection} from '../../components/forms/content_selector/ContentSelector';
 import {
 	ExportPreviewParams,
 	getExportPreview,
 } from '../../services/getExportPreview';
 import {postExportProcess} from '../../services/postExportProcess';
 import {ExportPreview} from '../../types/exportImportPreview';
+import {toProcessRequestFlags} from '../../utils/contentSelection';
 import {toRequestPortletDataHandlers} from '../../utils/toRequestPortletDataHandlers';
 import DataSelection from './components/DataSelection';
 import {PageTreeModalConfiguration} from './components/PageTreeModal';
@@ -29,15 +31,19 @@ import Setup from './components/Setup';
 
 export function NewExport({
 	backURL,
+	commentsAndRatingsEnabled = false,
 	exportPreview,
 	exportPreviewAPIURL,
 	exportProcessAPIURL,
+	lookAndFeelEnabled = false,
 	pageTreeModalConfiguration,
 }: {
 	backURL: string;
+	commentsAndRatingsEnabled?: boolean;
 	exportPreview?: ExportPreview;
 	exportPreviewAPIURL: string;
 	exportProcessAPIURL: string;
+	lookAndFeelEnabled?: boolean;
 	pageTreeModalConfiguration: PageTreeModalConfiguration;
 }) {
 	const [preview, setPreview] = useState<ExportPreview | undefined>(
@@ -46,6 +52,7 @@ export function NewExport({
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(!exportPreview);
 	const initialPreviewRef = useRef<ExportPreview | undefined>(exportPreview);
+	const appliedDateFilterRef = useRef<NormalizedDateFilter>({});
 
 	const getPreview = useCallback(
 		(exportPreviewParams: ExportPreviewParams) => {
@@ -85,6 +92,8 @@ export function NewExport({
 	const sections = preview?.previewPortletDataHandlerSections ?? [];
 
 	const handleApplyFilter = (filterValues: DateFilterValues) => {
+		appliedDateFilterRef.current = normalizeDateFilter(filterValues);
+
 		if (filterValues.range === Range.All && initialPreviewRef.current) {
 			setPreview(initialPreviewRef.current);
 
@@ -92,7 +101,7 @@ export function NewExport({
 		}
 
 		getPreview({
-			query: normalizeDateFilter(filterValues),
+			query: appliedDateFilterRef.current,
 			url: exportPreviewAPIURL,
 		});
 	};
@@ -103,13 +112,21 @@ export function NewExport({
 				contentSelection: undefined,
 				dateFilter: {range: Range.All} as DateFilterValues,
 				deletions: false,
-				fileName: '',
+				name: '',
+				permissions: false,
 			}}
 			onSubmit={async (values) => {
+				const contentSelection = values.contentSelection as
+					| ContentSelection
+					| undefined;
+
 				const result = await postExportProcess({
-					exportRequest: {
-						...normalizeDateFilter(values.dateFilter),
-						fileName: values.fileName,
+					exportProcessRequest: {
+						...appliedDateFilterRef.current,
+						...toProcessRequestFlags(contentSelection),
+						deletions: !!values.deletions,
+						name: values.name,
+						permissions: !!values.permissions,
 						requestPortletDataHandlers:
 							toRequestPortletDataHandlers(
 								sections,
@@ -128,13 +145,13 @@ export function NewExport({
 					return;
 				}
 
-				window.location.href = backURL;
+				Liferay.Util.navigate(backURL);
 			}}
 			validate={(values: FormikValues) => {
 				const errors: {[key: string]: string} = {};
 
-				if (!values?.fileName) {
-					errors.fileName = Liferay.Language.get(
+				if (!values?.name) {
+					errors.name = Liferay.Language.get(
 						'this-field-is-required'
 					);
 				}
@@ -154,9 +171,11 @@ export function NewExport({
 					<Setup />
 
 					<DataSelection
+						commentsAndRatingsEnabled={commentsAndRatingsEnabled}
 						deletionCount={preview?.deletionCount}
 						itemsCount={preview?.additionCount}
 						loading={loading}
+						lookAndFeelEnabled={lookAndFeelEnabled}
 						onApplyFilter={handleApplyFilter}
 						pageTreeModalConfiguration={pageTreeModalConfiguration}
 						sections={sections}
@@ -182,8 +201,6 @@ export function NewExport({
 						}
 						backURL={backURL}
 					/>
-
-					{process.env.NODE_ENV === 'development' && <FormikDebug />}
 				</Form>
 			)}
 		</Formik>

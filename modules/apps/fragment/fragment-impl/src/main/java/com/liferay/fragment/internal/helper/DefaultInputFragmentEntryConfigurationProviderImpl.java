@@ -10,12 +10,14 @@ import com.liferay.fragment.helper.DefaultInputFragmentEntryConfigurationProvide
 import com.liferay.info.field.type.BooleanInfoFieldType;
 import com.liferay.info.field.type.DateInfoFieldType;
 import com.liferay.info.field.type.DateTimeInfoFieldType;
+import com.liferay.info.field.type.EmailInfoFieldType;
 import com.liferay.info.field.type.FileInfoFieldType;
 import com.liferay.info.field.type.FriendlyURLInfoFieldType;
 import com.liferay.info.field.type.HTMLInfoFieldType;
 import com.liferay.info.field.type.LongTextInfoFieldType;
 import com.liferay.info.field.type.MultiselectInfoFieldType;
 import com.liferay.info.field.type.NumberInfoFieldType;
+import com.liferay.info.field.type.PhoneNumberInfoFieldType;
 import com.liferay.info.field.type.RelationshipInfoFieldType;
 import com.liferay.info.field.type.SelectInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
@@ -134,6 +136,9 @@ public class DefaultInputFragmentEntryConfigurationProviderImpl
 			DateTimeInfoFieldType.INSTANCE.getName(),
 			JSONUtil.put("key", "INPUTS-date-time-input")
 		).put(
+			EmailInfoFieldType.INSTANCE.getName(),
+			JSONUtil.put("key", "INPUTS-email-input")
+		).put(
 			FileInfoFieldType.INSTANCE.getName(),
 			JSONUtil.put("key", "INPUTS-file-upload")
 		).put(
@@ -151,6 +156,9 @@ public class DefaultInputFragmentEntryConfigurationProviderImpl
 		).put(
 			NumberInfoFieldType.INSTANCE.getName(),
 			JSONUtil.put("key", "INPUTS-numeric-input")
+		).put(
+			PhoneNumberInfoFieldType.INSTANCE.getName(),
+			JSONUtil.put("key", "INPUTS-phone-number-input")
 		).put(
 			RelationshipInfoFieldType.INSTANCE.getName(),
 			JSONUtil.put("key", "INPUTS-select-from-list")

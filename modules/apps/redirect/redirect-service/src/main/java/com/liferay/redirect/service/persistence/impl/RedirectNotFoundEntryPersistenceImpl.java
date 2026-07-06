@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -83,8 +81,9 @@ public class RedirectNotFoundEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<RedirectNotFoundEntry>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<RedirectNotFoundEntry, NoSuchNotFoundEntryException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the redirect not found entries where groupId = &#63;.
@@ -125,16 +124,8 @@ public class RedirectNotFoundEntryPersistenceImpl
 			OrderByComparator<RedirectNotFoundEntry> orderByComparator)
 		throws NoSuchNotFoundEntryException {
 
-		RedirectNotFoundEntry redirectNotFoundEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (redirectNotFoundEntry != null) {
-			return redirectNotFoundEntry;
-		}
-
-		throw new NoSuchNotFoundEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -176,8 +167,9 @@ public class RedirectNotFoundEntryPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private UniquePersistenceFinder<RedirectNotFoundEntry>
-		_uniquePersistenceFinderByG_U;
+	private UniquePersistenceFinder
+		<RedirectNotFoundEntry, NoSuchNotFoundEntryException>
+			_uniquePersistenceFinderByG_U;
 
 	/**
 	 * Returns the redirect not found entry where groupId = &#63; and url = &#63; or throws a <code>NoSuchNotFoundEntryException</code> if it could not be found.
@@ -191,21 +183,8 @@ public class RedirectNotFoundEntryPersistenceImpl
 	public RedirectNotFoundEntry findByG_U(long groupId, String url)
 		throws NoSuchNotFoundEntryException {
 
-		RedirectNotFoundEntry redirectNotFoundEntry = fetchByG_U(groupId, url);
-
-		if (redirectNotFoundEntry == null) {
-			String message =
-				_uniquePersistenceFinderByG_U.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, url});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNotFoundEntryException(message);
-		}
-
-		return redirectNotFoundEntry;
+		return _uniquePersistenceFinderByG_U.find(
+			finderCache, new Object[] {groupId, url});
 	}
 
 	/**
@@ -513,7 +492,7 @@ public class RedirectNotFoundEntryPersistenceImpl
 				_SQL_SELECT_REDIRECTNOTFOUNDENTRY_WHERE,
 				_SQL_COUNT_REDIRECTNOTFOUNDENTRY_WHERE,
 				RedirectNotFoundEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"redirectNotFoundEntry.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, RedirectNotFoundEntry::getGroupId));
@@ -588,16 +567,10 @@ public class RedirectNotFoundEntryPersistenceImpl
 	private static final String _SQL_COUNT_REDIRECTNOTFOUNDENTRY_WHERE =
 		"SELECT COUNT(redirectNotFoundEntry) FROM RedirectNotFoundEntry redirectNotFoundEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No RedirectNotFoundEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		RedirectNotFoundEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1344497443
+// LIFERAY-SERVICE-BUILDER-HASH:1041675891

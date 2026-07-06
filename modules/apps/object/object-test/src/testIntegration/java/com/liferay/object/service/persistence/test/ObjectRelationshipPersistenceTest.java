@@ -112,11 +112,7 @@ public class ObjectRelationshipPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ObjectRelationship newObjectRelationship = _persistence.create(pk);
-
-		newObjectRelationship.setMvccVersion(RandomTestUtil.nextLong());
+		ObjectRelationship newObjectRelationship = addObjectRelationship();
 
 		newObjectRelationship.setUuid(RandomTestUtil.randomString());
 
@@ -158,7 +154,9 @@ public class ObjectRelationshipPersistenceTest {
 
 		newObjectRelationship.setType(RandomTestUtil.randomString());
 
-		_objectRelationships.add(_persistence.update(newObjectRelationship));
+		newObjectRelationship = _persistence.update(newObjectRelationship);
+
+		_objectRelationships.add(newObjectRelationship);
 
 		ObjectRelationship existingObjectRelationship =
 			_persistence.findByPrimaryKey(
@@ -797,8 +795,6 @@ public class ObjectRelationshipPersistenceTest {
 
 		ObjectRelationship objectRelationship = _persistence.create(pk);
 
-		objectRelationship.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectRelationship.setUuid(RandomTestUtil.randomString());
 
 		objectRelationship.setExternalReferenceCode(
@@ -849,4 +845,4 @@ public class ObjectRelationshipPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1710412621
+// LIFERAY-SERVICE-BUILDER-HASH:854761371

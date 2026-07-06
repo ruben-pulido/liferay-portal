@@ -184,6 +184,7 @@ function AssetVocabulariesCategoriesSelector({
 					<label
 						className={showVocabularyLabel ? '' : 'sr-only'}
 						htmlFor={inputName + '_MultiSelect'}
+						id={inputName + '_MultiSelectLabel'}
 					>
 						{label}
 
@@ -202,6 +203,12 @@ function AssetVocabulariesCategoriesSelector({
 				<ClayInput.Group>
 					<ClayInput.GroupItem>
 						<ClayMultiSelect
+							allowsCustomLabel={false}
+							aria-labelledby={
+								label
+									? inputName + '_MultiSelectLabel'
+									: undefined
+							}
 							clearAllTitle={Liferay.Language.get('clear-all')}
 							id={inputName + '_MultiSelect'}
 							inputName={inputName}

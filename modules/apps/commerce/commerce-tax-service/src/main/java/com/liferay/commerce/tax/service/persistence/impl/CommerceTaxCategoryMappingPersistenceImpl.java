@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -90,8 +88,9 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceTaxCategoryMapping>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommerceTaxCategoryMapping, NoSuchTaxCategoryMappingException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce tax category mappings where uuid = &#63;.
@@ -132,16 +131,8 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			OrderByComparator<CommerceTaxCategoryMapping> orderByComparator)
 		throws NoSuchTaxCategoryMappingException {
 
-		CommerceTaxCategoryMapping commerceTaxCategoryMapping =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (commerceTaxCategoryMapping != null) {
-			return commerceTaxCategoryMapping;
-		}
-
-		throw new NoSuchTaxCategoryMappingException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -183,8 +174,9 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CommerceTaxCategoryMapping>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CommerceTaxCategoryMapping, NoSuchTaxCategoryMappingException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the commerce tax category mapping where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchTaxCategoryMappingException</code> if it could not be found.
@@ -198,22 +190,8 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 	public CommerceTaxCategoryMapping findByUUID_G(String uuid, long groupId)
 		throws NoSuchTaxCategoryMappingException {
 
-		CommerceTaxCategoryMapping commerceTaxCategoryMapping = fetchByUUID_G(
-			uuid, groupId);
-
-		if (commerceTaxCategoryMapping == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTaxCategoryMappingException(message);
-		}
-
-		return commerceTaxCategoryMapping;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -262,8 +240,9 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceTaxCategoryMapping>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommerceTaxCategoryMapping, NoSuchTaxCategoryMappingException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce tax category mappings where uuid = &#63; and companyId = &#63;.
@@ -306,16 +285,8 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			OrderByComparator<CommerceTaxCategoryMapping> orderByComparator)
 		throws NoSuchTaxCategoryMappingException {
 
-		CommerceTaxCategoryMapping commerceTaxCategoryMapping =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (commerceTaxCategoryMapping != null) {
-			return commerceTaxCategoryMapping;
-		}
-
-		throw new NoSuchTaxCategoryMappingException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -360,8 +331,9 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CommerceTaxCategoryMapping>
-		_collectionPersistenceFinderByCommerceTaxMethodId;
+	private CollectionPersistenceFinder
+		<CommerceTaxCategoryMapping, NoSuchTaxCategoryMappingException>
+			_collectionPersistenceFinderByCommerceTaxMethodId;
 
 	/**
 	 * Returns an ordered range of all the commerce tax category mappings where commerceTaxMethodId = &#63;.
@@ -402,19 +374,8 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			OrderByComparator<CommerceTaxCategoryMapping> orderByComparator)
 		throws NoSuchTaxCategoryMappingException {
 
-		CommerceTaxCategoryMapping commerceTaxCategoryMapping =
-			fetchByCommerceTaxMethodId_First(
-				commerceTaxMethodId, orderByComparator);
-
-		if (commerceTaxCategoryMapping != null) {
-			return commerceTaxCategoryMapping;
-		}
-
-		throw new NoSuchTaxCategoryMappingException(
-			_collectionPersistenceFinderByCommerceTaxMethodId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceTaxMethodId}));
+		return _collectionPersistenceFinderByCommerceTaxMethodId.findFirst(
+			finderCache, new Object[] {commerceTaxMethodId}, orderByComparator);
 	}
 
 	/**
@@ -456,8 +417,9 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			finderCache, new Object[] {commerceTaxMethodId});
 	}
 
-	private UniquePersistenceFinder<CommerceTaxCategoryMapping>
-		_uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder
+		<CommerceTaxCategoryMapping, NoSuchTaxCategoryMappingException>
+			_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the commerce tax category mapping where commerceTaxMethodId = &#63; and CPTaxCategoryId = &#63; or throws a <code>NoSuchTaxCategoryMappingException</code> if it could not be found.
@@ -472,23 +434,8 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			long commerceTaxMethodId, long CPTaxCategoryId)
 		throws NoSuchTaxCategoryMappingException {
 
-		CommerceTaxCategoryMapping commerceTaxCategoryMapping = fetchByC_C(
-			commerceTaxMethodId, CPTaxCategoryId);
-
-		if (commerceTaxCategoryMapping == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceTaxMethodId, CPTaxCategoryId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTaxCategoryMappingException(message);
-		}
-
-		return commerceTaxCategoryMapping;
+		return _uniquePersistenceFinderByC_C.find(
+			finderCache, new Object[] {commerceTaxMethodId, CPTaxCategoryId});
 	}
 
 	/**
@@ -540,8 +487,9 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			finderCache, new Object[] {commerceTaxMethodId, CPTaxCategoryId});
 	}
 
-	private UniquePersistenceFinder<CommerceTaxCategoryMapping>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<CommerceTaxCategoryMapping, NoSuchTaxCategoryMappingException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the commerce tax category mapping where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchTaxCategoryMappingException</code> if it could not be found.
@@ -556,23 +504,8 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchTaxCategoryMappingException {
 
-		CommerceTaxCategoryMapping commerceTaxCategoryMapping = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (commerceTaxCategoryMapping == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTaxCategoryMappingException(message);
-		}
-
-		return commerceTaxCategoryMapping;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -955,10 +888,11 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 			_SQL_SELECT_COMMERCETAXCATEGORYMAPPING_WHERE,
 			_SQL_COUNT_COMMERCETAXCATEGORYMAPPING_WHERE,
 			CommerceTaxCategoryMappingModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"commerceTaxCategoryMapping.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CommerceTaxCategoryMapping::getUuid));
+				"commerceTaxCategoryMapping.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CommerceTaxCategoryMapping::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -970,8 +904,9 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 				CommerceTaxCategoryMapping::getGroupId),
 			_SQL_SELECT_COMMERCETAXCATEGORYMAPPING_WHERE, "",
 			new FinderColumn<>(
-				"commerceTaxCategoryMapping.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CommerceTaxCategoryMapping::getUuid),
+				"commerceTaxCategoryMapping.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CommerceTaxCategoryMapping::getUuid),
 			new FinderColumn<>(
 				"commerceTaxCategoryMapping.", "groupId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -999,9 +934,9 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 				_SQL_SELECT_COMMERCETAXCATEGORYMAPPING_WHERE,
 				_SQL_COUNT_COMMERCETAXCATEGORYMAPPING_WHERE,
 				CommerceTaxCategoryMappingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"commerceTaxCategoryMapping.", "uuid",
+					"commerceTaxCategoryMapping.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CommerceTaxCategoryMapping::getUuid),
 				new FinderColumn<>(
@@ -1034,7 +969,7 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 				_SQL_SELECT_COMMERCETAXCATEGORYMAPPING_WHERE,
 				_SQL_COUNT_COMMERCETAXCATEGORYMAPPING_WHERE,
 				CommerceTaxCategoryMappingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceTaxCategoryMapping.", "commerceTaxMethodId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1132,12 +1067,6 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCETAXCATEGORYMAPPING_WHERE =
 		"SELECT COUNT(commerceTaxCategoryMapping) FROM CommerceTaxCategoryMapping commerceTaxCategoryMapping WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceTaxCategoryMapping exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceTaxCategoryMappingPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1147,4 +1076,4 @@ public class CommerceTaxCategoryMappingPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-84872007
+// LIFERAY-SERVICE-BUILDER-HASH:-676389480

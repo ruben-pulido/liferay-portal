@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -88,8 +86,9 @@ public class ObjectActionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectAction>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ObjectAction, NoSuchObjectActionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the object actions where uuid = &#63;.
@@ -129,15 +128,8 @@ public class ObjectActionPersistenceImpl
 			String uuid, OrderByComparator<ObjectAction> orderByComparator)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByUuid_First(uuid, orderByComparator);
-
-		if (objectAction != null) {
-			return objectAction;
-		}
-
-		throw new NoSuchObjectActionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -178,8 +170,9 @@ public class ObjectActionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ObjectAction>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ObjectAction, NoSuchObjectActionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the object actions where uuid = &#63; and companyId = &#63;.
@@ -222,16 +215,8 @@ public class ObjectActionPersistenceImpl
 			OrderByComparator<ObjectAction> orderByComparator)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectAction != null) {
-			return objectAction;
-		}
-
-		throw new NoSuchObjectActionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -276,8 +261,9 @@ public class ObjectActionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ObjectAction>
-		_collectionPersistenceFinderByObjectDefinitionId;
+	private CollectionPersistenceFinder
+		<ObjectAction, NoSuchObjectActionException>
+			_collectionPersistenceFinderByObjectDefinitionId;
 
 	/**
 	 * Returns an ordered range of all the object actions where objectDefinitionId = &#63;.
@@ -318,18 +304,8 @@ public class ObjectActionPersistenceImpl
 			OrderByComparator<ObjectAction> orderByComparator)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByObjectDefinitionId_First(
-			objectDefinitionId, orderByComparator);
-
-		if (objectAction != null) {
-			return objectAction;
-		}
-
-		throw new NoSuchObjectActionException(
-			_collectionPersistenceFinderByObjectDefinitionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectDefinitionId}));
+		return _collectionPersistenceFinderByObjectDefinitionId.findFirst(
+			finderCache, new Object[] {objectDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -371,7 +347,7 @@ public class ObjectActionPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId});
 	}
 
-	private UniquePersistenceFinder<ObjectAction>
+	private UniquePersistenceFinder<ObjectAction, NoSuchObjectActionException>
 		_uniquePersistenceFinderByODI_N;
 
 	/**
@@ -386,22 +362,8 @@ public class ObjectActionPersistenceImpl
 	public ObjectAction findByODI_N(long objectDefinitionId, String name)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByODI_N(objectDefinitionId, name);
-
-		if (objectAction == null) {
-			String message =
-				_uniquePersistenceFinderByODI_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectDefinitionId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectActionException(message);
-		}
-
-		return objectAction;
+		return _uniquePersistenceFinderByODI_N.find(
+			finderCache, new Object[] {objectDefinitionId, name});
 	}
 
 	/**
@@ -450,8 +412,9 @@ public class ObjectActionPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, name});
 	}
 
-	private CollectionPersistenceFinder<ObjectAction>
-		_collectionPersistenceFinderByA_OAEK;
+	private CollectionPersistenceFinder
+		<ObjectAction, NoSuchObjectActionException>
+			_collectionPersistenceFinderByA_OAEK;
 
 	/**
 	 * Returns an ordered range of all the object actions where active = &#63; and objectActionExecutorKey = &#63;.
@@ -494,17 +457,9 @@ public class ObjectActionPersistenceImpl
 			OrderByComparator<ObjectAction> orderByComparator)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByA_OAEK_First(
-			active, objectActionExecutorKey, orderByComparator);
-
-		if (objectAction != null) {
-			return objectAction;
-		}
-
-		throw new NoSuchObjectActionException(
-			_collectionPersistenceFinderByA_OAEK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {active, objectActionExecutorKey}));
+		return _collectionPersistenceFinderByA_OAEK.findFirst(
+			finderCache, new Object[] {active, objectActionExecutorKey},
+			orderByComparator);
 	}
 
 	/**
@@ -550,7 +505,7 @@ public class ObjectActionPersistenceImpl
 			finderCache, new Object[] {active, objectActionExecutorKey});
 	}
 
-	private UniquePersistenceFinder<ObjectAction>
+	private UniquePersistenceFinder<ObjectAction, NoSuchObjectActionException>
 		_uniquePersistenceFinderByERC_C_ODI;
 
 	/**
@@ -568,25 +523,11 @@ public class ObjectActionPersistenceImpl
 			long objectDefinitionId)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByERC_C_ODI(
-			externalReferenceCode, companyId, objectDefinitionId);
-
-		if (objectAction == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C_ODI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						externalReferenceCode, companyId, objectDefinitionId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectActionException(message);
-		}
-
-		return objectAction;
+		return _uniquePersistenceFinderByERC_C_ODI.find(
+			finderCache,
+			new Object[] {
+				externalReferenceCode, companyId, objectDefinitionId
+			});
 	}
 
 	/**
@@ -648,8 +589,9 @@ public class ObjectActionPersistenceImpl
 			});
 	}
 
-	private CollectionPersistenceFinder<ObjectAction>
-		_collectionPersistenceFinderByC_A_OATK;
+	private CollectionPersistenceFinder
+		<ObjectAction, NoSuchObjectActionException>
+			_collectionPersistenceFinderByC_A_OATK;
 
 	/**
 	 * Returns an ordered range of all the object actions where companyId = &#63; and active = &#63; and objectActionTriggerKey = &#63;.
@@ -695,17 +637,10 @@ public class ObjectActionPersistenceImpl
 			OrderByComparator<ObjectAction> orderByComparator)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByC_A_OATK_First(
-			companyId, active, objectActionTriggerKey, orderByComparator);
-
-		if (objectAction != null) {
-			return objectAction;
-		}
-
-		throw new NoSuchObjectActionException(
-			_collectionPersistenceFinderByC_A_OATK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, active, objectActionTriggerKey}));
+		return _collectionPersistenceFinderByC_A_OATK.findFirst(
+			finderCache,
+			new Object[] {companyId, active, objectActionTriggerKey},
+			orderByComparator);
 	}
 
 	/**
@@ -761,8 +696,9 @@ public class ObjectActionPersistenceImpl
 			new Object[] {companyId, active, objectActionTriggerKey});
 	}
 
-	private CollectionPersistenceFinder<ObjectAction>
-		_collectionPersistenceFinderByO_A_OATK;
+	private CollectionPersistenceFinder
+		<ObjectAction, NoSuchObjectActionException>
+			_collectionPersistenceFinderByO_A_OATK;
 
 	/**
 	 * Returns an ordered range of all the object actions where objectDefinitionId = &#63; and active = &#63; and objectActionTriggerKey = &#63;.
@@ -809,20 +745,10 @@ public class ObjectActionPersistenceImpl
 			OrderByComparator<ObjectAction> orderByComparator)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByO_A_OATK_First(
-			objectDefinitionId, active, objectActionTriggerKey,
+		return _collectionPersistenceFinderByO_A_OATK.findFirst(
+			finderCache,
+			new Object[] {objectDefinitionId, active, objectActionTriggerKey},
 			orderByComparator);
-
-		if (objectAction != null) {
-			return objectAction;
-		}
-
-		throw new NoSuchObjectActionException(
-			_collectionPersistenceFinderByO_A_OATK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					objectDefinitionId, active, objectActionTriggerKey
-				}));
 	}
 
 	/**
@@ -880,7 +806,7 @@ public class ObjectActionPersistenceImpl
 			new Object[] {objectDefinitionId, active, objectActionTriggerKey});
 	}
 
-	private UniquePersistenceFinder<ObjectAction>
+	private UniquePersistenceFinder<ObjectAction, NoSuchObjectActionException>
 		_uniquePersistenceFinderByODI_A_N_OATK;
 
 	/**
@@ -899,25 +825,11 @@ public class ObjectActionPersistenceImpl
 			String objectActionTriggerKey)
 		throws NoSuchObjectActionException {
 
-		ObjectAction objectAction = fetchByODI_A_N_OATK(
-			objectDefinitionId, active, name, objectActionTriggerKey);
-
-		if (objectAction == null) {
-			String message =
-				_uniquePersistenceFinderByODI_A_N_OATK.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						objectDefinitionId, active, name, objectActionTriggerKey
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectActionException(message);
-		}
-
-		return objectAction;
+		return _uniquePersistenceFinderByODI_A_N_OATK.find(
+			finderCache,
+			new Object[] {
+				objectDefinitionId, active, name, objectActionTriggerKey
+			});
 	}
 
 	/**
@@ -1263,10 +1175,11 @@ public class ObjectActionPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_OBJECTACTION_WHERE, _SQL_COUNT_OBJECTACTION_WHERE,
-			ObjectActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"objectAction.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ObjectAction::getUuid));
+				"objectAction.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, ObjectAction::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1289,9 +1202,10 @@ public class ObjectActionPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_OBJECTACTION_WHERE, _SQL_COUNT_OBJECTACTION_WHERE,
 				ObjectActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"objectAction.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ObjectAction::getUuid),
+					"objectAction.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, ObjectAction::getUuid),
 				new FinderColumn<>(
 					"objectAction.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectAction::getCompanyId));
@@ -1320,6 +1234,7 @@ public class ObjectActionPersistenceImpl
 					new String[] {"objectDefinitionId"}, false),
 				_SQL_SELECT_OBJECTACTION_WHERE, _SQL_COUNT_OBJECTACTION_WHERE,
 				ObjectActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectAction.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1368,9 +1283,11 @@ public class ObjectActionPersistenceImpl
 					false, null),
 				_SQL_SELECT_OBJECTACTION_WHERE, _SQL_COUNT_OBJECTACTION_WHERE,
 				ObjectActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"objectAction.", "active", FinderColumn.Type.BOOLEAN, "=",
-					true, true, ObjectAction::isActive),
+					"objectAction.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					ObjectAction::isActive),
 				new FinderColumn<>(
 					"objectAction.", "objectActionExecutorKey",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1441,12 +1358,14 @@ public class ObjectActionPersistenceImpl
 					0, 4, false, null),
 				_SQL_SELECT_OBJECTACTION_WHERE, _SQL_COUNT_OBJECTACTION_WHERE,
 				ObjectActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectAction.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectAction::getCompanyId),
 				new FinderColumn<>(
-					"objectAction.", "active", FinderColumn.Type.BOOLEAN, "=",
-					true, true, ObjectAction::isActive),
+					"objectAction.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					ObjectAction::isActive),
 				new FinderColumn<>(
 					"objectAction.", "objectActionTriggerKey",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1493,13 +1412,15 @@ public class ObjectActionPersistenceImpl
 					0, 4, false, null),
 				_SQL_SELECT_OBJECTACTION_WHERE, _SQL_COUNT_OBJECTACTION_WHERE,
 				ObjectActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectAction.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
 					ObjectAction::getObjectDefinitionId),
 				new FinderColumn<>(
-					"objectAction.", "active", FinderColumn.Type.BOOLEAN, "=",
-					true, true, ObjectAction::isActive),
+					"objectAction.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					ObjectAction::isActive),
 				new FinderColumn<>(
 					"objectAction.", "objectActionTriggerKey",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1526,8 +1447,8 @@ public class ObjectActionPersistenceImpl
 				"objectAction.", "objectDefinitionId", FinderColumn.Type.LONG,
 				"=", true, true, ObjectAction::getObjectDefinitionId),
 			new FinderColumn<>(
-				"objectAction.", "active", FinderColumn.Type.BOOLEAN, "=", true,
-				true, ObjectAction::isActive),
+				"objectAction.", "active", "active_", FinderColumn.Type.BOOLEAN,
+				"=", true, true, ObjectAction::isActive),
 			new FinderColumn<>(
 				"objectAction.", "name", FinderColumn.Type.STRING, "=", true,
 				true, ObjectAction::getName),
@@ -1590,12 +1511,6 @@ public class ObjectActionPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTACTION_WHERE =
 		"SELECT COUNT(objectAction) FROM ObjectAction objectAction WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectAction exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ObjectActionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "active", "system"});
 
@@ -1605,4 +1520,4 @@ public class ObjectActionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1765604641
+// LIFERAY-SERVICE-BUILDER-HASH:-281949075

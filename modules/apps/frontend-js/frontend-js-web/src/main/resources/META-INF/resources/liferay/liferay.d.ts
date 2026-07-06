@@ -174,6 +174,24 @@ declare module Liferay {
 	}
 
 	namespace State {
+		interface Atom<T> {
+			readonly __type?: T;
+			readonly key: string;
+		}
+
+		interface Selector<T> {
+			readonly __type?: T;
+			readonly key: string;
+		}
+
+		type Getter = <T>(atomOrSelector: Atom<T> | Selector<T>) => T;
+
+		namespace __unsafe__ {
+			function getAtomOrSelectorKey(
+				key: string
+			): Atom<unknown> | Selector<unknown> | null;
+		}
+
 		type Primitive =
 			| bigint
 			| boolean
@@ -262,6 +280,7 @@ declare module Liferay {
 		export function getTimeZone(): string;
 		export function getUserEmailAddress(): string;
 		export function getUserId(): string;
+		export function getUserName(): string;
 		export function isControlPanel(): boolean;
 		export function isImpersonated(): boolean;
 		export function isSignedIn(): boolean;

@@ -42,6 +42,22 @@ export function fetchFieldValues({
 	});
 }
 
+export async function fetchLifecycleStageFieldValues({
+	accountLifecycleId,
+	channelId,
+	groupId
+}) {
+	return sendRequest({
+		data: {
+			accountLifecycleId,
+			channelId,
+			fieldMappingFieldName: 'lifecycleStatus'
+		},
+		method: 'GET',
+		path: `contacts/${groupId}/account/fds_field_values`
+	});
+}
+
 export async function fetchLifecycleStatus({
 	accountId,
 	accountLifecycleId,
@@ -53,8 +69,9 @@ export async function fetchLifecycleStatus({
 	});
 }
 
-export function fetchMetrics({groupId}) {
+export function fetchMetrics({channelId, groupId}) {
 	return sendRequest({
+		data: {channelId},
 		method: 'GET',
 		path: `contacts/${groupId}/account/metrics`
 	});

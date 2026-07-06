@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -95,8 +93,9 @@ public class CPOptionValuePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPOptionValue>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPOptionValue, NoSuchCPOptionValueException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp option values where uuid = &#63;.
@@ -136,16 +135,8 @@ public class CPOptionValuePersistenceImpl
 			String uuid, OrderByComparator<CPOptionValue> orderByComparator)
 		throws NoSuchCPOptionValueException {
 
-		CPOptionValue cpOptionValue = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (cpOptionValue != null) {
-			return cpOptionValue;
-		}
-
-		throw new NoSuchCPOptionValueException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -186,8 +177,9 @@ public class CPOptionValuePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<CPOptionValue>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPOptionValue, NoSuchCPOptionValueException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp option values where uuid = &#63; and companyId = &#63;.
@@ -230,16 +222,8 @@ public class CPOptionValuePersistenceImpl
 			OrderByComparator<CPOptionValue> orderByComparator)
 		throws NoSuchCPOptionValueException {
 
-		CPOptionValue cpOptionValue = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cpOptionValue != null) {
-			return cpOptionValue;
-		}
-
-		throw new NoSuchCPOptionValueException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -284,8 +268,9 @@ public class CPOptionValuePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CPOptionValue>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<CPOptionValue, NoSuchCPOptionValueException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the cp option values where companyId = &#63;.
@@ -325,16 +310,8 @@ public class CPOptionValuePersistenceImpl
 			long companyId, OrderByComparator<CPOptionValue> orderByComparator)
 		throws NoSuchCPOptionValueException {
 
-		CPOptionValue cpOptionValue = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (cpOptionValue != null) {
-			return cpOptionValue;
-		}
-
-		throw new NoSuchCPOptionValueException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -375,8 +352,9 @@ public class CPOptionValuePersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<CPOptionValue>
-		_collectionPersistenceFinderByCPOptionId;
+	private CollectionPersistenceFinder
+		<CPOptionValue, NoSuchCPOptionValueException>
+			_collectionPersistenceFinderByCPOptionId;
 
 	/**
 	 * Returns an ordered range of all the cp option values where CPOptionId = &#63;.
@@ -416,16 +394,8 @@ public class CPOptionValuePersistenceImpl
 			long CPOptionId, OrderByComparator<CPOptionValue> orderByComparator)
 		throws NoSuchCPOptionValueException {
 
-		CPOptionValue cpOptionValue = fetchByCPOptionId_First(
-			CPOptionId, orderByComparator);
-
-		if (cpOptionValue != null) {
-			return cpOptionValue;
-		}
-
-		throw new NoSuchCPOptionValueException(
-			_collectionPersistenceFinderByCPOptionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPOptionId}));
+		return _collectionPersistenceFinderByCPOptionId.findFirst(
+			finderCache, new Object[] {CPOptionId}, orderByComparator);
 	}
 
 	/**
@@ -466,7 +436,7 @@ public class CPOptionValuePersistenceImpl
 			finderCache, new Object[] {CPOptionId});
 	}
 
-	private UniquePersistenceFinder<CPOptionValue>
+	private UniquePersistenceFinder<CPOptionValue, NoSuchCPOptionValueException>
 		_uniquePersistenceFinderByC_K;
 
 	/**
@@ -481,21 +451,8 @@ public class CPOptionValuePersistenceImpl
 	public CPOptionValue findByC_K(long CPOptionId, String key)
 		throws NoSuchCPOptionValueException {
 
-		CPOptionValue cpOptionValue = fetchByC_K(CPOptionId, key);
-
-		if (cpOptionValue == null) {
-			String message =
-				_uniquePersistenceFinderByC_K.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPOptionId, key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPOptionValueException(message);
-		}
-
-		return cpOptionValue;
+		return _uniquePersistenceFinderByC_K.find(
+			finderCache, new Object[] {CPOptionId, key});
 	}
 
 	/**
@@ -543,7 +500,7 @@ public class CPOptionValuePersistenceImpl
 			finderCache, new Object[] {CPOptionId, key});
 	}
 
-	private UniquePersistenceFinder<CPOptionValue>
+	private UniquePersistenceFinder<CPOptionValue, NoSuchCPOptionValueException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -559,23 +516,8 @@ public class CPOptionValuePersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCPOptionValueException {
 
-		CPOptionValue cpOptionValue = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (cpOptionValue == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPOptionValueException(message);
-		}
-
-		return cpOptionValue;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1010,10 +952,11 @@ public class CPOptionValuePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_CPOPTIONVALUE_WHERE, _SQL_COUNT_CPOPTIONVALUE_WHERE,
-			CPOptionValueModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			CPOptionValueModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"cpOptionValue.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, CPOptionValue::getUuid));
+				"cpOptionValue.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, CPOptionValue::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1036,9 +979,10 @@ public class CPOptionValuePersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_CPOPTIONVALUE_WHERE, _SQL_COUNT_CPOPTIONVALUE_WHERE,
 				CPOptionValueModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"cpOptionValue.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CPOptionValue::getUuid),
+					"cpOptionValue.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, CPOptionValue::getUuid),
 				new FinderColumn<>(
 					"cpOptionValue.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CPOptionValue::getCompanyId));
@@ -1064,6 +1008,7 @@ public class CPOptionValuePersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_CPOPTIONVALUE_WHERE, _SQL_COUNT_CPOPTIONVALUE_WHERE,
 				CPOptionValueModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"cpOptionValue.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CPOptionValue::getCompanyId));
@@ -1089,6 +1034,7 @@ public class CPOptionValuePersistenceImpl
 					new String[] {"CPOptionId"}, false),
 				_SQL_SELECT_CPOPTIONVALUE_WHERE, _SQL_COUNT_CPOPTIONVALUE_WHERE,
 				CPOptionValueModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"cpOptionValue.", "CPOptionId", FinderColumn.Type.LONG, "=",
 					true, true, CPOptionValue::getCPOptionId));
@@ -1106,8 +1052,8 @@ public class CPOptionValuePersistenceImpl
 				"cpOptionValue.", "CPOptionId", FinderColumn.Type.LONG, "=",
 				true, true, CPOptionValue::getCPOptionId),
 			new FinderColumn<>(
-				"cpOptionValue.", "key", FinderColumn.Type.STRING, "=", true,
-				true, CPOptionValue::getKey));
+				"cpOptionValue.", "key", "key_", FinderColumn.Type.STRING, "=",
+				true, true, CPOptionValue::getKey));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1184,12 +1130,6 @@ public class CPOptionValuePersistenceImpl
 	private static final String _SQL_COUNT_CPOPTIONVALUE_WHERE =
 		"SELECT COUNT(cpOptionValue) FROM CPOptionValue cpOptionValue WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPOptionValue exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPOptionValuePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "key"});
 
@@ -1199,4 +1139,4 @@ public class CPOptionValuePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1762027557
+// LIFERAY-SERVICE-BUILDER-HASH:-1887870602

@@ -21,7 +21,9 @@ $cadmin-card-inner-border-radius: calc(
 	#{$cadmin-card-border-radius} - #{$cadmin-card-border-width}
 ) !default;
 
-$cadmin-card-cap-bg: rgba($cadmin-black, 0.03) !default;
+$cadmin-card-cap-bg: unquote(
+	'hsl(from #{$cadmin-black} h s l / 0.03)'
+) !default;
 $cadmin-card-cap-color: null !default;
 
 // .card-body
@@ -418,6 +420,8 @@ $cadmin-form-check-card: map-deep-merge(
 		),
 
 		disabled: (
+			transform: none,
+
 			card: (
 				box-shadow: none,
 				border-color: $cadmin-card-border-color,
@@ -456,7 +460,6 @@ $cadmin-form-check-card: map-deep-merge(
 			),
 
 			custom-control-label: (
-				opacity: 0,
 				position: absolute,
 				z-index: 1,
 			),
@@ -520,7 +523,7 @@ $cadmin-card-interactive: map-deep-merge(
 		transition: $cadmin-card-transition,
 
 		hover: (
-			background-color: #f7f8f9,
+			background-color: $cadmin-gray-100,
 			text-decoration: none,
 		),
 
@@ -534,7 +537,7 @@ $cadmin-card-interactive: map-deep-merge(
 		),
 
 		active: (
-			background-color: #f1f2f5,
+			background-color: $cadmin-gray-200,
 		),
 
 		after-highlight: $cadmin-card-interactive-after-highlight,
@@ -599,6 +602,14 @@ $cadmin-card-interactive-secondary: map-deep-merge(
 			background-color: $cadmin-white,
 			color: $cadmin-gray-900,
 			transform: translateY(-0.25rem),
+			after: (
+				bottom: -0.25rem,
+				content: '',
+				height: 0.25rem,
+				left: 0,
+				position: absolute,
+				right: 0,
+			),
 		),
 
 		active: (
@@ -617,6 +628,14 @@ $cadmin-card-type-asset: map-deep-merge(
 
 		hover: (
 			transform: translateY(-0.25rem),
+			after: (
+				bottom: -0.25rem,
+				content: '',
+				height: 0.25rem,
+				left: 0,
+				position: absolute,
+				right: 0,
+			),
 		),
 
 		aspect-ratio: (
@@ -930,6 +949,14 @@ $cadmin-template-card: map-deep-merge(
 
 		hover: (
 			transform: translateY(-0.25rem),
+			after: (
+				bottom: -0.25rem,
+				content: '',
+				height: 0.25rem,
+				left: 0,
+				position: absolute,
+				right: 0,
+			),
 		),
 	),
 	$cadmin-template-card

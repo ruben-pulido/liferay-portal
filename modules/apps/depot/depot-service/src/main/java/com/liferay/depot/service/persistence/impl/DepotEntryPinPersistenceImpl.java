@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -83,7 +81,7 @@ public class DepotEntryPinPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DepotEntryPin>
+	private CollectionPersistenceFinder<DepotEntryPin, NoSuchEntryPinException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -124,16 +122,8 @@ public class DepotEntryPinPersistenceImpl
 			String uuid, OrderByComparator<DepotEntryPin> orderByComparator)
 		throws NoSuchEntryPinException {
 
-		DepotEntryPin depotEntryPin = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (depotEntryPin != null) {
-			return depotEntryPin;
-		}
-
-		throw new NoSuchEntryPinException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -174,7 +164,7 @@ public class DepotEntryPinPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DepotEntryPin>
+	private UniquePersistenceFinder<DepotEntryPin, NoSuchEntryPinException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -189,21 +179,8 @@ public class DepotEntryPinPersistenceImpl
 	public DepotEntryPin findByUUID_G(String uuid, long groupId)
 		throws NoSuchEntryPinException {
 
-		DepotEntryPin depotEntryPin = fetchByUUID_G(uuid, groupId);
-
-		if (depotEntryPin == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryPinException(message);
-		}
-
-		return depotEntryPin;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -251,7 +228,7 @@ public class DepotEntryPinPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DepotEntryPin>
+	private CollectionPersistenceFinder<DepotEntryPin, NoSuchEntryPinException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -295,16 +272,8 @@ public class DepotEntryPinPersistenceImpl
 			OrderByComparator<DepotEntryPin> orderByComparator)
 		throws NoSuchEntryPinException {
 
-		DepotEntryPin depotEntryPin = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (depotEntryPin != null) {
-			return depotEntryPin;
-		}
-
-		throw new NoSuchEntryPinException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -349,7 +318,7 @@ public class DepotEntryPinPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<DepotEntryPin>
+	private CollectionPersistenceFinder<DepotEntryPin, NoSuchEntryPinException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -390,16 +359,8 @@ public class DepotEntryPinPersistenceImpl
 			long userId, OrderByComparator<DepotEntryPin> orderByComparator)
 		throws NoSuchEntryPinException {
 
-		DepotEntryPin depotEntryPin = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (depotEntryPin != null) {
-			return depotEntryPin;
-		}
-
-		throw new NoSuchEntryPinException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -440,7 +401,7 @@ public class DepotEntryPinPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<DepotEntryPin>
+	private CollectionPersistenceFinder<DepotEntryPin, NoSuchEntryPinException>
 		_collectionPersistenceFinderByDepotEntryId;
 
 	/**
@@ -482,16 +443,8 @@ public class DepotEntryPinPersistenceImpl
 			OrderByComparator<DepotEntryPin> orderByComparator)
 		throws NoSuchEntryPinException {
 
-		DepotEntryPin depotEntryPin = fetchByDepotEntryId_First(
-			depotEntryId, orderByComparator);
-
-		if (depotEntryPin != null) {
-			return depotEntryPin;
-		}
-
-		throw new NoSuchEntryPinException(
-			_collectionPersistenceFinderByDepotEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {depotEntryId}));
+		return _collectionPersistenceFinderByDepotEntryId.findFirst(
+			finderCache, new Object[] {depotEntryId}, orderByComparator);
 	}
 
 	/**
@@ -532,7 +485,7 @@ public class DepotEntryPinPersistenceImpl
 			finderCache, new Object[] {depotEntryId});
 	}
 
-	private UniquePersistenceFinder<DepotEntryPin>
+	private UniquePersistenceFinder<DepotEntryPin, NoSuchEntryPinException>
 		_uniquePersistenceFinderByU_D;
 
 	/**
@@ -547,22 +500,8 @@ public class DepotEntryPinPersistenceImpl
 	public DepotEntryPin findByU_D(long userId, long depotEntryId)
 		throws NoSuchEntryPinException {
 
-		DepotEntryPin depotEntryPin = fetchByU_D(userId, depotEntryId);
-
-		if (depotEntryPin == null) {
-			String message =
-				_uniquePersistenceFinderByU_D.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {userId, depotEntryId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryPinException(message);
-		}
-
-		return depotEntryPin;
+		return _uniquePersistenceFinderByU_D.find(
+			finderCache, new Object[] {userId, depotEntryId});
 	}
 
 	/**
@@ -895,10 +834,11 @@ public class DepotEntryPinPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_DEPOTENTRYPIN_WHERE, _SQL_COUNT_DEPOTENTRYPIN_WHERE,
-			DepotEntryPinModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DepotEntryPinModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"depotEntryPin.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DepotEntryPin::getUuid));
+				"depotEntryPin.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DepotEntryPin::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -910,8 +850,8 @@ public class DepotEntryPinPersistenceImpl
 				DepotEntryPin::getGroupId),
 			_SQL_SELECT_DEPOTENTRYPIN_WHERE, "",
 			new FinderColumn<>(
-				"depotEntryPin.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DepotEntryPin::getUuid),
+				"depotEntryPin.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DepotEntryPin::getUuid),
 			new FinderColumn<>(
 				"depotEntryPin.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, DepotEntryPin::getGroupId));
@@ -937,9 +877,10 @@ public class DepotEntryPinPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_DEPOTENTRYPIN_WHERE, _SQL_COUNT_DEPOTENTRYPIN_WHERE,
 				DepotEntryPinModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"depotEntryPin.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, DepotEntryPin::getUuid),
+					"depotEntryPin.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, DepotEntryPin::getUuid),
 				new FinderColumn<>(
 					"depotEntryPin.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DepotEntryPin::getCompanyId));
@@ -965,6 +906,7 @@ public class DepotEntryPinPersistenceImpl
 					new String[] {"userId"}, false),
 				_SQL_SELECT_DEPOTENTRYPIN_WHERE, _SQL_COUNT_DEPOTENTRYPIN_WHERE,
 				DepotEntryPinModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"depotEntryPin.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, DepotEntryPin::getUserId));
@@ -991,6 +933,7 @@ public class DepotEntryPinPersistenceImpl
 					new String[] {"depotEntryId"}, false),
 				_SQL_SELECT_DEPOTENTRYPIN_WHERE, _SQL_COUNT_DEPOTENTRYPIN_WHERE,
 				DepotEntryPinModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"depotEntryPin.", "depotEntryId", FinderColumn.Type.LONG,
 					"=", true, true, DepotEntryPin::getDepotEntryId));
@@ -1067,12 +1010,6 @@ public class DepotEntryPinPersistenceImpl
 	private static final String _SQL_COUNT_DEPOTENTRYPIN_WHERE =
 		"SELECT COUNT(depotEntryPin) FROM DepotEntryPin depotEntryPin WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DepotEntryPin exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DepotEntryPinPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1082,4 +1019,4 @@ public class DepotEntryPinPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2064954160
+// LIFERAY-SERVICE-BUILDER-HASH:-381652188

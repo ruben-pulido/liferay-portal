@@ -111,11 +111,7 @@ public class PortletPreferencesPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		PortletPreferences newPortletPreferences = _persistence.create(pk);
-
-		newPortletPreferences.setMvccVersion(RandomTestUtil.nextLong());
+		PortletPreferences newPortletPreferences = addPortletPreferences();
 
 		newPortletPreferences.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -129,7 +125,9 @@ public class PortletPreferencesPersistenceTest {
 
 		newPortletPreferences.setPortletId(RandomTestUtil.randomString());
 
-		_portletPreferenceses.add(_persistence.update(newPortletPreferences));
+		newPortletPreferences = _persistence.update(newPortletPreferences);
+
+		_portletPreferenceses.add(newPortletPreferences);
 
 		PortletPreferences existingPortletPreferences =
 			_persistence.findByPrimaryKey(
@@ -587,8 +585,6 @@ public class PortletPreferencesPersistenceTest {
 
 		PortletPreferences portletPreferences = _persistence.create(pk);
 
-		portletPreferences.setMvccVersion(RandomTestUtil.nextLong());
-
 		portletPreferences.setCtCollectionId(RandomTestUtil.nextLong());
 
 		portletPreferences.setCompanyId(RandomTestUtil.nextLong());
@@ -612,4 +608,4 @@ public class PortletPreferencesPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-990461209
+// LIFERAY-SERVICE-BUILDER-HASH:1538029920

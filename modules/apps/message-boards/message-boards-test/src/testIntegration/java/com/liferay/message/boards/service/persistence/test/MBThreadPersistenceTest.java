@@ -116,11 +116,7 @@ public class MBThreadPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		MBThread newMBThread = _persistence.create(pk);
-
-		newMBThread.setMvccVersion(RandomTestUtil.nextLong());
+		MBThread newMBThread = addMBThread();
 
 		newMBThread.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -164,7 +160,9 @@ public class MBThreadPersistenceTest {
 
 		newMBThread.setStatusDate(RandomTestUtil.nextDate());
 
-		_mbThreads.add(_persistence.update(newMBThread));
+		newMBThread = _persistence.update(newMBThread);
+
+		_mbThreads.add(newMBThread);
 
 		MBThread existingMBThread = _persistence.findByPrimaryKey(
 			newMBThread.getPrimaryKey());
@@ -709,8 +707,6 @@ public class MBThreadPersistenceTest {
 
 		MBThread mbThread = _persistence.create(pk);
 
-		mbThread.setMvccVersion(RandomTestUtil.nextLong());
-
 		mbThread.setCtCollectionId(RandomTestUtil.nextLong());
 
 		mbThread.setUuid(RandomTestUtil.randomString());
@@ -763,4 +759,4 @@ public class MBThreadPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1391279336
+// LIFERAY-SERVICE-BUILDER-HASH:266197960

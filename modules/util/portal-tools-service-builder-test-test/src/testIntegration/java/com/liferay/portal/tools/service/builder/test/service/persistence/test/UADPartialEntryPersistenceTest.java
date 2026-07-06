@@ -109,9 +109,7 @@ public class UADPartialEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		UADPartialEntry newUADPartialEntry = _persistence.create(pk);
+		UADPartialEntry newUADPartialEntry = addUADPartialEntry();
 
 		newUADPartialEntry.setUserId(RandomTestUtil.nextLong());
 
@@ -119,7 +117,9 @@ public class UADPartialEntryPersistenceTest {
 
 		newUADPartialEntry.setMessage(RandomTestUtil.randomString());
 
-		_uadPartialEntries.add(_persistence.update(newUADPartialEntry));
+		newUADPartialEntry = _persistence.update(newUADPartialEntry);
+
+		_uadPartialEntries.add(newUADPartialEntry);
 
 		UADPartialEntry existingUADPartialEntry = _persistence.findByPrimaryKey(
 			newUADPartialEntry.getPrimaryKey());
@@ -404,4 +404,4 @@ public class UADPartialEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1943265048
+// LIFERAY-SERVICE-BUILDER-HASH:1573662378

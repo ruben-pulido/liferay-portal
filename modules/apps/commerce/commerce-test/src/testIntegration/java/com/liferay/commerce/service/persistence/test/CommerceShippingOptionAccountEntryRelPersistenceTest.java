@@ -119,13 +119,9 @@ public class CommerceShippingOptionAccountEntryRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommerceShippingOptionAccountEntryRel
-			newCommerceShippingOptionAccountEntryRel = _persistence.create(pk);
-
-		newCommerceShippingOptionAccountEntryRel.setMvccVersion(
-			RandomTestUtil.nextLong());
+			newCommerceShippingOptionAccountEntryRel =
+				addCommerceShippingOptionAccountEntryRel();
 
 		newCommerceShippingOptionAccountEntryRel.setCompanyId(
 			RandomTestUtil.nextLong());
@@ -154,8 +150,11 @@ public class CommerceShippingOptionAccountEntryRelPersistenceTest {
 		newCommerceShippingOptionAccountEntryRel.setCommerceShippingOptionKey(
 			RandomTestUtil.randomString());
 
+		newCommerceShippingOptionAccountEntryRel = _persistence.update(
+			newCommerceShippingOptionAccountEntryRel);
+
 		_commerceShippingOptionAccountEntryRels.add(
-			_persistence.update(newCommerceShippingOptionAccountEntryRel));
+			newCommerceShippingOptionAccountEntryRel);
 
 		CommerceShippingOptionAccountEntryRel
 			existingCommerceShippingOptionAccountEntryRel =
@@ -635,9 +634,6 @@ public class CommerceShippingOptionAccountEntryRelPersistenceTest {
 		CommerceShippingOptionAccountEntryRel
 			commerceShippingOptionAccountEntryRel = _persistence.create(pk);
 
-		commerceShippingOptionAccountEntryRel.setMvccVersion(
-			RandomTestUtil.nextLong());
-
 		commerceShippingOptionAccountEntryRel.setCompanyId(
 			RandomTestUtil.nextLong());
 
@@ -678,4 +674,4 @@ public class CommerceShippingOptionAccountEntryRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-324933552
+// LIFERAY-SERVICE-BUILDER-HASH:-732014959

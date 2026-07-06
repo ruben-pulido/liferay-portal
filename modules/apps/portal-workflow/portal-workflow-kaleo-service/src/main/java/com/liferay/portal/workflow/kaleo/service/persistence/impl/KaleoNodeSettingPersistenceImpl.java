@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class KaleoNodeSettingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoNodeSetting>
-		_collectionPersistenceFinderByKaleoNodeId;
+	private CollectionPersistenceFinder
+		<KaleoNodeSetting, NoSuchNodeSettingException>
+			_collectionPersistenceFinderByKaleoNodeId;
 
 	/**
 	 * Returns an ordered range of all the kaleo node settings where kaleoNodeId = &#63;.
@@ -124,16 +123,8 @@ public class KaleoNodeSettingPersistenceImpl
 			OrderByComparator<KaleoNodeSetting> orderByComparator)
 		throws NoSuchNodeSettingException {
 
-		KaleoNodeSetting kaleoNodeSetting = fetchByKaleoNodeId_First(
-			kaleoNodeId, orderByComparator);
-
-		if (kaleoNodeSetting != null) {
-			return kaleoNodeSetting;
-		}
-
-		throw new NoSuchNodeSettingException(
-			_collectionPersistenceFinderByKaleoNodeId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {kaleoNodeId}));
+		return _collectionPersistenceFinderByKaleoNodeId.findFirst(
+			finderCache, new Object[] {kaleoNodeId}, orderByComparator);
 	}
 
 	/**
@@ -175,8 +166,9 @@ public class KaleoNodeSettingPersistenceImpl
 			finderCache, new Object[] {kaleoNodeId});
 	}
 
-	private UniquePersistenceFinder<KaleoNodeSetting>
-		_uniquePersistenceFinderByKNI_N;
+	private UniquePersistenceFinder
+		<KaleoNodeSetting, NoSuchNodeSettingException>
+			_uniquePersistenceFinderByKNI_N;
 
 	/**
 	 * Returns the kaleo node setting where kaleoNodeId = &#63; and name = &#63; or throws a <code>NoSuchNodeSettingException</code> if it could not be found.
@@ -190,21 +182,8 @@ public class KaleoNodeSettingPersistenceImpl
 	public KaleoNodeSetting findByKNI_N(long kaleoNodeId, String name)
 		throws NoSuchNodeSettingException {
 
-		KaleoNodeSetting kaleoNodeSetting = fetchByKNI_N(kaleoNodeId, name);
-
-		if (kaleoNodeSetting == null) {
-			String message =
-				_uniquePersistenceFinderByKNI_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {kaleoNodeId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNodeSettingException(message);
-		}
-
-		return kaleoNodeSetting;
+		return _uniquePersistenceFinderByKNI_N.find(
+			finderCache, new Object[] {kaleoNodeId, name});
 	}
 
 	/**
@@ -551,7 +530,7 @@ public class KaleoNodeSettingPersistenceImpl
 				_SQL_SELECT_KALEONODESETTING_WHERE,
 				_SQL_COUNT_KALEONODESETTING_WHERE,
 				KaleoNodeSettingModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"kaleoNodeSetting.", "kaleoNodeId", FinderColumn.Type.LONG,
 					"=", true, true, KaleoNodeSetting::getKaleoNodeId));
@@ -629,16 +608,10 @@ public class KaleoNodeSettingPersistenceImpl
 	private static final String _SQL_COUNT_KALEONODESETTING_WHERE =
 		"SELECT COUNT(kaleoNodeSetting) FROM KaleoNodeSetting kaleoNodeSetting WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoNodeSetting exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		KaleoNodeSettingPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-322948091
+// LIFERAY-SERVICE-BUILDER-HASH:1690091922

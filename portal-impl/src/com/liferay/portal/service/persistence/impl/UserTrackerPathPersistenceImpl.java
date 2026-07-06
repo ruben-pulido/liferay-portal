@@ -63,8 +63,9 @@ public class UserTrackerPathPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<UserTrackerPath>
-		_collectionPersistenceFinderByUserTrackerId;
+	private CollectionPersistenceFinder
+		<UserTrackerPath, NoSuchUserTrackerPathException>
+			_collectionPersistenceFinderByUserTrackerId;
 
 	/**
 	 * Returns an ordered range of all the user tracker paths where userTrackerId = &#63;.
@@ -105,16 +106,9 @@ public class UserTrackerPathPersistenceImpl
 			OrderByComparator<UserTrackerPath> orderByComparator)
 		throws NoSuchUserTrackerPathException {
 
-		UserTrackerPath userTrackerPath = fetchByUserTrackerId_First(
-			userTrackerId, orderByComparator);
-
-		if (userTrackerPath != null) {
-			return userTrackerPath;
-		}
-
-		throw new NoSuchUserTrackerPathException(
-			_collectionPersistenceFinderByUserTrackerId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userTrackerId}));
+		return _collectionPersistenceFinderByUserTrackerId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userTrackerId},
+			orderByComparator);
 	}
 
 	/**
@@ -367,7 +361,7 @@ public class UserTrackerPathPersistenceImpl
 				_SQL_SELECT_USERTRACKERPATH_WHERE,
 				_SQL_COUNT_USERTRACKERPATH_WHERE,
 				UserTrackerPathModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"userTrackerPath.", "userTrackerId", FinderColumn.Type.LONG,
 					"=", true, true, UserTrackerPath::getUserTrackerId));
@@ -393,9 +387,6 @@ public class UserTrackerPathPersistenceImpl
 	private static final String _SQL_COUNT_USERTRACKERPATH_WHERE =
 		"SELECT COUNT(userTrackerPath) FROM UserTrackerPath userTrackerPath WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No UserTrackerPath exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"path"});
 
@@ -405,4 +396,4 @@ public class UserTrackerPathPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:257040081
+// LIFERAY-SERVICE-BUILDER-HASH:-1950787791

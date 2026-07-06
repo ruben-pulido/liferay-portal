@@ -116,13 +116,8 @@ public class WorkflowMetricsSLADefinitionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		WorkflowMetricsSLADefinition newWorkflowMetricsSLADefinition =
-			_persistence.create(pk);
-
-		newWorkflowMetricsSLADefinition.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addWorkflowMetricsSLADefinition();
 
 		newWorkflowMetricsSLADefinition.setUuid(RandomTestUtil.randomString());
 
@@ -182,8 +177,10 @@ public class WorkflowMetricsSLADefinitionPersistenceTest {
 		newWorkflowMetricsSLADefinition.setStatusDate(
 			RandomTestUtil.nextDate());
 
-		_workflowMetricsSLADefinitions.add(
-			_persistence.update(newWorkflowMetricsSLADefinition));
+		newWorkflowMetricsSLADefinition = _persistence.update(
+			newWorkflowMetricsSLADefinition);
+
+		_workflowMetricsSLADefinitions.add(newWorkflowMetricsSLADefinition);
 
 		WorkflowMetricsSLADefinition existingWorkflowMetricsSLADefinition =
 			_persistence.findByPrimaryKey(
@@ -737,8 +734,6 @@ public class WorkflowMetricsSLADefinitionPersistenceTest {
 		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
 			_persistence.create(pk);
 
-		workflowMetricsSLADefinition.setMvccVersion(RandomTestUtil.nextLong());
-
 		workflowMetricsSLADefinition.setUuid(RandomTestUtil.randomString());
 
 		workflowMetricsSLADefinition.setGroupId(RandomTestUtil.nextLong());
@@ -803,4 +798,4 @@ public class WorkflowMetricsSLADefinitionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:376656500
+// LIFERAY-SERVICE-BUILDER-HASH:-1858835348

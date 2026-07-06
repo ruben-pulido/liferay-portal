@@ -22,10 +22,9 @@ public class CookiesConstants {
 
 	public static final int MAX_AGE = (int)(Time.YEAR / 1000);
 
-	public static final String NAME_COMMERCE_CONTINUE_AS_GUEST =
-		"COMMERCE_CONTINUE_AS_GUEST";
-
 	public static final String NAME_COMPANY_ID = "COMPANY_ID";
+
+	public static final String NAME_CONSENT_STATE = "CONSENT_STATE";
 
 	public static final String NAME_CONSENT_TYPE_FUNCTIONAL =
 		"CONSENT_TYPE_FUNCTIONAL";
@@ -63,5 +62,22 @@ public class CookiesConstants {
 		"USER_CONSENT_CONFIGURED";
 
 	public static final String NAME_USER_UUID = "USER_UUID";
+
+	public static String getConsentTypeName(int consentType) {
+		if (consentType == CONSENT_TYPE_FUNCTIONAL) {
+			return NAME_CONSENT_TYPE_FUNCTIONAL;
+		}
+		else if (consentType == CONSENT_TYPE_NECESSARY) {
+			return NAME_CONSENT_TYPE_NECESSARY;
+		}
+		else if (consentType == CONSENT_TYPE_PERFORMANCE) {
+			return NAME_CONSENT_TYPE_PERFORMANCE;
+		}
+		else if (consentType == CONSENT_TYPE_PERSONALIZATION) {
+			return NAME_CONSENT_TYPE_PERSONALIZATION;
+		}
+
+		return null;
+	}
 
 }

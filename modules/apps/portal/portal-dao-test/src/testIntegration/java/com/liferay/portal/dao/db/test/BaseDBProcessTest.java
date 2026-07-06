@@ -34,14 +34,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -554,9 +554,7 @@ public class BaseDBProcessTest extends BaseDBProcess {
 				"select id from " + _TABLE_NAME,
 				resultSet -> new Object[] {resultSet.getInt("id")},
 				values -> {
-					Thread currentThread = Thread.currentThread();
-
-					threadIds.add(currentThread.getId());
+					_recordThread(threadIds);
 
 					int value = (int)values[0];
 
@@ -569,38 +567,6 @@ public class BaseDBProcessTest extends BaseDBProcess {
 	}
 
 	@Test
-	public void testProcessConcurrentlyShutdown() throws Exception {
-		List<Integer> values = new ArrayList<>();
-
-		for (int i = 1; i <= _PROCESS_CONCURRENTLY_COUNT; i++) {
-			values.add(i);
-		}
-
-		List<Future<Void>> futures = new ArrayList<>();
-
-		ExecutorService executorService = Executors.newWorkStealingPool();
-
-		for (int i = 0; i <= 10; i++) {
-			Future<Void> future = executorService.submit(
-				() -> {
-					processConcurrently(
-						values.toArray(new Integer[0]),
-						value -> Thread.sleep(1000), "An exception was thrown");
-
-					return null;
-				});
-
-			futures.add(future);
-		}
-
-		executorService.shutdown();
-
-		for (Future<Void> future : futures) {
-			future.get();
-		}
-	}
-
-	@Test
 	public void testProcessConcurrentlyWithBatch() throws Exception {
 		_validateProcessConcurrently(
 			threadIds -> processConcurrently(
@@ -608,9 +574,7 @@ public class BaseDBProcessTest extends BaseDBProcess {
 				"update " + _TABLE_NAME + " set typeInteger = ? where id = ?",
 				resultSet -> new Object[] {resultSet.getInt("id")},
 				(values, preparedStatement) -> {
-					Thread currentThread = Thread.currentThread();
-
-					threadIds.add(currentThread.getId());
+					_recordThread(threadIds);
 
 					int value = (int)values[0];
 
@@ -634,9 +598,7 @@ public class BaseDBProcessTest extends BaseDBProcess {
 			threadIds -> processConcurrently(
 				values.toArray(new Integer[0]),
 				value -> {
-					Thread currentThread = Thread.currentThread();
-
-					threadIds.add(currentThread.getId());
+					_recordThread(threadIds);
 
 					runSQL(
 						StringBundler.concat(
@@ -664,6 +626,18 @@ public class BaseDBProcessTest extends BaseDBProcess {
 		}
 	}
 
+	private void _recordThread(Set<Long> threadIds)
+		throws InterruptedException {
+
+		Thread currentThread = Thread.currentThread();
+
+		threadIds.add(currentThread.getId());
+
+		_countDownLatch.countDown();
+
+		_countDownLatch.await(1, TimeUnit.MINUTES);
+	}
+
 	private void _validateIndex(String[] columnNames) throws Exception {
 		List<IndexMetadata> indexMetadatas = ReflectionTestUtil.invoke(
 			_db, "getIndexMetadatas",
@@ -689,6 +663,10 @@ public class BaseDBProcessTest extends BaseDBProcess {
 	private void _validateProcessConcurrently(
 			UnsafeConsumer<Set<Long>, Exception> unsafeConsumer)
 		throws Exception {
+
+		Runtime runtime = Runtime.getRuntime();
+
+		Assume.assumeTrue(runtime.availableProcessors() > 1);
 
 		_populateTable();
 
@@ -727,5 +705,7 @@ public class BaseDBProcessTest extends BaseDBProcess {
 	private static DB _db;
 	private static DBInspector _dbInspector;
 	private static AtomicLong _tempIndexCounter;
+
+	private final CountDownLatch _countDownLatch = new CountDownLatch(2);
 
 }

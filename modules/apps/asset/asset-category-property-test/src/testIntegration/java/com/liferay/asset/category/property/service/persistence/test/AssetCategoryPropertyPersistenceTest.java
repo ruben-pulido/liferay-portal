@@ -116,12 +116,8 @@ public class AssetCategoryPropertyPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		AssetCategoryProperty newAssetCategoryProperty = _persistence.create(
-			pk);
-
-		newAssetCategoryProperty.setMvccVersion(RandomTestUtil.nextLong());
+		AssetCategoryProperty newAssetCategoryProperty =
+			addAssetCategoryProperty();
 
 		newAssetCategoryProperty.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -144,8 +140,10 @@ public class AssetCategoryPropertyPersistenceTest {
 
 		newAssetCategoryProperty.setValue(RandomTestUtil.randomString());
 
-		_assetCategoryProperties.add(
-			_persistence.update(newAssetCategoryProperty));
+		newAssetCategoryProperty = _persistence.update(
+			newAssetCategoryProperty);
+
+		_assetCategoryProperties.add(newAssetCategoryProperty);
 
 		AssetCategoryProperty existingAssetCategoryProperty =
 			_persistence.findByPrimaryKey(
@@ -614,8 +612,6 @@ public class AssetCategoryPropertyPersistenceTest {
 
 		AssetCategoryProperty assetCategoryProperty = _persistence.create(pk);
 
-		assetCategoryProperty.setMvccVersion(RandomTestUtil.nextLong());
-
 		assetCategoryProperty.setCtCollectionId(RandomTestUtil.nextLong());
 
 		assetCategoryProperty.setExternalReferenceCode(
@@ -649,4 +645,4 @@ public class AssetCategoryPropertyPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-879562848
+// LIFERAY-SERVICE-BUILDER-HASH:-900197240

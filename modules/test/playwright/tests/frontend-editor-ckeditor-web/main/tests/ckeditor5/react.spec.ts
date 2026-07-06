@@ -8,7 +8,7 @@ import {expect, mergeTests} from '@playwright/test';
 import {featureFlagsTest} from '../../../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../../../fixtures/loginTest';
 import {waitForFDS} from '../../../../../utils/waitFor';
-import {reactClassicPageTest} from '../../../../frontend-editor-ckeditor-sample-web/fixtures/ckeditor5/classicPageTest';
+import {reactClassicPageTest} from '../../../../frontend-editor-ckeditor5-sample-web/fixtures/classicPageTest';
 
 export const test = mergeTests(
 	reactClassicPageTest,
@@ -36,7 +36,6 @@ test(
 				'Bold',
 				'Italic',
 				'Bookmark',
-				'Timestamp',
 				'Image',
 				'Video',
 			];
@@ -51,19 +50,6 @@ test(
 			await expect(
 				classicPage.toolbar.buttonLabels.getByLabel('Underline')
 			).toBeHidden();
-		});
-
-		await test.step('"Timestamp" custom plugin has Clay icon', async () => {
-			const timestampButton = classicPage.toolbar.container.getByRole(
-				'button',
-				{
-					name: 'Timestamp',
-				}
-			);
-
-			await expect(
-				timestampButton.locator('svg use[href*="/clay/"]')
-			).toBeAttached();
 		});
 
 		await test.step('Item selector controls open item selector modal', async () => {

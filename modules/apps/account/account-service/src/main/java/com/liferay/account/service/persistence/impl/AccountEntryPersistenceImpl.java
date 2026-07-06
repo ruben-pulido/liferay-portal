@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -89,8 +87,8 @@ public class AccountEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<AccountEntry>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<AccountEntry, NoSuchEntryException> _collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the account entries where uuid = &#63;.
@@ -130,15 +128,8 @@ public class AccountEntryPersistenceImpl
 			String uuid, OrderByComparator<AccountEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AccountEntry accountEntry = fetchByUuid_First(uuid, orderByComparator);
-
-		if (accountEntry != null) {
-			return accountEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -213,8 +204,9 @@ public class AccountEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<AccountEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<AccountEntry, NoSuchEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the account entries where uuid = &#63; and companyId = &#63;.
@@ -257,16 +249,8 @@ public class AccountEntryPersistenceImpl
 			OrderByComparator<AccountEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AccountEntry accountEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (accountEntry != null) {
-			return accountEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -348,8 +332,9 @@ public class AccountEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<AccountEntry>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<AccountEntry, NoSuchEntryException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the account entries where companyId = &#63;.
@@ -389,16 +374,8 @@ public class AccountEntryPersistenceImpl
 			long companyId, OrderByComparator<AccountEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AccountEntry accountEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (accountEntry != null) {
-			return accountEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -474,8 +451,8 @@ public class AccountEntryPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<AccountEntry>
-		_collectionPersistenceFinderByC_S;
+	private FilterCollectionPersistenceFinder
+		<AccountEntry, NoSuchEntryException> _collectionPersistenceFinderByC_S;
 
 	/**
 	 * Returns an ordered range of all the account entries where companyId = &#63; and status = &#63;.
@@ -518,16 +495,8 @@ public class AccountEntryPersistenceImpl
 			OrderByComparator<AccountEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AccountEntry accountEntry = fetchByC_S_First(
-			companyId, status, orderByComparator);
-
-		if (accountEntry != null) {
-			return accountEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByC_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, status}));
+		return _collectionPersistenceFinderByC_S.findFirst(
+			finderCache, new Object[] {companyId, status}, orderByComparator);
 	}
 
 	/**
@@ -609,8 +578,8 @@ public class AccountEntryPersistenceImpl
 			finderCache, new Object[] {companyId, status}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<AccountEntry>
-		_collectionPersistenceFinderByU_T;
+	private FilterCollectionPersistenceFinder
+		<AccountEntry, NoSuchEntryException> _collectionPersistenceFinderByU_T;
 
 	/**
 	 * Returns an ordered range of all the account entries where userId = &#63; and type = &#63;.
@@ -653,16 +622,8 @@ public class AccountEntryPersistenceImpl
 			OrderByComparator<AccountEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AccountEntry accountEntry = fetchByU_T_First(
-			userId, type, orderByComparator);
-
-		if (accountEntry != null) {
-			return accountEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByU_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId, type}));
+		return _collectionPersistenceFinderByU_T.findFirst(
+			finderCache, new Object[] {userId, type}, orderByComparator);
 	}
 
 	/**
@@ -744,7 +705,7 @@ public class AccountEntryPersistenceImpl
 			finderCache, new Object[] {userId, type});
 	}
 
-	private UniquePersistenceFinder<AccountEntry>
+	private UniquePersistenceFinder<AccountEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -760,23 +721,8 @@ public class AccountEntryPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchEntryException {
 
-		AccountEntry accountEntry = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (accountEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return accountEntry;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1131,18 +1077,10 @@ public class AccountEntryPersistenceImpl
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_ACCOUNTENTRY_WHERE, _SQL_COUNT_ACCOUNTENTRY_WHERE,
 				AccountEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountEntryImpl.class, AccountEntry.class, "accountEntry",
-					"AccountEntry", "accountEntry.accountEntryId",
-					"SELECT DISTINCT {accountEntry.*} FROM AccountEntry accountEntry WHERE ",
-					"SELECT {AccountEntry.*} FROM (SELECT DISTINCT accountEntry.accountEntryId FROM AccountEntry accountEntry WHERE ",
-					") TEMP_TABLE INNER JOIN AccountEntry ON TEMP_TABLE.accountEntryId = AccountEntry.accountEntryId",
-					"SELECT COUNT(DISTINCT accountEntry.accountEntryId) AS COUNT_VALUE FROM AccountEntry accountEntry WHERE ",
-					AccountEntryModelImpl.ORDER_BY_SQL,
-					AccountEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"accountEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, AccountEntry::getUuid));
+					"accountEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, AccountEntry::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1165,18 +1103,10 @@ public class AccountEntryPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_ACCOUNTENTRY_WHERE, _SQL_COUNT_ACCOUNTENTRY_WHERE,
 				AccountEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountEntryImpl.class, AccountEntry.class, "accountEntry",
-					"AccountEntry", "accountEntry.accountEntryId",
-					"SELECT DISTINCT {accountEntry.*} FROM AccountEntry accountEntry WHERE ",
-					"SELECT {AccountEntry.*} FROM (SELECT DISTINCT accountEntry.accountEntryId FROM AccountEntry accountEntry WHERE ",
-					") TEMP_TABLE INNER JOIN AccountEntry ON TEMP_TABLE.accountEntryId = AccountEntry.accountEntryId",
-					"SELECT COUNT(DISTINCT accountEntry.accountEntryId) AS COUNT_VALUE FROM AccountEntry accountEntry WHERE ",
-					AccountEntryModelImpl.ORDER_BY_SQL,
-					AccountEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"accountEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, AccountEntry::getUuid),
+					"accountEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, AccountEntry::getUuid),
 				new FinderColumn<>(
 					"accountEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AccountEntry::getCompanyId));
@@ -1202,15 +1132,7 @@ public class AccountEntryPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_ACCOUNTENTRY_WHERE, _SQL_COUNT_ACCOUNTENTRY_WHERE,
 				AccountEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountEntryImpl.class, AccountEntry.class, "accountEntry",
-					"AccountEntry", "accountEntry.accountEntryId",
-					"SELECT DISTINCT {accountEntry.*} FROM AccountEntry accountEntry WHERE ",
-					"SELECT {AccountEntry.*} FROM (SELECT DISTINCT accountEntry.accountEntryId FROM AccountEntry accountEntry WHERE ",
-					") TEMP_TABLE INNER JOIN AccountEntry ON TEMP_TABLE.accountEntryId = AccountEntry.accountEntryId",
-					"SELECT COUNT(DISTINCT accountEntry.accountEntryId) AS COUNT_VALUE FROM AccountEntry accountEntry WHERE ",
-					AccountEntryModelImpl.ORDER_BY_SQL,
-					AccountEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"accountEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AccountEntry::getCompanyId));
@@ -1240,15 +1162,7 @@ public class AccountEntryPersistenceImpl
 					new String[] {"companyId", "status"}, false),
 				_SQL_SELECT_ACCOUNTENTRY_WHERE, _SQL_COUNT_ACCOUNTENTRY_WHERE,
 				AccountEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountEntryImpl.class, AccountEntry.class, "accountEntry",
-					"AccountEntry", "accountEntry.accountEntryId",
-					"SELECT DISTINCT {accountEntry.*} FROM AccountEntry accountEntry WHERE ",
-					"SELECT {AccountEntry.*} FROM (SELECT DISTINCT accountEntry.accountEntryId FROM AccountEntry accountEntry WHERE ",
-					") TEMP_TABLE INNER JOIN AccountEntry ON TEMP_TABLE.accountEntryId = AccountEntry.accountEntryId",
-					"SELECT COUNT(DISTINCT accountEntry.accountEntryId) AS COUNT_VALUE FROM AccountEntry accountEntry WHERE ",
-					AccountEntryModelImpl.ORDER_BY_SQL,
-					AccountEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"accountEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AccountEntry::getCompanyId),
@@ -1277,21 +1191,13 @@ public class AccountEntryPersistenceImpl
 					new String[] {"userId", "type_"}, 0, 2, false, null),
 				_SQL_SELECT_ACCOUNTENTRY_WHERE, _SQL_COUNT_ACCOUNTENTRY_WHERE,
 				AccountEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountEntryImpl.class, AccountEntry.class, "accountEntry",
-					"AccountEntry", "accountEntry.accountEntryId",
-					"SELECT DISTINCT {accountEntry.*} FROM AccountEntry accountEntry WHERE ",
-					"SELECT {AccountEntry.*} FROM (SELECT DISTINCT accountEntry.accountEntryId FROM AccountEntry accountEntry WHERE ",
-					") TEMP_TABLE INNER JOIN AccountEntry ON TEMP_TABLE.accountEntryId = AccountEntry.accountEntryId",
-					"SELECT COUNT(DISTINCT accountEntry.accountEntryId) AS COUNT_VALUE FROM AccountEntry accountEntry WHERE ",
-					AccountEntryModelImpl.ORDER_BY_SQL,
-					AccountEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"accountEntry.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, AccountEntry::getUserId),
 				new FinderColumn<>(
-					"accountEntry.", "type", FinderColumn.Type.STRING, "=",
-					true, true, AccountEntry::getType));
+					"accountEntry.", "type", "type_", FinderColumn.Type.STRING,
+					"=", true, true, AccountEntry::getType));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1365,12 +1271,6 @@ public class AccountEntryPersistenceImpl
 	private static final String _SQL_COUNT_ACCOUNTENTRY_WHERE =
 		"SELECT COUNT(accountEntry) FROM AccountEntry accountEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AccountEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AccountEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -1380,4 +1280,4 @@ public class AccountEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:799000221
+// LIFERAY-SERVICE-BUILDER-HASH:-440078185

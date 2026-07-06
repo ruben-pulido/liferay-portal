@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -79,8 +77,9 @@ public class CommerceShippingMethodPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceShippingMethod>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<CommerceShippingMethod, NoSuchShippingMethodException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the commerce shipping methods where groupId = &#63;.
@@ -121,16 +120,8 @@ public class CommerceShippingMethodPersistenceImpl
 			OrderByComparator<CommerceShippingMethod> orderByComparator)
 		throws NoSuchShippingMethodException {
 
-		CommerceShippingMethod commerceShippingMethod = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (commerceShippingMethod != null) {
-			return commerceShippingMethod;
-		}
-
-		throw new NoSuchShippingMethodException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -172,8 +163,9 @@ public class CommerceShippingMethodPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceShippingMethod>
-		_collectionPersistenceFinderByG_A;
+	private CollectionPersistenceFinder
+		<CommerceShippingMethod, NoSuchShippingMethodException>
+			_collectionPersistenceFinderByG_A;
 
 	/**
 	 * Returns an ordered range of all the commerce shipping methods where groupId = &#63; and active = &#63;.
@@ -216,16 +208,8 @@ public class CommerceShippingMethodPersistenceImpl
 			OrderByComparator<CommerceShippingMethod> orderByComparator)
 		throws NoSuchShippingMethodException {
 
-		CommerceShippingMethod commerceShippingMethod = fetchByG_A_First(
-			groupId, active, orderByComparator);
-
-		if (commerceShippingMethod != null) {
-			return commerceShippingMethod;
-		}
-
-		throw new NoSuchShippingMethodException(
-			_collectionPersistenceFinderByG_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, active}));
+		return _collectionPersistenceFinderByG_A.findFirst(
+			finderCache, new Object[] {groupId, active}, orderByComparator);
 	}
 
 	/**
@@ -270,8 +254,9 @@ public class CommerceShippingMethodPersistenceImpl
 			finderCache, new Object[] {groupId, active});
 	}
 
-	private UniquePersistenceFinder<CommerceShippingMethod>
-		_uniquePersistenceFinderByG_E;
+	private UniquePersistenceFinder
+		<CommerceShippingMethod, NoSuchShippingMethodException>
+			_uniquePersistenceFinderByG_E;
 
 	/**
 	 * Returns the commerce shipping method where groupId = &#63; and engineKey = &#63; or throws a <code>NoSuchShippingMethodException</code> if it could not be found.
@@ -285,23 +270,8 @@ public class CommerceShippingMethodPersistenceImpl
 	public CommerceShippingMethod findByG_E(long groupId, String engineKey)
 		throws NoSuchShippingMethodException {
 
-		CommerceShippingMethod commerceShippingMethod = fetchByG_E(
-			groupId, engineKey);
-
-		if (commerceShippingMethod == null) {
-			String message =
-				_uniquePersistenceFinderByG_E.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, engineKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchShippingMethodException(message);
-		}
-
-		return commerceShippingMethod;
+		return _uniquePersistenceFinderByG_E.find(
+			finderCache, new Object[] {groupId, engineKey});
 	}
 
 	/**
@@ -595,7 +565,7 @@ public class CommerceShippingMethodPersistenceImpl
 				_SQL_SELECT_COMMERCESHIPPINGMETHOD_WHERE,
 				_SQL_COUNT_COMMERCESHIPPINGMETHOD_WHERE,
 				CommerceShippingMethodModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceShippingMethod.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -622,13 +592,14 @@ public class CommerceShippingMethodPersistenceImpl
 			_SQL_SELECT_COMMERCESHIPPINGMETHOD_WHERE,
 			_SQL_COUNT_COMMERCESHIPPINGMETHOD_WHERE,
 			CommerceShippingMethodModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"commerceShippingMethod.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, CommerceShippingMethod::getGroupId),
 			new FinderColumn<>(
-				"commerceShippingMethod.", "active", FinderColumn.Type.BOOLEAN,
-				"=", true, true, CommerceShippingMethod::isActive));
+				"commerceShippingMethod.", "active", "active_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				CommerceShippingMethod::isActive));
 
 		_uniquePersistenceFinderByG_E = new UniquePersistenceFinder<>(
 			this,
@@ -701,12 +672,6 @@ public class CommerceShippingMethodPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCESHIPPINGMETHOD_WHERE =
 		"SELECT COUNT(commerceShippingMethod) FROM CommerceShippingMethod commerceShippingMethod WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceShippingMethod exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceShippingMethodPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"active"});
 
@@ -716,4 +681,4 @@ public class CommerceShippingMethodPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:807701162
+// LIFERAY-SERVICE-BUILDER-HASH:-1612323257

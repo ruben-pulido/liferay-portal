@@ -45,6 +45,7 @@ export default function buildStructure({
 		label: mainObjectDefinition.label,
 		name: mainObjectDefinition.name ?? '',
 		path: mainObjectDefinition.restContextPath ?? '',
+		settings: getSettings(mainObjectDefinition),
 		spaces: getSpaces(mainObjectDefinition),
 		status: isPublished ? 'published' : 'draft',
 		system: mainObjectDefinition.system ?? false,
@@ -120,7 +121,7 @@ export function buildChildren({
 
 			children.set(repeatableGroup.uuid, repeatableGroup);
 		}
-		else if (objectRelationship.deletionType === 'cascade') {
+		else if (objectRelationship.edge) {
 			const referencedStructure = buildReferencedStructure({
 				ancestors: [
 					...ancestors,
@@ -311,7 +312,26 @@ function getFieldSettings(objectField: ObjectField): Field['settings'] {
 		objectFieldSettings[objectFieldSetting.name] = objectFieldSetting.value;
 	}
 
-	if (objectField.businessType === 'Attachment') {
+	if (objectField.businessType === 'EmailAddress') {
+		if (objectFieldSettings.autocompleteDomains) {
+			settings.autocompleteDomains =
+				objectFieldSettings.autocompleteDomains;
+		}
+
+		if (objectFieldSettings.autocompleteEnabled) {
+			settings.autocompleteEnabled =
+				objectFieldSettings.autocompleteEnabled;
+		}
+
+		if (objectFieldSettings.blockedDomains) {
+			settings.blockedDomains = objectFieldSettings.blockedDomains;
+		}
+
+		if (objectFieldSettings.uniqueValues) {
+			settings.uniqueValues = objectFieldSettings.uniqueValues;
+		}
+	}
+	else if (objectField.businessType === 'Attachment') {
 		settings.acceptedFileExtensions =
 			objectFieldSettings.acceptedFileExtensions;
 		settings.fileSource = objectFieldSettings.fileSource;
@@ -349,10 +369,10 @@ function getFieldSettings(objectField: ObjectField): Field['settings'] {
 		}
 	}
 	else if (objectField.businessType === 'PhoneNumber') {
-		settings.prefixType = objectFieldSettings.prefixType;
+		settings.countrySource = objectFieldSettings.countrySource;
 
-		if (objectFieldSettings.prefix) {
-			settings.prefix = objectFieldSettings.prefix;
+		if (objectFieldSettings.country) {
+			settings.country = objectFieldSettings.country;
 		}
 
 		if (objectFieldSettings.uniqueValues) {
@@ -377,6 +397,7 @@ function getFieldType(objectField: ObjectField): FieldType {
 		Date: 'date',
 		DateTime: 'datetime',
 		Decimal: 'decimal',
+		EmailAddress: 'email',
 		Integer: 'integer',
 		LongText: 'long-text',
 		PhoneNumber: 'phone-number',
@@ -385,6 +406,18 @@ function getFieldType(objectField: ObjectField): FieldType {
 	} as const;
 
 	return BUSINESS_TYPE_TO_FIELD_TYPE[objectField.businessType];
+}
+
+export function getSettings(
+	objectDefinition: ObjectDefinition
+): Structure['settings'] {
+	const settings = objectDefinition.objectDefinitionSettings || [];
+
+	const allowStandaloneObjectEntry = settings.find(
+		({name}) => name === 'allowStandaloneObjectEntry'
+	)?.value;
+
+	return {allowStandaloneObjectEntry};
 }
 
 export function getSpaces(objectDefinition: ObjectDefinition) {
@@ -467,7 +500,7 @@ function getRelatedContentObjectRelationships(
 				objectRelationship.objectDefinitionExternalReferenceCode2 ===
 					mainObjectDefinition.externalReferenceCode &&
 				objectRelationship.type === 'oneToMany' &&
-				objectRelationship.deletionType === 'disassociate'
+				!objectRelationship.edge
 			) {
 				relationships.push(objectRelationship);
 			}

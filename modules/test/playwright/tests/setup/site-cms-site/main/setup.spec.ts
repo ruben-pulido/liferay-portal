@@ -10,15 +10,22 @@ import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../../fixtures/loginTest';
 import {ApiHelpers} from '../../../../helpers/ApiHelpers';
 import {cmsPagesTest} from '../../../site-cms-site-initializer/main/fixtures/cmsPagesTest';
-import {SITE_CMS_SPACE_NAME} from '../constants/space';
+import {
+	SITE_CMS_SPACE_EXTERNAL_REFERENCE_CODE,
+	SITE_CMS_SPACE_NAME,
+} from '../constants/space';
 
 export const test = mergeTests(
 	cmsPagesTest,
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-11235': {enabled: false},
-		'LPD-17564': {enabled: true},
 		'LPD-34594': {enabled: true},
+
+		// LPD-17564 depends on LPD-34594, which must be enabled first.
+
+		// eslint-disable-next-line sort-keys
+		'LPD-17564': {enabled: true},
 	}),
 	loginTest()
 );
@@ -27,10 +34,15 @@ test('Setup: Create a space for Site CMS tests', async ({backendPage}) => {
 	const apiHelpers = new ApiHelpers(backendPage);
 
 	const space = await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+		externalReferenceCode: SITE_CMS_SPACE_EXTERNAL_REFERENCE_CODE,
 		name: SITE_CMS_SPACE_NAME,
 		settings: {},
 		type: 'Space',
 	});
 
 	expect(space).toHaveProperty('name', SITE_CMS_SPACE_NAME);
+	expect(space).toHaveProperty(
+		'externalReferenceCode',
+		SITE_CMS_SPACE_EXTERNAL_REFERENCE_CODE
+	);
 });

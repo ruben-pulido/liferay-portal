@@ -52,7 +52,7 @@ test('does something', {tag: '@LPD-12345'}, async ({apiHelpers, myPage, page}) =
 
 **Always tag the test with the LPD ticket** it covers: `{tag: '@LPD-XXXXX'}`. This is mandatory — it is how tests are linked back to Jira. Pass an array when a single test covers more than one ticket: `{tag: ['@LPD-12345', '@LPD-67890']}`.
 
-Break the body of a test into phases with single-line comments (`// Add fields`, `// Publish the structure`, `// Check validation`) so the flow reads top-down. Do not narrate each statement — the comments mark sections, not lines.
+Break the body of a test into phases with single-line comments (`// Add fields`, `// Publish the structure`, `// Check validation`) so the flow reads top-down. Do not narrate each statement — the comments mark sections, not lines. For a large test where named phases in the trace and HTML report would aid debugging, wrap each phase in `test.step('Add fields', async () => {...})` instead, so the phase names surface as collapsible steps when a run fails.
 
 Generate unique names with `getRandomInt` / `getRandomString` from `modules/test/playwright/utils` for anything that must not collide across parallel runs (structure labels, names, ERCs, etc.). Tests share an environment; hardcoded names flake.
 
@@ -94,7 +94,7 @@ test('does something', {tag: '@LPD-12345'}, async ({site, page}) => {
 
 Other variants follow the same pattern for different resources — for example `isolatedLayoutTest({type: 'content'})` for a fresh page.
 
-**Default to an isolated fixture unless a dependency forbids it.** A test cannot use one when it relies on preseeded content from another resource — for example the `cmsSite` or `pageManagementSite` projects, which provision shared fixtures the test reads from. Those tests must run against the resource their project provides. Anything else — small UI checks, isolated flows, tests that build their own data — should run on an isolated fixture.
+**Default to an isolated fixture unless a dependency forbids it.** A test cannot use one when it relies on preseeded content from another resource — for example, the `cmsSite` or `pageManagementSite` projects, which provision shared fixtures the test reads from. Those tests must run against the resource their project provides. Anything else — small UI checks, isolated flows, tests that build their own data — should run on an isolated fixture.
 
 ## Flaky-Proofing
 
@@ -104,9 +104,9 @@ Use these utilities from `modules/test/playwright/utils`:
 
 - `clickAndExpectToBeHidden({trigger, target})` — clicks `trigger`, retries until `target` becomes hidden.
 - `clickAndExpectToBeVisible({trigger, target})` — clicks `trigger`, retries until `target` becomes visible.
-- `hoverAndExpectToBeVisible(...)` — hover-triggered visibility with retry.
-- `waitForAlert(page, message)` — waits for a Liferay alert.
-- `waitForPageToBeLoaded`, `waitForSPAToBeLoaded` — wait for full JS readiness.
+- `hoverAndExpectToBeVisible(...)` — triggers visibility via hover with retry.
+- `waitForAlert(page, message)` — waits for a Liferay alert to appear.
+- `waitForPageToBeLoaded`, `waitForSPAToBeLoaded` — waits for full JS readiness.
 
 For arbitrary retry, wrap a block in `expect(async () => { ... }).toPass()` (built into Playwright, not custom). Use it when no canned helper fits. Always pass an explicit `timeout` to every action and assertion inside the block — otherwise each call uses Playwright's 30s default and the retry never kicks in.
 

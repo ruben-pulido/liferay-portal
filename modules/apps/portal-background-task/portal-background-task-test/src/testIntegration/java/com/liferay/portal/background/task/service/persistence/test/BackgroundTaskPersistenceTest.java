@@ -111,11 +111,7 @@ public class BackgroundTaskPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		BackgroundTask newBackgroundTask = _persistence.create(pk);
-
-		newBackgroundTask.setMvccVersion(RandomTestUtil.nextLong());
+		BackgroundTask newBackgroundTask = addBackgroundTask();
 
 		newBackgroundTask.setGroupId(RandomTestUtil.nextLong());
 
@@ -147,7 +143,9 @@ public class BackgroundTaskPersistenceTest {
 
 		newBackgroundTask.setStatusMessage(RandomTestUtil.randomString());
 
-		_backgroundTasks.add(_persistence.update(newBackgroundTask));
+		newBackgroundTask = _persistence.update(newBackgroundTask);
+
+		_backgroundTasks.add(newBackgroundTask);
 
 		BackgroundTask existingBackgroundTask = _persistence.findByPrimaryKey(
 			newBackgroundTask.getPrimaryKey());
@@ -602,8 +600,6 @@ public class BackgroundTaskPersistenceTest {
 
 		BackgroundTask backgroundTask = _persistence.create(pk);
 
-		backgroundTask.setMvccVersion(RandomTestUtil.nextLong());
-
 		backgroundTask.setGroupId(RandomTestUtil.nextLong());
 
 		backgroundTask.setCompanyId(RandomTestUtil.nextLong());
@@ -643,4 +639,4 @@ public class BackgroundTaskPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1210537673
+// LIFERAY-SERVICE-BUILDER-HASH:-510098229

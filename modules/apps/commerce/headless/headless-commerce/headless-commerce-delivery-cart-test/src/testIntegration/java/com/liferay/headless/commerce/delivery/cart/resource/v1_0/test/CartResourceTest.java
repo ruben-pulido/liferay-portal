@@ -6,8 +6,13 @@
 package com.liferay.headless.commerce.delivery.cart.resource.v1_0.test;
 
 import com.liferay.account.configuration.AccountEntryAddressSubtypeConfiguration;
+import com.liferay.account.configuration.AccountEntryValidatorConfiguration;
+import com.liferay.account.constants.AccountConstants;
+import com.liferay.account.constants.AccountEntryValidatorConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.validator.AccountEntryValidator;
+import com.liferay.account.validator.AccountEntryValidatorResult;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.commerce.account.test.util.CommerceAccountTestUtil;
 import com.liferay.commerce.currency.model.CommerceCurrency;
@@ -16,14 +21,21 @@ import com.liferay.commerce.discount.constants.CommerceDiscountConstants;
 import com.liferay.commerce.discount.model.CommerceDiscount;
 import com.liferay.commerce.discount.service.CommerceDiscountLocalService;
 import com.liferay.commerce.model.CommerceOrder;
+import com.liferay.commerce.order.rule.constants.COREntryConstants;
+import com.liferay.commerce.order.rule.model.COREntry;
+import com.liferay.commerce.order.rule.service.COREntryLocalService;
+import com.liferay.commerce.order.rule.service.COREntryRelLocalService;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.commerce.test.util.CommerceTestUtil;
 import com.liferay.headless.commerce.delivery.cart.client.dto.v1_0.Address;
 import com.liferay.headless.commerce.delivery.cart.client.dto.v1_0.Cart;
+import com.liferay.headless.commerce.delivery.cart.client.dto.v1_0.CartItem;
 import com.liferay.headless.commerce.delivery.cart.client.dto.v1_0.CouponCode;
 import com.liferay.headless.commerce.delivery.cart.client.pagination.Page;
 import com.liferay.headless.commerce.delivery.cart.client.pagination.Pagination;
+import com.liferay.headless.commerce.delivery.cart.client.problem.Problem;
+import com.liferay.headless.commerce.delivery.cart.client.resource.v1_0.CartResource;
 import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
@@ -31,6 +43,8 @@ import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.test.util.CompanyConfigurationTemporarySwapper;
+import com.liferay.portal.kernel.encryptor.Encryptor;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.model.User;
@@ -44,12 +58,16 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.URLCodec;
+import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -69,6 +87,11 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  * @author Andrea Sbarra
@@ -97,6 +120,10 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 		_accountEntry = CommerceAccountTestUtil.addBusinessAccountEntry(
 			_serviceContext.getUserId(), "Test Business Account", null, null,
 			new long[] {_user.getUserId()}, null, _serviceContext);
+
+		Bundle bundle = FrameworkUtil.getBundle(CartResourceTest.class);
+
+		_bundleContext = bundle.getBundleContext();
 
 		_commerceCurrency = CommerceCurrencyTestUtil.addCommerceCurrency(
 			testGroup.getCompanyId());
@@ -136,6 +163,10 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 	public void tearDown() throws Exception {
 		super.tearDown();
 
+		if (_accountEntryValidatorServiceRegistration != null) {
+			_accountEntryValidatorServiceRegistration.unregister();
+		}
+
 		List<CommerceOrder> commerceOrders =
 			_commerceOrderLocalService.getCommerceOrders(
 				_commerceChannel.getGroupId(),
@@ -149,6 +180,14 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 		if (_accountEntry != null) {
 			_accountEntryLocalService.deleteAccountEntry(_accountEntry);
 		}
+	}
+
+	@Override
+	@Test
+	public void testGetCart() throws Exception {
+		super.testGetCart();
+
+		_testGetCartWithOffendedOrderRule();
 	}
 
 	@Override
@@ -172,16 +211,8 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 	@Override
 	@Test
 	public void testGetCartPaymentURL() throws Exception {
-		Cart cart = _createCart();
-
-		String callbackURL = RandomTestUtil.randomString();
-
-		Assert.assertEquals(
-			StringBundler.concat(
-				"http://localhost:", PortalUtil.getPortalServerPort(false),
-				"/o/commerce-payment?groupId=", _commerceChannel.getGroupId(),
-				"&nextStep=", callbackURL, "&uuid=", cart.getOrderUUID()),
-			cartResource.getCartPaymentURL(cart.getId(), callbackURL));
+		_testGetCartPaymentURLWithBusinessAccountEntry();
+		_testGetCartPaymentURLWithGuestAccountEntry();
 	}
 
 	@Override
@@ -210,6 +241,7 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 	public void testPatchCart() throws Exception {
 		super.testPatchCart();
 
+		_testPatchCartByGuestWithGuestCheckoutDisabledOnB2BChannel();
 		_testPatchCartWithAddressSubtype();
 		_testPatchCartWithMoreExternalReferenceCodes();
 	}
@@ -222,11 +254,92 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 		_testPatchCartByExternalReferenceCodeWithMoreExternalReferenceCodes();
 	}
 
+	@FeatureFlag("LPD-89850")
+	@Override
+	@Test
+	public void testPostCartCheckout() throws Exception {
+		super.testPostCartCheckout();
+
+		String key = RandomTestUtil.randomString();
+		String resultMessage = RandomTestUtil.randomString();
+
+		TestAccountEntryValidator testAccountEntryValidator =
+			new TestAccountEntryValidator(
+				key, resultMessage,
+				AccountEntryValidatorConstants.RESULT_FAILURE);
+
+		_accountEntryValidatorServiceRegistration =
+			_bundleContext.registerService(
+				AccountEntryValidator.class, testAccountEntryValidator,
+				HashMapDictionaryBuilder.<String, Object>put(
+					"account.entry.validator.key", key
+				).build());
+
+		Cart cart = _createCart();
+
+		CommerceOrder commerceOrder =
+			_commerceOrderLocalService.getCommerceOrder(cart.getId());
+
+		Cart postCart = cartResource.postCartCheckout(cart.getId());
+
+		Assert.assertFalse(postCart.getValid());
+		Assert.assertTrue(
+			ArrayUtil.contains(postCart.getErrorMessages(), resultMessage));
+
+		Assert.assertTrue(commerceOrder.isOpen());
+
+		commerceOrder = _commerceOrderLocalService.getCommerceOrder(
+			cart.getId());
+
+		commerceOrder.setBillingAddressId(RandomTestUtil.randomLong());
+
+		_commerceOrderLocalService.updateCommerceOrder(commerceOrder);
+
+		testAccountEntryValidator.setResultStatus(
+			AccountEntryValidatorConstants.RESULT_MANUAL);
+
+		postCart = cartResource.postCartCheckout(cart.getId());
+
+		Assert.assertFalse(
+			ArrayUtil.contains(postCart.getErrorMessages(), resultMessage));
+
+		commerceOrder = _commerceOrderLocalService.getCommerceOrder(
+			cart.getId());
+
+		commerceOrder.setBillingAddressId(RandomTestUtil.randomLong());
+
+		_commerceOrderLocalService.updateCommerceOrder(commerceOrder);
+
+		testAccountEntryValidator.setResultStatus(
+			AccountEntryValidatorConstants.RESULT_SUCCESS);
+
+		postCart = cartResource.postCartCheckout(cart.getId());
+
+		Assert.assertFalse(
+			ArrayUtil.contains(postCart.getErrorMessages(), resultMessage));
+
+		commerceOrder = _commerceOrderLocalService.getCommerceOrder(
+			cart.getId());
+
+		commerceOrder.setBillingAddressId(RandomTestUtil.randomLong());
+
+		_commerceOrderLocalService.updateCommerceOrder(commerceOrder);
+
+		testAccountEntryValidator.setResultStatus(
+			AccountEntryValidatorConstants.RESULT_WARNING);
+
+		postCart = cartResource.postCartCheckout(cart.getId());
+
+		Assert.assertFalse(
+			ArrayUtil.contains(postCart.getErrorMessages(), resultMessage));
+	}
+
 	@Override
 	@Test
 	public void testPostChannelCart() throws Exception {
 		super.testPostChannelCart();
 
+		_testPostChannelCartByGuestWithGuestCheckoutDisabledOnB2BChannel();
 		_testPostChannelCartWithMoreExternalReferenceCodes();
 	}
 
@@ -252,6 +365,72 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 		super.testPutCartByExternalReferenceCode();
 
 		_testPutCartByExternalReferenceCodeWithMoreExternalReferenceCodes();
+	}
+
+	public class TestAccountEntryValidator implements AccountEntryValidator {
+
+		public TestAccountEntryValidator(
+			String classPK, String resultMessage, String resultStatus) {
+
+			_classPK = classPK;
+			_resultMessage = resultMessage;
+			_resultStatus = resultStatus;
+		}
+
+		@Override
+		public AccountEntryValidatorConfiguration
+			getAccountEntryValidatorConfiguration(long companyId) {
+
+			return new AccountEntryValidatorConfiguration() {
+
+				@Override
+				public int checkInterval() {
+					return 0;
+				}
+
+				@Override
+				public boolean enabled() {
+					return true;
+				}
+
+			};
+		}
+
+		@Override
+		public String getClassPK(
+			AccountEntry accountEntry, JSONObject jsonObject) {
+
+			return _classPK;
+		}
+
+		public JSONObject getJSONObject() {
+			return _jsonObject;
+		}
+
+		public void setResultStatus(String resultStatus) {
+			_resultStatus = resultStatus;
+		}
+
+		@Override
+		public AccountEntryValidatorResult validate(
+			AccountEntry accountEntry, JSONObject jsonObject) {
+
+			_jsonObject = jsonObject;
+
+			return AccountEntryValidatorResult.builder(
+				_classPK
+			).resultMessage(
+				_resultMessage
+			).resultStatus(
+				_resultStatus
+			).build();
+		}
+
+		private final String _classPK;
+		private volatile JSONObject _jsonObject;
+		private final String _resultMessage;
+		private String _resultStatus;
+
 	}
 
 	@Override
@@ -519,6 +698,98 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 		};
 	}
 
+	private Cart _randomGuestCart() throws Exception {
+		Cart cart = randomCart();
+
+		cart.setAccountId(AccountConstants.ACCOUNT_ENTRY_ID_GUEST);
+
+		return cart;
+	}
+
+	private void _testGetCartPaymentURLWithBusinessAccountEntry()
+		throws Exception {
+
+		Cart cart = _createCart();
+
+		String callbackURL = RandomTestUtil.randomString();
+
+		Assert.assertEquals(
+			StringBundler.concat(
+				"http://localhost:", PortalUtil.getPortalServerPort(false),
+				"/o/commerce-payment?groupId=", _commerceChannel.getGroupId(),
+				"&nextStep=", callbackURL, "&uuid=", cart.getOrderUUID()),
+			cartResource.getCartPaymentURL(cart.getId(), callbackURL));
+	}
+
+	private void _testGetCartPaymentURLWithGuestAccountEntry()
+		throws Exception {
+
+		AccountEntry accountEntry =
+			_accountEntryLocalService.getGuestAccountEntry(
+				testCompany.getCompanyId());
+
+		CommerceOrder commerceOrder =
+			_commerceOrderLocalService.addCommerceOrder(
+				_user.getUserId(), _commerceChannel.getGroupId(),
+				accountEntry.getAccountEntryId(), _commerceCurrency.getCode(),
+				0);
+
+		String guestToken = URLCodec.encodeURL(
+			_encryptor.encrypt(
+				testCompany.getKeyObj(),
+				String.valueOf(commerceOrder.getCommerceOrderId())));
+
+		String paymentURL = cartResource.getCartPaymentURL(
+			commerceOrder.getCommerceOrderId(), RandomTestUtil.randomString());
+
+		Assert.assertTrue(paymentURL.contains("guestToken=" + guestToken));
+	}
+
+	private void _testGetCartWithOffendedOrderRule() throws Exception {
+		Calendar calendar = CalendarFactoryUtil.getCalendar(
+			_user.getTimeZone());
+
+		COREntry corEntry = _corEntryLocalService.addCOREntry(
+			RandomTestUtil.randomString(), _user.getUserId(), true,
+			RandomTestUtil.randomString(), calendar.get(Calendar.MONTH),
+			calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR),
+			calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),
+			calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
+			calendar.get(Calendar.YEAR), calendar.get(Calendar.HOUR_OF_DAY),
+			calendar.get(Calendar.MINUTE), true, RandomTestUtil.randomString(),
+			100, COREntryConstants.TYPE_MINIMUM_ORDER_AMOUNT,
+			UnicodePropertiesBuilder.put(
+				COREntryConstants.TYPE_MINIMUM_ORDER_AMOUNT_FIELD_AMOUNT,
+				"10000"
+			).put(
+				COREntryConstants.TYPE_MINIMUM_ORDER_AMOUNT_FIELD_CURRENCY_CODE,
+				_commerceCurrency.getCode()
+			).buildString(),
+			_serviceContext);
+
+		_corEntryRelLocalService.addCOREntryRel(
+			_user.getUserId(), CommerceChannel.class.getName(),
+			_commerceChannel.getCommerceChannelId(), corEntry.getCOREntryId());
+
+		CommerceOrder commerceOrder = _addCommerceOrder();
+
+		Cart cart = cartResource.getCart(commerceOrder.getCommerceOrderId());
+
+		Assert.assertTrue(ArrayUtil.isNotEmpty(cart.getErrorMessages()));
+		Assert.assertFalse(cart.getValid());
+
+		Page<Cart> cartsPage = cartResource.getChannelCartsPage(
+			_commerceChannel.getCommerceChannelId(), null, null,
+			Pagination.of(1, 10), null);
+
+		Assert.assertTrue(cartsPage.getTotalCount() > 0);
+
+		for (Cart pageCart : cartsPage.getItems()) {
+			Assert.assertNull(pageCart.getErrorMessages());
+			Assert.assertNull(pageCart.getValid());
+		}
+	}
+
 	private void _testGetChannelCartsPageWithFilter() throws Exception {
 		CommerceOrder commerceOrder = _addCommerceOrder();
 
@@ -629,6 +900,46 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 		Assert.assertEquals(
 			serviceBuilderAddress.getExternalReferenceCode(),
 			getCart.getShippingAddressExternalReferenceCode());
+	}
+
+	private void _testPatchCartByGuestWithGuestCheckoutDisabledOnB2BChannel()
+		throws Exception {
+
+		CommerceTestUtil.runWithGuestCheckoutDisabledOnB2BChannel(
+			_commerceChannel.getGroupId(),
+			() -> {
+				AccountEntry guestAccountEntry =
+					_accountEntryLocalService.getGuestAccountEntry(
+						testCompany.getCompanyId());
+				User guestUser = testCompany.getGuestUser();
+
+				_commerceOrder = _commerceOrderLocalService.addCommerceOrder(
+					guestUser.getUserId(), _commerceChannel.getGroupId(),
+					guestAccountEntry.getAccountEntryId(),
+					_commerceCurrency.getCode(), 0);
+
+				Problem.ProblemException problemException = Assert.assertThrows(
+					Problem.ProblemException.class,
+					() -> cartResource.patchCart(
+						_commerceOrder.getCommerceOrderId(),
+						new Cart() {
+							{
+								cartItems = new CartItem[] {
+									new CartItem() {
+										{
+											quantity = BigDecimal.valueOf(
+												RandomTestUtil.randomInt(
+													1, 10));
+										}
+									}
+								};
+							}
+						}));
+
+				Problem problem = problemException.getProblem();
+
+				Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			});
 	}
 
 	private void _testPatchCartWithAddressSubtype() throws Exception {
@@ -825,6 +1136,32 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 			postCart.getShippingAddressExternalReferenceCode());
 	}
 
+	private void _testPostChannelCartByGuestWithGuestCheckoutDisabledOnB2BChannel()
+		throws Exception {
+
+		CommerceTestUtil.runWithGuestCheckoutDisabledOnB2BChannel(
+			_commerceChannel.getGroupId(),
+			() -> {
+				CartResource guestCartResource = CartResource.builder(
+				).endpoint(
+					testCompany.getVirtualHostname(),
+					PortalUtil.getPortalServerPort(false), "http"
+				).locale(
+					LocaleUtil.getDefault()
+				).build();
+
+				Problem.ProblemException problemException = Assert.assertThrows(
+					Problem.ProblemException.class,
+					() -> guestCartResource.postChannelCart(
+						_commerceChannel.getCommerceChannelId(),
+						_randomGuestCart()));
+
+				Problem problem = problemException.getProblem();
+
+				Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			});
+	}
+
 	private void _testPostChannelCartWithMoreExternalReferenceCodes()
 		throws Exception {
 
@@ -1007,8 +1344,13 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 	@Inject
 	private AccountEntryLocalService _accountEntryLocalService;
 
+	private ServiceRegistration<AccountEntryValidator>
+		_accountEntryValidatorServiceRegistration;
+
 	@Inject
 	private AddressLocalService _addressLocalService;
+
+	private BundleContext _bundleContext;
 
 	@DeleteAfterTestRun
 	private CommerceChannel _commerceChannel;
@@ -1022,14 +1364,26 @@ public class CartResourceTest extends BaseCartResourceTestCase {
 	@Inject
 	private CommerceDiscountLocalService _commerceDiscountLocalService;
 
+	@DeleteAfterTestRun
+	private CommerceOrder _commerceOrder;
+
 	@Inject
 	private CommerceOrderLocalService _commerceOrderLocalService;
+
+	@Inject
+	private COREntryLocalService _corEntryLocalService;
+
+	@Inject
+	private COREntryRelLocalService _corEntryRelLocalService;
 
 	@DeleteAfterTestRun
 	private Country _country;
 
 	@Inject
 	private CountryLocalService _countryLocalService;
+
+	@Inject
+	private Encryptor _encryptor;
 
 	@Inject
 	private ListTypeDefinitionLocalService _listTypeDefinitionLocalService;

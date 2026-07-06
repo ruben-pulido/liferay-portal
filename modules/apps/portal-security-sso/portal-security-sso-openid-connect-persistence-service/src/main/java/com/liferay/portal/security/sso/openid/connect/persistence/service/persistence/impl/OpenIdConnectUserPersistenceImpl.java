@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -75,7 +73,7 @@ public class OpenIdConnectUserPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<OpenIdConnectUser>
+	private CollectionPersistenceFinder<OpenIdConnectUser, NoSuchUserException>
 		_collectionPersistenceFinderByC_U;
 
 	/**
@@ -119,16 +117,8 @@ public class OpenIdConnectUserPersistenceImpl
 			OrderByComparator<OpenIdConnectUser> orderByComparator)
 		throws NoSuchUserException {
 
-		OpenIdConnectUser openIdConnectUser = fetchByC_U_First(
-			companyId, userId, orderByComparator);
-
-		if (openIdConnectUser != null) {
-			return openIdConnectUser;
-		}
-
-		throw new NoSuchUserException(
-			_collectionPersistenceFinderByC_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, userId}));
+		return _collectionPersistenceFinderByC_U.findFirst(
+			finderCache, new Object[] {companyId, userId}, orderByComparator);
 	}
 
 	/**
@@ -173,7 +163,7 @@ public class OpenIdConnectUserPersistenceImpl
 			finderCache, new Object[] {companyId, userId});
 	}
 
-	private UniquePersistenceFinder<OpenIdConnectUser>
+	private UniquePersistenceFinder<OpenIdConnectUser, NoSuchUserException>
 		_uniquePersistenceFinderByC_I_S;
 
 	/**
@@ -190,23 +180,8 @@ public class OpenIdConnectUserPersistenceImpl
 			long companyId, String issuer, String subject)
 		throws NoSuchUserException {
 
-		OpenIdConnectUser openIdConnectUser = fetchByC_I_S(
-			companyId, issuer, subject);
-
-		if (openIdConnectUser == null) {
-			String message =
-				_uniquePersistenceFinderByC_I_S.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, issuer, subject});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchUserException(message);
-		}
-
-		return openIdConnectUser;
+		return _uniquePersistenceFinderByC_I_S.find(
+			finderCache, new Object[] {companyId, issuer, subject});
 	}
 
 	/**
@@ -475,6 +450,7 @@ public class OpenIdConnectUserPersistenceImpl
 			_SQL_SELECT_OPENIDCONNECTUSER_WHERE,
 			_SQL_COUNT_OPENIDCONNECTUSER_WHERE,
 			OpenIdConnectUserModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"openIdConnectUser.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, OpenIdConnectUser::getCompanyId),
@@ -559,16 +535,10 @@ public class OpenIdConnectUserPersistenceImpl
 	private static final String _SQL_COUNT_OPENIDCONNECTUSER_WHERE =
 		"SELECT COUNT(openIdConnectUser) FROM OpenIdConnectUser openIdConnectUser WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No OpenIdConnectUser exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		OpenIdConnectUserPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-554993699
+// LIFERAY-SERVICE-BUILDER-HASH:1070655069

@@ -359,9 +359,11 @@ XMLDefinition.prototype = {
 		const schema = {
 			resultFields: [
 				'description',
+				'http-method',
 				'id',
 				'input-variables',
 				'initial',
+				'java-delegate',
 				{
 					key: 'labels',
 					locator: 'labels',
@@ -374,6 +376,7 @@ XMLDefinition.prototype = {
 				},
 				'output-variables',
 				'rag',
+				'request-body',
 				'script',
 				{
 					key: 'scriptLanguage',
@@ -383,7 +386,9 @@ XMLDefinition.prototype = {
 					key: 'transitions',
 					locator: 'transitions',
 				},
+				'timeout',
 				'tools',
+				'url',
 				'user-message',
 				instance.getSchemaActions(),
 				instance.getSchemaAssignments(),

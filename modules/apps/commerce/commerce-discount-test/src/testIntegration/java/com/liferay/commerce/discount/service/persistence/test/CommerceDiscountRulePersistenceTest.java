@@ -112,11 +112,8 @@ public class CommerceDiscountRulePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CommerceDiscountRule newCommerceDiscountRule = _persistence.create(pk);
-
-		newCommerceDiscountRule.setMvccVersion(RandomTestUtil.nextLong());
+		CommerceDiscountRule newCommerceDiscountRule =
+			addCommerceDiscountRule();
 
 		newCommerceDiscountRule.setCompanyId(RandomTestUtil.nextLong());
 
@@ -137,8 +134,9 @@ public class CommerceDiscountRulePersistenceTest {
 
 		newCommerceDiscountRule.setTypeSettings(RandomTestUtil.randomString());
 
-		_commerceDiscountRules.add(
-			_persistence.update(newCommerceDiscountRule));
+		newCommerceDiscountRule = _persistence.update(newCommerceDiscountRule);
+
+		_commerceDiscountRules.add(newCommerceDiscountRule);
 
 		CommerceDiscountRule existingCommerceDiscountRule =
 			_persistence.findByPrimaryKey(
@@ -461,8 +459,6 @@ public class CommerceDiscountRulePersistenceTest {
 
 		CommerceDiscountRule commerceDiscountRule = _persistence.create(pk);
 
-		commerceDiscountRule.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceDiscountRule.setCompanyId(RandomTestUtil.nextLong());
 
 		commerceDiscountRule.setUserId(RandomTestUtil.nextLong());
@@ -492,4 +488,4 @@ public class CommerceDiscountRulePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:229702863
+// LIFERAY-SERVICE-BUILDER-HASH:927228666

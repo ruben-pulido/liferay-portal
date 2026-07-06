@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -77,7 +75,7 @@ public class ModulePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<Module>
+	private CollectionPersistenceFinder<Module, NoSuchModuleException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -117,15 +115,8 @@ public class ModulePersistenceImpl
 			String uuid, OrderByComparator<Module> orderByComparator)
 		throws NoSuchModuleException {
 
-		Module module = fetchByUuid_First(uuid, orderByComparator);
-
-		if (module != null) {
-			return module;
-		}
-
-		throw new NoSuchModuleException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -166,7 +157,7 @@ public class ModulePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<Module>
+	private CollectionPersistenceFinder<Module, NoSuchModuleException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -209,15 +200,8 @@ public class ModulePersistenceImpl
 			OrderByComparator<Module> orderByComparator)
 		throws NoSuchModuleException {
 
-		Module module = fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (module != null) {
-			return module;
-		}
-
-		throw new NoSuchModuleException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -262,7 +246,7 @@ public class ModulePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<Module>
+	private CollectionPersistenceFinder<Module, NoSuchModuleException>
 		_collectionPersistenceFinderByAppId;
 
 	/**
@@ -302,15 +286,8 @@ public class ModulePersistenceImpl
 			long appId, OrderByComparator<Module> orderByComparator)
 		throws NoSuchModuleException {
 
-		Module module = fetchByAppId_First(appId, orderByComparator);
-
-		if (module != null) {
-			return module;
-		}
-
-		throw new NoSuchModuleException(
-			_collectionPersistenceFinderByAppId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {appId}));
+		return _collectionPersistenceFinderByAppId.findFirst(
+			finderCache, new Object[] {appId}, orderByComparator);
 	}
 
 	/**
@@ -351,7 +328,7 @@ public class ModulePersistenceImpl
 			finderCache, new Object[] {appId});
 	}
 
-	private CollectionPersistenceFinder<Module>
+	private CollectionPersistenceFinder<Module, NoSuchModuleException>
 		_collectionPersistenceFinderByBundleSymbolicName;
 
 	/**
@@ -392,18 +369,8 @@ public class ModulePersistenceImpl
 			OrderByComparator<Module> orderByComparator)
 		throws NoSuchModuleException {
 
-		Module module = fetchByBundleSymbolicName_First(
-			bundleSymbolicName, orderByComparator);
-
-		if (module != null) {
-			return module;
-		}
-
-		throw new NoSuchModuleException(
-			_collectionPersistenceFinderByBundleSymbolicName.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {bundleSymbolicName}));
+		return _collectionPersistenceFinderByBundleSymbolicName.findFirst(
+			finderCache, new Object[] {bundleSymbolicName}, orderByComparator);
 	}
 
 	/**
@@ -445,7 +412,7 @@ public class ModulePersistenceImpl
 			finderCache, new Object[] {bundleSymbolicName});
 	}
 
-	private CollectionPersistenceFinder<Module>
+	private CollectionPersistenceFinder<Module, NoSuchModuleException>
 		_collectionPersistenceFinderByContextName;
 
 	/**
@@ -485,16 +452,8 @@ public class ModulePersistenceImpl
 			String contextName, OrderByComparator<Module> orderByComparator)
 		throws NoSuchModuleException {
 
-		Module module = fetchByContextName_First(
-			contextName, orderByComparator);
-
-		if (module != null) {
-			return module;
-		}
-
-		throw new NoSuchModuleException(
-			_collectionPersistenceFinderByContextName.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {contextName}));
+		return _collectionPersistenceFinderByContextName.findFirst(
+			finderCache, new Object[] {contextName}, orderByComparator);
 	}
 
 	/**
@@ -535,7 +494,7 @@ public class ModulePersistenceImpl
 			finderCache, new Object[] {contextName});
 	}
 
-	private CollectionPersistenceFinder<Module>
+	private CollectionPersistenceFinder<Module, NoSuchModuleException>
 		_collectionPersistenceFinderByA_CN;
 
 	/**
@@ -578,16 +537,8 @@ public class ModulePersistenceImpl
 			OrderByComparator<Module> orderByComparator)
 		throws NoSuchModuleException {
 
-		Module module = fetchByA_CN_First(
-			appId, contextName, orderByComparator);
-
-		if (module != null) {
-			return module;
-		}
-
-		throw new NoSuchModuleException(
-			_collectionPersistenceFinderByA_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {appId, contextName}));
+		return _collectionPersistenceFinderByA_CN.findFirst(
+			finderCache, new Object[] {appId, contextName}, orderByComparator);
 	}
 
 	/**
@@ -632,7 +583,8 @@ public class ModulePersistenceImpl
 			finderCache, new Object[] {appId, contextName});
 	}
 
-	private UniquePersistenceFinder<Module> _uniquePersistenceFinderByA_BSN_BV;
+	private UniquePersistenceFinder<Module, NoSuchModuleException>
+		_uniquePersistenceFinderByA_BSN_BV;
 
 	/**
 	 * Returns the module where appId = &#63; and bundleSymbolicName = &#63; and bundleVersion = &#63; or throws a <code>NoSuchModuleException</code> if it could not be found.
@@ -648,23 +600,9 @@ public class ModulePersistenceImpl
 			long appId, String bundleSymbolicName, String bundleVersion)
 		throws NoSuchModuleException {
 
-		Module module = fetchByA_BSN_BV(
-			appId, bundleSymbolicName, bundleVersion);
-
-		if (module == null) {
-			String message =
-				_uniquePersistenceFinderByA_BSN_BV.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {appId, bundleSymbolicName, bundleVersion});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchModuleException(message);
-		}
-
-		return module;
+		return _uniquePersistenceFinderByA_BSN_BV.find(
+			finderCache,
+			new Object[] {appId, bundleSymbolicName, bundleVersion});
 	}
 
 	/**
@@ -931,10 +869,10 @@ public class ModulePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
-			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"module.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				Module::getUuid));
+				"module.", "uuid", "uuid_", FinderColumn.Type.STRING, "=", true,
+				true, Module::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -956,10 +894,11 @@ public class ModulePersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
-				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"module.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, Module::getUuid),
+					"module.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, Module::getUuid),
 				new FinderColumn<>(
 					"module.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Module::getCompanyId));
@@ -982,7 +921,7 @@ public class ModulePersistenceImpl
 				new String[] {Long.class.getName()}, new String[] {"appId"},
 				false),
 			_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
-			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"module.", "appId", FinderColumn.Type.LONG, "=", true, true,
 				Module::getAppId));
@@ -1010,7 +949,8 @@ public class ModulePersistenceImpl
 					new String[] {String.class.getName()},
 					new String[] {"bundleSymbolicName"}, 0, 1, false, null),
 				_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
-				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"module.", "bundleSymbolicName", FinderColumn.Type.STRING,
 					"=", true, true, Module::getBundleSymbolicName));
@@ -1035,7 +975,8 @@ public class ModulePersistenceImpl
 					"countByContextName", new String[] {String.class.getName()},
 					new String[] {"contextName"}, 0, 1, false, null),
 				_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
-				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"module.", "contextName", FinderColumn.Type.STRING, "=",
 					true, true, Module::getContextName));
@@ -1059,7 +1000,7 @@ public class ModulePersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"appId", "contextName"}, 0, 2, false, null),
 			_SQL_SELECT_MODULE_WHERE, _SQL_COUNT_MODULE_WHERE,
-			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ModuleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"module.", "appId", FinderColumn.Type.LONG, "=", true, true,
 				Module::getAppId),
@@ -1144,12 +1085,6 @@ public class ModulePersistenceImpl
 	private static final String _SQL_COUNT_MODULE_WHERE =
 		"SELECT COUNT(module) FROM Module module WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Module exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ModulePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1159,4 +1094,4 @@ public class ModulePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1274754694
+// LIFERAY-SERVICE-BUILDER-HASH:489717026

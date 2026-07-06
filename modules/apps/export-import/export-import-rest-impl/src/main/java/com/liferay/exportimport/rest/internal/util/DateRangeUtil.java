@@ -5,9 +5,7 @@
 
 package com.liferay.exportimport.rest.internal.util;
 
-import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
 import com.liferay.portal.kernel.util.DateRange;
-import com.liferay.portal.kernel.util.Time;
 
 import jakarta.ws.rs.BadRequestException;
 
@@ -18,32 +16,20 @@ import java.util.Date;
  */
 public class DateRangeUtil {
 
-	public static DateRange toDateRange(
-		Date endDate, Integer last, String range, Date startDate) {
-
-		if (ExportImportDateUtil.RANGE_DATE_RANGE.equals(range)) {
-			if ((startDate == null) || (endDate == null)) {
-				throw new BadRequestException(
-					"A start date and an end date are required for a date " +
-						"range");
-			}
-
-			return new DateRange(startDate, endDate);
+	public static DateRange toDateRange(Date startDate, Date endDate) {
+		if ((startDate == null) && (endDate == null)) {
+			return null;
 		}
 
-		if (ExportImportDateUtil.RANGE_LAST.equals(range)) {
-			if (last == null) {
-				throw new BadRequestException(
-					"A number of hours is required for a relative date range");
-			}
+		if ((startDate != null) && (endDate != null) &&
+			!startDate.before(endDate)) {
 
-			Date now = new Date();
-
-			return new DateRange(
-				new Date(now.getTime() - (last * Time.HOUR)), now);
+			throw new BadRequestException("Start date must be before end date");
 		}
 
-		return new DateRange(null, null);
+		return new DateRange(
+			(startDate == null) ? new Date(0) : startDate,
+			(endDate == null) ? new Date() : endDate);
 	}
 
 }

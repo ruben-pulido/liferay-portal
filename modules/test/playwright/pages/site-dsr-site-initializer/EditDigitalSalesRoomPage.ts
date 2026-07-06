@@ -17,27 +17,40 @@ export class EditDigitalSalesRoomPage {
 	readonly commentSaveButton;
 	readonly commentsButton: Locator;
 	readonly commentTextarea: Locator;
-	readonly contributorRoleButton: Locator;
 	readonly contributorRoleInputButton: Locator;
+	readonly contributorRoleMenuItemButton: Locator;
+	readonly documentCard: (documentName: string) => Locator;
+	readonly documentGalleryCard: Locator;
+	readonly documentGalleryCardBadge: Locator;
+	readonly documentGalleryCardIcon: Locator;
+	readonly documentGalleryCardTitle: Locator;
 	readonly documentsMenuItem: Locator;
 	readonly editCommentTextarea: Locator;
 	readonly fileUploadButton: Locator;
+	readonly fragmentImage: Locator;
 	readonly friendlyURLInput: Locator;
 	readonly newButton: Locator;
 	readonly nextButton: Locator;
 	readonly noDocumentsMessage: Locator;
 	readonly onboardingMenuItem: Locator;
 	readonly page: Page;
+	readonly pageEditor: Locator;
 	readonly publishButton: Locator;
 	readonly replyButton: Locator;
 	readonly roleKeyButton: Locator;
+	readonly roomCollaboratorRoleInputButton: Locator;
 	readonly roomCommentsText: Locator;
 	readonly roomNameInput: Locator;
 	readonly saveButton: Locator;
 	readonly selectAccountInput: Locator;
 	readonly selectFileButton: Locator;
+	readonly selectImageAddButton: Locator;
+	readonly selectImageButton: Locator;
+	readonly selectImageFileInput: Locator;
+	readonly selectImageFrame: FrameLocator;
 	readonly selectOption: (value: string) => Locator;
 	readonly templatePreviewFrame: FrameLocator;
+	readonly viewerRoleInputButton: Locator;
 
 	constructor(page: Page) {
 		this.cancelButton = page.getByRole('button', {
@@ -55,11 +68,23 @@ export class EditDigitalSalesRoomPage {
 		this.commentTextarea = page.getByRole('textbox', {
 			name: 'Add comment.',
 		});
-		this.contributorRoleButton = page.getByRole('menuitem', {
-			name: 'Contributor',
-		});
 		this.contributorRoleInputButton = page.locator(
-			'[data-testid="roleKeyItem_Contributor"]'
+			'[data-testid="roleKeyItem_Content Contributor"]'
+		);
+		this.contributorRoleMenuItemButton = page.locator(
+			'[data-testid="memberRoleKeyItem_Content Contributor"]'
+		);
+		this.documentCard = (documentName: string) =>
+			page.locator('.card-title', {hasText: documentName});
+		this.documentGalleryCard = page.locator('.dsr-document-card');
+		this.documentGalleryCardBadge = this.documentGalleryCard.locator(
+			'.dsr-document-badge'
+		);
+		this.documentGalleryCardIcon = this.documentGalleryCard.locator(
+			'.dsr-document-icon svg'
+		);
+		this.documentGalleryCardTitle = this.documentGalleryCard.locator(
+			'.dsr-document-title'
 		);
 		this.documentsMenuItem = page.getByRole('menuitem', {
 			name: 'Documents',
@@ -70,6 +95,7 @@ export class EditDigitalSalesRoomPage {
 		this.fileUploadButton = page.getByRole('menuitem', {
 			name: 'File Upload',
 		});
+		this.fragmentImage = page.locator('#page-editor img').first();
 		this.friendlyURLInput = page.getByLabel('Friendly URL');
 		this.newButton = page.getByRole('button', {name: 'New'});
 		this.nextButton = page.getByRole('button', {name: 'Next'});
@@ -80,9 +106,13 @@ export class EditDigitalSalesRoomPage {
 			name: 'Onboarding',
 		});
 		this.page = page;
+		this.pageEditor = page.locator('#page-editor');
 		this.publishButton = page.getByRole('button', {name: 'Publish'});
 		this.replyButton = page.getByRole('button', {name: 'reply'});
 		this.roleKeyButton = page.locator('[data-testid="roleKeyButton"]');
+		this.roomCollaboratorRoleInputButton = page.locator(
+			'[data-testid="roleKeyItem_Room Collaborator"]'
+		);
 		this.roomCommentsText = page.getByText('Room Comments');
 		this.roomNameInput = page.getByLabel('Room Name');
 		this.saveButton = page.getByRole('button', {name: 'Save'});
@@ -90,11 +120,23 @@ export class EditDigitalSalesRoomPage {
 			name: 'Select Account',
 		});
 		this.selectFileButton = page.getByRole('button', {name: 'Select File'});
+		this.selectImageFrame = page.frameLocator('iframe[title="Select"]');
+		this.selectImageAddButton = this.selectImageFrame.getByRole('button', {
+			name: 'Add',
+		});
+		this.selectImageButton = page.getByRole('button', {
+			name: 'Select Image',
+		});
+		this.selectImageFileInput =
+			this.selectImageFrame.locator('input[type="file"]');
 		this.selectOption = (value: string) =>
 			page.getByRole('option', {name: value});
 		this.templatePreviewFrame = page
 			.getByLabel('Create New Digital Sales Room')
 			.frameLocator('iframe');
+		this.viewerRoleInputButton = page.locator(
+			'[data-testid="roleKeyItem_Viewer"]'
+		);
 	}
 
 	async uploadDocument(filePath: string) {
@@ -112,6 +154,19 @@ export class EditDigitalSalesRoomPage {
 		await this.publishButton.click();
 
 		await waitForAlert(this.page);
+	}
+
+	async uploadFragmentImage(filePath: string) {
+		await this.fragmentImage.click();
+		await this.fragmentImage.click();
+
+		await this.selectImageButton.click();
+
+		await this.selectImageFileInput.setInputFiles(filePath);
+
+		await this.selectImageAddButton.click();
+
+		await this.publishButton.click();
 	}
 
 	async addDigitalSalesRoom({

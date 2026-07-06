@@ -55,6 +55,21 @@ public class YMLSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testRESTOpenAPIUpsertDescription() throws Exception {
+		test(
+			"rest-openapi.testyaml",
+			new String[] {
+				"The mutability sentence must list every writable field of " +
+					"'ResourceFolder' as honored or ignored. Not writable " +
+						"fields: foo.",
+				"The mutability sentence does not match the required format.",
+				"The mutability sentence must list every writable field of " +
+					"'ResourceFolder' as honored or ignored. Missing: " +
+						"dateCreated, dateModified."
+			});
+	}
+
+	@Test
 	public void testSortDefinitions() throws Exception {
 		test("SortDefinitions.testyaml");
 	}

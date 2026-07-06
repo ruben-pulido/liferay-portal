@@ -123,7 +123,7 @@ export class WorkflowTasksPage {
 			autoClick: true,
 			target: this.page
 				.locator('.dropdown-menu:visible')
-				.getByText('Reject', {exact: true}),
+				.getByRole('menuitem', {name: 'Reject'}),
 			trigger: row.locator('.dropdown-toggle'),
 		});
 
@@ -132,8 +132,8 @@ export class WorkflowTasksPage {
 		await waitForAlert(this.page);
 	}
 
-	async resubmit(articleTitle: string) {
-		await this.goto();
+	async resubmit(articleTitle: string, siteUrl?: Site['friendlyUrlPath']) {
+		await this.goto(siteUrl);
 
 		await this.page.reload();
 
@@ -145,7 +145,7 @@ export class WorkflowTasksPage {
 			autoClick: true,
 			target: this.page
 				.locator('.dropdown-menu:visible')
-				.getByText('Resubmit', {exact: true}),
+				.getByRole('menuitem', {name: 'Resubmit'}),
 			trigger: row.locator('.dropdown-toggle'),
 		});
 

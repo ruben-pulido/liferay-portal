@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -79,8 +77,9 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceInventoryWarehouseRel>
-		_collectionPersistenceFinderByCommerceInventoryWarehouseId;
+	private CollectionPersistenceFinder
+		<CommerceInventoryWarehouseRel, NoSuchInventoryWarehouseRelException>
+			_collectionPersistenceFinderByCommerceInventoryWarehouseId;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory warehouse rels where commerceInventoryWarehouseId = &#63;.
@@ -124,19 +123,10 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 					orderByComparator)
 		throws NoSuchInventoryWarehouseRelException {
 
-		CommerceInventoryWarehouseRel commerceInventoryWarehouseRel =
-			fetchByCommerceInventoryWarehouseId_First(
-				commerceInventoryWarehouseId, orderByComparator);
-
-		if (commerceInventoryWarehouseRel != null) {
-			return commerceInventoryWarehouseRel;
-		}
-
-		throw new NoSuchInventoryWarehouseRelException(
-			_collectionPersistenceFinderByCommerceInventoryWarehouseId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceInventoryWarehouseId}));
+		return _collectionPersistenceFinderByCommerceInventoryWarehouseId.
+			findFirst(
+				finderCache, new Object[] {commerceInventoryWarehouseId},
+				orderByComparator);
 	}
 
 	/**
@@ -186,8 +176,9 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 			finderCache, new Object[] {commerceInventoryWarehouseId});
 	}
 
-	private CollectionPersistenceFinder<CommerceInventoryWarehouseRel>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CommerceInventoryWarehouseRel, NoSuchInventoryWarehouseRelException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory warehouse rels where classNameId = &#63; and commerceInventoryWarehouseId = &#63;.
@@ -231,18 +222,10 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 			OrderByComparator<CommerceInventoryWarehouseRel> orderByComparator)
 		throws NoSuchInventoryWarehouseRelException {
 
-		CommerceInventoryWarehouseRel commerceInventoryWarehouseRel =
-			fetchByC_C_First(
-				classNameId, commerceInventoryWarehouseId, orderByComparator);
-
-		if (commerceInventoryWarehouseRel != null) {
-			return commerceInventoryWarehouseRel;
-		}
-
-		throw new NoSuchInventoryWarehouseRelException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, commerceInventoryWarehouseId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache,
+			new Object[] {classNameId, commerceInventoryWarehouseId},
+			orderByComparator);
 	}
 
 	/**
@@ -293,8 +276,9 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 			new Object[] {classNameId, commerceInventoryWarehouseId});
 	}
 
-	private UniquePersistenceFinder<CommerceInventoryWarehouseRel>
-		_uniquePersistenceFinderByC_C_CIWI;
+	private UniquePersistenceFinder
+		<CommerceInventoryWarehouseRel, NoSuchInventoryWarehouseRelException>
+			_uniquePersistenceFinderByC_C_CIWI;
 
 	/**
 	 * Returns the commerce inventory warehouse rel where classNameId = &#63; and classPK = &#63; and commerceInventoryWarehouseId = &#63; or throws a <code>NoSuchInventoryWarehouseRelException</code> if it could not be found.
@@ -310,25 +294,9 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 			long classNameId, long classPK, long commerceInventoryWarehouseId)
 		throws NoSuchInventoryWarehouseRelException {
 
-		CommerceInventoryWarehouseRel commerceInventoryWarehouseRel =
-			fetchByC_C_CIWI(classNameId, classPK, commerceInventoryWarehouseId);
-
-		if (commerceInventoryWarehouseRel == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_CIWI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						classNameId, classPK, commerceInventoryWarehouseId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchInventoryWarehouseRelException(message);
-		}
-
-		return commerceInventoryWarehouseRel;
+		return _uniquePersistenceFinderByC_C_CIWI.find(
+			finderCache,
+			new Object[] {classNameId, classPK, commerceInventoryWarehouseId});
 	}
 
 	/**
@@ -609,6 +577,11 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceInventoryWarehouseRelId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCEINVENTORYWAREHOUSEREL;
 	}
@@ -648,11 +621,11 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 				_SQL_SELECT_COMMERCEINVENTORYWAREHOUSEREL_WHERE,
 				_SQL_COUNT_COMMERCEINVENTORYWAREHOUSEREL_WHERE,
 				CommerceInventoryWarehouseRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceInventoryWarehouseRel.",
-					"commerceInventoryWarehouseId", FinderColumn.Type.LONG, "=",
-					true, true,
+					"commerceInventoryWarehouseId", "CIWarehouseId",
+					FinderColumn.Type.LONG, "=", true, true,
 					CommerceInventoryWarehouseRel::
 						getCommerceInventoryWarehouseId));
 
@@ -677,15 +650,15 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 			_SQL_SELECT_COMMERCEINVENTORYWAREHOUSEREL_WHERE,
 			_SQL_COUNT_COMMERCEINVENTORYWAREHOUSEREL_WHERE,
 			CommerceInventoryWarehouseRelModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commerceInventoryWarehouseRel.", "classNameId",
 				FinderColumn.Type.LONG, "=", true, true,
 				CommerceInventoryWarehouseRel::getClassNameId),
 			new FinderColumn<>(
 				"commerceInventoryWarehouseRel.",
-				"commerceInventoryWarehouseId", FinderColumn.Type.LONG, "=",
-				true, true,
+				"commerceInventoryWarehouseId", "CIWarehouseId",
+				FinderColumn.Type.LONG, "=", true, true,
 				CommerceInventoryWarehouseRel::
 					getCommerceInventoryWarehouseId));
 
@@ -712,8 +685,8 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 				CommerceInventoryWarehouseRel::getClassPK),
 			new FinderColumn<>(
 				"commerceInventoryWarehouseRel.",
-				"commerceInventoryWarehouseId", FinderColumn.Type.LONG, "=",
-				true, true,
+				"commerceInventoryWarehouseId", "CIWarehouseId",
+				FinderColumn.Type.LONG, "=", true, true,
 				CommerceInventoryWarehouseRel::
 					getCommerceInventoryWarehouseId));
 
@@ -773,12 +746,6 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEINVENTORYWAREHOUSEREL_WHERE =
 		"SELECT COUNT(commerceInventoryWarehouseRel) FROM CommerceInventoryWarehouseRel commerceInventoryWarehouseRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceInventoryWarehouseRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceInventoryWarehouseRelPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {
 			"commerceInventoryWarehouseRelId", "commerceInventoryWarehouseId"
@@ -790,4 +757,4 @@ public class CommerceInventoryWarehouseRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1349735077
+// LIFERAY-SERVICE-BUILDER-HASH:-193381455

@@ -115,12 +115,8 @@ public class CPInstanceOptionValueRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CPInstanceOptionValueRel newCPInstanceOptionValueRel =
-			_persistence.create(pk);
-
-		newCPInstanceOptionValueRel.setMvccVersion(RandomTestUtil.nextLong());
+			addCPInstanceOptionValueRel();
 
 		newCPInstanceOptionValueRel.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -147,8 +143,10 @@ public class CPInstanceOptionValueRelPersistenceTest {
 
 		newCPInstanceOptionValueRel.setCPInstanceId(RandomTestUtil.nextLong());
 
-		_cpInstanceOptionValueRels.add(
-			_persistence.update(newCPInstanceOptionValueRel));
+		newCPInstanceOptionValueRel = _persistence.update(
+			newCPInstanceOptionValueRel);
+
+		_cpInstanceOptionValueRels.add(newCPInstanceOptionValueRel);
 
 		CPInstanceOptionValueRel existingCPInstanceOptionValueRel =
 			_persistence.findByPrimaryKey(
@@ -646,8 +644,6 @@ public class CPInstanceOptionValueRelPersistenceTest {
 		CPInstanceOptionValueRel cpInstanceOptionValueRel = _persistence.create(
 			pk);
 
-		cpInstanceOptionValueRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpInstanceOptionValueRel.setCtCollectionId(RandomTestUtil.nextLong());
 
 		cpInstanceOptionValueRel.setUuid(RandomTestUtil.randomString());
@@ -684,4 +680,4 @@ public class CPInstanceOptionValueRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1654032071
+// LIFERAY-SERVICE-BUILDER-HASH:1060382629

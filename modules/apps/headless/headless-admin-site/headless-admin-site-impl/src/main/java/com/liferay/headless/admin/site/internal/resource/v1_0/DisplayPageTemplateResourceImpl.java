@@ -18,11 +18,11 @@ import com.liferay.headless.admin.site.dto.v1_0.DisplayPageTemplateSEOSettings;
 import com.liferay.headless.admin.site.dto.v1_0.DisplayPageTemplateSettings;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.SitemapSettings;
+import com.liferay.headless.admin.site.dto.v1_0.util.FileEntryUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.DTOConverterContextUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.SubtypeUtil;
 import com.liferay.headless.admin.site.internal.odata.entity.v1_0.DisplayPageTemplateEntityModel;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.DisplayPageTemplateFolderUtil;
-import com.liferay.headless.admin.site.internal.resource.v1_0.util.FileEntryUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.PageSpecificationUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.ServiceContextUtil;
@@ -34,6 +34,7 @@ import com.liferay.headless.common.spi.util.GroupUtil;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.admin.kernel.model.LayoutTypePortletConstants;
+import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateCollectionTypeConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
@@ -151,12 +152,12 @@ public class DisplayPageTemplateResourceImpl
 
 			@Override
 			public List<String> getNestedFields() {
-				return List.of("pageSpecifications", "thumbnail");
+				return List.of("pageSpecifications", "thumbnailURLReference");
 			}
 
 			@Override
 			public String getPortletId() {
-				return LayoutAdminPortletKeys.GROUP_PAGES;
+				return LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES;
 			}
 
 			@Override
@@ -166,7 +167,7 @@ public class DisplayPageTemplateResourceImpl
 
 			@Override
 			public String getSectionKey() {
-				return ExportImportConstants.SECTION_KEY_SITE_BUILDER;
+				return ExportImportConstants.SECTION_KEY_DESIGN;
 			}
 
 			@Override
@@ -453,9 +454,9 @@ public class DisplayPageTemplateResourceImpl
 		}
 
 		long previewFileEntryId = FileEntryUtil.getPreviewFileEntryId(
-			groupId, getResourceName(),
-			_getServiceContext(displayPageTemplate, groupId),
-			displayPageTemplate.getThumbnailURLReference());
+			groupId, LayoutAdminPortletKeys.GROUP_PAGES,
+			displayPageTemplate.getThumbnailURLReference(),
+			contextUser.getUserId());
 
 		if (previewFileEntryId !=
 				layoutPageTemplateEntry.getPreviewFileEntryId()) {
@@ -630,9 +631,9 @@ public class DisplayPageTemplateResourceImpl
 				displayPageTemplate.getName(),
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
 				FileEntryUtil.getPreviewFileEntryId(
-					groupId, getResourceName(),
-					_getServiceContext(displayPageTemplate, groupId),
-					displayPageTemplate.getThumbnailURLReference()),
+					groupId, LayoutAdminPortletKeys.GROUP_PAGES,
+					displayPageTemplate.getThumbnailURLReference(),
+					contextUser.getUserId()),
 				GetterUtil.getBoolean(displayPageTemplate.getMarkedAsDefault()),
 				0L, layout.getPlid(), 0L,
 				PageSpecificationUtil.getPublishedStatus(

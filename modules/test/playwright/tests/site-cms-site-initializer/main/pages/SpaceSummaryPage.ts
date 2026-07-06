@@ -74,9 +74,10 @@ export class SpaceSummaryPage {
 	}
 
 	async addRoleToSpaceMember(roleName: string, userName: string) {
-		await this.viewAllMembersLink.click();
-
-		await this.page.getByRole('dialog').waitFor();
+		await clickAndExpectToBeVisible({
+			target: this.page.getByRole('dialog'),
+			trigger: this.viewAllMembersLink,
+		});
 
 		const userRow = this.page
 			.getByRole('listitem')
@@ -101,13 +102,20 @@ export class SpaceSummaryPage {
 
 		await expect(triggerText).toContainText(roleName);
 
+		await waitForAlert(this.page, 'role was successfully updated.', {
+			autoClose: false,
+		});
+
 		await this.closeButton.click();
+
+		await this.page.getByRole('dialog').waitFor({state: 'detached'});
 	}
 
 	async addUserOrUserGroup(name: string, type: UserOrUserGroupType) {
-		await this.viewAllMembersLink.click();
-
-		await this.page.getByRole('dialog').waitFor({state: 'visible'});
+		await clickAndExpectToBeVisible({
+			target: this.page.getByRole('dialog'),
+			trigger: this.viewAllMembersLink,
+		});
 
 		const dialog = this.page.getByRole('dialog');
 
@@ -142,6 +150,7 @@ export class SpaceSummaryPage {
 		await this.viewAllMembersLink.click();
 
 		await this.page.getByRole('dialog').waitFor();
+
 		await this.page
 			.getByLabel('Add People to Collaborate', {exact: true})
 			.selectOption(type);
@@ -202,9 +211,11 @@ export class SpaceSummaryPage {
 	async connectSite(siteName: string) {
 		await this.openConnectSitesDialog();
 
+		await this.page.getByLabel('Sites', {exact: true}).click();
+
 		await this.page
-			.getByLabel('Sites', {exact: true})
-			.selectOption('sites');
+			.getByRole('option', {exact: true, name: 'Sites'})
+			.click();
 
 		await this.page
 			.getByPlaceholder('Select a Site', {exact: true})
@@ -225,9 +236,11 @@ export class SpaceSummaryPage {
 	async connectSiteTemplate(siteTemplateName: string) {
 		await this.openConnectSitesDialog();
 
+		await this.page.getByLabel('Sites', {exact: true}).click();
+
 		await this.page
-			.getByLabel('Sites', {exact: true})
-			.selectOption('site-templates');
+			.getByRole('option', {exact: true, name: 'Site Templates'})
+			.click();
 
 		await this.page
 			.getByPlaceholder('Select a Site Template', {exact: true})
@@ -242,18 +255,46 @@ export class SpaceSummaryPage {
 			.getByText(`${siteTemplateName} (Site Template)`, {exact: true})
 			.waitFor();
 
+		await waitForAlert(
+			this.page,
+			`Success:Site template ${siteTemplateName} was successfully connected to the space.`,
+			{autoClose: false}
+		);
+
 		await this.closeButton.click();
+
+		await this.page.getByRole('dialog').waitFor({state: 'detached'});
 	}
 
-	async disconnectSiteFromModal(name: string) {
+	async disconnectSiteFromModal({
+		isSiteTemplate = false,
+		siteName,
+	}: {
+		isSiteTemplate?: boolean;
+		siteName: string;
+	}) {
+		const label = isSiteTemplate ? `${siteName} (Site Template)` : siteName;
+
 		await this.page
 			.getByLabel('Connected Sites')
 			.getByRole('listitem')
-			.filter({has: this.page.getByText(name, {exact: true})})
+			.filter({
+				has: this.page.getByText(label, {
+					exact: true,
+				}),
+			})
 			.getByRole('button', {name: /Actions/i})
 			.click();
 
 		await this.page.getByRole('menuitem', {name: 'Disconnect'}).click();
+
+		await waitForAlert(
+			this.page,
+			`Success:${
+				isSiteTemplate ? `Site template` : `Site`
+			} ${siteName} was successfully disconnected from the space.`,
+			{autoClose: false}
+		);
 	}
 
 	async openConnectedSitesModal() {

@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -73,8 +71,9 @@ public class AccountEntryOrganizationRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AccountEntryOrganizationRel>
-		_collectionPersistenceFinderByAccountEntryId;
+	private CollectionPersistenceFinder
+		<AccountEntryOrganizationRel, NoSuchEntryOrganizationRelException>
+			_collectionPersistenceFinderByAccountEntryId;
 
 	/**
 	 * Returns an ordered range of all the account entry organization rels where accountEntryId = &#63;.
@@ -115,16 +114,8 @@ public class AccountEntryOrganizationRelPersistenceImpl
 			OrderByComparator<AccountEntryOrganizationRel> orderByComparator)
 		throws NoSuchEntryOrganizationRelException {
 
-		AccountEntryOrganizationRel accountEntryOrganizationRel =
-			fetchByAccountEntryId_First(accountEntryId, orderByComparator);
-
-		if (accountEntryOrganizationRel != null) {
-			return accountEntryOrganizationRel;
-		}
-
-		throw new NoSuchEntryOrganizationRelException(
-			_collectionPersistenceFinderByAccountEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {accountEntryId}));
+		return _collectionPersistenceFinderByAccountEntryId.findFirst(
+			finderCache, new Object[] {accountEntryId}, orderByComparator);
 	}
 
 	/**
@@ -166,8 +157,9 @@ public class AccountEntryOrganizationRelPersistenceImpl
 			finderCache, new Object[] {accountEntryId});
 	}
 
-	private CollectionPersistenceFinder<AccountEntryOrganizationRel>
-		_collectionPersistenceFinderByOrganizationId;
+	private CollectionPersistenceFinder
+		<AccountEntryOrganizationRel, NoSuchEntryOrganizationRelException>
+			_collectionPersistenceFinderByOrganizationId;
 
 	/**
 	 * Returns an ordered range of all the account entry organization rels where organizationId = &#63;.
@@ -208,16 +200,8 @@ public class AccountEntryOrganizationRelPersistenceImpl
 			OrderByComparator<AccountEntryOrganizationRel> orderByComparator)
 		throws NoSuchEntryOrganizationRelException {
 
-		AccountEntryOrganizationRel accountEntryOrganizationRel =
-			fetchByOrganizationId_First(organizationId, orderByComparator);
-
-		if (accountEntryOrganizationRel != null) {
-			return accountEntryOrganizationRel;
-		}
-
-		throw new NoSuchEntryOrganizationRelException(
-			_collectionPersistenceFinderByOrganizationId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {organizationId}));
+		return _collectionPersistenceFinderByOrganizationId.findFirst(
+			finderCache, new Object[] {organizationId}, orderByComparator);
 	}
 
 	/**
@@ -259,8 +243,9 @@ public class AccountEntryOrganizationRelPersistenceImpl
 			finderCache, new Object[] {organizationId});
 	}
 
-	private UniquePersistenceFinder<AccountEntryOrganizationRel>
-		_uniquePersistenceFinderByA_O;
+	private UniquePersistenceFinder
+		<AccountEntryOrganizationRel, NoSuchEntryOrganizationRelException>
+			_uniquePersistenceFinderByA_O;
 
 	/**
 	 * Returns the account entry organization rel where accountEntryId = &#63; and organizationId = &#63; or throws a <code>NoSuchEntryOrganizationRelException</code> if it could not be found.
@@ -275,23 +260,8 @@ public class AccountEntryOrganizationRelPersistenceImpl
 			long accountEntryId, long organizationId)
 		throws NoSuchEntryOrganizationRelException {
 
-		AccountEntryOrganizationRel accountEntryOrganizationRel = fetchByA_O(
-			accountEntryId, organizationId);
-
-		if (accountEntryOrganizationRel == null) {
-			String message =
-				_uniquePersistenceFinderByA_O.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {accountEntryId, organizationId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryOrganizationRelException(message);
-		}
-
-		return accountEntryOrganizationRel;
+		return _uniquePersistenceFinderByA_O.find(
+			finderCache, new Object[] {accountEntryId, organizationId});
 	}
 
 	/**
@@ -564,7 +534,7 @@ public class AccountEntryOrganizationRelPersistenceImpl
 				_SQL_SELECT_ACCOUNTENTRYORGANIZATIONREL_WHERE,
 				_SQL_COUNT_ACCOUNTENTRYORGANIZATIONREL_WHERE,
 				AccountEntryOrganizationRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"accountEntryOrganizationRel.", "accountEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -594,7 +564,7 @@ public class AccountEntryOrganizationRelPersistenceImpl
 				_SQL_SELECT_ACCOUNTENTRYORGANIZATIONREL_WHERE,
 				_SQL_COUNT_ACCOUNTENTRYORGANIZATIONREL_WHERE,
 				AccountEntryOrganizationRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"accountEntryOrganizationRel.", "organizationId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -673,16 +643,10 @@ public class AccountEntryOrganizationRelPersistenceImpl
 	private static final String _SQL_COUNT_ACCOUNTENTRYORGANIZATIONREL_WHERE =
 		"SELECT COUNT(accountEntryOrganizationRel) FROM AccountEntryOrganizationRel accountEntryOrganizationRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AccountEntryOrganizationRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AccountEntryOrganizationRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1803285181
+// LIFERAY-SERVICE-BUILDER-HASH:1292532770

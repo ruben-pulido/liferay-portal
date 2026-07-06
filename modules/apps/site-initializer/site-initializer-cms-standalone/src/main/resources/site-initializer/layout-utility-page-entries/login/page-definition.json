@@ -1,0 +1,25 @@
+{
+	"pageElement": {
+		"id": "0f3b9c21-7a45-4d18-8e6c-2b1d5a9f0c44",
+		"pageElements": [
+			{
+				"definition": {
+					"widgetInstance": {
+						"widgetConfig": {
+						},
+						"widgetName": "com_liferay_site_cms_standalone_site_initializer_internal_portlet_CMSLoginPortlet"
+					}
+				},
+				"id": "7a0c6d98-eb1c-4e8f-f5d3-9c8e2b6a7dbb",
+				"type": "Widget"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "cms-login-master"
+		}
+	},
+	"version": 1.1
+}

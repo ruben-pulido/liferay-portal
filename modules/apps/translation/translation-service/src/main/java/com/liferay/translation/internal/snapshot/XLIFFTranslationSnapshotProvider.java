@@ -344,6 +344,22 @@ public class XLIFFTranslationSnapshotProvider
 		return LocaleUtil.fromLanguageId(targetLanguageProperty.getValue());
 	}
 
+	private boolean _isBlankTargetUnit(Unit unit) {
+		for (int i = 0; i < unit.getPartCount(); i++) {
+			Part part = unit.getPart(i);
+
+			Fragment targetFragment = part.getTarget();
+
+			if ((targetFragment == null) ||
+				!Validator.isBlank(targetFragment.getPlainText())) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private boolean _isVersion20(List<Event> events) {
 		for (Event event : events) {
 			if (event.isStartDocument()) {
@@ -387,11 +403,19 @@ public class XLIFFTranslationSnapshotProvider
 				TextContainer targetTextContainer = iTextUnit.getTarget(
 					targetLocaleId);
 
+				if (targetTextContainer.isEmpty()) {
+					continue;
+				}
+
 				for (TextPart targetTextPart : targetTextContainer.getParts()) {
+					if (!targetTextPart.isSegment()) {
+						continue;
+					}
+
 					TextFragment targetTextFragment =
 						targetTextPart.getContent();
 
-					if (Validator.isNull(targetTextFragment.getText())) {
+					if (targetTextFragment.getText() == null) {
 						continue;
 					}
 
@@ -427,6 +451,10 @@ public class XLIFFTranslationSnapshotProvider
 		throws XLIFFFileException {
 
 		for (Unit unit : xliffDocument.getUnits()) {
+			if (_isBlankTargetUnit(unit)) {
+				continue;
+			}
+
 			for (int i = 0; i < unit.getPartCount(); i++) {
 				Part part = unit.getPart(i);
 
@@ -437,12 +465,14 @@ public class XLIFFTranslationSnapshotProvider
 						"There is no translation target");
 				}
 
+				String targetPlainText = targetFragment.getPlainText();
+
 				unsafeConsumer.accept(
 					new InfoFieldValue<>(
 						_createInfoField(targetLocale, unit.getId()),
 						InfoLocalizedValue.builder(
 						).value(
-							targetLocale, targetFragment.getPlainText()
+							targetLocale, targetPlainText
 						).value(
 							biConsumer -> {
 								if (includeSource) {
@@ -502,14 +532,6 @@ public class XLIFFTranslationSnapshotProvider
 
 				throw new XLIFFFileException.MustBeWellFormed(
 					"Only one translation language per file is permitted");
-			}
-
-			TextContainer targetTextContainer = iTextUnit.getTarget(
-				targetLocaleId);
-
-			if (!textContainer.isEmpty() && targetTextContainer.isEmpty()) {
-				throw new XLIFFFileException.MustBeWellFormed(
-					"There is no translation target");
 			}
 		}
 	}

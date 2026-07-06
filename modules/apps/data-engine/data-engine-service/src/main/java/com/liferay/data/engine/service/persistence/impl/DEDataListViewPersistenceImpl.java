@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -86,8 +84,9 @@ public class DEDataListViewPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DEDataListView>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<DEDataListView, NoSuchDataListViewException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the de data list views where uuid = &#63;.
@@ -127,16 +126,8 @@ public class DEDataListViewPersistenceImpl
 			String uuid, OrderByComparator<DEDataListView> orderByComparator)
 		throws NoSuchDataListViewException {
 
-		DEDataListView deDataListView = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (deDataListView != null) {
-			return deDataListView;
-		}
-
-		throw new NoSuchDataListViewException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -177,7 +168,7 @@ public class DEDataListViewPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DEDataListView>
+	private UniquePersistenceFinder<DEDataListView, NoSuchDataListViewException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -192,21 +183,8 @@ public class DEDataListViewPersistenceImpl
 	public DEDataListView findByUUID_G(String uuid, long groupId)
 		throws NoSuchDataListViewException {
 
-		DEDataListView deDataListView = fetchByUUID_G(uuid, groupId);
-
-		if (deDataListView == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDataListViewException(message);
-		}
-
-		return deDataListView;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -254,8 +232,9 @@ public class DEDataListViewPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DEDataListView>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<DEDataListView, NoSuchDataListViewException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the de data list views where uuid = &#63; and companyId = &#63;.
@@ -298,16 +277,8 @@ public class DEDataListViewPersistenceImpl
 			OrderByComparator<DEDataListView> orderByComparator)
 		throws NoSuchDataListViewException {
 
-		DEDataListView deDataListView = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (deDataListView != null) {
-			return deDataListView;
-		}
-
-		throw new NoSuchDataListViewException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -352,8 +323,9 @@ public class DEDataListViewPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<DEDataListView>
-		_collectionPersistenceFinderByDDMStructureId;
+	private CollectionPersistenceFinder
+		<DEDataListView, NoSuchDataListViewException>
+			_collectionPersistenceFinderByDDMStructureId;
 
 	/**
 	 * Returns an ordered range of all the de data list views where ddmStructureId = &#63;.
@@ -394,16 +366,8 @@ public class DEDataListViewPersistenceImpl
 			OrderByComparator<DEDataListView> orderByComparator)
 		throws NoSuchDataListViewException {
 
-		DEDataListView deDataListView = fetchByDDMStructureId_First(
-			ddmStructureId, orderByComparator);
-
-		if (deDataListView != null) {
-			return deDataListView;
-		}
-
-		throw new NoSuchDataListViewException(
-			_collectionPersistenceFinderByDDMStructureId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ddmStructureId}));
+		return _collectionPersistenceFinderByDDMStructureId.findFirst(
+			finderCache, new Object[] {ddmStructureId}, orderByComparator);
 	}
 
 	/**
@@ -445,8 +409,9 @@ public class DEDataListViewPersistenceImpl
 			finderCache, new Object[] {ddmStructureId});
 	}
 
-	private CollectionPersistenceFinder<DEDataListView>
-		_collectionPersistenceFinderByG_C_DDMSI;
+	private CollectionPersistenceFinder
+		<DEDataListView, NoSuchDataListViewException>
+			_collectionPersistenceFinderByG_C_DDMSI;
 
 	/**
 	 * Returns an ordered range of all the de data list views where groupId = &#63; and companyId = &#63; and ddmStructureId = &#63;.
@@ -491,17 +456,9 @@ public class DEDataListViewPersistenceImpl
 			OrderByComparator<DEDataListView> orderByComparator)
 		throws NoSuchDataListViewException {
 
-		DEDataListView deDataListView = fetchByG_C_DDMSI_First(
-			groupId, companyId, ddmStructureId, orderByComparator);
-
-		if (deDataListView != null) {
-			return deDataListView;
-		}
-
-		throw new NoSuchDataListViewException(
-			_collectionPersistenceFinderByG_C_DDMSI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, companyId, ddmStructureId}));
+		return _collectionPersistenceFinderByG_C_DDMSI.findFirst(
+			finderCache, new Object[] {groupId, companyId, ddmStructureId},
+			orderByComparator);
 	}
 
 	/**
@@ -873,10 +830,11 @@ public class DEDataListViewPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_DEDATALISTVIEW_WHERE, _SQL_COUNT_DEDATALISTVIEW_WHERE,
-			DEDataListViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DEDataListViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"deDataListView.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DEDataListView::getUuid));
+				"deDataListView.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DEDataListView::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -888,8 +846,8 @@ public class DEDataListViewPersistenceImpl
 				DEDataListView::getGroupId),
 			_SQL_SELECT_DEDATALISTVIEW_WHERE, "",
 			new FinderColumn<>(
-				"deDataListView.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DEDataListView::getUuid),
+				"deDataListView.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DEDataListView::getUuid),
 			new FinderColumn<>(
 				"deDataListView.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, DEDataListView::getGroupId));
@@ -916,9 +874,11 @@ public class DEDataListViewPersistenceImpl
 				_SQL_SELECT_DEDATALISTVIEW_WHERE,
 				_SQL_COUNT_DEDATALISTVIEW_WHERE,
 				DEDataListViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"deDataListView.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, DEDataListView::getUuid),
+					"deDataListView.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					DEDataListView::getUuid),
 				new FinderColumn<>(
 					"deDataListView.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DEDataListView::getCompanyId));
@@ -947,6 +907,7 @@ public class DEDataListViewPersistenceImpl
 				_SQL_SELECT_DEDATALISTVIEW_WHERE,
 				_SQL_COUNT_DEDATALISTVIEW_WHERE,
 				DEDataListViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"deDataListView.", "ddmStructureId", FinderColumn.Type.LONG,
 					"=", true, true, DEDataListView::getDdmStructureId));
@@ -985,6 +946,7 @@ public class DEDataListViewPersistenceImpl
 				_SQL_SELECT_DEDATALISTVIEW_WHERE,
 				_SQL_COUNT_DEDATALISTVIEW_WHERE,
 				DEDataListViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"deDataListView.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DEDataListView::getGroupId),
@@ -1052,12 +1014,6 @@ public class DEDataListViewPersistenceImpl
 	private static final String _SQL_COUNT_DEDATALISTVIEW_WHERE =
 		"SELECT COUNT(deDataListView) FROM DEDataListView deDataListView WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DEDataListView exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DEDataListViewPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1067,4 +1023,4 @@ public class DEDataListViewPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1091860790
+// LIFERAY-SERVICE-BUILDER-HASH:1630789316

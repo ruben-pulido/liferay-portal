@@ -13,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchPortletPreferenceValueException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.PortletPreferenceValue;
 import com.liferay.portal.kernel.model.PortletPreferenceValueTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -74,8 +72,9 @@ public class PortletPreferenceValuePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<PortletPreferenceValue>
-		_collectionPersistenceFinderByPortletPreferencesId;
+	private CollectionPersistenceFinder
+		<PortletPreferenceValue, NoSuchPortletPreferenceValueException>
+			_collectionPersistenceFinderByPortletPreferencesId;
 
 	/**
 	 * Returns an ordered range of all the portlet preference values where portletPreferencesId = &#63;.
@@ -117,19 +116,9 @@ public class PortletPreferenceValuePersistenceImpl
 			OrderByComparator<PortletPreferenceValue> orderByComparator)
 		throws NoSuchPortletPreferenceValueException {
 
-		PortletPreferenceValue portletPreferenceValue =
-			fetchByPortletPreferencesId_First(
-				portletPreferencesId, orderByComparator);
-
-		if (portletPreferenceValue != null) {
-			return portletPreferenceValue;
-		}
-
-		throw new NoSuchPortletPreferenceValueException(
-			_collectionPersistenceFinderByPortletPreferencesId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {portletPreferencesId}));
+		return _collectionPersistenceFinderByPortletPreferencesId.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {portletPreferencesId}, orderByComparator);
 	}
 
 	/**
@@ -174,8 +163,9 @@ public class PortletPreferenceValuePersistenceImpl
 			new Object[] {portletPreferencesId});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferenceValue>
-		_collectionPersistenceFinderByP_N;
+	private CollectionPersistenceFinder
+		<PortletPreferenceValue, NoSuchPortletPreferenceValueException>
+			_collectionPersistenceFinderByP_N;
 
 	/**
 	 * Returns an ordered range of all the portlet preference values where portletPreferencesId = &#63; and name = &#63;.
@@ -219,17 +209,9 @@ public class PortletPreferenceValuePersistenceImpl
 			OrderByComparator<PortletPreferenceValue> orderByComparator)
 		throws NoSuchPortletPreferenceValueException {
 
-		PortletPreferenceValue portletPreferenceValue = fetchByP_N_First(
-			portletPreferencesId, name, orderByComparator);
-
-		if (portletPreferenceValue != null) {
-			return portletPreferenceValue;
-		}
-
-		throw new NoSuchPortletPreferenceValueException(
-			_collectionPersistenceFinderByP_N.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {portletPreferencesId, name}));
+		return _collectionPersistenceFinderByP_N.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {portletPreferencesId, name}, orderByComparator);
 	}
 
 	/**
@@ -277,8 +259,9 @@ public class PortletPreferenceValuePersistenceImpl
 			new Object[] {portletPreferencesId, name});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferenceValue>
-		_collectionPersistenceFinderByC_N_SV;
+	private CollectionPersistenceFinder
+		<PortletPreferenceValue, NoSuchPortletPreferenceValueException>
+			_collectionPersistenceFinderByC_N_SV;
 
 	/**
 	 * Returns an ordered range of all the portlet preference values where companyId = &#63; and name = &#63; and smallValue = &#63;.
@@ -324,17 +307,9 @@ public class PortletPreferenceValuePersistenceImpl
 			OrderByComparator<PortletPreferenceValue> orderByComparator)
 		throws NoSuchPortletPreferenceValueException {
 
-		PortletPreferenceValue portletPreferenceValue = fetchByC_N_SV_First(
-			companyId, name, smallValue, orderByComparator);
-
-		if (portletPreferenceValue != null) {
-			return portletPreferenceValue;
-		}
-
-		throw new NoSuchPortletPreferenceValueException(
-			_collectionPersistenceFinderByC_N_SV.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, name, smallValue}));
+		return _collectionPersistenceFinderByC_N_SV.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, name, smallValue}, orderByComparator);
 	}
 
 	/**
@@ -385,8 +360,9 @@ public class PortletPreferenceValuePersistenceImpl
 			new Object[] {companyId, name, smallValue});
 	}
 
-	private UniquePersistenceFinder<PortletPreferenceValue>
-		_uniquePersistenceFinderByP_I_N;
+	private UniquePersistenceFinder
+		<PortletPreferenceValue, NoSuchPortletPreferenceValueException>
+			_uniquePersistenceFinderByP_I_N;
 
 	/**
 	 * Returns the portlet preference value where portletPreferencesId = &#63; and index = &#63; and name = &#63; or throws a <code>NoSuchPortletPreferenceValueException</code> if it could not be found.
@@ -402,23 +378,9 @@ public class PortletPreferenceValuePersistenceImpl
 			long portletPreferencesId, int index, String name)
 		throws NoSuchPortletPreferenceValueException {
 
-		PortletPreferenceValue portletPreferenceValue = fetchByP_I_N(
-			portletPreferencesId, index, name);
-
-		if (portletPreferenceValue == null) {
-			String message =
-				_uniquePersistenceFinderByP_I_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {portletPreferencesId, index, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPortletPreferenceValueException(message);
-		}
-
-		return portletPreferenceValue;
+		return _uniquePersistenceFinderByP_I_N.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {portletPreferencesId, index, name});
 	}
 
 	/**
@@ -474,8 +436,9 @@ public class PortletPreferenceValuePersistenceImpl
 			new Object[] {portletPreferencesId, index, name});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferenceValue>
-		_collectionPersistenceFinderByP_N_SV;
+	private CollectionPersistenceFinder
+		<PortletPreferenceValue, NoSuchPortletPreferenceValueException>
+			_collectionPersistenceFinderByP_N_SV;
 
 	/**
 	 * Returns an ordered range of all the portlet preference values where portletPreferencesId = &#63; and name = &#63; and smallValue = &#63;.
@@ -521,17 +484,10 @@ public class PortletPreferenceValuePersistenceImpl
 			OrderByComparator<PortletPreferenceValue> orderByComparator)
 		throws NoSuchPortletPreferenceValueException {
 
-		PortletPreferenceValue portletPreferenceValue = fetchByP_N_SV_First(
-			portletPreferencesId, name, smallValue, orderByComparator);
-
-		if (portletPreferenceValue != null) {
-			return portletPreferenceValue;
-		}
-
-		throw new NoSuchPortletPreferenceValueException(
-			_collectionPersistenceFinderByP_N_SV.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {portletPreferencesId, name, smallValue}));
+		return _collectionPersistenceFinderByP_N_SV.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {portletPreferencesId, name, smallValue},
+			orderByComparator);
 	}
 
 	/**
@@ -881,7 +837,7 @@ public class PortletPreferenceValuePersistenceImpl
 				_SQL_SELECT_PORTLETPREFERENCEVALUE_WHERE,
 				_SQL_COUNT_PORTLETPREFERENCEVALUE_WHERE,
 				PortletPreferenceValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"portletPreferenceValue.", "portletPreferencesId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -910,7 +866,7 @@ public class PortletPreferenceValuePersistenceImpl
 			_SQL_SELECT_PORTLETPREFERENCEVALUE_WHERE,
 			_SQL_COUNT_PORTLETPREFERENCEVALUE_WHERE,
 			PortletPreferenceValueModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"portletPreferenceValue.", "portletPreferencesId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -950,7 +906,7 @@ public class PortletPreferenceValuePersistenceImpl
 				_SQL_SELECT_PORTLETPREFERENCEVALUE_WHERE,
 				_SQL_COUNT_PORTLETPREFERENCEVALUE_WHERE,
 				PortletPreferenceValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"portletPreferenceValue.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -981,8 +937,9 @@ public class PortletPreferenceValuePersistenceImpl
 				FinderColumn.Type.LONG, "=", true, true,
 				PortletPreferenceValue::getPortletPreferencesId),
 			new FinderColumn<>(
-				"portletPreferenceValue.", "index", FinderColumn.Type.INTEGER,
-				"=", true, true, PortletPreferenceValue::getIndex),
+				"portletPreferenceValue.", "index", "index_",
+				FinderColumn.Type.INTEGER, "=", true, true,
+				PortletPreferenceValue::getIndex),
 			new FinderColumn<>(
 				"portletPreferenceValue.", "name", FinderColumn.Type.STRING,
 				"=", true, true, PortletPreferenceValue::getName));
@@ -1019,7 +976,7 @@ public class PortletPreferenceValuePersistenceImpl
 				_SQL_SELECT_PORTLETPREFERENCEVALUE_WHERE,
 				_SQL_COUNT_PORTLETPREFERENCEVALUE_WHERE,
 				PortletPreferenceValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"portletPreferenceValue.", "portletPreferencesId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1053,12 +1010,6 @@ public class PortletPreferenceValuePersistenceImpl
 	private static final String _SQL_COUNT_PORTLETPREFERENCEVALUE_WHERE =
 		"SELECT COUNT(portletPreferenceValue) FROM PortletPreferenceValue portletPreferenceValue WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PortletPreferenceValue exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PortletPreferenceValuePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"index"});
 
@@ -1068,4 +1019,4 @@ public class PortletPreferenceValuePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:331906896
+// LIFERAY-SERVICE-BUILDER-HASH:-1407170444

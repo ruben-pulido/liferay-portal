@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -76,8 +74,9 @@ public class SamlIdpSpConnectionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SamlIdpSpConnection>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<SamlIdpSpConnection, NoSuchIdpSpConnectionException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the saml idp sp connections where companyId = &#63;.
@@ -118,16 +117,8 @@ public class SamlIdpSpConnectionPersistenceImpl
 			OrderByComparator<SamlIdpSpConnection> orderByComparator)
 		throws NoSuchIdpSpConnectionException {
 
-		SamlIdpSpConnection samlIdpSpConnection = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (samlIdpSpConnection != null) {
-			return samlIdpSpConnection;
-		}
-
-		throw new NoSuchIdpSpConnectionException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -169,8 +160,9 @@ public class SamlIdpSpConnectionPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<SamlIdpSpConnection>
-		_uniquePersistenceFinderByC_SSEI;
+	private UniquePersistenceFinder
+		<SamlIdpSpConnection, NoSuchIdpSpConnectionException>
+			_uniquePersistenceFinderByC_SSEI;
 
 	/**
 	 * Returns the saml idp sp connection where companyId = &#63; and samlSpEntityId = &#63; or throws a <code>NoSuchIdpSpConnectionException</code> if it could not be found.
@@ -185,23 +177,8 @@ public class SamlIdpSpConnectionPersistenceImpl
 			long companyId, String samlSpEntityId)
 		throws NoSuchIdpSpConnectionException {
 
-		SamlIdpSpConnection samlIdpSpConnection = fetchByC_SSEI(
-			companyId, samlSpEntityId);
-
-		if (samlIdpSpConnection == null) {
-			String message =
-				_uniquePersistenceFinderByC_SSEI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, samlSpEntityId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchIdpSpConnectionException(message);
-		}
-
-		return samlIdpSpConnection;
+		return _uniquePersistenceFinderByC_SSEI.find(
+			finderCache, new Object[] {companyId, samlSpEntityId});
 	}
 
 	/**
@@ -480,7 +457,7 @@ public class SamlIdpSpConnectionPersistenceImpl
 				_SQL_SELECT_SAMLIDPSPCONNECTION_WHERE,
 				_SQL_COUNT_SAMLIDPSPCONNECTION_WHERE,
 				SamlIdpSpConnectionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"samlIdpSpConnection.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, SamlIdpSpConnection::getCompanyId));
@@ -556,16 +533,10 @@ public class SamlIdpSpConnectionPersistenceImpl
 	private static final String _SQL_COUNT_SAMLIDPSPCONNECTION_WHERE =
 		"SELECT COUNT(samlIdpSpConnection) FROM SamlIdpSpConnection samlIdpSpConnection WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SamlIdpSpConnection exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SamlIdpSpConnectionPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-254148936
+// LIFERAY-SERVICE-BUILDER-HASH:-1627314166

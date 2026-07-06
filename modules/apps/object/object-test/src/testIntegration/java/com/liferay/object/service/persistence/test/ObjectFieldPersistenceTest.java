@@ -111,11 +111,7 @@ public class ObjectFieldPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ObjectField newObjectField = _persistence.create(pk);
-
-		newObjectField.setMvccVersion(RandomTestUtil.nextLong());
+		ObjectField newObjectField = addObjectField();
 
 		newObjectField.setUuid(RandomTestUtil.randomString());
 
@@ -168,7 +164,9 @@ public class ObjectFieldPersistenceTest {
 
 		newObjectField.setSystem(RandomTestUtil.randomBoolean());
 
-		_objectFields.add(_persistence.update(newObjectField));
+		newObjectField = _persistence.update(newObjectField);
+
+		_objectFields.add(newObjectField);
 
 		ObjectField existingObjectField = _persistence.findByPrimaryKey(
 			newObjectField.getPrimaryKey());
@@ -720,8 +718,6 @@ public class ObjectFieldPersistenceTest {
 
 		ObjectField objectField = _persistence.create(pk);
 
-		objectField.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectField.setUuid(RandomTestUtil.randomString());
 
 		objectField.setExternalReferenceCode(RandomTestUtil.randomString());
@@ -783,4 +779,4 @@ public class ObjectFieldPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:322520569
+// LIFERAY-SERVICE-BUILDER-HASH:-1968025669

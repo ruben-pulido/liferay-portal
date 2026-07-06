@@ -111,11 +111,7 @@ public class UserGroupPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		UserGroup newUserGroup = _persistence.create(pk);
-
-		newUserGroup.setMvccVersion(RandomTestUtil.nextLong());
+		UserGroup newUserGroup = addUserGroup();
 
 		newUserGroup.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -143,7 +139,9 @@ public class UserGroupPersistenceTest {
 
 		newUserGroup.setStatus(RandomTestUtil.nextInt());
 
-		_userGroups.add(_persistence.update(newUserGroup));
+		newUserGroup = _persistence.update(newUserGroup);
+
+		_userGroups.add(newUserGroup);
 
 		UserGroup existingUserGroup = _persistence.findByPrimaryKey(
 			newUserGroup.getPrimaryKey());
@@ -595,8 +593,6 @@ public class UserGroupPersistenceTest {
 
 		UserGroup userGroup = _persistence.create(pk);
 
-		userGroup.setMvccVersion(RandomTestUtil.nextLong());
-
 		userGroup.setCtCollectionId(RandomTestUtil.nextLong());
 
 		userGroup.setUuid(RandomTestUtil.randomString());
@@ -633,4 +629,4 @@ public class UserGroupPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2100466545
+// LIFERAY-SERVICE-BUILDER-HASH:1322531418

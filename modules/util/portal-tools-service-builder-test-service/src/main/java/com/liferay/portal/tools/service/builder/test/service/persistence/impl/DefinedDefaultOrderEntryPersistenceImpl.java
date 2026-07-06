@@ -9,8 +9,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -65,8 +63,9 @@ public class DefinedDefaultOrderEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<DefinedDefaultOrderEntry>
-		_uniquePersistenceFinderByName;
+	private UniquePersistenceFinder
+		<DefinedDefaultOrderEntry, NoSuchDefinedDefaultOrderEntryException>
+			_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the defined default order entry where name = &#63; or throws a <code>NoSuchDefinedDefaultOrderEntryException</code> if it could not be found.
@@ -79,21 +78,8 @@ public class DefinedDefaultOrderEntryPersistenceImpl
 	public DefinedDefaultOrderEntry findByName(String name)
 		throws NoSuchDefinedDefaultOrderEntryException {
 
-		DefinedDefaultOrderEntry definedDefaultOrderEntry = fetchByName(name);
-
-		if (definedDefaultOrderEntry == null) {
-			String message =
-				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDefinedDefaultOrderEntryException(message);
-		}
-
-		return definedDefaultOrderEntry;
+		return _uniquePersistenceFinderByName.find(
+			finderCache, new Object[] {name});
 	}
 
 	/**
@@ -138,8 +124,9 @@ public class DefinedDefaultOrderEntryPersistenceImpl
 			finderCache, new Object[] {name});
 	}
 
-	private CollectionPersistenceFinder<DefinedDefaultOrderEntry>
-		_collectionPersistenceFinderByName_Collection;
+	private CollectionPersistenceFinder
+		<DefinedDefaultOrderEntry, NoSuchDefinedDefaultOrderEntryException>
+			_collectionPersistenceFinderByName_Collection;
 
 	/**
 	 * Returns an ordered range of all the defined default order entries where name = &#63;.
@@ -180,16 +167,8 @@ public class DefinedDefaultOrderEntryPersistenceImpl
 			OrderByComparator<DefinedDefaultOrderEntry> orderByComparator)
 		throws NoSuchDefinedDefaultOrderEntryException {
 
-		DefinedDefaultOrderEntry definedDefaultOrderEntry =
-			fetchByName_Collection_First(name, orderByComparator);
-
-		if (definedDefaultOrderEntry != null) {
-			return definedDefaultOrderEntry;
-		}
-
-		throw new NoSuchDefinedDefaultOrderEntryException(
-			_collectionPersistenceFinderByName_Collection.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name}));
+		return _collectionPersistenceFinderByName_Collection.findFirst(
+			finderCache, new Object[] {name}, orderByComparator);
 	}
 
 	/**
@@ -469,7 +448,7 @@ public class DefinedDefaultOrderEntryPersistenceImpl
 				_SQL_SELECT_DEFINEDDEFAULTORDERENTRY_WHERE,
 				_SQL_COUNT_DEFINEDDEFAULTORDERENTRY_WHERE,
 				DefinedDefaultOrderEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"definedDefaultOrderEntry.", "name",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -502,16 +481,10 @@ public class DefinedDefaultOrderEntryPersistenceImpl
 	private static final String _SQL_COUNT_DEFINEDDEFAULTORDERENTRY_WHERE =
 		"SELECT COUNT(definedDefaultOrderEntry) FROM DefinedDefaultOrderEntry definedDefaultOrderEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DefinedDefaultOrderEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DefinedDefaultOrderEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1616907329
+// LIFERAY-SERVICE-BUILDER-HASH:-637702866

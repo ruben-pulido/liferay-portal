@@ -111,9 +111,7 @@ public class ChangesetEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ChangesetEntry newChangesetEntry = _persistence.create(pk);
+		ChangesetEntry newChangesetEntry = addChangesetEntry();
 
 		newChangesetEntry.setGroupId(RandomTestUtil.nextLong());
 
@@ -136,7 +134,9 @@ public class ChangesetEntryPersistenceTest {
 
 		newChangesetEntry.setClassPK(RandomTestUtil.nextLong());
 
-		_changesetEntries.add(_persistence.update(newChangesetEntry));
+		newChangesetEntry = _persistence.update(newChangesetEntry);
+
+		_changesetEntries.add(newChangesetEntry);
 
 		ChangesetEntry existingChangesetEntry = _persistence.findByPrimaryKey(
 			newChangesetEntry.getPrimaryKey());
@@ -598,4 +598,4 @@ public class ChangesetEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-970988901
+// LIFERAY-SERVICE-BUILDER-HASH:-155169094

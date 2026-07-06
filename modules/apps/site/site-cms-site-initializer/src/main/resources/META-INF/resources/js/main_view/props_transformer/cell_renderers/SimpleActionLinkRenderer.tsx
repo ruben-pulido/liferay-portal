@@ -24,6 +24,7 @@ export default function SimpleActionLinkRenderer({
 	itemData,
 	onViewClick,
 	options,
+	systemIconLabel,
 	trailingIcon,
 	value,
 }: {
@@ -37,6 +38,7 @@ export default function SimpleActionLinkRenderer({
 	itemData: any;
 	onViewClick?: (itemData: any) => void;
 	options: {actionId: string};
+	systemIconLabel?: string;
 	trailingIcon?: React.ReactNode;
 	value: string;
 }) {
@@ -102,11 +104,11 @@ export default function SimpleActionLinkRenderer({
 		</ClaySticker>
 	);
 
-	const systemIcon = itemData.system && (
+	const systemIcon = itemData.system && systemIconLabel && (
 		<ClayIcon
-			aria-label={Liferay.Language.get('system-default-structure')}
+			aria-label={systemIconLabel}
 			className="c-ml-2 lfr-portal-tooltip text-secondary"
-			data-title={Liferay.Language.get('system-default-structure')}
+			data-title={systemIconLabel}
 			symbol="lock"
 		/>
 	);

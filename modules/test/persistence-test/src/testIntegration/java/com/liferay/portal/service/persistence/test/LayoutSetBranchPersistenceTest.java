@@ -114,11 +114,7 @@ public class LayoutSetBranchPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		LayoutSetBranch newLayoutSetBranch = _persistence.create(pk);
-
-		newLayoutSetBranch.setMvccVersion(RandomTestUtil.nextLong());
+		LayoutSetBranch newLayoutSetBranch = addLayoutSetBranch();
 
 		newLayoutSetBranch.setGroupId(RandomTestUtil.nextLong());
 
@@ -156,7 +152,9 @@ public class LayoutSetBranchPersistenceTest {
 		newLayoutSetBranch.setLayoutSetPrototypeLinkEnabled(
 			RandomTestUtil.randomBoolean());
 
-		_layoutSetBranchs.add(_persistence.update(newLayoutSetBranch));
+		newLayoutSetBranch = _persistence.update(newLayoutSetBranch);
+
+		_layoutSetBranchs.add(newLayoutSetBranch);
 
 		LayoutSetBranch existingLayoutSetBranch = _persistence.findByPrimaryKey(
 			newLayoutSetBranch.getPrimaryKey());
@@ -600,8 +598,6 @@ public class LayoutSetBranchPersistenceTest {
 
 		LayoutSetBranch layoutSetBranch = _persistence.create(pk);
 
-		layoutSetBranch.setMvccVersion(RandomTestUtil.nextLong());
-
 		layoutSetBranch.setGroupId(RandomTestUtil.nextLong());
 
 		layoutSetBranch.setCompanyId(RandomTestUtil.nextLong());
@@ -649,4 +645,4 @@ public class LayoutSetBranchPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-359729671
+// LIFERAY-SERVICE-BUILDER-HASH:1152544426

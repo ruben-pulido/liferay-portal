@@ -13,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -90,7 +88,7 @@ public class SharingEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -131,15 +129,8 @@ public class SharingEntryPersistenceImpl
 			String uuid, OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByUuid_First(uuid, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -180,7 +171,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<SharingEntry>
+	private UniquePersistenceFinder<SharingEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -195,21 +186,8 @@ public class SharingEntryPersistenceImpl
 	public SharingEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByUUID_G(uuid, groupId);
-
-		if (sharingEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return sharingEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -257,7 +235,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -301,16 +279,8 @@ public class SharingEntryPersistenceImpl
 			OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -355,7 +325,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -396,16 +366,8 @@ public class SharingEntryPersistenceImpl
 			long groupId, OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -446,7 +408,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -487,16 +449,8 @@ public class SharingEntryPersistenceImpl
 			long userId, OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -537,7 +491,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByToTicketId;
 
 	/**
@@ -578,16 +532,8 @@ public class SharingEntryPersistenceImpl
 			long toTicketId, OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByToTicketId_First(
-			toTicketId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByToTicketId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {toTicketId}));
+		return _collectionPersistenceFinderByToTicketId.findFirst(
+			finderCache, new Object[] {toTicketId}, orderByComparator);
 	}
 
 	/**
@@ -628,7 +574,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {toTicketId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByToUserGroupId;
 
 	/**
@@ -670,16 +616,8 @@ public class SharingEntryPersistenceImpl
 			OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByToUserGroupId_First(
-			toUserGroupId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByToUserGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {toUserGroupId}));
+		return _collectionPersistenceFinderByToUserGroupId.findFirst(
+			finderCache, new Object[] {toUserGroupId}, orderByComparator);
 	}
 
 	/**
@@ -720,7 +658,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {toUserGroupId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByToUserId;
 
 	/**
@@ -761,16 +699,8 @@ public class SharingEntryPersistenceImpl
 			long toUserId, OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByToUserId_First(
-			toUserId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByToUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {toUserId}));
+		return _collectionPersistenceFinderByToUserId.findFirst(
+			finderCache, new Object[] {toUserId}, orderByComparator);
 	}
 
 	/**
@@ -811,7 +741,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {toUserId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByLtExpirationDate;
 
 	/**
@@ -906,17 +836,8 @@ public class SharingEntryPersistenceImpl
 			OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByLtExpirationDate_First(
-			expirationDate, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByLtExpirationDate.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {expirationDate}));
+		return _collectionPersistenceFinderByLtExpirationDate.findFirst(
+			finderCache, new Object[] {expirationDate}, orderByComparator);
 	}
 
 	/**
@@ -958,7 +879,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {expirationDate});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByC_CN;
 
 	/**
@@ -1002,17 +923,9 @@ public class SharingEntryPersistenceImpl
 			OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByC_CN_First(
-			companyId, classNameId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByC_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId}));
+		return _collectionPersistenceFinderByC_CN.findFirst(
+			finderCache, new Object[] {companyId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -1058,7 +971,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {companyId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByU_C;
 
 	/**
@@ -1102,16 +1015,8 @@ public class SharingEntryPersistenceImpl
 			OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByU_C_First(
-			userId, classNameId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByU_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId, classNameId}));
+		return _collectionPersistenceFinderByU_C.findFirst(
+			finderCache, new Object[] {userId, classNameId}, orderByComparator);
 	}
 
 	/**
@@ -1156,7 +1061,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {userId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByTU_C;
 
 	/**
@@ -1200,17 +1105,9 @@ public class SharingEntryPersistenceImpl
 			OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByTU_C_First(
-			toUserId, classNameId, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByTU_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {toUserId, classNameId}));
+		return _collectionPersistenceFinderByTU_C.findFirst(
+			finderCache, new Object[] {toUserId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -1256,7 +1153,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {toUserId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<SharingEntry>
+	private CollectionPersistenceFinder<SharingEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -1300,16 +1197,9 @@ public class SharingEntryPersistenceImpl
 			OrderByComparator<SharingEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (sharingEntry != null) {
-			return sharingEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -1355,7 +1245,7 @@ public class SharingEntryPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<SharingEntry>
+	private UniquePersistenceFinder<SharingEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByTT_TUG_TU_C_C;
 
 	/**
@@ -1375,26 +1265,11 @@ public class SharingEntryPersistenceImpl
 			long classNameId, long classPK)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByTT_TUG_TU_C_C(
-			toTicketId, toUserGroupId, toUserId, classNameId, classPK);
-
-		if (sharingEntry == null) {
-			String message =
-				_uniquePersistenceFinderByTT_TUG_TU_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						toTicketId, toUserGroupId, toUserId, classNameId,
-						classPK
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return sharingEntry;
+		return _uniquePersistenceFinderByTT_TUG_TU_C_C.find(
+			finderCache,
+			new Object[] {
+				toTicketId, toUserGroupId, toUserId, classNameId, classPK
+			});
 	}
 
 	/**
@@ -1465,7 +1340,7 @@ public class SharingEntryPersistenceImpl
 			});
 	}
 
-	private UniquePersistenceFinder<SharingEntry>
+	private UniquePersistenceFinder<SharingEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByERC_G;
 
 	/**
@@ -1480,23 +1355,8 @@ public class SharingEntryPersistenceImpl
 	public SharingEntry findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchEntryException {
 
-		SharingEntry sharingEntry = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (sharingEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return sharingEntry;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1846,10 +1706,11 @@ public class SharingEntryPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
-			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"sharingEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, SharingEntry::getUuid));
+				"sharingEntry.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, SharingEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1861,8 +1722,8 @@ public class SharingEntryPersistenceImpl
 				SharingEntry::getGroupId),
 			_SQL_SELECT_SHARINGENTRY_WHERE, "",
 			new FinderColumn<>(
-				"sharingEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, SharingEntry::getUuid),
+				"sharingEntry.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, SharingEntry::getUuid),
 			new FinderColumn<>(
 				"sharingEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, SharingEntry::getGroupId));
@@ -1888,9 +1749,10 @@ public class SharingEntryPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
 				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"sharingEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, SharingEntry::getUuid),
+					"sharingEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, SharingEntry::getUuid),
 				new FinderColumn<>(
 					"sharingEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SharingEntry::getCompanyId));
@@ -1916,6 +1778,7 @@ public class SharingEntryPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
 				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"sharingEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, SharingEntry::getGroupId));
@@ -1941,6 +1804,7 @@ public class SharingEntryPersistenceImpl
 					new String[] {"userId"}, false),
 				_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
 				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"sharingEntry.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, SharingEntry::getUserId));
@@ -1966,6 +1830,7 @@ public class SharingEntryPersistenceImpl
 					new String[] {"toTicketId"}, false),
 				_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
 				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"sharingEntry.", "toTicketId", FinderColumn.Type.LONG, "=",
 					true, true, SharingEntry::getToTicketId));
@@ -1992,6 +1857,7 @@ public class SharingEntryPersistenceImpl
 					new String[] {"toUserGroupId"}, false),
 				_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
 				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"sharingEntry.", "toUserGroupId", FinderColumn.Type.LONG,
 					"=", true, true, SharingEntry::getToUserGroupId));
@@ -2017,6 +1883,7 @@ public class SharingEntryPersistenceImpl
 					new String[] {"toUserId"}, false),
 				_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
 				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"sharingEntry.", "toUserId", FinderColumn.Type.LONG, "=",
 					true, true, SharingEntry::getToUserId));
@@ -2041,6 +1908,7 @@ public class SharingEntryPersistenceImpl
 					new String[] {"expirationDate"}, false),
 				_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
 				SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"sharingEntry.", "expirationDate", FinderColumn.Type.DATE,
 					"<", true, true, SharingEntry::getExpirationDate));
@@ -2064,7 +1932,8 @@ public class SharingEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "classNameId"}, false),
 			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
-			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"sharingEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, SharingEntry::getCompanyId),
@@ -2091,7 +1960,8 @@ public class SharingEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"userId", "classNameId"}, false),
 			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
-			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"sharingEntry.", "userId", FinderColumn.Type.LONG, "=", true,
 				true, SharingEntry::getUserId),
@@ -2118,7 +1988,8 @@ public class SharingEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"toUserId", "classNameId"}, false),
 			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
-			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"sharingEntry.", "toUserId", FinderColumn.Type.LONG, "=", true,
 				true, SharingEntry::getToUserId),
@@ -2145,7 +2016,8 @@ public class SharingEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"classNameId", "classPK"}, false),
 			_SQL_SELECT_SHARINGENTRY_WHERE, _SQL_COUNT_SHARINGENTRY_WHERE,
-			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SharingEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"sharingEntry.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, SharingEntry::getClassNameId),
@@ -2257,12 +2129,6 @@ public class SharingEntryPersistenceImpl
 	private static final String _SQL_COUNT_SHARINGENTRY_WHERE =
 		"SELECT COUNT(sharingEntry) FROM SharingEntry sharingEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SharingEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SharingEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -2272,4 +2138,4 @@ public class SharingEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-8081613
+// LIFERAY-SERVICE-BUILDER-HASH:1910546403

@@ -124,6 +124,26 @@ public class ObjectEntryInfoItemExceptionRequestHandler {
 		}
 
 		if (exception instanceof
+				ObjectEntryValuesException.BlockedEmailAddressDomain) {
+
+			ObjectEntryValuesException.BlockedEmailAddressDomain
+				objectEntryValuesException =
+					(ObjectEntryValuesException.BlockedEmailAddressDomain)
+						exception;
+
+			String infoFieldUniqueId = _getInfoFieldUniqueId(
+				groupId, infoItemFormProvider, objectDefinition,
+				objectEntryValuesException.getObjectFieldName());
+
+			if (infoFieldUniqueId == null) {
+				throw new InfoFormException();
+			}
+
+			throw new InfoFormValidationException.BlockedEmailAddressDomain(
+				infoFieldUniqueId);
+		}
+
+		if (exception instanceof
 				ObjectEntryValuesException.ExceedsIntegerSize) {
 
 			ObjectEntryValuesException.ExceedsIntegerSize
@@ -237,6 +257,25 @@ public class ObjectEntryInfoItemExceptionRequestHandler {
 		}
 
 		if (exception instanceof
+				ObjectEntryValuesException.InvalidEmailAddress) {
+
+			ObjectEntryValuesException.InvalidEmailAddress
+				objectEntryValuesException =
+					(ObjectEntryValuesException.InvalidEmailAddress)exception;
+
+			String infoFieldUniqueId = _getInfoFieldUniqueId(
+				groupId, infoItemFormProvider, objectDefinition,
+				objectEntryValuesException.getObjectFieldName());
+
+			if (infoFieldUniqueId == null) {
+				throw new InfoFormException();
+			}
+
+			throw new InfoFormValidationException.InvalidEmailAddress(
+				infoFieldUniqueId);
+		}
+
+		if (exception instanceof
 				ObjectEntryValuesException.InvalidFileExtension) {
 
 			ObjectEntryValuesException.InvalidFileExtension
@@ -256,6 +295,25 @@ public class ObjectEntryInfoItemExceptionRequestHandler {
 				_getAcceptedFileExtensions(
 					objectDefinition.getObjectDefinitionId(),
 					objectEntryValuesException.getObjectFieldName()));
+		}
+
+		if (exception instanceof
+				ObjectEntryValuesException.InvalidPhoneNumber) {
+
+			ObjectEntryValuesException.InvalidPhoneNumber
+				objectEntryValuesException =
+					(ObjectEntryValuesException.InvalidPhoneNumber)exception;
+
+			String infoFieldUniqueId = _getInfoFieldUniqueId(
+				groupId, infoItemFormProvider, objectDefinition,
+				objectEntryValuesException.getObjectFieldName());
+
+			if (infoFieldUniqueId == null) {
+				throw new InfoFormException();
+			}
+
+			throw new InfoFormValidationException.InvalidPhoneNumber(
+				infoFieldUniqueId);
 		}
 
 		if (exception instanceof ObjectEntryValuesException.ListTypeEntry) {

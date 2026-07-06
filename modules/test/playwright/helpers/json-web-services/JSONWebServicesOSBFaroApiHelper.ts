@@ -15,8 +15,10 @@ type FaroUser = {
 	emailAddress: string;
 	groupId: string;
 	id: string;
+	name: string;
 	roleName: string;
 	status: number;
+	userId: number;
 };
 
 type IndividualSegment = {
@@ -186,6 +188,68 @@ export class JSONWebServicesOSBFaroApiHelper {
 		).then((response) => response);
 	}
 
+	async addChannelUsers(
+		channelId: string,
+		groupId: string,
+		userIds: number[]
+	): Promise<Response> {
+		const formdata = new FormData();
+
+		formdata.append('userIds', JSON.stringify(userIds));
+
+		const header = new Headers();
+
+		header.append('Authorization', _authorization);
+
+		return fetch(
+			`${faroConfig.environment.baseUrl}${this.basePath}/main/${groupId}/channel/${channelId}/users`,
+			{
+				body: formdata,
+				headers: header,
+				method: 'POST',
+			}
+		).then((response) => response);
+	}
+
+	async updateChannelPermission(
+		channelId: string,
+		groupId: string,
+		permissionType: number
+	): Promise<Response> {
+		const formdata = new FormData();
+
+		formdata.append('permissionType', String(permissionType));
+
+		const header = new Headers();
+
+		header.append('Authorization', _authorization);
+
+		return fetch(
+			`${faroConfig.environment.baseUrl}${this.basePath}/main/${groupId}/channel/${channelId}`,
+			{
+				body: formdata,
+				headers: header,
+				method: 'PATCH',
+			}
+		).then((response) => response);
+	}
+
+	async getUser(groupId: string, emailAddress: string): Promise<FaroUser> {
+		const urlSearchParams = new URLSearchParams({
+			cur: '1',
+			delta: '1',
+			query: emailAddress,
+		});
+
+		const {items} = await this.apiHelpers.get(
+			`${faroConfig.environment.baseUrl}${this.basePath}/main/${groupId}/user?${urlSearchParams.toString()}`,
+			true,
+			await this.apiHelpers.getJSONWebServicesHeaders()
+		);
+
+		return items[0];
+	}
+
 	async deleteChannel(ids: string, groupId: string): Promise<Response> {
 		const formdata = new FormData();
 
@@ -197,6 +261,29 @@ export class JSONWebServicesOSBFaroApiHelper {
 
 		return fetch(
 			`${faroConfig.environment.baseUrl}${this.basePath}/main/${groupId}/channel`,
+			{
+				body: formdata,
+				headers: header,
+				method: 'DELETE',
+			}
+		).then((response) => response);
+	}
+
+	async deleteDistributionTab(
+		distributionTabId: string,
+		groupId: string
+	): Promise<Response> {
+		const formdata = new FormData();
+
+		formdata.append('distributionTabId', distributionTabId);
+		formdata.append('scope', 'group');
+
+		const header = new Headers();
+
+		header.append('Authorization', _authorization);
+
+		return fetch(
+			`${faroConfig.environment.baseUrl}${this.basePath}/main/${groupId}/preferences/distribution_tabs`,
 			{
 				body: formdata,
 				headers: header,
@@ -242,5 +329,27 @@ export class JSONWebServicesOSBFaroApiHelper {
 				headers: await this.apiHelpers.getJSONWebServicesHeaders(),
 			}
 		);
+	}
+
+	async fetchDataSourceConnectionToken(groupId: string): Promise<string> {
+		const header = new Headers();
+
+		header.append('Authorization', _authorization);
+
+		const response = await fetch(
+			`${faroConfig.environment.baseUrl}${this.basePath}/contacts/${groupId}/data_source/token`,
+			{
+				headers: header,
+				method: 'GET',
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`fetchDataSourceConnectionToken failed: ${response.status} ${await response.text()}`
+			);
+		}
+
+		return response.text();
 	}
 }

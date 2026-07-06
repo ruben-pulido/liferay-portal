@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -72,8 +70,9 @@ public class CTPreferencesPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTPreferences>
-		_collectionPersistenceFinderByCtCollectionId;
+	private CollectionPersistenceFinder
+		<CTPreferences, NoSuchPreferencesException>
+			_collectionPersistenceFinderByCtCollectionId;
 
 	/**
 	 * Returns an ordered range of all the ct preferenceses where ctCollectionId = &#63;.
@@ -114,16 +113,8 @@ public class CTPreferencesPersistenceImpl
 			OrderByComparator<CTPreferences> orderByComparator)
 		throws NoSuchPreferencesException {
 
-		CTPreferences ctPreferences = fetchByCtCollectionId_First(
-			ctCollectionId, orderByComparator);
-
-		if (ctPreferences != null) {
-			return ctPreferences;
-		}
-
-		throw new NoSuchPreferencesException(
-			_collectionPersistenceFinderByCtCollectionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ctCollectionId}));
+		return _collectionPersistenceFinderByCtCollectionId.findFirst(
+			finderCache, new Object[] {ctCollectionId}, orderByComparator);
 	}
 
 	/**
@@ -165,8 +156,9 @@ public class CTPreferencesPersistenceImpl
 			finderCache, new Object[] {ctCollectionId});
 	}
 
-	private CollectionPersistenceFinder<CTPreferences>
-		_collectionPersistenceFinderByPreviousCtCollectionId;
+	private CollectionPersistenceFinder
+		<CTPreferences, NoSuchPreferencesException>
+			_collectionPersistenceFinderByPreviousCtCollectionId;
 
 	/**
 	 * Returns an ordered range of all the ct preferenceses where previousCtCollectionId = &#63;.
@@ -207,18 +199,9 @@ public class CTPreferencesPersistenceImpl
 			OrderByComparator<CTPreferences> orderByComparator)
 		throws NoSuchPreferencesException {
 
-		CTPreferences ctPreferences = fetchByPreviousCtCollectionId_First(
-			previousCtCollectionId, orderByComparator);
-
-		if (ctPreferences != null) {
-			return ctPreferences;
-		}
-
-		throw new NoSuchPreferencesException(
-			_collectionPersistenceFinderByPreviousCtCollectionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {previousCtCollectionId}));
+		return _collectionPersistenceFinderByPreviousCtCollectionId.findFirst(
+			finderCache, new Object[] {previousCtCollectionId},
+			orderByComparator);
 	}
 
 	/**
@@ -261,7 +244,7 @@ public class CTPreferencesPersistenceImpl
 			finderCache, new Object[] {previousCtCollectionId});
 	}
 
-	private UniquePersistenceFinder<CTPreferences>
+	private UniquePersistenceFinder<CTPreferences, NoSuchPreferencesException>
 		_uniquePersistenceFinderByC_U;
 
 	/**
@@ -276,21 +259,8 @@ public class CTPreferencesPersistenceImpl
 	public CTPreferences findByC_U(long companyId, long userId)
 		throws NoSuchPreferencesException {
 
-		CTPreferences ctPreferences = fetchByC_U(companyId, userId);
-
-		if (ctPreferences == null) {
-			String message =
-				_uniquePersistenceFinderByC_U.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, userId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPreferencesException(message);
-		}
-
-		return ctPreferences;
+		return _uniquePersistenceFinderByC_U.find(
+			finderCache, new Object[] {companyId, userId});
 	}
 
 	/**
@@ -536,6 +506,7 @@ public class CTPreferencesPersistenceImpl
 					new String[] {"ctCollectionId"}, false),
 				_SQL_SELECT_CTPREFERENCES_WHERE, _SQL_COUNT_CTPREFERENCES_WHERE,
 				CTPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"ctPreferences.", "ctCollectionId", FinderColumn.Type.LONG,
 					"=", true, true, CTPreferences::getCtCollectionId));
@@ -564,6 +535,7 @@ public class CTPreferencesPersistenceImpl
 					new String[] {"previousCtCollectionId"}, false),
 				_SQL_SELECT_CTPREFERENCES_WHERE, _SQL_COUNT_CTPREFERENCES_WHERE,
 				CTPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"ctPreferences.", "previousCtCollectionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -638,16 +610,10 @@ public class CTPreferencesPersistenceImpl
 	private static final String _SQL_COUNT_CTPREFERENCES_WHERE =
 		"SELECT COUNT(ctPreferences) FROM CTPreferences ctPreferences WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTPreferences exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CTPreferencesPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1604421504
+// LIFERAY-SERVICE-BUILDER-HASH:-1290673367

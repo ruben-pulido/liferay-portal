@@ -14,8 +14,6 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.DuplicateWebsiteExternalReferenceCodeException;
 import com.liferay.portal.kernel.exception.NoSuchWebsiteException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Website;
 import com.liferay.portal.kernel.model.WebsiteTable;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
@@ -80,7 +78,7 @@ public class WebsitePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<Website>
+	private CollectionPersistenceFinder<Website, NoSuchWebsiteException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -120,15 +118,9 @@ public class WebsitePersistenceImpl
 			String uuid, OrderByComparator<Website> orderByComparator)
 		throws NoSuchWebsiteException {
 
-		Website website = fetchByUuid_First(uuid, orderByComparator);
-
-		if (website != null) {
-			return website;
-		}
-
-		throw new NoSuchWebsiteException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -170,7 +162,7 @@ public class WebsitePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<Website>
+	private CollectionPersistenceFinder<Website, NoSuchWebsiteException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -213,16 +205,9 @@ public class WebsitePersistenceImpl
 			OrderByComparator<Website> orderByComparator)
 		throws NoSuchWebsiteException {
 
-		Website website = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (website != null) {
-			return website;
-		}
-
-		throw new NoSuchWebsiteException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -268,7 +253,7 @@ public class WebsitePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<Website>
+	private CollectionPersistenceFinder<Website, NoSuchWebsiteException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -308,15 +293,9 @@ public class WebsitePersistenceImpl
 			long companyId, OrderByComparator<Website> orderByComparator)
 		throws NoSuchWebsiteException {
 
-		Website website = fetchByCompanyId_First(companyId, orderByComparator);
-
-		if (website != null) {
-			return website;
-		}
-
-		throw new NoSuchWebsiteException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -358,7 +337,7 @@ public class WebsitePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<Website>
+	private CollectionPersistenceFinder<Website, NoSuchWebsiteException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -398,15 +377,9 @@ public class WebsitePersistenceImpl
 			long userId, OrderByComparator<Website> orderByComparator)
 		throws NoSuchWebsiteException {
 
-		Website website = fetchByUserId_First(userId, orderByComparator);
-
-		if (website != null) {
-			return website;
-		}
-
-		throw new NoSuchWebsiteException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId},
+			orderByComparator);
 	}
 
 	/**
@@ -448,7 +421,7 @@ public class WebsitePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<Website>
+	private CollectionPersistenceFinder<Website, NoSuchWebsiteException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -492,17 +465,9 @@ public class WebsitePersistenceImpl
 			OrderByComparator<Website> orderByComparator)
 		throws NoSuchWebsiteException {
 
-		Website website = fetchByC_C_First(
-			companyId, classNameId, orderByComparator);
-
-		if (website != null) {
-			return website;
-		}
-
-		throw new NoSuchWebsiteException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId}, orderByComparator);
 	}
 
 	/**
@@ -550,7 +515,7 @@ public class WebsitePersistenceImpl
 			new Object[] {companyId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<Website>
+	private CollectionPersistenceFinder<Website, NoSuchWebsiteException>
 		_collectionPersistenceFinderByC_C_C;
 
 	/**
@@ -596,17 +561,9 @@ public class WebsitePersistenceImpl
 			OrderByComparator<Website> orderByComparator)
 		throws NoSuchWebsiteException {
 
-		Website website = fetchByC_C_C_First(
-			companyId, classNameId, classPK, orderByComparator);
-
-		if (website != null) {
-			return website;
-		}
-
-		throw new NoSuchWebsiteException(
-			_collectionPersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, classPK}, orderByComparator);
 	}
 
 	/**
@@ -657,7 +614,7 @@ public class WebsitePersistenceImpl
 			new Object[] {companyId, classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<Website>
+	private CollectionPersistenceFinder<Website, NoSuchWebsiteException>
 		_collectionPersistenceFinderByC_C_C_P;
 
 	/**
@@ -706,17 +663,10 @@ public class WebsitePersistenceImpl
 			OrderByComparator<Website> orderByComparator)
 		throws NoSuchWebsiteException {
 
-		Website website = fetchByC_C_C_P_First(
-			companyId, classNameId, classPK, primary, orderByComparator);
-
-		if (website != null) {
-			return website;
-		}
-
-		throw new NoSuchWebsiteException(
-			_collectionPersistenceFinderByC_C_C_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId, classPK, primary}));
+		return _collectionPersistenceFinderByC_C_C_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, classPK, primary},
+			orderByComparator);
 	}
 
 	/**
@@ -775,7 +725,8 @@ public class WebsitePersistenceImpl
 			new Object[] {companyId, classNameId, classPK, primary});
 	}
 
-	private UniquePersistenceFinder<Website> _uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder<Website, NoSuchWebsiteException>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the website where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchWebsiteException</code> if it could not be found.
@@ -789,22 +740,9 @@ public class WebsitePersistenceImpl
 	public Website findByERC_C(String externalReferenceCode, long companyId)
 		throws NoSuchWebsiteException {
 
-		Website website = fetchByERC_C(externalReferenceCode, companyId);
-
-		if (website == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchWebsiteException(message);
-		}
-
-		return website;
+		return _uniquePersistenceFinderByERC_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1147,10 +1085,10 @@ public class WebsitePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_WEBSITE_WHERE, _SQL_COUNT_WEBSITE_WHERE,
-			WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"website.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				Website::getUuid));
+				"website.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, Website::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1172,10 +1110,11 @@ public class WebsitePersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_WEBSITE_WHERE, _SQL_COUNT_WEBSITE_WHERE,
-				WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"website.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, Website::getUuid),
+					"website.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, Website::getUuid),
 				new FinderColumn<>(
 					"website.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Website::getCompanyId));
@@ -1200,7 +1139,8 @@ public class WebsitePersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_WEBSITE_WHERE, _SQL_COUNT_WEBSITE_WHERE,
-				WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"website.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Website::getCompanyId));
@@ -1225,7 +1165,8 @@ public class WebsitePersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"userId"}, false),
 				_SQL_SELECT_WEBSITE_WHERE, _SQL_COUNT_WEBSITE_WHERE,
-				WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"website.", "userId", FinderColumn.Type.LONG, "=", true,
 					true, Website::getUserId));
@@ -1249,7 +1190,7 @@ public class WebsitePersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "classNameId"}, false),
 			_SQL_SELECT_WEBSITE_WHERE, _SQL_COUNT_WEBSITE_WHERE,
-			WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"website.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, Website::getCompanyId),
@@ -1282,7 +1223,7 @@ public class WebsitePersistenceImpl
 				},
 				new String[] {"companyId", "classNameId", "classPK"}, false),
 			_SQL_SELECT_WEBSITE_WHERE, _SQL_COUNT_WEBSITE_WHERE,
-			WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"website.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, Website::getCompanyId),
@@ -1329,7 +1270,8 @@ public class WebsitePersistenceImpl
 					},
 					false),
 				_SQL_SELECT_WEBSITE_WHERE, _SQL_COUNT_WEBSITE_WHERE,
-				WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				WebsiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"website.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Website::getCompanyId),
@@ -1340,8 +1282,9 @@ public class WebsitePersistenceImpl
 					"website.", "classPK", FinderColumn.Type.LONG, "=", true,
 					true, Website::getClassPK),
 				new FinderColumn<>(
-					"website.", "primary", FinderColumn.Type.BOOLEAN, "=", true,
-					true, Website::isPrimary));
+					"website.", "primary", "primary_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					Website::isPrimary));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1380,12 +1323,6 @@ public class WebsitePersistenceImpl
 	private static final String _SQL_COUNT_WEBSITE_WHERE =
 		"SELECT COUNT(website) FROM Website website WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Website exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		WebsitePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "primary"});
 
@@ -1395,4 +1332,4 @@ public class WebsitePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1856257104
+// LIFERAY-SERVICE-BUILDER-HASH:-687792615

@@ -79,8 +79,9 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceNotificationQueueEntry>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<CommerceNotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the commerce notification queue entries where groupId = &#63;.
@@ -121,16 +122,8 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			OrderByComparator<CommerceNotificationQueueEntry> orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		CommerceNotificationQueueEntry commerceNotificationQueueEntry =
-			fetchByGroupId_First(groupId, orderByComparator);
-
-		if (commerceNotificationQueueEntry != null) {
-			return commerceNotificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -172,8 +165,9 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceNotificationQueueEntry>
-		_collectionPersistenceFinderByCommerceNotificationTemplateId;
+	private CollectionPersistenceFinder
+		<CommerceNotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderByCommerceNotificationTemplateId;
 
 	/**
 	 * Returns an ordered range of all the commerce notification queue entries where commerceNotificationTemplateId = &#63;.
@@ -218,19 +212,10 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 					orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		CommerceNotificationQueueEntry commerceNotificationQueueEntry =
-			fetchByCommerceNotificationTemplateId_First(
-				commerceNotificationTemplateId, orderByComparator);
-
-		if (commerceNotificationQueueEntry != null) {
-			return commerceNotificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderByCommerceNotificationTemplateId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceNotificationTemplateId}));
+		return _collectionPersistenceFinderByCommerceNotificationTemplateId.
+			findFirst(
+				finderCache, new Object[] {commerceNotificationTemplateId},
+				orderByComparator);
 	}
 
 	/**
@@ -280,8 +265,9 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			count(finderCache, new Object[] {commerceNotificationTemplateId});
 	}
 
-	private CollectionPersistenceFinder<CommerceNotificationQueueEntry>
-		_collectionPersistenceFinderBySent;
+	private CollectionPersistenceFinder
+		<CommerceNotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderBySent;
 
 	/**
 	 * Returns an ordered range of all the commerce notification queue entries where sent = &#63;.
@@ -322,16 +308,8 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			OrderByComparator<CommerceNotificationQueueEntry> orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		CommerceNotificationQueueEntry commerceNotificationQueueEntry =
-			fetchBySent_First(sent, orderByComparator);
-
-		if (commerceNotificationQueueEntry != null) {
-			return commerceNotificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderBySent.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {sent}));
+		return _collectionPersistenceFinderBySent.findFirst(
+			finderCache, new Object[] {sent}, orderByComparator);
 	}
 
 	/**
@@ -373,8 +351,9 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			finderCache, new Object[] {sent});
 	}
 
-	private CollectionPersistenceFinder<CommerceNotificationQueueEntry>
-		_collectionPersistenceFinderByLtSentDate;
+	private CollectionPersistenceFinder
+		<CommerceNotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderByLtSentDate;
 
 	/**
 	 * Returns all the commerce notification queue entries where sentDate &lt; &#63;.
@@ -469,16 +448,8 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			OrderByComparator<CommerceNotificationQueueEntry> orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		CommerceNotificationQueueEntry commerceNotificationQueueEntry =
-			fetchByLtSentDate_First(sentDate, orderByComparator);
-
-		if (commerceNotificationQueueEntry != null) {
-			return commerceNotificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderByLtSentDate.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {sentDate}));
+		return _collectionPersistenceFinderByLtSentDate.findFirst(
+			finderCache, new Object[] {sentDate}, orderByComparator);
 	}
 
 	/**
@@ -520,8 +491,9 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			finderCache, new Object[] {sentDate});
 	}
 
-	private CollectionPersistenceFinder<CommerceNotificationQueueEntry>
-		_collectionPersistenceFinderByG_C_C_S;
+	private CollectionPersistenceFinder
+		<CommerceNotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderByG_C_C_S;
 
 	/**
 	 * Returns an ordered range of all the commerce notification queue entries where groupId = &#63; and classNameId = &#63; and classPK = &#63; and sent = &#63;.
@@ -569,18 +541,9 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			OrderByComparator<CommerceNotificationQueueEntry> orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		CommerceNotificationQueueEntry commerceNotificationQueueEntry =
-			fetchByG_C_C_S_First(
-				groupId, classNameId, classPK, sent, orderByComparator);
-
-		if (commerceNotificationQueueEntry != null) {
-			return commerceNotificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderByG_C_C_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, classPK, sent}));
+		return _collectionPersistenceFinderByG_C_C_S.findFirst(
+			finderCache, new Object[] {groupId, classNameId, classPK, sent},
+			orderByComparator);
 	}
 
 	/**
@@ -860,6 +823,11 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceNotificationQueueEntryId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCENOTIFICATIONQUEUEENTRY;
 	}
@@ -896,7 +864,7 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 				_SQL_SELECT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 				_SQL_COUNT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 				CommerceNotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceNotificationQueueEntry.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -927,7 +895,7 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 				_SQL_SELECT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 				_SQL_COUNT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 				CommerceNotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceNotificationQueueEntry.",
 					"commerceNotificationTemplateId", FinderColumn.Type.LONG,
@@ -955,7 +923,7 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 			_SQL_SELECT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 			_SQL_COUNT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 			CommerceNotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commerceNotificationQueueEntry.", "sent",
 				FinderColumn.Type.BOOLEAN, "=", true, true,
@@ -980,7 +948,7 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 				_SQL_SELECT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 				_SQL_COUNT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 				CommerceNotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceNotificationQueueEntry.", "sentDate",
 					FinderColumn.Type.DATE, "<", true, true,
@@ -1018,7 +986,7 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 				_SQL_SELECT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 				_SQL_COUNT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE,
 				CommerceNotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceNotificationQueueEntry.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1093,9 +1061,6 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 		_SQL_COUNT_COMMERCENOTIFICATIONQUEUEENTRY_WHERE =
 			"SELECT COUNT(commerceNotificationQueueEntry) FROM CommerceNotificationQueueEntry commerceNotificationQueueEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceNotificationQueueEntry exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"commerceNotificationQueueEntryId", "from", "to"});
 
@@ -1105,4 +1070,4 @@ public class CommerceNotificationQueueEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:268361127
+// LIFERAY-SERVICE-BUILDER-HASH:-110122990

@@ -69,8 +69,9 @@ public class CTSGrandParentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTSGrandParent>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<CTSGrandParent, NoSuchCTSGrandParentException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the cts grand parents where companyId = &#63;.
@@ -110,16 +111,8 @@ public class CTSGrandParentPersistenceImpl
 			long companyId, OrderByComparator<CTSGrandParent> orderByComparator)
 		throws NoSuchCTSGrandParentException {
 
-		CTSGrandParent ctsGrandParent = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (ctsGrandParent != null) {
-			return ctsGrandParent;
-		}
-
-		throw new NoSuchCTSGrandParentException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -358,6 +351,7 @@ public class CTSGrandParentPersistenceImpl
 				_SQL_SELECT_CTSGRANDPARENT_WHERE,
 				_SQL_COUNT_CTSGRANDPARENT_WHERE,
 				CTSGrandParentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"ctsGrandParent.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTSGrandParent::getCompanyId));
@@ -416,13 +410,10 @@ public class CTSGrandParentPersistenceImpl
 	private static final String _SQL_COUNT_CTSGRANDPARENT_WHERE =
 		"SELECT COUNT(ctsGrandParent) FROM CTSGrandParent ctsGrandParent WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTSGrandParent exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1651586237
+// LIFERAY-SERVICE-BUILDER-HASH:-1919650936

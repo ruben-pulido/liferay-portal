@@ -64,23 +64,13 @@ export interface IProjectObjectEntry {
 	title: string;
 }
 
-export interface IItemsActions {
-	items: IItems[];
-}
-
-export interface IItems {
-	data: {
-		id: string;
-	};
-	disable: boolean;
-	href: string;
-	icon?: string;
-	label: string;
-	name: string;
-	type: string;
-}
-
 export interface ITaskObjectEntry {
+	actions?: {
+		[action: string]: {
+			href: string;
+			method: string | 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT';
+		};
+	};
 	assignTo: AssigneeValue;
 	cmpProjectToCMPTasks: IProjectObjectEntry;
 	creator: ICreator;
@@ -133,4 +123,79 @@ export interface ITask {
 	embedded: ITaskObjectEntry;
 	entryClassName: string;
 	score: number;
+}
+
+export type TaskAction = {
+	data: {
+		id: string;
+	};
+};
+
+export interface ProjectTaskItemData {
+	embedded: {
+		assignTo: AssigneeValue | null | {};
+		dueDate: string;
+		externalReferenceCode: string;
+		id: number;
+		title: string;
+	};
+	entryClassName: string;
+	id: number;
+	title: string;
+}
+
+interface WorkflowUser {
+	additionalName?: string;
+	contentType: string;
+	familyName: string;
+	givenName: string;
+	id: number;
+	image?: string;
+	name: string;
+	profileURL: string;
+}
+export interface WorkflowTaskItemData {
+	embedded: {
+		actions: {
+			[name: string]: {
+				href: string;
+				label?: string;
+				method: string;
+				name?: string;
+			};
+		};
+		assignedToMe: boolean;
+		assigneePerson?: WorkflowUser;
+		assigneeRoles: {
+			availableLanguages?: string[];
+			dateCreated: string;
+			dateModified: string;
+			description: string;
+			id: number;
+			name: string;
+			roleType: string;
+		}[];
+		completed: boolean;
+		creator: WorkflowUser;
+		dateCreated: string;
+		dateDue: string;
+		description: string;
+		id: number;
+		label: string;
+		modifiedDate?: string;
+		name: string;
+		objectReviewed: {
+			assetTitle: string;
+			assetType: string;
+			id: number;
+			projectTitle?: string;
+		};
+		workflowDefinitionId: number;
+		workflowDefinitionName: string;
+		workflowDefinitionVersion: string;
+		workflowInstanceId: number;
+	};
+	entryClassName: string;
+	id: number;
+	score?: number;
 }

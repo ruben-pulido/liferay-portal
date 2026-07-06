@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -88,8 +86,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LayoutPageTemplateStructureRel>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<LayoutPageTemplateStructureRel,
+		 NoSuchPageTemplateStructureRelException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the layout page template structure rels where uuid = &#63;.
@@ -130,16 +130,8 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			OrderByComparator<LayoutPageTemplateStructureRel> orderByComparator)
 		throws NoSuchPageTemplateStructureRelException {
 
-		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (layoutPageTemplateStructureRel != null) {
-			return layoutPageTemplateStructureRel;
-		}
-
-		throw new NoSuchPageTemplateStructureRelException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -181,8 +173,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<LayoutPageTemplateStructureRel>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<LayoutPageTemplateStructureRel,
+		 NoSuchPageTemplateStructureRelException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the layout page template structure rel where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchPageTemplateStructureRelException</code> if it could not be found.
@@ -197,22 +191,8 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			String uuid, long groupId)
 		throws NoSuchPageTemplateStructureRelException {
 
-		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-			fetchByUUID_G(uuid, groupId);
-
-		if (layoutPageTemplateStructureRel == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPageTemplateStructureRelException(message);
-		}
-
-		return layoutPageTemplateStructureRel;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -262,8 +242,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<LayoutPageTemplateStructureRel>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<LayoutPageTemplateStructureRel,
+		 NoSuchPageTemplateStructureRelException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the layout page template structure rels where uuid = &#63; and companyId = &#63;.
@@ -306,16 +288,8 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			OrderByComparator<LayoutPageTemplateStructureRel> orderByComparator)
 		throws NoSuchPageTemplateStructureRelException {
 
-		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (layoutPageTemplateStructureRel != null) {
-			return layoutPageTemplateStructureRel;
-		}
-
-		throw new NoSuchPageTemplateStructureRelException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -360,8 +334,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<LayoutPageTemplateStructureRel>
-		_collectionPersistenceFinderByLayoutPageTemplateStructureId;
+	private CollectionPersistenceFinder
+		<LayoutPageTemplateStructureRel,
+		 NoSuchPageTemplateStructureRelException>
+			_collectionPersistenceFinderByLayoutPageTemplateStructureId;
 
 	/**
 	 * Returns an ordered range of all the layout page template structure rels where layoutPageTemplateStructureId = &#63;.
@@ -405,19 +381,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 					orderByComparator)
 		throws NoSuchPageTemplateStructureRelException {
 
-		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-			fetchByLayoutPageTemplateStructureId_First(
-				layoutPageTemplateStructureId, orderByComparator);
-
-		if (layoutPageTemplateStructureRel != null) {
-			return layoutPageTemplateStructureRel;
-		}
-
-		throw new NoSuchPageTemplateStructureRelException(
-			_collectionPersistenceFinderByLayoutPageTemplateStructureId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {layoutPageTemplateStructureId}));
+		return _collectionPersistenceFinderByLayoutPageTemplateStructureId.
+			findFirst(
+				finderCache, new Object[] {layoutPageTemplateStructureId},
+				orderByComparator);
 	}
 
 	/**
@@ -467,8 +434,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			count(finderCache, new Object[] {layoutPageTemplateStructureId});
 	}
 
-	private CollectionPersistenceFinder<LayoutPageTemplateStructureRel>
-		_collectionPersistenceFinderBySegmentsExperienceId;
+	private CollectionPersistenceFinder
+		<LayoutPageTemplateStructureRel,
+		 NoSuchPageTemplateStructureRelException>
+			_collectionPersistenceFinderBySegmentsExperienceId;
 
 	/**
 	 * Returns an ordered range of all the layout page template structure rels where segmentsExperienceId = &#63;.
@@ -509,19 +478,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			OrderByComparator<LayoutPageTemplateStructureRel> orderByComparator)
 		throws NoSuchPageTemplateStructureRelException {
 
-		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-			fetchBySegmentsExperienceId_First(
-				segmentsExperienceId, orderByComparator);
-
-		if (layoutPageTemplateStructureRel != null) {
-			return layoutPageTemplateStructureRel;
-		}
-
-		throw new NoSuchPageTemplateStructureRelException(
-			_collectionPersistenceFinderBySegmentsExperienceId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {segmentsExperienceId}));
+		return _collectionPersistenceFinderBySegmentsExperienceId.findFirst(
+			finderCache, new Object[] {segmentsExperienceId},
+			orderByComparator);
 	}
 
 	/**
@@ -564,8 +523,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			finderCache, new Object[] {segmentsExperienceId});
 	}
 
-	private UniquePersistenceFinder<LayoutPageTemplateStructureRel>
-		_uniquePersistenceFinderByL_S;
+	private UniquePersistenceFinder
+		<LayoutPageTemplateStructureRel,
+		 NoSuchPageTemplateStructureRelException> _uniquePersistenceFinderByL_S;
 
 	/**
 	 * Returns the layout page template structure rel where layoutPageTemplateStructureId = &#63; and segmentsExperienceId = &#63; or throws a <code>NoSuchPageTemplateStructureRelException</code> if it could not be found.
@@ -580,25 +540,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			long layoutPageTemplateStructureId, long segmentsExperienceId)
 		throws NoSuchPageTemplateStructureRelException {
 
-		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-			fetchByL_S(layoutPageTemplateStructureId, segmentsExperienceId);
-
-		if (layoutPageTemplateStructureRel == null) {
-			String message =
-				_uniquePersistenceFinderByL_S.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						layoutPageTemplateStructureId, segmentsExperienceId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPageTemplateStructureRelException(message);
-		}
-
-		return layoutPageTemplateStructureRel;
+		return _uniquePersistenceFinderByL_S.find(
+			finderCache,
+			new Object[] {layoutPageTemplateStructureId, segmentsExperienceId});
 	}
 
 	/**
@@ -901,6 +845,11 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "layoutPageTemplateStructureRelId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTUREREL;
 	}
@@ -1009,9 +958,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE,
 			_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE,
 			LayoutPageTemplateStructureRelModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"layoutPageTemplateStructureRel.", "uuid",
+				"layoutPageTemplateStructureRel.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				LayoutPageTemplateStructureRel::getUuid));
 
@@ -1025,7 +974,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 				LayoutPageTemplateStructureRel::getGroupId),
 			_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE, "",
 			new FinderColumn<>(
-				"layoutPageTemplateStructureRel.", "uuid",
+				"layoutPageTemplateStructureRel.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				LayoutPageTemplateStructureRel::getUuid),
 			new FinderColumn<>(
@@ -1055,9 +1004,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 				_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE,
 				_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE,
 				LayoutPageTemplateStructureRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"layoutPageTemplateStructureRel.", "uuid",
+					"layoutPageTemplateStructureRel.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					LayoutPageTemplateStructureRel::getUuid),
 				new FinderColumn<>(
@@ -1090,7 +1039,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 				_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE,
 				_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE,
 				LayoutPageTemplateStructureRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"layoutPageTemplateStructureRel.",
 					"layoutPageTemplateStructureId", FinderColumn.Type.LONG,
@@ -1123,7 +1072,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 				_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE,
 				_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE,
 				LayoutPageTemplateStructureRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"layoutPageTemplateStructureRel.", "segmentsExperienceId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1213,12 +1162,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE =
 			"SELECT COUNT(layoutPageTemplateStructureRel) FROM LayoutPageTemplateStructureRel layoutPageTemplateStructureRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LayoutPageTemplateStructureRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LayoutPageTemplateStructureRelPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "layoutPageTemplateStructureRelId", "data"});
 
@@ -1228,4 +1171,4 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1831424118
+// LIFERAY-SERVICE-BUILDER-HASH:-411562463

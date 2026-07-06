@@ -8,8 +8,6 @@ package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
 import com.liferay.portal.kernel.service.persistence.impl.UniquePersistenceFinder;
@@ -57,8 +55,9 @@ public class NullConvertibleEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<NullConvertibleEntry>
-		_uniquePersistenceFinderByName;
+	private UniquePersistenceFinder
+		<NullConvertibleEntry, NoSuchNullConvertibleEntryException>
+			_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the null convertible entry where name = &#63; or throws a <code>NoSuchNullConvertibleEntryException</code> if it could not be found.
@@ -71,21 +70,8 @@ public class NullConvertibleEntryPersistenceImpl
 	public NullConvertibleEntry findByName(String name)
 		throws NoSuchNullConvertibleEntryException {
 
-		NullConvertibleEntry nullConvertibleEntry = fetchByName(name);
-
-		if (nullConvertibleEntry == null) {
-			String message =
-				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNullConvertibleEntryException(message);
-		}
-
-		return nullConvertibleEntry;
+		return _uniquePersistenceFinderByName.find(
+			dummyFinderCache, new Object[] {name});
 	}
 
 	/**
@@ -335,16 +321,10 @@ public class NullConvertibleEntryPersistenceImpl
 	private static final String _SQL_SELECT_NULLCONVERTIBLEENTRY_WHERE =
 		"SELECT nullConvertibleEntry FROM NullConvertibleEntry nullConvertibleEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No NullConvertibleEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		NullConvertibleEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return dummyFinderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1087750050
+// LIFERAY-SERVICE-BUILDER-HASH:1231781016

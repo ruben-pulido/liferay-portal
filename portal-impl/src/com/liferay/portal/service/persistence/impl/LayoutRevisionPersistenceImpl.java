@@ -64,8 +64,9 @@ public class LayoutRevisionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByLayoutSetBranchId;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByLayoutSetBranchId;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63;.
@@ -106,18 +107,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByLayoutSetBranchId_First(
-			layoutSetBranchId, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByLayoutSetBranchId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {layoutSetBranchId}));
+		return _collectionPersistenceFinderByLayoutSetBranchId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {layoutSetBranchId},
+			orderByComparator);
 	}
 
 	/**
@@ -160,8 +152,9 @@ public class LayoutRevisionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {layoutSetBranchId});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByPlid;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByPlid;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where plid = &#63;.
@@ -201,16 +194,9 @@ public class LayoutRevisionPersistenceImpl
 			long plid, OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByPlid_First(
-			plid, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByPlid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid}));
+		return _collectionPersistenceFinderByPlid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid},
+			orderByComparator);
 	}
 
 	/**
@@ -252,8 +238,9 @@ public class LayoutRevisionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {plid});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByStatus;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByStatus;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where status = &#63;.
@@ -293,16 +280,9 @@ public class LayoutRevisionPersistenceImpl
 			int status, OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByStatus_First(
-			status, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByStatus.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {status}));
+		return _collectionPersistenceFinderByStatus.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {status},
+			orderByComparator);
 	}
 
 	/**
@@ -344,8 +324,9 @@ public class LayoutRevisionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {status});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByL_H;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByL_H;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63;.
@@ -389,17 +370,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByL_H_First(
-			layoutSetBranchId, head, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByL_H.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {layoutSetBranchId, head}));
+		return _collectionPersistenceFinderByL_H.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head}, orderByComparator);
 	}
 
 	/**
@@ -447,8 +420,9 @@ public class LayoutRevisionPersistenceImpl
 			new Object[] {layoutSetBranchId, head});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByL_P;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByL_P;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and plid = &#63;.
@@ -492,17 +466,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByL_P_First(
-			layoutSetBranchId, plid, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByL_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {layoutSetBranchId, plid}));
+		return _collectionPersistenceFinderByL_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid}, orderByComparator);
 	}
 
 	/**
@@ -550,8 +516,9 @@ public class LayoutRevisionPersistenceImpl
 			new Object[] {layoutSetBranchId, plid});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByL_S;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByL_S;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and status = &#63;.
@@ -595,17 +562,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByL_S_First(
-			layoutSetBranchId, status, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByL_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {layoutSetBranchId, status}));
+		return _collectionPersistenceFinderByL_S.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, status}, orderByComparator);
 	}
 
 	/**
@@ -653,8 +612,9 @@ public class LayoutRevisionPersistenceImpl
 			new Object[] {layoutSetBranchId, status});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByH_P;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByH_P;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where head = &#63; and plid = &#63;.
@@ -697,16 +657,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByH_P_First(
-			head, plid, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByH_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {head, plid}));
+		return _collectionPersistenceFinderByH_P.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {head, plid},
+			orderByComparator);
 	}
 
 	/**
@@ -752,8 +705,9 @@ public class LayoutRevisionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {head, plid});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByP_NotS;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByP_NotS;
 
 	/**
 	 * Returns all the layout revisions where plid = &#63; and status &ne; &#63;.
@@ -851,16 +805,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByP_NotS_First(
-			plid, status, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByP_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid, status}));
+		return _collectionPersistenceFinderByP_NotS.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid, status},
+			orderByComparator);
 	}
 
 	/**
@@ -906,8 +853,9 @@ public class LayoutRevisionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {plid, status});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByL_L_P;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByL_L_P;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and layoutBranchId = &#63; and plid = &#63;.
@@ -953,17 +901,10 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByL_L_P_First(
-			layoutSetBranchId, layoutBranchId, plid, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByL_L_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {layoutSetBranchId, layoutBranchId, plid}));
+		return _collectionPersistenceFinderByL_L_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, layoutBranchId, plid},
+			orderByComparator);
 	}
 
 	/**
@@ -1019,8 +960,9 @@ public class LayoutRevisionPersistenceImpl
 			new Object[] {layoutSetBranchId, layoutBranchId, plid});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByL_P_P;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByL_P_P;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and parentLayoutRevisionId = &#63; and plid = &#63;.
@@ -1066,19 +1008,10 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByL_P_P_First(
-			layoutSetBranchId, parentLayoutRevisionId, plid, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByL_P_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					layoutSetBranchId, parentLayoutRevisionId, plid
-				}));
+		return _collectionPersistenceFinderByL_P_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, parentLayoutRevisionId, plid},
+			orderByComparator);
 	}
 
 	/**
@@ -1134,8 +1067,9 @@ public class LayoutRevisionPersistenceImpl
 			new Object[] {layoutSetBranchId, parentLayoutRevisionId, plid});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByL_H_P_Collection;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByL_H_P_Collection;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
@@ -1181,18 +1115,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByL_H_P_Collection_First(
-			layoutSetBranchId, head, plid, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByL_H_P_Collection.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {layoutSetBranchId, head, plid}));
+		return _collectionPersistenceFinderByL_H_P_Collection.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, plid}, orderByComparator);
 	}
 
 	/**
@@ -1247,8 +1172,9 @@ public class LayoutRevisionPersistenceImpl
 			new Object[] {layoutSetBranchId, head, plid});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByL_H_S;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByL_H_S;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
@@ -1294,17 +1220,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByL_H_S_First(
-			layoutSetBranchId, head, status, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByL_H_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {layoutSetBranchId, head, status}));
+		return _collectionPersistenceFinderByL_H_S.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, head, status}, orderByComparator);
 	}
 
 	/**
@@ -1357,8 +1275,9 @@ public class LayoutRevisionPersistenceImpl
 			new Object[] {layoutSetBranchId, head, status});
 	}
 
-	private CollectionPersistenceFinder<LayoutRevision>
-		_collectionPersistenceFinderByL_P_S;
+	private CollectionPersistenceFinder
+		<LayoutRevision, NoSuchLayoutRevisionException>
+			_collectionPersistenceFinderByL_P_S;
 
 	/**
 	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and plid = &#63; and status = &#63;.
@@ -1404,17 +1323,9 @@ public class LayoutRevisionPersistenceImpl
 			OrderByComparator<LayoutRevision> orderByComparator)
 		throws NoSuchLayoutRevisionException {
 
-		LayoutRevision layoutRevision = fetchByL_P_S_First(
-			layoutSetBranchId, plid, status, orderByComparator);
-
-		if (layoutRevision != null) {
-			return layoutRevision;
-		}
-
-		throw new NoSuchLayoutRevisionException(
-			_collectionPersistenceFinderByL_P_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {layoutSetBranchId, plid, status}));
+		return _collectionPersistenceFinderByL_P_S.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {layoutSetBranchId, plid, status}, orderByComparator);
 	}
 
 	/**
@@ -1690,6 +1601,7 @@ public class LayoutRevisionPersistenceImpl
 				_SQL_SELECT_LAYOUTREVISION_WHERE,
 				_SQL_COUNT_LAYOUTREVISION_WHERE,
 				LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"layoutRevision.", "layoutSetBranchId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1713,7 +1625,8 @@ public class LayoutRevisionPersistenceImpl
 				new String[] {Long.class.getName()}, new String[] {"plid"},
 				false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
-			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"layoutRevision.", "plid", FinderColumn.Type.LONG, "=", true,
 				true, LayoutRevision::getPlid));
@@ -1740,6 +1653,7 @@ public class LayoutRevisionPersistenceImpl
 				_SQL_SELECT_LAYOUTREVISION_WHERE,
 				_SQL_COUNT_LAYOUTREVISION_WHERE,
 				LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"layoutRevision.", "status", FinderColumn.Type.INTEGER, "=",
 					true, true, LayoutRevision::getStatus));
@@ -1763,7 +1677,8 @@ public class LayoutRevisionPersistenceImpl
 				new String[] {Long.class.getName(), Boolean.class.getName()},
 				new String[] {"layoutSetBranchId", "head"}, false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
-			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
 				"=", true, true, LayoutRevision::getLayoutSetBranchId),
@@ -1790,7 +1705,8 @@ public class LayoutRevisionPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"layoutSetBranchId", "plid"}, false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
-			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
 				"=", true, true, LayoutRevision::getLayoutSetBranchId),
@@ -1817,7 +1733,8 @@ public class LayoutRevisionPersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"layoutSetBranchId", "status"}, false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
-			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
 				"=", true, true, LayoutRevision::getLayoutSetBranchId),
@@ -1844,7 +1761,8 @@ public class LayoutRevisionPersistenceImpl
 				new String[] {Boolean.class.getName(), Long.class.getName()},
 				new String[] {"head", "plid"}, false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
-			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"layoutRevision.", "head", FinderColumn.Type.BOOLEAN, "=", true,
 				true, LayoutRevision::isHead),
@@ -1873,6 +1791,7 @@ public class LayoutRevisionPersistenceImpl
 				_SQL_SELECT_LAYOUTREVISION_WHERE,
 				_SQL_COUNT_LAYOUTREVISION_WHERE,
 				LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"layoutRevision.", "plid", FinderColumn.Type.LONG, "=",
 					true, true, LayoutRevision::getPlid),
@@ -1909,7 +1828,7 @@ public class LayoutRevisionPersistenceImpl
 				false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
 			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"layoutRevision.status != 5",
+			"layoutRevision.status != 5", "layoutRevision.status != 5", null,
 			new FinderColumn<>(
 				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
 				"=", true, true, LayoutRevision::getLayoutSetBranchId),
@@ -1954,7 +1873,8 @@ public class LayoutRevisionPersistenceImpl
 				},
 				false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
-			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
 				"=", true, true, LayoutRevision::getLayoutSetBranchId),
@@ -1998,6 +1918,7 @@ public class LayoutRevisionPersistenceImpl
 				_SQL_SELECT_LAYOUTREVISION_WHERE,
 				_SQL_COUNT_LAYOUTREVISION_WHERE,
 				LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"layoutRevision.", "layoutSetBranchId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2034,7 +1955,8 @@ public class LayoutRevisionPersistenceImpl
 				},
 				new String[] {"layoutSetBranchId", "head", "status"}, false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
-			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
 				"=", true, true, LayoutRevision::getLayoutSetBranchId),
@@ -2070,7 +1992,8 @@ public class LayoutRevisionPersistenceImpl
 				},
 				new String[] {"layoutSetBranchId", "plid", "status"}, false),
 			_SQL_SELECT_LAYOUTREVISION_WHERE, _SQL_COUNT_LAYOUTREVISION_WHERE,
-			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutRevisionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"layoutRevision.", "layoutSetBranchId", FinderColumn.Type.LONG,
 				"=", true, true, LayoutRevision::getLayoutSetBranchId),
@@ -2102,13 +2025,10 @@ public class LayoutRevisionPersistenceImpl
 	private static final String _SQL_COUNT_LAYOUTREVISION_WHERE =
 		"SELECT COUNT(layoutRevision) FROM LayoutRevision layoutRevision WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LayoutRevision exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1845047651
+// LIFERAY-SERVICE-BUILDER-HASH:-1267992542

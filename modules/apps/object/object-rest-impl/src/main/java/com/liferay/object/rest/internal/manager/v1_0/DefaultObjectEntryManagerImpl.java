@@ -28,6 +28,7 @@ import com.liferay.object.entry.scope.provider.ObjectEntryScopeProvider;
 import com.liferay.object.entry.scope.provider.ObjectEntryScopeProviderRegistry;
 import com.liferay.object.entry.util.ObjectEntryDTOConverterUtil;
 import com.liferay.object.exception.NoSuchObjectEntryException;
+import com.liferay.object.exception.ObjectEntryValuesException;
 import com.liferay.object.field.attachment.AttachmentManager;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.business.type.ObjectFieldBusinessTypeRegistry;
@@ -50,6 +51,7 @@ import com.liferay.object.rest.dto.v1_0.FileEntry;
 import com.liferay.object.rest.dto.v1_0.Folder;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.dto.v1_0.Status;
+import com.liferay.object.rest.dto.v1_0.SystemProperties;
 import com.liferay.object.rest.filter.factory.FilterFactory;
 import com.liferay.object.rest.filter.parser.ObjectDefinitionFilterParser;
 import com.liferay.object.rest.internal.resource.v1_0.ObjectEntryRelatedObjectsResourceImpl;
@@ -513,6 +515,36 @@ public class DefaultObjectEntryManagerImpl
 	}
 
 	@Override
+	public void disassociateRelatedModel(
+			DTOConverterContext dtoConverterContext,
+			String externalReferenceCode, ObjectDefinition objectDefinition,
+			ObjectRelationship objectRelationship,
+			String relatedExternalReferenceCode, String scopeKey)
+		throws Exception {
+
+		com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
+			_objectEntryService.getObjectEntry(
+				externalReferenceCode, getGroupId(objectDefinition, scopeKey),
+				objectDefinition.getObjectDefinitionId());
+
+		ObjectDefinition relatedObjectDefinition =
+			ObjectRelationshipUtil.getRelatedObjectDefinition(
+				objectDefinition, objectRelationship);
+
+		com.liferay.object.model.ObjectEntry serviceBuilderRelatedObjectEntry =
+			_objectEntryService.getObjectEntry(
+				relatedExternalReferenceCode,
+				getGroupId(relatedObjectDefinition, scopeKey),
+				relatedObjectDefinition.getObjectDefinitionId());
+
+		_disassociateRelatedModels(
+			objectDefinition, objectRelationship,
+			serviceBuilderObjectEntry.getObjectEntryId(),
+			new long[] {serviceBuilderRelatedObjectEntry.getObjectEntryId()},
+			relatedObjectDefinition, dtoConverterContext.getUserId());
+	}
+
+	@Override
 	public void disassociateRelatedModels(
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition,
@@ -785,7 +817,7 @@ public class DefaultObjectEntryManagerImpl
 		Long[] groupIds = groupIdsList.toArray(new Long[0]);
 
 		Predicate predicate = _filterFactory.create(
-			filterExpression, objectDefinition);
+			filterExpression, groupIds, objectDefinition);
 
 		int start = _getStartPosition(pagination);
 		int end = _getEndPosition(pagination);
@@ -914,6 +946,7 @@ public class DefaultObjectEntryManagerImpl
 
 				searchContext.setCompanyId(companyId);
 				searchContext.setGroupIds(new long[] {groupId});
+				searchContext.setLocale(dtoConverterContext.getLocale());
 
 				SearchRequestBuilder searchRequestBuilder =
 					_searchRequestBuilderFactory.builder(searchContext);
@@ -1665,6 +1698,8 @@ public class DefaultObjectEntryManagerImpl
 			Map<String, Serializable> values)
 		throws Exception {
 
+		_checkAllowStandaloneObjectEntry(objectDefinition, values);
+
 		validateReadOnlyObjectFields(
 			null, getGroupId(objectDefinition, scopeKey), objectDefinition,
 			objectEntry);
@@ -1881,8 +1916,10 @@ public class DefaultObjectEntryManagerImpl
 							serviceBuilderObjectEntry.getPrimaryKey(),
 							nestedObjectEntry.getId(),
 							ServiceContextUtil.createServiceContext(
-								objectDefinition.getCompanyId(), groupId,
-								nestedObjectEntry,
+								objectDefinition.getCompanyId(),
+								relatedObjectDefinition.
+									isEnableCategorization(),
+								groupId, nestedObjectEntry,
 								dtoConverterContext.getUserId()));
 					}
 
@@ -1970,6 +2007,33 @@ public class DefaultObjectEntryManagerImpl
 					serviceContext),
 				scopeKey),
 			_objectEntryService.fetchObjectEntry(objectEntryId));
+	}
+
+	private void _checkAllowStandaloneObjectEntry(
+			ObjectDefinition objectDefinition, Map<String, Serializable> values)
+		throws Exception {
+
+		if (objectDefinition.isAllowStandaloneObjectEntry() ||
+			!objectDefinition.isRootDescendantNode()) {
+
+			return;
+		}
+
+		for (ObjectRelationship objectRelationship :
+				_objectRelationshipLocalService.
+					getObjectRelationshipsByObjectDefinitionId2(
+						objectDefinition.getObjectDefinitionId(), true)) {
+
+			ObjectField objectField = _objectFieldLocalService.getObjectField(
+				objectRelationship.getObjectFieldId2());
+
+			if (MapUtil.getLong(values, objectField.getName()) != 0) {
+				return;
+			}
+		}
+
+		throw new ObjectEntryValuesException.NotAllowedStandaloneObjectEntry(
+			objectDefinition.getShortName());
 	}
 
 	private void _checkApprovedObjectEntry(
@@ -2060,7 +2124,10 @@ public class DefaultObjectEntryManagerImpl
 
 		List<ObjectEntryComment> objectEntryComments = null;
 
-		if ((objectEntry.getComments() != null) &&
+		SystemProperties systemProperties = objectEntry.getSystemProperties();
+
+		if ((systemProperties != null) &&
+			(systemProperties.getComments() != null) &&
 			(Objects.equals(
 				objectDefinition.getScope(),
 				ObjectDefinitionConstants.SCOPE_SITE) ||
@@ -2068,7 +2135,7 @@ public class DefaultObjectEntryManagerImpl
 				 objectDefinition.getCompanyId(), "LPD-43996"))) {
 
 			objectEntryComments = TransformUtil.transformToList(
-				objectEntry.getComments(),
+				systemProperties.getComments(),
 				comment -> new ObjectEntryComment(
 					comment.getExternalReferenceCode(),
 					comment.getParentCommentExternalReferenceCode(),
@@ -2077,6 +2144,7 @@ public class DefaultObjectEntryManagerImpl
 
 		return ServiceContextUtil.createServiceContext(
 			objectDefinition.getCompanyId(),
+			objectDefinition.isEnableCategorization(),
 			getGroupId(objectDefinition, scopeKey),
 			dtoConverterContext.getLocale(), modelPermissions, objectEntry,
 			objectEntryComments, dtoConverterContext.getUserId());
@@ -2915,7 +2983,8 @@ public class DefaultObjectEntryManagerImpl
 			com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-17564") ||
+		if (!FeatureFlagManagerUtil.isEnabled(
+				objectDefinition.getCompanyId(), "LPD-17564") ||
 			!objectDefinition.isEnableObjectEntrySubscription() ||
 			ObjectEntryFolderSubscriptionUtil.isSubscribedToObjectEntryFolder(
 				serviceBuilderObjectEntry.getCompanyId(),
@@ -2970,13 +3039,8 @@ public class DefaultObjectEntryManagerImpl
 			_systemObjectDefinitionManagerRegistry.
 				getSystemObjectDefinitionManager(objectDefinition.getName());
 
-		PersistedModelLocalService persistedModelLocalService =
-			PersistedModelLocalServiceRegistryUtil.
-				getPersistedModelLocalService(
-					systemObjectDefinitionManager.getModelClassName());
-
 		PersistedModel persistedModel =
-			persistedModelLocalService.getPersistedModel(objectEntryId);
+			systemObjectDefinitionManager.getPersistedModel(objectEntryId);
 
 		if (Objects.equals(
 				systemObjectDefinitionManager.getScope(),
@@ -3612,7 +3676,8 @@ public class DefaultObjectEntryManagerImpl
 			).put(
 				"restore",
 				() -> {
-					if (!FeatureFlagManagerUtil.isEnabled("LPD-17564") ||
+					if (!FeatureFlagManagerUtil.isEnabled(
+							objectDefinition.getCompanyId(), "LPD-17564") ||
 						!serviceBuilderObjectEntry.isInTrash()) {
 
 						return null;

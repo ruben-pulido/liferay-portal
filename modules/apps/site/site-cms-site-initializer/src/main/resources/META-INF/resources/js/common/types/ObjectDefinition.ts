@@ -11,6 +11,7 @@ export type ObjectField = {
 		| 'Decimal'
 		| 'Date'
 		| 'DateTime'
+		| 'EmailAddress'
 		| 'Integer'
 		| 'MultiselectPicklist'
 		| 'Long'
@@ -64,7 +65,10 @@ export type ObjectDefinition = {
 	label: Liferay.Language.LocalizedValue<string>;
 	name?: string;
 	objectDefinitionSettings?: {
-		name: 'acceptedGroupExternalReferenceCodes' | 'acceptAllGroups';
+		name:
+			| 'acceptAllGroups'
+			| 'acceptedGroupExternalReferenceCodes'
+			| 'allowStandaloneObjectEntry';
 		value: string;
 	}[];
 	objectFields?: ObjectField[];

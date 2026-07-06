@@ -1,0 +1,99 @@
+components:
+    schemas:
+        ResourceFolder:
+            description:
+                A folder that organizes a fragment set's resources.
+            properties:
+                creator:
+                    $ref: ../../headless-admin-user/headless-admin-user-impl/rest-openapi.yaml#Creator
+                    description:
+                        The resource folder's creator.
+                    readOnly: true
+                dateCreated:
+                    description:
+                        The resource folder's creation date.
+                    format: date-time
+                    type: string
+                dateModified:
+                    description:
+                        The last time the resource folder changed.
+                    format: date-time
+                    type: string
+                externalReferenceCode:
+                    description:
+                        The resource folder's external reference code.
+                    type: string
+                name:
+                    description:
+                        The resource folder's name.
+                    type: string
+            type: object
+paths:
+    "/malformed/{externalReferenceCode}":
+        put:
+            description:
+                Updates the resource folder with the given external reference code, or creates it if it does not exist. On update, the name may change.
+            operationId: putMalformedResourceFolder
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+            tags: ["ResourceFolder"]
+    "/missing/{externalReferenceCode}":
+        put:
+            description:
+                Updates the resource folder with the given external reference code, or creates it if it does not exist. On update, `name` is honored; any values sent for `externalReferenceCode` are ignored.
+            operationId: putMissingResourceFolder
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+            tags: ["ResourceFolder"]
+    "/unlisted/{externalReferenceCode}":
+        put:
+            description:
+                Updates the resource folder with the given external reference code, or creates it if it does not exist. On update, `dateModified`, `foo`, and `name` are honored; any values sent for `dateCreated` and `externalReferenceCode` are ignored.
+            operationId: putUnlistedResourceFolder
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+            tags: ["ResourceFolder"]
+    "/valid/{externalReferenceCode}":
+        put:
+            description:
+                Updates the resource folder with the given external reference code, or creates it if it does not exist. On update, `dateModified`, `externalReferenceCode`, and `name` are honored; any values sent for `dateCreated` are ignored.
+            operationId: putValidResourceFolder
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+            tags: ["ResourceFolder"]

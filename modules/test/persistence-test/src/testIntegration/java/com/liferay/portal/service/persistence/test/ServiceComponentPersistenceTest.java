@@ -109,11 +109,7 @@ public class ServiceComponentPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ServiceComponent newServiceComponent = _persistence.create(pk);
-
-		newServiceComponent.setMvccVersion(RandomTestUtil.nextLong());
+		ServiceComponent newServiceComponent = addServiceComponent();
 
 		newServiceComponent.setBuildNamespace(RandomTestUtil.randomString());
 
@@ -123,7 +119,9 @@ public class ServiceComponentPersistenceTest {
 
 		newServiceComponent.setData(RandomTestUtil.randomString());
 
-		_serviceComponents.add(_persistence.update(newServiceComponent));
+		newServiceComponent = _persistence.update(newServiceComponent);
+
+		_serviceComponents.add(newServiceComponent);
 
 		ServiceComponent existingServiceComponent =
 			_persistence.findByPrimaryKey(newServiceComponent.getPrimaryKey());
@@ -480,8 +478,6 @@ public class ServiceComponentPersistenceTest {
 
 		ServiceComponent serviceComponent = _persistence.create(pk);
 
-		serviceComponent.setMvccVersion(RandomTestUtil.nextLong());
-
 		serviceComponent.setBuildNamespace(RandomTestUtil.randomString());
 
 		serviceComponent.setBuildNumber(RandomTestUtil.nextLong());
@@ -501,4 +497,4 @@ public class ServiceComponentPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1768664837
+// LIFERAY-SERVICE-BUILDER-HASH:171207430

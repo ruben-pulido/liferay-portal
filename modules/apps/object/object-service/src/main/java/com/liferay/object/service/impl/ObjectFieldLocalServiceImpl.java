@@ -945,15 +945,6 @@ public class ObjectFieldLocalServiceImpl
 		ObjectDefinition objectDefinition =
 			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-83570") &&
-			Objects.equals(
-				businessType,
-				ObjectFieldConstants.BUSINESS_TYPE_PHONE_NUMBER)) {
-
-			throw new UnsupportedOperationException();
-		}
-
 		if (Validator.isNull(dbTableName)) {
 			dbTableName = objectDefinition.getDBTableName();
 
@@ -1269,7 +1260,12 @@ public class ObjectFieldLocalServiceImpl
 		if (ObjectDefinitionThreadLocal.isDeleteObjectDefinitionId(
 				objectField.getObjectDefinitionId())) {
 
-			return objectFieldPersistence.remove(objectField);
+			objectField = objectFieldPersistence.remove(objectField);
+
+			_objectFieldSettingLocalService.deleteObjectFieldObjectFieldSetting(
+				objectField);
+
+			return objectField;
 		}
 
 		if (objectDefinition.isSystem() && objectField.isSystem() &&
@@ -1608,15 +1604,6 @@ public class ObjectFieldLocalServiceImpl
 
 		ObjectField oldObjectField = objectFieldPersistence.findByPrimaryKey(
 			objectFieldId);
-
-		if (!FeatureFlagManagerUtil.isEnabled(
-				oldObjectField.getCompanyId(), "LPD-83570") &&
-			Objects.equals(
-				businessType,
-				ObjectFieldConstants.BUSINESS_TYPE_PHONE_NUMBER)) {
-
-			throw new UnsupportedOperationException();
-		}
 
 		ObjectField newObjectField = (ObjectField)oldObjectField.clone();
 

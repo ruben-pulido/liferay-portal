@@ -47,13 +47,17 @@ public class ObjectEntryFolderModelDocumentContributor
 		String cmsSection = _getCMSSection(parts);
 
 		if (cmsSection != null) {
-			document.addKeyword("cms_kind", "folder");
 			document.addKeyword("cms_root", parts.length == 3);
 			document.addKeyword("cms_section", cmsSection);
+			document.addKeyword(
+				"objectDefinitionExternalReferenceCode",
+				ObjectEntryFolderConstants.
+					EXTERNAL_REFERENCE_CODE_OBJECT_ENTRY_FOLDER);
 		}
 
 		document.addLocalizedKeyword(
 			"localized_label", objectEntryFolder.getLabelMap(), true, true);
+		document.addKeyword("rootDescendantNode", false);
 	}
 
 	private String _getCMSSection(String[] parts) {

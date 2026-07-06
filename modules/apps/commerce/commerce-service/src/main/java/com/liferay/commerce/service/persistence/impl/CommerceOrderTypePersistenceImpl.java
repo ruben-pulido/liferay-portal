@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -90,8 +88,9 @@ public class CommerceOrderTypePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<CommerceOrderType>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrderType, NoSuchOrderTypeException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce order types where uuid = &#63;.
@@ -131,16 +130,8 @@ public class CommerceOrderTypePersistenceImpl
 			String uuid, OrderByComparator<CommerceOrderType> orderByComparator)
 		throws NoSuchOrderTypeException {
 
-		CommerceOrderType commerceOrderType = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (commerceOrderType != null) {
-			return commerceOrderType;
-		}
-
-		throw new NoSuchOrderTypeException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -215,8 +206,9 @@ public class CommerceOrderTypePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrderType>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrderType, NoSuchOrderTypeException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce order types where uuid = &#63; and companyId = &#63;.
@@ -259,16 +251,8 @@ public class CommerceOrderTypePersistenceImpl
 			OrderByComparator<CommerceOrderType> orderByComparator)
 		throws NoSuchOrderTypeException {
 
-		CommerceOrderType commerceOrderType = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (commerceOrderType != null) {
-			return commerceOrderType;
-		}
-
-		throw new NoSuchOrderTypeException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -350,8 +334,9 @@ public class CommerceOrderTypePersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrderType>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrderType, NoSuchOrderTypeException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the commerce order types where companyId = &#63;.
@@ -392,16 +377,8 @@ public class CommerceOrderTypePersistenceImpl
 			OrderByComparator<CommerceOrderType> orderByComparator)
 		throws NoSuchOrderTypeException {
 
-		CommerceOrderType commerceOrderType = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (commerceOrderType != null) {
-			return commerceOrderType;
-		}
-
-		throw new NoSuchOrderTypeException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -478,8 +455,9 @@ public class CommerceOrderTypePersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrderType>
-		_collectionPersistenceFinderByC_A;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrderType, NoSuchOrderTypeException>
+			_collectionPersistenceFinderByC_A;
 
 	/**
 	 * Returns an ordered range of all the commerce order types where companyId = &#63; and active = &#63;.
@@ -522,16 +500,8 @@ public class CommerceOrderTypePersistenceImpl
 			OrderByComparator<CommerceOrderType> orderByComparator)
 		throws NoSuchOrderTypeException {
 
-		CommerceOrderType commerceOrderType = fetchByC_A_First(
-			companyId, active, orderByComparator);
-
-		if (commerceOrderType != null) {
-			return commerceOrderType;
-		}
-
-		throw new NoSuchOrderTypeException(
-			_collectionPersistenceFinderByC_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, active}));
+		return _collectionPersistenceFinderByC_A.findFirst(
+			finderCache, new Object[] {companyId, active}, orderByComparator);
 	}
 
 	/**
@@ -613,8 +583,9 @@ public class CommerceOrderTypePersistenceImpl
 			finderCache, new Object[] {companyId, active}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrderType>
-		_collectionPersistenceFinderByLtD_S;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrderType, NoSuchOrderTypeException>
+			_collectionPersistenceFinderByLtD_S;
 
 	/**
 	 * Returns all the commerce order types where displayDate &lt; &#63; and status = &#63;.
@@ -713,16 +684,8 @@ public class CommerceOrderTypePersistenceImpl
 			OrderByComparator<CommerceOrderType> orderByComparator)
 		throws NoSuchOrderTypeException {
 
-		CommerceOrderType commerceOrderType = fetchByLtD_S_First(
-			displayDate, status, orderByComparator);
-
-		if (commerceOrderType != null) {
-			return commerceOrderType;
-		}
-
-		throw new NoSuchOrderTypeException(
-			_collectionPersistenceFinderByLtD_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {displayDate, status}));
+		return _collectionPersistenceFinderByLtD_S.findFirst(
+			finderCache, new Object[] {displayDate, status}, orderByComparator);
 	}
 
 	/**
@@ -839,8 +802,9 @@ public class CommerceOrderTypePersistenceImpl
 			finderCache, new Object[] {displayDate, status});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrderType>
-		_collectionPersistenceFinderByLtE_S;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrderType, NoSuchOrderTypeException>
+			_collectionPersistenceFinderByLtE_S;
 
 	/**
 	 * Returns all the commerce order types where expirationDate &lt; &#63; and status = &#63;.
@@ -941,17 +905,9 @@ public class CommerceOrderTypePersistenceImpl
 			OrderByComparator<CommerceOrderType> orderByComparator)
 		throws NoSuchOrderTypeException {
 
-		CommerceOrderType commerceOrderType = fetchByLtE_S_First(
-			expirationDate, status, orderByComparator);
-
-		if (commerceOrderType != null) {
-			return commerceOrderType;
-		}
-
-		throw new NoSuchOrderTypeException(
-			_collectionPersistenceFinderByLtE_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {expirationDate, status}));
+		return _collectionPersistenceFinderByLtE_S.findFirst(
+			finderCache, new Object[] {expirationDate, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1069,7 +1025,7 @@ public class CommerceOrderTypePersistenceImpl
 			finderCache, new Object[] {expirationDate, status});
 	}
 
-	private UniquePersistenceFinder<CommerceOrderType>
+	private UniquePersistenceFinder<CommerceOrderType, NoSuchOrderTypeException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -1085,23 +1041,8 @@ public class CommerceOrderTypePersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchOrderTypeException {
 
-		CommerceOrderType commerceOrderType = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (commerceOrderType == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchOrderTypeException(message);
-		}
-
-		return commerceOrderType;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1466,20 +1407,11 @@ public class CommerceOrderTypePersistenceImpl
 				_SQL_SELECT_COMMERCEORDERTYPE_WHERE,
 				_SQL_COUNT_COMMERCEORDERTYPE_WHERE,
 				CommerceOrderTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderTypeImpl.class, CommerceOrderType.class,
-					"commerceOrderType", "CommerceOrderType",
-					"commerceOrderType.commerceOrderTypeId",
-					"SELECT DISTINCT {commerceOrderType.*} FROM CommerceOrderType commerceOrderType WHERE ",
-					"SELECT {CommerceOrderType.*} FROM (SELECT DISTINCT commerceOrderType.commerceOrderTypeId FROM CommerceOrderType commerceOrderType WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrderType ON TEMP_TABLE.commerceOrderTypeId = CommerceOrderType.commerceOrderTypeId",
-					"SELECT COUNT(DISTINCT commerceOrderType.commerceOrderTypeId) AS COUNT_VALUE FROM CommerceOrderType commerceOrderType WHERE ",
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL,
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"commerceOrderType.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceOrderType::getUuid));
+					"commerceOrderType.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceOrderType::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1503,20 +1435,11 @@ public class CommerceOrderTypePersistenceImpl
 				_SQL_SELECT_COMMERCEORDERTYPE_WHERE,
 				_SQL_COUNT_COMMERCEORDERTYPE_WHERE,
 				CommerceOrderTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderTypeImpl.class, CommerceOrderType.class,
-					"commerceOrderType", "CommerceOrderType",
-					"commerceOrderType.commerceOrderTypeId",
-					"SELECT DISTINCT {commerceOrderType.*} FROM CommerceOrderType commerceOrderType WHERE ",
-					"SELECT {CommerceOrderType.*} FROM (SELECT DISTINCT commerceOrderType.commerceOrderTypeId FROM CommerceOrderType commerceOrderType WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrderType ON TEMP_TABLE.commerceOrderTypeId = CommerceOrderType.commerceOrderTypeId",
-					"SELECT COUNT(DISTINCT commerceOrderType.commerceOrderTypeId) AS COUNT_VALUE FROM CommerceOrderType commerceOrderType WHERE ",
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL,
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"commerceOrderType.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceOrderType::getUuid),
+					"commerceOrderType.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceOrderType::getUuid),
 				new FinderColumn<>(
 					"commerceOrderType.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceOrderType::getCompanyId));
@@ -1543,17 +1466,7 @@ public class CommerceOrderTypePersistenceImpl
 				_SQL_SELECT_COMMERCEORDERTYPE_WHERE,
 				_SQL_COUNT_COMMERCEORDERTYPE_WHERE,
 				CommerceOrderTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderTypeImpl.class, CommerceOrderType.class,
-					"commerceOrderType", "CommerceOrderType",
-					"commerceOrderType.commerceOrderTypeId",
-					"SELECT DISTINCT {commerceOrderType.*} FROM CommerceOrderType commerceOrderType WHERE ",
-					"SELECT {CommerceOrderType.*} FROM (SELECT DISTINCT commerceOrderType.commerceOrderTypeId FROM CommerceOrderType commerceOrderType WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrderType ON TEMP_TABLE.commerceOrderTypeId = CommerceOrderType.commerceOrderTypeId",
-					"SELECT COUNT(DISTINCT commerceOrderType.commerceOrderTypeId) AS COUNT_VALUE FROM CommerceOrderType commerceOrderType WHERE ",
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL,
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceOrderType.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceOrderType::getCompanyId));
@@ -1584,23 +1497,14 @@ public class CommerceOrderTypePersistenceImpl
 				_SQL_SELECT_COMMERCEORDERTYPE_WHERE,
 				_SQL_COUNT_COMMERCEORDERTYPE_WHERE,
 				CommerceOrderTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderTypeImpl.class, CommerceOrderType.class,
-					"commerceOrderType", "CommerceOrderType",
-					"commerceOrderType.commerceOrderTypeId",
-					"SELECT DISTINCT {commerceOrderType.*} FROM CommerceOrderType commerceOrderType WHERE ",
-					"SELECT {CommerceOrderType.*} FROM (SELECT DISTINCT commerceOrderType.commerceOrderTypeId FROM CommerceOrderType commerceOrderType WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrderType ON TEMP_TABLE.commerceOrderTypeId = CommerceOrderType.commerceOrderTypeId",
-					"SELECT COUNT(DISTINCT commerceOrderType.commerceOrderTypeId) AS COUNT_VALUE FROM CommerceOrderType commerceOrderType WHERE ",
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL,
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceOrderType.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceOrderType::getCompanyId),
 				new FinderColumn<>(
-					"commerceOrderType.", "active", FinderColumn.Type.BOOLEAN,
-					"=", true, true, CommerceOrderType::isActive));
+					"commerceOrderType.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					CommerceOrderType::isActive));
 
 		_collectionPersistenceFinderByLtD_S =
 			new FilterCollectionPersistenceFinder<>(
@@ -1623,17 +1527,7 @@ public class CommerceOrderTypePersistenceImpl
 				_SQL_SELECT_COMMERCEORDERTYPE_WHERE,
 				_SQL_COUNT_COMMERCEORDERTYPE_WHERE,
 				CommerceOrderTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderTypeImpl.class, CommerceOrderType.class,
-					"commerceOrderType", "CommerceOrderType",
-					"commerceOrderType.commerceOrderTypeId",
-					"SELECT DISTINCT {commerceOrderType.*} FROM CommerceOrderType commerceOrderType WHERE ",
-					"SELECT {CommerceOrderType.*} FROM (SELECT DISTINCT commerceOrderType.commerceOrderTypeId FROM CommerceOrderType commerceOrderType WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrderType ON TEMP_TABLE.commerceOrderTypeId = CommerceOrderType.commerceOrderTypeId",
-					"SELECT COUNT(DISTINCT commerceOrderType.commerceOrderTypeId) AS COUNT_VALUE FROM CommerceOrderType commerceOrderType WHERE ",
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL,
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceOrderType.", "displayDate", FinderColumn.Type.DATE,
 					"<", true, true, CommerceOrderType::getDisplayDate),
@@ -1662,17 +1556,7 @@ public class CommerceOrderTypePersistenceImpl
 				_SQL_SELECT_COMMERCEORDERTYPE_WHERE,
 				_SQL_COUNT_COMMERCEORDERTYPE_WHERE,
 				CommerceOrderTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderTypeImpl.class, CommerceOrderType.class,
-					"commerceOrderType", "CommerceOrderType",
-					"commerceOrderType.commerceOrderTypeId",
-					"SELECT DISTINCT {commerceOrderType.*} FROM CommerceOrderType commerceOrderType WHERE ",
-					"SELECT {CommerceOrderType.*} FROM (SELECT DISTINCT commerceOrderType.commerceOrderTypeId FROM CommerceOrderType commerceOrderType WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrderType ON TEMP_TABLE.commerceOrderTypeId = CommerceOrderType.commerceOrderTypeId",
-					"SELECT COUNT(DISTINCT commerceOrderType.commerceOrderTypeId) AS COUNT_VALUE FROM CommerceOrderType commerceOrderType WHERE ",
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL,
-					CommerceOrderTypeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceOrderType.", "expirationDate",
 					FinderColumn.Type.DATE, "<", true, true,
@@ -1754,12 +1638,6 @@ public class CommerceOrderTypePersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEORDERTYPE_WHERE =
 		"SELECT COUNT(commerceOrderType) FROM CommerceOrderType commerceOrderType WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceOrderType exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceOrderTypePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "active"});
 
@@ -1769,4 +1647,4 @@ public class CommerceOrderTypePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-595504501
+// LIFERAY-SERVICE-BUILDER-HASH:-1779171340

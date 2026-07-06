@@ -5,7 +5,6 @@
 
 package com.liferay.site.navigation.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -15,8 +14,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -100,7 +97,7 @@ public class SiteNavigationMenuPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SiteNavigationMenu>
+	private CollectionPersistenceFinder<SiteNavigationMenu, NoSuchMenuException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -142,16 +139,8 @@ public class SiteNavigationMenuPersistenceImpl
 			OrderByComparator<SiteNavigationMenu> orderByComparator)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (siteNavigationMenu != null) {
-			return siteNavigationMenu;
-		}
-
-		throw new NoSuchMenuException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -192,7 +181,7 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<SiteNavigationMenu>
+	private UniquePersistenceFinder<SiteNavigationMenu, NoSuchMenuException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -207,21 +196,8 @@ public class SiteNavigationMenuPersistenceImpl
 	public SiteNavigationMenu findByUUID_G(String uuid, long groupId)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByUUID_G(uuid, groupId);
-
-		if (siteNavigationMenu == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMenuException(message);
-		}
-
-		return siteNavigationMenu;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -269,7 +245,7 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<SiteNavigationMenu>
+	private CollectionPersistenceFinder<SiteNavigationMenu, NoSuchMenuException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -313,16 +289,8 @@ public class SiteNavigationMenuPersistenceImpl
 			OrderByComparator<SiteNavigationMenu> orderByComparator)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (siteNavigationMenu != null) {
-			return siteNavigationMenu;
-		}
-
-		throw new NoSuchMenuException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -367,8 +335,9 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<SiteNavigationMenu>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<SiteNavigationMenu, NoSuchMenuException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the site navigation menus where groupId = &#63;.
@@ -409,23 +378,9 @@ public class SiteNavigationMenuPersistenceImpl
 			OrderByComparator<SiteNavigationMenu> orderByComparator)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (siteNavigationMenu != null) {
-			return siteNavigationMenu;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchMenuException(sb.toString());
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {new long[] {groupId}},
+			orderByComparator);
 	}
 
 	/**
@@ -578,7 +533,7 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {groupIds}, groupIds);
 	}
 
-	private CollectionPersistenceFinder<SiteNavigationMenu>
+	private CollectionPersistenceFinder<SiteNavigationMenu, NoSuchMenuException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -620,16 +575,8 @@ public class SiteNavigationMenuPersistenceImpl
 			OrderByComparator<SiteNavigationMenu> orderByComparator)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (siteNavigationMenu != null) {
-			return siteNavigationMenu;
-		}
-
-		throw new NoSuchMenuException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -671,7 +618,7 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<SiteNavigationMenu>
+	private UniquePersistenceFinder<SiteNavigationMenu, NoSuchMenuException>
 		_uniquePersistenceFinderByG_N;
 
 	/**
@@ -686,21 +633,8 @@ public class SiteNavigationMenuPersistenceImpl
 	public SiteNavigationMenu findByG_N(long groupId, String name)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByG_N(groupId, name);
-
-		if (siteNavigationMenu == null) {
-			String message =
-				_uniquePersistenceFinderByG_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMenuException(message);
-		}
-
-		return siteNavigationMenu;
+		return _uniquePersistenceFinderByG_N.find(
+			finderCache, new Object[] {groupId, name});
 	}
 
 	/**
@@ -748,8 +682,9 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {groupId, name});
 	}
 
-	private FilterCollectionPersistenceFinder<SiteNavigationMenu>
-		_collectionPersistenceFinderByG_LikeN;
+	private FilterCollectionPersistenceFinder
+		<SiteNavigationMenu, NoSuchMenuException>
+			_collectionPersistenceFinderByG_LikeN;
 
 	/**
 	 * Returns all the site navigation menus where groupId = &#63; and name LIKE &#63;.
@@ -848,26 +783,9 @@ public class SiteNavigationMenuPersistenceImpl
 			OrderByComparator<SiteNavigationMenu> orderByComparator)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByG_LikeN_First(
-			groupId, name, orderByComparator);
-
-		if (siteNavigationMenu != null) {
-			return siteNavigationMenu;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", nameLIKE");
-		sb.append(name);
-
-		sb.append("}");
-
-		throw new NoSuchMenuException(sb.toString());
+		return _collectionPersistenceFinderByG_LikeN.findFirst(
+			finderCache, new Object[] {new long[] {groupId}, name},
+			orderByComparator);
 	}
 
 	/**
@@ -1162,8 +1080,9 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {groupIds, name}, groupIds);
 	}
 
-	private FilterCollectionPersistenceFinder<SiteNavigationMenu>
-		_collectionPersistenceFinderByG_T;
+	private FilterCollectionPersistenceFinder
+		<SiteNavigationMenu, NoSuchMenuException>
+			_collectionPersistenceFinderByG_T;
 
 	/**
 	 * Returns an ordered range of all the site navigation menus where groupId = &#63; and type = &#63;.
@@ -1206,16 +1125,8 @@ public class SiteNavigationMenuPersistenceImpl
 			OrderByComparator<SiteNavigationMenu> orderByComparator)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByG_T_First(
-			groupId, type, orderByComparator);
-
-		if (siteNavigationMenu != null) {
-			return siteNavigationMenu;
-		}
-
-		throw new NoSuchMenuException(
-			_collectionPersistenceFinderByG_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, type}));
+		return _collectionPersistenceFinderByG_T.findFirst(
+			finderCache, new Object[] {groupId, type}, orderByComparator);
 	}
 
 	/**
@@ -1297,8 +1208,9 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {groupId, type}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<SiteNavigationMenu>
-		_collectionPersistenceFinderByG_A;
+	private FilterCollectionPersistenceFinder
+		<SiteNavigationMenu, NoSuchMenuException>
+			_collectionPersistenceFinderByG_A;
 
 	/**
 	 * Returns an ordered range of all the site navigation menus where groupId = &#63; and auto = &#63;.
@@ -1341,16 +1253,8 @@ public class SiteNavigationMenuPersistenceImpl
 			OrderByComparator<SiteNavigationMenu> orderByComparator)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByG_A_First(
-			groupId, auto, orderByComparator);
-
-		if (siteNavigationMenu != null) {
-			return siteNavigationMenu;
-		}
-
-		throw new NoSuchMenuException(
-			_collectionPersistenceFinderByG_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, auto}));
+		return _collectionPersistenceFinderByG_A.findFirst(
+			finderCache, new Object[] {groupId, auto}, orderByComparator);
 	}
 
 	/**
@@ -1432,7 +1336,7 @@ public class SiteNavigationMenuPersistenceImpl
 			finderCache, new Object[] {groupId, auto}, groupId);
 	}
 
-	private UniquePersistenceFinder<SiteNavigationMenu>
+	private UniquePersistenceFinder<SiteNavigationMenu, NoSuchMenuException>
 		_uniquePersistenceFinderByERC_G;
 
 	/**
@@ -1448,23 +1352,8 @@ public class SiteNavigationMenuPersistenceImpl
 			String externalReferenceCode, long groupId)
 		throws NoSuchMenuException {
 
-		SiteNavigationMenu siteNavigationMenu = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (siteNavigationMenu == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMenuException(message);
-		}
-
-		return siteNavigationMenu;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1914,9 +1803,11 @@ public class SiteNavigationMenuPersistenceImpl
 			_SQL_SELECT_SITENAVIGATIONMENU_WHERE,
 			_SQL_COUNT_SITENAVIGATIONMENU_WHERE,
 			SiteNavigationMenuModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"siteNavigationMenu.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, SiteNavigationMenu::getUuid));
+				"siteNavigationMenu.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				SiteNavigationMenu::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1928,8 +1819,9 @@ public class SiteNavigationMenuPersistenceImpl
 				SiteNavigationMenu::getGroupId),
 			_SQL_SELECT_SITENAVIGATIONMENU_WHERE, "",
 			new FinderColumn<>(
-				"siteNavigationMenu.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, SiteNavigationMenu::getUuid),
+				"siteNavigationMenu.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				SiteNavigationMenu::getUuid),
 			new FinderColumn<>(
 				"siteNavigationMenu.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, SiteNavigationMenu::getGroupId));
@@ -1956,10 +1848,11 @@ public class SiteNavigationMenuPersistenceImpl
 				_SQL_SELECT_SITENAVIGATIONMENU_WHERE,
 				_SQL_COUNT_SITENAVIGATIONMENU_WHERE,
 				SiteNavigationMenuModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"siteNavigationMenu.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, SiteNavigationMenu::getUuid),
+					"siteNavigationMenu.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					SiteNavigationMenu::getUuid),
 				new FinderColumn<>(
 					"siteNavigationMenu.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, SiteNavigationMenu::getCompanyId));
@@ -1986,17 +1879,7 @@ public class SiteNavigationMenuPersistenceImpl
 				_SQL_SELECT_SITENAVIGATIONMENU_WHERE,
 				_SQL_COUNT_SITENAVIGATIONMENU_WHERE,
 				SiteNavigationMenuModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SiteNavigationMenuImpl.class, SiteNavigationMenu.class,
-					"siteNavigationMenu", "SiteNavigationMenu",
-					"siteNavigationMenu.siteNavigationMenuId",
-					"SELECT DISTINCT {siteNavigationMenu.*} FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					"SELECT {SiteNavigationMenu.*} FROM (SELECT DISTINCT siteNavigationMenu.siteNavigationMenuId FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					") TEMP_TABLE INNER JOIN SiteNavigationMenu ON TEMP_TABLE.siteNavigationMenuId = SiteNavigationMenu.siteNavigationMenuId",
-					"SELECT COUNT(DISTINCT siteNavigationMenu.siteNavigationMenuId) AS COUNT_VALUE FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					SiteNavigationMenuModelImpl.ORDER_BY_SQL,
-					SiteNavigationMenuModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new ArrayableFinderColumn<>(
 					"siteNavigationMenu.", "groupId", FinderColumn.Type.LONG,
 					"=", false, true, true, SiteNavigationMenu::getGroupId));
@@ -2023,7 +1906,7 @@ public class SiteNavigationMenuPersistenceImpl
 				_SQL_SELECT_SITENAVIGATIONMENU_WHERE,
 				_SQL_COUNT_SITENAVIGATIONMENU_WHERE,
 				SiteNavigationMenuModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"siteNavigationMenu.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, SiteNavigationMenu::getCompanyId));
@@ -2063,17 +1946,7 @@ public class SiteNavigationMenuPersistenceImpl
 				_SQL_SELECT_SITENAVIGATIONMENU_WHERE,
 				_SQL_COUNT_SITENAVIGATIONMENU_WHERE,
 				SiteNavigationMenuModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SiteNavigationMenuImpl.class, SiteNavigationMenu.class,
-					"siteNavigationMenu", "SiteNavigationMenu",
-					"siteNavigationMenu.siteNavigationMenuId",
-					"SELECT DISTINCT {siteNavigationMenu.*} FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					"SELECT {SiteNavigationMenu.*} FROM (SELECT DISTINCT siteNavigationMenu.siteNavigationMenuId FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					") TEMP_TABLE INNER JOIN SiteNavigationMenu ON TEMP_TABLE.siteNavigationMenuId = SiteNavigationMenu.siteNavigationMenuId",
-					"SELECT COUNT(DISTINCT siteNavigationMenu.siteNavigationMenuId) AS COUNT_VALUE FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					SiteNavigationMenuModelImpl.ORDER_BY_SQL,
-					SiteNavigationMenuModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new ArrayableFinderColumn<>(
 					"siteNavigationMenu.", "groupId", FinderColumn.Type.LONG,
 					"=", false, true, true, SiteNavigationMenu::getGroupId),
@@ -2107,23 +1980,14 @@ public class SiteNavigationMenuPersistenceImpl
 				_SQL_SELECT_SITENAVIGATIONMENU_WHERE,
 				_SQL_COUNT_SITENAVIGATIONMENU_WHERE,
 				SiteNavigationMenuModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SiteNavigationMenuImpl.class, SiteNavigationMenu.class,
-					"siteNavigationMenu", "SiteNavigationMenu",
-					"siteNavigationMenu.siteNavigationMenuId",
-					"SELECT DISTINCT {siteNavigationMenu.*} FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					"SELECT {SiteNavigationMenu.*} FROM (SELECT DISTINCT siteNavigationMenu.siteNavigationMenuId FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					") TEMP_TABLE INNER JOIN SiteNavigationMenu ON TEMP_TABLE.siteNavigationMenuId = SiteNavigationMenu.siteNavigationMenuId",
-					"SELECT COUNT(DISTINCT siteNavigationMenu.siteNavigationMenuId) AS COUNT_VALUE FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					SiteNavigationMenuModelImpl.ORDER_BY_SQL,
-					SiteNavigationMenuModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"siteNavigationMenu.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, SiteNavigationMenu::getGroupId),
 				new FinderColumn<>(
-					"siteNavigationMenu.", "type", FinderColumn.Type.INTEGER,
-					"=", true, true, SiteNavigationMenu::getType));
+					"siteNavigationMenu.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					SiteNavigationMenu::getType));
 
 		_collectionPersistenceFinderByG_A =
 			new FilterCollectionPersistenceFinder<>(
@@ -2151,23 +2015,14 @@ public class SiteNavigationMenuPersistenceImpl
 				_SQL_SELECT_SITENAVIGATIONMENU_WHERE,
 				_SQL_COUNT_SITENAVIGATIONMENU_WHERE,
 				SiteNavigationMenuModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SiteNavigationMenuImpl.class, SiteNavigationMenu.class,
-					"siteNavigationMenu", "SiteNavigationMenu",
-					"siteNavigationMenu.siteNavigationMenuId",
-					"SELECT DISTINCT {siteNavigationMenu.*} FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					"SELECT {SiteNavigationMenu.*} FROM (SELECT DISTINCT siteNavigationMenu.siteNavigationMenuId FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					") TEMP_TABLE INNER JOIN SiteNavigationMenu ON TEMP_TABLE.siteNavigationMenuId = SiteNavigationMenu.siteNavigationMenuId",
-					"SELECT COUNT(DISTINCT siteNavigationMenu.siteNavigationMenuId) AS COUNT_VALUE FROM SiteNavigationMenu siteNavigationMenu WHERE ",
-					SiteNavigationMenuModelImpl.ORDER_BY_SQL,
-					SiteNavigationMenuModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"siteNavigationMenu.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, SiteNavigationMenu::getGroupId),
 				new FinderColumn<>(
-					"siteNavigationMenu.", "auto", FinderColumn.Type.BOOLEAN,
-					"=", true, true, SiteNavigationMenu::isAuto));
+					"siteNavigationMenu.", "auto", "auto_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					SiteNavigationMenu::isAuto));
 
 		_uniquePersistenceFinderByERC_G = new UniquePersistenceFinder<>(
 			this,
@@ -2244,12 +2099,6 @@ public class SiteNavigationMenuPersistenceImpl
 	private static final String _SQL_COUNT_SITENAVIGATIONMENU_WHERE =
 		"SELECT COUNT(siteNavigationMenu) FROM SiteNavigationMenu siteNavigationMenu WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SiteNavigationMenu exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SiteNavigationMenuPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type", "auto"});
 
@@ -2259,4 +2108,4 @@ public class SiteNavigationMenuPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-388905672
+// LIFERAY-SERVICE-BUILDER-HASH:-1555435164

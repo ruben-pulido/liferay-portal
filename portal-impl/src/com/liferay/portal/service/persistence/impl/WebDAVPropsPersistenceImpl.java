@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchWebDAVPropsException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.WebDAVProps;
 import com.liferay.portal.kernel.model.WebDAVPropsTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -62,7 +60,8 @@ public class WebDAVPropsPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<WebDAVProps> _uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder<WebDAVProps, NoSuchWebDAVPropsException>
+		_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the web dav props where classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchWebDAVPropsException</code> if it could not be found.
@@ -76,22 +75,9 @@ public class WebDAVPropsPersistenceImpl
 	public WebDAVProps findByC_C(long classNameId, long classPK)
 		throws NoSuchWebDAVPropsException {
 
-		WebDAVProps webDAVProps = fetchByC_C(classNameId, classPK);
-
-		if (webDAVProps == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchWebDAVPropsException(message);
-		}
-
-		return webDAVProps;
+		return _uniquePersistenceFinderByC_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -368,16 +354,10 @@ public class WebDAVPropsPersistenceImpl
 	private static final String _SQL_SELECT_WEBDAVPROPS_WHERE =
 		"SELECT webDAVProps FROM WebDAVProps webDAVProps WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No WebDAVProps exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		WebDAVPropsPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1202143229
+// LIFERAY-SERVICE-BUILDER-HASH:2079980492

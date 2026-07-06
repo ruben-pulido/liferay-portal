@@ -116,9 +116,7 @@ public class SourcePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Source newSource = _persistence.create(pk);
+		Source newSource = addSource();
 
 		newSource.setUuid(RandomTestUtil.randomString());
 
@@ -146,7 +144,9 @@ public class SourcePersistenceTest {
 
 		newSource.setDriverPassword(RandomTestUtil.randomString());
 
-		_sources.add(_persistence.update(newSource));
+		newSource = _persistence.update(newSource);
+
+		_sources.add(newSource);
 
 		Source existingSource = _persistence.findByPrimaryKey(
 			newSource.getPrimaryKey());
@@ -581,4 +581,4 @@ public class SourcePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:671220592
+// LIFERAY-SERVICE-BUILDER-HASH:1282373680

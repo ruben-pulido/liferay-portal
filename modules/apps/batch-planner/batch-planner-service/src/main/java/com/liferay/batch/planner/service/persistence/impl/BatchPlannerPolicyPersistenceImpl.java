@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -75,8 +73,9 @@ public class BatchPlannerPolicyPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<BatchPlannerPolicy>
-		_collectionPersistenceFinderByBatchPlannerPlanId;
+	private CollectionPersistenceFinder
+		<BatchPlannerPolicy, NoSuchPolicyException>
+			_collectionPersistenceFinderByBatchPlannerPlanId;
 
 	/**
 	 * Returns an ordered range of all the batch planner policies where batchPlannerPlanId = &#63;.
@@ -117,18 +116,8 @@ public class BatchPlannerPolicyPersistenceImpl
 			OrderByComparator<BatchPlannerPolicy> orderByComparator)
 		throws NoSuchPolicyException {
 
-		BatchPlannerPolicy batchPlannerPolicy = fetchByBatchPlannerPlanId_First(
-			batchPlannerPlanId, orderByComparator);
-
-		if (batchPlannerPolicy != null) {
-			return batchPlannerPolicy;
-		}
-
-		throw new NoSuchPolicyException(
-			_collectionPersistenceFinderByBatchPlannerPlanId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {batchPlannerPlanId}));
+		return _collectionPersistenceFinderByBatchPlannerPlanId.findFirst(
+			finderCache, new Object[] {batchPlannerPlanId}, orderByComparator);
 	}
 
 	/**
@@ -170,7 +159,7 @@ public class BatchPlannerPolicyPersistenceImpl
 			finderCache, new Object[] {batchPlannerPlanId});
 	}
 
-	private UniquePersistenceFinder<BatchPlannerPolicy>
+	private UniquePersistenceFinder<BatchPlannerPolicy, NoSuchPolicyException>
 		_uniquePersistenceFinderByBPPI_N;
 
 	/**
@@ -185,23 +174,8 @@ public class BatchPlannerPolicyPersistenceImpl
 	public BatchPlannerPolicy findByBPPI_N(long batchPlannerPlanId, String name)
 		throws NoSuchPolicyException {
 
-		BatchPlannerPolicy batchPlannerPolicy = fetchByBPPI_N(
-			batchPlannerPlanId, name);
-
-		if (batchPlannerPolicy == null) {
-			String message =
-				_uniquePersistenceFinderByBPPI_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {batchPlannerPlanId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPolicyException(message);
-		}
-
-		return batchPlannerPolicy;
+		return _uniquePersistenceFinderByBPPI_N.find(
+			finderCache, new Object[] {batchPlannerPlanId, name});
 	}
 
 	/**
@@ -483,7 +457,7 @@ public class BatchPlannerPolicyPersistenceImpl
 				_SQL_SELECT_BATCHPLANNERPOLICY_WHERE,
 				_SQL_COUNT_BATCHPLANNERPOLICY_WHERE,
 				BatchPlannerPolicyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"batchPlannerPolicy.", "batchPlannerPlanId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -560,16 +534,10 @@ public class BatchPlannerPolicyPersistenceImpl
 	private static final String _SQL_COUNT_BATCHPLANNERPOLICY_WHERE =
 		"SELECT COUNT(batchPlannerPolicy) FROM BatchPlannerPolicy batchPlannerPolicy WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No BatchPlannerPolicy exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		BatchPlannerPolicyPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:99918095
+// LIFERAY-SERVICE-BUILDER-HASH:-1895474766

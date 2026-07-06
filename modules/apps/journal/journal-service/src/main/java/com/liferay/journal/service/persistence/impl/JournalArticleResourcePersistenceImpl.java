@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -84,8 +82,9 @@ public class JournalArticleResourcePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<JournalArticleResource>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<JournalArticleResource, NoSuchArticleResourceException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the journal article resources where uuid = &#63;.
@@ -126,16 +125,8 @@ public class JournalArticleResourcePersistenceImpl
 			OrderByComparator<JournalArticleResource> orderByComparator)
 		throws NoSuchArticleResourceException {
 
-		JournalArticleResource journalArticleResource = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (journalArticleResource != null) {
-			return journalArticleResource;
-		}
-
-		throw new NoSuchArticleResourceException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -177,8 +168,9 @@ public class JournalArticleResourcePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<JournalArticleResource>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<JournalArticleResource, NoSuchArticleResourceException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the journal article resource where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchArticleResourceException</code> if it could not be found.
@@ -192,22 +184,8 @@ public class JournalArticleResourcePersistenceImpl
 	public JournalArticleResource findByUUID_G(String uuid, long groupId)
 		throws NoSuchArticleResourceException {
 
-		JournalArticleResource journalArticleResource = fetchByUUID_G(
-			uuid, groupId);
-
-		if (journalArticleResource == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchArticleResourceException(message);
-		}
-
-		return journalArticleResource;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -256,8 +234,9 @@ public class JournalArticleResourcePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<JournalArticleResource>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<JournalArticleResource, NoSuchArticleResourceException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the journal article resources where uuid = &#63; and companyId = &#63;.
@@ -300,16 +279,8 @@ public class JournalArticleResourcePersistenceImpl
 			OrderByComparator<JournalArticleResource> orderByComparator)
 		throws NoSuchArticleResourceException {
 
-		JournalArticleResource journalArticleResource = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (journalArticleResource != null) {
-			return journalArticleResource;
-		}
-
-		throw new NoSuchArticleResourceException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -354,8 +325,9 @@ public class JournalArticleResourcePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<JournalArticleResource>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<JournalArticleResource, NoSuchArticleResourceException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the journal article resources where groupId = &#63;.
@@ -396,16 +368,8 @@ public class JournalArticleResourcePersistenceImpl
 			OrderByComparator<JournalArticleResource> orderByComparator)
 		throws NoSuchArticleResourceException {
 
-		JournalArticleResource journalArticleResource = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (journalArticleResource != null) {
-			return journalArticleResource;
-		}
-
-		throw new NoSuchArticleResourceException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -447,8 +411,9 @@ public class JournalArticleResourcePersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private UniquePersistenceFinder<JournalArticleResource>
-		_uniquePersistenceFinderByG_A;
+	private UniquePersistenceFinder
+		<JournalArticleResource, NoSuchArticleResourceException>
+			_uniquePersistenceFinderByG_A;
 
 	/**
 	 * Returns the journal article resource where groupId = &#63; and articleId = &#63; or throws a <code>NoSuchArticleResourceException</code> if it could not be found.
@@ -462,23 +427,8 @@ public class JournalArticleResourcePersistenceImpl
 	public JournalArticleResource findByG_A(long groupId, String articleId)
 		throws NoSuchArticleResourceException {
 
-		JournalArticleResource journalArticleResource = fetchByG_A(
-			groupId, articleId);
-
-		if (journalArticleResource == null) {
-			String message =
-				_uniquePersistenceFinderByG_A.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, articleId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchArticleResourceException(message);
-		}
-
-		return journalArticleResource;
+		return _uniquePersistenceFinderByG_A.find(
+			finderCache, new Object[] {groupId, articleId});
 	}
 
 	/**
@@ -822,10 +772,11 @@ public class JournalArticleResourcePersistenceImpl
 			_SQL_SELECT_JOURNALARTICLERESOURCE_WHERE,
 			_SQL_COUNT_JOURNALARTICLERESOURCE_WHERE,
 			JournalArticleResourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
-				"journalArticleResource.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, JournalArticleResource::getUuid));
+				"journalArticleResource.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				JournalArticleResource::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -837,8 +788,9 @@ public class JournalArticleResourcePersistenceImpl
 				JournalArticleResource::getGroupId),
 			_SQL_SELECT_JOURNALARTICLERESOURCE_WHERE, "",
 			new FinderColumn<>(
-				"journalArticleResource.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, JournalArticleResource::getUuid),
+				"journalArticleResource.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				JournalArticleResource::getUuid),
 			new FinderColumn<>(
 				"journalArticleResource.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, JournalArticleResource::getGroupId));
@@ -865,10 +817,11 @@ public class JournalArticleResourcePersistenceImpl
 				_SQL_SELECT_JOURNALARTICLERESOURCE_WHERE,
 				_SQL_COUNT_JOURNALARTICLERESOURCE_WHERE,
 				JournalArticleResourceModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"journalArticleResource.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, JournalArticleResource::getUuid),
+					"journalArticleResource.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					JournalArticleResource::getUuid),
 				new FinderColumn<>(
 					"journalArticleResource.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -896,7 +849,7 @@ public class JournalArticleResourcePersistenceImpl
 				_SQL_SELECT_JOURNALARTICLERESOURCE_WHERE,
 				_SQL_COUNT_JOURNALARTICLERESOURCE_WHERE,
 				JournalArticleResourceModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"journalArticleResource.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -976,12 +929,6 @@ public class JournalArticleResourcePersistenceImpl
 	private static final String _SQL_COUNT_JOURNALARTICLERESOURCE_WHERE =
 		"SELECT COUNT(journalArticleResource) FROM JournalArticleResource journalArticleResource WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No JournalArticleResource exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		JournalArticleResourcePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -991,4 +938,4 @@ public class JournalArticleResourcePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:951205513
+// LIFERAY-SERVICE-BUILDER-HASH:1499946348

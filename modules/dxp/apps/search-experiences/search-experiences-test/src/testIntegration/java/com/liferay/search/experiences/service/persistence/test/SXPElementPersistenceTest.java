@@ -113,11 +113,7 @@ public class SXPElementPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SXPElement newSXPElement = _persistence.create(pk);
-
-		newSXPElement.setMvccVersion(RandomTestUtil.nextLong());
+		SXPElement newSXPElement = addSXPElement();
 
 		newSXPElement.setUuid(RandomTestUtil.randomString());
 
@@ -155,7 +151,9 @@ public class SXPElementPersistenceTest {
 
 		newSXPElement.setStatus(RandomTestUtil.nextInt());
 
-		_sxpElements.add(_persistence.update(newSXPElement));
+		newSXPElement = _persistence.update(newSXPElement);
+
+		_sxpElements.add(newSXPElement);
 
 		SXPElement existingSXPElement = _persistence.findByPrimaryKey(
 			newSXPElement.getPrimaryKey());
@@ -602,8 +600,6 @@ public class SXPElementPersistenceTest {
 
 		SXPElement sxpElement = _persistence.create(pk);
 
-		sxpElement.setMvccVersion(RandomTestUtil.nextLong());
-
 		sxpElement.setUuid(RandomTestUtil.randomString());
 
 		sxpElement.setExternalReferenceCode(RandomTestUtil.randomString());
@@ -650,4 +646,4 @@ public class SXPElementPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1419151878
+// LIFERAY-SERVICE-BUILDER-HASH:-1219519392

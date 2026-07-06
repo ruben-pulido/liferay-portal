@@ -60,7 +60,7 @@ public class OrgLaborPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<OrgLabor>
+	private CollectionPersistenceFinder<OrgLabor, NoSuchOrgLaborException>
 		_collectionPersistenceFinderByOrganizationId;
 
 	/**
@@ -100,16 +100,9 @@ public class OrgLaborPersistenceImpl
 			long organizationId, OrderByComparator<OrgLabor> orderByComparator)
 		throws NoSuchOrgLaborException {
 
-		OrgLabor orgLabor = fetchByOrganizationId_First(
-			organizationId, orderByComparator);
-
-		if (orgLabor != null) {
-			return orgLabor;
-		}
-
-		throw new NoSuchOrgLaborException(
-			_collectionPersistenceFinderByOrganizationId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {organizationId}));
+		return _collectionPersistenceFinderByOrganizationId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {organizationId},
+			orderByComparator);
 	}
 
 	/**
@@ -343,7 +336,8 @@ public class OrgLaborPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"organizationId"}, false),
 				_SQL_SELECT_ORGLABOR_WHERE, _SQL_COUNT_ORGLABOR_WHERE,
-				OrgLaborModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				OrgLaborModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"orgLabor.", "organizationId", FinderColumn.Type.LONG, "=",
 					true, true, OrgLabor::getOrganizationId));
@@ -369,13 +363,10 @@ public class OrgLaborPersistenceImpl
 	private static final String _SQL_COUNT_ORGLABOR_WHERE =
 		"SELECT COUNT(orgLabor) FROM OrgLabor orgLabor WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No OrgLabor exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1845012404
+// LIFERAY-SERVICE-BUILDER-HASH:422612602

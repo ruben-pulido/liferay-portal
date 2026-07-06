@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelperUtil;
@@ -73,7 +71,7 @@ public class SocialActivityPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -114,16 +112,9 @@ public class SocialActivityPersistenceImpl
 			long groupId, OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -165,7 +156,7 @@ public class SocialActivityPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -206,16 +197,9 @@ public class SocialActivityPersistenceImpl
 			long companyId, OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -257,7 +241,7 @@ public class SocialActivityPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -298,16 +282,9 @@ public class SocialActivityPersistenceImpl
 			long userId, OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId},
+			orderByComparator);
 	}
 
 	/**
@@ -349,7 +326,7 @@ public class SocialActivityPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByActivitySetId;
 
 	/**
@@ -391,16 +368,9 @@ public class SocialActivityPersistenceImpl
 			OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByActivitySetId_First(
-			activitySetId, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByActivitySetId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {activitySetId}));
+		return _collectionPersistenceFinderByActivitySetId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {activitySetId},
+			orderByComparator);
 	}
 
 	/**
@@ -443,7 +413,7 @@ public class SocialActivityPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {activitySetId});
 	}
 
-	private UniquePersistenceFinder<SocialActivity>
+	private UniquePersistenceFinder<SocialActivity, NoSuchActivityException>
 		_uniquePersistenceFinderByMirrorActivityId;
 
 	/**
@@ -457,24 +427,8 @@ public class SocialActivityPersistenceImpl
 	public SocialActivity findByMirrorActivityId(long mirrorActivityId)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByMirrorActivityId(
-			mirrorActivityId);
-
-		if (socialActivity == null) {
-			String message =
-				_uniquePersistenceFinderByMirrorActivityId.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {mirrorActivityId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchActivityException(message);
-		}
-
-		return socialActivity;
+		return _uniquePersistenceFinderByMirrorActivityId.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {mirrorActivityId});
 	}
 
 	/**
@@ -521,7 +475,7 @@ public class SocialActivityPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {mirrorActivityId});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByReceiverUserId;
 
 	/**
@@ -563,16 +517,9 @@ public class SocialActivityPersistenceImpl
 			OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByReceiverUserId_First(
-			receiverUserId, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByReceiverUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {receiverUserId}));
+		return _collectionPersistenceFinderByReceiverUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {receiverUserId},
+			orderByComparator);
 	}
 
 	/**
@@ -615,7 +562,7 @@ public class SocialActivityPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {receiverUserId});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByC_CN;
 
 	/**
@@ -660,17 +607,9 @@ public class SocialActivityPersistenceImpl
 			OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByC_CN_First(
-			companyId, classNameId, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByC_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId}));
+		return _collectionPersistenceFinderByC_CN.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId}, orderByComparator);
 	}
 
 	/**
@@ -718,7 +657,7 @@ public class SocialActivityPersistenceImpl
 			new Object[] {companyId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -763,16 +702,9 @@ public class SocialActivityPersistenceImpl
 			OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {classNameId, classPK}, orderByComparator);
 	}
 
 	/**
@@ -820,7 +752,7 @@ public class SocialActivityPersistenceImpl
 			new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByM_C_C;
 
 	/**
@@ -867,17 +799,10 @@ public class SocialActivityPersistenceImpl
 			OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByM_C_C_First(
-			mirrorActivityId, classNameId, classPK, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByM_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {mirrorActivityId, classNameId, classPK}));
+		return _collectionPersistenceFinderByM_C_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {mirrorActivityId, classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -933,7 +858,7 @@ public class SocialActivityPersistenceImpl
 			new Object[] {mirrorActivityId, classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByC_C_T;
 
 	/**
@@ -980,17 +905,9 @@ public class SocialActivityPersistenceImpl
 			OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByC_C_T_First(
-			classNameId, classPK, type, orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByC_C_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, type}));
+		return _collectionPersistenceFinderByC_C_T.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {classNameId, classPK, type}, orderByComparator);
 	}
 
 	/**
@@ -1041,7 +958,7 @@ public class SocialActivityPersistenceImpl
 			new Object[] {classNameId, classPK, type});
 	}
 
-	private CollectionPersistenceFinder<SocialActivity>
+	private CollectionPersistenceFinder<SocialActivity, NoSuchActivityException>
 		_collectionPersistenceFinderByG_U_C_C_T_R;
 
 	/**
@@ -1098,20 +1015,12 @@ public class SocialActivityPersistenceImpl
 			OrderByComparator<SocialActivity> orderByComparator)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByG_U_C_C_T_R_First(
-			groupId, userId, classNameId, classPK, type, receiverUserId,
+		return _collectionPersistenceFinderByG_U_C_C_T_R.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {
+				groupId, userId, classNameId, classPK, type, receiverUserId
+			},
 			orderByComparator);
-
-		if (socialActivity != null) {
-			return socialActivity;
-		}
-
-		throw new NoSuchActivityException(
-			_collectionPersistenceFinderByG_U_C_C_T_R.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					groupId, userId, classNameId, classPK, type, receiverUserId
-				}));
 	}
 
 	/**
@@ -1185,7 +1094,7 @@ public class SocialActivityPersistenceImpl
 			});
 	}
 
-	private UniquePersistenceFinder<SocialActivity>
+	private UniquePersistenceFinder<SocialActivity, NoSuchActivityException>
 		_uniquePersistenceFinderByG_U_CD_C_C_T_R;
 
 	/**
@@ -1207,27 +1116,12 @@ public class SocialActivityPersistenceImpl
 			long classPK, int type, long receiverUserId)
 		throws NoSuchActivityException {
 
-		SocialActivity socialActivity = fetchByG_U_CD_C_C_T_R(
-			groupId, userId, createDate, classNameId, classPK, type,
-			receiverUserId);
-
-		if (socialActivity == null) {
-			String message =
-				_uniquePersistenceFinderByG_U_CD_C_C_T_R.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						groupId, userId, createDate, classNameId, classPK, type,
-						receiverUserId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchActivityException(message);
-		}
-
-		return socialActivity;
+		return _uniquePersistenceFinderByG_U_CD_C_C_T_R.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {
+				groupId, userId, createDate, classNameId, classPK, type,
+				receiverUserId
+			});
 	}
 
 	/**
@@ -1595,6 +1489,7 @@ public class SocialActivityPersistenceImpl
 				_SQL_SELECT_SOCIALACTIVITY_WHERE,
 				_SQL_COUNT_SOCIALACTIVITY_WHERE,
 				SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialActivity.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, SocialActivity::getGroupId));
@@ -1621,6 +1516,7 @@ public class SocialActivityPersistenceImpl
 				_SQL_SELECT_SOCIALACTIVITY_WHERE,
 				_SQL_COUNT_SOCIALACTIVITY_WHERE,
 				SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialActivity.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SocialActivity::getCompanyId));
@@ -1647,6 +1543,7 @@ public class SocialActivityPersistenceImpl
 				_SQL_SELECT_SOCIALACTIVITY_WHERE,
 				_SQL_COUNT_SOCIALACTIVITY_WHERE,
 				SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialActivity.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, SocialActivity::getUserId));
@@ -1674,6 +1571,7 @@ public class SocialActivityPersistenceImpl
 				_SQL_SELECT_SOCIALACTIVITY_WHERE,
 				_SQL_COUNT_SOCIALACTIVITY_WHERE,
 				SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialActivity.", "activitySetId", FinderColumn.Type.LONG,
 					"=", true, true, SocialActivity::getActivitySetId));
@@ -1716,6 +1614,7 @@ public class SocialActivityPersistenceImpl
 				_SQL_SELECT_SOCIALACTIVITY_WHERE,
 				_SQL_COUNT_SOCIALACTIVITY_WHERE,
 				SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialActivity.", "receiverUserId", FinderColumn.Type.LONG,
 					"=", true, true, SocialActivity::getReceiverUserId));
@@ -1739,7 +1638,8 @@ public class SocialActivityPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "classNameId"}, false),
 			_SQL_SELECT_SOCIALACTIVITY_WHERE, _SQL_COUNT_SOCIALACTIVITY_WHERE,
-			SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"socialActivity.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, SocialActivity::getCompanyId),
@@ -1766,7 +1666,8 @@ public class SocialActivityPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"classNameId", "classPK"}, false),
 			_SQL_SELECT_SOCIALACTIVITY_WHERE, _SQL_COUNT_SOCIALACTIVITY_WHERE,
-			SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"socialActivity.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, SocialActivity::getClassNameId),
@@ -1802,7 +1703,8 @@ public class SocialActivityPersistenceImpl
 				new String[] {"mirrorActivityId", "classNameId", "classPK"},
 				false),
 			_SQL_SELECT_SOCIALACTIVITY_WHERE, _SQL_COUNT_SOCIALACTIVITY_WHERE,
-			SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"socialActivity.", "mirrorActivityId", FinderColumn.Type.LONG,
 				"=", true, true, SocialActivity::getMirrorActivityId),
@@ -1838,7 +1740,8 @@ public class SocialActivityPersistenceImpl
 				},
 				new String[] {"classNameId", "classPK", "type_"}, false),
 			_SQL_SELECT_SOCIALACTIVITY_WHERE, _SQL_COUNT_SOCIALACTIVITY_WHERE,
-			SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"socialActivity.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, SocialActivity::getClassNameId),
@@ -1846,8 +1749,8 @@ public class SocialActivityPersistenceImpl
 				"socialActivity.", "classPK", FinderColumn.Type.LONG, "=", true,
 				true, SocialActivity::getClassPK),
 			new FinderColumn<>(
-				"socialActivity.", "type", FinderColumn.Type.INTEGER, "=", true,
-				true, SocialActivity::getType));
+				"socialActivity.", "type", "type_", FinderColumn.Type.INTEGER,
+				"=", true, true, SocialActivity::getType));
 
 		_collectionPersistenceFinderByG_U_C_C_T_R =
 			new CollectionPersistenceFinder<>(
@@ -1895,6 +1798,7 @@ public class SocialActivityPersistenceImpl
 				_SQL_SELECT_SOCIALACTIVITY_WHERE,
 				_SQL_COUNT_SOCIALACTIVITY_WHERE,
 				SocialActivityModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"socialActivity.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, SocialActivity::getGroupId),
@@ -1908,8 +1812,9 @@ public class SocialActivityPersistenceImpl
 					"socialActivity.", "classPK", FinderColumn.Type.LONG, "=",
 					true, true, SocialActivity::getClassPK),
 				new FinderColumn<>(
-					"socialActivity.", "type", FinderColumn.Type.INTEGER, "=",
-					true, true, SocialActivity::getType),
+					"socialActivity.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					SocialActivity::getType),
 				new FinderColumn<>(
 					"socialActivity.", "receiverUserId", FinderColumn.Type.LONG,
 					"=", true, true, SocialActivity::getReceiverUserId));
@@ -1950,8 +1855,9 @@ public class SocialActivityPersistenceImpl
 					"socialActivity.", "classPK", FinderColumn.Type.LONG, "=",
 					true, true, SocialActivity::getClassPK),
 				new FinderColumn<>(
-					"socialActivity.", "type", FinderColumn.Type.INTEGER, "=",
-					true, true, SocialActivity::getType),
+					"socialActivity.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					SocialActivity::getType),
 				new FinderColumn<>(
 					"socialActivity.", "receiverUserId", FinderColumn.Type.LONG,
 					"=", true, true, SocialActivity::getReceiverUserId));
@@ -1977,12 +1883,6 @@ public class SocialActivityPersistenceImpl
 	private static final String _SQL_COUNT_SOCIALACTIVITY_WHERE =
 		"SELECT COUNT(socialActivity) FROM SocialActivity socialActivity WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SocialActivity exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SocialActivityPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
 
@@ -1992,4 +1892,4 @@ public class SocialActivityPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:12316359
+// LIFERAY-SERVICE-BUILDER-HASH:1633961054

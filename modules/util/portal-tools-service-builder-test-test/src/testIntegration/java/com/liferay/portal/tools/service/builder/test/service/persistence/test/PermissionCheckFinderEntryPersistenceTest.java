@@ -117,10 +117,8 @@ public class PermissionCheckFinderEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		PermissionCheckFinderEntry newPermissionCheckFinderEntry =
-			_persistence.create(pk);
+			addPermissionCheckFinderEntry();
 
 		newPermissionCheckFinderEntry.setGroupId(RandomTestUtil.nextLong());
 
@@ -134,8 +132,10 @@ public class PermissionCheckFinderEntryPersistenceTest {
 
 		newPermissionCheckFinderEntry.setType(RandomTestUtil.randomString());
 
-		_permissionCheckFinderEntries.add(
-			_persistence.update(newPermissionCheckFinderEntry));
+		newPermissionCheckFinderEntry = _persistence.update(
+			newPermissionCheckFinderEntry);
+
+		_permissionCheckFinderEntries.add(newPermissionCheckFinderEntry);
 
 		PermissionCheckFinderEntry existingPermissionCheckFinderEntry =
 			_persistence.findByPrimaryKey(
@@ -513,4 +513,4 @@ public class PermissionCheckFinderEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2085231377
+// LIFERAY-SERVICE-BUILDER-HASH:770858273

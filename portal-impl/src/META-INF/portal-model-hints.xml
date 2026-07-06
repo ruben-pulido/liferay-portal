@@ -211,6 +211,7 @@
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="vocabularyId" type="long" />
+		<field name="depotEntryType" type="int" />
 	</model>
 	<model name="com.liferay.counter.kernel.model.Counter">
 		<field name="name" type="String">
@@ -808,6 +809,7 @@
 		<field name="themeId" type="String" />
 		<field name="colorSchemeId" type="String" />
 		<field name="styleBookEntryERC" type="String" />
+		<field name="styleBookEntryScopeERC" type="String" />
 		<field name="css" type="String">
 			<hint-collection name="CLOB" />
 		</field>
@@ -1545,6 +1547,10 @@
 			<hint name="max-length">255</hint>
 		</field>
 		<field name="type" type="int" />
+		<field name="emailAddress" type="String">
+			<hint-collection name="EMAIL-ADDRESS" />
+			<validator name="email" />
+		</field>
 		<field name="extraInfo" type="String">
 			<hint-collection name="CLOB" />
 		</field>

@@ -8,6 +8,42 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 source _common.sh
 
+function main {
+	_create_worktree
+
+	[[ ${LIFERAY_PROVISION:-} == none ]] && { echo "${WORKTREE_DIR}"; return 0; }
+
+	_set_bundle_path
+
+	if [[ ${LIFERAY_PROVISION:-} == fresh ]]
+	then
+		(cd "${WORKTREE_DIR}" && ANT_OPTS="-Xmx2560m" ant all >&2) || _die "\"ant all\" failed under ${WORKTREE_DIR}."
+	else
+		_reuse_worktree
+	fi
+
+	_set_port_offset
+
+	_set_arquillian_port
+	_set_data_guard_port
+	_set_database
+	_set_debug_port
+	_set_elasticsearch_ports
+	_set_glowroot_port
+	_set_gogo_shell_port
+	_set_gradle_paths
+	_set_playwright_port
+	_set_portal_home
+	_set_portal_http_address
+	_set_poshi_url
+	_set_test_integration_port
+	_set_tomcat_ports
+
+	[[ -z ${LIFERAY_PROVISION_SKIP_TOMCAT:-} ]] && "$(_find_tomcat_dir "${BUNDLES_DIR}")/bin/catalina.sh" jpda start >&2
+
+	echo "${WORKTREE_DIR}"
+}
+
 function _all_ports_free_for_offset {
 	local offset="${1}"
 
@@ -47,7 +83,7 @@ function _collect_claimed_offsets {
 
 		worktree_path="${line#worktree }"
 
-		[[ ${worktree_path} != "${WORKTREE_DIR}" ]] || continue
+		[[ ${worktree_path} != ${WORKTREE_DIR} ]] || continue
 
 		bundles="$(_find_app_server_parent_dir "${worktree_path}" 2>/dev/null)" || continue
 
@@ -64,12 +100,14 @@ function _create_worktree {
 
 	input="$(cat)"
 
-	cwd="$(jq --exit-status --raw-output ".cwd" <<< "${input}")" || _die "The cwd field is missing from the hook input ${input}."
-	name="$(jq --exit-status --raw-output ".name" <<< "${input}")" || _die "The name field is missing from the hook input ${input}."
+	cwd="$(jq --exit-status --raw-output .cwd <<< "${input}")" || _die "The \"cwd\" field is missing from the hook input ${input}."
+	name="$(jq --exit-status --raw-output .name <<< "${input}")" || _die "The \"name\" field is missing from the hook input ${input}."
 
-	local target_path
+	local main_worktree target_path
 
-	target_path="$(dirname "$(git -C "${cwd}" rev-parse --show-toplevel)")/liferay-portal-${name}"
+	main_worktree="$(git -C "${cwd}" worktree list --porcelain | grep --extended-regexp "^worktree " | head --lines=1 | _sed "s/^worktree //")"
+
+	target_path="$(dirname "${main_worktree}")/$(basename "${main_worktree}")-${name}"
 
 	if ! git -C "${cwd}" worktree list --porcelain | grep --fixed-strings --line-regexp --quiet "worktree ${target_path}"
 	then
@@ -89,13 +127,13 @@ function _resolve_main_worktree_dir {
 
 	repo_dir="$(git -C "${WORKTREE_DIR}" rev-parse --show-toplevel)"
 
-	git -C "${repo_dir}" worktree list --porcelain | grep --extended-regexp "^worktree .*/liferay-portal\$" | head --lines=1 | sed "s/^worktree //"
+	git -C "${repo_dir}" worktree list --porcelain | grep --extended-regexp "^worktree .*/liferay-portal\$" | head --lines=1 | _sed "s/^worktree //"
 }
 
 function _reuse_worktree {
 	MAIN_WORKTREE_DIR="$(_resolve_main_worktree_dir)"
 
-	if [[ -n ${MAIN_WORKTREE_DIR} && ${MAIN_WORKTREE_DIR} != "${WORKTREE_DIR}" ]]
+	if [[ -n ${MAIN_WORKTREE_DIR} && ${MAIN_WORKTREE_DIR} != ${WORKTREE_DIR} ]]
 	then
 		rsync \
 			--archive \
@@ -110,36 +148,37 @@ function _reuse_worktree {
 
 		if [[ -d ${MAIN_WORKTREE_DIR}/.gradle/caches && ! -e ${WORKTREE_DIR}/.gradle/caches ]]
 		then
-			mkdir --parents "${WORKTREE_DIR}/.gradle"
+			mkdir -p "${WORKTREE_DIR}/.gradle"
 
-			cp --archive --link "${MAIN_WORKTREE_DIR}/.gradle/caches" "${WORKTREE_DIR}/.gradle/caches"
+			if [[ $(uname) == Darwin ]]
+			then
+				rsync --archive --link-dest="${MAIN_WORKTREE_DIR}/.gradle/caches" "${MAIN_WORKTREE_DIR}/.gradle/caches/" "${WORKTREE_DIR}/.gradle/caches/"
+			else
+				cp --archive --link "${MAIN_WORKTREE_DIR}/.gradle/caches" "${WORKTREE_DIR}/.gradle/caches"
+			fi
 		fi
 	fi
 
 	if ! _bundle_exists "${BUNDLES_DIR}"
 	then
-		[[ -n ${MAIN_WORKTREE_DIR} && ${MAIN_WORKTREE_DIR} != "${WORKTREE_DIR}" ]] || _die "Unable to locate the main worktree to copy the bundle from."
+		[[ -n ${MAIN_WORKTREE_DIR} && ${MAIN_WORKTREE_DIR} != ${WORKTREE_DIR} ]] || _die "The main worktree is missing, so the bundle cannot be copied."
 
 		local main_bundles
 
-		main_bundles="$(_find_app_server_parent_dir "${MAIN_WORKTREE_DIR}")" || _die "Unable to resolve app.server.parent.dir for ${MAIN_WORKTREE_DIR}."
+		main_bundles="$(_find_app_server_parent_dir "${MAIN_WORKTREE_DIR}")" || _die "The \"app.server.parent.dir\" property is undefined for ${MAIN_WORKTREE_DIR}."
 
 		[[ -d ${main_bundles} ]] || _die "Main bundle directory ${main_bundles} does not exist."
 
-		mkdir --parents "${BUNDLES_DIR}"
+		mkdir -p "${BUNDLES_DIR}"
 
-		cp --archive "${main_bundles}/." "${BUNDLES_DIR}/"
+		if [[ $(uname) == Darwin ]]
+		then
+			rsync --archive "${main_bundles}/" "${BUNDLES_DIR}/"
+		else
+			cp --archive "${main_bundles}/." "${BUNDLES_DIR}"
+		fi
 
-		_bundle_exists "${BUNDLES_DIR}" || _die "Bundle copy finished but no tomcat-* directory exists under ${BUNDLES_DIR}."
-	fi
-}
-
-function _sed_inplace {
-	if [[ $(uname) == Darwin ]]
-	then
-		sed -i "" "${@}"
-	else
-		sed --in-place "${@}"
+		_bundle_exists "${BUNDLES_DIR}" || _die "Bundle copy finished but no \"tomcat-*\" directory exists under ${BUNDLES_DIR}."
 	fi
 }
 
@@ -148,7 +187,7 @@ function _set_arquillian_port {
 
 	local config_file="${BUNDLES_DIR}/osgi/configs/com.liferay.arquillian.extension.junit.bridge.connector.ArquillianConnector.config"
 
-	mkdir --parents "$(dirname "${config_file}")"
+	mkdir -p "$(dirname "${config_file}")"
 
 	_atomic_write "${config_file}" <<EOF
 port="${target}"
@@ -170,7 +209,7 @@ function _set_bundle_path {
 function _set_data_guard_port {
 	local file="${BUNDLES_DIR}/osgi/configs/com.liferay.data.guard.connector.DataGuardConnector.config"
 
-	mkdir --parents "$(dirname "${file}")"
+	mkdir -p "$(dirname "${file}")"
 
 	local target=$((42763 + OFFSET))
 
@@ -185,11 +224,12 @@ function _set_database {
 	db_name="$(_derive_db_name "$(basename "${WORKTREE_DIR}")")"
 
 	local file="${BUNDLES_DIR}/portal-ext.properties"
+	local wizard_file="${BUNDLES_DIR}/portal-setup-wizard.properties"
 
 	local existing_user existing_password
 
-	existing_user="$(_get_property "${file}" "jdbc\.default\.username" root)"
-	existing_password="$(_get_property "${file}" "jdbc\.default\.password")"
+	existing_user="$(_get_property_from_files "jdbc\.default\.username" root "${file}" "${wizard_file}")"
+	existing_password="$(_get_property_from_files "jdbc\.default\.password" "" "${file}" "${wizard_file}")"
 
 	_set_property "${file}" jdbc.default.driverClassName com.mysql.cj.jdbc.Driver
 	_set_property "${file}" jdbc.default.url "jdbc:mysql://localhost/${db_name}?characterEncoding=UTF-8&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true"
@@ -227,7 +267,7 @@ function _set_debug_port {
 function _set_elasticsearch_ports {
 	local configs_dir="${BUNDLES_DIR}/osgi/configs"
 
-	mkdir --parents "${configs_dir}"
+	mkdir -p "${configs_dir}"
 
 	local es_version=elasticsearch8
 
@@ -262,9 +302,9 @@ function _set_glowroot_port {
 
 	local current
 
-	current="$(jq ".web.port" "${file}" 2>/dev/null || echo null)"
+	current="$(jq .web.port "${file}" 2>/dev/null || echo null)"
 
-	if [[ ${current} == "${target}" ]]
+	if [[ ${current} == ${target} ]]
 	then
 		return
 	fi
@@ -296,15 +336,16 @@ function _set_gradle_paths {
 
 	main_worktree="$(_resolve_main_worktree_dir)"
 
-	[[ -n ${main_worktree} && ${main_worktree} != "${WORKTREE_DIR}" ]] || return 0
+	[[ -n ${main_worktree} && ${main_worktree} != ${WORKTREE_DIR} ]] || return 0
 
 	local main_bundles_literal
 
 	main_bundles_literal="$(_get_property "${file}" "liferay\.home")"
 
-	[[ -n ${main_bundles_literal} ]] || _die "Unable to read liferay.home from ${file}."
+	[[ -n ${main_bundles_literal} ]] || _die "The \"liferay.home\" property is missing from ${file}."
 
-	_sed_inplace \
+	_sed \
+		--in-place \
 		--expression "s|${main_bundles_literal}/|${BUNDLES_DIR}/|g" \
 		--expression "s|${main_bundles_literal}\$|${BUNDLES_DIR}|g" \
 		--expression "s|${main_worktree}/|${WORKTREE_DIR}/|g" \
@@ -332,6 +373,35 @@ function _set_port_offset {
 		return
 	fi
 
+	local lock_file
+
+	lock_file="$(git -C "${WORKTREE_DIR}" rev-parse --path-format=absolute --git-common-dir)/.worktree-port-offset.lock"
+
+	local lock_dir="${lock_file}.d"
+
+	local lock_fd
+	local use_flock=0
+
+	command -v flock >/dev/null 2>&1 && use_flock=1
+
+	if [[ ${use_flock} -eq 1 ]]
+	then
+		exec {lock_fd}>"${lock_file}"
+
+		flock "${lock_fd}"
+	else
+		local waited=0
+
+		until mkdir "${lock_dir}" 2>/dev/null
+		do
+			sleep 1
+
+			((++waited))
+
+			[[ ${waited} -lt 120 ]] || _die "The port offset lock at ${lock_dir} could not be acquired."
+		done
+	fi
+
 	local claimed_offsets
 
 	claimed_offsets=" $(_collect_claimed_offsets | tr "\n" " ") "
@@ -347,11 +417,18 @@ function _set_port_offset {
 			OFFSET="${offset}"
 			echo "${OFFSET}" > "${offset_file}"
 
-			return
+			break
 		fi
 	done
 
-	_die "Unable to find a free port offset between 1 and 99."
+	if [[ ${use_flock} -eq 1 ]]
+	then
+		exec {lock_fd}>&-
+	else
+		rmdir "${lock_dir}" 2>/dev/null || true
+	fi
+
+	[[ -f ${offset_file} ]] || _die "No free port offset is available between 1 and 99."
 }
 
 function _set_portal_home {
@@ -368,6 +445,15 @@ function _set_portal_http_address {
 	_set_property "${BUNDLES_DIR}/portal-ext.properties" portal.instance.inet.socket.address "localhost:${http_port}"
 }
 
+function _set_poshi_url {
+	local file="${WORKTREE_DIR}/test.${USER}.properties"
+	local http_port=$((8080 + OFFSET))
+
+	_set_property "${file}" default.portal.url "http://localhost:${http_port}"
+	_set_property "${file}" instance.url "http://localhost:${http_port}"
+	_set_property "${file}" test.url "http://localhost:${http_port}"
+}
+
 function _set_property {
 	local file="${1}"
 	local key="${2}"
@@ -377,7 +463,7 @@ function _set_property {
 
 	local escaped="${key//./\\.}"
 
-	_sed_inplace --expression "/^[[:space:]]*${escaped}=/d" --regexp-extended "${file}"
+	_sed --in-place --regexp-extended --expression "/^[[:space:]]*${escaped}=/d" "${file}"
 
 	if [[ -s ${file} ]] && [[ -n $(tail --bytes=1 "${file}") ]]
 	then
@@ -390,7 +476,7 @@ function _set_property {
 function _set_test_integration_port {
 	local file="${WORKTREE_DIR}/.gradle/init.d/worktree-ports.gradle"
 
-	mkdir --parents "$(dirname "${file}")"
+	mkdir -p "$(dirname "${file}")"
 
 	local http_port=$((8080 + OFFSET))
 
@@ -417,13 +503,14 @@ function _set_tomcat_ports {
 	local target_ajp=$((8009 + OFFSET))
 	local target_https=$((8443 + OFFSET))
 
-	_sed_inplace \
+	_sed \
+		--in-place \
+		--regexp-extended \
 		--expression "/<Server/s/port=\"[0-9]+\"/port=\"${target_shutdown}\"/" \
 		--expression "/protocol=\"HTTP\\/1\\.1\"/s/port=\"[0-9]+\"/port=\"${target_http}\"/" \
 		--expression "/protocol=\"org\\.apache\\.coyote\\.http11\\.Http11NioProtocol\"/s/port=\"[0-9]+\"/port=\"${target_https}\"/" \
 		--expression "/<Connector protocol=\"AJP\\/1\\.3\"/,/\\/>/s/^([[:space:]]+)port=\"[0-9]+\"/\\1port=\"${target_ajp}\"/" \
 		--expression "s/redirectPort=\"[0-9]+\"/redirectPort=\"${target_https}\"/g" \
-		--regexp-extended \
 		"${file}"
 }
 
@@ -434,53 +521,19 @@ function _set_worktree_paths {
 
 	main_worktree="$(_resolve_main_worktree_dir)"
 
-	[[ -n ${main_worktree} && ${main_worktree} != "${WORKTREE_DIR}" ]] || return 0
+	[[ -n ${main_worktree} && ${main_worktree} != ${WORKTREE_DIR} ]] || return 0
 
 	main_bundles="$(_find_app_server_parent_dir "${main_worktree}" 2>/dev/null)" || return 0
 	main_tomcat="$(_find_tomcat_dir "${main_bundles}" 2>/dev/null)" || return 0
 
 	[[ -f ${file} ]] || return 0
 
-	_sed_inplace \
+	_sed \
+		--in-place \
 		--expression "s|${main_tomcat}/|$(_find_tomcat_dir "${BUNDLES_DIR}")/|g" \
 		--expression "s|${main_bundles}/|${BUNDLES_DIR}/|g" \
 		--expression "s|${main_worktree}/|${WORKTREE_DIR}/|g" \
 		"${file}"
-}
-
-function main {
-	_create_worktree
-
-	[[ ${LIFERAY_PROVISION:-} == none ]] && { echo "${WORKTREE_DIR}"; return 0; }
-
-	_set_bundle_path
-
-	if [[ ${LIFERAY_PROVISION:-} == fresh ]]
-	then
-		(cd "${WORKTREE_DIR}" && ANT_OPTS="-Xmx2560m" ant all >&2) || _die "ant all failed under ${WORKTREE_DIR}."
-	else
-		_reuse_worktree
-	fi
-
-	_set_port_offset
-
-	_set_arquillian_port
-	_set_data_guard_port
-	_set_database
-	_set_debug_port
-	_set_elasticsearch_ports
-	_set_glowroot_port
-	_set_gogo_shell_port
-	_set_gradle_paths
-	_set_playwright_port
-	_set_portal_home
-	_set_portal_http_address
-	_set_test_integration_port
-	_set_tomcat_ports
-
-	[[ -z ${LIFERAY_PROVISION_SKIP_TOMCAT:-} ]] && "$(_find_tomcat_dir "${BUNDLES_DIR}")/bin/catalina.sh" jpda start >&2
-
-	echo "${WORKTREE_DIR}"
 }
 
 main "${@}"

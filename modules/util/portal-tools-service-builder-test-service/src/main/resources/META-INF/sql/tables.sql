@@ -41,6 +41,11 @@ create table CacheReplicatorEntry (
 	name VARCHAR(75) null
 );
 
+create table ColumnNameEntry (
+	cNameEntryId LONG not null primary key,
+	name VARCHAR(75) null
+);
+
 create table DSLQueryEntry (
 	dslQueryEntryId LONG not null primary key,
 	name VARCHAR(75) null
@@ -197,6 +202,7 @@ create table LVEntryVersion (
 );
 
 create table LazyBlobEntry (
+	mvccVersion LONG default 0 not null,
 	uuid_ VARCHAR(75) null,
 	lazyBlobEntryId LONG not null primary key,
 	groupId LONG,
@@ -309,6 +315,11 @@ create table PermissionCheckFinderEntry (
 	type_ VARCHAR(75) null
 );
 
+create table ReassociateEntry (
+	reassociateEntryId LONG not null primary key,
+	name VARCHAR(75) null
+);
+
 create table RedundantIndexEntry (
 	redundantIndexEntryId LONG not null primary key,
 	companyId LONG,
@@ -330,6 +341,12 @@ create table UADPartialEntry (
 
 create table UndefinedDefaultOrderEntry (
 	undefinedDefaultOrderEntryId LONG not null primary key,
+	modifiedDate DATE null,
+	name VARCHAR(75) null
+);
+
+create table UniqueFinderEntry (
+	uniqueFinderEntryId LONG not null primary key,
 	modifiedDate DATE null,
 	name VARCHAR(75) null
 );

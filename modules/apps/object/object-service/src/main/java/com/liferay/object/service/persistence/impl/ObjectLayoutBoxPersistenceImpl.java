@@ -77,8 +77,9 @@ public class ObjectLayoutBoxPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectLayoutBox>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ObjectLayoutBox, NoSuchObjectLayoutBoxException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the object layout boxes where uuid = &#63;.
@@ -118,16 +119,8 @@ public class ObjectLayoutBoxPersistenceImpl
 			String uuid, OrderByComparator<ObjectLayoutBox> orderByComparator)
 		throws NoSuchObjectLayoutBoxException {
 
-		ObjectLayoutBox objectLayoutBox = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (objectLayoutBox != null) {
-			return objectLayoutBox;
-		}
-
-		throw new NoSuchObjectLayoutBoxException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -168,8 +161,9 @@ public class ObjectLayoutBoxPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ObjectLayoutBox>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ObjectLayoutBox, NoSuchObjectLayoutBoxException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the object layout boxes where uuid = &#63; and companyId = &#63;.
@@ -212,16 +206,8 @@ public class ObjectLayoutBoxPersistenceImpl
 			OrderByComparator<ObjectLayoutBox> orderByComparator)
 		throws NoSuchObjectLayoutBoxException {
 
-		ObjectLayoutBox objectLayoutBox = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectLayoutBox != null) {
-			return objectLayoutBox;
-		}
-
-		throw new NoSuchObjectLayoutBoxException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -266,8 +252,9 @@ public class ObjectLayoutBoxPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ObjectLayoutBox>
-		_collectionPersistenceFinderByObjectLayoutTabId;
+	private CollectionPersistenceFinder
+		<ObjectLayoutBox, NoSuchObjectLayoutBoxException>
+			_collectionPersistenceFinderByObjectLayoutTabId;
 
 	/**
 	 * Returns an ordered range of all the object layout boxes where objectLayoutTabId = &#63;.
@@ -308,18 +295,8 @@ public class ObjectLayoutBoxPersistenceImpl
 			OrderByComparator<ObjectLayoutBox> orderByComparator)
 		throws NoSuchObjectLayoutBoxException {
 
-		ObjectLayoutBox objectLayoutBox = fetchByObjectLayoutTabId_First(
-			objectLayoutTabId, orderByComparator);
-
-		if (objectLayoutBox != null) {
-			return objectLayoutBox;
-		}
-
-		throw new NoSuchObjectLayoutBoxException(
-			_collectionPersistenceFinderByObjectLayoutTabId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectLayoutTabId}));
+		return _collectionPersistenceFinderByObjectLayoutTabId.findFirst(
+			finderCache, new Object[] {objectLayoutTabId}, orderByComparator);
 	}
 
 	/**
@@ -604,9 +581,10 @@ public class ObjectLayoutBoxPersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_OBJECTLAYOUTBOX_WHERE, _SQL_COUNT_OBJECTLAYOUTBOX_WHERE,
 			ObjectLayoutBoxModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"objectLayoutBox.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ObjectLayoutBox::getUuid));
+				"objectLayoutBox.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, ObjectLayoutBox::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -630,10 +608,11 @@ public class ObjectLayoutBoxPersistenceImpl
 				_SQL_SELECT_OBJECTLAYOUTBOX_WHERE,
 				_SQL_COUNT_OBJECTLAYOUTBOX_WHERE,
 				ObjectLayoutBoxModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"objectLayoutBox.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ObjectLayoutBox::getUuid),
+					"objectLayoutBox.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ObjectLayoutBox::getUuid),
 				new FinderColumn<>(
 					"objectLayoutBox.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectLayoutBox::getCompanyId));
@@ -663,7 +642,7 @@ public class ObjectLayoutBoxPersistenceImpl
 				_SQL_SELECT_OBJECTLAYOUTBOX_WHERE,
 				_SQL_COUNT_OBJECTLAYOUTBOX_WHERE,
 				ObjectLayoutBoxModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"objectLayoutBox.", "objectLayoutTabId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -723,9 +702,6 @@ public class ObjectLayoutBoxPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTLAYOUTBOX_WHERE =
 		"SELECT COUNT(objectLayoutBox) FROM ObjectLayoutBox objectLayoutBox WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectLayoutBox exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -735,4 +711,4 @@ public class ObjectLayoutBoxPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-91192495
+// LIFERAY-SERVICE-BUILDER-HASH:-346378191

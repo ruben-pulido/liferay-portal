@@ -24,4 +24,25 @@ public class ExportImportReportEntryConstants {
 
 	public static final int TYPE_ERROR = 1;
 
+	public static final int TYPE_MISSING_REFERENCE = 3;
+
+	public static final int TYPE_WARNING = 4;
+
+	public static String getTypeLabel(int type) {
+		if (type == TYPE_EMPTY) {
+			return "empty";
+		}
+		else if (type == TYPE_ERROR) {
+			return "error";
+		}
+		else if (type == TYPE_MISSING_REFERENCE) {
+			return "missing-reference";
+		}
+		else if (type == TYPE_WARNING) {
+			return "warning";
+		}
+
+		return null;
+	}
+
 }

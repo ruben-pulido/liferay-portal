@@ -111,12 +111,8 @@ public class JournalArticleLocalizationPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		JournalArticleLocalization newJournalArticleLocalization =
-			_persistence.create(pk);
-
-		newJournalArticleLocalization.setMvccVersion(RandomTestUtil.nextLong());
+			addJournalArticleLocalization();
 
 		newJournalArticleLocalization.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -133,8 +129,10 @@ public class JournalArticleLocalizationPersistenceTest {
 		newJournalArticleLocalization.setLanguageId(
 			RandomTestUtil.randomString());
 
-		_journalArticleLocalizations.add(
-			_persistence.update(newJournalArticleLocalization));
+		newJournalArticleLocalization = _persistence.update(
+			newJournalArticleLocalization);
+
+		_journalArticleLocalizations.add(newJournalArticleLocalization);
 
 		JournalArticleLocalization existingJournalArticleLocalization =
 			_persistence.findByPrimaryKey(
@@ -516,8 +514,6 @@ public class JournalArticleLocalizationPersistenceTest {
 		JournalArticleLocalization journalArticleLocalization =
 			_persistence.create(pk);
 
-		journalArticleLocalization.setMvccVersion(RandomTestUtil.nextLong());
-
 		journalArticleLocalization.setCtCollectionId(RandomTestUtil.nextLong());
 
 		journalArticleLocalization.setCompanyId(RandomTestUtil.nextLong());
@@ -543,4 +539,4 @@ public class JournalArticleLocalizationPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1835204292
+// LIFERAY-SERVICE-BUILDER-HASH:-1041766921

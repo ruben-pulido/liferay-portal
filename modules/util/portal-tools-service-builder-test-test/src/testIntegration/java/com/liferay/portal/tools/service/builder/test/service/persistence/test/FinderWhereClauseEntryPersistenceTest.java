@@ -112,17 +112,17 @@ public class FinderWhereClauseEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		FinderWhereClauseEntry newFinderWhereClauseEntry = _persistence.create(
-			pk);
+		FinderWhereClauseEntry newFinderWhereClauseEntry =
+			addFinderWhereClauseEntry();
 
 		newFinderWhereClauseEntry.setName(RandomTestUtil.randomString());
 
 		newFinderWhereClauseEntry.setNickname(RandomTestUtil.randomString());
 
-		_finderWhereClauseEntries.add(
-			_persistence.update(newFinderWhereClauseEntry));
+		newFinderWhereClauseEntry = _persistence.update(
+			newFinderWhereClauseEntry);
+
+		_finderWhereClauseEntries.add(newFinderWhereClauseEntry);
 
 		FinderWhereClauseEntry existingFinderWhereClauseEntry =
 			_persistence.findByPrimaryKey(
@@ -439,4 +439,4 @@ public class FinderWhereClauseEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-333911845
+// LIFERAY-SERVICE-BUILDER-HASH:1693639358

@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -82,7 +80,7 @@ public class CTSContentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTSContent>
+	private CollectionPersistenceFinder<CTSContent, NoSuchContentException>
 		_collectionPersistenceFinderByR_P;
 
 	/**
@@ -126,16 +124,8 @@ public class CTSContentPersistenceImpl
 			OrderByComparator<CTSContent> orderByComparator)
 		throws NoSuchContentException {
 
-		CTSContent ctsContent = fetchByR_P_First(
-			repositoryId, path, orderByComparator);
-
-		if (ctsContent != null) {
-			return ctsContent;
-		}
-
-		throw new NoSuchContentException(
-			_collectionPersistenceFinderByR_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {repositoryId, path}));
+		return _collectionPersistenceFinderByR_P.findFirst(
+			finderCache, new Object[] {repositoryId, path}, orderByComparator);
 	}
 
 	/**
@@ -180,7 +170,7 @@ public class CTSContentPersistenceImpl
 			finderCache, new Object[] {repositoryId, path});
 	}
 
-	private CollectionPersistenceFinder<CTSContent>
+	private CollectionPersistenceFinder<CTSContent, NoSuchContentException>
 		_collectionPersistenceFinderByC_R_S;
 
 	/**
@@ -226,17 +216,9 @@ public class CTSContentPersistenceImpl
 			OrderByComparator<CTSContent> orderByComparator)
 		throws NoSuchContentException {
 
-		CTSContent ctsContent = fetchByC_R_S_First(
-			companyId, repositoryId, storeType, orderByComparator);
-
-		if (ctsContent != null) {
-			return ctsContent;
-		}
-
-		throw new NoSuchContentException(
-			_collectionPersistenceFinderByC_R_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, repositoryId, storeType}));
+		return _collectionPersistenceFinderByC_R_S.findFirst(
+			finderCache, new Object[] {companyId, repositoryId, storeType},
+			orderByComparator);
 	}
 
 	/**
@@ -289,7 +271,7 @@ public class CTSContentPersistenceImpl
 			finderCache, new Object[] {companyId, repositoryId, storeType});
 	}
 
-	private CollectionPersistenceFinder<CTSContent>
+	private CollectionPersistenceFinder<CTSContent, NoSuchContentException>
 		_collectionPersistenceFinderByC_R_P_S;
 
 	/**
@@ -338,17 +320,10 @@ public class CTSContentPersistenceImpl
 			OrderByComparator<CTSContent> orderByComparator)
 		throws NoSuchContentException {
 
-		CTSContent ctsContent = fetchByC_R_P_S_First(
-			companyId, repositoryId, path, storeType, orderByComparator);
-
-		if (ctsContent != null) {
-			return ctsContent;
-		}
-
-		throw new NoSuchContentException(
-			_collectionPersistenceFinderByC_R_P_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, repositoryId, path, storeType}));
+		return _collectionPersistenceFinderByC_R_P_S.findFirst(
+			finderCache,
+			new Object[] {companyId, repositoryId, path, storeType},
+			orderByComparator);
 	}
 
 	/**
@@ -407,7 +382,7 @@ public class CTSContentPersistenceImpl
 			new Object[] {companyId, repositoryId, path, storeType});
 	}
 
-	private CollectionPersistenceFinder<CTSContent>
+	private CollectionPersistenceFinder<CTSContent, NoSuchContentException>
 		_collectionPersistenceFinderByC_R_LikeP_S;
 
 	/**
@@ -524,17 +499,10 @@ public class CTSContentPersistenceImpl
 			OrderByComparator<CTSContent> orderByComparator)
 		throws NoSuchContentException {
 
-		CTSContent ctsContent = fetchByC_R_LikeP_S_First(
-			companyId, repositoryId, path, storeType, orderByComparator);
-
-		if (ctsContent != null) {
-			return ctsContent;
-		}
-
-		throw new NoSuchContentException(
-			_collectionPersistenceFinderByC_R_LikeP_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, repositoryId, path, storeType}));
+		return _collectionPersistenceFinderByC_R_LikeP_S.findFirst(
+			finderCache,
+			new Object[] {companyId, repositoryId, path, storeType},
+			orderByComparator);
 	}
 
 	/**
@@ -593,7 +561,7 @@ public class CTSContentPersistenceImpl
 			new Object[] {companyId, repositoryId, path, storeType});
 	}
 
-	private UniquePersistenceFinder<CTSContent>
+	private UniquePersistenceFinder<CTSContent, NoSuchContentException>
 		_uniquePersistenceFinderByC_R_P_V_S;
 
 	/**
@@ -613,25 +581,9 @@ public class CTSContentPersistenceImpl
 			String storeType)
 		throws NoSuchContentException {
 
-		CTSContent ctsContent = fetchByC_R_P_V_S(
-			companyId, repositoryId, path, version, storeType);
-
-		if (ctsContent == null) {
-			String message =
-				_uniquePersistenceFinderByC_R_P_V_S.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						companyId, repositoryId, path, version, storeType
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchContentException(message);
-		}
-
-		return ctsContent;
+		return _uniquePersistenceFinderByC_R_P_V_S.find(
+			finderCache,
+			new Object[] {companyId, repositoryId, path, version, storeType});
 	}
 
 	/**
@@ -814,10 +766,7 @@ public class CTSContentPersistenceImpl
 				session.save(ctsContent);
 			}
 			else {
-				session.evict(
-					CTSContentImpl.class, ctsContent.getPrimaryKeyObj());
-
-				session.saveOrUpdate(ctsContent);
+				ctsContent = (CTSContent)session.merge(ctsContent);
 			}
 
 			session.flush();
@@ -980,13 +929,14 @@ public class CTSContentPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"repositoryId", "path_"}, 0, 2, false, null),
 			_SQL_SELECT_CTSCONTENT_WHERE, _SQL_COUNT_CTSCONTENT_WHERE,
-			CTSContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			CTSContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"ctsContent.", "repositoryId", FinderColumn.Type.LONG, "=",
 				true, true, CTSContent::getRepositoryId),
 			new FinderColumn<>(
-				"ctsContent.", "path", FinderColumn.Type.STRING, "=", true,
-				true, CTSContent::getPath));
+				"ctsContent.", "path", "path_", FinderColumn.Type.STRING, "=",
+				true, true, CTSContent::getPath));
 
 		_collectionPersistenceFinderByC_R_S = new CollectionPersistenceFinder<>(
 			this,
@@ -1015,7 +965,8 @@ public class CTSContentPersistenceImpl
 				new String[] {"companyId", "repositoryId", "storeType"}, 0, 4,
 				false, null),
 			_SQL_SELECT_CTSCONTENT_WHERE, _SQL_COUNT_CTSCONTENT_WHERE,
-			CTSContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			CTSContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"ctsContent.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, CTSContent::getCompanyId),
@@ -1062,7 +1013,8 @@ public class CTSContentPersistenceImpl
 					},
 					0, 12, false, null),
 				_SQL_SELECT_CTSCONTENT_WHERE, _SQL_COUNT_CTSCONTENT_WHERE,
-				CTSContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CTSContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ctsContent.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTSContent::getCompanyId),
@@ -1070,8 +1022,8 @@ public class CTSContentPersistenceImpl
 					"ctsContent.", "repositoryId", FinderColumn.Type.LONG, "=",
 					true, true, CTSContent::getRepositoryId),
 				new FinderColumn<>(
-					"ctsContent.", "path", FinderColumn.Type.STRING, "=", true,
-					true, CTSContent::getPath),
+					"ctsContent.", "path", "path_", FinderColumn.Type.STRING,
+					"=", true, true, CTSContent::getPath),
 				new FinderColumn<>(
 					"ctsContent.", "storeType", FinderColumn.Type.STRING, "=",
 					true, true, CTSContent::getStoreType));
@@ -1104,7 +1056,8 @@ public class CTSContentPersistenceImpl
 					},
 					false),
 				_SQL_SELECT_CTSCONTENT_WHERE, _SQL_COUNT_CTSCONTENT_WHERE,
-				CTSContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CTSContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ctsContent.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTSContent::getCompanyId),
@@ -1112,8 +1065,8 @@ public class CTSContentPersistenceImpl
 					"ctsContent.", "repositoryId", FinderColumn.Type.LONG, "=",
 					true, true, CTSContent::getRepositoryId),
 				new FinderColumn<>(
-					"ctsContent.", "path", FinderColumn.Type.STRING, "LIKE",
-					true, true, CTSContent::getPath),
+					"ctsContent.", "path", "path_", FinderColumn.Type.STRING,
+					"LIKE", true, true, CTSContent::getPath),
 				new FinderColumn<>(
 					"ctsContent.", "storeType", FinderColumn.Type.STRING, "=",
 					true, true, CTSContent::getStoreType));
@@ -1143,8 +1096,8 @@ public class CTSContentPersistenceImpl
 				"ctsContent.", "repositoryId", FinderColumn.Type.LONG, "=",
 				true, true, CTSContent::getRepositoryId),
 			new FinderColumn<>(
-				"ctsContent.", "path", FinderColumn.Type.STRING, "=", true,
-				true, CTSContent::getPath),
+				"ctsContent.", "path", "path_", FinderColumn.Type.STRING, "=",
+				true, true, CTSContent::getPath),
 			new FinderColumn<>(
 				"ctsContent.", "version", FinderColumn.Type.STRING, "=", true,
 				true, CTSContent::getVersion),
@@ -1209,12 +1162,6 @@ public class CTSContentPersistenceImpl
 	private static final String _SQL_COUNT_CTSCONTENT_WHERE =
 		"SELECT COUNT(ctsContent) FROM CTSContent ctsContent WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTSContent exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CTSContentPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"path", "data", "size"});
 
@@ -1224,4 +1171,4 @@ public class CTSContentPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:974583559
+// LIFERAY-SERVICE-BUILDER-HASH:333066147

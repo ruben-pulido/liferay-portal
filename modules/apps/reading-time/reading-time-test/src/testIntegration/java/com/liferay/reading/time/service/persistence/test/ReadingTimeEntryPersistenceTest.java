@@ -111,11 +111,7 @@ public class ReadingTimeEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ReadingTimeEntry newReadingTimeEntry = _persistence.create(pk);
-
-		newReadingTimeEntry.setMvccVersion(RandomTestUtil.nextLong());
+		ReadingTimeEntry newReadingTimeEntry = addReadingTimeEntry();
 
 		newReadingTimeEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -135,7 +131,9 @@ public class ReadingTimeEntryPersistenceTest {
 
 		newReadingTimeEntry.setReadingTime(RandomTestUtil.nextLong());
 
-		_readingTimeEntries.add(_persistence.update(newReadingTimeEntry));
+		newReadingTimeEntry = _persistence.update(newReadingTimeEntry);
+
+		_readingTimeEntries.add(newReadingTimeEntry);
 
 		ReadingTimeEntry existingReadingTimeEntry =
 			_persistence.findByPrimaryKey(newReadingTimeEntry.getPrimaryKey());
@@ -543,8 +541,6 @@ public class ReadingTimeEntryPersistenceTest {
 
 		ReadingTimeEntry readingTimeEntry = _persistence.create(pk);
 
-		readingTimeEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		readingTimeEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		readingTimeEntry.setUuid(RandomTestUtil.randomString());
@@ -574,4 +570,4 @@ public class ReadingTimeEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1199045994
+// LIFERAY-SERVICE-BUILDER-HASH:736700506

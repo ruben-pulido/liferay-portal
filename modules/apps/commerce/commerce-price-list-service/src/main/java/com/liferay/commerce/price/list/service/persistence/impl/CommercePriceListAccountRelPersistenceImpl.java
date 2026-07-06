@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -87,8 +85,9 @@ public class CommercePriceListAccountRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommercePriceListAccountRel>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommercePriceListAccountRel, NoSuchPriceListAccountRelException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce price list account rels where uuid = &#63;.
@@ -129,16 +128,8 @@ public class CommercePriceListAccountRelPersistenceImpl
 			OrderByComparator<CommercePriceListAccountRel> orderByComparator)
 		throws NoSuchPriceListAccountRelException {
 
-		CommercePriceListAccountRel commercePriceListAccountRel =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (commercePriceListAccountRel != null) {
-			return commercePriceListAccountRel;
-		}
-
-		throw new NoSuchPriceListAccountRelException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -180,8 +171,9 @@ public class CommercePriceListAccountRelPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceListAccountRel>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommercePriceListAccountRel, NoSuchPriceListAccountRelException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce price list account rels where uuid = &#63; and companyId = &#63;.
@@ -224,16 +216,8 @@ public class CommercePriceListAccountRelPersistenceImpl
 			OrderByComparator<CommercePriceListAccountRel> orderByComparator)
 		throws NoSuchPriceListAccountRelException {
 
-		CommercePriceListAccountRel commercePriceListAccountRel =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (commercePriceListAccountRel != null) {
-			return commercePriceListAccountRel;
-		}
-
-		throw new NoSuchPriceListAccountRelException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -278,8 +262,9 @@ public class CommercePriceListAccountRelPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceListAccountRel>
-		_collectionPersistenceFinderByCommercePriceListId;
+	private CollectionPersistenceFinder
+		<CommercePriceListAccountRel, NoSuchPriceListAccountRelException>
+			_collectionPersistenceFinderByCommercePriceListId;
 
 	/**
 	 * Returns an ordered range of all the commerce price list account rels where commercePriceListId = &#63;.
@@ -320,19 +305,8 @@ public class CommercePriceListAccountRelPersistenceImpl
 			OrderByComparator<CommercePriceListAccountRel> orderByComparator)
 		throws NoSuchPriceListAccountRelException {
 
-		CommercePriceListAccountRel commercePriceListAccountRel =
-			fetchByCommercePriceListId_First(
-				commercePriceListId, orderByComparator);
-
-		if (commercePriceListAccountRel != null) {
-			return commercePriceListAccountRel;
-		}
-
-		throw new NoSuchPriceListAccountRelException(
-			_collectionPersistenceFinderByCommercePriceListId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commercePriceListId}));
+		return _collectionPersistenceFinderByCommercePriceListId.findFirst(
+			finderCache, new Object[] {commercePriceListId}, orderByComparator);
 	}
 
 	/**
@@ -374,8 +348,9 @@ public class CommercePriceListAccountRelPersistenceImpl
 			finderCache, new Object[] {commercePriceListId});
 	}
 
-	private UniquePersistenceFinder<CommercePriceListAccountRel>
-		_uniquePersistenceFinderByCAI_CPI;
+	private UniquePersistenceFinder
+		<CommercePriceListAccountRel, NoSuchPriceListAccountRelException>
+			_uniquePersistenceFinderByCAI_CPI;
 
 	/**
 	 * Returns the commerce price list account rel where commerceAccountId = &#63; and commercePriceListId = &#63; or throws a <code>NoSuchPriceListAccountRelException</code> if it could not be found.
@@ -390,23 +365,8 @@ public class CommercePriceListAccountRelPersistenceImpl
 			long commerceAccountId, long commercePriceListId)
 		throws NoSuchPriceListAccountRelException {
 
-		CommercePriceListAccountRel commercePriceListAccountRel =
-			fetchByCAI_CPI(commerceAccountId, commercePriceListId);
-
-		if (commercePriceListAccountRel == null) {
-			String message =
-				_uniquePersistenceFinderByCAI_CPI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceAccountId, commercePriceListId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPriceListAccountRelException(message);
-		}
-
-		return commercePriceListAccountRel;
+		return _uniquePersistenceFinderByCAI_CPI.find(
+			finderCache, new Object[] {commerceAccountId, commercePriceListId});
 	}
 
 	/**
@@ -803,9 +763,9 @@ public class CommercePriceListAccountRelPersistenceImpl
 			_SQL_SELECT_COMMERCEPRICELISTACCOUNTREL_WHERE,
 			_SQL_COUNT_COMMERCEPRICELISTACCOUNTREL_WHERE,
 			CommercePriceListAccountRelModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"commercePriceListAccountRel.", "uuid",
+				"commercePriceListAccountRel.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CommercePriceListAccountRel::getUuid));
 
@@ -831,9 +791,9 @@ public class CommercePriceListAccountRelPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICELISTACCOUNTREL_WHERE,
 				_SQL_COUNT_COMMERCEPRICELISTACCOUNTREL_WHERE,
 				CommercePriceListAccountRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"commercePriceListAccountRel.", "uuid",
+					"commercePriceListAccountRel.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CommercePriceListAccountRel::getUuid),
 				new FinderColumn<>(
@@ -866,7 +826,7 @@ public class CommercePriceListAccountRelPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICELISTACCOUNTREL_WHERE,
 				_SQL_COUNT_COMMERCEPRICELISTACCOUNTREL_WHERE,
 				CommercePriceListAccountRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commercePriceListAccountRel.", "commercePriceListId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -948,12 +908,6 @@ public class CommercePriceListAccountRelPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEPRICELISTACCOUNTREL_WHERE =
 		"SELECT COUNT(commercePriceListAccountRel) FROM CommercePriceListAccountRel commercePriceListAccountRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommercePriceListAccountRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommercePriceListAccountRelPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "order"});
 
@@ -963,4 +917,4 @@ public class CommercePriceListAccountRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-200344301
+// LIFERAY-SERVICE-BUILDER-HASH:1735120858

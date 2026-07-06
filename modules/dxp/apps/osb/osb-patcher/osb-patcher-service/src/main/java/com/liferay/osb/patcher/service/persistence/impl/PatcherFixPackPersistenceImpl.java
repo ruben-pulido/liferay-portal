@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -84,8 +82,9 @@ public class PatcherFixPackPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<PatcherFixPack>
-		_uniquePersistenceFinderByPatcherBuildId;
+	private UniquePersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_uniquePersistenceFinderByPatcherBuildId;
 
 	/**
 	 * Returns the patcher fix pack where patcherBuildId = &#63; or throws a <code>NoSuchPatcherFixPackException</code> if it could not be found.
@@ -98,21 +97,8 @@ public class PatcherFixPackPersistenceImpl
 	public PatcherFixPack findByPatcherBuildId(long patcherBuildId)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPatcherBuildId(patcherBuildId);
-
-		if (patcherFixPack == null) {
-			String message =
-				_uniquePersistenceFinderByPatcherBuildId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {patcherBuildId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPatcherFixPackException(message);
-		}
-
-		return patcherFixPack;
+		return _uniquePersistenceFinderByPatcherBuildId.find(
+			finderCache, new Object[] {patcherBuildId});
 	}
 
 	/**
@@ -157,8 +143,9 @@ public class PatcherFixPackPersistenceImpl
 			finderCache, new Object[] {patcherBuildId});
 	}
 
-	private FilterCollectionPersistenceFinder<PatcherFixPack>
-		_collectionPersistenceFinderByPatcherFixComponentId;
+	private FilterCollectionPersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_collectionPersistenceFinderByPatcherFixComponentId;
 
 	/**
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63;.
@@ -199,18 +186,9 @@ public class PatcherFixPackPersistenceImpl
 			OrderByComparator<PatcherFixPack> orderByComparator)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPatcherFixComponentId_First(
-			patcherFixComponentId, orderByComparator);
-
-		if (patcherFixPack != null) {
-			return patcherFixPack;
-		}
-
-		throw new NoSuchPatcherFixPackException(
-			_collectionPersistenceFinderByPatcherFixComponentId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {patcherFixComponentId}));
+		return _collectionPersistenceFinderByPatcherFixComponentId.findFirst(
+			finderCache, new Object[] {patcherFixComponentId},
+			orderByComparator);
 	}
 
 	/**
@@ -288,8 +266,9 @@ public class PatcherFixPackPersistenceImpl
 			finderCache, new Object[] {patcherFixComponentId});
 	}
 
-	private FilterCollectionPersistenceFinder<PatcherFixPack>
-		_collectionPersistenceFinderByVersion;
+	private FilterCollectionPersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_collectionPersistenceFinderByVersion;
 
 	/**
 	 * Returns an ordered range of all the patcher fix packs where version = &#63;.
@@ -329,16 +308,8 @@ public class PatcherFixPackPersistenceImpl
 			int version, OrderByComparator<PatcherFixPack> orderByComparator)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByVersion_First(
-			version, orderByComparator);
-
-		if (patcherFixPack != null) {
-			return patcherFixPack;
-		}
-
-		throw new NoSuchPatcherFixPackException(
-			_collectionPersistenceFinderByVersion.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {version}));
+		return _collectionPersistenceFinderByVersion.findFirst(
+			finderCache, new Object[] {version}, orderByComparator);
 	}
 
 	/**
@@ -413,8 +384,9 @@ public class PatcherFixPackPersistenceImpl
 			finderCache, new Object[] {version});
 	}
 
-	private FilterCollectionPersistenceFinder<PatcherFixPack>
-		_collectionPersistenceFinderByPFCI_PPVI;
+	private FilterCollectionPersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_collectionPersistenceFinderByPFCI_PPVI;
 
 	/**
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63;.
@@ -458,17 +430,10 @@ public class PatcherFixPackPersistenceImpl
 			OrderByComparator<PatcherFixPack> orderByComparator)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPFCI_PPVI_First(
-			patcherFixComponentId, patcherProjectVersionId, orderByComparator);
-
-		if (patcherFixPack != null) {
-			return patcherFixPack;
-		}
-
-		throw new NoSuchPatcherFixPackException(
-			_collectionPersistenceFinderByPFCI_PPVI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {patcherFixComponentId, patcherProjectVersionId}));
+		return _collectionPersistenceFinderByPFCI_PPVI.findFirst(
+			finderCache,
+			new Object[] {patcherFixComponentId, patcherProjectVersionId},
+			orderByComparator);
 	}
 
 	/**
@@ -562,8 +527,9 @@ public class PatcherFixPackPersistenceImpl
 			new Object[] {patcherFixComponentId, patcherProjectVersionId});
 	}
 
-	private FilterCollectionPersistenceFinder<PatcherFixPack>
-		_collectionPersistenceFinderByPFCI_V;
+	private FilterCollectionPersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_collectionPersistenceFinderByPFCI_V;
 
 	/**
 	 * Returns an ordered range of all the patcher fix packs where patcherFixComponentId = &#63; and version = &#63;.
@@ -606,17 +572,9 @@ public class PatcherFixPackPersistenceImpl
 			OrderByComparator<PatcherFixPack> orderByComparator)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPFCI_V_First(
-			patcherFixComponentId, version, orderByComparator);
-
-		if (patcherFixPack != null) {
-			return patcherFixPack;
-		}
-
-		throw new NoSuchPatcherFixPackException(
-			_collectionPersistenceFinderByPFCI_V.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {patcherFixComponentId, version}));
+		return _collectionPersistenceFinderByPFCI_V.findFirst(
+			finderCache, new Object[] {patcherFixComponentId, version},
+			orderByComparator);
 	}
 
 	/**
@@ -699,8 +657,9 @@ public class PatcherFixPackPersistenceImpl
 			finderCache, new Object[] {patcherFixComponentId, version});
 	}
 
-	private UniquePersistenceFinder<PatcherFixPack>
-		_uniquePersistenceFinderByPFCI_N;
+	private UniquePersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_uniquePersistenceFinderByPFCI_N;
 
 	/**
 	 * Returns the patcher fix pack where patcherProjectVersionId = &#63; and name = &#63; or throws a <code>NoSuchPatcherFixPackException</code> if it could not be found.
@@ -715,23 +674,8 @@ public class PatcherFixPackPersistenceImpl
 			long patcherProjectVersionId, String name)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPFCI_N(
-			patcherProjectVersionId, name);
-
-		if (patcherFixPack == null) {
-			String message =
-				_uniquePersistenceFinderByPFCI_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {patcherProjectVersionId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPatcherFixPackException(message);
-		}
-
-		return patcherFixPack;
+		return _uniquePersistenceFinderByPFCI_N.find(
+			finderCache, new Object[] {patcherProjectVersionId, name});
 	}
 
 	/**
@@ -782,8 +726,9 @@ public class PatcherFixPackPersistenceImpl
 			finderCache, new Object[] {patcherProjectVersionId, name});
 	}
 
-	private FilterCollectionPersistenceFinder<PatcherFixPack>
-		_collectionPersistenceFinderByPFCI_S;
+	private FilterCollectionPersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_collectionPersistenceFinderByPFCI_S;
 
 	/**
 	 * Returns an ordered range of all the patcher fix packs where patcherProjectVersionId = &#63; and status = &#63;.
@@ -826,17 +771,9 @@ public class PatcherFixPackPersistenceImpl
 			OrderByComparator<PatcherFixPack> orderByComparator)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPFCI_S_First(
-			patcherProjectVersionId, status, orderByComparator);
-
-		if (patcherFixPack != null) {
-			return patcherFixPack;
-		}
-
-		throw new NoSuchPatcherFixPackException(
-			_collectionPersistenceFinderByPFCI_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {patcherProjectVersionId, status}));
+		return _collectionPersistenceFinderByPFCI_S.findFirst(
+			finderCache, new Object[] {patcherProjectVersionId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -919,8 +856,9 @@ public class PatcherFixPackPersistenceImpl
 			finderCache, new Object[] {patcherProjectVersionId, status});
 	}
 
-	private FilterCollectionPersistenceFinder<PatcherFixPack>
-		_collectionPersistenceFinderByPFCI_PPVI_GtV;
+	private FilterCollectionPersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_collectionPersistenceFinderByPFCI_PPVI_GtV;
 
 	/**
 	 * Returns all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &gt; &#63;.
@@ -1035,20 +973,12 @@ public class PatcherFixPackPersistenceImpl
 			int version, OrderByComparator<PatcherFixPack> orderByComparator)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPFCI_PPVI_GtV_First(
-			patcherFixComponentId, patcherProjectVersionId, version,
+		return _collectionPersistenceFinderByPFCI_PPVI_GtV.findFirst(
+			finderCache,
+			new Object[] {
+				patcherFixComponentId, patcherProjectVersionId, version
+			},
 			orderByComparator);
-
-		if (patcherFixPack != null) {
-			return patcherFixPack;
-		}
-
-		throw new NoSuchPatcherFixPackException(
-			_collectionPersistenceFinderByPFCI_PPVI_GtV.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					patcherFixComponentId, patcherProjectVersionId, version
-				}));
 	}
 
 	/**
@@ -1199,8 +1129,9 @@ public class PatcherFixPackPersistenceImpl
 			});
 	}
 
-	private FilterCollectionPersistenceFinder<PatcherFixPack>
-		_collectionPersistenceFinderByPFCI_PPVI_LtV;
+	private FilterCollectionPersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_collectionPersistenceFinderByPFCI_PPVI_LtV;
 
 	/**
 	 * Returns all the patcher fix packs where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and version &lt; &#63;.
@@ -1315,20 +1246,12 @@ public class PatcherFixPackPersistenceImpl
 			int version, OrderByComparator<PatcherFixPack> orderByComparator)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPFCI_PPVI_LtV_First(
-			patcherFixComponentId, patcherProjectVersionId, version,
+		return _collectionPersistenceFinderByPFCI_PPVI_LtV.findFirst(
+			finderCache,
+			new Object[] {
+				patcherFixComponentId, patcherProjectVersionId, version
+			},
 			orderByComparator);
-
-		if (patcherFixPack != null) {
-			return patcherFixPack;
-		}
-
-		throw new NoSuchPatcherFixPackException(
-			_collectionPersistenceFinderByPFCI_PPVI_LtV.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					patcherFixComponentId, patcherProjectVersionId, version
-				}));
 	}
 
 	/**
@@ -1479,8 +1402,9 @@ public class PatcherFixPackPersistenceImpl
 			});
 	}
 
-	private UniquePersistenceFinder<PatcherFixPack>
-		_uniquePersistenceFinderByPFCI_PPVI_N_V;
+	private UniquePersistenceFinder
+		<PatcherFixPack, NoSuchPatcherFixPackException>
+			_uniquePersistenceFinderByPFCI_PPVI_N_V;
 
 	/**
 	 * Returns the patcher fix pack where patcherFixComponentId = &#63; and patcherProjectVersionId = &#63; and name = &#63; and version = &#63; or throws a <code>NoSuchPatcherFixPackException</code> if it could not be found.
@@ -1498,26 +1422,11 @@ public class PatcherFixPackPersistenceImpl
 			String name, int version)
 		throws NoSuchPatcherFixPackException {
 
-		PatcherFixPack patcherFixPack = fetchByPFCI_PPVI_N_V(
-			patcherFixComponentId, patcherProjectVersionId, name, version);
-
-		if (patcherFixPack == null) {
-			String message =
-				_uniquePersistenceFinderByPFCI_PPVI_N_V.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						patcherFixComponentId, patcherProjectVersionId, name,
-						version
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPatcherFixPackException(message);
-		}
-
-		return patcherFixPack;
+		return _uniquePersistenceFinderByPFCI_PPVI_N_V.find(
+			finderCache,
+			new Object[] {
+				patcherFixComponentId, patcherProjectVersionId, name, version
+			});
 	}
 
 	/**
@@ -2154,16 +2063,7 @@ public class PatcherFixPackPersistenceImpl
 				_SQL_SELECT_PATCHERFIXPACK_WHERE,
 				_SQL_COUNT_PATCHERFIXPACK_WHERE,
 				PatcherFixPackModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherFixPackImpl.class, PatcherFixPack.class,
-					"patcherFixPack", "OSBPatcher_PatcherFixPack",
-					"patcherFixPack.patcherFixPackId",
-					"SELECT DISTINCT {patcherFixPack.*} FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					"SELECT {OSBPatcher_PatcherFixPack.*} FROM (SELECT DISTINCT patcherFixPack.patcherFixPackId FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherFixPack ON TEMP_TABLE.patcherFixPackId = OSBPatcher_PatcherFixPack.patcherFixPackId",
-					"SELECT COUNT(DISTINCT patcherFixPack.patcherFixPackId) AS COUNT_VALUE FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					PatcherFixPackModelImpl.ORDER_BY_SQL,
-					PatcherFixPackModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherFixPack.", "patcherFixComponentId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2191,16 +2091,7 @@ public class PatcherFixPackPersistenceImpl
 				_SQL_SELECT_PATCHERFIXPACK_WHERE,
 				_SQL_COUNT_PATCHERFIXPACK_WHERE,
 				PatcherFixPackModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherFixPackImpl.class, PatcherFixPack.class,
-					"patcherFixPack", "OSBPatcher_PatcherFixPack",
-					"patcherFixPack.patcherFixPackId",
-					"SELECT DISTINCT {patcherFixPack.*} FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					"SELECT {OSBPatcher_PatcherFixPack.*} FROM (SELECT DISTINCT patcherFixPack.patcherFixPackId FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherFixPack ON TEMP_TABLE.patcherFixPackId = OSBPatcher_PatcherFixPack.patcherFixPackId",
-					"SELECT COUNT(DISTINCT patcherFixPack.patcherFixPackId) AS COUNT_VALUE FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					PatcherFixPackModelImpl.ORDER_BY_SQL,
-					PatcherFixPackModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherFixPack.", "version", FinderColumn.Type.INTEGER,
 					"=", true, true, PatcherFixPack::getVersion));
@@ -2238,16 +2129,7 @@ public class PatcherFixPackPersistenceImpl
 				_SQL_SELECT_PATCHERFIXPACK_WHERE,
 				_SQL_COUNT_PATCHERFIXPACK_WHERE,
 				PatcherFixPackModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherFixPackImpl.class, PatcherFixPack.class,
-					"patcherFixPack", "OSBPatcher_PatcherFixPack",
-					"patcherFixPack.patcherFixPackId",
-					"SELECT DISTINCT {patcherFixPack.*} FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					"SELECT {OSBPatcher_PatcherFixPack.*} FROM (SELECT DISTINCT patcherFixPack.patcherFixPackId FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherFixPack ON TEMP_TABLE.patcherFixPackId = OSBPatcher_PatcherFixPack.patcherFixPackId",
-					"SELECT COUNT(DISTINCT patcherFixPack.patcherFixPackId) AS COUNT_VALUE FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					PatcherFixPackModelImpl.ORDER_BY_SQL,
-					PatcherFixPackModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherFixPack.", "patcherFixComponentId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2283,16 +2165,7 @@ public class PatcherFixPackPersistenceImpl
 				_SQL_SELECT_PATCHERFIXPACK_WHERE,
 				_SQL_COUNT_PATCHERFIXPACK_WHERE,
 				PatcherFixPackModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherFixPackImpl.class, PatcherFixPack.class,
-					"patcherFixPack", "OSBPatcher_PatcherFixPack",
-					"patcherFixPack.patcherFixPackId",
-					"SELECT DISTINCT {patcherFixPack.*} FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					"SELECT {OSBPatcher_PatcherFixPack.*} FROM (SELECT DISTINCT patcherFixPack.patcherFixPackId FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherFixPack ON TEMP_TABLE.patcherFixPackId = OSBPatcher_PatcherFixPack.patcherFixPackId",
-					"SELECT COUNT(DISTINCT patcherFixPack.patcherFixPackId) AS COUNT_VALUE FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					PatcherFixPackModelImpl.ORDER_BY_SQL,
-					PatcherFixPackModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherFixPack.", "patcherFixComponentId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2344,16 +2217,7 @@ public class PatcherFixPackPersistenceImpl
 				_SQL_SELECT_PATCHERFIXPACK_WHERE,
 				_SQL_COUNT_PATCHERFIXPACK_WHERE,
 				PatcherFixPackModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherFixPackImpl.class, PatcherFixPack.class,
-					"patcherFixPack", "OSBPatcher_PatcherFixPack",
-					"patcherFixPack.patcherFixPackId",
-					"SELECT DISTINCT {patcherFixPack.*} FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					"SELECT {OSBPatcher_PatcherFixPack.*} FROM (SELECT DISTINCT patcherFixPack.patcherFixPackId FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherFixPack ON TEMP_TABLE.patcherFixPackId = OSBPatcher_PatcherFixPack.patcherFixPackId",
-					"SELECT COUNT(DISTINCT patcherFixPack.patcherFixPackId) AS COUNT_VALUE FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					PatcherFixPackModelImpl.ORDER_BY_SQL,
-					PatcherFixPackModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherFixPack.", "patcherProjectVersionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2395,16 +2259,7 @@ public class PatcherFixPackPersistenceImpl
 				_SQL_SELECT_PATCHERFIXPACK_WHERE,
 				_SQL_COUNT_PATCHERFIXPACK_WHERE,
 				PatcherFixPackModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherFixPackImpl.class, PatcherFixPack.class,
-					"patcherFixPack", "OSBPatcher_PatcherFixPack",
-					"patcherFixPack.patcherFixPackId",
-					"SELECT DISTINCT {patcherFixPack.*} FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					"SELECT {OSBPatcher_PatcherFixPack.*} FROM (SELECT DISTINCT patcherFixPack.patcherFixPackId FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherFixPack ON TEMP_TABLE.patcherFixPackId = OSBPatcher_PatcherFixPack.patcherFixPackId",
-					"SELECT COUNT(DISTINCT patcherFixPack.patcherFixPackId) AS COUNT_VALUE FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					PatcherFixPackModelImpl.ORDER_BY_SQL,
-					PatcherFixPackModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherFixPack.", "patcherFixComponentId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2450,16 +2305,7 @@ public class PatcherFixPackPersistenceImpl
 				_SQL_SELECT_PATCHERFIXPACK_WHERE,
 				_SQL_COUNT_PATCHERFIXPACK_WHERE,
 				PatcherFixPackModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PatcherFixPackImpl.class, PatcherFixPack.class,
-					"patcherFixPack", "OSBPatcher_PatcherFixPack",
-					"patcherFixPack.patcherFixPackId",
-					"SELECT DISTINCT {patcherFixPack.*} FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					"SELECT {OSBPatcher_PatcherFixPack.*} FROM (SELECT DISTINCT patcherFixPack.patcherFixPackId FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					") TEMP_TABLE INNER JOIN OSBPatcher_PatcherFixPack ON TEMP_TABLE.patcherFixPackId = OSBPatcher_PatcherFixPack.patcherFixPackId",
-					"SELECT COUNT(DISTINCT patcherFixPack.patcherFixPackId) AS COUNT_VALUE FROM OSBPatcher_PatcherFixPack patcherFixPack WHERE ",
-					PatcherFixPackModelImpl.ORDER_BY_SQL,
-					PatcherFixPackModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"patcherFixPack.", "patcherFixComponentId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2564,16 +2410,10 @@ public class PatcherFixPackPersistenceImpl
 	private static final String _SQL_COUNT_PATCHERFIXPACK_WHERE =
 		"SELECT COUNT(patcherFixPack) FROM PatcherFixPack patcherFixPack WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PatcherFixPack exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PatcherFixPackPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2028945424
+// LIFERAY-SERVICE-BUILDER-HASH:-604463384

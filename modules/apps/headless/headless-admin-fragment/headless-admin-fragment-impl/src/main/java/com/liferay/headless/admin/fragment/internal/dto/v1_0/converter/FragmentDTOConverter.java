@@ -5,21 +5,29 @@
 
 package com.liferay.headless.admin.fragment.internal.dto.v1_0.converter;
 
-import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
+import com.liferay.headless.admin.fragment.constant.v1_0.FieldType;
+import com.liferay.headless.admin.fragment.dto.v1_0.BasicFragment;
+import com.liferay.headless.admin.fragment.dto.v1_0.FormFragment;
 import com.liferay.headless.admin.fragment.dto.v1_0.Fragment;
 import com.liferay.headless.admin.fragment.dto.v1_0.FragmentSet;
 import com.liferay.headless.admin.fragment.dto.v1_0.FragmentVersion;
-import com.liferay.headless.admin.user.dto.v1_0.Creator;
+import com.liferay.headless.admin.fragment.internal.dto.v1_0.util.CreatorUtil;
+import com.liferay.headless.admin.fragment.internal.util.FieldTypeUtil;
+import com.liferay.headless.admin.site.dto.v1_0.util.ThumbnailURLReferenceUtil;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.fields.NestedFieldsSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +54,10 @@ public class FragmentDTOConverter
 	public Fragment toDTO(
 		DTOConverterContext dtoConverterContext, FragmentEntry fragmentEntry) {
 
-		FragmentEntry draftOnlyOrPublishedFragmentEntry =
-			_fetchDraftOnlyOrPublishedFragmentEntry(fragmentEntry);
+		FragmentEntry headListableFragmentEntry =
+			_fetchHeadListableFragmentEntry(fragmentEntry);
 
-		if (draftOnlyOrPublishedFragmentEntry == null) {
+		if (headListableFragmentEntry == null) {
 			throw new IllegalStateException(
 				StringBundler.concat(
 					"Fragment entry draft with ID ",
@@ -57,10 +65,10 @@ public class FragmentDTOConverter
 					fragmentEntry.getHeadId(), " that no longer exists"));
 		}
 
-		return _toFragment(draftOnlyOrPublishedFragmentEntry);
+		return _toFragment(headListableFragmentEntry);
 	}
 
-	private FragmentEntry _fetchDraftOnlyOrPublishedFragmentEntry(
+	private FragmentEntry _fetchHeadListableFragmentEntry(
 		FragmentEntry fragmentEntry) {
 
 		if (fragmentEntry.isHead()) {
@@ -71,49 +79,14 @@ public class FragmentDTOConverter
 			fragmentEntry.getHeadId());
 	}
 
-	private Fragment _toFragment(FragmentEntry fragmentEntry) {
-		List<FragmentVersion> fragmentVersionList = new ArrayList<>();
+	private BasicFragment _toBasicFragment(
+		FragmentEntry fragmentEntry, List<FragmentVersion> fragmentVersions) {
 
-		if (fragmentEntry.isHead()) {
-			fragmentVersionList.add(
-				_toFragmentVersion(
-					fragmentEntry, FragmentVersion.Status.APPROVED));
-		}
-
-		FragmentEntry draftFragmentEntry =
-			_fragmentEntryLocalService.fetchDraft(
-				fragmentEntry.getPrimaryKey());
-
-		if (draftFragmentEntry != null) {
-			fragmentVersionList.add(
-				_toFragmentVersion(
-					draftFragmentEntry, FragmentVersion.Status.DRAFT));
-		}
-		else if (!fragmentEntry.isHead()) {
-			fragmentVersionList.add(
-				_toFragmentVersion(
-					fragmentEntry, FragmentVersion.Status.DRAFT));
-		}
-
-		return new Fragment() {
+		BasicFragment basicFragment = new BasicFragment() {
 			{
 				setCacheable(fragmentEntry::isCacheable);
 				setCreator(
-					() -> {
-						User user = _userLocalService.fetchUser(
-							fragmentEntry.getUserId());
-
-						if (user == null) {
-							return null;
-						}
-
-						return new Creator() {
-							{
-								setExternalReferenceCode(
-									user::getExternalReferenceCode);
-							}
-						};
-					});
+					() -> CreatorUtil.toCreator(fragmentEntry.getUserId()));
 				setDateCreated(fragmentEntry::getCreateDate);
 				setDateModified(fragmentEntry::getModifiedDate);
 				setExternalReferenceCode(
@@ -123,35 +96,139 @@ public class FragmentDTOConverter
 						null,
 						_fragmentCollectionLocalService.getFragmentCollection(
 							fragmentEntry.getFragmentCollectionId())));
-				setFragmentVersions(
-					() -> fragmentVersionList.toArray(new FragmentVersion[0]));
 				setIcon(fragmentEntry::getIcon);
 				setKey(fragmentEntry::getFragmentEntryKey);
 				setMarketplace(fragmentEntry::isMarketplace);
 				setName(fragmentEntry::getName);
 				setReadOnly(fragmentEntry::isReadOnly);
-				setType(
-					() -> Fragment.Type.create(
-						StringUtil.upperCaseFirstLetter(
-							FragmentConstants.getTypeLabel(
-								fragmentEntry.getType()))));
+				setThumbnailURLReference(
+					() -> NestedFieldsSupplier.supply(
+						"thumbnailURLReference",
+						fieldName ->
+							ThumbnailURLReferenceUtil.
+								getFileEntryThumbnailURLReference(
+									fragmentEntry.getPreviewFileEntryId())));
+				setType(() -> Fragment.Type.BASIC_FRAGMENT);
 			}
 		};
+
+		basicFragment.setFragmentVersions(
+			() -> fragmentVersions.toArray(new FragmentVersion[0]));
+
+		return basicFragment;
+	}
+
+	private FormFragment _toFormFragment(
+		FragmentEntry fragmentEntry, List<FragmentVersion> fragmentVersions) {
+
+		FormFragment formFragment = new FormFragment() {
+			{
+				setCacheable(fragmentEntry::isCacheable);
+				setCreator(
+					() -> CreatorUtil.toCreator(fragmentEntry.getUserId()));
+				setDateCreated(fragmentEntry::getCreateDate);
+				setDateModified(fragmentEntry::getModifiedDate);
+				setExternalReferenceCode(
+					fragmentEntry::getExternalReferenceCode);
+				setFieldTypes(
+					() -> {
+						String typeOptions = fragmentEntry.getTypeOptions();
+
+						if (Validator.isNull(typeOptions)) {
+							return null;
+						}
+
+						JSONObject typeOptionsJSONObject =
+							_jsonFactory.createJSONObject(typeOptions);
+
+						JSONArray fieldTypesJSONArray =
+							typeOptionsJSONObject.getJSONArray("fieldTypes");
+
+						if (fieldTypesJSONArray == null) {
+							return null;
+						}
+
+						return TransformUtil.transform(
+							JSONUtil.toStringArray(fieldTypesJSONArray),
+							FieldTypeUtil::toExternalFieldType,
+							FieldType.class);
+					});
+				setFragmentSet(
+					() -> _fragmentSetDTOConverter.toDTO(
+						null,
+						_fragmentCollectionLocalService.getFragmentCollection(
+							fragmentEntry.getFragmentCollectionId())));
+				setIcon(fragmentEntry::getIcon);
+				setKey(fragmentEntry::getFragmentEntryKey);
+				setMarketplace(fragmentEntry::isMarketplace);
+				setName(fragmentEntry::getName);
+				setReadOnly(fragmentEntry::isReadOnly);
+				setThumbnailURLReference(
+					() -> NestedFieldsSupplier.supply(
+						"thumbnailURLReference",
+						fieldName ->
+							ThumbnailURLReferenceUtil.
+								getFileEntryThumbnailURLReference(
+									fragmentEntry.getPreviewFileEntryId())));
+				setType(() -> Fragment.Type.FORM_FRAGMENT);
+			}
+		};
+
+		formFragment.setFragmentVersions(
+			() -> fragmentVersions.toArray(new FragmentVersion[0]));
+
+		return formFragment;
+	}
+
+	private Fragment _toFragment(FragmentEntry fragmentEntry) {
+		List<FragmentVersion> fragmentVersions = new ArrayList<>();
+
+		if (fragmentEntry.isHead()) {
+			fragmentVersions.add(
+				_toFragmentVersion(
+					fragmentEntry, FragmentVersion.Status.APPROVED));
+		}
+
+		FragmentEntry draftFragmentEntry =
+			_fragmentEntryLocalService.fetchDraft(
+				fragmentEntry.getPrimaryKey());
+
+		if (draftFragmentEntry != null) {
+			fragmentVersions.add(
+				_toFragmentVersion(
+					draftFragmentEntry, FragmentVersion.Status.DRAFT));
+		}
+		else if (!fragmentEntry.isHead()) {
+			fragmentVersions.add(
+				_toFragmentVersion(
+					fragmentEntry, FragmentVersion.Status.DRAFT));
+		}
+
+		if (fragmentEntry.isTypeInput()) {
+			return _toFormFragment(fragmentEntry, fragmentVersions);
+		}
+
+		return _toBasicFragment(fragmentEntry, fragmentVersions);
 	}
 
 	private FragmentVersion _toFragmentVersion(
 		FragmentEntry fragmentEntry,
 		FragmentVersion.Status fragmentVersionStatus) {
 
-		return new FragmentVersion() {
+		FragmentVersion fragmentVersion = new FragmentVersion() {
 			{
-				setConfiguration(fragmentEntry::getConfiguration);
-				setCss(fragmentEntry::getCss);
-				setHtml(fragmentEntry::getHtml);
-				setJs(fragmentEntry::getJs);
 				setStatus(() -> fragmentVersionStatus);
 			}
 		};
+
+		if (!fragmentEntry.isMarketplace()) {
+			fragmentVersion.setConfiguration(fragmentEntry::getConfiguration);
+			fragmentVersion.setCss(fragmentEntry::getCss);
+			fragmentVersion.setHtml(fragmentEntry::getHtml);
+			fragmentVersion.setJs(fragmentEntry::getJs);
+		}
+
+		return fragmentVersion;
 	}
 
 	@Reference
@@ -167,6 +244,6 @@ public class FragmentDTOConverter
 		_fragmentSetDTOConverter;
 
 	@Reference
-	private UserLocalService _userLocalService;
+	private JSONFactory _jsonFactory;
 
 }

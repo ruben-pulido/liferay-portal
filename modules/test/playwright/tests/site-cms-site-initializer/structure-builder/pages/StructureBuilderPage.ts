@@ -25,6 +25,7 @@ export const FIELD_TYPES = [
 	'Date and Time',
 	'Boolean',
 	'Upload',
+	'Phone Number',
 ] as const;
 
 export type FieldType = (typeof FIELD_TYPES)[number];
@@ -443,6 +444,7 @@ export class StructureBuilderPage {
 		page,
 		publish = true,
 		spaces,
+		type = 'content',
 	}: {
 		autoDelete?: boolean;
 		erc?: string;
@@ -451,8 +453,9 @@ export class StructureBuilderPage {
 		page: StructureBuilderPage;
 		publish?: boolean;
 		spaces?: string[];
+		type?: StructureType;
 	}) {
-		await page.goToCreateStructure();
+		await page.goToCreateStructure(type);
 
 		if (spaces) {
 			await this.selectSpaces(spaces);

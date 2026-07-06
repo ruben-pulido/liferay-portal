@@ -3,7 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {PreviewPortletDataHandlerControl} from '../types/portletDataHandler';
+import {sub} from 'frontend-js-web';
+
+import {
+	PreviewPortletDataHandlerBoolean,
+	PreviewPortletDataHandlerControl,
+	PreviewPortletDataHandlerSection,
+} from '../types/portletDataHandler';
+
+import type {ContentSelection} from '../components/forms/content_selector/ContentSelector';
 
 export type HandlerSelection =
 	| {
@@ -12,8 +20,28 @@ export type HandlerSelection =
 	| string
 	| true;
 
+export const COMPACT_SECTION_NAMES = [
+	'category.control_panel.users',
+	'objects',
+];
+
 export const LAYOUT_SET_LAYOUTS_PORTLET_DATA_KEY =
 	'PORTLET_DATA_com_liferay_layout_admin_web_portlet_LayoutSetLayoutsPortlet';
+
+export const SCROLLABLE_SECTION_NAMES = ['objects'];
+
+export const SECTION_KEY_CONTENT = 'category.content';
+
+export const SECTION_KEY_CONTENT_AND_DATA =
+	'category.site_administration.content';
+
+export const SECTION_KEY_SITE_BUILDER = 'category.site_administration.build';
+
+export function isAllLayoutsSelected(
+	value: HandlerSelection | undefined
+): boolean {
+	return typeof value === 'object' && !value.layoutIds;
+}
 
 export function isSelected(
 	value: HandlerSelection | undefined,
@@ -24,7 +52,7 @@ export function isSelected(
 	}
 
 	if (entry.name === LAYOUT_SET_LAYOUTS_PORTLET_DATA_KEY) {
-		return typeof value === 'object' && !('layoutIds' in value);
+		return isAllLayoutsSelected(value);
 	}
 
 	if (entry.type === 'Choice') {
@@ -43,7 +71,7 @@ export function isSelected(
 	);
 }
 
-export function getInitialSelection(
+export function getHandlerSelection(
 	entry: PreviewPortletDataHandlerControl
 ): HandlerSelection {
 	if (entry.name === LAYOUT_SET_LAYOUTS_PORTLET_DATA_KEY) {
@@ -58,13 +86,107 @@ export function getInitialSelection(
 		return true;
 	}
 
-	const selection: Record<string, HandlerSelection> = {};
+	return getHandlerSelections(entry.previewPortletDataHandlerControls);
+}
 
-	entry.previewPortletDataHandlerControls.forEach((control) => {
-		selection[control.name] = getInitialSelection(control);
-	});
+export function getHandlerSelections(
+	controls: PreviewPortletDataHandlerControl[]
+): Record<string, HandlerSelection> {
+	return Object.fromEntries(
+		controls.map((control) => [control.name, getHandlerSelection(control)])
+	);
+}
+
+export function getSectionPreviewPortletDataHandlers(
+	section: PreviewPortletDataHandlerSection,
+	{lookAndFeelEnabled = false}: {lookAndFeelEnabled?: boolean} = {}
+): PreviewPortletDataHandlerBoolean[] {
+	const previewPortletDataHandlers =
+		section.previewPortletDataHandlers.map<PreviewPortletDataHandlerBoolean>(
+			(handler) => ({...handler, type: 'Boolean'})
+		);
+
+	if (!(lookAndFeelEnabled && section.name === SECTION_KEY_SITE_BUILDER)) {
+		return previewPortletDataHandlers;
+	}
+
+	return [
+		...previewPortletDataHandlers,
+		{
+			label: Liferay.Language.get('look-and-feel'),
+			name: 'lookAndFeel',
+			previewPortletDataHandlerControls: [
+				{
+					label: Liferay.Language.get('theme-settings'),
+					name: 'themeSettings',
+					type: 'Boolean',
+				},
+				{
+					label: Liferay.Language.get('logo'),
+					name: 'logo',
+					type: 'Boolean',
+				},
+				{
+					label: Liferay.Language.get('site-pages-settings'),
+					name: 'sitePagesSettings',
+					type: 'Boolean',
+				},
+				{
+					label: Liferay.Language.get('site-template-settings'),
+					name: 'siteTemplateSettings',
+					type: 'Boolean',
+				},
+			],
+			type: 'Boolean',
+		},
+	];
+}
+
+export function getSectionSelection(
+	section: PreviewPortletDataHandlerSection,
+	{
+		commentsAndRatingsEnabled = false,
+		lookAndFeelEnabled = false,
+	}: {commentsAndRatingsEnabled?: boolean; lookAndFeelEnabled?: boolean} = {}
+): Record<string, HandlerSelection> {
+	const selection = getHandlerSelections(
+		getSectionPreviewPortletDataHandlers(section, {lookAndFeelEnabled})
+	);
+
+	if (
+		commentsAndRatingsEnabled &&
+		(section.name === SECTION_KEY_CONTENT ||
+			section.name === SECTION_KEY_CONTENT_AND_DATA)
+	) {
+		selection.commentsAndRatings = {comments: true, ratings: true};
+	}
 
 	return selection;
+}
+
+export function getFullDataSelection(
+	sections: PreviewPortletDataHandlerSection[],
+	{
+		commentsAndRatingsEnabled = false,
+		lookAndFeelEnabled = false,
+		showDeletions = false,
+	}: {
+		commentsAndRatingsEnabled?: boolean;
+		lookAndFeelEnabled?: boolean;
+		showDeletions?: boolean;
+	} = {}
+): ContentSelection {
+	return Object.fromEntries(
+		getVisibleSections(sections, {lookAndFeelEnabled, showDeletions}).map(
+			(section) => [
+				section.name,
+				getSectionSelection(section, {
+					commentsAndRatingsEnabled,
+					lookAndFeelEnabled,
+				}),
+			]
+		)
+	);
 }
 
 export function updateSelection<V>(
@@ -76,4 +198,86 @@ export function updateSelection<V>(
 	const next: Record<string, V> = value ? {...rest, [key]: value} : rest;
 
 	return Object.keys(next).length ? next : undefined;
+}
+
+export function getSelectionSummary(
+	controls: {label: string; name: string}[],
+	selection: Record<string, HandlerSelection>
+): string {
+	const selectedLabels = controls
+		.filter((control) => selection[control.name] !== undefined)
+		.map((control) => control.label);
+
+	if (selectedLabels.length) {
+		return sub(
+			Liferay.Language.get('selected-x'),
+			selectedLabels.join(', ')
+		);
+	}
+
+	const labels = controls.map((control) => control.label);
+
+	if (labels.length) {
+		return sub(Liferay.Language.get('select-x'), labels.join(', '));
+	}
+
+	return '';
+}
+
+export function withSiteBuilderSection(
+	sections: PreviewPortletDataHandlerSection[],
+	label = ''
+): PreviewPortletDataHandlerSection[] {
+	if (sections.some((section) => section.name === SECTION_KEY_SITE_BUILDER)) {
+		return sections;
+	}
+
+	return [
+		...sections,
+		{
+			label,
+			name: SECTION_KEY_SITE_BUILDER,
+			previewPortletDataHandlers: [],
+		},
+	];
+}
+
+export function getVisibleSections(
+	sections: PreviewPortletDataHandlerSection[],
+	{
+		lookAndFeelEnabled = false,
+		showDeletions = false,
+	}: {lookAndFeelEnabled?: boolean; showDeletions?: boolean} = {}
+): PreviewPortletDataHandlerSection[] {
+	const filteredSections = sections.filter(
+		(section) =>
+			showDeletions || !!section.additionCount || !section.deletionCount
+	);
+
+	return lookAndFeelEnabled
+		? withSiteBuilderSection(
+				filteredSections,
+				Liferay.Language.get('category.site_administration.build')
+			)
+		: filteredSections;
+}
+
+export function toProcessRequestFlags(
+	contentSelection: ContentSelection | undefined
+) {
+	const commentsAndRatings = (contentSelection?.[SECTION_KEY_CONTENT]
+		?.commentsAndRatings ??
+		contentSelection?.[SECTION_KEY_CONTENT_AND_DATA]?.commentsAndRatings ??
+		{}) as Record<string, boolean>;
+	const lookAndFeel = (contentSelection?.[SECTION_KEY_SITE_BUILDER]
+		?.lookAndFeel ?? {}) as Record<string, boolean>;
+
+	return {
+		comments: !!commentsAndRatings.comments,
+		logo: !!lookAndFeel.logo,
+		ratings: !!commentsAndRatings.ratings,
+		sitePagesSettings: !!lookAndFeel.sitePagesSettings,
+		siteTemplateSettings: !!lookAndFeel.siteTemplateSettings,
+		themeSettings: !!lookAndFeel.themeSettings,
+	};
 }

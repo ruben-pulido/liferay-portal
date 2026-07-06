@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -74,8 +72,9 @@ public class LVEntryVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByLvEntryId;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByLvEntryId;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where lvEntryId = &#63;.
@@ -115,16 +114,8 @@ public class LVEntryVersionPersistenceImpl
 			long lvEntryId, OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByLvEntryId_First(
-			lvEntryId, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByLvEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {lvEntryId}));
+		return _collectionPersistenceFinderByLvEntryId.findFirst(
+			finderCache, new Object[] {lvEntryId}, orderByComparator);
 	}
 
 	/**
@@ -165,8 +156,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {lvEntryId});
 	}
 
-	private UniquePersistenceFinder<LVEntryVersion>
-		_uniquePersistenceFinderByLvEntryId_Version;
+	private UniquePersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_uniquePersistenceFinderByLvEntryId_Version;
 
 	/**
 	 * Returns the lv entry version where lvEntryId = &#63; and version = &#63; or throws a <code>NoSuchLVEntryVersionException</code> if it could not be found.
@@ -180,24 +172,8 @@ public class LVEntryVersionPersistenceImpl
 	public LVEntryVersion findByLvEntryId_Version(long lvEntryId, int version)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByLvEntryId_Version(
-			lvEntryId, version);
-
-		if (lvEntryVersion == null) {
-			String message =
-				_uniquePersistenceFinderByLvEntryId_Version.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {lvEntryId, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLVEntryVersionException(message);
-		}
-
-		return lvEntryVersion;
+		return _uniquePersistenceFinderByLvEntryId_Version.find(
+			finderCache, new Object[] {lvEntryId, version});
 	}
 
 	/**
@@ -246,8 +222,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {lvEntryId, version});
 	}
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where uuid = &#63;.
@@ -287,16 +264,8 @@ public class LVEntryVersionPersistenceImpl
 			String uuid, OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -337,8 +306,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByUuid_Version;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByUuid_Version;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where uuid = &#63; and version = &#63;.
@@ -381,16 +351,8 @@ public class LVEntryVersionPersistenceImpl
 			OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByUuid_Version_First(
-			uuid, version, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByUuid_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, version}));
+		return _collectionPersistenceFinderByUuid_Version.findFirst(
+			finderCache, new Object[] {uuid, version}, orderByComparator);
 	}
 
 	/**
@@ -435,8 +397,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, version});
 	}
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByUUID_G;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByUUID_G;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where uuid = &#63; and groupId = &#63;.
@@ -479,16 +442,8 @@ public class LVEntryVersionPersistenceImpl
 			OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByUUID_G_First(
-			uuid, groupId, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId}));
+		return _collectionPersistenceFinderByUUID_G.findFirst(
+			finderCache, new Object[] {uuid, groupId}, orderByComparator);
 	}
 
 	/**
@@ -533,8 +488,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private UniquePersistenceFinder<LVEntryVersion>
-		_uniquePersistenceFinderByUUID_G_Version;
+	private UniquePersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_uniquePersistenceFinderByUUID_G_Version;
 
 	/**
 	 * Returns the lv entry version where uuid = &#63; and groupId = &#63; and version = &#63; or throws a <code>NoSuchLVEntryVersionException</code> if it could not be found.
@@ -550,23 +506,8 @@ public class LVEntryVersionPersistenceImpl
 			String uuid, long groupId, int version)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByUUID_G_Version(
-			uuid, groupId, version);
-
-		if (lvEntryVersion == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G_Version.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {uuid, groupId, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLVEntryVersionException(message);
-		}
-
-		return lvEntryVersion;
+		return _uniquePersistenceFinderByUUID_G_Version.find(
+			finderCache, new Object[] {uuid, groupId, version});
 	}
 
 	/**
@@ -619,8 +560,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, groupId, version});
 	}
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where uuid = &#63; and companyId = &#63;.
@@ -663,16 +605,8 @@ public class LVEntryVersionPersistenceImpl
 			OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -717,8 +651,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByUuid_C_Version;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByUuid_C_Version;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where uuid = &#63; and companyId = &#63; and version = &#63;.
@@ -763,17 +698,9 @@ public class LVEntryVersionPersistenceImpl
 			OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByUuid_C_Version_First(
-			uuid, companyId, version, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByUuid_C_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {uuid, companyId, version}));
+		return _collectionPersistenceFinderByUuid_C_Version.findFirst(
+			finderCache, new Object[] {uuid, companyId, version},
+			orderByComparator);
 	}
 
 	/**
@@ -824,8 +751,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId, version});
 	}
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where groupId = &#63;.
@@ -865,16 +793,8 @@ public class LVEntryVersionPersistenceImpl
 			long groupId, OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -915,8 +835,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByGroupId_Version;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByGroupId_Version;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where groupId = &#63; and version = &#63;.
@@ -959,16 +880,8 @@ public class LVEntryVersionPersistenceImpl
 			OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByGroupId_Version_First(
-			groupId, version, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByGroupId_Version.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, version}));
+		return _collectionPersistenceFinderByGroupId_Version.findFirst(
+			finderCache, new Object[] {groupId, version}, orderByComparator);
 	}
 
 	/**
@@ -1013,8 +926,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, version});
 	}
 
-	private CollectionPersistenceFinder<LVEntryVersion>
-		_collectionPersistenceFinderByG_UGK;
+	private CollectionPersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_collectionPersistenceFinderByG_UGK;
 
 	/**
 	 * Returns an ordered range of all the lv entry versions where groupId = &#63; and uniqueGroupKey = &#63;.
@@ -1057,17 +971,9 @@ public class LVEntryVersionPersistenceImpl
 			OrderByComparator<LVEntryVersion> orderByComparator)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByG_UGK_First(
-			groupId, uniqueGroupKey, orderByComparator);
-
-		if (lvEntryVersion != null) {
-			return lvEntryVersion;
-		}
-
-		throw new NoSuchLVEntryVersionException(
-			_collectionPersistenceFinderByG_UGK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, uniqueGroupKey}));
+		return _collectionPersistenceFinderByG_UGK.findFirst(
+			finderCache, new Object[] {groupId, uniqueGroupKey},
+			orderByComparator);
 	}
 
 	/**
@@ -1113,8 +1019,9 @@ public class LVEntryVersionPersistenceImpl
 			finderCache, new Object[] {groupId, uniqueGroupKey});
 	}
 
-	private UniquePersistenceFinder<LVEntryVersion>
-		_uniquePersistenceFinderByG_UGK_Version;
+	private UniquePersistenceFinder
+		<LVEntryVersion, NoSuchLVEntryVersionException>
+			_uniquePersistenceFinderByG_UGK_Version;
 
 	/**
 	 * Returns the lv entry version where groupId = &#63; and uniqueGroupKey = &#63; and version = &#63; or throws a <code>NoSuchLVEntryVersionException</code> if it could not be found.
@@ -1130,23 +1037,8 @@ public class LVEntryVersionPersistenceImpl
 			long groupId, String uniqueGroupKey, int version)
 		throws NoSuchLVEntryVersionException {
 
-		LVEntryVersion lvEntryVersion = fetchByG_UGK_Version(
-			groupId, uniqueGroupKey, version);
-
-		if (lvEntryVersion == null) {
-			String message =
-				_uniquePersistenceFinderByG_UGK_Version.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, uniqueGroupKey, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLVEntryVersionException(message);
-		}
-
-		return lvEntryVersion;
+		return _uniquePersistenceFinderByG_UGK_Version.find(
+			finderCache, new Object[] {groupId, uniqueGroupKey, version});
 	}
 
 	/**
@@ -1781,6 +1673,7 @@ public class LVEntryVersionPersistenceImpl
 				_SQL_SELECT_LVENTRYVERSION_WHERE,
 				_SQL_COUNT_LVENTRYVERSION_WHERE,
 				LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"lvEntryVersion.", "lvEntryId", FinderColumn.Type.LONG, "=",
 					true, true, LVEntryVersion::getLvEntryId));
@@ -1821,10 +1714,11 @@ public class LVEntryVersionPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_LVENTRYVERSION_WHERE, _SQL_COUNT_LVENTRYVERSION_WHERE,
-			LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"lvEntryVersion.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, LVEntryVersion::getUuid));
+				"lvEntryVersion.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, LVEntryVersion::getUuid));
 
 		_collectionPersistenceFinderByUuid_Version =
 			new CollectionPersistenceFinder<>(
@@ -1855,9 +1749,11 @@ public class LVEntryVersionPersistenceImpl
 				_SQL_SELECT_LVENTRYVERSION_WHERE,
 				_SQL_COUNT_LVENTRYVERSION_WHERE,
 				LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"lvEntryVersion.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, LVEntryVersion::getUuid),
+					"lvEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					LVEntryVersion::getUuid),
 				new FinderColumn<>(
 					"lvEntryVersion.", "version", FinderColumn.Type.INTEGER,
 					"=", true, true, LVEntryVersion::getVersion));
@@ -1884,9 +1780,11 @@ public class LVEntryVersionPersistenceImpl
 				_SQL_SELECT_LVENTRYVERSION_WHERE,
 				_SQL_COUNT_LVENTRYVERSION_WHERE,
 				LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"lvEntryVersion.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, LVEntryVersion::getUuid),
+					"lvEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					LVEntryVersion::getUuid),
 				new FinderColumn<>(
 					"lvEntryVersion.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, LVEntryVersion::getGroupId));
@@ -1905,8 +1803,9 @@ public class LVEntryVersionPersistenceImpl
 					LVEntryVersion::getGroupId, LVEntryVersion::getVersion),
 				_SQL_SELECT_LVENTRYVERSION_WHERE, "",
 				new FinderColumn<>(
-					"lvEntryVersion.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, LVEntryVersion::getUuid),
+					"lvEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					LVEntryVersion::getUuid),
 				new FinderColumn<>(
 					"lvEntryVersion.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, LVEntryVersion::getGroupId),
@@ -1936,9 +1835,11 @@ public class LVEntryVersionPersistenceImpl
 				_SQL_SELECT_LVENTRYVERSION_WHERE,
 				_SQL_COUNT_LVENTRYVERSION_WHERE,
 				LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"lvEntryVersion.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, LVEntryVersion::getUuid),
+					"lvEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					LVEntryVersion::getUuid),
 				new FinderColumn<>(
 					"lvEntryVersion.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, LVEntryVersion::getCompanyId));
@@ -1977,9 +1878,11 @@ public class LVEntryVersionPersistenceImpl
 				_SQL_SELECT_LVENTRYVERSION_WHERE,
 				_SQL_COUNT_LVENTRYVERSION_WHERE,
 				LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"lvEntryVersion.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, LVEntryVersion::getUuid),
+					"lvEntryVersion.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					LVEntryVersion::getUuid),
 				new FinderColumn<>(
 					"lvEntryVersion.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, LVEntryVersion::getCompanyId),
@@ -2009,6 +1912,7 @@ public class LVEntryVersionPersistenceImpl
 				_SQL_SELECT_LVENTRYVERSION_WHERE,
 				_SQL_COUNT_LVENTRYVERSION_WHERE,
 				LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"lvEntryVersion.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, LVEntryVersion::getGroupId));
@@ -2042,6 +1946,7 @@ public class LVEntryVersionPersistenceImpl
 				_SQL_SELECT_LVENTRYVERSION_WHERE,
 				_SQL_COUNT_LVENTRYVERSION_WHERE,
 				LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"lvEntryVersion.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, LVEntryVersion::getGroupId),
@@ -2068,7 +1973,8 @@ public class LVEntryVersionPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"groupId", "uniqueGroupKey"}, 0, 2, false, null),
 			_SQL_SELECT_LVENTRYVERSION_WHERE, _SQL_COUNT_LVENTRYVERSION_WHERE,
-			LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LVEntryVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"lvEntryVersion.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, LVEntryVersion::getGroupId),
@@ -2140,12 +2046,6 @@ public class LVEntryVersionPersistenceImpl
 	private static final String _SQL_COUNT_LVENTRYVERSION_WHERE =
 		"SELECT COUNT(lvEntryVersion) FROM LVEntryVersion lvEntryVersion WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LVEntryVersion exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LVEntryVersionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -2155,4 +2055,4 @@ public class LVEntryVersionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1193570756
+// LIFERAY-SERVICE-BUILDER-HASH:1167978348

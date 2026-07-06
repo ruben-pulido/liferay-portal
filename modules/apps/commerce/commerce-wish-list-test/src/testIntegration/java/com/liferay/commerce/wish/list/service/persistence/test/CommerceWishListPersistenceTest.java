@@ -112,11 +112,7 @@ public class CommerceWishListPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CommerceWishList newCommerceWishList = _persistence.create(pk);
-
-		newCommerceWishList.setMvccVersion(RandomTestUtil.nextLong());
+		CommerceWishList newCommerceWishList = addCommerceWishList();
 
 		newCommerceWishList.setUuid(RandomTestUtil.randomString());
 
@@ -136,7 +132,9 @@ public class CommerceWishListPersistenceTest {
 
 		newCommerceWishList.setDefaultWishList(RandomTestUtil.randomBoolean());
 
-		_commerceWishLists.add(_persistence.update(newCommerceWishList));
+		newCommerceWishList = _persistence.update(newCommerceWishList);
+
+		_commerceWishLists.add(newCommerceWishList);
 
 		CommerceWishList existingCommerceWishList =
 			_persistence.findByPrimaryKey(newCommerceWishList.getPrimaryKey());
@@ -557,8 +555,6 @@ public class CommerceWishListPersistenceTest {
 
 		CommerceWishList commerceWishList = _persistence.create(pk);
 
-		commerceWishList.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceWishList.setUuid(RandomTestUtil.randomString());
 
 		commerceWishList.setGroupId(RandomTestUtil.nextLong());
@@ -588,4 +584,4 @@ public class CommerceWishListPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-934772466
+// LIFERAY-SERVICE-BUILDER-HASH:1723242011

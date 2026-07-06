@@ -77,8 +77,9 @@ public class CommerceInventoryAuditPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceInventoryAudit>
-		_collectionPersistenceFinderByLtCreateDate;
+	private CollectionPersistenceFinder
+		<CommerceInventoryAudit, NoSuchInventoryAuditException>
+			_collectionPersistenceFinderByLtCreateDate;
 
 	/**
 	 * Returns all the commerce inventory audits where createDate &lt; &#63;.
@@ -172,16 +173,8 @@ public class CommerceInventoryAuditPersistenceImpl
 			OrderByComparator<CommerceInventoryAudit> orderByComparator)
 		throws NoSuchInventoryAuditException {
 
-		CommerceInventoryAudit commerceInventoryAudit =
-			fetchByLtCreateDate_First(createDate, orderByComparator);
-
-		if (commerceInventoryAudit != null) {
-			return commerceInventoryAudit;
-		}
-
-		throw new NoSuchInventoryAuditException(
-			_collectionPersistenceFinderByLtCreateDate.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {createDate}));
+		return _collectionPersistenceFinderByLtCreateDate.findFirst(
+			finderCache, new Object[] {createDate}, orderByComparator);
 	}
 
 	/**
@@ -223,8 +216,9 @@ public class CommerceInventoryAuditPersistenceImpl
 			finderCache, new Object[] {createDate});
 	}
 
-	private CollectionPersistenceFinder<CommerceInventoryAudit>
-		_collectionPersistenceFinderByC_S_U;
+	private CollectionPersistenceFinder
+		<CommerceInventoryAudit, NoSuchInventoryAuditException>
+			_collectionPersistenceFinderByC_S_U;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory audits where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
@@ -269,17 +263,9 @@ public class CommerceInventoryAuditPersistenceImpl
 			OrderByComparator<CommerceInventoryAudit> orderByComparator)
 		throws NoSuchInventoryAuditException {
 
-		CommerceInventoryAudit commerceInventoryAudit = fetchByC_S_U_First(
-			companyId, sku, unitOfMeasureKey, orderByComparator);
-
-		if (commerceInventoryAudit != null) {
-			return commerceInventoryAudit;
-		}
-
-		throw new NoSuchInventoryAuditException(
-			_collectionPersistenceFinderByC_S_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, sku, unitOfMeasureKey}));
+		return _collectionPersistenceFinderByC_S_U.findFirst(
+			finderCache, new Object[] {companyId, sku, unitOfMeasureKey},
+			orderByComparator);
 	}
 
 	/**
@@ -541,6 +527,11 @@ public class CommerceInventoryAuditPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceInventoryAuditId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCEINVENTORYAUDIT;
 	}
@@ -575,7 +566,7 @@ public class CommerceInventoryAuditPersistenceImpl
 				_SQL_SELECT_COMMERCEINVENTORYAUDIT_WHERE,
 				_SQL_COUNT_COMMERCEINVENTORYAUDIT_WHERE,
 				CommerceInventoryAuditModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceInventoryAudit.", "createDate",
 					FinderColumn.Type.DATE, "<", true, true,
@@ -610,7 +601,7 @@ public class CommerceInventoryAuditPersistenceImpl
 			_SQL_SELECT_COMMERCEINVENTORYAUDIT_WHERE,
 			_SQL_COUNT_COMMERCEINVENTORYAUDIT_WHERE,
 			CommerceInventoryAuditModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"commerceInventoryAudit.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, CommerceInventoryAudit::getCompanyId),
@@ -676,9 +667,6 @@ public class CommerceInventoryAuditPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEINVENTORYAUDIT_WHERE =
 		"SELECT COUNT(commerceInventoryAudit) FROM CommerceInventoryAudit commerceInventoryAudit WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceInventoryAudit exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"commerceInventoryAuditId"});
 
@@ -688,4 +676,4 @@ public class CommerceInventoryAuditPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1118915304
+// LIFERAY-SERVICE-BUILDER-HASH:1331837392

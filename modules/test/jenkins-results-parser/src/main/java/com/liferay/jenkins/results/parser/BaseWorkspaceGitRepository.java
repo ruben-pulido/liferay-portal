@@ -10,12 +10,8 @@ import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 
-import java.time.Duration;
-import java.time.Instant;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +115,7 @@ public abstract class BaseWorkspaceGitRepository
 			return _branchName;
 		}
 
-		String branchName = System.getenv("TOP_LEVEL_BRANCH_NAME");
+		String branchName = Environment.get("TOP_LEVEL_BRANCH_NAME");
 
 		if (JenkinsResultsParserUtil.isNullOrEmpty(branchName)) {
 			BuildDatabase buildDatabase = BuildDatabaseUtil.getBuildDatabase();
@@ -588,14 +584,14 @@ public abstract class BaseWorkspaceGitRepository
 	protected Properties getProperties(String propertyType) {
 		Properties buildProperties = new Properties();
 
-		Map<String, String> envMap = System.getenv();
+		Map<String, String> envMap = Environment.getAll();
 
 		for (Map.Entry<String, String> envEntry : envMap.entrySet()) {
 			buildProperties.setProperty(
 				"env." + envEntry.getKey(), envEntry.getValue());
 		}
 
-		buildProperties.putAll(System.getenv());
+		buildProperties.putAll(Environment.getAll());
 
 		try {
 			buildProperties.putAll(
@@ -900,51 +896,6 @@ public abstract class BaseWorkspaceGitRepository
 		String senderBranchSHA = getSenderBranchSHA();
 
 		if (!gitWorkingDirectory.localSHAExists(senderBranchSHA)) {
-			if (JenkinsResultsParserUtil.isCloudCINode()) {
-				try {
-					GitHubRemoteGitCommit gitHubRemoteGitCommit =
-						GitCommitFactory.newGitHubRemoteGitCommit(
-							getSenderBranchUsername(),
-							gitWorkingDirectory.getGitRepositoryName(),
-							senderBranchSHA);
-
-					Date commitDate = gitHubRemoteGitCommit.getCommitDate();
-
-					Instant commitInstant = commitDate.toInstant();
-
-					Instant oneMonthAgo = Instant.now(
-					).minus(
-						Duration.ofDays(30)
-					);
-
-					if (commitInstant.isBefore(oneMonthAgo) &&
-						_isPullRequest()) {
-
-						PullRequest pullRequest =
-							PullRequestFactory.newPullRequest(getGitHubURL());
-
-						if (pullRequest != null) {
-							String message =
-								"User's commit " + senderBranchSHA +
-									" is more than 1 month old. Rebase and " +
-										"retest your changes.";
-
-							pullRequest.addComment(message);
-
-							throw new RuntimeException(
-								"Sender's commit is more than 1 month old");
-						}
-					}
-				}
-				catch (Exception exception) {
-					exception.printStackTrace();
-
-					throw new RuntimeException(
-						"Sender's commit is more than 1 month old or there " +
-							"was an error retrieving commit information");
-				}
-			}
-
 			gitWorkingDirectory.fetch(_getSenderRemoteGitRef());
 		}
 
@@ -1214,7 +1165,7 @@ public abstract class BaseWorkspaceGitRepository
 	}
 
 	private String _getJobName() {
-		String jobName = System.getenv("JOB_NAME");
+		String jobName = Environment.get("JOB_NAME");
 
 		if (jobName != null) {
 			return jobName;
@@ -1333,7 +1284,7 @@ public abstract class BaseWorkspaceGitRepository
 	}
 
 	private boolean _isDotGitDirArchiveRequired() {
-		String jobName = System.getenv("JOB_NAME");
+		String jobName = Environment.get("JOB_NAME");
 
 		if (JenkinsResultsParserUtil.isTopLevelJobName(jobName)) {
 			return true;
@@ -1343,8 +1294,9 @@ public abstract class BaseWorkspaceGitRepository
 			return Boolean.parseBoolean(
 				JenkinsResultsParserUtil.getBuildProperty(
 					"git.archive.dot.git.dir.required", getDirectoryName(),
-					System.getenv("CI_TEST_SUITE"), System.getenv("DIST_TYPE"),
-					jobName, System.getenv("JOB_VARIANT")));
+					Environment.get("CI_TEST_SUITE"),
+					Environment.get("DIST_TYPE"), jobName,
+					Environment.get("JOB_VARIANT")));
 		}
 		catch (IOException ioException) {
 			return false;
@@ -1369,8 +1321,8 @@ public abstract class BaseWorkspaceGitRepository
 		try {
 			return Boolean.parseBoolean(
 				JenkinsResultsParserUtil.getBuildProperty(
-					"git.archive.enabled", System.getenv("CI_TEST_SUITE"),
-					System.getenv("JOB_NAME")));
+					"git.archive.enabled", Environment.get("CI_TEST_SUITE"),
+					Environment.get("JOB_NAME")));
 		}
 		catch (IOException ioException) {
 			return true;
@@ -1487,10 +1439,10 @@ public abstract class BaseWorkspaceGitRepository
 
 		GitWorkingDirectory gitWorkingDirectory = getGitWorkingDirectory();
 
-		gitWorkingDirectory.fetch(remoteGitRef);
+		LocalGitBranch localGitBranch = gitWorkingDirectory.fetch(remoteGitRef);
 
-		if (!gitWorkingDirectory.localSHAExists(sha) ||
-			!gitWorkingDirectory.refContainsSHA(remoteGitRef.getSHA(), sha)) {
+		if ((localGitBranch == null) ||
+			!gitWorkingDirectory.refContainsSHA(localGitBranch, sha)) {
 
 			throw new RuntimeException(
 				JenkinsResultsParserUtil.combine(

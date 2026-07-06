@@ -112,11 +112,7 @@ public class DDMContentPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DDMContent newDDMContent = _persistence.create(pk);
-
-		newDDMContent.setMvccVersion(RandomTestUtil.nextLong());
+		DDMContent newDDMContent = addDDMContent();
 
 		newDDMContent.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -140,7 +136,9 @@ public class DDMContentPersistenceTest {
 
 		newDDMContent.setData(RandomTestUtil.randomString());
 
-		_ddmContents.add(_persistence.update(newDDMContent));
+		newDDMContent = _persistence.update(newDDMContent);
+
+		_ddmContents.add(newDDMContent);
 
 		DDMContent existingDDMContent = _persistence.findByPrimaryKey(
 			newDDMContent.getPrimaryKey());
@@ -524,8 +522,6 @@ public class DDMContentPersistenceTest {
 
 		DDMContent ddmContent = _persistence.create(pk);
 
-		ddmContent.setMvccVersion(RandomTestUtil.nextLong());
-
 		ddmContent.setCtCollectionId(RandomTestUtil.nextLong());
 
 		ddmContent.setUuid(RandomTestUtil.randomString());
@@ -558,4 +554,4 @@ public class DDMContentPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-743187788
+// LIFERAY-SERVICE-BUILDER-HASH:-828389301

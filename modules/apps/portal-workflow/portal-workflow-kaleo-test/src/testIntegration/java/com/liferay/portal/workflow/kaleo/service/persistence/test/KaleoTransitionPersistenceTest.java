@@ -112,11 +112,7 @@ public class KaleoTransitionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		KaleoTransition newKaleoTransition = _persistence.create(pk);
-
-		newKaleoTransition.setMvccVersion(RandomTestUtil.nextLong());
+		KaleoTransition newKaleoTransition = addKaleoTransition();
 
 		newKaleoTransition.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -157,7 +153,9 @@ public class KaleoTransitionPersistenceTest {
 
 		newKaleoTransition.setDefaultTransition(RandomTestUtil.randomBoolean());
 
-		_kaleoTransitions.add(_persistence.update(newKaleoTransition));
+		newKaleoTransition = _persistence.update(newKaleoTransition);
+
+		_kaleoTransitions.add(newKaleoTransition);
 
 		KaleoTransition existingKaleoTransition = _persistence.findByPrimaryKey(
 			newKaleoTransition.getPrimaryKey());
@@ -590,8 +588,6 @@ public class KaleoTransitionPersistenceTest {
 
 		KaleoTransition kaleoTransition = _persistence.create(pk);
 
-		kaleoTransition.setMvccVersion(RandomTestUtil.nextLong());
-
 		kaleoTransition.setCtCollectionId(RandomTestUtil.nextLong());
 
 		kaleoTransition.setGroupId(RandomTestUtil.nextLong());
@@ -639,4 +635,4 @@ public class KaleoTransitionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-832447360
+// LIFERAY-SERVICE-BUILDER-HASH:-2102990744

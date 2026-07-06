@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,10 @@ public class ObjectValidationRuleSettingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectValidationRuleSetting>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ObjectValidationRuleSetting,
+		 NoSuchObjectValidationRuleSettingException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the object validation rule settings where uuid = &#63;.
@@ -124,16 +124,8 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			OrderByComparator<ObjectValidationRuleSetting> orderByComparator)
 		throws NoSuchObjectValidationRuleSettingException {
 
-		ObjectValidationRuleSetting objectValidationRuleSetting =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (objectValidationRuleSetting != null) {
-			return objectValidationRuleSetting;
-		}
-
-		throw new NoSuchObjectValidationRuleSettingException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -175,8 +167,10 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ObjectValidationRuleSetting>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ObjectValidationRuleSetting,
+		 NoSuchObjectValidationRuleSettingException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the object validation rule settings where uuid = &#63; and companyId = &#63;.
@@ -219,16 +213,8 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			OrderByComparator<ObjectValidationRuleSetting> orderByComparator)
 		throws NoSuchObjectValidationRuleSettingException {
 
-		ObjectValidationRuleSetting objectValidationRuleSetting =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (objectValidationRuleSetting != null) {
-			return objectValidationRuleSetting;
-		}
-
-		throw new NoSuchObjectValidationRuleSettingException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -273,8 +259,10 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ObjectValidationRuleSetting>
-		_collectionPersistenceFinderByObjectValidationRuleId;
+	private CollectionPersistenceFinder
+		<ObjectValidationRuleSetting,
+		 NoSuchObjectValidationRuleSettingException>
+			_collectionPersistenceFinderByObjectValidationRuleId;
 
 	/**
 	 * Returns an ordered range of all the object validation rule settings where objectValidationRuleId = &#63;.
@@ -315,19 +303,9 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			OrderByComparator<ObjectValidationRuleSetting> orderByComparator)
 		throws NoSuchObjectValidationRuleSettingException {
 
-		ObjectValidationRuleSetting objectValidationRuleSetting =
-			fetchByObjectValidationRuleId_First(
-				objectValidationRuleId, orderByComparator);
-
-		if (objectValidationRuleSetting != null) {
-			return objectValidationRuleSetting;
-		}
-
-		throw new NoSuchObjectValidationRuleSettingException(
-			_collectionPersistenceFinderByObjectValidationRuleId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectValidationRuleId}));
+		return _collectionPersistenceFinderByObjectValidationRuleId.findFirst(
+			finderCache, new Object[] {objectValidationRuleId},
+			orderByComparator);
 	}
 
 	/**
@@ -370,8 +348,10 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			finderCache, new Object[] {objectValidationRuleId});
 	}
 
-	private CollectionPersistenceFinder<ObjectValidationRuleSetting>
-		_collectionPersistenceFinderByOVRI_N;
+	private CollectionPersistenceFinder
+		<ObjectValidationRuleSetting,
+		 NoSuchObjectValidationRuleSettingException>
+			_collectionPersistenceFinderByOVRI_N;
 
 	/**
 	 * Returns an ordered range of all the object validation rule settings where objectValidationRuleId = &#63; and name = &#63;.
@@ -414,18 +394,9 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			OrderByComparator<ObjectValidationRuleSetting> orderByComparator)
 		throws NoSuchObjectValidationRuleSettingException {
 
-		ObjectValidationRuleSetting objectValidationRuleSetting =
-			fetchByOVRI_N_First(
-				objectValidationRuleId, name, orderByComparator);
-
-		if (objectValidationRuleSetting != null) {
-			return objectValidationRuleSetting;
-		}
-
-		throw new NoSuchObjectValidationRuleSettingException(
-			_collectionPersistenceFinderByOVRI_N.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectValidationRuleId, name}));
+		return _collectionPersistenceFinderByOVRI_N.findFirst(
+			finderCache, new Object[] {objectValidationRuleId, name},
+			orderByComparator);
 	}
 
 	/**
@@ -471,8 +442,10 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			finderCache, new Object[] {objectValidationRuleId, name});
 	}
 
-	private UniquePersistenceFinder<ObjectValidationRuleSetting>
-		_uniquePersistenceFinderByN_V;
+	private UniquePersistenceFinder
+		<ObjectValidationRuleSetting,
+		 NoSuchObjectValidationRuleSettingException>
+			_uniquePersistenceFinderByN_V;
 
 	/**
 	 * Returns the object validation rule setting where name = &#63; and value = &#63; or throws a <code>NoSuchObjectValidationRuleSettingException</code> if it could not be found.
@@ -486,22 +459,8 @@ public class ObjectValidationRuleSettingPersistenceImpl
 	public ObjectValidationRuleSetting findByN_V(String name, String value)
 		throws NoSuchObjectValidationRuleSettingException {
 
-		ObjectValidationRuleSetting objectValidationRuleSetting = fetchByN_V(
-			name, value);
-
-		if (objectValidationRuleSetting == null) {
-			String message =
-				_uniquePersistenceFinderByN_V.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name, value});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectValidationRuleSettingException(message);
-		}
-
-		return objectValidationRuleSetting;
+		return _uniquePersistenceFinderByN_V.find(
+			finderCache, new Object[] {name, value});
 	}
 
 	/**
@@ -550,8 +509,10 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			finderCache, new Object[] {name, value});
 	}
 
-	private UniquePersistenceFinder<ObjectValidationRuleSetting>
-		_uniquePersistenceFinderByOVRI_N_V;
+	private UniquePersistenceFinder
+		<ObjectValidationRuleSetting,
+		 NoSuchObjectValidationRuleSettingException>
+			_uniquePersistenceFinderByOVRI_N_V;
 
 	/**
 	 * Returns the object validation rule setting where objectValidationRuleId = &#63; and name = &#63; and value = &#63; or throws a <code>NoSuchObjectValidationRuleSettingException</code> if it could not be found.
@@ -567,23 +528,8 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			long objectValidationRuleId, String name, String value)
 		throws NoSuchObjectValidationRuleSettingException {
 
-		ObjectValidationRuleSetting objectValidationRuleSetting =
-			fetchByOVRI_N_V(objectValidationRuleId, name, value);
-
-		if (objectValidationRuleSetting == null) {
-			String message =
-				_uniquePersistenceFinderByOVRI_N_V.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectValidationRuleId, name, value});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectValidationRuleSettingException(message);
-		}
-
-		return objectValidationRuleSetting;
+		return _uniquePersistenceFinderByOVRI_N_V.find(
+			finderCache, new Object[] {objectValidationRuleId, name, value});
 	}
 
 	/**
@@ -904,9 +850,9 @@ public class ObjectValidationRuleSettingPersistenceImpl
 			_SQL_SELECT_OBJECTVALIDATIONRULESETTING_WHERE,
 			_SQL_COUNT_OBJECTVALIDATIONRULESETTING_WHERE,
 			ObjectValidationRuleSettingModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"objectValidationRuleSetting.", "uuid",
+				"objectValidationRuleSetting.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				ObjectValidationRuleSetting::getUuid));
 
@@ -932,9 +878,9 @@ public class ObjectValidationRuleSettingPersistenceImpl
 				_SQL_SELECT_OBJECTVALIDATIONRULESETTING_WHERE,
 				_SQL_COUNT_OBJECTVALIDATIONRULESETTING_WHERE,
 				ObjectValidationRuleSettingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"objectValidationRuleSetting.", "uuid",
+					"objectValidationRuleSetting.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					ObjectValidationRuleSetting::getUuid),
 				new FinderColumn<>(
@@ -967,7 +913,7 @@ public class ObjectValidationRuleSettingPersistenceImpl
 				_SQL_SELECT_OBJECTVALIDATIONRULESETTING_WHERE,
 				_SQL_COUNT_OBJECTVALIDATIONRULESETTING_WHERE,
 				ObjectValidationRuleSettingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"objectValidationRuleSetting.", "objectValidationRuleId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -997,7 +943,7 @@ public class ObjectValidationRuleSettingPersistenceImpl
 				_SQL_SELECT_OBJECTVALIDATIONRULESETTING_WHERE,
 				_SQL_COUNT_OBJECTVALIDATIONRULESETTING_WHERE,
 				ObjectValidationRuleSettingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"objectValidationRuleSetting.", "objectValidationRuleId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1106,12 +1052,6 @@ public class ObjectValidationRuleSettingPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTVALIDATIONRULESETTING_WHERE =
 		"SELECT COUNT(objectValidationRuleSetting) FROM ObjectValidationRuleSetting objectValidationRuleSetting WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectValidationRuleSetting exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ObjectValidationRuleSettingPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1121,4 +1061,4 @@ public class ObjectValidationRuleSettingPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:212689693
+// LIFERAY-SERVICE-BUILDER-HASH:824426093

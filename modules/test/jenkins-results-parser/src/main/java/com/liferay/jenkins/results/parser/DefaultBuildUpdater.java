@@ -5,8 +5,6 @@
 
 package com.liferay.jenkins.results.parser;
 
-import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,9 +29,7 @@ public class DefaultBuildUpdater extends BaseBuildUpdater {
 			JenkinsCohort jenkinsCohort = build.getJenkinsCohort();
 
 			jenkinsMaster = jenkinsCohort.getMostAvailableJenkinsMaster(
-				build.getInvokedBatchSize(), build.getJobName(),
-				_getLabelExpression(), build.getMinimumSlaveRAM(),
-				build.getMaximumSlavesPerHost());
+				build.getInvokedBatchSize(), build.getJobName());
 
 			build.setJenkinsMaster(jenkinsMaster);
 		}
@@ -49,12 +45,20 @@ public class DefaultBuildUpdater extends BaseBuildUpdater {
 	public void reinvoke(Map<String, String> reinvokeBuildParameters) {
 		Build build = getBuild();
 
+		JenkinsMaster currentJenkinsMaster = null;
+
+		Build.Invocation currentInvocation = build.getCurrentInvocation();
+
+		if (currentInvocation != null) {
+			currentJenkinsMaster = currentInvocation.getJenkinsMaster();
+		}
+
 		JenkinsCohort jenkinsCohort = build.getJenkinsCohort();
 
 		JenkinsMaster jenkinsMaster =
 			jenkinsCohort.getMostAvailableJenkinsMaster(
-				build.getInvokedBatchSize(), build.getJobName(),
-				_getLabelExpression(), 24, build.getMaximumSlavesPerHost());
+				currentJenkinsMaster, build.getInvokedBatchSize(),
+				build.getJobName());
 
 		build.setJenkinsMaster(jenkinsMaster);
 
@@ -292,31 +296,6 @@ public class DefaultBuildUpdater extends BaseBuildUpdater {
 		return buildParameters;
 	}
 
-	private String _getLabelExpression() {
-		Build build = getBuild();
-
-		Map<String, String> buildParameters = build.getParameters();
-
-		String slaveLabel = buildParameters.get("SLAVE_LABEL");
-
-		if (!JenkinsResultsParserUtil.isNullOrEmpty(slaveLabel)) {
-			return slaveLabel;
-		}
-
-		if (build instanceof DownstreamBuild) {
-			DownstreamBuild downstreamBuild = (DownstreamBuild)build;
-
-			AxisTestClassGroup axisTestClassGroup =
-				downstreamBuild.getAxisTestClassGroup();
-
-			if (axisTestClassGroup != null) {
-				return axisTestClassGroup.getSlaveLabel();
-			}
-		}
-
-		return null;
-	}
-
 	private JSONObject _getQueueItemJSONObject() {
 		try {
 			Build build = getBuild();
@@ -380,6 +359,16 @@ public class DefaultBuildUpdater extends BaseBuildUpdater {
 		Map<String, String> reinvokeBuildParameters) {
 
 		Build build = getBuild();
+
+		Build parentBuild = build.getParentBuild();
+
+		if (parentBuild != null) {
+			String parentBuildURL = parentBuild.getBuildURL();
+
+			if (!JenkinsResultsParserUtil.isNullOrEmpty(parentBuildURL)) {
+				build.setParameterValue("PARENT_BUILD_URL", parentBuildURL);
+			}
+		}
 
 		Map<String, String> buildParameters = new HashMap<>(
 			build.getParameters());

@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -97,8 +95,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp definition specification option values where uuid = &#63;.
@@ -141,17 +141,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				orderByComparator)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByUuid_First(
-				uuid, orderByComparator);
-
-		if (cpDefinitionSpecificationOptionValue != null) {
-			return cpDefinitionSpecificationOptionValue;
-		}
-
-		throw new NoSuchCPDefinitionSpecificationOptionValueException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -194,8 +185,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the cp definition specification option value where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCPDefinitionSpecificationOptionValueException</code> if it could not be found.
@@ -210,23 +203,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			String uuid, long groupId)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByUUID_G(uuid, groupId);
-
-		if (cpDefinitionSpecificationOptionValue == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDefinitionSpecificationOptionValueException(
-				message);
-		}
-
-		return cpDefinitionSpecificationOptionValue;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -276,8 +254,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp definition specification option values where uuid = &#63; and companyId = &#63;.
@@ -322,17 +302,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				orderByComparator)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByUuid_C_First(
-				uuid, companyId, orderByComparator);
-
-		if (cpDefinitionSpecificationOptionValue != null) {
-			return cpDefinitionSpecificationOptionValue;
-		}
-
-		throw new NoSuchCPDefinitionSpecificationOptionValueException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -378,8 +349,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the cp definition specification option values where groupId = &#63;.
@@ -422,17 +395,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				orderByComparator)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByGroupId_First(
-				groupId, orderByComparator);
-
-		if (cpDefinitionSpecificationOptionValue != null) {
-			return cpDefinitionSpecificationOptionValue;
-		}
-
-		throw new NoSuchCPDefinitionSpecificationOptionValueException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -475,8 +439,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_collectionPersistenceFinderByCPDefinitionId;
+	private CollectionPersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_collectionPersistenceFinderByCPDefinitionId;
 
 	/**
 	 * Returns an ordered range of all the cp definition specification option values where CPDefinitionId = &#63;.
@@ -519,17 +485,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				orderByComparator)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByCPDefinitionId_First(
-				CPDefinitionId, orderByComparator);
-
-		if (cpDefinitionSpecificationOptionValue != null) {
-			return cpDefinitionSpecificationOptionValue;
-		}
-
-		throw new NoSuchCPDefinitionSpecificationOptionValueException(
-			_collectionPersistenceFinderByCPDefinitionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPDefinitionId}));
+		return _collectionPersistenceFinderByCPDefinitionId.findFirst(
+			finderCache, new Object[] {CPDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -572,8 +529,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {CPDefinitionId});
 	}
 
-	private CollectionPersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_collectionPersistenceFinderByCPSpecificationOptionId;
+	private CollectionPersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_collectionPersistenceFinderByCPSpecificationOptionId;
 
 	/**
 	 * Returns an ordered range of all the cp definition specification option values where CPSpecificationOptionId = &#63;.
@@ -618,20 +577,9 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 					orderByComparator)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue =
-				fetchByCPSpecificationOptionId_First(
-					CPSpecificationOptionId, orderByComparator);
-
-		if (cpDefinitionSpecificationOptionValue != null) {
-			return cpDefinitionSpecificationOptionValue;
-		}
-
-		throw new NoSuchCPDefinitionSpecificationOptionValueException(
-			_collectionPersistenceFinderByCPSpecificationOptionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {CPSpecificationOptionId}));
+		return _collectionPersistenceFinderByCPSpecificationOptionId.findFirst(
+			finderCache, new Object[] {CPSpecificationOptionId},
+			orderByComparator);
 	}
 
 	/**
@@ -676,8 +624,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {CPSpecificationOptionId});
 	}
 
-	private CollectionPersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_collectionPersistenceFinderByCPOptionCategoryId;
+	private CollectionPersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_collectionPersistenceFinderByCPOptionCategoryId;
 
 	/**
 	 * Returns an ordered range of all the cp definition specification option values where CPOptionCategoryId = &#63;.
@@ -720,20 +670,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				orderByComparator)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue =
-				fetchByCPOptionCategoryId_First(
-					CPOptionCategoryId, orderByComparator);
-
-		if (cpDefinitionSpecificationOptionValue != null) {
-			return cpDefinitionSpecificationOptionValue;
-		}
-
-		throw new NoSuchCPDefinitionSpecificationOptionValueException(
-			_collectionPersistenceFinderByCPOptionCategoryId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {CPOptionCategoryId}));
+		return _collectionPersistenceFinderByCPOptionCategoryId.findFirst(
+			finderCache, new Object[] {CPOptionCategoryId}, orderByComparator);
 	}
 
 	/**
@@ -776,8 +714,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {CPOptionCategoryId});
 	}
 
-	private UniquePersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_uniquePersistenceFinderByC_CSOVI;
+	private UniquePersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_uniquePersistenceFinderByC_CSOVI;
 
 	/**
 	 * Returns the cp definition specification option value where CPDefinitionSpecificationOptionValueId = &#63; and CPDefinitionId = &#63; or throws a <code>NoSuchCPDefinitionSpecificationOptionValueException</code> if it could not be found.
@@ -792,27 +732,11 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			long CPDefinitionSpecificationOptionValueId, long CPDefinitionId)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByC_CSOVI(
-				CPDefinitionSpecificationOptionValueId, CPDefinitionId);
-
-		if (cpDefinitionSpecificationOptionValue == null) {
-			String message =
-				_uniquePersistenceFinderByC_CSOVI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						CPDefinitionSpecificationOptionValueId, CPDefinitionId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDefinitionSpecificationOptionValueException(
-				message);
-		}
-
-		return cpDefinitionSpecificationOptionValue;
+		return _uniquePersistenceFinderByC_CSOVI.find(
+			finderCache,
+			new Object[] {
+				CPDefinitionSpecificationOptionValueId, CPDefinitionId
+			});
 	}
 
 	/**
@@ -873,8 +797,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			});
 	}
 
-	private CollectionPersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_collectionPersistenceFinderByC_CSO;
+	private CollectionPersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_collectionPersistenceFinderByC_CSO;
 
 	/**
 	 * Returns an ordered range of all the cp definition specification option values where CPDefinitionId = &#63; and CPSpecificationOptionId = &#63;.
@@ -919,18 +845,9 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				orderByComparator)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByC_CSO_First(
-				CPDefinitionId, CPSpecificationOptionId, orderByComparator);
-
-		if (cpDefinitionSpecificationOptionValue != null) {
-			return cpDefinitionSpecificationOptionValue;
-		}
-
-		throw new NoSuchCPDefinitionSpecificationOptionValueException(
-			_collectionPersistenceFinderByC_CSO.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {CPDefinitionId, CPSpecificationOptionId}));
+		return _collectionPersistenceFinderByC_CSO.findFirst(
+			finderCache, new Object[] {CPDefinitionId, CPSpecificationOptionId},
+			orderByComparator);
 	}
 
 	/**
@@ -981,8 +898,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			new Object[] {CPDefinitionId, CPSpecificationOptionId});
 	}
 
-	private CollectionPersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_collectionPersistenceFinderByC_COC;
+	private CollectionPersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_collectionPersistenceFinderByC_COC;
 
 	/**
 	 * Returns an ordered range of all the cp definition specification option values where CPDefinitionId = &#63; and CPOptionCategoryId = &#63;.
@@ -1027,18 +946,9 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				orderByComparator)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByC_COC_First(
-				CPDefinitionId, CPOptionCategoryId, orderByComparator);
-
-		if (cpDefinitionSpecificationOptionValue != null) {
-			return cpDefinitionSpecificationOptionValue;
-		}
-
-		throw new NoSuchCPDefinitionSpecificationOptionValueException(
-			_collectionPersistenceFinderByC_COC.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {CPDefinitionId, CPOptionCategoryId}));
+		return _collectionPersistenceFinderByC_COC.findFirst(
+			finderCache, new Object[] {CPDefinitionId, CPOptionCategoryId},
+			orderByComparator);
 	}
 
 	/**
@@ -1085,8 +995,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {CPDefinitionId, CPOptionCategoryId});
 	}
 
-	private UniquePersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_uniquePersistenceFinderByC_K;
+	private UniquePersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_uniquePersistenceFinderByC_K;
 
 	/**
 	 * Returns the cp definition specification option value where CPDefinitionId = &#63; and key = &#63; or throws a <code>NoSuchCPDefinitionSpecificationOptionValueException</code> if it could not be found.
@@ -1101,25 +1013,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			long CPDefinitionId, String key)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByC_K(
-				CPDefinitionId, key);
-
-		if (cpDefinitionSpecificationOptionValue == null) {
-			String message =
-				_uniquePersistenceFinderByC_K.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {CPDefinitionId, key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDefinitionSpecificationOptionValueException(
-				message);
-		}
-
-		return cpDefinitionSpecificationOptionValue;
+		return _uniquePersistenceFinderByC_K.find(
+			finderCache, new Object[] {CPDefinitionId, key});
 	}
 
 	/**
@@ -1170,8 +1065,10 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			finderCache, new Object[] {CPDefinitionId, key});
 	}
 
-	private UniquePersistenceFinder<CPDefinitionSpecificationOptionValue>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<CPDefinitionSpecificationOptionValue,
+		 NoSuchCPDefinitionSpecificationOptionValueException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the cp definition specification option value where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCPDefinitionSpecificationOptionValueException</code> if it could not be found.
@@ -1186,25 +1083,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCPDefinitionSpecificationOptionValueException {
 
-		CPDefinitionSpecificationOptionValue
-			cpDefinitionSpecificationOptionValue = fetchByERC_C(
-				externalReferenceCode, companyId);
-
-		if (cpDefinitionSpecificationOptionValue == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDefinitionSpecificationOptionValueException(
-				message);
-		}
-
-		return cpDefinitionSpecificationOptionValue;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1601,6 +1481,11 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "CPDefinitionSpecificationOptionValueId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE;
 	}
@@ -1713,9 +1598,9 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 			_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 			CPDefinitionSpecificationOptionValueModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"cpDefinitionSpecificationOptionValue.", "uuid",
+				"cpDefinitionSpecificationOptionValue.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CPDefinitionSpecificationOptionValue::getUuid));
 
@@ -1730,7 +1615,7 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				CPDefinitionSpecificationOptionValue::getGroupId),
 			_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE, "",
 			new FinderColumn<>(
-				"cpDefinitionSpecificationOptionValue.", "uuid",
+				"cpDefinitionSpecificationOptionValue.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CPDefinitionSpecificationOptionValue::getUuid),
 			new FinderColumn<>(
@@ -1760,9 +1645,9 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				CPDefinitionSpecificationOptionValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpDefinitionSpecificationOptionValue.", "uuid",
+					"cpDefinitionSpecificationOptionValue.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CPDefinitionSpecificationOptionValue::getUuid),
 				new FinderColumn<>(
@@ -1792,7 +1677,7 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				CPDefinitionSpecificationOptionValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpDefinitionSpecificationOptionValue.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1822,7 +1707,7 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				CPDefinitionSpecificationOptionValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpDefinitionSpecificationOptionValue.", "CPDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1853,7 +1738,7 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				CPDefinitionSpecificationOptionValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpDefinitionSpecificationOptionValue.",
 					"CPSpecificationOptionId", FinderColumn.Type.LONG, "=",
@@ -1886,7 +1771,7 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 				CPDefinitionSpecificationOptionValueModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpDefinitionSpecificationOptionValue.",
 					"CPOptionCategoryId", FinderColumn.Type.LONG, "=", true,
@@ -1910,7 +1795,8 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			new FinderColumn<>(
 				"cpDefinitionSpecificationOptionValue.",
 				"CPDefinitionSpecificationOptionValueId",
-				FinderColumn.Type.LONG, "=", true, true,
+				"CPDSpecificationOptionValueId", FinderColumn.Type.LONG, "=",
+				true, true,
 				CPDefinitionSpecificationOptionValue::
 					getCPDefinitionSpecificationOptionValueId),
 			new FinderColumn<>(
@@ -1942,7 +1828,7 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 			_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 			CPDefinitionSpecificationOptionValueModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"cpDefinitionSpecificationOptionValue.", "CPDefinitionId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -1975,7 +1861,7 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 			_SQL_SELECT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 			_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE,
 			CPDefinitionSpecificationOptionValueModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"cpDefinitionSpecificationOptionValue.", "CPDefinitionId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -2000,7 +1886,7 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 				FinderColumn.Type.LONG, "=", true, true,
 				CPDefinitionSpecificationOptionValue::getCPDefinitionId),
 			new FinderColumn<>(
-				"cpDefinitionSpecificationOptionValue.", "key",
+				"cpDefinitionSpecificationOptionValue.", "key", "key_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CPDefinitionSpecificationOptionValue::getKey));
 
@@ -2087,12 +1973,6 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 		_SQL_COUNT_CPDEFINITIONSPECIFICATIONOPTIONVALUE_WHERE =
 			"SELECT COUNT(cpDefinitionSpecificationOptionValue) FROM CPDefinitionSpecificationOptionValue cpDefinitionSpecificationOptionValue WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPDefinitionSpecificationOptionValue exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPDefinitionSpecificationOptionValuePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "CPDefinitionSpecificationOptionValueId", "key"});
 
@@ -2102,4 +1982,4 @@ public class CPDefinitionSpecificationOptionValuePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:322830987
+// LIFERAY-SERVICE-BUILDER-HASH:359942643

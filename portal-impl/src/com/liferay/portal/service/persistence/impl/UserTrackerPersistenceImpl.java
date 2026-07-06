@@ -63,7 +63,7 @@ public class UserTrackerPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<UserTracker>
+	private CollectionPersistenceFinder<UserTracker, NoSuchUserTrackerException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -104,16 +104,9 @@ public class UserTrackerPersistenceImpl
 			long companyId, OrderByComparator<UserTracker> orderByComparator)
 		throws NoSuchUserTrackerException {
 
-		UserTracker userTracker = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (userTracker != null) {
-			return userTracker;
-		}
-
-		throw new NoSuchUserTrackerException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -155,7 +148,7 @@ public class UserTrackerPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<UserTracker>
+	private CollectionPersistenceFinder<UserTracker, NoSuchUserTrackerException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -196,16 +189,9 @@ public class UserTrackerPersistenceImpl
 			long userId, OrderByComparator<UserTracker> orderByComparator)
 		throws NoSuchUserTrackerException {
 
-		UserTracker userTracker = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (userTracker != null) {
-			return userTracker;
-		}
-
-		throw new NoSuchUserTrackerException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId},
+			orderByComparator);
 	}
 
 	/**
@@ -247,7 +233,7 @@ public class UserTrackerPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<UserTracker>
+	private CollectionPersistenceFinder<UserTracker, NoSuchUserTrackerException>
 		_collectionPersistenceFinderBySessionId;
 
 	/**
@@ -288,16 +274,9 @@ public class UserTrackerPersistenceImpl
 			String sessionId, OrderByComparator<UserTracker> orderByComparator)
 		throws NoSuchUserTrackerException {
 
-		UserTracker userTracker = fetchBySessionId_First(
-			sessionId, orderByComparator);
-
-		if (userTracker != null) {
-			return userTracker;
-		}
-
-		throw new NoSuchUserTrackerException(
-			_collectionPersistenceFinderBySessionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {sessionId}));
+		return _collectionPersistenceFinderBySessionId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {sessionId},
+			orderByComparator);
 	}
 
 	/**
@@ -548,6 +527,7 @@ public class UserTrackerPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_USERTRACKER_WHERE, _SQL_COUNT_USERTRACKER_WHERE,
 				UserTrackerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"userTracker.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, UserTracker::getCompanyId));
@@ -573,6 +553,7 @@ public class UserTrackerPersistenceImpl
 					new String[] {"userId"}, false),
 				_SQL_SELECT_USERTRACKER_WHERE, _SQL_COUNT_USERTRACKER_WHERE,
 				UserTrackerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"userTracker.", "userId", FinderColumn.Type.LONG, "=", true,
 					true, UserTracker::getUserId));
@@ -598,6 +579,7 @@ public class UserTrackerPersistenceImpl
 					new String[] {"sessionId"}, 0, 1, false, null),
 				_SQL_SELECT_USERTRACKER_WHERE, _SQL_COUNT_USERTRACKER_WHERE,
 				UserTrackerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"userTracker.", "sessionId", FinderColumn.Type.STRING, "=",
 					true, true, UserTracker::getSessionId));
@@ -623,13 +605,10 @@ public class UserTrackerPersistenceImpl
 	private static final String _SQL_COUNT_USERTRACKER_WHERE =
 		"SELECT COUNT(userTracker) FROM UserTracker userTracker WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No UserTracker exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-668625110
+// LIFERAY-SERVICE-BUILDER-HASH:1410262643

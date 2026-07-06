@@ -17,7 +17,7 @@ import com.liferay.exportimport.kernel.staging.Staging;
 import com.liferay.exportimport.rest.dto.v1_0.ImportPreview;
 import com.liferay.exportimport.rest.dto.v1_0.PreviewPortletDataHandler;
 import com.liferay.exportimport.rest.internal.util.PermissionUtil;
-import com.liferay.exportimport.rest.internal.util.PortletDataHandlerSectionUtil;
+import com.liferay.exportimport.rest.internal.util.PreviewPortletDataHandlerUtil;
 import com.liferay.exportimport.rest.resource.v1_0.ImportPreviewResource;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -25,15 +25,17 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.LayoutService;
+import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.staging.StagingGroupHelper;
 
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
-
-import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -60,14 +62,22 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 			MultipartBody multipartBody)
 		throws Exception {
 
-		Group group = groupLocalService.getGroupByExternalReferenceCode(
-			assetLibraryExternalReferenceCode, contextCompany.getCompanyId());
+		Group group = _getAssetLibraryGroup(assetLibraryExternalReferenceCode);
 
-		if (!group.isDepot()) {
-			throw new NotFoundException();
-		}
+		return _getImportPreview(group.getGroupId(), multipartBody, 0, null);
+	}
 
-		return _getImportPreview(group.getGroupId(), multipartBody);
+	@Override
+	public ImportPreview postAssetLibraryPortletImportPreview(
+			String assetLibraryExternalReferenceCode, String portletId,
+			Long plid, MultipartBody multipartBody)
+		throws Exception {
+
+		Group group = _getAssetLibraryGroup(assetLibraryExternalReferenceCode);
+
+		return _getImportPreview(
+			group.getGroupId(), multipartBody, GetterUtil.getLong(plid),
+			portletId);
 	}
 
 	@Override
@@ -77,7 +87,11 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 		Group group = _stagingGroupHelper.fetchCompanyGroup(
 			contextCompany.getCompanyId());
 
-		return _getImportPreview(group.getGroupId(), multipartBody);
+		if (group == null) {
+			throw new NotFoundException();
+		}
+
+		return _getImportPreview(group.getGroupId(), multipartBody, 0, null);
 	}
 
 	@Override
@@ -85,14 +99,53 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 			String siteExternalReferenceCode, MultipartBody multipartBody)
 		throws Exception {
 
-		Group group = groupLocalService.getGroupByExternalReferenceCode(
-			siteExternalReferenceCode, contextCompany.getCompanyId());
+		Group group = _getSiteGroup(siteExternalReferenceCode);
 
-		if (!group.isSite()) {
-			throw new NotFoundException();
+		return _getImportPreview(group.getGroupId(), multipartBody, 0, null);
+	}
+
+	@Override
+	public ImportPreview postSitePortletImportPreview(
+			String siteExternalReferenceCode, String portletId, Long plid,
+			MultipartBody multipartBody)
+		throws Exception {
+
+		Group group = _getSiteGroup(siteExternalReferenceCode);
+
+		return _getImportPreview(
+			group.getGroupId(), multipartBody, GetterUtil.getLong(plid),
+			portletId);
+	}
+
+	private ExportImportConfiguration _addExportImportConfiguration(
+			long groupId, long plid, String portletId)
+		throws Exception {
+
+		if (Validator.isBlank(portletId)) {
+			return _exportImportConfigurationLocalService.
+				addExportImportConfiguration(
+					contextUser.getUserId(), groupId, null, null,
+					ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
+					ExportImportConfigurationSettingsMapFactoryUtil.
+						buildImportLayoutSettingsMap(
+							contextUser.getUserId(), groupId, false, null,
+							new HashMap<>(),
+							contextAcceptLanguage.getPreferredLocale(),
+							contextUser.getTimeZone()),
+					new ServiceContext());
 		}
 
-		return _getImportPreview(group.getGroupId(), multipartBody);
+		return _exportImportConfigurationLocalService.
+			addExportImportConfiguration(
+				contextUser.getUserId(), groupId, null, null,
+				ExportImportConfigurationConstants.TYPE_IMPORT_PORTLET,
+				ExportImportConfigurationSettingsMapFactoryUtil.
+					buildImportPortletSettingsMap(
+						contextUser.getUserId(), plid, groupId, portletId,
+						new HashMap<>(),
+						contextAcceptLanguage.getPreferredLocale(),
+						contextUser.getTimeZone()),
+				new ServiceContext());
 	}
 
 	private FileEntry _addTempFileEntry(
@@ -116,8 +169,20 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 			binaryFile.getInputStream(), binaryFile.getContentType());
 	}
 
+	private Group _getAssetLibraryGroup(String externalReferenceCode) {
+		Group group = groupLocalService.fetchGroupByExternalReferenceCode(
+			externalReferenceCode, contextCompany.getCompanyId());
+
+		if ((group == null) || !group.isDepot()) {
+			throw new NotFoundException();
+		}
+
+		return group;
+	}
+
 	private ImportPreview _getImportPreview(
-			long groupId, MultipartBody multipartBody)
+			long groupId, MultipartBody multipartBody, long plid,
+			String portletId)
 		throws Exception {
 
 		PermissionUtil.checkImportPermission(
@@ -125,66 +190,99 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 
 		FileEntry fileEntry = _addTempFileEntry(groupId, multipartBody);
 
-		_validateImportLayoutsFile(groupId, fileEntry);
+		_validateImportFile(fileEntry, groupId, plid, portletId);
+
+		Map<String, List<PreviewPortletDataHandler>>
+			previewPortletDataHandlersMap = new LinkedHashMap<>();
+
+		Locale locale = contextAcceptLanguage.getPreferredLocale();
 
 		ManifestSummary manifestSummary =
 			_exportImportHelper.getManifestSummary(
 				contextUser.getUserId(), groupId, new HashMap<>(), fileEntry);
 
-		Locale locale = contextAcceptLanguage.getPreferredLocale();
-
-		Map<String, List<PreviewPortletDataHandler>>
-			previewPortletDataHandlers = new LinkedHashMap<>();
+		boolean portletScoped = !Validator.isBlank(portletId);
 
 		for (Portlet portlet : manifestSummary.getDataPortlets()) {
-			PortletDataHandlerSectionUtil.addPortletDataHandlerSection(
+			if (portletScoped &&
+				!StringUtil.equals(portlet.getPortletId(), portletId)) {
+
+				continue;
+			}
+
+			PreviewPortletDataHandlerUtil.addPreviewPortletDataHandler(
 				contextCompany.getCompanyId(), locale, manifestSummary, portlet,
 				portlet.getPortletDataHandlerInstance(),
 				PortletDataHandler::getImportPortletDataHandlerControls,
-				previewPortletDataHandlers);
+				portletScoped, previewPortletDataHandlersMap);
+		}
+
+		if (portletScoped) {
+			Portlet portlet = _portletLocalService.getPortletById(
+				contextCompany.getCompanyId(), portletId);
+
+			PortletDataHandler portletDataHandler =
+				portlet.getPortletDataHandlerInstance();
+
+			if (portletDataHandler != null) {
+				PreviewPortletDataHandlerUtil.
+					addConfigurationPreviewPortletDataHandler(
+						locale, portlet,
+						portletDataHandler.
+							getImportConfigurationPortletDataHandlerControls(
+								portlet, manifestSummary),
+						previewPortletDataHandlersMap);
+			}
 		}
 
 		return new ImportPreview() {
 			{
 				setAdditionCount(
-					() -> PortletDataHandlerSectionUtil.getAdditionCount(
-						previewPortletDataHandlers));
+					() -> PreviewPortletDataHandlerUtil.getAdditionCount(
+						previewPortletDataHandlersMap));
 				setAuthor(fileEntry::getUserName);
 				setDeletionCount(
-					() -> PortletDataHandlerSectionUtil.getDeletionCount(
-						previewPortletDataHandlers));
+					() -> PreviewPortletDataHandlerUtil.getDeletionCount(
+						previewPortletDataHandlersMap));
 				setExportDate(manifestSummary::getExportDate);
-				setFileEntryId(fileEntry::getFileEntryId);
 				setFileName(fileEntry::getFileName);
 				setFileSize(fileEntry::getSize);
 				setPreviewPortletDataHandlerSections(
 					() ->
-						PortletDataHandlerSectionUtil.
-							toPortletDataHandlerSections(
-								locale, previewPortletDataHandlers));
+						PreviewPortletDataHandlerUtil.
+							toPreviewPortletDataHandlerSections(
+								locale, previewPortletDataHandlersMap));
 			}
 		};
 	}
 
-	private void _validateImportLayoutsFile(long groupId, FileEntry fileEntry)
+	private Group _getSiteGroup(String externalReferenceCode) {
+		Group group = groupLocalService.fetchGroupByExternalReferenceCode(
+			externalReferenceCode, contextCompany.getCompanyId());
+
+		if ((group == null) || (!group.isCMS() && !group.isSite())) {
+			throw new NotFoundException();
+		}
+
+		return group;
+	}
+
+	private void _validateImportFile(
+			FileEntry fileEntry, long groupId, long plid, String portletId)
 		throws Exception {
 
-		Map<String, Serializable> parameterMap =
-			ExportImportConfigurationSettingsMapFactoryUtil.
-				buildImportLayoutSettingsMap(
-					contextUser.getUserId(), groupId, false, null,
-					new HashMap<>(), contextAcceptLanguage.getPreferredLocale(),
-					contextUser.getTimeZone());
-
 		ExportImportConfiguration exportImportConfiguration =
-			_exportImportConfigurationLocalService.addExportImportConfiguration(
-				contextUser.getUserId(), groupId, null, null,
-				ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
-				parameterMap, new ServiceContext());
+			_addExportImportConfiguration(groupId, plid, portletId);
 
 		try {
-			_exportImportLocalService.validateImportLayoutsFile(
-				exportImportConfiguration, fileEntry.getContentStream());
+			if (Validator.isBlank(portletId)) {
+				_exportImportLocalService.validateImportLayoutsFile(
+					exportImportConfiguration, fileEntry.getContentStream());
+			}
+			else {
+				_exportImportLocalService.validateImportPortletInfo(
+					exportImportConfiguration, fileEntry.getContentStream());
+			}
 		}
 		catch (PortalException portalException) {
 			_layoutService.deleteTempFileEntry(
@@ -215,6 +313,9 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 
 	@Reference
 	private LayoutService _layoutService;
+
+	@Reference
+	private PortletLocalService _portletLocalService;
 
 	@Reference
 	private Staging _staging;

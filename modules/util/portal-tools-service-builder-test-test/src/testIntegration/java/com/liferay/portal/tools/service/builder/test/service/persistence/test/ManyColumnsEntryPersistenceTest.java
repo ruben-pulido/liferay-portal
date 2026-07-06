@@ -109,9 +109,7 @@ public class ManyColumnsEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ManyColumnsEntry newManyColumnsEntry = _persistence.create(pk);
+		ManyColumnsEntry newManyColumnsEntry = addManyColumnsEntry();
 
 		newManyColumnsEntry.setColumn1(RandomTestUtil.nextInt());
 
@@ -241,7 +239,9 @@ public class ManyColumnsEntryPersistenceTest {
 
 		newManyColumnsEntry.setColumn64(RandomTestUtil.nextInt());
 
-		_manyColumnsEntries.add(_persistence.update(newManyColumnsEntry));
+		newManyColumnsEntry = _persistence.update(newManyColumnsEntry);
+
+		_manyColumnsEntries.add(newManyColumnsEntry);
 
 		ManyColumnsEntry existingManyColumnsEntry =
 			_persistence.findByPrimaryKey(newManyColumnsEntry.getPrimaryKey());
@@ -850,4 +850,4 @@ public class ManyColumnsEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:446199874
+// LIFERAY-SERVICE-BUILDER-HASH:-331931033

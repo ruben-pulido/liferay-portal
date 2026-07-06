@@ -112,11 +112,7 @@ public class CountryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Country newCountry = _persistence.create(pk);
-
-		newCountry.setMvccVersion(RandomTestUtil.nextLong());
+		Country newCountry = addCountry();
 
 		newCountry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -164,7 +160,9 @@ public class CountryPersistenceTest {
 
 		newCountry.setStatus(RandomTestUtil.nextInt());
 
-		_countries.add(_persistence.update(newCountry));
+		newCountry = _persistence.update(newCountry);
+
+		_countries.add(newCountry);
 
 		Country existingCountry = _persistence.findByPrimaryKey(
 			newCountry.getPrimaryKey());
@@ -729,8 +727,6 @@ public class CountryPersistenceTest {
 
 		Country country = _persistence.create(pk);
 
-		country.setMvccVersion(RandomTestUtil.nextLong());
-
 		country.setCtCollectionId(RandomTestUtil.nextLong());
 
 		country.setUuid(RandomTestUtil.randomString());
@@ -787,4 +783,4 @@ public class CountryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2019342251
+// LIFERAY-SERVICE-BUILDER-HASH:1333328580

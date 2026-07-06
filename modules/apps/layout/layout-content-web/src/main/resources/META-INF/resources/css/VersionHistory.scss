@@ -1,0 +1,45 @@
+@import 'atlas-variables';
+
+$version-history-toolbar-height: 3rem;
+
+$version-history-side-panel-width: 320px;
+
+.version-history {
+	&__side-panel {
+		border-right-style: solid;
+		border-right-width: 1px;
+
+		@include media-breakpoint-up(lg) {
+			.close {
+				display: none;
+			}
+		}
+	}
+
+	&__toolbar {
+		left: 0;
+		position: fixed;
+		right: 0;
+		top: var(--control-menu-container-height, 0);
+		z-index: 100;
+
+		@include media-breakpoint-up(lg) {
+			left: $version-history-side-panel-width;
+		}
+	}
+
+	&__toolbar-experience {
+		.layout__experience-selector {
+			border-radius: 8px;
+			width: auto;
+
+			.label {
+				display: none;
+			}
+		}
+	}
+}
+
+#wrapper.c-slideout-container {
+	padding-top: $version-history-toolbar-height;
+}

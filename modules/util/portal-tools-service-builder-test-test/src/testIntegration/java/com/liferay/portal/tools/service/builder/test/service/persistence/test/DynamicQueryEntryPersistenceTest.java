@@ -111,9 +111,7 @@ public class DynamicQueryEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DynamicQueryEntry newDynamicQueryEntry = _persistence.create(pk);
+		DynamicQueryEntry newDynamicQueryEntry = addDynamicQueryEntry();
 
 		newDynamicQueryEntry.setCreateDate(RandomTestUtil.nextDate());
 
@@ -127,7 +125,9 @@ public class DynamicQueryEntryPersistenceTest {
 
 		newDynamicQueryEntry.setStatus(RandomTestUtil.nextInt());
 
-		_dynamicQueryEntries.add(_persistence.update(newDynamicQueryEntry));
+		newDynamicQueryEntry = _persistence.update(newDynamicQueryEntry);
+
+		_dynamicQueryEntries.add(newDynamicQueryEntry);
 
 		DynamicQueryEntry existingDynamicQueryEntry =
 			_persistence.findByPrimaryKey(newDynamicQueryEntry.getPrimaryKey());
@@ -433,4 +433,4 @@ public class DynamicQueryEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2001134816
+// LIFERAY-SERVICE-BUILDER-HASH:-1962705422

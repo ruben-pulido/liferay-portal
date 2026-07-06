@@ -112,11 +112,7 @@ public class KBFolderPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		KBFolder newKBFolder = _persistence.create(pk);
-
-		newKBFolder.setMvccVersion(RandomTestUtil.nextLong());
+		KBFolder newKBFolder = addKBFolder();
 
 		newKBFolder.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -154,7 +150,9 @@ public class KBFolderPersistenceTest {
 
 		newKBFolder.setStatusDate(RandomTestUtil.nextDate());
 
-		_kbFolders.add(_persistence.update(newKBFolder));
+		newKBFolder = _persistence.update(newKBFolder);
+
+		_kbFolders.add(newKBFolder);
 
 		KBFolder existingKBFolder = _persistence.findByPrimaryKey(
 			newKBFolder.getPrimaryKey());
@@ -659,8 +657,6 @@ public class KBFolderPersistenceTest {
 
 		KBFolder kbFolder = _persistence.create(pk);
 
-		kbFolder.setMvccVersion(RandomTestUtil.nextLong());
-
 		kbFolder.setCtCollectionId(RandomTestUtil.nextLong());
 
 		kbFolder.setUuid(RandomTestUtil.randomString());
@@ -707,4 +703,4 @@ public class KBFolderPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1296207782
+// LIFERAY-SERVICE-BUILDER-HASH:-999790360

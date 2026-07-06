@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,8 +79,9 @@ public class CPDAvailabilityEstimatePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPDAvailabilityEstimate>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPDAvailabilityEstimate, NoSuchCPDAvailabilityEstimateException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cpd availability estimates where uuid = &#63;.
@@ -123,16 +122,8 @@ public class CPDAvailabilityEstimatePersistenceImpl
 			OrderByComparator<CPDAvailabilityEstimate> orderByComparator)
 		throws NoSuchCPDAvailabilityEstimateException {
 
-		CPDAvailabilityEstimate cpdAvailabilityEstimate = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (cpdAvailabilityEstimate != null) {
-			return cpdAvailabilityEstimate;
-		}
-
-		throw new NoSuchCPDAvailabilityEstimateException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -174,8 +165,9 @@ public class CPDAvailabilityEstimatePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<CPDAvailabilityEstimate>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPDAvailabilityEstimate, NoSuchCPDAvailabilityEstimateException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cpd availability estimates where uuid = &#63; and companyId = &#63;.
@@ -218,16 +210,8 @@ public class CPDAvailabilityEstimatePersistenceImpl
 			OrderByComparator<CPDAvailabilityEstimate> orderByComparator)
 		throws NoSuchCPDAvailabilityEstimateException {
 
-		CPDAvailabilityEstimate cpdAvailabilityEstimate = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cpdAvailabilityEstimate != null) {
-			return cpdAvailabilityEstimate;
-		}
-
-		throw new NoSuchCPDAvailabilityEstimateException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -272,8 +256,9 @@ public class CPDAvailabilityEstimatePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CPDAvailabilityEstimate>
-		_collectionPersistenceFinderByCommerceAvailabilityEstimateId;
+	private CollectionPersistenceFinder
+		<CPDAvailabilityEstimate, NoSuchCPDAvailabilityEstimateException>
+			_collectionPersistenceFinderByCommerceAvailabilityEstimateId;
 
 	/**
 	 * Returns an ordered range of all the cpd availability estimates where commerceAvailabilityEstimateId = &#63;.
@@ -315,19 +300,10 @@ public class CPDAvailabilityEstimatePersistenceImpl
 			OrderByComparator<CPDAvailabilityEstimate> orderByComparator)
 		throws NoSuchCPDAvailabilityEstimateException {
 
-		CPDAvailabilityEstimate cpdAvailabilityEstimate =
-			fetchByCommerceAvailabilityEstimateId_First(
-				commerceAvailabilityEstimateId, orderByComparator);
-
-		if (cpdAvailabilityEstimate != null) {
-			return cpdAvailabilityEstimate;
-		}
-
-		throw new NoSuchCPDAvailabilityEstimateException(
-			_collectionPersistenceFinderByCommerceAvailabilityEstimateId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceAvailabilityEstimateId}));
+		return _collectionPersistenceFinderByCommerceAvailabilityEstimateId.
+			findFirst(
+				finderCache, new Object[] {commerceAvailabilityEstimateId},
+				orderByComparator);
 	}
 
 	/**
@@ -375,8 +351,9 @@ public class CPDAvailabilityEstimatePersistenceImpl
 			count(finderCache, new Object[] {commerceAvailabilityEstimateId});
 	}
 
-	private UniquePersistenceFinder<CPDAvailabilityEstimate>
-		_uniquePersistenceFinderByCProductId;
+	private UniquePersistenceFinder
+		<CPDAvailabilityEstimate, NoSuchCPDAvailabilityEstimateException>
+			_uniquePersistenceFinderByCProductId;
 
 	/**
 	 * Returns the cpd availability estimate where CProductId = &#63; or throws a <code>NoSuchCPDAvailabilityEstimateException</code> if it could not be found.
@@ -389,22 +366,8 @@ public class CPDAvailabilityEstimatePersistenceImpl
 	public CPDAvailabilityEstimate findByCProductId(long CProductId)
 		throws NoSuchCPDAvailabilityEstimateException {
 
-		CPDAvailabilityEstimate cpdAvailabilityEstimate = fetchByCProductId(
-			CProductId);
-
-		if (cpdAvailabilityEstimate == null) {
-			String message =
-				_uniquePersistenceFinderByCProductId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CProductId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDAvailabilityEstimateException(message);
-		}
-
-		return cpdAvailabilityEstimate;
+		return _uniquePersistenceFinderByCProductId.find(
+			finderCache, new Object[] {CProductId});
 	}
 
 	/**
@@ -704,10 +667,11 @@ public class CPDAvailabilityEstimatePersistenceImpl
 			_SQL_SELECT_CPDAVAILABILITYESTIMATE_WHERE,
 			_SQL_COUNT_CPDAVAILABILITYESTIMATE_WHERE,
 			CPDAvailabilityEstimateModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"cpdAvailabilityEstimate.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CPDAvailabilityEstimate::getUuid));
+				"cpdAvailabilityEstimate.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPDAvailabilityEstimate::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -731,9 +695,9 @@ public class CPDAvailabilityEstimatePersistenceImpl
 				_SQL_SELECT_CPDAVAILABILITYESTIMATE_WHERE,
 				_SQL_COUNT_CPDAVAILABILITYESTIMATE_WHERE,
 				CPDAvailabilityEstimateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpdAvailabilityEstimate.", "uuid",
+					"cpdAvailabilityEstimate.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CPDAvailabilityEstimate::getUuid),
 				new FinderColumn<>(
@@ -766,7 +730,7 @@ public class CPDAvailabilityEstimatePersistenceImpl
 				_SQL_SELECT_CPDAVAILABILITYESTIMATE_WHERE,
 				_SQL_COUNT_CPDAVAILABILITYESTIMATE_WHERE,
 				CPDAvailabilityEstimateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpdAvailabilityEstimate.",
 					"commerceAvailabilityEstimateId", FinderColumn.Type.LONG,
@@ -841,12 +805,6 @@ public class CPDAvailabilityEstimatePersistenceImpl
 	private static final String _SQL_COUNT_CPDAVAILABILITYESTIMATE_WHERE =
 		"SELECT COUNT(cpdAvailabilityEstimate) FROM CPDAvailabilityEstimate cpdAvailabilityEstimate WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPDAvailabilityEstimate exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPDAvailabilityEstimatePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -856,4 +814,4 @@ public class CPDAvailabilityEstimatePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1951221406
+// LIFERAY-SERVICE-BUILDER-HASH:-573243285

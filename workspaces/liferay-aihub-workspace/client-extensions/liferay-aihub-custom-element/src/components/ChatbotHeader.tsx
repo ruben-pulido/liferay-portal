@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayIcon from '@clayui/icon';
 import React from 'react';
 
 import ChatbotAvatar from './ChatbotAvatar';
-import {CloseIcon} from './Icons';
 import Logo from './Logo';
 
 interface ChatbotHeaderProps {
-	companyLogo?: string;
+	avatar?: string;
 	onClose: () => void;
 	title: string;
 }
 
 export default function ChatbotHeader({
-	companyLogo,
+	avatar,
 	onClose,
 	title,
 }: ChatbotHeaderProps) {
 	return (
 		<div className="aihub-header">
 			<ChatbotAvatar
+				avatar={avatar}
 				className="aihub-header-logo"
-				companyLogo={companyLogo}
 				fallback={<Logo className="aihub-header-logo" />}
 				title={title}
 			/>
@@ -38,7 +38,7 @@ export default function ChatbotHeader({
 				className="aihub-header-close"
 				onClick={onClose}
 			>
-				<CloseIcon />
+				<ClayIcon symbol="times" />
 			</button>
 		</div>
 	);

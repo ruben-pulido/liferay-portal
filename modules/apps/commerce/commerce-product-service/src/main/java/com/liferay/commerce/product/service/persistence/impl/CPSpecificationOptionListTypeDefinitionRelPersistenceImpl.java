@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -86,7 +84,8 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
 	private CollectionPersistenceFinder
-		<CPSpecificationOptionListTypeDefinitionRel>
+		<CPSpecificationOptionListTypeDefinitionRel,
+		 NoSuchCPSpecificationOptionListTypeDefinitionRelException>
 			_collectionPersistenceFinderByCPSpecificationOptionId;
 
 	/**
@@ -132,20 +131,9 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 					orderByComparator)
 		throws NoSuchCPSpecificationOptionListTypeDefinitionRelException {
 
-		CPSpecificationOptionListTypeDefinitionRel
-			cpSpecificationOptionListTypeDefinitionRel =
-				fetchByCPSpecificationOptionId_First(
-					CPSpecificationOptionId, orderByComparator);
-
-		if (cpSpecificationOptionListTypeDefinitionRel != null) {
-			return cpSpecificationOptionListTypeDefinitionRel;
-		}
-
-		throw new NoSuchCPSpecificationOptionListTypeDefinitionRelException(
-			_collectionPersistenceFinderByCPSpecificationOptionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {CPSpecificationOptionId}));
+		return _collectionPersistenceFinderByCPSpecificationOptionId.findFirst(
+			finderCache, new Object[] {CPSpecificationOptionId},
+			orderByComparator);
 	}
 
 	/**
@@ -191,7 +179,8 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 	}
 
 	private CollectionPersistenceFinder
-		<CPSpecificationOptionListTypeDefinitionRel>
+		<CPSpecificationOptionListTypeDefinitionRel,
+		 NoSuchCPSpecificationOptionListTypeDefinitionRelException>
 			_collectionPersistenceFinderByListTypeDefinitionId;
 
 	/**
@@ -237,20 +226,9 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 					orderByComparator)
 		throws NoSuchCPSpecificationOptionListTypeDefinitionRelException {
 
-		CPSpecificationOptionListTypeDefinitionRel
-			cpSpecificationOptionListTypeDefinitionRel =
-				fetchByListTypeDefinitionId_First(
-					listTypeDefinitionId, orderByComparator);
-
-		if (cpSpecificationOptionListTypeDefinitionRel != null) {
-			return cpSpecificationOptionListTypeDefinitionRel;
-		}
-
-		throw new NoSuchCPSpecificationOptionListTypeDefinitionRelException(
-			_collectionPersistenceFinderByListTypeDefinitionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {listTypeDefinitionId}));
+		return _collectionPersistenceFinderByListTypeDefinitionId.findFirst(
+			finderCache, new Object[] {listTypeDefinitionId},
+			orderByComparator);
 	}
 
 	/**
@@ -295,8 +273,10 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 			finderCache, new Object[] {listTypeDefinitionId});
 	}
 
-	private UniquePersistenceFinder<CPSpecificationOptionListTypeDefinitionRel>
-		_uniquePersistenceFinderByC_L;
+	private UniquePersistenceFinder
+		<CPSpecificationOptionListTypeDefinitionRel,
+		 NoSuchCPSpecificationOptionListTypeDefinitionRelException>
+			_uniquePersistenceFinderByC_L;
 
 	/**
 	 * Returns the cp specification option list type definition rel where CPSpecificationOptionId = &#63; and listTypeDefinitionId = &#63; or throws a <code>NoSuchCPSpecificationOptionListTypeDefinitionRelException</code> if it could not be found.
@@ -311,27 +291,9 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 			long CPSpecificationOptionId, long listTypeDefinitionId)
 		throws NoSuchCPSpecificationOptionListTypeDefinitionRelException {
 
-		CPSpecificationOptionListTypeDefinitionRel
-			cpSpecificationOptionListTypeDefinitionRel = fetchByC_L(
-				CPSpecificationOptionId, listTypeDefinitionId);
-
-		if (cpSpecificationOptionListTypeDefinitionRel == null) {
-			String message =
-				_uniquePersistenceFinderByC_L.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						CPSpecificationOptionId, listTypeDefinitionId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPSpecificationOptionListTypeDefinitionRelException(
-				message);
-		}
-
-		return cpSpecificationOptionListTypeDefinitionRel;
+		return _uniquePersistenceFinderByC_L.find(
+			finderCache,
+			new Object[] {CPSpecificationOptionId, listTypeDefinitionId});
 	}
 
 	/**
@@ -610,6 +572,11 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "CPSpecificationOptionListTypeDefinitionRelId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_CPSPECIFICATIONOPTIONLISTTYPEDEFINITIONREL;
 	}
@@ -706,7 +673,7 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 				_SQL_COUNT_CPSPECIFICATIONOPTIONLISTTYPEDEFINITIONREL_WHERE,
 				CPSpecificationOptionListTypeDefinitionRelModelImpl.
 					ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpSpecificationOptionListTypeDefinitionRel.",
 					"CPSpecificationOptionId", FinderColumn.Type.LONG, "=",
@@ -740,7 +707,7 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 				_SQL_COUNT_CPSPECIFICATIONOPTIONLISTTYPEDEFINITIONREL_WHERE,
 				CPSpecificationOptionListTypeDefinitionRelModelImpl.
 					ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpSpecificationOptionListTypeDefinitionRel.",
 					"listTypeDefinitionId", FinderColumn.Type.LONG, "=", true,
@@ -835,12 +802,6 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 		_SQL_COUNT_CPSPECIFICATIONOPTIONLISTTYPEDEFINITIONREL_WHERE =
 			"SELECT COUNT(cpSpecificationOptionListTypeDefinitionRel) FROM CPSpecificationOptionListTypeDefinitionRel cpSpecificationOptionListTypeDefinitionRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPSpecificationOptionListTypeDefinitionRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPSpecificationOptionListTypeDefinitionRelPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"CPSpecificationOptionListTypeDefinitionRelId"});
 
@@ -850,4 +811,4 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-804816327
+// LIFERAY-SERVICE-BUILDER-HASH:-530942943

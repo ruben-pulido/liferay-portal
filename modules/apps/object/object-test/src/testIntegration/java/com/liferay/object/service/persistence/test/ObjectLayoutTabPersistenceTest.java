@@ -109,11 +109,7 @@ public class ObjectLayoutTabPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ObjectLayoutTab newObjectLayoutTab = _persistence.create(pk);
-
-		newObjectLayoutTab.setMvccVersion(RandomTestUtil.nextLong());
+		ObjectLayoutTab newObjectLayoutTab = addObjectLayoutTab();
 
 		newObjectLayoutTab.setUuid(RandomTestUtil.randomString());
 
@@ -135,7 +131,9 @@ public class ObjectLayoutTabPersistenceTest {
 
 		newObjectLayoutTab.setPriority(RandomTestUtil.nextInt());
 
-		_objectLayoutTabs.add(_persistence.update(newObjectLayoutTab));
+		newObjectLayoutTab = _persistence.update(newObjectLayoutTab);
+
+		_objectLayoutTabs.add(newObjectLayoutTab);
 
 		ObjectLayoutTab existingObjectLayoutTab = _persistence.findByPrimaryKey(
 			newObjectLayoutTab.getPrimaryKey());
@@ -460,8 +458,6 @@ public class ObjectLayoutTabPersistenceTest {
 
 		ObjectLayoutTab objectLayoutTab = _persistence.create(pk);
 
-		objectLayoutTab.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectLayoutTab.setUuid(RandomTestUtil.randomString());
 
 		objectLayoutTab.setCompanyId(RandomTestUtil.nextLong());
@@ -493,4 +489,4 @@ public class ObjectLayoutTabPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1585619978
+// LIFERAY-SERVICE-BUILDER-HASH:1390226969

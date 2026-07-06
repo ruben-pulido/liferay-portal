@@ -766,6 +766,23 @@ public class PortalUpgradeProcessRegistryImpl
 		upgradeVersionTreeMap.put(
 			new Version(38, 4, 1),
 			new RegionExternalReferenceCodeUpgradeProcess());
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 4, 2),
+			UpgradeProcessFactory.addColumns(
+				"Ticket", "emailAddress VARCHAR(254) null"));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 5, 0),
+			UpgradeProcessFactory.addColumns(
+				"Layout", "styleBookEntryScopeERC VARCHAR(75) null"));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 6, 0),
+			UpgradeProcessFactory.addColumns(
+				"AssetVocabularyGroupRel", "depotEntryType INTEGER"),
+			UpgradeProcessFactory.runSQL(
+				"update AssetVocabularyGroupRel set depotEntryType = 1"));
 	}
 
 }

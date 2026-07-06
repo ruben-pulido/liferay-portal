@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,10 @@ public class NotificationRecipientSettingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<NotificationRecipientSetting>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<NotificationRecipientSetting,
+		 NoSuchNotificationRecipientSettingException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the notification recipient settings where uuid = &#63;.
@@ -124,16 +124,8 @@ public class NotificationRecipientSettingPersistenceImpl
 			OrderByComparator<NotificationRecipientSetting> orderByComparator)
 		throws NoSuchNotificationRecipientSettingException {
 
-		NotificationRecipientSetting notificationRecipientSetting =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (notificationRecipientSetting != null) {
-			return notificationRecipientSetting;
-		}
-
-		throw new NoSuchNotificationRecipientSettingException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -175,8 +167,10 @@ public class NotificationRecipientSettingPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<NotificationRecipientSetting>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<NotificationRecipientSetting,
+		 NoSuchNotificationRecipientSettingException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the notification recipient settings where uuid = &#63; and companyId = &#63;.
@@ -219,16 +213,8 @@ public class NotificationRecipientSettingPersistenceImpl
 			OrderByComparator<NotificationRecipientSetting> orderByComparator)
 		throws NoSuchNotificationRecipientSettingException {
 
-		NotificationRecipientSetting notificationRecipientSetting =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (notificationRecipientSetting != null) {
-			return notificationRecipientSetting;
-		}
-
-		throw new NoSuchNotificationRecipientSettingException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -273,8 +259,10 @@ public class NotificationRecipientSettingPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<NotificationRecipientSetting>
-		_collectionPersistenceFinderByNotificationRecipientId;
+	private CollectionPersistenceFinder
+		<NotificationRecipientSetting,
+		 NoSuchNotificationRecipientSettingException>
+			_collectionPersistenceFinderByNotificationRecipientId;
 
 	/**
 	 * Returns an ordered range of all the notification recipient settings where notificationRecipientId = &#63;.
@@ -315,19 +303,9 @@ public class NotificationRecipientSettingPersistenceImpl
 			OrderByComparator<NotificationRecipientSetting> orderByComparator)
 		throws NoSuchNotificationRecipientSettingException {
 
-		NotificationRecipientSetting notificationRecipientSetting =
-			fetchByNotificationRecipientId_First(
-				notificationRecipientId, orderByComparator);
-
-		if (notificationRecipientSetting != null) {
-			return notificationRecipientSetting;
-		}
-
-		throw new NoSuchNotificationRecipientSettingException(
-			_collectionPersistenceFinderByNotificationRecipientId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {notificationRecipientId}));
+		return _collectionPersistenceFinderByNotificationRecipientId.findFirst(
+			finderCache, new Object[] {notificationRecipientId},
+			orderByComparator);
 	}
 
 	/**
@@ -370,8 +348,10 @@ public class NotificationRecipientSettingPersistenceImpl
 			finderCache, new Object[] {notificationRecipientId});
 	}
 
-	private UniquePersistenceFinder<NotificationRecipientSetting>
-		_uniquePersistenceFinderByNRI_N;
+	private UniquePersistenceFinder
+		<NotificationRecipientSetting,
+		 NoSuchNotificationRecipientSettingException>
+			_uniquePersistenceFinderByNRI_N;
 
 	/**
 	 * Returns the notification recipient setting where notificationRecipientId = &#63; and name = &#63; or throws a <code>NoSuchNotificationRecipientSettingException</code> if it could not be found.
@@ -386,23 +366,8 @@ public class NotificationRecipientSettingPersistenceImpl
 			long notificationRecipientId, String name)
 		throws NoSuchNotificationRecipientSettingException {
 
-		NotificationRecipientSetting notificationRecipientSetting =
-			fetchByNRI_N(notificationRecipientId, name);
-
-		if (notificationRecipientSetting == null) {
-			String message =
-				_uniquePersistenceFinderByNRI_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {notificationRecipientId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNotificationRecipientSettingException(message);
-		}
-
-		return notificationRecipientSetting;
+		return _uniquePersistenceFinderByNRI_N.find(
+			finderCache, new Object[] {notificationRecipientId, name});
 	}
 
 	/**
@@ -717,9 +682,9 @@ public class NotificationRecipientSettingPersistenceImpl
 			_SQL_SELECT_NOTIFICATIONRECIPIENTSETTING_WHERE,
 			_SQL_COUNT_NOTIFICATIONRECIPIENTSETTING_WHERE,
 			NotificationRecipientSettingModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"notificationRecipientSetting.", "uuid",
+				"notificationRecipientSetting.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				NotificationRecipientSetting::getUuid));
 
@@ -745,9 +710,9 @@ public class NotificationRecipientSettingPersistenceImpl
 				_SQL_SELECT_NOTIFICATIONRECIPIENTSETTING_WHERE,
 				_SQL_COUNT_NOTIFICATIONRECIPIENTSETTING_WHERE,
 				NotificationRecipientSettingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"notificationRecipientSetting.", "uuid",
+					"notificationRecipientSetting.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					NotificationRecipientSetting::getUuid),
 				new FinderColumn<>(
@@ -780,7 +745,7 @@ public class NotificationRecipientSettingPersistenceImpl
 				_SQL_SELECT_NOTIFICATIONRECIPIENTSETTING_WHERE,
 				_SQL_COUNT_NOTIFICATIONRECIPIENTSETTING_WHERE,
 				NotificationRecipientSettingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"notificationRecipientSetting.", "notificationRecipientId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -859,12 +824,6 @@ public class NotificationRecipientSettingPersistenceImpl
 	private static final String _SQL_COUNT_NOTIFICATIONRECIPIENTSETTING_WHERE =
 		"SELECT COUNT(notificationRecipientSetting) FROM NotificationRecipientSetting notificationRecipientSetting WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No NotificationRecipientSetting exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		NotificationRecipientSettingPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -874,4 +833,4 @@ public class NotificationRecipientSettingPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-859372413
+// LIFERAY-SERVICE-BUILDER-HASH:-360510110

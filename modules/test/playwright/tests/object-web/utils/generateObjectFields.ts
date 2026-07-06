@@ -118,6 +118,12 @@ function getObjectFieldSpecificProperties(
 				businessType: 'Decimal',
 				type: 'Double',
 			};
+		case 'EmailAddress':
+			return {
+				DBType: 'String',
+				businessType: 'EmailAddress',
+				type: 'String',
+			};
 		case 'Encrypted':
 			return {
 				DBType: 'Clob',
@@ -168,7 +174,7 @@ function getObjectFieldSpecificProperties(
 				businessType: 'PhoneNumber',
 				objectFieldSettings: [
 					{
-						name: 'prefixType',
+						name: 'countrySource',
 						value: 'definedByUser',
 					},
 				],

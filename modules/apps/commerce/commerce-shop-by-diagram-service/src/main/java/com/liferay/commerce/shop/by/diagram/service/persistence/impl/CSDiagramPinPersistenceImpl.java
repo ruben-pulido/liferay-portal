@@ -79,8 +79,9 @@ public class CSDiagramPinPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CSDiagramPin>
-		_collectionPersistenceFinderByCPDefinitionId;
+	private CollectionPersistenceFinder
+		<CSDiagramPin, NoSuchCSDiagramPinException>
+			_collectionPersistenceFinderByCPDefinitionId;
 
 	/**
 	 * Returns an ordered range of all the cs diagram pins where CPDefinitionId = &#63;.
@@ -121,16 +122,8 @@ public class CSDiagramPinPersistenceImpl
 			OrderByComparator<CSDiagramPin> orderByComparator)
 		throws NoSuchCSDiagramPinException {
 
-		CSDiagramPin csDiagramPin = fetchByCPDefinitionId_First(
-			CPDefinitionId, orderByComparator);
-
-		if (csDiagramPin != null) {
-			return csDiagramPin;
-		}
-
-		throw new NoSuchCSDiagramPinException(
-			_collectionPersistenceFinderByCPDefinitionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPDefinitionId}));
+		return _collectionPersistenceFinderByCPDefinitionId.findFirst(
+			finderCache, new Object[] {CPDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -467,6 +460,7 @@ public class CSDiagramPinPersistenceImpl
 					new String[] {"CPDefinitionId"}, false),
 				_SQL_SELECT_CSDIAGRAMPIN_WHERE, _SQL_COUNT_CSDIAGRAMPIN_WHERE,
 				CSDiagramPinModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"csDiagramPin.", "CPDefinitionId", FinderColumn.Type.LONG,
 					"=", true, true, CSDiagramPin::getCPDefinitionId));
@@ -528,13 +522,10 @@ public class CSDiagramPinPersistenceImpl
 	private static final String _SQL_COUNT_CSDIAGRAMPIN_WHERE =
 		"SELECT COUNT(csDiagramPin) FROM CSDiagramPin csDiagramPin WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CSDiagramPin exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:767437601
+// LIFERAY-SERVICE-BUILDER-HASH:-1015049894

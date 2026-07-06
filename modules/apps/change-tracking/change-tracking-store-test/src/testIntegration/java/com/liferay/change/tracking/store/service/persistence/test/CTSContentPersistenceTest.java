@@ -116,11 +116,7 @@ public class CTSContentPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CTSContent newCTSContent = _persistence.create(pk);
-
-		newCTSContent.setMvccVersion(RandomTestUtil.nextLong());
+		CTSContent newCTSContent = addCTSContent();
 
 		newCTSContent.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -144,7 +140,9 @@ public class CTSContentPersistenceTest {
 
 		newCTSContent.setStoreType(RandomTestUtil.randomString());
 
-		_ctsContents.add(_persistence.update(newCTSContent));
+		newCTSContent = _persistence.update(newCTSContent);
+
+		_ctsContents.add(newCTSContent);
 
 		CTSContent existingCTSContent = _persistence.findByPrimaryKey(
 			newCTSContent.getPrimaryKey());
@@ -551,8 +549,6 @@ public class CTSContentPersistenceTest {
 
 		CTSContent ctsContent = _persistence.create(pk);
 
-		ctsContent.setMvccVersion(RandomTestUtil.nextLong());
-
 		ctsContent.setCtCollectionId(RandomTestUtil.nextLong());
 
 		ctsContent.setCompanyId(RandomTestUtil.nextLong());
@@ -585,4 +581,4 @@ public class CTSContentPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:65518857
+// LIFERAY-SERVICE-BUILDER-HASH:-597241943

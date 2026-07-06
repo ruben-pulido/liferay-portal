@@ -14,7 +14,6 @@ import com.liferay.account.model.impl.AccountGroupModelImpl;
 import com.liferay.account.service.persistence.AccountGroupPersistence;
 import com.liferay.account.service.persistence.AccountGroupUtil;
 import com.liferay.account.service.persistence.impl.constants.AccountPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
@@ -23,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -93,8 +90,8 @@ public class AccountGroupPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<AccountGroup>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<AccountGroup, NoSuchGroupException> _collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the account groups where uuid = &#63;.
@@ -134,15 +131,8 @@ public class AccountGroupPersistenceImpl
 			String uuid, OrderByComparator<AccountGroup> orderByComparator)
 		throws NoSuchGroupException {
 
-		AccountGroup accountGroup = fetchByUuid_First(uuid, orderByComparator);
-
-		if (accountGroup != null) {
-			return accountGroup;
-		}
-
-		throw new NoSuchGroupException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -217,8 +207,9 @@ public class AccountGroupPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<AccountGroup>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<AccountGroup, NoSuchGroupException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the account groups where uuid = &#63; and companyId = &#63;.
@@ -261,16 +252,8 @@ public class AccountGroupPersistenceImpl
 			OrderByComparator<AccountGroup> orderByComparator)
 		throws NoSuchGroupException {
 
-		AccountGroup accountGroup = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (accountGroup != null) {
-			return accountGroup;
-		}
-
-		throw new NoSuchGroupException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -352,8 +335,9 @@ public class AccountGroupPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<AccountGroup>
-		_collectionPersistenceFinderByAccountGroupId;
+	private FilterCollectionPersistenceFinder
+		<AccountGroup, NoSuchGroupException>
+			_collectionPersistenceFinderByAccountGroupId;
 
 	/**
 	 * Returns an ordered range of all the account groups where accountGroupId = &#63;.
@@ -394,23 +378,9 @@ public class AccountGroupPersistenceImpl
 			OrderByComparator<AccountGroup> orderByComparator)
 		throws NoSuchGroupException {
 
-		AccountGroup accountGroup = fetchByAccountGroupId_First(
-			accountGroupId, orderByComparator);
-
-		if (accountGroup != null) {
-			return accountGroup;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("accountGroupId=");
-		sb.append(accountGroupId);
-
-		sb.append("}");
-
-		throw new NoSuchGroupException(sb.toString());
+		return _collectionPersistenceFinderByAccountGroupId.findFirst(
+			finderCache, new Object[] {new long[] {accountGroupId}},
+			orderByComparator);
 	}
 
 	/**
@@ -562,8 +532,9 @@ public class AccountGroupPersistenceImpl
 			new Object[] {ArrayUtil.sortedUnique(accountGroupIds)});
 	}
 
-	private FilterCollectionPersistenceFinder<AccountGroup>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<AccountGroup, NoSuchGroupException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the account groups where companyId = &#63;.
@@ -603,16 +574,8 @@ public class AccountGroupPersistenceImpl
 			long companyId, OrderByComparator<AccountGroup> orderByComparator)
 		throws NoSuchGroupException {
 
-		AccountGroup accountGroup = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (accountGroup != null) {
-			return accountGroup;
-		}
-
-		throw new NoSuchGroupException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -688,8 +651,8 @@ public class AccountGroupPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<AccountGroup>
-		_collectionPersistenceFinderByC_D;
+	private FilterCollectionPersistenceFinder
+		<AccountGroup, NoSuchGroupException> _collectionPersistenceFinderByC_D;
 
 	/**
 	 * Returns an ordered range of all the account groups where companyId = &#63; and defaultAccountGroup = &#63;.
@@ -732,17 +695,9 @@ public class AccountGroupPersistenceImpl
 			OrderByComparator<AccountGroup> orderByComparator)
 		throws NoSuchGroupException {
 
-		AccountGroup accountGroup = fetchByC_D_First(
-			companyId, defaultAccountGroup, orderByComparator);
-
-		if (accountGroup != null) {
-			return accountGroup;
-		}
-
-		throw new NoSuchGroupException(
-			_collectionPersistenceFinderByC_D.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, defaultAccountGroup}));
+		return _collectionPersistenceFinderByC_D.findFirst(
+			finderCache, new Object[] {companyId, defaultAccountGroup},
+			orderByComparator);
 	}
 
 	/**
@@ -826,8 +781,9 @@ public class AccountGroupPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<AccountGroup>
-		_collectionPersistenceFinderByC_LikeN;
+	private FilterCollectionPersistenceFinder
+		<AccountGroup, NoSuchGroupException>
+			_collectionPersistenceFinderByC_LikeN;
 
 	/**
 	 * Returns all the account groups where companyId = &#63; and name LIKE &#63;.
@@ -926,16 +882,8 @@ public class AccountGroupPersistenceImpl
 			OrderByComparator<AccountGroup> orderByComparator)
 		throws NoSuchGroupException {
 
-		AccountGroup accountGroup = fetchByC_LikeN_First(
-			companyId, name, orderByComparator);
-
-		if (accountGroup != null) {
-			return accountGroup;
-		}
-
-		throw new NoSuchGroupException(
-			_collectionPersistenceFinderByC_LikeN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name}));
+		return _collectionPersistenceFinderByC_LikeN.findFirst(
+			finderCache, new Object[] {companyId, name}, orderByComparator);
 	}
 
 	/**
@@ -1050,8 +998,8 @@ public class AccountGroupPersistenceImpl
 			finderCache, new Object[] {companyId, name}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<AccountGroup>
-		_collectionPersistenceFinderByC_T;
+	private FilterCollectionPersistenceFinder
+		<AccountGroup, NoSuchGroupException> _collectionPersistenceFinderByC_T;
 
 	/**
 	 * Returns an ordered range of all the account groups where companyId = &#63; and type = &#63;.
@@ -1094,16 +1042,8 @@ public class AccountGroupPersistenceImpl
 			OrderByComparator<AccountGroup> orderByComparator)
 		throws NoSuchGroupException {
 
-		AccountGroup accountGroup = fetchByC_T_First(
-			companyId, type, orderByComparator);
-
-		if (accountGroup != null) {
-			return accountGroup;
-		}
-
-		throw new NoSuchGroupException(
-			_collectionPersistenceFinderByC_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, type}));
+		return _collectionPersistenceFinderByC_T.findFirst(
+			finderCache, new Object[] {companyId, type}, orderByComparator);
 	}
 
 	/**
@@ -1185,7 +1125,7 @@ public class AccountGroupPersistenceImpl
 			finderCache, new Object[] {companyId, type}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<AccountGroup>
+	private UniquePersistenceFinder<AccountGroup, NoSuchGroupException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -1201,23 +1141,8 @@ public class AccountGroupPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchGroupException {
 
-		AccountGroup accountGroup = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (accountGroup == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchGroupException(message);
-		}
-
-		return accountGroup;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1572,18 +1497,10 @@ public class AccountGroupPersistenceImpl
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_ACCOUNTGROUP_WHERE, _SQL_COUNT_ACCOUNTGROUP_WHERE,
 				AccountGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountGroupImpl.class, AccountGroup.class, "accountGroup",
-					"AccountGroup", "accountGroup.accountGroupId",
-					"SELECT DISTINCT {accountGroup.*} FROM AccountGroup accountGroup WHERE ",
-					"SELECT {AccountGroup.*} FROM (SELECT DISTINCT accountGroup.accountGroupId FROM AccountGroup accountGroup WHERE ",
-					") TEMP_TABLE INNER JOIN AccountGroup ON TEMP_TABLE.accountGroupId = AccountGroup.accountGroupId",
-					"SELECT COUNT(DISTINCT accountGroup.accountGroupId) AS COUNT_VALUE FROM AccountGroup accountGroup WHERE ",
-					AccountGroupModelImpl.ORDER_BY_SQL,
-					AccountGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"accountGroup.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, AccountGroup::getUuid));
+					"accountGroup.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, AccountGroup::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1606,18 +1523,10 @@ public class AccountGroupPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_ACCOUNTGROUP_WHERE, _SQL_COUNT_ACCOUNTGROUP_WHERE,
 				AccountGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountGroupImpl.class, AccountGroup.class, "accountGroup",
-					"AccountGroup", "accountGroup.accountGroupId",
-					"SELECT DISTINCT {accountGroup.*} FROM AccountGroup accountGroup WHERE ",
-					"SELECT {AccountGroup.*} FROM (SELECT DISTINCT accountGroup.accountGroupId FROM AccountGroup accountGroup WHERE ",
-					") TEMP_TABLE INNER JOIN AccountGroup ON TEMP_TABLE.accountGroupId = AccountGroup.accountGroupId",
-					"SELECT COUNT(DISTINCT accountGroup.accountGroupId) AS COUNT_VALUE FROM AccountGroup accountGroup WHERE ",
-					AccountGroupModelImpl.ORDER_BY_SQL,
-					AccountGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"accountGroup.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, AccountGroup::getUuid),
+					"accountGroup.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, AccountGroup::getUuid),
 				new FinderColumn<>(
 					"accountGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AccountGroup::getCompanyId));
@@ -1645,15 +1554,7 @@ public class AccountGroupPersistenceImpl
 					new String[] {"accountGroupId"}, false),
 				_SQL_SELECT_ACCOUNTGROUP_WHERE, _SQL_COUNT_ACCOUNTGROUP_WHERE,
 				AccountGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountGroupImpl.class, AccountGroup.class, "accountGroup",
-					"AccountGroup", "accountGroup.accountGroupId",
-					"SELECT DISTINCT {accountGroup.*} FROM AccountGroup accountGroup WHERE ",
-					"SELECT {AccountGroup.*} FROM (SELECT DISTINCT accountGroup.accountGroupId FROM AccountGroup accountGroup WHERE ",
-					") TEMP_TABLE INNER JOIN AccountGroup ON TEMP_TABLE.accountGroupId = AccountGroup.accountGroupId",
-					"SELECT COUNT(DISTINCT accountGroup.accountGroupId) AS COUNT_VALUE FROM AccountGroup accountGroup WHERE ",
-					AccountGroupModelImpl.ORDER_BY_SQL,
-					AccountGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new ArrayableFinderColumn<>(
 					"accountGroup.", "accountGroupId", FinderColumn.Type.LONG,
 					"=", false, true, true, AccountGroup::getAccountGroupId));
@@ -1679,15 +1580,7 @@ public class AccountGroupPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_ACCOUNTGROUP_WHERE, _SQL_COUNT_ACCOUNTGROUP_WHERE,
 				AccountGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountGroupImpl.class, AccountGroup.class, "accountGroup",
-					"AccountGroup", "accountGroup.accountGroupId",
-					"SELECT DISTINCT {accountGroup.*} FROM AccountGroup accountGroup WHERE ",
-					"SELECT {AccountGroup.*} FROM (SELECT DISTINCT accountGroup.accountGroupId FROM AccountGroup accountGroup WHERE ",
-					") TEMP_TABLE INNER JOIN AccountGroup ON TEMP_TABLE.accountGroupId = AccountGroup.accountGroupId",
-					"SELECT COUNT(DISTINCT accountGroup.accountGroupId) AS COUNT_VALUE FROM AccountGroup accountGroup WHERE ",
-					AccountGroupModelImpl.ORDER_BY_SQL,
-					AccountGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"accountGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AccountGroup::getCompanyId));
@@ -1717,15 +1610,7 @@ public class AccountGroupPersistenceImpl
 					new String[] {"companyId", "defaultAccountGroup"}, false),
 				_SQL_SELECT_ACCOUNTGROUP_WHERE, _SQL_COUNT_ACCOUNTGROUP_WHERE,
 				AccountGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountGroupImpl.class, AccountGroup.class, "accountGroup",
-					"AccountGroup", "accountGroup.accountGroupId",
-					"SELECT DISTINCT {accountGroup.*} FROM AccountGroup accountGroup WHERE ",
-					"SELECT {AccountGroup.*} FROM (SELECT DISTINCT accountGroup.accountGroupId FROM AccountGroup accountGroup WHERE ",
-					") TEMP_TABLE INNER JOIN AccountGroup ON TEMP_TABLE.accountGroupId = AccountGroup.accountGroupId",
-					"SELECT COUNT(DISTINCT accountGroup.accountGroupId) AS COUNT_VALUE FROM AccountGroup accountGroup WHERE ",
-					AccountGroupModelImpl.ORDER_BY_SQL,
-					AccountGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"accountGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AccountGroup::getCompanyId),
@@ -1752,15 +1637,7 @@ public class AccountGroupPersistenceImpl
 					new String[] {"companyId", "name"}, false),
 				_SQL_SELECT_ACCOUNTGROUP_WHERE, _SQL_COUNT_ACCOUNTGROUP_WHERE,
 				AccountGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountGroupImpl.class, AccountGroup.class, "accountGroup",
-					"AccountGroup", "accountGroup.accountGroupId",
-					"SELECT DISTINCT {accountGroup.*} FROM AccountGroup accountGroup WHERE ",
-					"SELECT {AccountGroup.*} FROM (SELECT DISTINCT accountGroup.accountGroupId FROM AccountGroup accountGroup WHERE ",
-					") TEMP_TABLE INNER JOIN AccountGroup ON TEMP_TABLE.accountGroupId = AccountGroup.accountGroupId",
-					"SELECT COUNT(DISTINCT accountGroup.accountGroupId) AS COUNT_VALUE FROM AccountGroup accountGroup WHERE ",
-					AccountGroupModelImpl.ORDER_BY_SQL,
-					AccountGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"accountGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AccountGroup::getCompanyId),
@@ -1789,21 +1666,13 @@ public class AccountGroupPersistenceImpl
 					new String[] {"companyId", "type_"}, 0, 2, false, null),
 				_SQL_SELECT_ACCOUNTGROUP_WHERE, _SQL_COUNT_ACCOUNTGROUP_WHERE,
 				AccountGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					AccountGroupImpl.class, AccountGroup.class, "accountGroup",
-					"AccountGroup", "accountGroup.accountGroupId",
-					"SELECT DISTINCT {accountGroup.*} FROM AccountGroup accountGroup WHERE ",
-					"SELECT {AccountGroup.*} FROM (SELECT DISTINCT accountGroup.accountGroupId FROM AccountGroup accountGroup WHERE ",
-					") TEMP_TABLE INNER JOIN AccountGroup ON TEMP_TABLE.accountGroupId = AccountGroup.accountGroupId",
-					"SELECT COUNT(DISTINCT accountGroup.accountGroupId) AS COUNT_VALUE FROM AccountGroup accountGroup WHERE ",
-					AccountGroupModelImpl.ORDER_BY_SQL,
-					AccountGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"accountGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AccountGroup::getCompanyId),
 				new FinderColumn<>(
-					"accountGroup.", "type", FinderColumn.Type.STRING, "=",
-					true, true, AccountGroup::getType));
+					"accountGroup.", "type", "type_", FinderColumn.Type.STRING,
+					"=", true, true, AccountGroup::getType));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1877,12 +1746,6 @@ public class AccountGroupPersistenceImpl
 	private static final String _SQL_COUNT_ACCOUNTGROUP_WHERE =
 		"SELECT COUNT(accountGroup) FROM AccountGroup accountGroup WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AccountGroup exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AccountGroupPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -1892,4 +1755,4 @@ public class AccountGroupPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1815171246
+// LIFERAY-SERVICE-BUILDER-HASH:827042424

@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
 import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
@@ -76,8 +74,9 @@ public class EagerBlobEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<EagerBlobEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<EagerBlobEntry, NoSuchEagerBlobEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the eager blob entries where uuid = &#63;.
@@ -117,16 +116,8 @@ public class EagerBlobEntryPersistenceImpl
 			String uuid, OrderByComparator<EagerBlobEntry> orderByComparator)
 		throws NoSuchEagerBlobEntryException {
 
-		EagerBlobEntry eagerBlobEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (eagerBlobEntry != null) {
-			return eagerBlobEntry;
-		}
-
-		throw new NoSuchEagerBlobEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			dummyFinderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -167,8 +158,9 @@ public class EagerBlobEntryPersistenceImpl
 			dummyFinderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<EagerBlobEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<EagerBlobEntry, NoSuchEagerBlobEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the eager blob entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchEagerBlobEntryException</code> if it could not be found.
@@ -182,21 +174,8 @@ public class EagerBlobEntryPersistenceImpl
 	public EagerBlobEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchEagerBlobEntryException {
 
-		EagerBlobEntry eagerBlobEntry = fetchByUUID_G(uuid, groupId);
-
-		if (eagerBlobEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEagerBlobEntryException(message);
-		}
-
-		return eagerBlobEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			dummyFinderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -458,10 +437,11 @@ public class EagerBlobEntryPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_EAGERBLOBENTRY_WHERE, _SQL_COUNT_EAGERBLOBENTRY_WHERE,
-			EagerBlobEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			EagerBlobEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"eagerBlobEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, EagerBlobEntry::getUuid));
+				"eagerBlobEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, EagerBlobEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -473,8 +453,8 @@ public class EagerBlobEntryPersistenceImpl
 				EagerBlobEntry::getGroupId),
 			_SQL_SELECT_EAGERBLOBENTRY_WHERE, "",
 			new FinderColumn<>(
-				"eagerBlobEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, EagerBlobEntry::getUuid),
+				"eagerBlobEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, EagerBlobEntry::getUuid),
 			new FinderColumn<>(
 				"eagerBlobEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, EagerBlobEntry::getGroupId));
@@ -527,12 +507,6 @@ public class EagerBlobEntryPersistenceImpl
 	private static final String _SQL_COUNT_EAGERBLOBENTRY_WHERE =
 		"SELECT COUNT(eagerBlobEntry) FROM EagerBlobEntry eagerBlobEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No EagerBlobEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		EagerBlobEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "blob"});
 
@@ -542,4 +516,4 @@ public class EagerBlobEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:480376287
+// LIFERAY-SERVICE-BUILDER-HASH:1489121936

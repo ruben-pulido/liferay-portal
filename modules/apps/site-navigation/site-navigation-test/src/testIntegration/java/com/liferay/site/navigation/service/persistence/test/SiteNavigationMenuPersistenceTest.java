@@ -117,11 +117,7 @@ public class SiteNavigationMenuPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SiteNavigationMenu newSiteNavigationMenu = _persistence.create(pk);
-
-		newSiteNavigationMenu.setMvccVersion(RandomTestUtil.nextLong());
+		SiteNavigationMenu newSiteNavigationMenu = addSiteNavigationMenu();
 
 		newSiteNavigationMenu.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -150,7 +146,9 @@ public class SiteNavigationMenuPersistenceTest {
 
 		newSiteNavigationMenu.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_siteNavigationMenus.add(_persistence.update(newSiteNavigationMenu));
+		newSiteNavigationMenu = _persistence.update(newSiteNavigationMenu);
+
+		_siteNavigationMenus.add(newSiteNavigationMenu);
 
 		SiteNavigationMenu existingSiteNavigationMenu =
 			_persistence.findByPrimaryKey(
@@ -695,8 +693,6 @@ public class SiteNavigationMenuPersistenceTest {
 
 		SiteNavigationMenu siteNavigationMenu = _persistence.create(pk);
 
-		siteNavigationMenu.setMvccVersion(RandomTestUtil.nextLong());
-
 		siteNavigationMenu.setCtCollectionId(RandomTestUtil.nextLong());
 
 		siteNavigationMenu.setUuid(RandomTestUtil.randomString());
@@ -735,4 +731,4 @@ public class SiteNavigationMenuPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:235638456
+// LIFERAY-SERVICE-BUILDER-HASH:-1805045977

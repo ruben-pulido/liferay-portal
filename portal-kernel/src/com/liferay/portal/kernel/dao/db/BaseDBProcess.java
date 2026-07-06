@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import java.sql.Connection;
@@ -55,8 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -538,6 +539,36 @@ public abstract class BaseDBProcess implements DBProcess {
 
 	protected Connection connection;
 
+	private void _closeConnection(Connection connection) {
+		Boolean autoCommit = _autoCommits.remove(connection);
+
+		if (autoCommit != null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Closing a connection that still has an autoCommit " +
+						"override");
+			}
+
+			try {
+				connection.rollback();
+			}
+			catch (SQLException sqlException) {
+				_log.error(
+					"Unable to finish a transactional connection",
+					sqlException);
+			}
+
+			try {
+				connection.setAutoCommit(autoCommit);
+			}
+			catch (SQLException sqlException) {
+				_log.error("Unable to set autoCommit", sqlException);
+			}
+		}
+
+		DataAccess.cleanUp(connection);
+	}
+
 	private void _closeConnections(Map<Thread, Connection> connectionsMap) {
 		if (MapUtil.isEmpty(connectionsMap)) {
 			return;
@@ -545,46 +576,28 @@ public abstract class BaseDBProcess implements DBProcess {
 
 		Collection<Connection> connections = connectionsMap.values();
 
-		try {
-			Iterator<Connection> iterator = connections.iterator();
+		Iterator<Connection> iterator = connections.iterator();
 
-			while (iterator.hasNext()) {
-				Connection connection = iterator.next();
+		while (iterator.hasNext()) {
+			Connection connection = iterator.next();
 
-				iterator.remove();
+			iterator.remove();
 
-				connection.close();
-			}
-		}
-		catch (SQLException sqlException) {
-			_log.error(sqlException);
+			_closeConnection(connection);
 		}
 	}
 
 	private void _closeConnections(
 		Map<Thread, Connection> connectionsMap, Thread thread) {
 
-		if (MapUtil.isEmpty(connectionsMap)) {
+		if (connectionsMap == null) {
 			return;
 		}
 
-		try {
-			for (Map.Entry<Thread, Connection> entry :
-					connectionsMap.entrySet()) {
+		Connection connection = connectionsMap.remove(thread);
 
-				if (entry.getKey() == thread) {
-					Connection connection = entry.getValue();
-
-					connectionsMap.remove(entry.getKey());
-
-					connection.close();
-
-					return;
-				}
-			}
-		}
-		catch (SQLException sqlException) {
-			_log.error(sqlException);
+		if (connection != null) {
+			_closeConnection(connection);
 		}
 	}
 
@@ -596,8 +609,32 @@ public abstract class BaseDBProcess implements DBProcess {
 			Thread.currentThread(),
 			k -> {
 				try {
-					return AutoBatchPreparedStatementUtil.autoBatch(
-						connection, updateSQL);
+					PreparedStatement preparedStatement =
+						AutoBatchPreparedStatementUtil.autoBatch(
+							connection, updateSQL);
+
+					Map<Thread, Connection> connectionsMap =
+						_connectionsMaps.get(
+							PropsValues.DATABASE_PARTITION_ENABLED ?
+								CompanyThreadLocal.getCompanyId() :
+									CompanyConstants.SYSTEM);
+
+					if (connectionsMap == null) {
+						return preparedStatement;
+					}
+
+					Connection workerConnection = connectionsMap.get(
+						Thread.currentThread());
+
+					if (workerConnection == null) {
+						return preparedStatement;
+					}
+
+					return (PreparedStatement)ProxyUtil.newProxyInstance(
+						ClassLoader.getSystemClassLoader(),
+						new Class<?>[] {PreparedStatement.class},
+						new BatchCommitInvocationHandler(
+							workerConnection, preparedStatement));
 				}
 				catch (SQLException sqlException) {
 					throw new RuntimeException(sqlException);
@@ -728,70 +765,75 @@ public abstract class BaseDBProcess implements DBProcess {
 			Objects.requireNonNull(unsafeBiConsumer);
 		}
 
+		int fixedThreadPoolSize = _getFixedThreadPoolSize();
+
 		ExecutorService executorService = Executors.newFixedThreadPool(
-			_getFixedThreadPoolSize());
+			fixedThreadPoolSize);
 
 		List<Future<Void>> futures = new ArrayList<>();
 		Map<Thread, PreparedStatement> preparedStatementHashMap =
 			new ConcurrentHashMap<>();
-		Set<Thread> threads = new CopyOnWriteArraySet<>();
 		ThrowableCollector throwableCollector = new ThrowableCollector();
 
 		try {
 			boolean notificationEnabled = NotificationThreadLocal.isEnabled();
 			boolean workflowEnabled = WorkflowThreadLocal.isEnabled();
 
-			T next = null;
+			Callable<Void> callable = () -> {
+				NotificationThreadLocal.setEnabled(notificationEnabled);
+				WorkflowThreadLocal.setEnabled(workflowEnabled);
 
-			while ((next = unsafeSupplier.get()) != null) {
-				T current = next;
+				Thread currentThread = Thread.currentThread();
 
-				Future<Void> future = executorService.submit(
-					new CompanyInheritableThreadLocalCallable<>(
-						() -> {
-							NotificationThreadLocal.setEnabled(
-								notificationEnabled);
-							WorkflowThreadLocal.setEnabled(workflowEnabled);
+				try {
+					PreparedStatement preparedStatement = null;
 
-							try {
-								threads.add(Thread.currentThread());
+					while (true) {
+						T current = null;
 
-								if (Validator.isNull(updateSQL)) {
-									unsafeConsumer.accept(current);
-								}
-								else {
-									unsafeBiConsumer.accept(
-										current,
-										_getConcurrentPreparedStatement(
-											updateSQL,
-											preparedStatementHashMap));
-								}
-							}
-							catch (Exception exception) {
-								throwableCollector.collect(exception);
-							}
+						synchronized (unsafeSupplier) {
+							current = unsafeSupplier.get();
+						}
 
-							return null;
-						}));
+						if (current == null) {
+							break;
+						}
 
-				if (futures.size() >=
-						PropsValues.
-							UPGRADE_CONCURRENT_PROCESS_FUTURE_LIST_MAX_SIZE) {
+						if (Validator.isNull(updateSQL)) {
+							unsafeConsumer.accept(current);
+						}
+						else {
+							preparedStatement = _getConcurrentPreparedStatement(
+								updateSQL, preparedStatementHashMap);
 
-					for (Future<Void> curFuture : futures) {
-						curFuture.get();
+							unsafeBiConsumer.accept(current, preparedStatement);
+						}
 					}
 
-					futures.clear();
+					if (preparedStatement != null) {
+						preparedStatement.executeBatch();
+
+						preparedStatement.close();
+					}
+				}
+				catch (Exception exception) {
+					throwableCollector.collect(exception);
+				}
+				finally {
+					closeConnections(currentThread);
 				}
 
-				futures.add(future);
+				return null;
+			};
+
+			for (int i = 0; i < fixedThreadPoolSize; i++) {
+				futures.add(
+					executorService.submit(
+						new CompanyInheritableThreadLocalCallable<>(callable)));
 			}
 		}
 		finally {
 			try {
-				executorService.shutdown();
-
 				for (Future<Void> future : futures) {
 					future.get();
 				}
@@ -805,26 +847,9 @@ public abstract class BaseDBProcess implements DBProcess {
 
 					ReflectionUtil.throwException(throwable);
 				}
-
-				try {
-					for (PreparedStatement preparedStatement :
-							preparedStatementHashMap.values()) {
-
-						preparedStatement.executeBatch();
-
-						preparedStatement.close();
-					}
-				}
-				catch (Exception exception) {
-					_log.error(exceptionMessage, exception);
-
-					throw exception;
-				}
 			}
 			finally {
-				for (Thread thread : threads) {
-					closeConnections(thread);
-				}
+				executorService.shutdown();
 			}
 		}
 	}
@@ -834,8 +859,116 @@ public abstract class BaseDBProcess implements DBProcess {
 	private static final AtomicInteger _fixedThreadPoolSize = new AtomicInteger(
 		0);
 
+	private final Map<Connection, Boolean> _autoCommits =
+		new ConcurrentHashMap<>();
 	private final Map<Long, Map<Thread, Connection>> _connectionsMaps =
 		new ConcurrentHashMap<>();
+
+	private class BatchCommitInvocationHandler implements InvocationHandler {
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+			throws Throwable {
+
+			String methodName = method.getName();
+
+			boolean addBatch = methodName.equals("addBatch");
+
+			if (addBatch && !_transaction) {
+				_startTransaction();
+			}
+
+			Object result;
+
+			try {
+				result = method.invoke(_preparedStatement, args);
+			}
+			catch (InvocationTargetException invocationTargetException) {
+				Throwable causeThrowable = invocationTargetException.getCause();
+
+				if (_transaction) {
+					try {
+						_finishTransaction(false);
+					}
+					catch (SQLException sqlException) {
+						causeThrowable.addSuppressed(sqlException);
+					}
+				}
+
+				throw causeThrowable;
+			}
+
+			if (addBatch) {
+				if (++_count >= PropsValues.HIBERNATE_JDBC_BATCH_SIZE) {
+					_finishTransaction(true);
+				}
+			}
+			else if (_transaction && methodName.equals("executeBatch")) {
+				_finishTransaction(true);
+			}
+
+			return result;
+		}
+
+		private BatchCommitInvocationHandler(
+			Connection connection, PreparedStatement preparedStatement) {
+
+			_connection = connection;
+			_preparedStatement = preparedStatement;
+		}
+
+		private void _finishTransaction(boolean commit) throws SQLException {
+			_count = 0;
+			_transaction = false;
+
+			try {
+				if (commit) {
+					_connection.commit();
+				}
+				else {
+					_connection.rollback();
+				}
+			}
+			finally {
+				Boolean autoCommit = _autoCommits.remove(_connection);
+
+				try {
+					_connection.setAutoCommit(
+						GetterUtil.getBoolean(autoCommit, true));
+				}
+				catch (SQLException sqlException) {
+					_log.error("Unable to set auto commit", sqlException);
+				}
+			}
+		}
+
+		private void _startTransaction() throws SQLException {
+			boolean autoCommit = _connection.getAutoCommit();
+
+			if (_autoCommits.putIfAbsent(_connection, autoCommit) != null) {
+				return;
+			}
+
+			if (autoCommit) {
+				try {
+					_connection.setAutoCommit(false);
+				}
+				catch (SQLException sqlException) {
+					_autoCommits.remove(_connection);
+
+					throw sqlException;
+				}
+			}
+
+			_transaction = true;
+		}
+
+		private final Connection _connection;
+		private int _count;
+		private final PreparedStatement _preparedStatement;
+		private boolean _transaction;
+
+	}
 
 	private class ConnectionThreadProxyInvocationHandler
 		implements InvocationHandler {

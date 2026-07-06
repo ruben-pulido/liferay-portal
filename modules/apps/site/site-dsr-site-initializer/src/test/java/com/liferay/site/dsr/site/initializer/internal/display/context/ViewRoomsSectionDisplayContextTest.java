@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.site.dsr.site.initializer.internal.constants.DSRConstants;
@@ -66,9 +67,23 @@ public class ViewRoomsSectionDisplayContextTest {
 	public void setUp() throws PortalException {
 		_languageUtilMockedStatic.when(
 			() -> LanguageUtil.get(
+				Mockito.any(HttpServletRequest.class), Mockito.eq("archive"))
+		).thenReturn(
+			"Archive"
+		);
+
+		_languageUtilMockedStatic.when(
+			() -> LanguageUtil.get(
 				Mockito.any(HttpServletRequest.class), Mockito.eq("delete"))
 		).thenReturn(
 			"Delete"
+		);
+
+		_languageUtilMockedStatic.when(
+			() -> LanguageUtil.get(
+				Mockito.any(HttpServletRequest.class), Mockito.eq("duplicate"))
+		).thenReturn(
+			"Duplicate"
 		);
 
 		_languageUtilMockedStatic.when(
@@ -84,6 +99,20 @@ public class ViewRoomsSectionDisplayContextTest {
 				Mockito.eq("new-digital-sales-room"))
 		).thenReturn(
 			"New Digital Sales Room"
+		);
+
+		_languageUtilMockedStatic.when(
+			() -> LanguageUtil.get(
+				Mockito.any(HttpServletRequest.class), Mockito.eq("restore"))
+		).thenReturn(
+			"Restore"
+		);
+
+		_languageUtilMockedStatic.when(
+			() -> LanguageUtil.get(
+				Mockito.any(HttpServletRequest.class), Mockito.eq("settings"))
+		).thenReturn(
+			"Settings"
 		);
 
 		_languageUtilMockedStatic.when(
@@ -138,6 +167,12 @@ public class ViewRoomsSectionDisplayContextTest {
 		);
 
 		Mockito.when(
+			_objectDefinition.getClassName()
+		).thenReturn(
+			_CLASS_NAME
+		);
+
+		Mockito.when(
 			_objectDefinition.getLabel(Mockito.any(Locale.class))
 		).thenReturn(
 			RandomTestUtil.randomString()
@@ -149,10 +184,22 @@ public class ViewRoomsSectionDisplayContextTest {
 			RandomTestUtil.randomLong()
 		);
 
+		_portalUtilMockedStatic.when(
+			() -> PortalUtil.getClassNameId(_CLASS_NAME)
+		).thenReturn(
+			_CLASS_NAME_ID
+		);
+
 		Mockito.when(
 			_themeDisplay.getLocale()
 		).thenReturn(
 			LocaleUtil.ENGLISH
+		);
+
+		Mockito.when(
+			_themeDisplay.getPathFriendlyURLPublic()
+		).thenReturn(
+			StringPool.BLANK
 		);
 
 		Mockito.when(
@@ -166,12 +213,19 @@ public class ViewRoomsSectionDisplayContextTest {
 		).thenReturn(
 			StringPool.BLANK
 		);
+
+		Mockito.when(
+			_themeDisplay.getURLCurrent()
+		).thenReturn(
+			_URL_CURRENT
+		);
 	}
 
 	@After
 	public void tearDown() {
 		_languageUtilMockedStatic.close();
 		_layoutSetPrototypeLocalServiceUtilMockedStatic.close();
+		_portalUtilMockedStatic.close();
 	}
 
 	@Test
@@ -211,11 +265,8 @@ public class ViewRoomsSectionDisplayContextTest {
 				_objectDefinition, Mockito.mock(ObjectEntryService.class));
 
 		Assert.assertEquals(
-			StringBundler.concat(
-				"/o/search/v1.0/search?emptySearch=true&",
-				"filter=objectDefinitionId eq ",
-				_objectDefinition.getObjectDefinitionId(),
-				"&nestedFields=embedded,r_accountToDSRRooms_accountEntryId"),
+			"/o/digital-sales-room/rooms?nestedFields=creator," +
+				"r_accountToDSRRooms_accountEntryId",
 			viewRoomsSectionDisplayContext.getAPIURL());
 	}
 
@@ -230,12 +281,9 @@ public class ViewRoomsSectionDisplayContextTest {
 				Mockito.mock(ObjectEntryService.class));
 
 		Assert.assertEquals(
-			StringBundler.concat(
-				"/o/search/v1.0/search?emptySearch=true&",
-				"filter=objectDefinitionId eq ",
-				_objectDefinition.getObjectDefinitionId(),
-				"&nestedFields=embedded,r_accountToDSRRooms_accountEntryId",
-				"&pageSize=5&sort=dateModified:desc"),
+			"/o/digital-sales-room/rooms?nestedFields=creator," +
+				"r_accountToDSRRooms_accountEntryId&pageSize=5&sort" +
+					"=dateModified:desc",
 			viewRoomsSectionDisplayContext.getAPIURL());
 	}
 
@@ -323,27 +371,64 @@ public class ViewRoomsSectionDisplayContextTest {
 			viewRoomsSectionDisplayContext.getFDSActionDropdownItems();
 
 		Assert.assertEquals(
-			fdsActionDropdownItems.toString(), 4,
+			fdsActionDropdownItems.toString(), 7,
 			fdsActionDropdownItems.size());
 
 		_assertFDSActionDropdownItem(
 			StringBundler.concat(
 				DSRConstants.DSR_FRIENDLY_URL, "/view_room?siteId=",
-				"{embedded.siteId}"),
+				"{siteId}"),
 			"view", "view", "View", null, "get", null,
 			fdsActionDropdownItems.get(0));
 		_assertFDSActionDropdownItem(
 			StringBundler.concat(
 				DSRConstants.DSR_FRIENDLY_URL, "/view_room?mode=edit&siteId=",
-				"{embedded.siteId}"),
+				"{siteId}"),
 			"pencil", "edit", "Edit", null, "update", null,
 			fdsActionDropdownItems.get(1));
 		_assertFDSActionDropdownItem(
 			"#", "share", "share", "Share", null, "update", null,
 			fdsActionDropdownItems.get(2));
 		_assertFDSActionDropdownItem(
-			"#", "trash", "delete", "Delete", "delete", "delete", null,
+			StringBundler.concat(
+				DSRConstants.DSR_FRIENDLY_URL, "/e/room-settings/",
+				_CLASS_NAME_ID, "/{id}?redirect=", _URL_CURRENT),
+			"cog", "settings", "Settings", null, "update", null,
 			fdsActionDropdownItems.get(3));
+		_assertFDSActionDropdownItem(
+			"#", "archive", "archive", "Archive", null, "update", null,
+			fdsActionDropdownItems.get(4));
+		_assertFDSActionDropdownItem(
+			"#", "restore", "restore", "Restore", null, "update", null,
+			fdsActionDropdownItems.get(5));
+		_assertFDSActionDropdownItem(
+			"#", "trash", "delete", "Delete", "delete", "delete", null,
+			fdsActionDropdownItems.get(6));
+
+		ObjectEntryService objectEntryService = Mockito.mock(
+			ObjectEntryService.class);
+
+		Mockito.when(
+			objectEntryService.hasPortletResourcePermission(
+				Mockito.anyLong(), Mockito.anyLong(), Mockito.anyString())
+		).thenReturn(
+			true
+		);
+
+		viewRoomsSectionDisplayContext = new ViewRoomsSectionDisplayContext(
+			new HashMap<>(), _getMockHttpServletRequest(), _objectDefinition,
+			objectEntryService);
+
+		fdsActionDropdownItems =
+			viewRoomsSectionDisplayContext.getFDSActionDropdownItems();
+
+		Assert.assertEquals(
+			fdsActionDropdownItems.toString(), 8,
+			fdsActionDropdownItems.size());
+
+		_assertFDSActionDropdownItem(
+			"#", "copy", "duplicate", "Duplicate", null, "update", null,
+			fdsActionDropdownItems.get(2));
 	}
 
 	@Test
@@ -416,7 +501,14 @@ public class ViewRoomsSectionDisplayContextTest {
 		return mockHttpServletRequest;
 	}
 
+	private static final String _CLASS_NAME =
+		"com.liferay.object.model.ObjectDefinition#D1S2";
+
+	private static final long _CLASS_NAME_ID = RandomTestUtil.randomLong();
+
 	private static final String _GROUP_DISPLAY_URL = "groupDisplayURL";
+
+	private static final String _URL_CURRENT = "currentURL";
 
 	private final Group _group = Mockito.mock(Group.class);
 	private final MockedStatic<LanguageUtil> _languageUtilMockedStatic =
@@ -428,6 +520,8 @@ public class ViewRoomsSectionDisplayContextTest {
 			LayoutSetPrototypeLocalServiceUtil.class);
 	private final ObjectDefinition _objectDefinition = Mockito.mock(
 		ObjectDefinition.class);
+	private final MockedStatic<PortalUtil> _portalUtilMockedStatic =
+		Mockito.mockStatic(PortalUtil.class);
 	private final ThemeDisplay _themeDisplay = Mockito.mock(ThemeDisplay.class);
 
 }

@@ -112,9 +112,7 @@ public class DSLQueryStatusEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DSLQueryStatusEntry newDSLQueryStatusEntry = _persistence.create(pk);
+		DSLQueryStatusEntry newDSLQueryStatusEntry = addDSLQueryStatusEntry();
 
 		newDSLQueryStatusEntry.setDslQueryEntryId(RandomTestUtil.nextLong());
 
@@ -122,7 +120,9 @@ public class DSLQueryStatusEntryPersistenceTest {
 
 		newDSLQueryStatusEntry.setStatusDate(RandomTestUtil.nextDate());
 
-		_dslQueryStatusEntries.add(_persistence.update(newDSLQueryStatusEntry));
+		newDSLQueryStatusEntry = _persistence.update(newDSLQueryStatusEntry);
+
+		_dslQueryStatusEntries.add(newDSLQueryStatusEntry);
 
 		DSLQueryStatusEntry existingDSLQueryStatusEntry =
 			_persistence.findByPrimaryKey(
@@ -420,4 +420,4 @@ public class DSLQueryStatusEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1516114127
+// LIFERAY-SERVICE-BUILDER-HASH:12722765

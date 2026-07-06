@@ -179,7 +179,7 @@ public class TaxonomyCategoryResourceImpl
 
 			@Override
 			public String getSectionKey() {
-				return ExportImportConstants.SECTION_KEY_CONTENT;
+				return ExportImportConstants.SECTION_KEY_CONTENT_AND_DATA;
 			}
 
 			@Override
@@ -375,12 +375,15 @@ public class TaxonomyCategoryResourceImpl
 				BooleanFilter booleanFilter =
 					booleanQuery.getPreBooleanFilter();
 
-				if (depotEntry.getType() == DepotConstants.TYPE_SPACE) {
+				if ((depotEntry.getType() == DepotConstants.TYPE_PROJECT) ||
+					(depotEntry.getType() == DepotConstants.TYPE_SPACE)) {
+
 					TermsFilter assetVocabularyIdTermsFilter = new TermsFilter(
 						Field.ASSET_VOCABULARY_ID);
 
 					assetVocabularyIdTermsFilter.addValues(
-						_getAssetVocabularyIds(depotEntry.getGroupId()));
+						_getAssetVocabularyIds(
+							depotEntry.getGroupId(), depotEntry.getType()));
 
 					booleanFilter.add(
 						assetVocabularyIdTermsFilter, BooleanClauseOccur.MUST);
@@ -401,6 +404,7 @@ public class TaxonomyCategoryResourceImpl
 				searchContext.setCompanyId(contextCompany.getCompanyId());
 
 				if ((depotEntry != null) &&
+					(depotEntry.getType() != DepotConstants.TYPE_PROJECT) &&
 					(depotEntry.getType() != DepotConstants.TYPE_SPACE)) {
 
 					searchContext.setGroupIds(new long[] {assetLibraryId});
@@ -587,7 +591,9 @@ public class TaxonomyCategoryResourceImpl
 			Long assetLibraryId, TaxonomyCategory taxonomyCategory)
 		throws Exception {
 
-		return _postTaxonomyCategory(assetLibraryId, taxonomyCategory);
+		return _postTaxonomyCategory(
+			assetLibraryId, taxonomyCategory.getExternalReferenceCode(),
+			taxonomyCategory);
 	}
 
 	@Override
@@ -595,7 +601,9 @@ public class TaxonomyCategoryResourceImpl
 			Long siteId, TaxonomyCategory taxonomyCategory)
 		throws Exception {
 
-		return _postTaxonomyCategory(siteId, taxonomyCategory);
+		return _postTaxonomyCategory(
+			siteId, taxonomyCategory.getExternalReferenceCode(),
+			taxonomyCategory);
 	}
 
 	@Override
@@ -746,17 +754,18 @@ public class TaxonomyCategoryResourceImpl
 		return assetCategory.getVocabularyId();
 	}
 
-	private String[] _getAssetVocabularyIds(long groupId) {
+	private String[] _getAssetVocabularyIds(long groupId, int depotEntryType) {
 		List<AssetVocabularyGroupRel> assetVocabularyGroupRels =
 			new ArrayList<>();
 
 		assetVocabularyGroupRels.addAll(
 			_assetVocabularyGroupRelLocalService.
-				getAssetVocabularyGroupRelsByGroupId(groupId));
+				getAssetVocabularyGroupRelsByGroupIdAndDepotEntryType(
+					groupId, depotEntryType));
 		assetVocabularyGroupRels.addAll(
 			_assetVocabularyGroupRelLocalService.
-				getAssetVocabularyGroupRelsByGroupId(
-					GroupConstants.GROUP_ID_ALL));
+				getAssetVocabularyGroupRelsByGroupIdAndDepotEntryType(
+					GroupConstants.GROUP_ID_ALL, depotEntryType));
 
 		return transformToArray(
 			assetVocabularyGroupRels,
@@ -953,7 +962,8 @@ public class TaxonomyCategoryResourceImpl
 					_assetVocabularyGroupRelLocalService.
 						setAssetVocabularyGroupRels(
 							assetVocabulary.getVocabularyId(),
-							new long[] {GroupConstants.GROUP_ID_ALL});
+							new long[] {GroupConstants.GROUP_ID_ALL},
+							DepotConstants.TYPE_SPACE);
 				}
 			}
 
@@ -1033,7 +1043,8 @@ public class TaxonomyCategoryResourceImpl
 	}
 
 	private TaxonomyCategory _postTaxonomyCategory(
-			long groupId, TaxonomyCategory taxonomyCategory)
+			long groupId, String externalReferenceCode,
+			TaxonomyCategory taxonomyCategory)
 		throws Exception {
 
 		Long taxonomyVocabularyId = _getTaxonomyVocabularyId(
@@ -1046,7 +1057,7 @@ public class TaxonomyCategoryResourceImpl
 		}
 
 		return _addTaxonomyCategory(
-			taxonomyCategory.getExternalReferenceCode(), groupId,
+			externalReferenceCode, groupId,
 			contextAcceptLanguage.getPreferredLanguageId(),
 			_getParentTaxonomyCategoryId(groupId, taxonomyCategory),
 			taxonomyCategory, taxonomyVocabularyId);
@@ -1062,7 +1073,8 @@ public class TaxonomyCategoryResourceImpl
 				externalReferenceCode, groupId);
 
 		if (persistedAssetCategory == null) {
-			return _postTaxonomyCategory(groupId, taxonomyCategory);
+			return _postTaxonomyCategory(
+				groupId, externalReferenceCode, taxonomyCategory);
 		}
 
 		long assetVocabularyId = _getAssetVocabularyId(

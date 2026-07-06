@@ -115,11 +115,8 @@ public class ClientExtensionEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ClientExtensionEntry newClientExtensionEntry = _persistence.create(pk);
-
-		newClientExtensionEntry.setMvccVersion(RandomTestUtil.nextLong());
+		ClientExtensionEntry newClientExtensionEntry =
+			addClientExtensionEntry();
 
 		newClientExtensionEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -159,8 +156,9 @@ public class ClientExtensionEntryPersistenceTest {
 
 		newClientExtensionEntry.setStatusDate(RandomTestUtil.nextDate());
 
-		_clientExtensionEntries.add(
-			_persistence.update(newClientExtensionEntry));
+		newClientExtensionEntry = _persistence.update(newClientExtensionEntry);
+
+		_clientExtensionEntries.add(newClientExtensionEntry);
 
 		ClientExtensionEntry existingClientExtensionEntry =
 			_persistence.findByPrimaryKey(
@@ -645,8 +643,6 @@ public class ClientExtensionEntryPersistenceTest {
 
 		ClientExtensionEntry clientExtensionEntry = _persistence.create(pk);
 
-		clientExtensionEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		clientExtensionEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		clientExtensionEntry.setUuid(RandomTestUtil.randomString());
@@ -695,4 +691,4 @@ public class ClientExtensionEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1870917096
+// LIFERAY-SERVICE-BUILDER-HASH:851870453

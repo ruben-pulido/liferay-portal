@@ -32,6 +32,10 @@
 		<field name="companyId" type="long" />
 		<field name="name" type="String" />
 	</model>
+	<model name="com.liferay.portal.tools.service.builder.test.model.ColumnNameEntry">
+		<field name="columnNameEntryId" type="long" />
+		<field name="name" type="String" />
+	</model>
 	<model name="com.liferay.portal.tools.service.builder.test.model.DataLimitEntry">
 		<field name="dataLimitEntryId" type="long" />
 		<field name="companyId" type="long" />
@@ -121,6 +125,7 @@
 		<field name="portletId" type="String" />
 	</model>
 	<model name="com.liferay.portal.tools.service.builder.test.model.LazyBlobEntry">
+		<field name="mvccVersion" type="long" />
 		<field name="uuid" type="String" />
 		<field name="lazyBlobEntryId" type="long" />
 		<field name="groupId" type="long" />
@@ -266,6 +271,10 @@
 		<field name="name" type="String" />
 		<field name="type" type="String" />
 	</model>
+	<model name="com.liferay.portal.tools.service.builder.test.model.ReassociateEntry">
+		<field name="reassociateEntryId" type="long" />
+		<field name="name" type="String" />
+	</model>
 	<model name="com.liferay.portal.tools.service.builder.test.model.RedundantIndexEntry">
 		<field name="redundantIndexEntryId" type="long" />
 		<field name="companyId" type="long" />
@@ -284,6 +293,11 @@
 	</model>
 	<model name="com.liferay.portal.tools.service.builder.test.model.UndefinedDefaultOrderEntry">
 		<field name="undefinedDefaultOrderEntryId" type="long" />
+		<field name="modifiedDate" type="Date" />
+		<field name="name" type="String" />
+	</model>
+	<model name="com.liferay.portal.tools.service.builder.test.model.UniqueFinderEntry">
+		<field name="uniqueFinderEntryId" type="long" />
 		<field name="modifiedDate" type="Date" />
 		<field name="name" type="String" />
 	</model>

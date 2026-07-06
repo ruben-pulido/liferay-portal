@@ -60,10 +60,22 @@
 		}
 	}
 
+	&.http-request-node {
+		.node-icon svg {
+			fill: #0b5fff;
+		}
+	}
+
 	&.join-node,
 	&.join-xor-node {
 		.node-icon svg {
 			fill: #7785ff;
+		}
+	}
+
+	&.service-node {
+		.node-icon svg {
+			fill: #af78ff;
 		}
 	}
 
@@ -91,10 +103,6 @@
 	}
 }
 
-.node.selected {
-	border: 2px solid #80acff;
-}
-
 .node-handle-area {
 	height: 110px;
 	left: -18px;
@@ -114,4 +122,8 @@
 			z-index: -1;
 		}
 	}
+}
+
+.node.selected {
+	border: 2px solid #80acff;
 }

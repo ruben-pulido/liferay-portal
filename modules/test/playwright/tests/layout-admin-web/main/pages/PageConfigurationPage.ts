@@ -89,27 +89,32 @@ export class PageConfigurationPage {
 	}
 
 	async setFriendlyURL(friendlyURL: string, language: 'spanish' | 'english') {
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: this.page.getByRole('menuitem', {name: language}),
-			trigger: this.page
-				.getByLabel('Current translation')
-				.nth(1)
-				.locator('..'),
-		});
+		const selectLanguage = async (name: string) => {
+			const toggle = this.page.locator(
+				'.form-group.friendly-url .input-localized-trigger'
+			);
+
+			const option = this.page.getByRole('menuitem', {name});
+
+			await clickAndExpectToBeVisible({target: option, trigger: toggle});
+
+			const isActive = await option.evaluate((element) =>
+				element.classList.contains('active')
+			);
+
+			if (isActive) {
+				await toggle.click();
+			}
+			else {
+				await option.click();
+			}
+		};
+
+		await selectLanguage(language);
 
 		await this.friendlyURL.fill(friendlyURL);
 
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: this.page
-				.getByRole('menuitem')
-				.filter({hasText: 'default'}),
-			trigger: this.page
-				.getByLabel('Current translation')
-				.nth(1)
-				.locator('..'),
-		});
+		await selectLanguage('default');
 
 		await this.save();
 	}

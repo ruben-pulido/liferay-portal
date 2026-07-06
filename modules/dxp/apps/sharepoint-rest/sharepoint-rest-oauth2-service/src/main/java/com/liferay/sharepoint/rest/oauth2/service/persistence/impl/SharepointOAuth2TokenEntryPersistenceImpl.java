@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -76,8 +74,9 @@ public class SharepointOAuth2TokenEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SharepointOAuth2TokenEntry>
-		_collectionPersistenceFinderByUserId;
+	private CollectionPersistenceFinder
+		<SharepointOAuth2TokenEntry, NoSuch2TokenEntryException>
+			_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns an ordered range of all the sharepoint o auth2 token entries where userId = &#63;.
@@ -118,16 +117,8 @@ public class SharepointOAuth2TokenEntryPersistenceImpl
 			OrderByComparator<SharepointOAuth2TokenEntry> orderByComparator)
 		throws NoSuch2TokenEntryException {
 
-		SharepointOAuth2TokenEntry sharepointOAuth2TokenEntry =
-			fetchByUserId_First(userId, orderByComparator);
-
-		if (sharepointOAuth2TokenEntry != null) {
-			return sharepointOAuth2TokenEntry;
-		}
-
-		throw new NoSuch2TokenEntryException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -169,8 +160,9 @@ public class SharepointOAuth2TokenEntryPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private UniquePersistenceFinder<SharepointOAuth2TokenEntry>
-		_uniquePersistenceFinderByU_C;
+	private UniquePersistenceFinder
+		<SharepointOAuth2TokenEntry, NoSuch2TokenEntryException>
+			_uniquePersistenceFinderByU_C;
 
 	/**
 	 * Returns the sharepoint o auth2 token entry where userId = &#63; and configurationPid = &#63; or throws a <code>NoSuch2TokenEntryException</code> if it could not be found.
@@ -185,23 +177,8 @@ public class SharepointOAuth2TokenEntryPersistenceImpl
 			long userId, String configurationPid)
 		throws NoSuch2TokenEntryException {
 
-		SharepointOAuth2TokenEntry sharepointOAuth2TokenEntry = fetchByU_C(
-			userId, configurationPid);
-
-		if (sharepointOAuth2TokenEntry == null) {
-			String message =
-				_uniquePersistenceFinderByU_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {userId, configurationPid});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuch2TokenEntryException(message);
-		}
-
-		return sharepointOAuth2TokenEntry;
+		return _uniquePersistenceFinderByU_C.find(
+			finderCache, new Object[] {userId, configurationPid});
 	}
 
 	/**
@@ -482,7 +459,7 @@ public class SharepointOAuth2TokenEntryPersistenceImpl
 				_SQL_SELECT_SHAREPOINTOAUTH2TOKENENTRY_WHERE,
 				_SQL_COUNT_SHAREPOINTOAUTH2TOKENENTRY_WHERE,
 				SharepointOAuth2TokenEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"sharepointOAuth2TokenEntry.", "userId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -560,16 +537,10 @@ public class SharepointOAuth2TokenEntryPersistenceImpl
 	private static final String _SQL_COUNT_SHAREPOINTOAUTH2TOKENENTRY_WHERE =
 		"SELECT COUNT(sharepointOAuth2TokenEntry) FROM SharepointOAuth2TokenEntry sharepointOAuth2TokenEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SharepointOAuth2TokenEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SharepointOAuth2TokenEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1503530655
+// LIFERAY-SERVICE-BUILDER-HASH:-1416156835

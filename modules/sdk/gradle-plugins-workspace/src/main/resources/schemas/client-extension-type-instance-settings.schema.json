@@ -75,6 +75,45 @@
 		},
 		{
 			"properties": {
+				"checkInterval": {
+					"default": 15,
+					"description": "Set the number of days before a VAT number is revalidated against VIES.",
+					"min": 1,
+					"title": "Check Interval",
+					"type": "number"
+				},
+				"countryCodes": {
+					"default": "AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",
+					"description": "Select the country codes whose VAT numbers are validated against VIES.",
+					"items": {
+						"type": "string"
+					},
+					"title": "Country Codes",
+					"type": "array"
+				},
+				"enabled": {
+					"default": true,
+					"title": "Enabled",
+					"type": "boolean"
+				},
+				"pid": {
+					"const": "com.liferay.account.validator.vies.configuration.VIESAccountEntryValidatorConfiguration",
+					"title": "VIES Account Entry Validator"
+				},
+				"viesEndpointURL": {
+					"default": "https://ec.europa.eu/taxation_customs/vies/rest-api/check-vat-number",
+					"description": "Set the full URL of the DG TAXUD VIES check-vat-number REST endpoint.",
+					"title": "VIES Endpoint URL",
+					"type": "string"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "VIES Account Entry Validator"
+		},
+		{
+			"properties": {
 				"enabled": {
 					"default": false,
 					"description": "Enable postprocessing of all legacy markup in fragments, web content, and blogs so that Adaptive Media is able to work with it. Enabling this option may impact the performance of your sites.",
@@ -175,7 +214,7 @@
 					"type": "string"
 				},
 				"pid": {
-					"const": "com.liferay.ai.hub.internal.configuration.VertexAIConfiguration",
+					"const": "com.liferay.ai.hub.configuration.VertexAIConfiguration",
 					"title": "Vertex AI Configuration"
 				},
 				"projectId": {
@@ -571,6 +610,12 @@
 					"title": "Import Batch Size",
 					"type": "number"
 				},
+				"languageKeyResolutionEnabled": {
+					"default": true,
+					"description": "Enable resolving the [$FOR_EACH_LANGUAGE_ID$] language key placeholder into translations for all portal supported locales when importing batch files or running site initializers.",
+					"title": "Language Key Resolution Enabled",
+					"type": "boolean"
+				},
 				"pid": {
 					"const": "com.liferay.batch.engine.configuration.BatchEngineTaskCompanyConfiguration",
 					"title": "Batch Engine Task Configuration"
@@ -773,6 +818,12 @@
 		},
 		{
 			"properties": {
+				"automaticFriendlyURLConflictResolutionEnabled": {
+					"default": false,
+					"description": "Enable this mode to automatically resolve duplicate friendly URL conflicts.",
+					"title": "Automatic Resolution for Duplicate Friendly URL Conflicts",
+					"type": "boolean"
+				},
 				"cleanUpCTSContentData": {
 					"default": false,
 					"description": "Enable this to remove change tracking store content immediately after a publication publishes.",
@@ -1986,6 +2037,24 @@
 			]
 		},
 		{
+			"properties": {
+				"enableLog": {
+					"default": false,
+					"description": "If this is checked, the frontend audiences infrastructure will print informational messages to the browser console.",
+					"title": "Enable Log",
+					"type": "boolean"
+				},
+				"pid": {
+					"const": "com.liferay.frontend.js.audiences.web.internal.configuration.FrontendJSAudiencesConfiguration",
+					"title": "Frontend Audiences Infrastructure"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "Frontend Audiences Infrastructure"
+		},
+		{
 			"description": "For changes made here to take effect, you must reload the browser page after saving.",
 			"properties": {
 				"cacheExpirationTime": {
@@ -2131,7 +2200,7 @@
 				},
 				"translatedJSFilesMaxAge": {
 					"default": 3600,
-					"description": "Set the value of the \"max-age\" directive in the \"Cache-Control\" header for translated JavaScript files for translated JavaScript files (those that contain invocations to \"Liferay.Language.get()\" and do not have an associated language.json file).",
+					"description": "Set the value of the \"max-age\" directive in the \"Cache-Control\" header for translated JavaScript files (those that contain invocations to \"Liferay.Language.get()\" and do not have an associated language.json file).",
 					"title": "Translated JavaScript Files Max Age Directive Value",
 					"type": "number"
 				}
@@ -2243,6 +2312,13 @@
 					"description": "Set this to true to index all article versions. Set this to false to index only the last indexable version.",
 					"title": "Index All Article Versions Enabled",
 					"type": "boolean"
+				},
+				"journalArticleCheckLimit": {
+					"default": 100,
+					"description": "Set the maximum number of articles to check.",
+					"min": 1,
+					"title": "Journal Article Check Limit",
+					"type": "number"
 				},
 				"journalArticleExportImportProcessorCacheEnabled": {
 					"default": true,
@@ -2543,6 +2619,25 @@
 				"pid"
 			],
 			"title": "Mail Settings"
+		},
+		{
+			"description": "The settings in this configuration let you control the MCP Server.",
+			"properties": {
+				"enabled": {
+					"default": false,
+					"title": "Enabled",
+					"type": "boolean"
+				},
+				"pid": {
+					"const": "com.liferay.mcp.server.rest.internal.configuration.MCPServerConfiguration",
+					"description": "The settings in this configuration let you control the MCP Server.",
+					"title": "MCP Server"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "MCP Server"
 		},
 		{
 			"properties": {
@@ -4565,6 +4660,48 @@
 		},
 		{
 			"properties": {
+				"invitationToCollaborateEmailBody": {
+					"description": "Provide a localized template for the body of invitation to collaborate emails.",
+					"properties": {
+					},
+					"title": "Invitation to Collaborate Email Body",
+					"type": "object"
+				},
+				"invitationToCollaborateEmailSenderEmailAddress": {
+					"description": "Define a specific email address for the sender of invitation to collaborate emails. If empty, the inviter's email address is used.",
+					"title": "Invitation to Collaborate Email Sender Email Address",
+					"type": "string"
+				},
+				"invitationToCollaborateEmailSenderName": {
+					"description": "Define a specific name for the sender of invitation to collaborate emails. If empty, the inviter's name is used.",
+					"title": "Invitation to Collaborate Email Sender Name",
+					"type": "string"
+				},
+				"invitationToCollaborateEmailSubject": {
+					"description": "Provide a localized template for the subject of invitation to collaborate emails.",
+					"properties": {
+					},
+					"title": "Invitation to Collaborate Email Subject",
+					"type": "object"
+				},
+				"invitationToCollaborateTokenExpirationTime": {
+					"default": 48,
+					"description": "Define the time (in hours) before the invitation to collaborate token expires.",
+					"title": "Invitation to Collaborate Token Expiration Time",
+					"type": "number"
+				},
+				"pid": {
+					"const": "com.liferay.sharing.configuration.SharingEntryCollaborationEmailConfiguration",
+					"title": "Invitation to Collaborate"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "Invitation to Collaborate"
+		},
+		{
+			"properties": {
 				"enabled": {
 					"default": true,
 					"title": "Enabled",
@@ -4598,6 +4735,54 @@
 				"pid"
 			],
 			"title": "Bulk Action Task Configuration"
+		},
+		{
+			"properties": {
+				"content": {
+					"default": "",
+					"title": "llms.txt Content",
+					"type": "string"
+				},
+				"enabled": {
+					"default": false,
+					"title": "Enable llms.txt",
+					"type": "boolean"
+				},
+				"pid": {
+					"const": "com.liferay.site.internal.configuration.LLMSCompanyConfiguration",
+					"title": "llms.txt"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "llms.txt"
+		},
+		{
+			"description": "Control how virtual hosts restrict access to sites.",
+			"properties": {
+				"allowDefaultInstanceURLBypass": {
+					"default": false,
+					"description": "When strict virtual host mode is enabled, still allow access to sites through the default instance URL.",
+					"title": "Allow Default Instance URL Bypass",
+					"type": "boolean"
+				},
+				"pid": {
+					"const": "com.liferay.site.internal.configuration.SiteVirtualHostConfiguration",
+					"description": "Control how virtual hosts restrict access to sites.",
+					"title": "Virtual Host Restrictions"
+				},
+				"strictModeEnabled": {
+					"default": false,
+					"description": "When enabled, a site that has a virtual host is reachable only through that virtual host.",
+					"title": "Strict Virtual Host Mode Enabled",
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "Virtual Host Restrictions"
 		},
 		{
 			"properties": {
@@ -4640,6 +4825,11 @@
 					"default": true,
 					"title": "XML Sitemap Index Enabled",
 					"type": "boolean"
+				},
+				"xmlSitemapIndexMode": {
+					"default": "page-layout",
+					"title": "XML Sitemap Index Mode",
+					"type": "string"
 				}
 			},
 			"required": [
@@ -4879,11 +5069,12 @@
 			"enum": [
 				"com.liferay.account.configuration.AccountEntryEmailConfiguration",
 				"com.liferay.account.configuration.AccountEntryEmailDomainsConfiguration",
+				"com.liferay.account.validator.vies.configuration.VIESAccountEntryValidatorConfiguration",
 				"com.liferay.adaptive.media.image.content.transformer.backwards.compatibility.internal.configuration.AMBackwardsCompatibilityHtmlContentTransformerConfiguration",
 				"com.liferay.adaptive.media.image.internal.configuration.AMImageCompanyConfiguration",
 				"com.liferay.ai.creator.openai.configuration.AICreatorOpenAICompanyConfiguration",
 				"com.liferay.ai.hub.cell.configuration.AIHubCellConfiguration",
-				"com.liferay.ai.hub.internal.configuration.VertexAIConfiguration",
+				"com.liferay.ai.hub.configuration.VertexAIConfiguration",
 				"com.liferay.analytics.settings.configuration.AnalyticsConfiguration",
 				"com.liferay.asset.auto.tagger.google.cloud.natural.language.internal.configuration.GCloudNaturalLanguageAssetAutoTaggerCompanyConfiguration",
 				"com.liferay.asset.auto.tagger.internal.configuration.AssetAutoTaggerCompanyConfiguration",
@@ -4934,6 +5125,7 @@
 				"com.liferay.fragment.web.internal.configuration.FragmentPortletConfiguration",
 				"com.liferay.friendly.url.configuration.FriendlyURLRedirectionConfiguration",
 				"com.liferay.friendly.url.configuration.FriendlyURLSeparatorCompanyConfiguration",
+				"com.liferay.frontend.js.audiences.web.internal.configuration.FrontendJSAudiencesConfiguration",
 				"com.liferay.frontend.js.spa.web.internal.configuration.SPAConfiguration",
 				"com.liferay.frontend.js.web.internal.configuration.CustomDialogsSettingsConfiguration",
 				"com.liferay.frontend.js.web.internal.configuration.FrontendCachingConfiguration",
@@ -4946,6 +5138,7 @@
 				"com.liferay.layout.set.prototype.configuration.LayoutSetPrototypeConfiguration",
 				"com.liferay.mail.outlook.auth.connector.provider.internal.configuration.MailOutlookAuthConnectorCompanyConfiguration",
 				"com.liferay.mail.settings.configuration.MailSettingCompanyConfiguration",
+				"com.liferay.mcp.server.rest.internal.configuration.MCPServerConfiguration",
 				"com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration",
 				"com.liferay.multi.factor.authentication.fido2.web.internal.configuration.MFAFIDO2Configuration",
 				"com.liferay.multi.factor.authentication.ip.address.internal.configuration.MFAIPAddressConfiguration",
@@ -4988,8 +5181,11 @@
 				"com.liferay.segments.configuration.SegmentsCompanyConfiguration",
 				"com.liferay.segments.context.vocabulary.internal.configuration.SegmentsContextVocabularyCompanyConfiguration",
 				"com.liferay.sharepoint.rest.repository.internal.configuration.SharepointRepositoryConfiguration",
+				"com.liferay.sharing.configuration.SharingEntryCollaborationEmailConfiguration",
 				"com.liferay.sharing.internal.configuration.SharingCompanyConfiguration",
 				"com.liferay.site.cms.site.initializer.configuration.BulkActionTaskConfiguration",
+				"com.liferay.site.internal.configuration.LLMSCompanyConfiguration",
+				"com.liferay.site.internal.configuration.SiteVirtualHostConfiguration",
 				"com.liferay.site.internal.configuration.SitemapCompanyConfiguration",
 				"com.liferay.social.activity.internal.configuration.SocialActivityCompanyConfiguration",
 				"com.liferay.staging.configuration.StagingConfiguration",

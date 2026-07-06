@@ -164,7 +164,6 @@ public class LayoutLayoutSetPrototypeLayoutERCUpgradeProcessTest
 				_layoutSetPrototype);
 
 		MergeLayoutPrototypesThreadLocal.clearMergeComplete();
-		MergeLayoutPrototypesThreadLocal.setSkipMerge(false);
 
 		LayoutSet layoutSet = _layoutSetLocalService.getLayoutSet(
 			_group.getGroupId(), false);
@@ -177,7 +176,7 @@ public class LayoutLayoutSetPrototypeLayoutERCUpgradeProcessTest
 
 		layoutSet = _layoutSetLocalService.updateLayoutSet(layoutSet);
 
-		_sites.mergeLayoutSetPrototypeLayouts(_group, layoutSet);
+		_sites.mergeLayoutSetPrototypeLayouts(layoutSet);
 	}
 
 	@Inject

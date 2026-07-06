@@ -77,8 +77,9 @@ public class NotificationQueueEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<NotificationQueueEntry>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<NotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the notification queue entries where companyId = &#63;.
@@ -119,16 +120,8 @@ public class NotificationQueueEntryPersistenceImpl
 			OrderByComparator<NotificationQueueEntry> orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		NotificationQueueEntry notificationQueueEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (notificationQueueEntry != null) {
-			return notificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -205,8 +198,9 @@ public class NotificationQueueEntryPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<NotificationQueueEntry>
-		_collectionPersistenceFinderByNotificationTemplateId;
+	private FilterCollectionPersistenceFinder
+		<NotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderByNotificationTemplateId;
 
 	/**
 	 * Returns an ordered range of all the notification queue entries where notificationTemplateId = &#63;.
@@ -247,19 +241,9 @@ public class NotificationQueueEntryPersistenceImpl
 			OrderByComparator<NotificationQueueEntry> orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		NotificationQueueEntry notificationQueueEntry =
-			fetchByNotificationTemplateId_First(
-				notificationTemplateId, orderByComparator);
-
-		if (notificationQueueEntry != null) {
-			return notificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderByNotificationTemplateId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {notificationTemplateId}));
+		return _collectionPersistenceFinderByNotificationTemplateId.findFirst(
+			finderCache, new Object[] {notificationTemplateId},
+			orderByComparator);
 	}
 
 	/**
@@ -339,8 +323,9 @@ public class NotificationQueueEntryPersistenceImpl
 			finderCache, new Object[] {notificationTemplateId});
 	}
 
-	private FilterCollectionPersistenceFinder<NotificationQueueEntry>
-		_collectionPersistenceFinderByLtSentDate;
+	private FilterCollectionPersistenceFinder
+		<NotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderByLtSentDate;
 
 	/**
 	 * Returns all the notification queue entries where sentDate &lt; &#63;.
@@ -433,16 +418,8 @@ public class NotificationQueueEntryPersistenceImpl
 			OrderByComparator<NotificationQueueEntry> orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		NotificationQueueEntry notificationQueueEntry = fetchByLtSentDate_First(
-			sentDate, orderByComparator);
-
-		if (notificationQueueEntry != null) {
-			return notificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderByLtSentDate.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {sentDate}));
+		return _collectionPersistenceFinderByLtSentDate.findFirst(
+			finderCache, new Object[] {sentDate}, orderByComparator);
 	}
 
 	/**
@@ -550,8 +527,9 @@ public class NotificationQueueEntryPersistenceImpl
 			finderCache, new Object[] {sentDate});
 	}
 
-	private FilterCollectionPersistenceFinder<NotificationQueueEntry>
-		_collectionPersistenceFinderByT_S;
+	private FilterCollectionPersistenceFinder
+		<NotificationQueueEntry, NoSuchNotificationQueueEntryException>
+			_collectionPersistenceFinderByT_S;
 
 	/**
 	 * Returns an ordered range of all the notification queue entries where type = &#63; and status = &#63;.
@@ -594,16 +572,8 @@ public class NotificationQueueEntryPersistenceImpl
 			OrderByComparator<NotificationQueueEntry> orderByComparator)
 		throws NoSuchNotificationQueueEntryException {
 
-		NotificationQueueEntry notificationQueueEntry = fetchByT_S_First(
-			type, status, orderByComparator);
-
-		if (notificationQueueEntry != null) {
-			return notificationQueueEntry;
-		}
-
-		throw new NoSuchNotificationQueueEntryException(
-			_collectionPersistenceFinderByT_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {type, status}));
+		return _collectionPersistenceFinderByT_S.findFirst(
+			finderCache, new Object[] {type, status}, orderByComparator);
 	}
 
 	/**
@@ -930,19 +900,7 @@ public class NotificationQueueEntryPersistenceImpl
 				_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE,
 				_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE,
 				NotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					NotificationQueueEntryImpl.class,
-					NotificationQueueEntry.class, "notificationQueueEntry",
-					"NotificationQueueEntry",
-					"notificationQueueEntry.notificationQueueEntryId",
-					"SELECT DISTINCT {notificationQueueEntry.*} FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					"SELECT {NotificationQueueEntry.*} FROM (SELECT DISTINCT notificationQueueEntry.notificationQueueEntryId FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					") TEMP_TABLE INNER JOIN NotificationQueueEntry ON TEMP_TABLE.notificationQueueEntryId = NotificationQueueEntry.notificationQueueEntryId",
-					"SELECT COUNT(DISTINCT notificationQueueEntry.notificationQueueEntryId) AS COUNT_VALUE FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					NotificationQueueEntryModelImpl.ORDER_BY_SQL,
-					NotificationQueueEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"notificationQueueEntry.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -973,19 +931,7 @@ public class NotificationQueueEntryPersistenceImpl
 				_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE,
 				_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE,
 				NotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					NotificationQueueEntryImpl.class,
-					NotificationQueueEntry.class, "notificationQueueEntry",
-					"NotificationQueueEntry",
-					"notificationQueueEntry.notificationQueueEntryId",
-					"SELECT DISTINCT {notificationQueueEntry.*} FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					"SELECT {NotificationQueueEntry.*} FROM (SELECT DISTINCT notificationQueueEntry.notificationQueueEntryId FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					") TEMP_TABLE INNER JOIN NotificationQueueEntry ON TEMP_TABLE.notificationQueueEntryId = NotificationQueueEntry.notificationQueueEntryId",
-					"SELECT COUNT(DISTINCT notificationQueueEntry.notificationQueueEntryId) AS COUNT_VALUE FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					NotificationQueueEntryModelImpl.ORDER_BY_SQL,
-					NotificationQueueEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"notificationQueueEntry.", "notificationTemplateId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1010,19 +956,7 @@ public class NotificationQueueEntryPersistenceImpl
 				_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE,
 				_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE,
 				NotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					NotificationQueueEntryImpl.class,
-					NotificationQueueEntry.class, "notificationQueueEntry",
-					"NotificationQueueEntry",
-					"notificationQueueEntry.notificationQueueEntryId",
-					"SELECT DISTINCT {notificationQueueEntry.*} FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					"SELECT {NotificationQueueEntry.*} FROM (SELECT DISTINCT notificationQueueEntry.notificationQueueEntryId FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					") TEMP_TABLE INNER JOIN NotificationQueueEntry ON TEMP_TABLE.notificationQueueEntryId = NotificationQueueEntry.notificationQueueEntryId",
-					"SELECT COUNT(DISTINCT notificationQueueEntry.notificationQueueEntryId) AS COUNT_VALUE FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					NotificationQueueEntryModelImpl.ORDER_BY_SQL,
-					NotificationQueueEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"notificationQueueEntry.", "sentDate",
 					FinderColumn.Type.DATE, "<", true, true,
@@ -1054,22 +988,11 @@ public class NotificationQueueEntryPersistenceImpl
 				_SQL_SELECT_NOTIFICATIONQUEUEENTRY_WHERE,
 				_SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE,
 				NotificationQueueEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					NotificationQueueEntryImpl.class,
-					NotificationQueueEntry.class, "notificationQueueEntry",
-					"NotificationQueueEntry",
-					"notificationQueueEntry.notificationQueueEntryId",
-					"SELECT DISTINCT {notificationQueueEntry.*} FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					"SELECT {NotificationQueueEntry.*} FROM (SELECT DISTINCT notificationQueueEntry.notificationQueueEntryId FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					") TEMP_TABLE INNER JOIN NotificationQueueEntry ON TEMP_TABLE.notificationQueueEntryId = NotificationQueueEntry.notificationQueueEntryId",
-					"SELECT COUNT(DISTINCT notificationQueueEntry.notificationQueueEntryId) AS COUNT_VALUE FROM NotificationQueueEntry notificationQueueEntry WHERE ",
-					NotificationQueueEntryModelImpl.ORDER_BY_SQL,
-					NotificationQueueEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"notificationQueueEntry.", "type", FinderColumn.Type.STRING,
-					"=", true, true, NotificationQueueEntry::getType),
+					"notificationQueueEntry.", "type", "type_",
+					FinderColumn.Type.STRING, "=", true, true,
+					NotificationQueueEntry::getType),
 				new FinderColumn<>(
 					"notificationQueueEntry.", "status",
 					FinderColumn.Type.INTEGER, "=", true, true,
@@ -1129,9 +1052,6 @@ public class NotificationQueueEntryPersistenceImpl
 	private static final String _SQL_COUNT_NOTIFICATIONQUEUEENTRY_WHERE =
 		"SELECT COUNT(notificationQueueEntry) FROM NotificationQueueEntry notificationQueueEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No NotificationQueueEntry exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
 
@@ -1141,4 +1061,4 @@ public class NotificationQueueEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1188826341
+// LIFERAY-SERVICE-BUILDER-HASH:2020886182

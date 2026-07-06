@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -34,6 +35,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.roles.admin.role.type.contributor.RoleTypeContributor;
+import com.liferay.roles.admin.role.type.contributor.RoleTypeContributorShowFilterRegistryUtil;
 import com.liferay.roles.admin.role.type.contributor.provider.RoleTypeContributorProvider;
 import com.liferay.roles.admin.search.RoleSearch;
 import com.liferay.roles.admin.search.RoleSearchTerms;
@@ -334,6 +336,21 @@ public class EditPortalDefaultPermissionsConfigurationDisplayContext {
 		).buildString();
 	}
 
+	private int[] _filterRoleTypes(int[] roleTypes) {
+		return ArrayUtil.filter(
+			roleTypes,
+			roleType -> {
+				RoleTypeContributor roleTypeContributor =
+					_roleTypeContributorProvider.getRoleTypeContributor(
+						roleType);
+
+				return (roleTypeContributor == null) ||
+					   RoleTypeContributorShowFilterRegistryUtil.isShow(
+						   _themeDisplay.getPermissionChecker(),
+						   roleTypeContributor);
+			});
+	}
+
 	private Map<String, String[]> _getDefaultPermissions() {
 		if (_defaultPermissions != null) {
 			return _defaultPermissions;
@@ -405,6 +422,8 @@ public class EditPortalDefaultPermissionsConfigurationDisplayContext {
 		}
 
 		if (_roleTypes != null) {
+			_roleTypes = _filterRoleTypes(_roleTypes);
+
 			return _roleTypes;
 		}
 
@@ -429,10 +448,14 @@ public class EditPortalDefaultPermissionsConfigurationDisplayContext {
 				_roleTypes = RoleConstants.TYPES_REGULAR;
 			}
 
+			_roleTypes = _filterRoleTypes(_roleTypes);
+
 			return _roleTypes;
 		}
 
 		if (_group == null) {
+			_roleTypes = _filterRoleTypes(_roleTypes);
+
 			return _roleTypes;
 		}
 
@@ -449,6 +472,8 @@ public class EditPortalDefaultPermissionsConfigurationDisplayContext {
 		else {
 			_roleTypes = _getGroupRoleTypes(_group, _roleTypes);
 		}
+
+		_roleTypes = _filterRoleTypes(_roleTypes);
 
 		return _roleTypes;
 	}

@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchBrowserTrackerException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BrowserTracker;
 import com.liferay.portal.kernel.model.BrowserTrackerTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -59,8 +57,9 @@ public class BrowserTrackerPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<BrowserTracker>
-		_uniquePersistenceFinderByUserId;
+	private UniquePersistenceFinder
+		<BrowserTracker, NoSuchBrowserTrackerException>
+			_uniquePersistenceFinderByUserId;
 
 	/**
 	 * Returns the browser tracker where userId = &#63; or throws a <code>NoSuchBrowserTrackerException</code> if it could not be found.
@@ -73,21 +72,8 @@ public class BrowserTrackerPersistenceImpl
 	public BrowserTracker findByUserId(long userId)
 		throws NoSuchBrowserTrackerException {
 
-		BrowserTracker browserTracker = fetchByUserId(userId);
-
-		if (browserTracker == null) {
-			String message =
-				_uniquePersistenceFinderByUserId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchBrowserTrackerException(message);
-		}
-
-		return browserTracker;
+		return _uniquePersistenceFinderByUserId.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId});
 	}
 
 	/**
@@ -332,16 +318,10 @@ public class BrowserTrackerPersistenceImpl
 	private static final String _SQL_SELECT_BROWSERTRACKER_WHERE =
 		"SELECT browserTracker FROM BrowserTracker browserTracker WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No BrowserTracker exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		BrowserTrackerPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-109263853
+// LIFERAY-SERVICE-BUILDER-HASH:294667466

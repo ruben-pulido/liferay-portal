@@ -112,12 +112,8 @@ public class SocialActivityCounterPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SocialActivityCounter newSocialActivityCounter = _persistence.create(
-			pk);
-
-		newSocialActivityCounter.setMvccVersion(RandomTestUtil.nextLong());
+		SocialActivityCounter newSocialActivityCounter =
+			addSocialActivityCounter();
 
 		newSocialActivityCounter.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -145,8 +141,10 @@ public class SocialActivityCounterPersistenceTest {
 
 		newSocialActivityCounter.setActive(RandomTestUtil.randomBoolean());
 
-		_socialActivityCounters.add(
-			_persistence.update(newSocialActivityCounter));
+		newSocialActivityCounter = _persistence.update(
+			newSocialActivityCounter);
+
+		_socialActivityCounters.add(newSocialActivityCounter);
 
 		SocialActivityCounter existingSocialActivityCounter =
 			_persistence.findByPrimaryKey(
@@ -642,8 +640,6 @@ public class SocialActivityCounterPersistenceTest {
 
 		SocialActivityCounter socialActivityCounter = _persistence.create(pk);
 
-		socialActivityCounter.setMvccVersion(RandomTestUtil.nextLong());
-
 		socialActivityCounter.setCtCollectionId(RandomTestUtil.nextLong());
 
 		socialActivityCounter.setGroupId(RandomTestUtil.nextLong());
@@ -681,4 +677,4 @@ public class SocialActivityCounterPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:271766310
+// LIFERAY-SERVICE-BUILDER-HASH:154975353

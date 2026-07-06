@@ -172,27 +172,6 @@ testray.build.type=EE Development (@{to.branch.name})</echo>
 	</macrodef>
 
 	<target name="all">
-		<if>
-			<not>
-				<or>
-					<equals arg1="${build.binaries.cache.dir}" arg2="" />
-					<available file="${project.dir}/${build.binaries.cache.dir}" type="dir" />
-				</or>
-			</not>
-			<then>
-				<property location="${project.dir}/${build.binaries.cache.dir}" name="build.binaries.cache.dir.absolute.path" />
-
-				<echo>
-Please clone the repository at https://github.com/liferay/${build.binaries.cache.repository.name}
-into ${build.binaries.cache.dir.absolute.path} to have a cached copy of all
-Gradle dependencies used during the build.
-
-Set the property "build.binaries.cache.dir" to an empty value to suppress this
-message.
-				</echo>
-			</then>
-		</if>
-
 		<property name="gradle.execute.silent" value="true" />
 
 		<antcall target="clean" />
@@ -257,29 +236,65 @@ message.
 
 		<setup-sdk />
 
-		<gradle-execute setupbinariescache="false" task="deployReleng">
+		<gradle-execute task="deployReleng">
 			<arg value="--build-file=${project.dir}/modules/releng.gradle" />
 		</gradle-execute>
 	</target>
 
 	<target name="clean">
-		<gradle-stop-daemon />
+		<exec executable="git" outputproperty="master.private.ref">
+			<arg value="for-each-ref" />
+			<arg value="--format=%(refname)" />
+			<arg value="refs/heads/master-private" />
+		</exec>
 
 		<if>
-			<available file="${project.dir}/.git" />
+			<equals arg1="${master.private.ref}" arg2="refs/heads/master-private" />
 			<then>
-				<execute>
-					${build.git.clean.command}
-				</execute>
+				<exec executable="git" outputproperty="master.private.merge.base">
+					<arg value="merge-base" />
+					<arg value="HEAD" />
+					<arg value="master-private" />
+				</exec>
+
+				<exec executable="git" outputproperty="master.private.unique.commits">
+					<arg value="rev-list" />
+					<arg value="--count" />
+					<arg value="master..${master.private.merge.base}" />
+				</exec>
 			</then>
-			<else>
-				<echo>Do not clean project because it is not in a Git repository.</echo>
-			</else>
 		</if>
 
-		<clean-liferay-home />
+		<if>
+			<and>
+				<isset property="master.private.unique.commits" />
+				<not>
+					<equals arg1="${master.private.unique.commits}" arg2="0" />
+				</not>
+			</and>
+			<then>
+				<echo>Skip clean because the current branch is based on master-private.</echo>
+			</then>
+			<else>
+				<gradle-stop-daemon />
 
-		<print-current-time />
+				<if>
+					<available file="${project.dir}/.git" />
+					<then>
+						<execute>
+							${build.git.clean.command}
+						</execute>
+					</then>
+					<else>
+						<echo>Do not clean project because it is not in a Git repository.</echo>
+					</else>
+				</if>
+
+				<clean-liferay-home />
+
+				<print-current-time />
+			</else>
+		</if>
 	</target>
 
 	<target name="compile">
@@ -361,6 +376,16 @@ message.
 		<ant dir="sql" inheritAll="false" target="build-db" />
 
 		<deploy-properties />
+
+		<if>
+			<equals arg1="${build.profile}" arg2="cms-standalone" />
+			<then>
+				<echo file="${app.server.classes.portal.dir}/portal-bundle.properties">include-and-override=portal-cms-standalone.properties</echo>
+			</then>
+			<else>
+				<delete failonerror="false" file="${app.server.classes.portal.dir}/portal-bundle.properties" />
+			</else>
+		</if>
 
 		<antcall target="deploy-additional-jars" />
 
@@ -511,7 +536,7 @@ message.
 	<target name="deploy-portal-license-enterprise-app">
 		<property name="artifact.name" value="com.liferay.portal.license.enterprise.app" />
 
-		<gradle-execute outputproperty="jar.file" setupbinariescache="false" task="printDependencyPath">
+		<gradle-execute outputproperty="jar.file" task="printDependencyPath">
 			<arg value="--build-file=${project.dir}/modules/util.gradle" />
 			<arg value="--quiet" />
 			<arg value="-Dorg.gradle.internal.launcher.welcomeMessageEnabled=false" />
@@ -854,6 +879,10 @@ This target has been renamed to "snapshot-bundle". Please call "snapshot-bundle"
 
 		<mkdir dir="${project.dir}/dist" />
 
+		<property name="workspace.artifact.id.suffix" value="" />
+		<property name="workspace.includes" value="**/*" />
+		<property name="workspace.repository.url" value="https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-releases" />
+
 		<for param="workspace.dir">
 			<path>
 				<dirset
@@ -878,7 +907,15 @@ This target has been renamed to "snapshot-bundle". Please call "snapshot-bundle"
 
 				<local name="artifact.id" />
 
-				<property name="artifact.id" value="com.${processed.dir.name}" />
+				<if>
+					<equals arg1="${workspace.artifact.id.suffix}" arg2="" />
+					<then>
+						<property name="artifact.id" value="com.${processed.dir.name}" />
+					</then>
+					<else>
+						<property name="artifact.id" value="com.${processed.dir.name}.${workspace.artifact.id.suffix}" />
+					</else>
+				</if>
 
 				<delete dir="${user.home}/.m2/repository/com/liferay/workspaces/${artifact.id}" />
 				<delete file="${project.dir}/dist/${artifact.id}.pom" />
@@ -890,6 +927,7 @@ This target has been renamed to "snapshot-bundle". Please call "snapshot-bundle"
 				>
 					<zipfileset
 						dir="@{workspace.dir}"
+						includes="${workspace.includes}"
 					/>
 				</zip>
 
@@ -899,7 +937,7 @@ This target has been renamed to "snapshot-bundle". Please call "snapshot-bundle"
 
 				<artifact:deploy file="dist/${artifact.id}.zip">
 					<pom file="dist/${artifact.id}.pom" />
-					<remoteRepository url="https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-releases">
+					<remoteRepository url="${workspace.repository.url}">
 						<authentication password="${sonatype.release.password}" username="${sonatype.release.username}" />
 					</remoteRepository>
 				</artifact:deploy>
@@ -1143,6 +1181,7 @@ This target has been renamed to "snapshot-bundle". Please call "snapshot-bundle"
 
 		<gradle-execute dir="${project.dir}/modules" task="updateYarnBinariesCache">
 			<arg value="--build-file=${project.dir}/modules/util.gradle" />
+			<arg value="-Pbuild.binaries.cache.dir=${build.binaries.cache.dir}" />
 		</gradle-execute>
 	</target>
 
@@ -1155,21 +1194,21 @@ This target has been renamed to "snapshot-bundle". Please call "snapshot-bundle"
 
 		<delete dir="${basedir}/.gradle" />
 
-		<setup-sdk setupbinariescache="false" />
+		<setup-sdk />
 
-		<gradle-execute dir="modules" forcedcacheenabled="false" setupbinariescache="false" task="clean">
+		<gradle-execute dir="modules" forcedcacheenabled="false" task="clean">
 			<arg value="--continue" />
 			<arg value="--parallel" />
 		</gradle-execute>
 
-		<gradle-execute dir="modules" forcedcacheenabled="false" setupbinariescache="false" task="classes">
+		<gradle-execute dir="modules" forcedcacheenabled="false" task="classes">
 			<arg value="--continue" />
 			<arg value="--parallel" />
 			<arg value="testClasses" />
 			<arg value="testIntegrationClasses" />
 		</gradle-execute>
 
-		<gradle-execute dir="modules/sdk/gradle-util" failonerror="false" forcedcacheenabled="false" setupbinariescache="false" task="spotbugsMain">
+		<gradle-execute dir="modules/sdk/gradle-util" failonerror="false" forcedcacheenabled="false" task="spotbugsMain">
 			<arg value="--continue" />
 			<arg value="--parallel" />
 		</gradle-execute>

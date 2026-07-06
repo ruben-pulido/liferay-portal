@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchResourceActionException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.model.ResourceActionTable;
 import com.liferay.portal.kernel.service.persistence.ResourceActionPersistence;
@@ -62,8 +60,9 @@ public class ResourceActionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ResourceAction>
-		_collectionPersistenceFinderByName;
+	private CollectionPersistenceFinder
+		<ResourceAction, NoSuchResourceActionException>
+			_collectionPersistenceFinderByName;
 
 	/**
 	 * Returns an ordered range of all the resource actions where name = &#63;.
@@ -103,16 +102,9 @@ public class ResourceActionPersistenceImpl
 			String name, OrderByComparator<ResourceAction> orderByComparator)
 		throws NoSuchResourceActionException {
 
-		ResourceAction resourceAction = fetchByName_First(
-			name, orderByComparator);
-
-		if (resourceAction != null) {
-			return resourceAction;
-		}
-
-		throw new NoSuchResourceActionException(
-			_collectionPersistenceFinderByName.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name}));
+		return _collectionPersistenceFinderByName.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {name},
+			orderByComparator);
 	}
 
 	/**
@@ -154,8 +146,9 @@ public class ResourceActionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {name});
 	}
 
-	private UniquePersistenceFinder<ResourceAction>
-		_uniquePersistenceFinderByN_A;
+	private UniquePersistenceFinder
+		<ResourceAction, NoSuchResourceActionException>
+			_uniquePersistenceFinderByN_A;
 
 	/**
 	 * Returns the resource action where name = &#63; and actionId = &#63; or throws a <code>NoSuchResourceActionException</code> if it could not be found.
@@ -169,21 +162,8 @@ public class ResourceActionPersistenceImpl
 	public ResourceAction findByN_A(String name, String actionId)
 		throws NoSuchResourceActionException {
 
-		ResourceAction resourceAction = fetchByN_A(name, actionId);
-
-		if (resourceAction == null) {
-			String message =
-				_uniquePersistenceFinderByN_A.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name, actionId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchResourceActionException(message);
-		}
-
-		return resourceAction;
+		return _uniquePersistenceFinderByN_A.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {name, actionId});
 	}
 
 	/**
@@ -423,7 +403,8 @@ public class ResourceActionPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"name"}, 0,
 				1, false, null),
 			_SQL_SELECT_RESOURCEACTION_WHERE, _SQL_COUNT_RESOURCEACTION_WHERE,
-			ResourceActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ResourceActionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"resourceAction.", "name", FinderColumn.Type.STRING, "=", true,
 				true, ResourceAction::getName));
@@ -465,16 +446,10 @@ public class ResourceActionPersistenceImpl
 	private static final String _SQL_COUNT_RESOURCEACTION_WHERE =
 		"SELECT COUNT(resourceAction) FROM ResourceAction resourceAction WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ResourceAction exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ResourceActionPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:945883472
+// LIFERAY-SERVICE-BUILDER-HASH:1693724736

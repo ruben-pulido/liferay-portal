@@ -111,11 +111,7 @@ public class ObjectActionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ObjectAction newObjectAction = _persistence.create(pk);
-
-		newObjectAction.setMvccVersion(RandomTestUtil.nextLong());
+		ObjectAction newObjectAction = addObjectAction();
 
 		newObjectAction.setUuid(RandomTestUtil.randomString());
 
@@ -157,7 +153,9 @@ public class ObjectActionPersistenceTest {
 
 		newObjectAction.setStatus(RandomTestUtil.nextInt());
 
-		_objectActions.add(_persistence.update(newObjectAction));
+		newObjectAction = _persistence.update(newObjectAction);
+
+		_objectActions.add(newObjectAction);
 
 		ObjectAction existingObjectAction = _persistence.findByPrimaryKey(
 			newObjectAction.getPrimaryKey());
@@ -661,8 +659,6 @@ public class ObjectActionPersistenceTest {
 
 		ObjectAction objectAction = _persistence.create(pk);
 
-		objectAction.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectAction.setUuid(RandomTestUtil.randomString());
 
 		objectAction.setExternalReferenceCode(RandomTestUtil.randomString());
@@ -711,4 +707,4 @@ public class ObjectActionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2093497396
+// LIFERAY-SERVICE-BUILDER-HASH:-132397846

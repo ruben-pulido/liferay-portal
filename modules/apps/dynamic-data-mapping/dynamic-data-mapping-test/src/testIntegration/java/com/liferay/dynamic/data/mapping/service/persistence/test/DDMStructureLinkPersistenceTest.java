@@ -111,11 +111,7 @@ public class DDMStructureLinkPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DDMStructureLink newDDMStructureLink = _persistence.create(pk);
-
-		newDDMStructureLink.setMvccVersion(RandomTestUtil.nextLong());
+		DDMStructureLink newDDMStructureLink = addDDMStructureLink();
 
 		newDDMStructureLink.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -127,7 +123,9 @@ public class DDMStructureLinkPersistenceTest {
 
 		newDDMStructureLink.setStructureId(RandomTestUtil.nextLong());
 
-		_ddmStructureLinks.add(_persistence.update(newDDMStructureLink));
+		newDDMStructureLink = _persistence.update(newDDMStructureLink);
+
+		_ddmStructureLinks.add(newDDMStructureLink);
 
 		DDMStructureLink existingDDMStructureLink =
 			_persistence.findByPrimaryKey(newDDMStructureLink.getPrimaryKey());
@@ -496,8 +494,6 @@ public class DDMStructureLinkPersistenceTest {
 
 		DDMStructureLink ddmStructureLink = _persistence.create(pk);
 
-		ddmStructureLink.setMvccVersion(RandomTestUtil.nextLong());
-
 		ddmStructureLink.setCtCollectionId(RandomTestUtil.nextLong());
 
 		ddmStructureLink.setCompanyId(RandomTestUtil.nextLong());
@@ -519,4 +515,4 @@ public class DDMStructureLinkPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-947171339
+// LIFERAY-SERVICE-BUILDER-HASH:1885532546

@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
 
 cd "$(dirname "${0}")" || exit
 
@@ -13,19 +17,21 @@ function main {
 
 		rsync \
 			-a --delete \
-			--exclude "build.gradle" \
-			--exclude "package.json" \
+			--exclude "Jenkinsfile" \
 			--exclude "README.md" \
-			--exclude "test.properties" \
-			--exclude "yarn.lock" \
+			--exclude "build.gradle" \
 			--exclude "client-extensions" \
+			--exclude "gradle-local.properties" \
 			--exclude "language" \
 			--exclude "modules" \
 			--exclude "node_modules" \
 			--exclude "node_modules_cache" \
+			--exclude "package.json" \
 			--exclude "poshi" \
 			--exclude "quickstart" \
+			--exclude "test.properties" \
 			--exclude "themes" \
+			--exclude "yarn.lock" \
 			liferay-sample-workspace/ "${dir}"
 	done
 }

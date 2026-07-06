@@ -108,11 +108,7 @@ public class RememberMeTokenPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		RememberMeToken newRememberMeToken = _persistence.create(pk);
-
-		newRememberMeToken.setMvccVersion(RandomTestUtil.nextLong());
+		RememberMeToken newRememberMeToken = addRememberMeToken();
 
 		newRememberMeToken.setCompanyId(RandomTestUtil.nextLong());
 
@@ -124,7 +120,9 @@ public class RememberMeTokenPersistenceTest {
 
 		newRememberMeToken.setValue(RandomTestUtil.randomString());
 
-		_rememberMeTokens.add(_persistence.update(newRememberMeToken));
+		newRememberMeToken = _persistence.update(newRememberMeToken);
+
+		_rememberMeTokens.add(newRememberMeToken);
 
 		RememberMeToken existingRememberMeToken = _persistence.findByPrimaryKey(
 			newRememberMeToken.getPrimaryKey());
@@ -415,8 +413,6 @@ public class RememberMeTokenPersistenceTest {
 
 		RememberMeToken rememberMeToken = _persistence.create(pk);
 
-		rememberMeToken.setMvccVersion(RandomTestUtil.nextLong());
-
 		rememberMeToken.setCompanyId(RandomTestUtil.nextLong());
 
 		rememberMeToken.setUserId(RandomTestUtil.nextLong());
@@ -438,4 +434,4 @@ public class RememberMeTokenPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1300111689
+// LIFERAY-SERVICE-BUILDER-HASH:-916237966

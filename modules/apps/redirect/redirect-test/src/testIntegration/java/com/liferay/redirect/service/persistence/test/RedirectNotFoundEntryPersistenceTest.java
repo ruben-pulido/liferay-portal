@@ -114,12 +114,8 @@ public class RedirectNotFoundEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		RedirectNotFoundEntry newRedirectNotFoundEntry = _persistence.create(
-			pk);
-
-		newRedirectNotFoundEntry.setMvccVersion(RandomTestUtil.nextLong());
+		RedirectNotFoundEntry newRedirectNotFoundEntry =
+			addRedirectNotFoundEntry();
 
 		newRedirectNotFoundEntry.setGroupId(RandomTestUtil.nextLong());
 
@@ -137,8 +133,10 @@ public class RedirectNotFoundEntryPersistenceTest {
 
 		newRedirectNotFoundEntry.setUrl(RandomTestUtil.randomString());
 
-		_redirectNotFoundEntries.add(
-			_persistence.update(newRedirectNotFoundEntry));
+		newRedirectNotFoundEntry = _persistence.update(
+			newRedirectNotFoundEntry);
+
+		_redirectNotFoundEntries.add(newRedirectNotFoundEntry);
 
 		RedirectNotFoundEntry existingRedirectNotFoundEntry =
 			_persistence.findByPrimaryKey(
@@ -540,8 +538,6 @@ public class RedirectNotFoundEntryPersistenceTest {
 
 		RedirectNotFoundEntry redirectNotFoundEntry = _persistence.create(pk);
 
-		redirectNotFoundEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		redirectNotFoundEntry.setGroupId(RandomTestUtil.nextLong());
 
 		redirectNotFoundEntry.setCompanyId(RandomTestUtil.nextLong());
@@ -570,4 +566,4 @@ public class RedirectNotFoundEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:431404944
+// LIFERAY-SERVICE-BUILDER-HASH:888531954

@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -89,8 +87,9 @@ public class SXPElementPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<SXPElement>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<SXPElement, NoSuchSXPElementException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the sxp elements where uuid = &#63;.
@@ -130,15 +129,8 @@ public class SXPElementPersistenceImpl
 			String uuid, OrderByComparator<SXPElement> orderByComparator)
 		throws NoSuchSXPElementException {
 
-		SXPElement sxpElement = fetchByUuid_First(uuid, orderByComparator);
-
-		if (sxpElement != null) {
-			return sxpElement;
-		}
-
-		throw new NoSuchSXPElementException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -213,8 +205,9 @@ public class SXPElementPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<SXPElement>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<SXPElement, NoSuchSXPElementException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the sxp elements where uuid = &#63; and companyId = &#63;.
@@ -257,16 +250,8 @@ public class SXPElementPersistenceImpl
 			OrderByComparator<SXPElement> orderByComparator)
 		throws NoSuchSXPElementException {
 
-		SXPElement sxpElement = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (sxpElement != null) {
-			return sxpElement;
-		}
-
-		throw new NoSuchSXPElementException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -348,8 +333,9 @@ public class SXPElementPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<SXPElement>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<SXPElement, NoSuchSXPElementException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the sxp elements where companyId = &#63;.
@@ -389,16 +375,8 @@ public class SXPElementPersistenceImpl
 			long companyId, OrderByComparator<SXPElement> orderByComparator)
 		throws NoSuchSXPElementException {
 
-		SXPElement sxpElement = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (sxpElement != null) {
-			return sxpElement;
-		}
-
-		throw new NoSuchSXPElementException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -474,8 +452,9 @@ public class SXPElementPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<SXPElement>
-		_collectionPersistenceFinderByC_R;
+	private FilterCollectionPersistenceFinder
+		<SXPElement, NoSuchSXPElementException>
+			_collectionPersistenceFinderByC_R;
 
 	/**
 	 * Returns an ordered range of all the sxp elements where companyId = &#63; and readOnly = &#63;.
@@ -518,16 +497,8 @@ public class SXPElementPersistenceImpl
 			OrderByComparator<SXPElement> orderByComparator)
 		throws NoSuchSXPElementException {
 
-		SXPElement sxpElement = fetchByC_R_First(
-			companyId, readOnly, orderByComparator);
-
-		if (sxpElement != null) {
-			return sxpElement;
-		}
-
-		throw new NoSuchSXPElementException(
-			_collectionPersistenceFinderByC_R.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, readOnly}));
+		return _collectionPersistenceFinderByC_R.findFirst(
+			finderCache, new Object[] {companyId, readOnly}, orderByComparator);
 	}
 
 	/**
@@ -609,8 +580,9 @@ public class SXPElementPersistenceImpl
 			finderCache, new Object[] {companyId, readOnly}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<SXPElement>
-		_collectionPersistenceFinderByC_T;
+	private FilterCollectionPersistenceFinder
+		<SXPElement, NoSuchSXPElementException>
+			_collectionPersistenceFinderByC_T;
 
 	/**
 	 * Returns an ordered range of all the sxp elements where companyId = &#63; and type = &#63;.
@@ -653,16 +625,8 @@ public class SXPElementPersistenceImpl
 			OrderByComparator<SXPElement> orderByComparator)
 		throws NoSuchSXPElementException {
 
-		SXPElement sxpElement = fetchByC_T_First(
-			companyId, type, orderByComparator);
-
-		if (sxpElement != null) {
-			return sxpElement;
-		}
-
-		throw new NoSuchSXPElementException(
-			_collectionPersistenceFinderByC_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, type}));
+		return _collectionPersistenceFinderByC_T.findFirst(
+			finderCache, new Object[] {companyId, type}, orderByComparator);
 	}
 
 	/**
@@ -744,8 +708,9 @@ public class SXPElementPersistenceImpl
 			finderCache, new Object[] {companyId, type}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<SXPElement>
-		_collectionPersistenceFinderByC_T_S;
+	private FilterCollectionPersistenceFinder
+		<SXPElement, NoSuchSXPElementException>
+			_collectionPersistenceFinderByC_T_S;
 
 	/**
 	 * Returns an ordered range of all the sxp elements where companyId = &#63; and type = &#63; and status = &#63;.
@@ -790,17 +755,9 @@ public class SXPElementPersistenceImpl
 			OrderByComparator<SXPElement> orderByComparator)
 		throws NoSuchSXPElementException {
 
-		SXPElement sxpElement = fetchByC_T_S_First(
-			companyId, type, status, orderByComparator);
-
-		if (sxpElement != null) {
-			return sxpElement;
-		}
-
-		throw new NoSuchSXPElementException(
-			_collectionPersistenceFinderByC_T_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, type, status}));
+		return _collectionPersistenceFinderByC_T_S.findFirst(
+			finderCache, new Object[] {companyId, type, status},
+			orderByComparator);
 	}
 
 	/**
@@ -888,7 +845,8 @@ public class SXPElementPersistenceImpl
 			finderCache, new Object[] {companyId, type, status}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<SXPElement> _uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder<SXPElement, NoSuchSXPElementException>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the sxp element where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchSXPElementException</code> if it could not be found.
@@ -902,22 +860,8 @@ public class SXPElementPersistenceImpl
 	public SXPElement findByERC_C(String externalReferenceCode, long companyId)
 		throws NoSuchSXPElementException {
 
-		SXPElement sxpElement = fetchByERC_C(externalReferenceCode, companyId);
-
-		if (sxpElement == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSXPElementException(message);
-		}
-
-		return sxpElement;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1295,19 +1239,11 @@ public class SXPElementPersistenceImpl
 					new String[] {String.class.getName()},
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_SXPELEMENT_WHERE, _SQL_COUNT_SXPELEMENT_WHERE,
-				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPElementImpl.class, SXPElement.class, "sxpElement",
-					"SXPElement", "sxpElement.sxpElementId",
-					"SELECT DISTINCT {sxpElement.*} FROM SXPElement sxpElement WHERE ",
-					"SELECT {SXPElement.*} FROM (SELECT DISTINCT sxpElement.sxpElementId FROM SXPElement sxpElement WHERE ",
-					") TEMP_TABLE INNER JOIN SXPElement ON TEMP_TABLE.sxpElementId = SXPElement.sxpElementId",
-					"SELECT COUNT(DISTINCT sxpElement.sxpElementId) AS COUNT_VALUE FROM SXPElement sxpElement WHERE ",
-					SXPElementModelImpl.ORDER_BY_SQL,
-					SXPElementModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"sxpElement.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, SXPElement::getUuid));
+					"sxpElement.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, SXPElement::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1329,19 +1265,11 @@ public class SXPElementPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_SXPELEMENT_WHERE, _SQL_COUNT_SXPELEMENT_WHERE,
-				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPElementImpl.class, SXPElement.class, "sxpElement",
-					"SXPElement", "sxpElement.sxpElementId",
-					"SELECT DISTINCT {sxpElement.*} FROM SXPElement sxpElement WHERE ",
-					"SELECT {SXPElement.*} FROM (SELECT DISTINCT sxpElement.sxpElementId FROM SXPElement sxpElement WHERE ",
-					") TEMP_TABLE INNER JOIN SXPElement ON TEMP_TABLE.sxpElementId = SXPElement.sxpElementId",
-					"SELECT COUNT(DISTINCT sxpElement.sxpElementId) AS COUNT_VALUE FROM SXPElement sxpElement WHERE ",
-					SXPElementModelImpl.ORDER_BY_SQL,
-					SXPElementModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"sxpElement.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, SXPElement::getUuid),
+					"sxpElement.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, SXPElement::getUuid),
 				new FinderColumn<>(
 					"sxpElement.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SXPElement::getCompanyId));
@@ -1366,16 +1294,8 @@ public class SXPElementPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_SXPELEMENT_WHERE, _SQL_COUNT_SXPELEMENT_WHERE,
-				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPElementImpl.class, SXPElement.class, "sxpElement",
-					"SXPElement", "sxpElement.sxpElementId",
-					"SELECT DISTINCT {sxpElement.*} FROM SXPElement sxpElement WHERE ",
-					"SELECT {SXPElement.*} FROM (SELECT DISTINCT sxpElement.sxpElementId FROM SXPElement sxpElement WHERE ",
-					") TEMP_TABLE INNER JOIN SXPElement ON TEMP_TABLE.sxpElementId = SXPElement.sxpElementId",
-					"SELECT COUNT(DISTINCT sxpElement.sxpElementId) AS COUNT_VALUE FROM SXPElement sxpElement WHERE ",
-					SXPElementModelImpl.ORDER_BY_SQL,
-					SXPElementModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"sxpElement.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SXPElement::getCompanyId));
@@ -1404,16 +1324,8 @@ public class SXPElementPersistenceImpl
 					},
 					new String[] {"companyId", "readOnly"}, false),
 				_SQL_SELECT_SXPELEMENT_WHERE, _SQL_COUNT_SXPELEMENT_WHERE,
-				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPElementImpl.class, SXPElement.class, "sxpElement",
-					"SXPElement", "sxpElement.sxpElementId",
-					"SELECT DISTINCT {sxpElement.*} FROM SXPElement sxpElement WHERE ",
-					"SELECT {SXPElement.*} FROM (SELECT DISTINCT sxpElement.sxpElementId FROM SXPElement sxpElement WHERE ",
-					") TEMP_TABLE INNER JOIN SXPElement ON TEMP_TABLE.sxpElementId = SXPElement.sxpElementId",
-					"SELECT COUNT(DISTINCT sxpElement.sxpElementId) AS COUNT_VALUE FROM SXPElement sxpElement WHERE ",
-					SXPElementModelImpl.ORDER_BY_SQL,
-					SXPElementModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"sxpElement.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SXPElement::getCompanyId),
@@ -1445,22 +1357,14 @@ public class SXPElementPersistenceImpl
 					},
 					new String[] {"companyId", "type_"}, false),
 				_SQL_SELECT_SXPELEMENT_WHERE, _SQL_COUNT_SXPELEMENT_WHERE,
-				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPElementImpl.class, SXPElement.class, "sxpElement",
-					"SXPElement", "sxpElement.sxpElementId",
-					"SELECT DISTINCT {sxpElement.*} FROM SXPElement sxpElement WHERE ",
-					"SELECT {SXPElement.*} FROM (SELECT DISTINCT sxpElement.sxpElementId FROM SXPElement sxpElement WHERE ",
-					") TEMP_TABLE INNER JOIN SXPElement ON TEMP_TABLE.sxpElementId = SXPElement.sxpElementId",
-					"SELECT COUNT(DISTINCT sxpElement.sxpElementId) AS COUNT_VALUE FROM SXPElement sxpElement WHERE ",
-					SXPElementModelImpl.ORDER_BY_SQL,
-					SXPElementModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"sxpElement.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SXPElement::getCompanyId),
 				new FinderColumn<>(
-					"sxpElement.", "type", FinderColumn.Type.INTEGER, "=", true,
-					true, SXPElement::getType));
+					"sxpElement.", "type", "type_", FinderColumn.Type.INTEGER,
+					"=", true, true, SXPElement::getType));
 
 		_collectionPersistenceFinderByC_T_S =
 			new FilterCollectionPersistenceFinder<>(
@@ -1489,22 +1393,14 @@ public class SXPElementPersistenceImpl
 					},
 					new String[] {"companyId", "type_", "status"}, false),
 				_SQL_SELECT_SXPELEMENT_WHERE, _SQL_COUNT_SXPELEMENT_WHERE,
-				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPElementImpl.class, SXPElement.class, "sxpElement",
-					"SXPElement", "sxpElement.sxpElementId",
-					"SELECT DISTINCT {sxpElement.*} FROM SXPElement sxpElement WHERE ",
-					"SELECT {SXPElement.*} FROM (SELECT DISTINCT sxpElement.sxpElementId FROM SXPElement sxpElement WHERE ",
-					") TEMP_TABLE INNER JOIN SXPElement ON TEMP_TABLE.sxpElementId = SXPElement.sxpElementId",
-					"SELECT COUNT(DISTINCT sxpElement.sxpElementId) AS COUNT_VALUE FROM SXPElement sxpElement WHERE ",
-					SXPElementModelImpl.ORDER_BY_SQL,
-					SXPElementModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				SXPElementModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"sxpElement.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SXPElement::getCompanyId),
 				new FinderColumn<>(
-					"sxpElement.", "type", FinderColumn.Type.INTEGER, "=", true,
-					true, SXPElement::getType),
+					"sxpElement.", "type", "type_", FinderColumn.Type.INTEGER,
+					"=", true, true, SXPElement::getType),
 				new FinderColumn<>(
 					"sxpElement.", "status", FinderColumn.Type.INTEGER, "=",
 					true, true, SXPElement::getStatus));
@@ -1581,12 +1477,6 @@ public class SXPElementPersistenceImpl
 	private static final String _SQL_COUNT_SXPELEMENT_WHERE =
 		"SELECT COUNT(sxpElement) FROM SXPElement sxpElement WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SXPElement exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SXPElementPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "hidden", "type"});
 
@@ -1596,4 +1486,4 @@ public class SXPElementPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1730673964
+// LIFERAY-SERVICE-BUILDER-HASH:-1904242610

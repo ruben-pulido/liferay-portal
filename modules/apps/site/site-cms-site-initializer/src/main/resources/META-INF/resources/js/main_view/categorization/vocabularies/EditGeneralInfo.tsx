@@ -48,7 +48,6 @@ export default function EditGeneralInfo({
 	setSpaceInputError,
 	setVocabularyPermissions,
 	showPermissions,
-	spaceInputError,
 	spritemap,
 	vocabulary,
 }: {
@@ -66,7 +65,6 @@ export default function EditGeneralInfo({
 	setSpaceInputError: (value: string) => void;
 	setVocabularyPermissions: Function;
 	showPermissions: boolean;
-	spaceInputError: string;
 	spritemap: string;
 	vocabulary: IVocabulary;
 }) {
@@ -148,7 +146,7 @@ export default function EditGeneralInfo({
 				role="group"
 			>
 				<ClayForm.Group className="c-gap-4 d-flex flex-column p-4">
-					<ClayLayout.Row className="form-title" justify="between">
+					<ClayLayout.Row className="mx-0" justify="between">
 						<h2 className="mb-0 py-2 text-6 text-dark">
 							{Liferay.Language.get('basic-info')}
 						</h2>
@@ -187,6 +185,7 @@ export default function EditGeneralInfo({
 
 						<ClayInput
 							aria-label={Liferay.Language.get('name')}
+							disabled={vocabulary.system}
 							onBlur={handleNameBlur}
 							onChange={({target: {value}}) =>
 								onChangeName(value)
@@ -220,6 +219,7 @@ export default function EditGeneralInfo({
 							aria-label={Liferay.Language.get(
 								'external-reference-code'
 							)}
+							disabled={vocabulary.system}
 							onChange={({target: {value}}) => {
 								if (
 									value.length >
@@ -264,6 +264,7 @@ export default function EditGeneralInfo({
 						<ClayInput
 							aria-label={Liferay.Language.get('description')}
 							component="textarea"
+							disabled={vocabulary.system}
 							onChange={({target: {value}}) =>
 								onChangeDescription(value)
 							}
@@ -352,10 +353,10 @@ export default function EditGeneralInfo({
 					<CategorizationSpaces
 						assetLibraries={assetLibraries}
 						checkboxText="vocabulary"
+						disabled={vocabulary.system}
 						setSelectedSpaces={onChangeSelectedSpaces}
 						setSpaceChange={setSpaceChange}
 						setSpaceInputError={setSpaceInputError}
-						spaceInputError={spaceInputError}
 					/>
 				</ClayForm.Group>
 			</ClayPanel>

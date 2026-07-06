@@ -13,7 +13,6 @@ import com.liferay.change.tracking.model.impl.CTAutoResolutionInfoModelImpl;
 import com.liferay.change.tracking.service.persistence.CTAutoResolutionInfoPersistence;
 import com.liferay.change.tracking.service.persistence.CTAutoResolutionInfoUtil;
 import com.liferay.change.tracking.service.persistence.impl.constants.CTPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
@@ -76,8 +75,9 @@ public class CTAutoResolutionInfoPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTAutoResolutionInfo>
-		_collectionPersistenceFinderByCtCollectionId;
+	private CollectionPersistenceFinder
+		<CTAutoResolutionInfo, NoSuchAutoResolutionInfoException>
+			_collectionPersistenceFinderByCtCollectionId;
 
 	/**
 	 * Returns an ordered range of all the ct auto resolution infos where ctCollectionId = &#63;.
@@ -118,16 +118,8 @@ public class CTAutoResolutionInfoPersistenceImpl
 			OrderByComparator<CTAutoResolutionInfo> orderByComparator)
 		throws NoSuchAutoResolutionInfoException {
 
-		CTAutoResolutionInfo ctAutoResolutionInfo = fetchByCtCollectionId_First(
-			ctCollectionId, orderByComparator);
-
-		if (ctAutoResolutionInfo != null) {
-			return ctAutoResolutionInfo;
-		}
-
-		throw new NoSuchAutoResolutionInfoException(
-			_collectionPersistenceFinderByCtCollectionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ctCollectionId}));
+		return _collectionPersistenceFinderByCtCollectionId.findFirst(
+			finderCache, new Object[] {ctCollectionId}, orderByComparator);
 	}
 
 	/**
@@ -169,8 +161,9 @@ public class CTAutoResolutionInfoPersistenceImpl
 			finderCache, new Object[] {ctCollectionId});
 	}
 
-	private CollectionPersistenceFinder<CTAutoResolutionInfo>
-		_collectionPersistenceFinderByC_MCNI_SMCPK;
+	private CollectionPersistenceFinder
+		<CTAutoResolutionInfo, NoSuchAutoResolutionInfoException>
+			_collectionPersistenceFinderByC_MCNI_SMCPK;
 
 	/**
 	 * Returns an ordered range of all the ct auto resolution infos where ctCollectionId = &#63; and modelClassNameId = &#63; and sourceModelClassPK = &#63;.
@@ -220,30 +213,13 @@ public class CTAutoResolutionInfoPersistenceImpl
 			OrderByComparator<CTAutoResolutionInfo> orderByComparator)
 		throws NoSuchAutoResolutionInfoException {
 
-		CTAutoResolutionInfo ctAutoResolutionInfo = fetchByC_MCNI_SMCPK_First(
-			ctCollectionId, modelClassNameId, sourceModelClassPK,
+		return _collectionPersistenceFinderByC_MCNI_SMCPK.findFirst(
+			finderCache,
+			new Object[] {
+				ctCollectionId, modelClassNameId,
+				new long[] {sourceModelClassPK}
+			},
 			orderByComparator);
-
-		if (ctAutoResolutionInfo != null) {
-			return ctAutoResolutionInfo;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("ctCollectionId=");
-		sb.append(ctCollectionId);
-
-		sb.append(", modelClassNameId=");
-		sb.append(modelClassNameId);
-
-		sb.append(", sourceModelClassPK=");
-		sb.append(sourceModelClassPK);
-
-		sb.append("}");
-
-		throw new NoSuchAutoResolutionInfoException(sb.toString());
 	}
 
 	/**
@@ -582,7 +558,7 @@ public class CTAutoResolutionInfoPersistenceImpl
 				_SQL_SELECT_CTAUTORESOLUTIONINFO_WHERE,
 				_SQL_COUNT_CTAUTORESOLUTIONINFO_WHERE,
 				CTAutoResolutionInfoModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"ctAutoResolutionInfo.", "ctCollectionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -632,7 +608,7 @@ public class CTAutoResolutionInfoPersistenceImpl
 				_SQL_SELECT_CTAUTORESOLUTIONINFO_WHERE,
 				_SQL_COUNT_CTAUTORESOLUTIONINFO_WHERE,
 				CTAutoResolutionInfoModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"ctAutoResolutionInfo.", "ctCollectionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -700,13 +676,10 @@ public class CTAutoResolutionInfoPersistenceImpl
 	private static final String _SQL_COUNT_CTAUTORESOLUTIONINFO_WHERE =
 		"SELECT COUNT(ctAutoResolutionInfo) FROM CTAutoResolutionInfo ctAutoResolutionInfo WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTAutoResolutionInfo exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1402197601
+// LIFERAY-SERVICE-BUILDER-HASH:-563968243

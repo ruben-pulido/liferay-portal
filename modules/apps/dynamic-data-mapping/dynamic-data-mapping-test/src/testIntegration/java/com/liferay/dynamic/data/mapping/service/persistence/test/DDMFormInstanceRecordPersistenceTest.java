@@ -115,12 +115,8 @@ public class DDMFormInstanceRecordPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DDMFormInstanceRecord newDDMFormInstanceRecord = _persistence.create(
-			pk);
-
-		newDDMFormInstanceRecord.setMvccVersion(RandomTestUtil.nextLong());
+		DDMFormInstanceRecord newDDMFormInstanceRecord =
+			addDDMFormInstanceRecord();
 
 		newDDMFormInstanceRecord.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -156,8 +152,10 @@ public class DDMFormInstanceRecordPersistenceTest {
 
 		newDDMFormInstanceRecord.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_ddmFormInstanceRecords.add(
-			_persistence.update(newDDMFormInstanceRecord));
+		newDDMFormInstanceRecord = _persistence.update(
+			newDDMFormInstanceRecord);
+
+		_ddmFormInstanceRecords.add(newDDMFormInstanceRecord);
 
 		DDMFormInstanceRecord existingDDMFormInstanceRecord =
 			_persistence.findByPrimaryKey(
@@ -279,6 +277,15 @@ public class DDMFormInstanceRecordPersistenceTest {
 		_persistence.countByF_F(0L, "null");
 
 		_persistence.countByF_F(0L, (String)null);
+	}
+
+	@Test
+	public void testCountByF_I() throws Exception {
+		_persistence.countByF_I(RandomTestUtil.nextLong(), "");
+
+		_persistence.countByF_I(0L, "null");
+
+		_persistence.countByF_I(0L, (String)null);
 	}
 
 	@Test
@@ -630,8 +637,6 @@ public class DDMFormInstanceRecordPersistenceTest {
 
 		DDMFormInstanceRecord ddmFormInstanceRecord = _persistence.create(pk);
 
-		ddmFormInstanceRecord.setMvccVersion(RandomTestUtil.nextLong());
-
 		ddmFormInstanceRecord.setCtCollectionId(RandomTestUtil.nextLong());
 
 		ddmFormInstanceRecord.setUuid(RandomTestUtil.randomString());
@@ -676,4 +681,4 @@ public class DDMFormInstanceRecordPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:920909394
+// LIFERAY-SERVICE-BUILDER-HASH:-285956691

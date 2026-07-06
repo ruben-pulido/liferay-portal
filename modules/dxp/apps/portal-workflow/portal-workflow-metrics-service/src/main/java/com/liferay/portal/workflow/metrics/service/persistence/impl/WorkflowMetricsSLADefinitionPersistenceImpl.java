@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinition>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definitions where uuid = &#63;.
@@ -124,16 +123,8 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			OrderByComparator<WorkflowMetricsSLADefinition> orderByComparator)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (workflowMetricsSLADefinition != null) {
-			return workflowMetricsSLADefinition;
-		}
-
-		throw new NoSuchSLADefinitionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -175,8 +166,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<WorkflowMetricsSLADefinition>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the workflow metrics sla definition where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchSLADefinitionException</code> if it could not be found.
@@ -190,22 +182,8 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 	public WorkflowMetricsSLADefinition findByUUID_G(String uuid, long groupId)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByUUID_G(uuid, groupId);
-
-		if (workflowMetricsSLADefinition == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSLADefinitionException(message);
-		}
-
-		return workflowMetricsSLADefinition;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -255,8 +233,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinition>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definitions where uuid = &#63; and companyId = &#63;.
@@ -299,16 +278,8 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			OrderByComparator<WorkflowMetricsSLADefinition> orderByComparator)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (workflowMetricsSLADefinition != null) {
-			return workflowMetricsSLADefinition;
-		}
-
-		throw new NoSuchSLADefinitionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -353,8 +324,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<WorkflowMetricsSLADefinition>
-		_uniquePersistenceFinderByWMSLAD_A;
+	private UniquePersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_uniquePersistenceFinderByWMSLAD_A;
 
 	/**
 	 * Returns the workflow metrics sla definition where workflowMetricsSLADefinitionId = &#63; and active = &#63; or throws a <code>NoSuchSLADefinitionException</code> if it could not be found.
@@ -369,23 +341,8 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			long workflowMetricsSLADefinitionId, boolean active)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByWMSLAD_A(workflowMetricsSLADefinitionId, active);
-
-		if (workflowMetricsSLADefinition == null) {
-			String message =
-				_uniquePersistenceFinderByWMSLAD_A.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {workflowMetricsSLADefinitionId, active});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSLADefinitionException(message);
-		}
-
-		return workflowMetricsSLADefinition;
+		return _uniquePersistenceFinderByWMSLAD_A.find(
+			finderCache, new Object[] {workflowMetricsSLADefinitionId, active});
 	}
 
 	/**
@@ -439,8 +396,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			finderCache, new Object[] {workflowMetricsSLADefinitionId, active});
 	}
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinition>
-		_collectionPersistenceFinderByC_S;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_collectionPersistenceFinderByC_S;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definitions where companyId = &#63; and status = &#63;.
@@ -483,16 +441,8 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			OrderByComparator<WorkflowMetricsSLADefinition> orderByComparator)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByC_S_First(companyId, status, orderByComparator);
-
-		if (workflowMetricsSLADefinition != null) {
-			return workflowMetricsSLADefinition;
-		}
-
-		throw new NoSuchSLADefinitionException(
-			_collectionPersistenceFinderByC_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, status}));
+		return _collectionPersistenceFinderByC_S.findFirst(
+			finderCache, new Object[] {companyId, status}, orderByComparator);
 	}
 
 	/**
@@ -537,8 +487,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, status});
 	}
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinition>
-		_collectionPersistenceFinderByC_A_P;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_collectionPersistenceFinderByC_A_P;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definitions where companyId = &#63; and active = &#63; and processId = &#63;.
@@ -583,17 +534,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			OrderByComparator<WorkflowMetricsSLADefinition> orderByComparator)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByC_A_P_First(companyId, active, processId, orderByComparator);
-
-		if (workflowMetricsSLADefinition != null) {
-			return workflowMetricsSLADefinition;
-		}
-
-		throw new NoSuchSLADefinitionException(
-			_collectionPersistenceFinderByC_A_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, active, processId}));
+		return _collectionPersistenceFinderByC_A_P.findFirst(
+			finderCache, new Object[] {companyId, active, processId},
+			orderByComparator);
 	}
 
 	/**
@@ -642,8 +585,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, active, processId});
 	}
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinition>
-		_collectionPersistenceFinderByC_A_N_P;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_collectionPersistenceFinderByC_A_N_P;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definitions where companyId = &#63; and active = &#63; and name = &#63; and processId = &#63;.
@@ -691,18 +635,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			OrderByComparator<WorkflowMetricsSLADefinition> orderByComparator)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByC_A_N_P_First(
-				companyId, active, name, processId, orderByComparator);
-
-		if (workflowMetricsSLADefinition != null) {
-			return workflowMetricsSLADefinition;
-		}
-
-		throw new NoSuchSLADefinitionException(
-			_collectionPersistenceFinderByC_A_N_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, active, name, processId}));
+		return _collectionPersistenceFinderByC_A_N_P.findFirst(
+			finderCache, new Object[] {companyId, active, name, processId},
+			orderByComparator);
 	}
 
 	/**
@@ -758,8 +693,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, active, name, processId});
 	}
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinition>
-		_collectionPersistenceFinderByC_A_P_S;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_collectionPersistenceFinderByC_A_P_S;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definitions where companyId = &#63; and active = &#63; and processId = &#63; and status = &#63;.
@@ -807,18 +743,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			OrderByComparator<WorkflowMetricsSLADefinition> orderByComparator)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByC_A_P_S_First(
-				companyId, active, processId, status, orderByComparator);
-
-		if (workflowMetricsSLADefinition != null) {
-			return workflowMetricsSLADefinition;
-		}
-
-		throw new NoSuchSLADefinitionException(
-			_collectionPersistenceFinderByC_A_P_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, active, processId, status}));
+		return _collectionPersistenceFinderByC_A_P_S.findFirst(
+			finderCache, new Object[] {companyId, active, processId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -874,8 +801,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, active, processId, status});
 	}
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinition>
-		_collectionPersistenceFinderByC_A_P_NotPV_S;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinition, NoSuchSLADefinitionException>
+			_collectionPersistenceFinderByC_A_P_NotPV_S;
 
 	/**
 	 * Returns all the workflow metrics sla definitions where companyId = &#63; and active = &#63; and processId = &#63; and processVersion &ne; &#63; and status = &#63;.
@@ -1001,21 +929,10 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			OrderByComparator<WorkflowMetricsSLADefinition> orderByComparator)
 		throws NoSuchSLADefinitionException {
 
-		WorkflowMetricsSLADefinition workflowMetricsSLADefinition =
-			fetchByC_A_P_NotPV_S_First(
-				companyId, active, processId, processVersion, status,
-				orderByComparator);
-
-		if (workflowMetricsSLADefinition != null) {
-			return workflowMetricsSLADefinition;
-		}
-
-		throw new NoSuchSLADefinitionException(
-			_collectionPersistenceFinderByC_A_P_NotPV_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					companyId, active, processId, processVersion, status
-				}));
+		return _collectionPersistenceFinderByC_A_P_NotPV_S.findFirst(
+			finderCache,
+			new Object[] {companyId, active, processId, processVersion, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1317,6 +1234,11 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "workflowMetricsSLADefinitionId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_WORKFLOWMETRICSSLADEFINITION;
 	}
@@ -1351,9 +1273,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 			_SQL_COUNT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 			WorkflowMetricsSLADefinitionModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"workflowMetricsSLADefinition.", "uuid",
+				"workflowMetricsSLADefinition.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				WorkflowMetricsSLADefinition::getUuid));
 
@@ -1367,7 +1289,7 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 				WorkflowMetricsSLADefinition::getGroupId),
 			_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE, "",
 			new FinderColumn<>(
-				"workflowMetricsSLADefinition.", "uuid",
+				"workflowMetricsSLADefinition.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				WorkflowMetricsSLADefinition::getUuid),
 			new FinderColumn<>(
@@ -1397,9 +1319,9 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 				_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 				_SQL_COUNT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 				WorkflowMetricsSLADefinitionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"workflowMetricsSLADefinition.", "uuid",
+					"workflowMetricsSLADefinition.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					WorkflowMetricsSLADefinition::getUuid),
 				new FinderColumn<>(
@@ -1418,12 +1340,12 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE, "",
 			new FinderColumn<>(
 				"workflowMetricsSLADefinition.",
-				"workflowMetricsSLADefinitionId", FinderColumn.Type.LONG, "=",
-				true, true,
+				"workflowMetricsSLADefinitionId", "wmSLADefinitionId",
+				FinderColumn.Type.LONG, "=", true, true,
 				WorkflowMetricsSLADefinition::
 					getWorkflowMetricsSLADefinitionId),
 			new FinderColumn<>(
-				"workflowMetricsSLADefinition.", "active",
+				"workflowMetricsSLADefinition.", "active", "active_",
 				FinderColumn.Type.BOOLEAN, "=", true, true,
 				WorkflowMetricsSLADefinition::isActive));
 
@@ -1448,7 +1370,7 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 			_SQL_COUNT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 			WorkflowMetricsSLADefinitionModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"workflowMetricsSLADefinition.", "companyId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -1485,13 +1407,13 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 			_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 			_SQL_COUNT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 			WorkflowMetricsSLADefinitionModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"workflowMetricsSLADefinition.", "companyId",
 				FinderColumn.Type.LONG, "=", true, true,
 				WorkflowMetricsSLADefinition::getCompanyId),
 			new FinderColumn<>(
-				"workflowMetricsSLADefinition.", "active",
+				"workflowMetricsSLADefinition.", "active", "active_",
 				FinderColumn.Type.BOOLEAN, "=", true, true,
 				WorkflowMetricsSLADefinition::isActive),
 			new FinderColumn<>(
@@ -1531,13 +1453,13 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 				_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 				_SQL_COUNT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 				WorkflowMetricsSLADefinitionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"workflowMetricsSLADefinition.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
 					WorkflowMetricsSLADefinition::getCompanyId),
 				new FinderColumn<>(
-					"workflowMetricsSLADefinition.", "active",
+					"workflowMetricsSLADefinition.", "active", "active_",
 					FinderColumn.Type.BOOLEAN, "=", true, true,
 					WorkflowMetricsSLADefinition::isActive),
 				new FinderColumn<>(
@@ -1587,13 +1509,13 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 				_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 				_SQL_COUNT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 				WorkflowMetricsSLADefinitionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"workflowMetricsSLADefinition.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
 					WorkflowMetricsSLADefinition::getCompanyId),
 				new FinderColumn<>(
-					"workflowMetricsSLADefinition.", "active",
+					"workflowMetricsSLADefinition.", "active", "active_",
 					FinderColumn.Type.BOOLEAN, "=", true, true,
 					WorkflowMetricsSLADefinition::isActive),
 				new FinderColumn<>(
@@ -1640,13 +1562,13 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 				_SQL_SELECT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 				_SQL_COUNT_WORKFLOWMETRICSSLADEFINITION_WHERE,
 				WorkflowMetricsSLADefinitionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"workflowMetricsSLADefinition.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
 					WorkflowMetricsSLADefinition::getCompanyId),
 				new FinderColumn<>(
-					"workflowMetricsSLADefinition.", "active",
+					"workflowMetricsSLADefinition.", "active", "active_",
 					FinderColumn.Type.BOOLEAN, "=", true, true,
 					WorkflowMetricsSLADefinition::isActive),
 				new FinderColumn<>(
@@ -1717,12 +1639,6 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 	private static final String _SQL_COUNT_WORKFLOWMETRICSSLADEFINITION_WHERE =
 		"SELECT COUNT(workflowMetricsSLADefinition) FROM WorkflowMetricsSLADefinition workflowMetricsSLADefinition WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No WorkflowMetricsSLADefinition exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		WorkflowMetricsSLADefinitionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "workflowMetricsSLADefinitionId", "active"});
 
@@ -1732,4 +1648,4 @@ public class WorkflowMetricsSLADefinitionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:843687580
+// LIFERAY-SERVICE-BUILDER-HASH:1478864099

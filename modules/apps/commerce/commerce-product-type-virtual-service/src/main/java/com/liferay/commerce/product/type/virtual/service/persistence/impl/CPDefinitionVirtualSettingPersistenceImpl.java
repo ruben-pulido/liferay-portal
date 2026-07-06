@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,8 +79,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPDefinitionVirtualSetting>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPDefinitionVirtualSetting, NoSuchCPDefinitionVirtualSettingException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp definition virtual settings where uuid = &#63;.
@@ -123,16 +122,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			OrderByComparator<CPDefinitionVirtualSetting> orderByComparator)
 		throws NoSuchCPDefinitionVirtualSettingException {
 
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (cpDefinitionVirtualSetting != null) {
-			return cpDefinitionVirtualSetting;
-		}
-
-		throw new NoSuchCPDefinitionVirtualSettingException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -174,8 +165,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CPDefinitionVirtualSetting>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CPDefinitionVirtualSetting, NoSuchCPDefinitionVirtualSettingException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the cp definition virtual setting where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCPDefinitionVirtualSettingException</code> if it could not be found.
@@ -189,22 +181,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	public CPDefinitionVirtualSetting findByUUID_G(String uuid, long groupId)
 		throws NoSuchCPDefinitionVirtualSettingException {
 
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting = fetchByUUID_G(
-			uuid, groupId);
-
-		if (cpDefinitionVirtualSetting == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDefinitionVirtualSettingException(message);
-		}
-
-		return cpDefinitionVirtualSetting;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -253,8 +231,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CPDefinitionVirtualSetting>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPDefinitionVirtualSetting, NoSuchCPDefinitionVirtualSettingException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp definition virtual settings where uuid = &#63; and companyId = &#63;.
@@ -297,16 +276,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			OrderByComparator<CPDefinitionVirtualSetting> orderByComparator)
 		throws NoSuchCPDefinitionVirtualSettingException {
 
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (cpDefinitionVirtualSetting != null) {
-			return cpDefinitionVirtualSetting;
-		}
-
-		throw new NoSuchCPDefinitionVirtualSettingException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -351,8 +322,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<CPDefinitionVirtualSetting>
-		_uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder
+		<CPDefinitionVirtualSetting, NoSuchCPDefinitionVirtualSettingException>
+			_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the cp definition virtual setting where classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchCPDefinitionVirtualSettingException</code> if it could not be found.
@@ -366,23 +338,8 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	public CPDefinitionVirtualSetting findByC_C(long classNameId, long classPK)
 		throws NoSuchCPDefinitionVirtualSettingException {
 
-		CPDefinitionVirtualSetting cpDefinitionVirtualSetting = fetchByC_C(
-			classNameId, classPK);
-
-		if (cpDefinitionVirtualSetting == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDefinitionVirtualSettingException(message);
-		}
-
-		return cpDefinitionVirtualSetting;
+		return _uniquePersistenceFinderByC_C.find(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -694,10 +651,11 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 			_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE,
 			_SQL_COUNT_CPDEFINITIONVIRTUALSETTING_WHERE,
 			CPDefinitionVirtualSettingModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"cpDefinitionVirtualSetting.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CPDefinitionVirtualSetting::getUuid));
+				"cpDefinitionVirtualSetting.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPDefinitionVirtualSetting::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -709,8 +667,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 				CPDefinitionVirtualSetting::getGroupId),
 			_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE, "",
 			new FinderColumn<>(
-				"cpDefinitionVirtualSetting.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CPDefinitionVirtualSetting::getUuid),
+				"cpDefinitionVirtualSetting.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPDefinitionVirtualSetting::getUuid),
 			new FinderColumn<>(
 				"cpDefinitionVirtualSetting.", "groupId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -738,9 +697,9 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 				_SQL_SELECT_CPDEFINITIONVIRTUALSETTING_WHERE,
 				_SQL_COUNT_CPDEFINITIONVIRTUALSETTING_WHERE,
 				CPDefinitionVirtualSettingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpDefinitionVirtualSetting.", "uuid",
+					"cpDefinitionVirtualSetting.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CPDefinitionVirtualSetting::getUuid),
 				new FinderColumn<>(
@@ -820,12 +779,6 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	private static final String _SQL_COUNT_CPDEFINITIONVIRTUALSETTING_WHERE =
 		"SELECT COUNT(cpDefinitionVirtualSetting) FROM CPDefinitionVirtualSetting cpDefinitionVirtualSetting WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPDefinitionVirtualSetting exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPDefinitionVirtualSettingPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "termsOfUseJournalArticleResourcePrimKey"});
 
@@ -835,4 +788,4 @@ public class CPDefinitionVirtualSettingPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2099783681
+// LIFERAY-SERVICE-BUILDER-HASH:-642484932

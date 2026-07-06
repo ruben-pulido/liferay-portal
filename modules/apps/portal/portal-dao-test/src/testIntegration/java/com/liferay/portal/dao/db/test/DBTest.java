@@ -661,53 +661,69 @@ public class DBTest {
 		try (SafeCloseable safeCloseable =
 				PropsValuesTestUtil.swapWithSafeCloseable(
 					"UPGRADE_QUERY_MONITOR_LOCK_THRESHOLD", 0L);
-			Connection lockingConnection = DataAccess.getConnection()) {
+			Connection lockingConnection = DataAccess.getConnection();
+			Connection pollingConnection = DataAccess.getConnection()) {
 
-			lockingConnection.setAutoCommit(false);
+			boolean autoCommit = lockingConnection.getAutoCommit();
 
-			db.runSQL(
-				lockingConnection,
-				"update " + TABLE_NAME_1 +
-					" set nilColumn = 'locked' where id = 1");
+			try {
+				lockingConnection.setAutoCommit(false);
 
-			futureTask = new FutureTask<>(
-				() -> {
-					db.runSQL(
-						connection,
-						"update " + TABLE_NAME_1 +
-							" set nilColumn = 'waiting' where id = 1");
+				db.runSQL(
+					lockingConnection,
+					"update " + TABLE_NAME_1 +
+						" set nilColumn = 'locked' where id = 1");
 
-					return null;
-				});
+				futureTask = new FutureTask<>(
+					() -> {
+						try (Connection backgroundConnection =
+								DataAccess.getConnection()) {
 
-			Thread thread = new Thread(futureTask);
+							db.runSQL(
+								backgroundConnection,
+								"update " + TABLE_NAME_1 +
+									" set nilColumn = 'waiting' where id = 1");
+						}
 
-			thread.setDaemon(true);
+						return null;
+					});
 
-			thread.start();
+				Thread thread = new Thread(futureTask);
 
-			long endTime = System.currentTimeMillis() + 30000;
+				thread.setDaemon(true);
 
-			while (System.currentTimeMillis() < endTime) {
-				for (DB.QueryInfo lockedQueryInfo :
-						db.getLockedQueryInfos(lockingConnection)) {
+				thread.start();
 
-					String query = lockedQueryInfo.getQuery();
+				long endTime = System.currentTimeMillis() + 30000;
 
-					if (query.contains("waiting")) {
-						Assert.assertNotNull(lockedQueryInfo.getId());
-						Assert.assertNotNull(lockedQueryInfo.getSchema());
-
-						assertLockedQueryState(lockedQueryInfo.getState());
-
-						return;
+				while (System.currentTimeMillis() < endTime) {
+					if (futureTask.isDone()) {
+						futureTask.get();
 					}
+
+					for (DB.QueryInfo lockedQueryInfo :
+							db.getLockedQueryInfos(pollingConnection)) {
+
+						String query = lockedQueryInfo.getQuery();
+
+						if (query.contains("waiting")) {
+							Assert.assertNotNull(lockedQueryInfo.getId());
+							Assert.assertNotNull(lockedQueryInfo.getSchema());
+
+							assertLockedQueryState(lockedQueryInfo.getState());
+
+							return;
+						}
+					}
+
+					Thread.sleep(200);
 				}
 
-				Thread.sleep(200);
+				Assert.fail();
 			}
-
-			Assert.fail();
+			finally {
+				lockingConnection.setAutoCommit(autoCommit);
+			}
 		}
 		finally {
 			if (futureTask != null) {
@@ -762,23 +778,24 @@ public class DBTest {
 
 					String query = queryInfo.getQuery();
 
-					if (query.contains(_getSlowQueryFragment())) {
-						Assert.assertNotNull(queryInfo.getId());
-						Assert.assertNotNull(queryInfo.getSchema());
-						Assert.assertNotNull(queryInfo.getState());
-
-						for (DB.QueryInfo lockedQueryInfo :
-								db.getLockedQueryInfos(pollingConnection)) {
-
-							Assert.assertFalse(
-								lockedQueryInfo.getQuery(
-								).contains(
-									_getSlowQueryFragment()
-								));
-						}
-
-						return;
+					if (!query.contains(_getSlowQueryFragment())) {
+						continue;
 					}
+
+					Assert.assertNotNull(queryInfo.getId());
+					Assert.assertNotNull(queryInfo.getSchema());
+					Assert.assertNotNull(queryInfo.getState());
+
+					for (DB.QueryInfo lockedQueryInfo :
+							db.getLockedQueryInfos(pollingConnection)) {
+
+						String lockedQuery = lockedQueryInfo.getQuery();
+
+						Assert.assertFalse(
+							lockedQuery.contains(_getSlowQueryFragment()));
+					}
+
+					return;
 				}
 
 				Thread.sleep(200);
@@ -816,63 +833,79 @@ public class DBTest {
 			SafeCloseable safeCloseable2 =
 				PropsValuesTestUtil.swapWithSafeCloseable(
 					"UPGRADE_QUERY_MONITOR_LONG_RUNNING_THRESHOLD", 0L);
-			Connection lockingConnection = DataAccess.getConnection()) {
+			Connection lockingConnection = DataAccess.getConnection();
+			Connection pollingConnection = DataAccess.getConnection()) {
 
-			lockingConnection.setAutoCommit(false);
+			boolean autoCommit = lockingConnection.getAutoCommit();
 
-			db.runSQL(
-				lockingConnection,
-				"update " + TABLE_NAME_1 +
-					" set nilColumn = 'locked' where id = 2");
+			try {
+				lockingConnection.setAutoCommit(false);
 
-			futureTask = new FutureTask<>(
-				() -> {
-					db.runSQL(
-						connection,
-						"update " + TABLE_NAME_1 +
-							" set nilColumn = 'waiting' where id = 2");
+				db.runSQL(
+					lockingConnection,
+					"update " + TABLE_NAME_1 +
+						" set nilColumn = 'locked' where id = 2");
 
-					return null;
-				});
+				futureTask = new FutureTask<>(
+					() -> {
+						try (Connection backgroundConnection =
+								DataAccess.getConnection()) {
 
-			Thread thread = new Thread(futureTask);
+							db.runSQL(
+								backgroundConnection,
+								"update " + TABLE_NAME_1 +
+									" set nilColumn = 'waiting' where id = 2");
+						}
 
-			thread.setDaemon(true);
+						return null;
+					});
 
-			thread.start();
+				Thread thread = new Thread(futureTask);
 
-			long endTime = System.currentTimeMillis() + 30000;
+				thread.setDaemon(true);
 
-			boolean foundInLocked = false;
+				thread.start();
 
-			while (System.currentTimeMillis() < endTime) {
-				for (DB.QueryInfo lockedQueryInfo :
-						db.getLockedQueryInfos(lockingConnection)) {
+				long endTime = System.currentTimeMillis() + 30000;
 
-					String query = lockedQueryInfo.getQuery();
+				boolean foundInLocked = false;
 
-					if (query.contains("waiting")) {
-						foundInLocked = true;
+				while (System.currentTimeMillis() < endTime) {
+					if (futureTask.isDone()) {
+						futureTask.get();
+					}
 
+					for (DB.QueryInfo lockedQueryInfo :
+							db.getLockedQueryInfos(pollingConnection)) {
+
+						String query = lockedQueryInfo.getQuery();
+
+						if (query.contains("waiting")) {
+							foundInLocked = true;
+
+							break;
+						}
+					}
+
+					if (foundInLocked) {
 						break;
 					}
+
+					Thread.sleep(200);
 				}
 
-				if (foundInLocked) {
-					break;
-				}
+				Assert.assertTrue(foundInLocked);
 
-				Thread.sleep(200);
+				for (DB.QueryInfo queryInfo :
+						db.getLongRunningQueryInfos(pollingConnection)) {
+
+					String query = queryInfo.getQuery();
+
+					Assert.assertFalse(query.contains("waiting"));
+				}
 			}
-
-			Assert.assertTrue(foundInLocked);
-
-			for (DB.QueryInfo queryInfo :
-					db.getLongRunningQueryInfos(lockingConnection)) {
-
-				String query = queryInfo.getQuery();
-
-				Assert.assertFalse(query.contains("waiting"));
+			finally {
+				lockingConnection.setAutoCommit(autoCommit);
 			}
 		}
 		finally {

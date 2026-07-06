@@ -109,11 +109,7 @@ public class ExpandoValuePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ExpandoValue newExpandoValue = _persistence.create(pk);
-
-		newExpandoValue.setMvccVersion(RandomTestUtil.nextLong());
+		ExpandoValue newExpandoValue = addExpandoValue();
 
 		newExpandoValue.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -131,7 +127,9 @@ public class ExpandoValuePersistenceTest {
 
 		newExpandoValue.setData(RandomTestUtil.randomString());
 
-		_expandoValues.add(_persistence.update(newExpandoValue));
+		newExpandoValue = _persistence.update(newExpandoValue);
+
+		_expandoValues.add(newExpandoValue);
 
 		ExpandoValue existingExpandoValue = _persistence.findByPrimaryKey(
 			newExpandoValue.getPrimaryKey());
@@ -565,8 +563,6 @@ public class ExpandoValuePersistenceTest {
 
 		ExpandoValue expandoValue = _persistence.create(pk);
 
-		expandoValue.setMvccVersion(RandomTestUtil.nextLong());
-
 		expandoValue.setCtCollectionId(RandomTestUtil.nextLong());
 
 		expandoValue.setCompanyId(RandomTestUtil.nextLong());
@@ -593,4 +589,4 @@ public class ExpandoValuePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1440643162
+// LIFERAY-SERVICE-BUILDER-HASH:472206067

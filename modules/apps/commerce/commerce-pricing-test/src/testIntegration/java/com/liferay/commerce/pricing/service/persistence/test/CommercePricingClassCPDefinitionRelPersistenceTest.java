@@ -118,13 +118,9 @@ public class CommercePricingClassCPDefinitionRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommercePricingClassCPDefinitionRel
-			newCommercePricingClassCPDefinitionRel = _persistence.create(pk);
-
-		newCommercePricingClassCPDefinitionRel.setMvccVersion(
-			RandomTestUtil.nextLong());
+			newCommercePricingClassCPDefinitionRel =
+				addCommercePricingClassCPDefinitionRel();
 
 		newCommercePricingClassCPDefinitionRel.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -150,8 +146,11 @@ public class CommercePricingClassCPDefinitionRelPersistenceTest {
 		newCommercePricingClassCPDefinitionRel.setCPDefinitionId(
 			RandomTestUtil.nextLong());
 
+		newCommercePricingClassCPDefinitionRel = _persistence.update(
+			newCommercePricingClassCPDefinitionRel);
+
 		_commercePricingClassCPDefinitionRels.add(
-			_persistence.update(newCommercePricingClassCPDefinitionRel));
+			newCommercePricingClassCPDefinitionRel);
 
 		CommercePricingClassCPDefinitionRel
 			existingCommercePricingClassCPDefinitionRel =
@@ -612,9 +611,6 @@ public class CommercePricingClassCPDefinitionRelPersistenceTest {
 		CommercePricingClassCPDefinitionRel
 			commercePricingClassCPDefinitionRel = _persistence.create(pk);
 
-		commercePricingClassCPDefinitionRel.setMvccVersion(
-			RandomTestUtil.nextLong());
-
 		commercePricingClassCPDefinitionRel.setCtCollectionId(
 			RandomTestUtil.nextLong());
 
@@ -652,4 +648,4 @@ public class CommercePricingClassCPDefinitionRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:978512940
+// LIFERAY-SERVICE-BUILDER-HASH:-1098504803

@@ -26,7 +26,8 @@ export interface FilterProperty {
 	label: string;
 	name: string;
 	options?: PropertyOption[];
-	type: PropertyType;
+	sortable?: boolean;
+	type?: PropertyType;
 }
 
 export interface FilterPropertyGroup {
@@ -47,4 +48,12 @@ export interface FilterCondition {
 	propertyName?: string;
 	quantifier?: string;
 	value?: string | Array<string | object>;
+}
+
+export function getPropertyKey(
+	classNameId: number | undefined,
+	classTypeId: number | undefined,
+	name: string | undefined
+): string {
+	return `${classNameId ?? ''}|${classTypeId ?? ''}|${name ?? ''}`;
 }

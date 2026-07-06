@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -72,8 +70,9 @@ public class FaroPreferencesPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<FaroPreferences>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<FaroPreferences, NoSuchFaroPreferencesException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the faro preferenceses where groupId = &#63;.
@@ -113,16 +112,8 @@ public class FaroPreferencesPersistenceImpl
 			long groupId, OrderByComparator<FaroPreferences> orderByComparator)
 		throws NoSuchFaroPreferencesException {
 
-		FaroPreferences faroPreferences = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (faroPreferences != null) {
-			return faroPreferences;
-		}
-
-		throw new NoSuchFaroPreferencesException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -163,8 +154,9 @@ public class FaroPreferencesPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private UniquePersistenceFinder<FaroPreferences>
-		_uniquePersistenceFinderByG_O;
+	private UniquePersistenceFinder
+		<FaroPreferences, NoSuchFaroPreferencesException>
+			_uniquePersistenceFinderByG_O;
 
 	/**
 	 * Returns the faro preferences where groupId = &#63; and ownerId = &#63; or throws a <code>NoSuchFaroPreferencesException</code> if it could not be found.
@@ -178,21 +170,8 @@ public class FaroPreferencesPersistenceImpl
 	public FaroPreferences findByG_O(long groupId, long ownerId)
 		throws NoSuchFaroPreferencesException {
 
-		FaroPreferences faroPreferences = fetchByG_O(groupId, ownerId);
-
-		if (faroPreferences == null) {
-			String message =
-				_uniquePersistenceFinderByG_O.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, ownerId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFaroPreferencesException(message);
-		}
-
-		return faroPreferences;
+		return _uniquePersistenceFinderByG_O.find(
+			finderCache, new Object[] {groupId, ownerId});
 	}
 
 	/**
@@ -439,7 +418,7 @@ public class FaroPreferencesPersistenceImpl
 				_SQL_SELECT_FAROPREFERENCES_WHERE,
 				_SQL_COUNT_FAROPREFERENCES_WHERE,
 				FaroPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"faroPreferences.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, FaroPreferences::getGroupId));
@@ -513,16 +492,10 @@ public class FaroPreferencesPersistenceImpl
 	private static final String _SQL_COUNT_FAROPREFERENCES_WHERE =
 		"SELECT COUNT(faroPreferences) FROM FaroPreferences faroPreferences WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FaroPreferences exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FaroPreferencesPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1705474000
+// LIFERAY-SERVICE-BUILDER-HASH:-191237047

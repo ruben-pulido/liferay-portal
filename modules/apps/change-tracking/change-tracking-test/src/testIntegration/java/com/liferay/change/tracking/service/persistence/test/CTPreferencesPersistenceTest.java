@@ -110,11 +110,7 @@ public class CTPreferencesPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CTPreferences newCTPreferences = _persistence.create(pk);
-
-		newCTPreferences.setMvccVersion(RandomTestUtil.nextLong());
+		CTPreferences newCTPreferences = addCTPreferences();
 
 		newCTPreferences.setCompanyId(RandomTestUtil.nextLong());
 
@@ -126,7 +122,9 @@ public class CTPreferencesPersistenceTest {
 
 		newCTPreferences.setConfirmationEnabled(RandomTestUtil.randomBoolean());
 
-		_ctPreferenceses.add(_persistence.update(newCTPreferences));
+		newCTPreferences = _persistence.update(newCTPreferences);
+
+		_ctPreferenceses.add(newCTPreferences);
 
 		CTPreferences existingCTPreferences = _persistence.findByPrimaryKey(
 			newCTPreferences.getPrimaryKey());
@@ -486,8 +484,6 @@ public class CTPreferencesPersistenceTest {
 
 		CTPreferences ctPreferences = _persistence.create(pk);
 
-		ctPreferences.setMvccVersion(RandomTestUtil.nextLong());
-
 		ctPreferences.setCompanyId(RandomTestUtil.nextLong());
 
 		ctPreferences.setUserId(RandomTestUtil.nextLong());
@@ -509,4 +505,4 @@ public class CTPreferencesPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:395289488
+// LIFERAY-SERVICE-BUILDER-HASH:-852589490

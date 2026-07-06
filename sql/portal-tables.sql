@@ -203,6 +203,7 @@ create table AssetVocabularyGroupRel (
 	groupId LONG,
 	companyId LONG,
 	vocabularyId LONG,
+	depotEntryType INTEGER,
 	primary key (assetVocabularyGroupRelId, ctCollectionId)
 );
 
@@ -693,6 +694,7 @@ create table Layout (
 	themeId VARCHAR(75) null,
 	colorSchemeId VARCHAR(75) null,
 	styleBookEntryERC VARCHAR(75) null,
+	styleBookEntryScopeERC VARCHAR(75) null,
 	css TEXT null,
 	priority INTEGER,
 	faviconFileEntryERC VARCHAR(75) null,
@@ -1473,6 +1475,7 @@ create table Ticket (
 	classPK LONG,
 	key_ VARCHAR(255) null,
 	type_ INTEGER,
+	emailAddress VARCHAR(254) null,
 	extraInfo TEXT null,
 	expirationDate DATE null
 );

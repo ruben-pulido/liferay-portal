@@ -537,13 +537,6 @@
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
 					},
-					"comments": {
-						"description": "Optional field with the comments associated with this object entry, can be embedded with nestedFields",
-						"items": {
-							"$ref": "#/components/schemas/Comment"
-						},
-						"type": "array"
-					},
 					"creator": {
 						"readOnly": true,
 						"type": "string",
@@ -616,6 +609,9 @@
 						},
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
+					},
+					"modifiedBy": {
+						"$ref": "#/components/schemas/Creator"
 					},
 					"objectEntryFolderExternalReferenceCode": {
 						"type": "string"
@@ -1351,13 +1347,6 @@
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
 					},
-					"comments": {
-						"description": "Optional field with the comments associated with this object entry, can be embedded with nestedFields",
-						"items": {
-							"$ref": "#/components/schemas/Comment"
-						},
-						"type": "array"
-					},
 					"creator": {
 						"readOnly": true,
 						"type": "string",
@@ -1427,6 +1416,9 @@
 						},
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
+					},
+					"modifiedBy": {
+						"$ref": "#/components/schemas/Creator"
 					},
 					"multiselectPicklistField": {
 						"items": {
@@ -2296,13 +2288,6 @@
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
 					},
-					"comments": {
-						"description": "Optional field with the comments associated with this object entry, can be embedded with nestedFields",
-						"items": {
-							"$ref": "#/components/schemas/Comment"
-						},
-						"type": "array"
-					},
 					"creator": {
 						"readOnly": true,
 						"type": "string",
@@ -2372,6 +2357,9 @@
 						},
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
+					},
+					"modifiedBy": {
+						"$ref": "#/components/schemas/Creator"
 					},
 					"multiselectPicklistField": {
 						"items": {

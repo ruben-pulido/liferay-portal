@@ -112,11 +112,7 @@ public class CPTaxCategoryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CPTaxCategory newCPTaxCategory = _persistence.create(pk);
-
-		newCPTaxCategory.setMvccVersion(RandomTestUtil.nextLong());
+		CPTaxCategory newCPTaxCategory = addCPTaxCategory();
 
 		newCPTaxCategory.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -139,7 +135,9 @@ public class CPTaxCategoryPersistenceTest {
 
 		newCPTaxCategory.setDescription(RandomTestUtil.randomString());
 
-		_cpTaxCategories.add(_persistence.update(newCPTaxCategory));
+		newCPTaxCategory = _persistence.update(newCPTaxCategory);
+
+		_cpTaxCategories.add(newCPTaxCategory);
 
 		CPTaxCategory existingCPTaxCategory = _persistence.findByPrimaryKey(
 			newCPTaxCategory.getPrimaryKey());
@@ -546,8 +544,6 @@ public class CPTaxCategoryPersistenceTest {
 
 		CPTaxCategory cpTaxCategory = _persistence.create(pk);
 
-		cpTaxCategory.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpTaxCategory.setCtCollectionId(RandomTestUtil.nextLong());
 
 		cpTaxCategory.setUuid(RandomTestUtil.randomString());
@@ -579,4 +575,4 @@ public class CPTaxCategoryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-423788837
+// LIFERAY-SERVICE-BUILDER-HASH:-1977242584

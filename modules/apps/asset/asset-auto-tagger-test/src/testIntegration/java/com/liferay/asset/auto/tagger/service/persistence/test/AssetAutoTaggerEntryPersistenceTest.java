@@ -114,11 +114,8 @@ public class AssetAutoTaggerEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		AssetAutoTaggerEntry newAssetAutoTaggerEntry = _persistence.create(pk);
-
-		newAssetAutoTaggerEntry.setMvccVersion(RandomTestUtil.nextLong());
+		AssetAutoTaggerEntry newAssetAutoTaggerEntry =
+			addAssetAutoTaggerEntry();
 
 		newAssetAutoTaggerEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -134,8 +131,9 @@ public class AssetAutoTaggerEntryPersistenceTest {
 
 		newAssetAutoTaggerEntry.setAssetTagId(RandomTestUtil.nextLong());
 
-		_assetAutoTaggerEntries.add(
-			_persistence.update(newAssetAutoTaggerEntry));
+		newAssetAutoTaggerEntry = _persistence.update(newAssetAutoTaggerEntry);
+
+		_assetAutoTaggerEntries.add(newAssetAutoTaggerEntry);
 
 		AssetAutoTaggerEntry existingAssetAutoTaggerEntry =
 			_persistence.findByPrimaryKey(
@@ -538,8 +536,6 @@ public class AssetAutoTaggerEntryPersistenceTest {
 
 		AssetAutoTaggerEntry assetAutoTaggerEntry = _persistence.create(pk);
 
-		assetAutoTaggerEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		assetAutoTaggerEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		assetAutoTaggerEntry.setGroupId(RandomTestUtil.nextLong());
@@ -565,4 +561,4 @@ public class AssetAutoTaggerEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:264442237
+// LIFERAY-SERVICE-BUILDER-HASH:754453545

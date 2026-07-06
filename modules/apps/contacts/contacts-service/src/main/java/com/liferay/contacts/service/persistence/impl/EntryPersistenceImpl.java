@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -75,7 +73,7 @@ public class EntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<Entry>
+	private CollectionPersistenceFinder<Entry, NoSuchEntryException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -115,15 +113,8 @@ public class EntryPersistenceImpl
 			long userId, OrderByComparator<Entry> orderByComparator)
 		throws NoSuchEntryException {
 
-		Entry entry = fetchByUserId_First(userId, orderByComparator);
-
-		if (entry != null) {
-			return entry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -164,7 +155,8 @@ public class EntryPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private UniquePersistenceFinder<Entry> _uniquePersistenceFinderByU_EA;
+	private UniquePersistenceFinder<Entry, NoSuchEntryException>
+		_uniquePersistenceFinderByU_EA;
 
 	/**
 	 * Returns the entry where userId = &#63; and emailAddress = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
@@ -178,22 +170,8 @@ public class EntryPersistenceImpl
 	public Entry findByU_EA(long userId, String emailAddress)
 		throws NoSuchEntryException {
 
-		Entry entry = fetchByU_EA(userId, emailAddress);
-
-		if (entry == null) {
-			String message =
-				_uniquePersistenceFinderByU_EA.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {userId, emailAddress});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return entry;
+		return _uniquePersistenceFinderByU_EA.find(
+			finderCache, new Object[] {userId, emailAddress});
 	}
 
 	/**
@@ -453,7 +431,8 @@ public class EntryPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"userId"}, false),
 				_SQL_SELECT_ENTRY_WHERE, _SQL_COUNT_ENTRY_WHERE,
-				EntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				EntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"entry.", "userId", FinderColumn.Type.LONG, "=", true, true,
 					Entry::getUserId));
@@ -527,16 +506,10 @@ public class EntryPersistenceImpl
 	private static final String _SQL_COUNT_ENTRY_WHERE =
 		"SELECT COUNT(entry) FROM Entry entry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Entry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		EntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-93377920
+// LIFERAY-SERVICE-BUILDER-HASH:2066937214

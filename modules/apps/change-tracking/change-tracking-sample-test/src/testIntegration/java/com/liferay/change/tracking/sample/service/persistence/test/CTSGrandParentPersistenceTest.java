@@ -109,11 +109,7 @@ public class CTSGrandParentPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CTSGrandParent newCTSGrandParent = _persistence.create(pk);
-
-		newCTSGrandParent.setMvccVersion(RandomTestUtil.nextLong());
+		CTSGrandParent newCTSGrandParent = addCTSGrandParent();
 
 		newCTSGrandParent.setCompanyId(RandomTestUtil.nextLong());
 
@@ -121,7 +117,9 @@ public class CTSGrandParentPersistenceTest {
 
 		newCTSGrandParent.setName(RandomTestUtil.randomString());
 
-		_ctsGrandParents.add(_persistence.update(newCTSGrandParent));
+		newCTSGrandParent = _persistence.update(newCTSGrandParent);
+
+		_ctsGrandParents.add(newCTSGrandParent);
 
 		CTSGrandParent existingCTSGrandParent = _persistence.findByPrimaryKey(
 			newCTSGrandParent.getPrimaryKey());
@@ -397,8 +395,6 @@ public class CTSGrandParentPersistenceTest {
 
 		CTSGrandParent ctsGrandParent = _persistence.create(pk);
 
-		ctsGrandParent.setMvccVersion(RandomTestUtil.nextLong());
-
 		ctsGrandParent.setCompanyId(RandomTestUtil.nextLong());
 
 		ctsGrandParent.setParentCTSGrandParentId(RandomTestUtil.nextLong());
@@ -416,4 +412,4 @@ public class CTSGrandParentPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1825462106
+// LIFERAY-SERVICE-BUILDER-HASH:7946473

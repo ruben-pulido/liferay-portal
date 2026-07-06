@@ -111,9 +111,7 @@ public class SamlSpSessionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SamlSpSession newSamlSpSession = _persistence.create(pk);
+		SamlSpSession newSamlSpSession = addSamlSpSession();
 
 		newSamlSpSession.setCompanyId(RandomTestUtil.nextLong());
 
@@ -137,7 +135,9 @@ public class SamlSpSessionPersistenceTest {
 
 		newSamlSpSession.setTerminated(RandomTestUtil.randomBoolean());
 
-		_samlSpSessions.add(_persistence.update(newSamlSpSession));
+		newSamlSpSession = _persistence.update(newSamlSpSession);
+
+		_samlSpSessions.add(newSamlSpSession);
 
 		SamlSpSession existingSamlSpSession = _persistence.findByPrimaryKey(
 			newSamlSpSession.getPrimaryKey());
@@ -559,4 +559,4 @@ public class SamlSpSessionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1416760481
+// LIFERAY-SERVICE-BUILDER-HASH:-756478840

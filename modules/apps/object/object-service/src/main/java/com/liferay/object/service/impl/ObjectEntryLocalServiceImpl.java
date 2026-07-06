@@ -21,6 +21,7 @@ import com.liferay.asset.kernel.service.AssetTagGroupRelLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyGroupRelLocalService;
 import com.liferay.asset.link.constants.AssetLinkConstants;
 import com.liferay.asset.link.service.AssetLinkLocalService;
+import com.liferay.depot.util.DepotRoleUtil;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
@@ -33,6 +34,7 @@ import com.liferay.dynamic.data.mapping.util.NumberUtil;
 import com.liferay.exportimport.kernel.empty.model.EmptyModelManager;
 import com.liferay.exportimport.kernel.empty.model.EmptyModelManagerUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.friendly.url.constants.FriendlyURLEntryConstants;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.list.type.exception.NoSuchListTypeEntryException;
@@ -549,7 +551,8 @@ public class ObjectEntryLocalServiceImpl
 			_deleteTempFileEntries(dlFileEntriesMap);
 		}
 
-		objectEntry = _addObjectEntryVersion(objectDefinition, objectEntry);
+		objectEntry = _addObjectEntryVersion(
+			userId, objectDefinition, objectEntry);
 
 		boolean clearObjectEntryIdsMap =
 			ObjectActionThreadLocal.isClearObjectEntryIdsMap();
@@ -1051,6 +1054,8 @@ public class ObjectEntryLocalServiceImpl
 				groupId,
 				_classNameLocalService.getClassNameId(
 					objectDefinition.getClassName()),
+				FriendlyURLEntryConstants.
+					FRIENDLY_URL_ENTRY_PARENT_CLASS_PK_DEFAULT,
 				urlTitle);
 
 		if (friendlyURLEntry == null) {
@@ -1401,7 +1406,7 @@ public class ObjectEntryLocalServiceImpl
 
 		predicate = predicate.and(_getHeadObjectEntryPredicate(false));
 
-		if (!objectScopeProvider.isGroupAware()) {
+		if ((groupId == 0) || !objectScopeProvider.isGroupAware()) {
 			return dslQueryCount(joinStep.where(predicate));
 		}
 
@@ -2324,8 +2329,9 @@ public class ObjectEntryLocalServiceImpl
 				_objectDefinitionPersistence.findByPrimaryKey(
 					node.getPrimaryKey());
 
-			Indexer<ObjectEntry> indexer = IndexerRegistryUtil.getIndexer(
-				objectDefinition.getClassName());
+			Indexer<ObjectEntry> indexer =
+				IndexerRegistryUtil.nullSafeGetIndexer(
+					objectDefinition.getClassName());
 
 			_performActions(
 				objectDefinition.getObjectDefinitionId(),
@@ -2430,7 +2436,8 @@ public class ObjectEntryLocalServiceImpl
 		else {
 			_assetEntryLocalService.updateEntry(
 				objectDefinition.getClassName(), objectEntry.getObjectEntryId(),
-				null, null, true, objectEntry.isApproved());
+				objectEntry.getPublishDate(), objectEntry.getExpirationDate(),
+				true, objectEntry.isApproved());
 		}
 
 		_reindex(objectEntry);
@@ -2443,14 +2450,19 @@ public class ObjectEntryLocalServiceImpl
 					objectEntry.getObjectEntryId());
 
 			if (count > 0) {
-				_updateLatestObjectEntryVersion(objectDefinition, objectEntry);
+				_updateLatestObjectEntryVersion(
+					userId, objectDefinition, objectEntry);
 			}
 		}
 		else if (!objectEntry.isInTrash() && !originalObjectEntry.isInTrash()) {
-			objectEntry = _addObjectEntryVersion(objectDefinition, objectEntry);
+			objectEntry = _addObjectEntryVersion(
+				userId, objectDefinition, objectEntry);
 		}
 
-		if (objectDefinition.isRootNode()) {
+		if (objectDefinition.isRootNode() &&
+			(status != WorkflowConstants.STATUS_IN_TRASH) &&
+			!originalObjectEntry.isInTrash()) {
+
 			_updateRootDescendantNodeObjectEntryStatus(
 				userId, objectEntry, serviceContext);
 		}
@@ -2902,7 +2914,8 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private ObjectEntry _addObjectEntryVersion(
-			ObjectDefinition objectDefinition, ObjectEntry objectEntry)
+			long userId, ObjectDefinition objectDefinition,
+			ObjectEntry objectEntry)
 		throws PortalException {
 
 		if (!objectDefinition.isEnableObjectEntryVersioning()) {
@@ -2910,7 +2923,8 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		ObjectEntryVersion objectEntryVersion =
-			_objectEntryVersionLocalService.addObjectEntryVersion(objectEntry);
+			_objectEntryVersionLocalService.addObjectEntryVersion(
+				userId, objectEntry);
 
 		objectEntry.setVersion(objectEntryVersion.getVersion());
 
@@ -3237,6 +3251,8 @@ public class ObjectEntryLocalServiceImpl
 					ObjectEntryTable.INSTANCE.status.notIn(
 						new Integer[] {
 							WorkflowConstants.STATUS_DRAFT,
+							WorkflowConstants.STATUS_EXPIRED,
+							WorkflowConstants.STATUS_IN_TRASH,
 							WorkflowConstants.STATUS_PENDING
 						})
 				)
@@ -3871,6 +3887,45 @@ public class ObjectEntryLocalServiceImpl
 		).and(
 			searchPredicate.withParentheses()
 		);
+	}
+
+	private long[] _filterAssetCategoryIds(
+		long[] assetCategoryIds, ObjectEntry objectEntry) {
+
+		return ArrayUtil.filter(
+			assetCategoryIds,
+			assetCategoryId -> {
+				AssetCategory assetCategory =
+					_assetCategoryLocalService.fetchAssetCategory(
+						assetCategoryId);
+
+				if (assetCategory == null) {
+					return false;
+				}
+
+				List<AssetVocabularyGroupRel> assetVocabularyGroupRels =
+					_assetVocabularyGroupRelLocalService.
+						getAssetVocabularyGroupRelsByVocabularyId(
+							assetCategory.getVocabularyId());
+
+				if (ListUtil.isEmpty(assetVocabularyGroupRels)) {
+					return true;
+				}
+
+				for (AssetVocabularyGroupRel assetVocabularyGroupRel :
+						assetVocabularyGroupRels) {
+
+					if ((assetVocabularyGroupRel.getGroupId() ==
+							GroupConstants.ANY_PARENT_GROUP_ID) ||
+						(assetVocabularyGroupRel.getGroupId() ==
+							objectEntry.getGroupId())) {
+
+						return true;
+					}
+				}
+
+				return false;
+			});
 	}
 
 	private DSLQuery _getAccountEntriesDSLQuery(long companyId, long userId)
@@ -4741,8 +4796,12 @@ public class ObjectEntryLocalServiceImpl
 				dynamicObjectDefinitionLocalizationTable,
 				dynamicObjectDefinitionTable, null)
 		).where(
-			ObjectEntryTable.INSTANCE.objectDefinitionId.eq(
-				objectDefinition.getObjectDefinitionId()
+			ObjectEntrySearchUtil.getObjectEntryIndexPredicate(
+				groupIds, objectDefinition,
+				Predicate.withParentheses(
+					_fillPredicate(
+						objectDefinition.getObjectDefinitionId(), predicate,
+						search))
 			).and(
 				ObjectEntryTable.INSTANCE.rootObjectEntryId.eq(
 					ObjectEntryTable.INSTANCE.objectEntryId
@@ -4752,19 +4811,6 @@ public class ObjectEntryLocalServiceImpl
 			).and(
 				ObjectEntryTable.INSTANCE.status.neq(
 					WorkflowConstants.STATUS_IN_TRASH)
-			).and(
-				() -> {
-					if (ArrayUtil.isEmpty(groupIds)) {
-						return null;
-					}
-
-					return ObjectEntryTable.INSTANCE.groupId.in(groupIds);
-				}
-			).and(
-				Predicate.withParentheses(
-					_fillPredicate(
-						objectDefinition.getObjectDefinitionId(), predicate,
-						search))
 			).and(
 				_getHeadObjectEntryPredicate(preferApproved)
 			).and(
@@ -6919,10 +6965,12 @@ public class ObjectEntryLocalServiceImpl
 				userId, objectEntry.getNonzeroGroupId(),
 				objectEntry.getCreateDate(), objectEntry.getModifiedDate(),
 				objectDefinition.getClassName(), objectEntry.getObjectEntryId(),
-				objectEntry.getUuid(), 0, assetCategoryIds, assetTagNames, true,
-				objectEntry.isApproved(), null, null, null, null, mimeType,
-				title, String.valueOf(objectEntry.getObjectEntryId()), null,
-				null, null, 0, 0, priority, serviceContext);
+				objectEntry.getUuid(), 0,
+				_filterAssetCategoryIds(assetCategoryIds, objectEntry),
+				assetTagNames, true, objectEntry.isApproved(), null, null,
+				objectEntry.getPublishDate(), objectEntry.getExpirationDate(),
+				mimeType, title, String.valueOf(objectEntry.getObjectEntryId()),
+				null, null, null, 0, 0, priority, serviceContext);
 
 			if (assetLinkEntryIds != null) {
 				_assetLinkLocalService.updateLinks(
@@ -6952,7 +7000,8 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private void _updateLatestObjectEntryVersion(
-			ObjectDefinition objectDefinition, ObjectEntry objectEntry)
+			long userId, ObjectDefinition objectDefinition,
+			ObjectEntry objectEntry)
 		throws PortalException {
 
 		if (!objectDefinition.isEnableObjectEntryVersioning()) {
@@ -6960,7 +7009,7 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		_objectEntryVersionLocalService.updateLatestObjectEntryVersion(
-			objectEntry);
+			userId, objectEntry);
 	}
 
 	private ObjectEntry _updateObjectEntry(
@@ -7080,6 +7129,9 @@ public class ObjectEntryLocalServiceImpl
 			serviceContext.getAssetPriority(), serviceContext);
 
 		if (move) {
+			_updateLatestObjectEntryVersion(
+				userId, objectDefinition, objectEntry);
+
 			return objectEntry;
 		}
 
@@ -7111,11 +7163,12 @@ public class ObjectEntryLocalServiceImpl
 			if (objectEntry.isPending() || originalObjectEntry.isDraft() ||
 				originalObjectEntry.isExpired()) {
 
-				_updateLatestObjectEntryVersion(objectDefinition, objectEntry);
+				_updateLatestObjectEntryVersion(
+					userId, objectDefinition, objectEntry);
 			}
 			else {
 				objectEntry = _addObjectEntryVersion(
-					objectDefinition, objectEntry);
+					userId, objectDefinition, objectEntry);
 			}
 		}
 
@@ -7472,6 +7525,19 @@ public class ObjectEntryLocalServiceImpl
 		if (!objectScopeProvider.isValidGroupId(groupId)) {
 			throw new ObjectEntryGroupIdException.InvalidGroupIdForScope(
 				groupId, scope);
+		}
+
+		if (StringUtil.equals(scope, ObjectDefinitionConstants.SCOPE_DEPOT)) {
+			String domain = ObjectDefinitionSettingUtil.getValue(
+				ObjectDefinitionSettingConstants.NAME_DOMAIN,
+				objectDefinition.getObjectDefinitionSettings());
+
+			if (Validator.isNotNull(domain) &&
+				!StringUtil.equals(domain, DepotRoleUtil.getSubtype(groupId))) {
+
+				throw new ObjectEntryGroupIdException.InvalidGroupIdForDomain(
+					groupId, domain);
+			}
 		}
 
 		if (!StringUtil.equals(scope, ObjectDefinitionConstants.SCOPE_DEPOT) ||

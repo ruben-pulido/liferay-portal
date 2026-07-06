@@ -19,11 +19,14 @@ import com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil;
 import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.constants.DepotRolesConstants;
 import com.liferay.depot.model.DepotEntry;
+import com.liferay.depot.model.DepotEntryGroupRel;
+import com.liferay.depot.service.DepotEntryGroupRelLocalService;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.processor.RawMetadataProcessorUtil;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
@@ -476,7 +479,7 @@ public class ObjectEntryResourceTest {
 							ObjectFieldSettingConstants.
 								NAME_ACCEPTED_FILE_EXTENSIONS
 						).value(
-							"txt"
+							"jpg, txt"
 						).build(),
 						new ObjectFieldSettingBuilder(
 						).name(
@@ -7827,6 +7830,41 @@ public class ObjectEntryResourceTest {
 	}
 
 	@Test
+	@TestInfo("LPD-85194")
+	public void testGetObjectEntryWithAttachmentObjectFieldImageMetadata()
+		throws Exception {
+
+		_testGetObjectEntryWithAttachmentObjectFieldImageMetadata(
+			_addFileEntry(
+				FileUtil.getBytes(
+					getClass(),
+					"dependencies/sample_large_square_1500x1500.jpg"),
+				RandomTestUtil.randomString() + ".jpg",
+				ContentTypes.IMAGE_JPEG),
+			"Square", "Large (Bigger Than 1024)");
+		_testGetObjectEntryWithAttachmentObjectFieldImageMetadata(
+			_addFileEntry(
+				FileUtil.getBytes(
+					getClass(), "dependencies/sample_medium_tall_600x800.jpg"),
+				RandomTestUtil.randomString() + ".jpg",
+				ContentTypes.IMAGE_JPEG),
+			"Tall", "Medium (Up to 1024x768)");
+		_testGetObjectEntryWithAttachmentObjectFieldImageMetadata(
+			_addFileEntry(
+				FileUtil.getBytes(
+					getClass(), "dependencies/sample_small_wide_400x300.jpg"),
+				RandomTestUtil.randomString() + ".jpg",
+				ContentTypes.IMAGE_JPEG),
+			"Wide", "Small (Up to 400x300)");
+		_testGetObjectEntryWithAttachmentObjectFieldImageMetadata(
+			_addFileEntry(
+				RandomTestUtil.randomBytes(),
+				RandomTestUtil.randomString() + ".txt",
+				ContentTypes.TEXT_PLAIN),
+			null, null);
+	}
+
+	@Test
 	public void testGetObjectEntryWithAuditEvents() throws Exception {
 		ListTypeDefinition listTypeDefinition =
 			_listTypeDefinitionLocalService.addListTypeDefinition(
@@ -8665,7 +8703,28 @@ public class ObjectEntryResourceTest {
 
 		// Company scope
 
-		CMSTestUtil.getOrAddGroup(ObjectEntryResourceTest.class);
+		Company company = _companyLocalService.getCompany(
+			TestPropsValues.getCompanyId());
+
+		AssetVocabulary companyAssetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				TestPropsValues.getUserId(), company.getGroupId(),
+				RandomTestUtil.randomString(), new ServiceContext());
+
+		TaxonomyCategory companyTaxonomyCategory1 =
+			_postTaxonomyVocabularyTaxonomyCategory(
+				company.getGroupId(), companyAssetVocabulary.getVocabularyId());
+
+		TaxonomyCategory companyTaxonomyCategory2 =
+			_postTaxonomyCategoryTaxonomyCategory(
+				company.getGroupId(), companyTaxonomyCategory1.getId(),
+				companyTaxonomyCategory1.getTaxonomyVocabularyId());
+
+		_testGetObjectEntryWithTaxonomyCategories(
+			0, _objectDefinition1, companyTaxonomyCategory1,
+			companyTaxonomyCategory2);
+
+		// Depot scope
 
 		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
 			RandomTestUtil.randomLocaleStringMap(),
@@ -8673,73 +8732,64 @@ public class ObjectEntryResourceTest {
 			DepotConstants.TYPE_ASSET_LIBRARY,
 			ServiceContextTestUtil.getServiceContext());
 
-		Group group1 = _groupLocalService.getGroup(depotEntry.getGroupId());
+		AssetVocabulary depotAssetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				TestPropsValues.getUserId(), depotEntry.getGroupId(),
+				RandomTestUtil.randomString(), new ServiceContext());
 
-		AssetVocabulary assetVocabulary1 =
-			AssetVocabularyLocalServiceUtil.addVocabulary(
-				UserLocalServiceUtil.getGuestUserId(
-					TestPropsValues.getCompanyId()),
-				group1.getGroupId(), RandomTestUtil.randomString(),
-				new ServiceContext());
-
-		TaxonomyCategory taxonomyCategory1 =
+		TaxonomyCategory depotTaxonomyCategory1 =
 			_postTaxonomyVocabularyTaxonomyCategory(
-				group1.getGroupId(), assetVocabulary1.getVocabularyId());
+				depotEntry.getGroupId(),
+				depotAssetVocabulary.getVocabularyId());
 
-		Group group2 = _groupLocalService.getGroup(
-			TestPropsValues.getCompanyId(), GroupConstants.CMS);
-
-		AssetVocabulary assetVocabulary2 =
-			AssetVocabularyLocalServiceUtil.addVocabulary(
-				UserLocalServiceUtil.getGuestUserId(
-					TestPropsValues.getCompanyId()),
-				group2.getGroupId(), RandomTestUtil.randomString(),
-				new ServiceContext());
-
-		TaxonomyCategory taxonomyCategory2 =
-			_postTaxonomyVocabularyTaxonomyCategory(
-				group2.getGroupId(), assetVocabulary2.getVocabularyId());
-
-		Group group3 = _groupLocalService.fetchGroup(_testGroupId);
-
-		TaxonomyCategory taxonomyCategory3 =
-			_postTaxonomyVocabularyTaxonomyCategory(
-				group3.getGroupId(), _assetVocabulary.getVocabularyId());
-
-		TaxonomyCategory taxonomyCategory4 =
+		TaxonomyCategory depotTaxonomyCategory2 =
 			_postTaxonomyCategoryTaxonomyCategory(
-				group3.getGroupId(), taxonomyCategory3.getId(),
-				taxonomyCategory3.getTaxonomyVocabularyId());
-
-		_testGetObjectEntryWithTaxonomyCategories(
-			0, _objectDefinition1, taxonomyCategory1, taxonomyCategory2,
-			taxonomyCategory3, taxonomyCategory4);
-
-		// Depot scope
+				depotEntry.getGroupId(), depotTaxonomyCategory1.getId(),
+				depotTaxonomyCategory1.getTaxonomyVocabularyId());
 
 		ObjectDefinition depotScopedObjectDefinition =
 			_addDepotScopedObjectDefinition();
 
 		_testGetObjectEntryWithTaxonomyCategories(
 			depotEntry.getGroupId(), depotScopedObjectDefinition,
-			taxonomyCategory1, taxonomyCategory2, taxonomyCategory3,
-			taxonomyCategory4);
+			depotTaxonomyCategory1, depotTaxonomyCategory2);
 
 		// Site scope
 
+		TaxonomyCategory siteTaxonomyCategory1 =
+			_postTaxonomyVocabularyTaxonomyCategory(
+				_testGroupId, _assetVocabulary.getVocabularyId());
+
+		TaxonomyCategory siteTaxonomyCategory2 =
+			_postTaxonomyCategoryTaxonomyCategory(
+				_testGroupId, siteTaxonomyCategory1.getId(),
+				siteTaxonomyCategory1.getTaxonomyVocabularyId());
+
 		_testGetObjectEntryWithTaxonomyCategories(
-			_testGroupId, _siteScopedObjectDefinition1, taxonomyCategory1,
-			taxonomyCategory2, taxonomyCategory3, taxonomyCategory4);
+			_testGroupId, _siteScopedObjectDefinition1, siteTaxonomyCategory1,
+			siteTaxonomyCategory2);
 	}
 
 	@Test
 	public void testGetObjectEntryWithTaxonomyCategoriesAndEmbeddedTaxonomyCategory()
 		throws Exception {
 
+		Company company = _companyLocalService.getCompany(
+			TestPropsValues.getCompanyId());
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				TestPropsValues.getUserId(), company.getGroupId(),
+				RandomTestUtil.randomString(), new ServiceContext());
+
 		TaxonomyCategory taxonomyCategory1 =
-			_postTaxonomyVocabularyTaxonomyCategory();
+			_postTaxonomyVocabularyTaxonomyCategory(
+				assetVocabulary.getGroupId(),
+				assetVocabulary.getVocabularyId());
 		TaxonomyCategory taxonomyCategory2 =
-			_postTaxonomyVocabularyTaxonomyCategory();
+			_postTaxonomyVocabularyTaxonomyCategory(
+				assetVocabulary.getGroupId(),
+				assetVocabulary.getVocabularyId());
 
 		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
 			JSONUtil.put(
@@ -9121,7 +9171,11 @@ public class ObjectEntryResourceTest {
 	}
 
 	@Test
-	public void testPatchObjectEntryWithFriendlyURL() throws Exception {
+	public void testPatchObjectEntryWithFriendlyURLCustomizationEnabled()
+		throws Exception {
+
+		// With friendly URL
+
 		_objectDefinition1.setEnableFriendlyURLCustomization(true);
 
 		_objectDefinition1 =
@@ -9147,6 +9201,34 @@ public class ObjectEntryResourceTest {
 
 		Assert.assertEquals(
 			"test-url", jsonObject.getString("friendlyUrlPath"));
+
+		// Without friendly URL
+
+		String friendlyURL = StringUtil.toLowerCase(
+			RandomTestUtil.randomString());
+		String objectFieldValue = RandomTestUtil.randomString();
+
+		jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				_OBJECT_FIELD_NAME_1, objectFieldValue
+			).put(
+				"friendlyUrlPath_i18n",
+				HashMapBuilder.put(
+					"en_US", friendlyURL
+				).build()
+			).toString(),
+			_objectDefinition1.getRESTContextPath(), Http.Method.POST);
+
+		jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				_OBJECT_FIELD_NAME_1, objectFieldValue
+			).toString(),
+			_objectDefinition1.getRESTContextPath() + StringPool.SLASH +
+				jsonObject.getString("id"),
+			Http.Method.PATCH);
+
+		Assert.assertEquals(
+			friendlyURL, jsonObject.getString("friendlyUrlPath"));
 	}
 
 	@Test
@@ -9267,10 +9349,22 @@ public class ObjectEntryResourceTest {
 
 	@Test
 	public void testPatchObjectEntryWithTaxonomyCategories() throws Exception {
+		Company company = _companyLocalService.getCompany(
+			TestPropsValues.getCompanyId());
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				TestPropsValues.getUserId(), company.getGroupId(),
+				RandomTestUtil.randomString(), new ServiceContext());
+
 		TaxonomyCategory taxonomyCategory1 =
-			_postTaxonomyVocabularyTaxonomyCategory();
+			_postTaxonomyVocabularyTaxonomyCategory(
+				assetVocabulary.getGroupId(),
+				assetVocabulary.getVocabularyId());
 		TaxonomyCategory taxonomyCategory2 =
-			_postTaxonomyVocabularyTaxonomyCategory();
+			_postTaxonomyVocabularyTaxonomyCategory(
+				assetVocabulary.getGroupId(),
+				assetVocabulary.getVocabularyId());
 
 		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
 			JSONUtil.put(
@@ -9283,7 +9377,9 @@ public class ObjectEntryResourceTest {
 			_objectDefinition1.getRESTContextPath(), Http.Method.POST);
 
 		TaxonomyCategory taxonomyCategory3 =
-			_postTaxonomyVocabularyTaxonomyCategory();
+			_postTaxonomyVocabularyTaxonomyCategory(
+				assetVocabulary.getGroupId(),
+				assetVocabulary.getVocabularyId());
 
 		jsonObject = HTTPTestUtil.invokeToJSONObject(
 			JSONUtil.put(
@@ -11233,15 +11329,19 @@ public class ObjectEntryResourceTest {
 		com.liferay.object.rest.dto.v1_0.ObjectEntry objectEntry =
 			new com.liferay.object.rest.dto.v1_0.ObjectEntry() {
 				{
-					comments = new Comment[] {
-						new Comment() {
-							{
-								externalReferenceCode =
-									RandomTestUtil.randomString();
-								parentCommentExternalReferenceCode =
-									parentExternalReferenceCode;
-								text = RandomTestUtil.randomString();
-							}
+					systemProperties = new SystemProperties() {
+						{
+							comments = new Comment[] {
+								new Comment() {
+									{
+										externalReferenceCode =
+											RandomTestUtil.randomString();
+										parentCommentExternalReferenceCode =
+											parentExternalReferenceCode;
+										text = RandomTestUtil.randomString();
+									}
+								}
+							};
 						}
 					};
 				}
@@ -11334,6 +11434,34 @@ public class ObjectEntryResourceTest {
 		}
 	}
 
+	@FeatureFlag("LPD-43996")
+	@Test
+	public void testPostObjectEntryWithObjectFieldComments() throws Exception {
+		ObjectDefinition objectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				Collections.singletonList(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+						"comments", "comments", false)),
+				ObjectDefinitionConstants.SCOPE_COMPANY);
+
+		_enableComments(objectDefinition);
+
+		String value = RandomTestUtil.randomString();
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				"comments", value
+			).toString(),
+			objectDefinition.getRESTContextPath(), Http.Method.POST);
+
+		Assert.assertEquals(value, jsonObject.getString("comments"));
+
+		_objectDefinitionLocalService.deleteObjectDefinition(
+			objectDefinition.getObjectDefinitionId());
+	}
+
 	@Test
 	public void testPostObjectEntryWithTaxonomyCategories() throws Exception {
 		Company company = _companyLocalService.getCompany(
@@ -11420,6 +11548,8 @@ public class ObjectEntryResourceTest {
 				jsonObject.getLong("id")));
 
 		_assetVocabularyLocalService.deleteVocabulary(assetVocabulary);
+
+		_testPostObjectEntryWithCrossSiteTaxonomyCategories();
 	}
 
 	@Test
@@ -15635,6 +15765,18 @@ public class ObjectEntryResourceTest {
 			fileEntry.getFileEntryId());
 	}
 
+	private FileEntry _addFileEntry(
+			byte[] content, String fileName, String contentType)
+		throws Exception {
+
+		return _dlAppLocalService.addFileEntry(
+			null, TestPropsValues.getUserId(), _group.getGroupId(),
+			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, fileName, contentType,
+			StringUtil.randomString(), StringUtil.randomString(),
+			StringUtil.randomString(), StringUtil.randomString(), content, null,
+			null, null, ServiceContextTestUtil.getServiceContext());
+	}
+
 	private ObjectEntry _addLocalizedObjectEntry(
 			ObjectDefinition objectDefinition, String objectFieldName,
 			String[] objectFieldValues)
@@ -16392,14 +16534,18 @@ public class ObjectEntryResourceTest {
 
 		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
 			null,
-			_getEndpoint(objectDefinition, groupId) + "?nestedFields=comments",
+			_getEndpoint(objectDefinition, groupId) +
+				"?nestedFields=systemProperties.comments",
 			Http.Method.GET);
 
 		JSONArray jsonArray = jsonObject.getJSONArray("items");
 
 		jsonObject = jsonArray.getJSONObject(0);
 
-		return jsonObject.getJSONArray("comments");
+		JSONObject systemPropertiesJSONObject = jsonObject.getJSONObject(
+			"systemProperties");
+
+		return systemPropertiesJSONObject.getJSONArray("comments");
 	}
 
 	private String _getDeletePatchPutEndpoint(
@@ -16833,6 +16979,36 @@ public class ObjectEntryResourceTest {
 			null, null);
 	}
 
+	private JSONObject _getObjectEntryFileMetadataJSONObject(
+			FileEntry fileEntry)
+		throws Exception {
+
+		JSONObject objectEntryJSONObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
+			).put(
+				_OBJECT_FIELD_NAME_ATTACHMENT_USER_COMPUTER_TO_DOCS_AND_MEDIA_SOURCE_1,
+				fileEntry.getFileEntryId()
+			).toString(),
+			_objectDefinition1.getRESTContextPath(), Http.Method.POST);
+
+		RawMetadataProcessorUtil.saveMetadata(fileEntry.getFileVersion());
+
+		JSONObject responseJSONObject = HTTPTestUtil.invokeToJSONObject(
+			null,
+			StringBundler.concat(
+				_objectDefinition1.getRESTContextPath(), "/",
+				objectEntryJSONObject.getString("id"), "?nestedFields=",
+				_OBJECT_FIELD_NAME_ATTACHMENT_USER_COMPUTER_TO_DOCS_AND_MEDIA_SOURCE_1,
+				".metadata"),
+			Http.Method.GET);
+
+		JSONObject jsonObject = responseJSONObject.getJSONObject(
+			_OBJECT_FIELD_NAME_ATTACHMENT_USER_COMPUTER_TO_DOCS_AND_MEDIA_SOURCE_1);
+
+		return jsonObject.getJSONObject("metadata");
+	}
+
 	private JSONObject _getObjectEntryJSONObject(
 			Integer nestedFieldDepth, String nestedFieldName,
 			ObjectDefinition objectDefinition)
@@ -17108,17 +17284,20 @@ public class ObjectEntryResourceTest {
 		String endpoint = _getDeletePatchPutEndpoint(
 			groupId, objectDefinition, objectEntryJSONObject);
 
-		endpoint = endpoint + "?nestedFields=comments";
+		endpoint = endpoint + "?nestedFields=systemProperties.comments";
 
 		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
 			JSONUtil.put(
 				_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
 			).put(
-				"comments", commentsJSONArray
+				"systemProperties", JSONUtil.put("comments", commentsJSONArray)
 			).toString(),
 			endpoint, httpMethod);
 
-		return jsonObject.getJSONArray("comments");
+		JSONObject systemPropertiesJSONObject = jsonObject.getJSONObject(
+			"systemProperties");
+
+		return systemPropertiesJSONObject.getJSONArray("comments");
 	}
 
 	private JSONObject _postCustomObjectEntryWithAssigneeObjectField(
@@ -17191,21 +17370,28 @@ public class ObjectEntryResourceTest {
 			ObjectDefinition objectDefinition)
 		throws Exception {
 
+		JSONArray jsonArray = null;
+
 		String endpoint = _getEndpoint(objectDefinition, groupId);
 
 		if (nestedFields) {
-			endpoint = endpoint + "?nestedFields=comments";
+			endpoint = endpoint + "?nestedFields=systemProperties.comments";
 		}
 
 		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
 			JSONUtil.put(
 				_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
 			).put(
-				"comments", commentsJSONArray
+				"systemProperties", JSONUtil.put("comments", commentsJSONArray)
 			).toString(),
 			endpoint, Http.Method.POST);
 
-		JSONArray jsonArray = jsonObject.getJSONArray("comments");
+		JSONObject systemPropertiesJSONObject = jsonObject.getJSONObject(
+			"systemProperties");
+
+		if (systemPropertiesJSONObject != null) {
+			jsonArray = systemPropertiesJSONObject.getJSONArray("comments");
+		}
 
 		if (jsonArray == null) {
 			return JSONFactoryUtil.createJSONArray();
@@ -17395,9 +17581,10 @@ public class ObjectEntryResourceTest {
 			JSONUtil.put(
 				_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
 			).put(
-				"comments", commentsJSONArray
+				"systemProperties", JSONUtil.put("comments", commentsJSONArray)
 			).toString(),
-			endpoint + "?nestedFields=comments", Http.Method.POST);
+			endpoint + "?nestedFields=systemProperties.comments",
+			Http.Method.POST);
 
 		long objectEntryId = objectEntryJSONObject.getLong("id");
 
@@ -17701,6 +17888,32 @@ public class ObjectEntryResourceTest {
 		}
 
 		Assert.assertEquals(tempFilesCount, _getTempFilesCount());
+	}
+
+	private void _testGetObjectEntryWithAttachmentObjectFieldImageMetadata(
+			FileEntry fileEntry, String expectedAspectRatio,
+			String expectedResolution)
+		throws Exception {
+
+		JSONObject metadataJSONObject = _getObjectEntryFileMetadataJSONObject(
+			fileEntry);
+
+		if (expectedAspectRatio != null) {
+			Assert.assertEquals(
+				expectedAspectRatio,
+				metadataJSONObject.getString("aspectRatio"));
+		}
+		else {
+			Assert.assertNull(metadataJSONObject.opt("aspectRatio"));
+		}
+
+		if (expectedResolution != null) {
+			Assert.assertEquals(
+				expectedResolution, metadataJSONObject.getString("resolution"));
+		}
+		else {
+			Assert.assertNull(metadataJSONObject.opt("resolution"));
+		}
 	}
 
 	private void _testGetObjectEntryWithObjectActions(
@@ -19388,20 +19601,24 @@ public class ObjectEntryResourceTest {
 		com.liferay.object.rest.dto.v1_0.ObjectEntry objectEntry =
 			new com.liferay.object.rest.dto.v1_0.ObjectEntry() {
 				{
-					comments = new Comment[] {
-						new Comment() {
-							{
-								externalReferenceCode =
-									RandomTestUtil.randomString();
-								parentCommentExternalReferenceCode =
-									parentExternalReferenceCode;
-								text = RandomTestUtil.randomString();
-							}
-						}
-					};
 					properties = HashMapBuilder.<String, Object>put(
 						_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
 					).build();
+					systemProperties = new SystemProperties() {
+						{
+							comments = new Comment[] {
+								new Comment() {
+									{
+										externalReferenceCode =
+											RandomTestUtil.randomString();
+										parentCommentExternalReferenceCode =
+											parentExternalReferenceCode;
+										text = RandomTestUtil.randomString();
+									}
+								}
+							};
+						}
+					};
 				}
 			};
 
@@ -20539,6 +20756,164 @@ public class ObjectEntryResourceTest {
 				commentsJSONArray, groupId, true, objectDefinition
 			).toString(),
 			JSONCompareMode.LENIENT);
+	}
+
+	private void _testPostObjectEntryWithCrossSiteTaxonomyCategories()
+		throws Exception {
+
+		// Can add a category from a connected depot entry
+
+		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
+			RandomTestUtil.randomLocaleStringMap(),
+			RandomTestUtil.randomLocaleStringMap(),
+			DepotConstants.TYPE_ASSET_LIBRARY,
+			ServiceContextTestUtil.getServiceContext());
+
+		DepotEntryGroupRel depotEntryGroupRel =
+			_depotEntryGroupRelLocalService.addDepotEntryGroupRel(
+				depotEntry.getDepotEntryId(), _testGroupId);
+
+		AssetVocabulary depotAssetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				TestPropsValues.getUserId(), depotEntry.getGroupId(),
+				RandomTestUtil.randomString(), new ServiceContext());
+
+		TaxonomyCategory depotTaxonomyCategory =
+			_postTaxonomyVocabularyTaxonomyCategory(
+				depotEntry.getGroupId(),
+				depotAssetVocabulary.getVocabularyId());
+
+		Assert.assertNotNull(
+			HTTPTestUtil.invokeToJSONObject(
+				JSONUtil.put(
+					_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
+				).put(
+					"taxonomyCategoryIds",
+					JSONUtil.put(depotTaxonomyCategory.getId())
+				).toString(),
+				_getEndpoint(_siteScopedObjectDefinition1, _testGroupId),
+				Http.Method.POST
+			).get(
+				"id"
+			));
+
+		_depotEntryGroupRelLocalService.deleteDepotEntryGroupRel(
+			depotEntryGroupRel.getDepotEntryGroupRelId());
+
+		// Can add a category from a parent site
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				TestPropsValues.getUserId(), _group.getGroupId(),
+				RandomTestUtil.randomString(), new ServiceContext());
+
+		TaxonomyCategory taxonomyCategory =
+			_postTaxonomyVocabularyTaxonomyCategory(
+				_group.getGroupId(), assetVocabulary.getVocabularyId());
+
+		Group childGroup = GroupTestUtil.addGroup(_group.getGroupId());
+
+		Assert.assertNotNull(
+			HTTPTestUtil.invokeToJSONObject(
+				JSONUtil.put(
+					_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
+				).put(
+					"taxonomyCategoryIds",
+					JSONUtil.put(taxonomyCategory.getId())
+				).toString(),
+				_getEndpoint(
+					_siteScopedObjectDefinition1, childGroup.getGroupId()),
+				Http.Method.POST
+			).get(
+				"id"
+			));
+
+		_groupLocalService.deleteGroup(childGroup);
+
+		// Cannot add a category to a company-scoped entry
+
+		Assert.assertEquals(
+			400,
+			HTTPTestUtil.invokeToHttpCode(
+				JSONUtil.put(
+					_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
+				).put(
+					"taxonomyCategoryIds",
+					JSONUtil.put(taxonomyCategory.getId())
+				).toString(),
+				_objectDefinition1.getRESTContextPath(), Http.Method.POST));
+
+		// Cannot add a category from a foreign site
+
+		Assert.assertEquals(
+			400,
+			HTTPTestUtil.invokeToHttpCode(
+				JSONUtil.put(
+					_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
+				).put(
+					"taxonomyCategoryIds",
+					JSONUtil.put(taxonomyCategory.getId())
+				).toString(),
+				_getEndpoint(_siteScopedObjectDefinition1, _testGroupId),
+				Http.Method.POST));
+
+		// Cannot add a category via UPSERT
+
+		Assert.assertEquals(
+			400,
+			HTTPTestUtil.invokeToHttpCode(
+				JSONUtil.put(
+					_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
+				).put(
+					"taxonomyCategoryIds",
+					JSONUtil.put(taxonomyCategory.getId())
+				).toString(),
+				StringBundler.concat(
+					_getEndpoint(_siteScopedObjectDefinition1, _testGroupId),
+					"/by-external-reference-code/",
+					RandomTestUtil.randomString()),
+				Http.Method.PUT));
+
+		// No empty category created
+
+		String externalReferenceCode = RandomTestUtil.randomString();
+
+		Assert.assertNull(
+			AssetCategoryLocalServiceUtil.
+				fetchAssetCategoryByExternalReferenceCode(
+					externalReferenceCode, _group.getGroupId()));
+
+		Assert.assertEquals(
+			400,
+			HTTPTestUtil.invokeToHttpCode(
+				JSONUtil.put(
+					_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
+				).put(
+					"taxonomyCategoryBriefs",
+					JSONUtil.put(
+						JSONUtil.put(
+							"scope",
+							JSONUtil.put(
+								"externalReferenceCode",
+								_group.getExternalReferenceCode()
+							).put(
+								"type", "Site"
+							)
+						).put(
+							"taxonomyCategoryExternalReferenceCode",
+							externalReferenceCode
+						))
+				).toString(),
+				_getEndpoint(_siteScopedObjectDefinition1, _testGroupId),
+				Http.Method.POST));
+
+		Assert.assertNull(
+			AssetCategoryLocalServiceUtil.
+				fetchAssetCategoryByExternalReferenceCode(
+					externalReferenceCode, _group.getGroupId()));
+
+		_assetVocabularyLocalService.deleteVocabulary(assetVocabulary);
+		_assetVocabularyLocalService.deleteVocabulary(depotAssetVocabulary);
 	}
 
 	private void _testPostScopeScopeKey(Object scopeKey1, Object scopeKey2)
@@ -21932,6 +22307,9 @@ public class ObjectEntryResourceTest {
 
 	@Inject
 	private CompanyLocalService _companyLocalService;
+
+	@Inject
+	private DepotEntryGroupRelLocalService _depotEntryGroupRelLocalService;
 
 	@Inject
 	private DepotEntryLocalService _depotEntryLocalService;

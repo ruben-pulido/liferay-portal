@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -90,8 +88,9 @@ public class ListTypeDefinitionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<ListTypeDefinition>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<ListTypeDefinition, NoSuchListTypeDefinitionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the list type definitions where uuid = &#63;.
@@ -132,16 +131,8 @@ public class ListTypeDefinitionPersistenceImpl
 			OrderByComparator<ListTypeDefinition> orderByComparator)
 		throws NoSuchListTypeDefinitionException {
 
-		ListTypeDefinition listTypeDefinition = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (listTypeDefinition != null) {
-			return listTypeDefinition;
-		}
-
-		throw new NoSuchListTypeDefinitionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -216,8 +207,9 @@ public class ListTypeDefinitionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<ListTypeDefinition>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<ListTypeDefinition, NoSuchListTypeDefinitionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the list type definitions where uuid = &#63; and companyId = &#63;.
@@ -260,16 +252,8 @@ public class ListTypeDefinitionPersistenceImpl
 			OrderByComparator<ListTypeDefinition> orderByComparator)
 		throws NoSuchListTypeDefinitionException {
 
-		ListTypeDefinition listTypeDefinition = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (listTypeDefinition != null) {
-			return listTypeDefinition;
-		}
-
-		throw new NoSuchListTypeDefinitionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -351,8 +335,9 @@ public class ListTypeDefinitionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<ListTypeDefinition>
-		_collectionPersistenceFinderByC_U;
+	private FilterCollectionPersistenceFinder
+		<ListTypeDefinition, NoSuchListTypeDefinitionException>
+			_collectionPersistenceFinderByC_U;
 
 	/**
 	 * Returns an ordered range of all the list type definitions where companyId = &#63; and userId = &#63;.
@@ -395,16 +380,8 @@ public class ListTypeDefinitionPersistenceImpl
 			OrderByComparator<ListTypeDefinition> orderByComparator)
 		throws NoSuchListTypeDefinitionException {
 
-		ListTypeDefinition listTypeDefinition = fetchByC_U_First(
-			companyId, userId, orderByComparator);
-
-		if (listTypeDefinition != null) {
-			return listTypeDefinition;
-		}
-
-		throw new NoSuchListTypeDefinitionException(
-			_collectionPersistenceFinderByC_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, userId}));
+		return _collectionPersistenceFinderByC_U.findFirst(
+			finderCache, new Object[] {companyId, userId}, orderByComparator);
 	}
 
 	/**
@@ -486,8 +463,9 @@ public class ListTypeDefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, userId}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<ListTypeDefinition>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<ListTypeDefinition, NoSuchListTypeDefinitionException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the list type definition where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchListTypeDefinitionException</code> if it could not be found.
@@ -502,23 +480,8 @@ public class ListTypeDefinitionPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchListTypeDefinitionException {
 
-		ListTypeDefinition listTypeDefinition = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (listTypeDefinition == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchListTypeDefinitionException(message);
-		}
-
-		return listTypeDefinition;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -885,20 +848,11 @@ public class ListTypeDefinitionPersistenceImpl
 				_SQL_SELECT_LISTTYPEDEFINITION_WHERE,
 				_SQL_COUNT_LISTTYPEDEFINITION_WHERE,
 				ListTypeDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					ListTypeDefinitionImpl.class, ListTypeDefinition.class,
-					"listTypeDefinition", "ListTypeDefinition",
-					"listTypeDefinition.listTypeDefinitionId",
-					"SELECT DISTINCT {listTypeDefinition.*} FROM ListTypeDefinition listTypeDefinition WHERE ",
-					"SELECT {ListTypeDefinition.*} FROM (SELECT DISTINCT listTypeDefinition.listTypeDefinitionId FROM ListTypeDefinition listTypeDefinition WHERE ",
-					") TEMP_TABLE INNER JOIN ListTypeDefinition ON TEMP_TABLE.listTypeDefinitionId = ListTypeDefinition.listTypeDefinitionId",
-					"SELECT COUNT(DISTINCT listTypeDefinition.listTypeDefinitionId) AS COUNT_VALUE FROM ListTypeDefinition listTypeDefinition WHERE ",
-					ListTypeDefinitionModelImpl.ORDER_BY_SQL,
-					ListTypeDefinitionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"listTypeDefinition.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, ListTypeDefinition::getUuid));
+					"listTypeDefinition.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ListTypeDefinition::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -922,20 +876,11 @@ public class ListTypeDefinitionPersistenceImpl
 				_SQL_SELECT_LISTTYPEDEFINITION_WHERE,
 				_SQL_COUNT_LISTTYPEDEFINITION_WHERE,
 				ListTypeDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					ListTypeDefinitionImpl.class, ListTypeDefinition.class,
-					"listTypeDefinition", "ListTypeDefinition",
-					"listTypeDefinition.listTypeDefinitionId",
-					"SELECT DISTINCT {listTypeDefinition.*} FROM ListTypeDefinition listTypeDefinition WHERE ",
-					"SELECT {ListTypeDefinition.*} FROM (SELECT DISTINCT listTypeDefinition.listTypeDefinitionId FROM ListTypeDefinition listTypeDefinition WHERE ",
-					") TEMP_TABLE INNER JOIN ListTypeDefinition ON TEMP_TABLE.listTypeDefinitionId = ListTypeDefinition.listTypeDefinitionId",
-					"SELECT COUNT(DISTINCT listTypeDefinition.listTypeDefinitionId) AS COUNT_VALUE FROM ListTypeDefinition listTypeDefinition WHERE ",
-					ListTypeDefinitionModelImpl.ORDER_BY_SQL,
-					ListTypeDefinitionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"listTypeDefinition.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, ListTypeDefinition::getUuid),
+					"listTypeDefinition.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ListTypeDefinition::getUuid),
 				new FinderColumn<>(
 					"listTypeDefinition.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ListTypeDefinition::getCompanyId));
@@ -962,17 +907,7 @@ public class ListTypeDefinitionPersistenceImpl
 				_SQL_SELECT_LISTTYPEDEFINITION_WHERE,
 				_SQL_COUNT_LISTTYPEDEFINITION_WHERE,
 				ListTypeDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					ListTypeDefinitionImpl.class, ListTypeDefinition.class,
-					"listTypeDefinition", "ListTypeDefinition",
-					"listTypeDefinition.listTypeDefinitionId",
-					"SELECT DISTINCT {listTypeDefinition.*} FROM ListTypeDefinition listTypeDefinition WHERE ",
-					"SELECT {ListTypeDefinition.*} FROM (SELECT DISTINCT listTypeDefinition.listTypeDefinitionId FROM ListTypeDefinition listTypeDefinition WHERE ",
-					") TEMP_TABLE INNER JOIN ListTypeDefinition ON TEMP_TABLE.listTypeDefinitionId = ListTypeDefinition.listTypeDefinitionId",
-					"SELECT COUNT(DISTINCT listTypeDefinition.listTypeDefinitionId) AS COUNT_VALUE FROM ListTypeDefinition listTypeDefinition WHERE ",
-					ListTypeDefinitionModelImpl.ORDER_BY_SQL,
-					ListTypeDefinitionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"listTypeDefinition.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ListTypeDefinition::getCompanyId),
@@ -1053,12 +988,6 @@ public class ListTypeDefinitionPersistenceImpl
 	private static final String _SQL_COUNT_LISTTYPEDEFINITION_WHERE =
 		"SELECT COUNT(listTypeDefinition) FROM ListTypeDefinition listTypeDefinition WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ListTypeDefinition exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ListTypeDefinitionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "system"});
 
@@ -1068,4 +997,4 @@ public class ListTypeDefinitionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-242499217
+// LIFERAY-SERVICE-BUILDER-HASH:149902601

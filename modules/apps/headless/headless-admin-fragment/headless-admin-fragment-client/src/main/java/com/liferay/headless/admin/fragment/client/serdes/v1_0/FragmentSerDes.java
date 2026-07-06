@@ -5,6 +5,8 @@
 
 package com.liferay.headless.admin.fragment.client.serdes.v1_0;
 
+import com.liferay.headless.admin.fragment.client.dto.v1_0.BasicFragment;
+import com.liferay.headless.admin.fragment.client.dto.v1_0.FormFragment;
 import com.liferay.headless.admin.fragment.client.dto.v1_0.Fragment;
 import com.liferay.headless.admin.fragment.client.dto.v1_0.FragmentVersion;
 import com.liferay.headless.admin.fragment.client.json.BaseJSONParser;
@@ -44,184 +46,24 @@ public class FragmentSerDes {
 			return "null";
 		}
 
-		StringBuilder sb = new StringBuilder();
+		Fragment.Type type = fragment.getType();
 
-		sb.append("{");
+		if (type != null) {
+			String typeString = type.toString();
 
-		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ssXX");
-
-		if (fragment.getCacheable() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
+			if (typeString.equals("BasicFragment")) {
+				return BasicFragmentSerDes.toJSON((BasicFragment)fragment);
 			}
 
-			sb.append("\"cacheable\": ");
+			if (typeString.equals("FormFragment")) {
+				return FormFragmentSerDes.toJSON((FormFragment)fragment);
+			}
 
-			sb.append(fragment.getCacheable());
+			throw new IllegalArgumentException("Unknown type " + typeString);
 		}
-
-		if (fragment.getCreator() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"creator\": ");
-
-			sb.append(fragment.getCreator());
+		else {
+			throw new IllegalArgumentException("Missing type parameter");
 		}
-
-		if (fragment.getDateCreated() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"dateCreated\": ");
-
-			sb.append("\"");
-
-			sb.append(
-				liferayToJSONDateFormat.format(fragment.getDateCreated()));
-
-			sb.append("\"");
-		}
-
-		if (fragment.getDateModified() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"dateModified\": ");
-
-			sb.append("\"");
-
-			sb.append(
-				liferayToJSONDateFormat.format(fragment.getDateModified()));
-
-			sb.append("\"");
-		}
-
-		if (fragment.getExternalReferenceCode() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"externalReferenceCode\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(fragment.getExternalReferenceCode()));
-
-			sb.append("\"");
-		}
-
-		if (fragment.getFragmentSet() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"fragmentSet\": ");
-
-			sb.append(String.valueOf(fragment.getFragmentSet()));
-		}
-
-		if (fragment.getFragmentVersions() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"fragmentVersions\": ");
-
-			sb.append("[");
-
-			for (int i = 0; i < fragment.getFragmentVersions().length; i++) {
-				sb.append(String.valueOf(fragment.getFragmentVersions()[i]));
-
-				if ((i + 1) < fragment.getFragmentVersions().length) {
-					sb.append(", ");
-				}
-			}
-
-			sb.append("]");
-		}
-
-		if (fragment.getIcon() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"icon\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(fragment.getIcon()));
-
-			sb.append("\"");
-		}
-
-		if (fragment.getKey() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"key\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(fragment.getKey()));
-
-			sb.append("\"");
-		}
-
-		if (fragment.getMarketplace() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"marketplace\": ");
-
-			sb.append(fragment.getMarketplace());
-		}
-
-		if (fragment.getName() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"name\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(fragment.getName()));
-
-			sb.append("\"");
-		}
-
-		if (fragment.getReadOnly() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"readOnly\": ");
-
-			sb.append(fragment.getReadOnly());
-		}
-
-		if (fragment.getType() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"type\": ");
-
-			sb.append("\"");
-			sb.append(fragment.getType());
-			sb.append("\"");
-		}
-
-		sb.append("}");
-
-		return sb.toString();
 	}
 
 	public static Map<String, Object> toMap(String json) {
@@ -332,6 +174,15 @@ public class FragmentSerDes {
 			map.put("readOnly", String.valueOf(fragment.getReadOnly()));
 		}
 
+		if (fragment.getThumbnailURLReference() == null) {
+			map.put("thumbnailURLReference", null);
+		}
+		else {
+			map.put(
+				"thumbnailURLReference",
+				String.valueOf(fragment.getThumbnailURLReference()));
+		}
+
 		if (fragment.getType() == null) {
 			map.put("type", null);
 		}
@@ -346,7 +197,7 @@ public class FragmentSerDes {
 
 		@Override
 		protected Fragment createDTO() {
-			return new Fragment();
+			return null;
 		}
 
 		@Override
@@ -394,11 +245,41 @@ public class FragmentSerDes {
 			else if (Objects.equals(jsonParserFieldName, "readOnly")) {
 				return false;
 			}
+			else if (Objects.equals(
+						jsonParserFieldName, "thumbnailURLReference")) {
+
+				return false;
+			}
 			else if (Objects.equals(jsonParserFieldName, "type")) {
 				return false;
 			}
 
 			return false;
+		}
+
+		@Override
+		public Fragment parseToDTO(String json) {
+			Map<String, Object> jsonMap = parseToMap(json);
+
+			Object type = jsonMap.get("type");
+
+			if (type != null) {
+				String typeString = type.toString();
+
+				if (typeString.equals("BasicFragment")) {
+					return BasicFragment.toDTO(json);
+				}
+
+				if (typeString.equals("FormFragment")) {
+					return FormFragment.toDTO(json);
+				}
+
+				throw new IllegalArgumentException(
+					"Unknown type " + typeString);
+			}
+			else {
+				throw new IllegalArgumentException("Missing type parameter");
+			}
 		}
 
 		@Override
@@ -482,6 +363,15 @@ public class FragmentSerDes {
 			else if (Objects.equals(jsonParserFieldName, "readOnly")) {
 				if (jsonParserFieldValue != null) {
 					fragment.setReadOnly((Boolean)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "thumbnailURLReference")) {
+
+				if (jsonParserFieldValue != null) {
+					fragment.setThumbnailURLReference(
+						ThumbnailURLReferenceSerDes.toDTO(
+							(String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "type")) {
@@ -571,4 +461,4 @@ public class FragmentSerDes {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:704343568
+// LIFERAY-REST-BUILDER-HASH:-282516193

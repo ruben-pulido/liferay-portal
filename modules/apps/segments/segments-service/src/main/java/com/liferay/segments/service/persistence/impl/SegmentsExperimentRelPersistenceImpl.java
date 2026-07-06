@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -83,8 +81,9 @@ public class SegmentsExperimentRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SegmentsExperimentRel>
-		_collectionPersistenceFinderBySegmentsExperimentId;
+	private CollectionPersistenceFinder
+		<SegmentsExperimentRel, NoSuchExperimentRelException>
+			_collectionPersistenceFinderBySegmentsExperimentId;
 
 	/**
 	 * Returns an ordered range of all the segments experiment rels where segmentsExperimentId = &#63;.
@@ -125,19 +124,9 @@ public class SegmentsExperimentRelPersistenceImpl
 			OrderByComparator<SegmentsExperimentRel> orderByComparator)
 		throws NoSuchExperimentRelException {
 
-		SegmentsExperimentRel segmentsExperimentRel =
-			fetchBySegmentsExperimentId_First(
-				segmentsExperimentId, orderByComparator);
-
-		if (segmentsExperimentRel != null) {
-			return segmentsExperimentRel;
-		}
-
-		throw new NoSuchExperimentRelException(
-			_collectionPersistenceFinderBySegmentsExperimentId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {segmentsExperimentId}));
+		return _collectionPersistenceFinderBySegmentsExperimentId.findFirst(
+			finderCache, new Object[] {segmentsExperimentId},
+			orderByComparator);
 	}
 
 	/**
@@ -180,8 +169,9 @@ public class SegmentsExperimentRelPersistenceImpl
 			finderCache, new Object[] {segmentsExperimentId});
 	}
 
-	private CollectionPersistenceFinder<SegmentsExperimentRel>
-		_collectionPersistenceFinderBySegmentsExperienceId;
+	private CollectionPersistenceFinder
+		<SegmentsExperimentRel, NoSuchExperimentRelException>
+			_collectionPersistenceFinderBySegmentsExperienceId;
 
 	/**
 	 * Returns an ordered range of all the segments experiment rels where segmentsExperienceId = &#63;.
@@ -222,19 +212,9 @@ public class SegmentsExperimentRelPersistenceImpl
 			OrderByComparator<SegmentsExperimentRel> orderByComparator)
 		throws NoSuchExperimentRelException {
 
-		SegmentsExperimentRel segmentsExperimentRel =
-			fetchBySegmentsExperienceId_First(
-				segmentsExperienceId, orderByComparator);
-
-		if (segmentsExperimentRel != null) {
-			return segmentsExperimentRel;
-		}
-
-		throw new NoSuchExperimentRelException(
-			_collectionPersistenceFinderBySegmentsExperienceId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {segmentsExperienceId}));
+		return _collectionPersistenceFinderBySegmentsExperienceId.findFirst(
+			finderCache, new Object[] {segmentsExperienceId},
+			orderByComparator);
 	}
 
 	/**
@@ -277,8 +257,9 @@ public class SegmentsExperimentRelPersistenceImpl
 			finderCache, new Object[] {segmentsExperienceId});
 	}
 
-	private UniquePersistenceFinder<SegmentsExperimentRel>
-		_uniquePersistenceFinderByS_S;
+	private UniquePersistenceFinder
+		<SegmentsExperimentRel, NoSuchExperimentRelException>
+			_uniquePersistenceFinderByS_S;
 
 	/**
 	 * Returns the segments experiment rel where segmentsExperimentId = &#63; and segmentsExperienceId = &#63; or throws a <code>NoSuchExperimentRelException</code> if it could not be found.
@@ -293,23 +274,9 @@ public class SegmentsExperimentRelPersistenceImpl
 			long segmentsExperimentId, long segmentsExperienceId)
 		throws NoSuchExperimentRelException {
 
-		SegmentsExperimentRel segmentsExperimentRel = fetchByS_S(
-			segmentsExperimentId, segmentsExperienceId);
-
-		if (segmentsExperimentRel == null) {
-			String message =
-				_uniquePersistenceFinderByS_S.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {segmentsExperimentId, segmentsExperienceId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchExperimentRelException(message);
-		}
-
-		return segmentsExperimentRel;
+		return _uniquePersistenceFinderByS_S.find(
+			finderCache,
+			new Object[] {segmentsExperimentId, segmentsExperienceId});
 	}
 
 	/**
@@ -678,7 +645,7 @@ public class SegmentsExperimentRelPersistenceImpl
 				_SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE,
 				_SQL_COUNT_SEGMENTSEXPERIMENTREL_WHERE,
 				SegmentsExperimentRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"segmentsExperimentRel.", "segmentsExperimentId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -709,7 +676,7 @@ public class SegmentsExperimentRelPersistenceImpl
 				_SQL_SELECT_SEGMENTSEXPERIMENTREL_WHERE,
 				_SQL_COUNT_SEGMENTSEXPERIMENTREL_WHERE,
 				SegmentsExperimentRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"segmentsExperimentRel.", "segmentsExperienceId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -790,16 +757,10 @@ public class SegmentsExperimentRelPersistenceImpl
 	private static final String _SQL_COUNT_SEGMENTSEXPERIMENTREL_WHERE =
 		"SELECT COUNT(segmentsExperimentRel) FROM SegmentsExperimentRel segmentsExperimentRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SegmentsExperimentRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SegmentsExperimentRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-553186800
+// LIFERAY-SERVICE-BUILDER-HASH:1609627544

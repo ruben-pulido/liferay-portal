@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,8 +79,9 @@ public class CommerceWishListPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceWishList>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommerceWishList, NoSuchWishListException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce wish lists where uuid = &#63;.
@@ -122,16 +121,8 @@ public class CommerceWishListPersistenceImpl
 			String uuid, OrderByComparator<CommerceWishList> orderByComparator)
 		throws NoSuchWishListException {
 
-		CommerceWishList commerceWishList = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (commerceWishList != null) {
-			return commerceWishList;
-		}
-
-		throw new NoSuchWishListException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -172,7 +163,7 @@ public class CommerceWishListPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CommerceWishList>
+	private UniquePersistenceFinder<CommerceWishList, NoSuchWishListException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -187,21 +178,8 @@ public class CommerceWishListPersistenceImpl
 	public CommerceWishList findByUUID_G(String uuid, long groupId)
 		throws NoSuchWishListException {
 
-		CommerceWishList commerceWishList = fetchByUUID_G(uuid, groupId);
-
-		if (commerceWishList == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchWishListException(message);
-		}
-
-		return commerceWishList;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -249,8 +227,9 @@ public class CommerceWishListPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceWishList>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommerceWishList, NoSuchWishListException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce wish lists where uuid = &#63; and companyId = &#63;.
@@ -293,16 +272,8 @@ public class CommerceWishListPersistenceImpl
 			OrderByComparator<CommerceWishList> orderByComparator)
 		throws NoSuchWishListException {
 
-		CommerceWishList commerceWishList = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (commerceWishList != null) {
-			return commerceWishList;
-		}
-
-		throw new NoSuchWishListException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -347,8 +318,9 @@ public class CommerceWishListPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CommerceWishList>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<CommerceWishList, NoSuchWishListException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the commerce wish lists where groupId = &#63;.
@@ -388,16 +360,8 @@ public class CommerceWishListPersistenceImpl
 			long groupId, OrderByComparator<CommerceWishList> orderByComparator)
 		throws NoSuchWishListException {
 
-		CommerceWishList commerceWishList = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (commerceWishList != null) {
-			return commerceWishList;
-		}
-
-		throw new NoSuchWishListException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -438,8 +402,9 @@ public class CommerceWishListPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceWishList>
-		_collectionPersistenceFinderByUserId;
+	private CollectionPersistenceFinder
+		<CommerceWishList, NoSuchWishListException>
+			_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns an ordered range of all the commerce wish lists where userId = &#63;.
@@ -479,16 +444,8 @@ public class CommerceWishListPersistenceImpl
 			long userId, OrderByComparator<CommerceWishList> orderByComparator)
 		throws NoSuchWishListException {
 
-		CommerceWishList commerceWishList = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (commerceWishList != null) {
-			return commerceWishList;
-		}
-
-		throw new NoSuchWishListException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -529,8 +486,9 @@ public class CommerceWishListPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<CommerceWishList>
-		_collectionPersistenceFinderByG_U;
+	private CollectionPersistenceFinder
+		<CommerceWishList, NoSuchWishListException>
+			_collectionPersistenceFinderByG_U;
 
 	/**
 	 * Returns an ordered range of all the commerce wish lists where groupId = &#63; and userId = &#63;.
@@ -573,16 +531,8 @@ public class CommerceWishListPersistenceImpl
 			OrderByComparator<CommerceWishList> orderByComparator)
 		throws NoSuchWishListException {
 
-		CommerceWishList commerceWishList = fetchByG_U_First(
-			groupId, userId, orderByComparator);
-
-		if (commerceWishList != null) {
-			return commerceWishList;
-		}
-
-		throw new NoSuchWishListException(
-			_collectionPersistenceFinderByG_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, userId}));
+		return _collectionPersistenceFinderByG_U.findFirst(
+			finderCache, new Object[] {groupId, userId}, orderByComparator);
 	}
 
 	/**
@@ -627,8 +577,9 @@ public class CommerceWishListPersistenceImpl
 			finderCache, new Object[] {groupId, userId});
 	}
 
-	private CollectionPersistenceFinder<CommerceWishList>
-		_collectionPersistenceFinderByU_LtC;
+	private CollectionPersistenceFinder
+		<CommerceWishList, NoSuchWishListException>
+			_collectionPersistenceFinderByU_LtC;
 
 	/**
 	 * Returns all the commerce wish lists where userId = &#63; and createDate &lt; &#63;.
@@ -727,16 +678,8 @@ public class CommerceWishListPersistenceImpl
 			OrderByComparator<CommerceWishList> orderByComparator)
 		throws NoSuchWishListException {
 
-		CommerceWishList commerceWishList = fetchByU_LtC_First(
-			userId, createDate, orderByComparator);
-
-		if (commerceWishList != null) {
-			return commerceWishList;
-		}
-
-		throw new NoSuchWishListException(
-			_collectionPersistenceFinderByU_LtC.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId, createDate}));
+		return _collectionPersistenceFinderByU_LtC.findFirst(
+			finderCache, new Object[] {userId, createDate}, orderByComparator);
 	}
 
 	/**
@@ -781,8 +724,9 @@ public class CommerceWishListPersistenceImpl
 			finderCache, new Object[] {userId, createDate});
 	}
 
-	private CollectionPersistenceFinder<CommerceWishList>
-		_collectionPersistenceFinderByG_U_D;
+	private CollectionPersistenceFinder
+		<CommerceWishList, NoSuchWishListException>
+			_collectionPersistenceFinderByG_U_D;
 
 	/**
 	 * Returns an ordered range of all the commerce wish lists where groupId = &#63; and userId = &#63; and defaultWishList = &#63;.
@@ -827,17 +771,9 @@ public class CommerceWishListPersistenceImpl
 			OrderByComparator<CommerceWishList> orderByComparator)
 		throws NoSuchWishListException {
 
-		CommerceWishList commerceWishList = fetchByG_U_D_First(
-			groupId, userId, defaultWishList, orderByComparator);
-
-		if (commerceWishList != null) {
-			return commerceWishList;
-		}
-
-		throw new NoSuchWishListException(
-			_collectionPersistenceFinderByG_U_D.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, userId, defaultWishList}));
+		return _collectionPersistenceFinderByG_U_D.findFirst(
+			finderCache, new Object[] {groupId, userId, defaultWishList},
+			orderByComparator);
 	}
 
 	/**
@@ -1133,9 +1069,10 @@ public class CommerceWishListPersistenceImpl
 			_SQL_SELECT_COMMERCEWISHLIST_WHERE,
 			_SQL_COUNT_COMMERCEWISHLIST_WHERE,
 			CommerceWishListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"commerceWishList.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CommerceWishList::getUuid));
+				"commerceWishList.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, CommerceWishList::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1147,8 +1084,8 @@ public class CommerceWishListPersistenceImpl
 				CommerceWishList::getGroupId),
 			_SQL_SELECT_COMMERCEWISHLIST_WHERE, "",
 			new FinderColumn<>(
-				"commerceWishList.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CommerceWishList::getUuid),
+				"commerceWishList.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, CommerceWishList::getUuid),
 			new FinderColumn<>(
 				"commerceWishList.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceWishList::getGroupId));
@@ -1175,10 +1112,11 @@ public class CommerceWishListPersistenceImpl
 				_SQL_SELECT_COMMERCEWISHLIST_WHERE,
 				_SQL_COUNT_COMMERCEWISHLIST_WHERE,
 				CommerceWishListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"commerceWishList.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceWishList::getUuid),
+					"commerceWishList.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceWishList::getUuid),
 				new FinderColumn<>(
 					"commerceWishList.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceWishList::getCompanyId));
@@ -1205,7 +1143,7 @@ public class CommerceWishListPersistenceImpl
 				_SQL_SELECT_COMMERCEWISHLIST_WHERE,
 				_SQL_COUNT_COMMERCEWISHLIST_WHERE,
 				CommerceWishListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"commerceWishList.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceWishList::getGroupId));
@@ -1232,7 +1170,7 @@ public class CommerceWishListPersistenceImpl
 				_SQL_SELECT_COMMERCEWISHLIST_WHERE,
 				_SQL_COUNT_COMMERCEWISHLIST_WHERE,
 				CommerceWishListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"commerceWishList.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceWishList::getUserId));
@@ -1258,6 +1196,7 @@ public class CommerceWishListPersistenceImpl
 			_SQL_SELECT_COMMERCEWISHLIST_WHERE,
 			_SQL_COUNT_COMMERCEWISHLIST_WHERE,
 			CommerceWishListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"commerceWishList.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceWishList::getGroupId),
@@ -1283,6 +1222,7 @@ public class CommerceWishListPersistenceImpl
 			_SQL_SELECT_COMMERCEWISHLIST_WHERE,
 			_SQL_COUNT_COMMERCEWISHLIST_WHERE,
 			CommerceWishListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"commerceWishList.", "userId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceWishList::getUserId),
@@ -1317,6 +1257,7 @@ public class CommerceWishListPersistenceImpl
 			_SQL_SELECT_COMMERCEWISHLIST_WHERE,
 			_SQL_COUNT_COMMERCEWISHLIST_WHERE,
 			CommerceWishListModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"commerceWishList.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceWishList::getGroupId),
@@ -1382,12 +1323,6 @@ public class CommerceWishListPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEWISHLIST_WHERE =
 		"SELECT COUNT(commerceWishList) FROM CommerceWishList commerceWishList WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceWishList exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceWishListPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1397,4 +1332,4 @@ public class CommerceWishListPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:727660518
+// LIFERAY-SERVICE-BUILDER-HASH:1783963250

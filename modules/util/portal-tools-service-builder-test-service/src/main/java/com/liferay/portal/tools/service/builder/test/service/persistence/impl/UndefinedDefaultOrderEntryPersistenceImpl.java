@@ -9,8 +9,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -65,8 +63,9 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<UndefinedDefaultOrderEntry>
-		_uniquePersistenceFinderByName;
+	private UniquePersistenceFinder
+		<UndefinedDefaultOrderEntry, NoSuchUndefinedDefaultOrderEntryException>
+			_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the undefined default order entry where name = &#63; or throws a <code>NoSuchUndefinedDefaultOrderEntryException</code> if it could not be found.
@@ -79,22 +78,8 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	public UndefinedDefaultOrderEntry findByName(String name)
 		throws NoSuchUndefinedDefaultOrderEntryException {
 
-		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry = fetchByName(
-			name);
-
-		if (undefinedDefaultOrderEntry == null) {
-			String message =
-				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchUndefinedDefaultOrderEntryException(message);
-		}
-
-		return undefinedDefaultOrderEntry;
+		return _uniquePersistenceFinderByName.find(
+			finderCache, new Object[] {name});
 	}
 
 	/**
@@ -140,8 +125,9 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 			finderCache, new Object[] {name});
 	}
 
-	private CollectionPersistenceFinder<UndefinedDefaultOrderEntry>
-		_collectionPersistenceFinderByName_Collection;
+	private CollectionPersistenceFinder
+		<UndefinedDefaultOrderEntry, NoSuchUndefinedDefaultOrderEntryException>
+			_collectionPersistenceFinderByName_Collection;
 
 	/**
 	 * Returns an ordered range of all the undefined default order entries where name = &#63;.
@@ -182,16 +168,8 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 			OrderByComparator<UndefinedDefaultOrderEntry> orderByComparator)
 		throws NoSuchUndefinedDefaultOrderEntryException {
 
-		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry =
-			fetchByName_Collection_First(name, orderByComparator);
-
-		if (undefinedDefaultOrderEntry != null) {
-			return undefinedDefaultOrderEntry;
-		}
-
-		throw new NoSuchUndefinedDefaultOrderEntryException(
-			_collectionPersistenceFinderByName_Collection.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name}));
+		return _collectionPersistenceFinderByName_Collection.findFirst(
+			finderCache, new Object[] {name}, orderByComparator);
 	}
 
 	/**
@@ -474,7 +452,7 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 				_SQL_SELECT_UNDEFINEDDEFAULTORDERENTRY_WHERE,
 				_SQL_COUNT_UNDEFINEDDEFAULTORDERENTRY_WHERE,
 				UndefinedDefaultOrderEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"undefinedDefaultOrderEntry.", "name",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -507,16 +485,10 @@ public class UndefinedDefaultOrderEntryPersistenceImpl
 	private static final String _SQL_COUNT_UNDEFINEDDEFAULTORDERENTRY_WHERE =
 		"SELECT COUNT(undefinedDefaultOrderEntry) FROM UndefinedDefaultOrderEntry undefinedDefaultOrderEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No UndefinedDefaultOrderEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		UndefinedDefaultOrderEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:164193818
+// LIFERAY-SERVICE-BUILDER-HASH:-1892088585

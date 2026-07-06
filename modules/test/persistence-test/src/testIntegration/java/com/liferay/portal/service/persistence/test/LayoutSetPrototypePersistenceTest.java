@@ -109,11 +109,7 @@ public class LayoutSetPrototypePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		LayoutSetPrototype newLayoutSetPrototype = _persistence.create(pk);
-
-		newLayoutSetPrototype.setMvccVersion(RandomTestUtil.nextLong());
+		LayoutSetPrototype newLayoutSetPrototype = addLayoutSetPrototype();
 
 		newLayoutSetPrototype.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -137,7 +133,9 @@ public class LayoutSetPrototypePersistenceTest {
 
 		newLayoutSetPrototype.setActive(RandomTestUtil.randomBoolean());
 
-		_layoutSetPrototypes.add(_persistence.update(newLayoutSetPrototype));
+		newLayoutSetPrototype = _persistence.update(newLayoutSetPrototype);
+
+		_layoutSetPrototypes.add(newLayoutSetPrototype);
 
 		LayoutSetPrototype existingLayoutSetPrototype =
 			_persistence.findByPrimaryKey(
@@ -478,8 +476,6 @@ public class LayoutSetPrototypePersistenceTest {
 
 		LayoutSetPrototype layoutSetPrototype = _persistence.create(pk);
 
-		layoutSetPrototype.setMvccVersion(RandomTestUtil.nextLong());
-
 		layoutSetPrototype.setCtCollectionId(RandomTestUtil.nextLong());
 
 		layoutSetPrototype.setUuid(RandomTestUtil.randomString());
@@ -513,4 +509,4 @@ public class LayoutSetPrototypePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-601550633
+// LIFERAY-SERVICE-BUILDER-HASH:251212160

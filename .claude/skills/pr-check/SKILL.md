@@ -12,11 +12,19 @@ Run premerge checks against the current branch. The skill iterates through the v
 
 ## Preconditions
 
-- **Branch rebased on local `master`.** Compare `git merge-base HEAD master` to `git rev-parse master`; when they differ, abort and tell the developer to rebase (`git rebase master`). The `format-source-current-branch` validation diffs against the local `master` tip to decide which files to format — when the branch's merge-base lags behind that tip, SF picks up reverse-direction diffs from the master commits the branch has not absorbed and the `<TICKET> SF` autocommit captures unrelated rewrites.
+- **On a feature branch.** When `HEAD` is `master` or detached, exit with a one-line message.
 
-- **Working tree clean.** `git status --porcelain` must return empty. When dirty, abort and ask the developer to commit first — the autocommit steps inside drift validations would otherwise capture their uncommitted edits.
+- **Working tree clean.** `git status --porcelain` must return empty. When dirty, abort and ask the developer to commit first.
 
-- **Diff baseline is local `master`.** The skill never fetches from a remote and does not compare against an `upstream/master` ref. Whether local `master` is up to date is the developer's call.
+- **Rebased on the latest `master`.** Resolve the master remote. Prefer `upstream`, otherwise the remote whose URL points at `liferay/liferay-portal` (check `git remote --verbose`). When none resolves, compare `git merge-base HEAD master` to `git rev-parse master`. Abort and tell the developer to rebase when the two differ, and warn that the branch was not checked against a remote. Otherwise run these steps.
+
+	1. `git fetch <remote> master`.
+
+	1. Fast forward local `master` to the fetched tip. When `master` is checked out in another worktree, fast forward it there with `git -C <worktree> merge --ff-only <remote>/master`. Otherwise update it in place with `git fetch <remote> master:master`, which also creates `master` when it does not exist. Both are fast forward only. When the command fails (because `master` has diverged or its worktree is not clean), warn the developer and stop the run.
+
+	1. `git rebase <remote>/master`. On a clean rebase, continue against the rebased branch. On conflict, list the unmerged files (`git diff --diff-filter=U --name-only`) and ask the developer who should resolve the conflicts. When the developer asks you to resolve them, fix the conflicts, `git add` the files, and run `git rebase --continue`. In every other case (the developer resolves them, the conflicts cannot be resolved, or the rebase fails otherwise) run `git rebase --abort` and stop the run.
+
+- **Diff baseline is local `master`.** After the rebase, the three-dot diff against local `master` is the baseline.
 
 - **Diff is nonempty.** When the three-dot diff produces no files, exit with a one-line message — no validation produces useful signal on a clean branch.
 
@@ -30,7 +38,7 @@ git diff --name-status "$(git merge-base HEAD master)...HEAD"
 
 ## Expected Output
 
-**`PASS`** or **`FAIL`**.
+**`PASS`** or **`FAIL`**, followed by a **Results Summary** table the `pr` and `pr-check-publish` skills reuse to record what was tested on the GitHub PR.
 
 The procedure runs in two passes over the validations, in the order below. The order is dependency-driven: drift first (later validations see the regenerated tree), then formatting, then build, then tests.
 
@@ -42,13 +50,23 @@ The procedure runs in two passes over the validations, in the order below. The o
 
 1. [Source Format](validations/source-format.md)
 
+1. [Module Registration](validations/module-registration.md)
+
+1. [Portlet Title](validations/portlet-title.md)
+
 1. [Full Portal Build](validations/full-portal-build.md)
 
-1. [Per-Module Deploy](validations/per-module-deploy.md)
+1. [Per-Module Compile](validations/per-module-compile.md)
+
+1. [Integration Test Compile](validations/integration-test-compile.md)
+
+1. [Cross-Module Compile](validations/cross-module-compile.md)
+
+1. [Baseline](validations/baseline.md)
 
 1. [JSP Compile](validations/jsp-compile.md)
 
-1. [Integration Test Compile](validations/integration-test-compile.md)
+1. [Theme Build](validations/theme-build.md)
 
 1. [Workspace Build](validations/workspace-build.md)
 
@@ -57,6 +75,8 @@ The procedure runs in two passes over the validations, in the order below. The o
 1. [Structural Smoke](validations/structural-smoke.md)
 
 1. [Java Unit Tests](validations/java-unit-test.md)
+
+1. [PQL Validation](validations/pql-validation.md)
 
 1. [JavaScript Unit Tests](validations/javascript-unit-test.md)
 
@@ -70,6 +90,7 @@ In your next turn, compose a single bash script that:
 
 - computes the diff: `git diff --name-only "$(git merge-base HEAD master)...HEAD"`
 - for each validation, tests its regex against the diff and prints the validation name when it fires (a leading `!` in the regex inverts: fire when any diff path does *not* match the rest)
+- ` &! ` in the regex splits it into an include side and an exclude side. The validation fires when a diff path matches the include side but not the exclude side.
 - runs as a single Bash tool invocation
 
 From the script's output, sum the matched validations' `## Time Estimate` values for the cumulative total. The matching is mechanical; consult each file's prose `## Trigger` only when a result needs human-judgment context (e.g., Service Builder output-only catch-up).
@@ -83,9 +104,29 @@ For each matched validation, spawn one subagent. **Pass it only the `## Command`
 When the validation's **Command** is a build (gradle, ant, npm, jest), bound the output:
 
 ```bash
-<command> 2>&1 | tail -n 100
+<command> 2>&1 | tail --lines=100
 ```
 
 Decide PASS/FAIL from the build tool's success markers in the captured output (`BUILD SUCCESSFUL` / `BUILD FAILED`, `Tests: N passed, M failed`, etc.). Apply only to build commands. Leave inert commands like `git status --porcelain` and `git diff --quiet` untouched.
 
 When all validations pass, report `PASS`. When any fail, report `FAIL` and surface the failed validations.
+
+## Results Summary
+
+After the two passes complete, emit a Results Summary block. It is the canonical record of what was tested, embedded verbatim by the `pr` skill into the PR description and reused by the `pr-check-publish` skill when recording a run on an existing PR.
+
+Capture the tested commit with `git rev-parse HEAD` **after** Pass 2 completes, so the SHA reflects the tree that was actually exercised — including any autocommits the validations made, such as the `<TICKET> SF` source-format commit. This is the commit the `pr` skill pushes as the PR head and the commit the webhook binds the `pr-check` status to, so a reviewer can tell whether the current head is the one that was tested.
+
+The block is the overall state and tested SHA, followed by a table with one row per **matched** validation — the validations that actually ran, in the execution order above. Validations whose `## Match` regex did not fire are omitted rather than listed as skipped, so the table reflects only what the diff exercised.
+
+```markdown
+**pr-check: PASS** — tested on `<head-SHA>`
+
+| Validation | Result |
+| --- | --- |
+| Source Format | PASS |
+| Full Portal Build | PASS |
+| Java Unit Tests | PASS |
+```
+
+The overall state is `PASS` only when every row is `PASS`; any `FAIL` row makes it `FAIL`.

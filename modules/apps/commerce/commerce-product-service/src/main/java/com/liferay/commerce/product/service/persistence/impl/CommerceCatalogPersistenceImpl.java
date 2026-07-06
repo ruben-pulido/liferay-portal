@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -95,8 +93,9 @@ public class CommerceCatalogPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<CommerceCatalog>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<CommerceCatalog, NoSuchCatalogException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce catalogs where uuid = &#63;.
@@ -136,16 +135,8 @@ public class CommerceCatalogPersistenceImpl
 			String uuid, OrderByComparator<CommerceCatalog> orderByComparator)
 		throws NoSuchCatalogException {
 
-		CommerceCatalog commerceCatalog = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (commerceCatalog != null) {
-			return commerceCatalog;
-		}
-
-		throw new NoSuchCatalogException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -220,8 +211,9 @@ public class CommerceCatalogPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceCatalog>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<CommerceCatalog, NoSuchCatalogException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce catalogs where uuid = &#63; and companyId = &#63;.
@@ -264,16 +256,8 @@ public class CommerceCatalogPersistenceImpl
 			OrderByComparator<CommerceCatalog> orderByComparator)
 		throws NoSuchCatalogException {
 
-		CommerceCatalog commerceCatalog = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (commerceCatalog != null) {
-			return commerceCatalog;
-		}
-
-		throw new NoSuchCatalogException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -355,8 +339,9 @@ public class CommerceCatalogPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceCatalog>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<CommerceCatalog, NoSuchCatalogException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the commerce catalogs where companyId = &#63;.
@@ -397,16 +382,8 @@ public class CommerceCatalogPersistenceImpl
 			OrderByComparator<CommerceCatalog> orderByComparator)
 		throws NoSuchCatalogException {
 
-		CommerceCatalog commerceCatalog = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (commerceCatalog != null) {
-			return commerceCatalog;
-		}
-
-		throw new NoSuchCatalogException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -482,8 +459,9 @@ public class CommerceCatalogPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceCatalog>
-		_collectionPersistenceFinderByAccountEntryId;
+	private FilterCollectionPersistenceFinder
+		<CommerceCatalog, NoSuchCatalogException>
+			_collectionPersistenceFinderByAccountEntryId;
 
 	/**
 	 * Returns an ordered range of all the commerce catalogs where accountEntryId = &#63;.
@@ -524,16 +502,8 @@ public class CommerceCatalogPersistenceImpl
 			OrderByComparator<CommerceCatalog> orderByComparator)
 		throws NoSuchCatalogException {
 
-		CommerceCatalog commerceCatalog = fetchByAccountEntryId_First(
-			accountEntryId, orderByComparator);
-
-		if (commerceCatalog != null) {
-			return commerceCatalog;
-		}
-
-		throw new NoSuchCatalogException(
-			_collectionPersistenceFinderByAccountEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {accountEntryId}));
+		return _collectionPersistenceFinderByAccountEntryId.findFirst(
+			finderCache, new Object[] {accountEntryId}, orderByComparator);
 	}
 
 	/**
@@ -610,8 +580,9 @@ public class CommerceCatalogPersistenceImpl
 			finderCache, new Object[] {accountEntryId});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceCatalog>
-		_collectionPersistenceFinderByC_S;
+	private FilterCollectionPersistenceFinder
+		<CommerceCatalog, NoSuchCatalogException>
+			_collectionPersistenceFinderByC_S;
 
 	/**
 	 * Returns an ordered range of all the commerce catalogs where companyId = &#63; and system = &#63;.
@@ -654,16 +625,8 @@ public class CommerceCatalogPersistenceImpl
 			OrderByComparator<CommerceCatalog> orderByComparator)
 		throws NoSuchCatalogException {
 
-		CommerceCatalog commerceCatalog = fetchByC_S_First(
-			companyId, system, orderByComparator);
-
-		if (commerceCatalog != null) {
-			return commerceCatalog;
-		}
-
-		throw new NoSuchCatalogException(
-			_collectionPersistenceFinderByC_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, system}));
+		return _collectionPersistenceFinderByC_S.findFirst(
+			finderCache, new Object[] {companyId, system}, orderByComparator);
 	}
 
 	/**
@@ -745,7 +708,7 @@ public class CommerceCatalogPersistenceImpl
 			finderCache, new Object[] {companyId, system}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<CommerceCatalog>
+	private UniquePersistenceFinder<CommerceCatalog, NoSuchCatalogException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -761,23 +724,8 @@ public class CommerceCatalogPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCatalogException {
 
-		CommerceCatalog commerceCatalog = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (commerceCatalog == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCatalogException(message);
-		}
-
-		return commerceCatalog;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1219,20 +1167,11 @@ public class CommerceCatalogPersistenceImpl
 				_SQL_SELECT_COMMERCECATALOG_WHERE,
 				_SQL_COUNT_COMMERCECATALOG_WHERE,
 				CommerceCatalogModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceCatalogImpl.class, CommerceCatalog.class,
-					"commerceCatalog", "CommerceCatalog",
-					"commerceCatalog.commerceCatalogId",
-					"SELECT DISTINCT {commerceCatalog.*} FROM CommerceCatalog commerceCatalog WHERE ",
-					"SELECT {CommerceCatalog.*} FROM (SELECT DISTINCT commerceCatalog.commerceCatalogId FROM CommerceCatalog commerceCatalog WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceCatalog ON TEMP_TABLE.commerceCatalogId = CommerceCatalog.commerceCatalogId",
-					"SELECT COUNT(DISTINCT commerceCatalog.commerceCatalogId) AS COUNT_VALUE FROM CommerceCatalog commerceCatalog WHERE ",
-					CommerceCatalogModelImpl.ORDER_BY_SQL,
-					CommerceCatalogModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"commerceCatalog.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceCatalog::getUuid));
+					"commerceCatalog.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceCatalog::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1256,20 +1195,11 @@ public class CommerceCatalogPersistenceImpl
 				_SQL_SELECT_COMMERCECATALOG_WHERE,
 				_SQL_COUNT_COMMERCECATALOG_WHERE,
 				CommerceCatalogModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceCatalogImpl.class, CommerceCatalog.class,
-					"commerceCatalog", "CommerceCatalog",
-					"commerceCatalog.commerceCatalogId",
-					"SELECT DISTINCT {commerceCatalog.*} FROM CommerceCatalog commerceCatalog WHERE ",
-					"SELECT {CommerceCatalog.*} FROM (SELECT DISTINCT commerceCatalog.commerceCatalogId FROM CommerceCatalog commerceCatalog WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceCatalog ON TEMP_TABLE.commerceCatalogId = CommerceCatalog.commerceCatalogId",
-					"SELECT COUNT(DISTINCT commerceCatalog.commerceCatalogId) AS COUNT_VALUE FROM CommerceCatalog commerceCatalog WHERE ",
-					CommerceCatalogModelImpl.ORDER_BY_SQL,
-					CommerceCatalogModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"commerceCatalog.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceCatalog::getUuid),
+					"commerceCatalog.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceCatalog::getUuid),
 				new FinderColumn<>(
 					"commerceCatalog.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceCatalog::getCompanyId));
@@ -1296,17 +1226,7 @@ public class CommerceCatalogPersistenceImpl
 				_SQL_SELECT_COMMERCECATALOG_WHERE,
 				_SQL_COUNT_COMMERCECATALOG_WHERE,
 				CommerceCatalogModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceCatalogImpl.class, CommerceCatalog.class,
-					"commerceCatalog", "CommerceCatalog",
-					"commerceCatalog.commerceCatalogId",
-					"SELECT DISTINCT {commerceCatalog.*} FROM CommerceCatalog commerceCatalog WHERE ",
-					"SELECT {CommerceCatalog.*} FROM (SELECT DISTINCT commerceCatalog.commerceCatalogId FROM CommerceCatalog commerceCatalog WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceCatalog ON TEMP_TABLE.commerceCatalogId = CommerceCatalog.commerceCatalogId",
-					"SELECT COUNT(DISTINCT commerceCatalog.commerceCatalogId) AS COUNT_VALUE FROM CommerceCatalog commerceCatalog WHERE ",
-					CommerceCatalogModelImpl.ORDER_BY_SQL,
-					CommerceCatalogModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceCatalog.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceCatalog::getCompanyId));
@@ -1335,17 +1255,7 @@ public class CommerceCatalogPersistenceImpl
 				_SQL_SELECT_COMMERCECATALOG_WHERE,
 				_SQL_COUNT_COMMERCECATALOG_WHERE,
 				CommerceCatalogModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceCatalogImpl.class, CommerceCatalog.class,
-					"commerceCatalog", "CommerceCatalog",
-					"commerceCatalog.commerceCatalogId",
-					"SELECT DISTINCT {commerceCatalog.*} FROM CommerceCatalog commerceCatalog WHERE ",
-					"SELECT {CommerceCatalog.*} FROM (SELECT DISTINCT commerceCatalog.commerceCatalogId FROM CommerceCatalog commerceCatalog WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceCatalog ON TEMP_TABLE.commerceCatalogId = CommerceCatalog.commerceCatalogId",
-					"SELECT COUNT(DISTINCT commerceCatalog.commerceCatalogId) AS COUNT_VALUE FROM CommerceCatalog commerceCatalog WHERE ",
-					CommerceCatalogModelImpl.ORDER_BY_SQL,
-					CommerceCatalogModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceCatalog.", "accountEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1377,23 +1287,14 @@ public class CommerceCatalogPersistenceImpl
 				_SQL_SELECT_COMMERCECATALOG_WHERE,
 				_SQL_COUNT_COMMERCECATALOG_WHERE,
 				CommerceCatalogModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceCatalogImpl.class, CommerceCatalog.class,
-					"commerceCatalog", "CommerceCatalog",
-					"commerceCatalog.commerceCatalogId",
-					"SELECT DISTINCT {commerceCatalog.*} FROM CommerceCatalog commerceCatalog WHERE ",
-					"SELECT {CommerceCatalog.*} FROM (SELECT DISTINCT commerceCatalog.commerceCatalogId FROM CommerceCatalog commerceCatalog WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceCatalog ON TEMP_TABLE.commerceCatalogId = CommerceCatalog.commerceCatalogId",
-					"SELECT COUNT(DISTINCT commerceCatalog.commerceCatalogId) AS COUNT_VALUE FROM CommerceCatalog commerceCatalog WHERE ",
-					CommerceCatalogModelImpl.ORDER_BY_SQL,
-					CommerceCatalogModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceCatalog.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceCatalog::getCompanyId),
 				new FinderColumn<>(
-					"commerceCatalog.", "system", FinderColumn.Type.BOOLEAN,
-					"=", true, true, CommerceCatalog::isSystem));
+					"commerceCatalog.", "system", "system_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					CommerceCatalog::isSystem));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1470,12 +1371,6 @@ public class CommerceCatalogPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCECATALOG_WHERE =
 		"SELECT COUNT(commerceCatalog) FROM CommerceCatalog commerceCatalog WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceCatalog exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceCatalogPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "system"});
 
@@ -1485,4 +1380,4 @@ public class CommerceCatalogPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:146113794
+// LIFERAY-SERVICE-BUILDER-HASH:-1479590413

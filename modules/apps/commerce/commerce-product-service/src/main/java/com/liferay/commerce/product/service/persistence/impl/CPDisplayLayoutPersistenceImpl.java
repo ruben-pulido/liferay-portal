@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -86,8 +84,9 @@ public class CPDisplayLayoutPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where uuid = &#63;.
@@ -127,16 +126,8 @@ public class CPDisplayLayoutPersistenceImpl
 			String uuid, OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -177,8 +168,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CPDisplayLayout>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the cp display layout where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCPDisplayLayoutException</code> if it could not be found.
@@ -192,21 +184,8 @@ public class CPDisplayLayoutPersistenceImpl
 	public CPDisplayLayout findByUUID_G(String uuid, long groupId)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByUUID_G(uuid, groupId);
-
-		if (cpDisplayLayout == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDisplayLayoutException(message);
-		}
-
-		return cpDisplayLayout;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -254,8 +233,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where uuid = &#63; and companyId = &#63;.
@@ -298,16 +278,8 @@ public class CPDisplayLayoutPersistenceImpl
 			OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -352,8 +324,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where groupId = &#63;.
@@ -393,16 +366,8 @@ public class CPDisplayLayoutPersistenceImpl
 			long groupId, OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -443,8 +408,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByG_C;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByG_C;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and classNameId = &#63;.
@@ -487,16 +453,9 @@ public class CPDisplayLayoutPersistenceImpl
 			OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByG_C_First(
-			groupId, classNameId, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByG_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, classNameId}));
+		return _collectionPersistenceFinderByG_C.findFirst(
+			finderCache, new Object[] {groupId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -542,8 +501,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {groupId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByG_LPTEU;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByG_LPTEU;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and layoutPageTemplateEntryUuid = &#63;.
@@ -586,17 +546,9 @@ public class CPDisplayLayoutPersistenceImpl
 			OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByG_LPTEU_First(
-			groupId, layoutPageTemplateEntryUuid, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByG_LPTEU.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, layoutPageTemplateEntryUuid}));
+		return _collectionPersistenceFinderByG_LPTEU.findFirst(
+			finderCache, new Object[] {groupId, layoutPageTemplateEntryUuid},
+			orderByComparator);
 	}
 
 	/**
@@ -646,8 +598,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {groupId, layoutPageTemplateEntryUuid});
 	}
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByG_L;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByG_L;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where groupId = &#63; and layoutUuid = &#63;.
@@ -690,16 +643,8 @@ public class CPDisplayLayoutPersistenceImpl
 			OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByG_L_First(
-			groupId, layoutUuid, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByG_L.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, layoutUuid}));
+		return _collectionPersistenceFinderByG_L.findFirst(
+			finderCache, new Object[] {groupId, layoutUuid}, orderByComparator);
 	}
 
 	/**
@@ -744,8 +689,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {groupId, layoutUuid});
 	}
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
@@ -788,16 +734,9 @@ public class CPDisplayLayoutPersistenceImpl
 			OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -843,8 +782,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByC_C_LPTEU;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByC_C_LPTEU;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
@@ -887,16 +827,9 @@ public class CPDisplayLayoutPersistenceImpl
 			OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByC_C_LPTEU_First(
-			classNameId, classPK, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByC_C_LPTEU.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C_LPTEU.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -942,8 +875,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<CPDisplayLayout>
-		_collectionPersistenceFinderByC_C_L;
+	private CollectionPersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_collectionPersistenceFinderByC_C_L;
 
 	/**
 	 * Returns an ordered range of all the cp display layouts where classNameId = &#63; and classPK = &#63;.
@@ -986,16 +920,9 @@ public class CPDisplayLayoutPersistenceImpl
 			OrderByComparator<CPDisplayLayout> orderByComparator)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByC_C_L_First(
-			classNameId, classPK, orderByComparator);
-
-		if (cpDisplayLayout != null) {
-			return cpDisplayLayout;
-		}
-
-		throw new NoSuchCPDisplayLayoutException(
-			_collectionPersistenceFinderByC_C_L.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C_L.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -1041,8 +968,9 @@ public class CPDisplayLayoutPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<CPDisplayLayout>
-		_uniquePersistenceFinderByG_C_C;
+	private UniquePersistenceFinder
+		<CPDisplayLayout, NoSuchCPDisplayLayoutException>
+			_uniquePersistenceFinderByG_C_C;
 
 	/**
 	 * Returns the cp display layout where groupId = &#63; and classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchCPDisplayLayoutException</code> if it could not be found.
@@ -1058,23 +986,8 @@ public class CPDisplayLayoutPersistenceImpl
 			long groupId, long classNameId, long classPK)
 		throws NoSuchCPDisplayLayoutException {
 
-		CPDisplayLayout cpDisplayLayout = fetchByG_C_C(
-			groupId, classNameId, classPK);
-
-		if (cpDisplayLayout == null) {
-			String message =
-				_uniquePersistenceFinderByG_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDisplayLayoutException(message);
-		}
-
-		return cpDisplayLayout;
+		return _uniquePersistenceFinderByG_C_C.find(
+			finderCache, new Object[] {groupId, classNameId, classPK});
 	}
 
 	/**
@@ -1451,9 +1364,10 @@ public class CPDisplayLayoutPersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_CPDISPLAYLAYOUT_WHERE, _SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 			CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"cpDisplayLayout.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, CPDisplayLayout::getUuid));
+				"cpDisplayLayout.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, CPDisplayLayout::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1465,8 +1379,8 @@ public class CPDisplayLayoutPersistenceImpl
 				CPDisplayLayout::getGroupId),
 			_SQL_SELECT_CPDISPLAYLAYOUT_WHERE, "",
 			new FinderColumn<>(
-				"cpDisplayLayout.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, CPDisplayLayout::getUuid),
+				"cpDisplayLayout.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, CPDisplayLayout::getUuid),
 			new FinderColumn<>(
 				"cpDisplayLayout.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, CPDisplayLayout::getGroupId));
@@ -1493,10 +1407,11 @@ public class CPDisplayLayoutPersistenceImpl
 				_SQL_SELECT_CPDISPLAYLAYOUT_WHERE,
 				_SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 				CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"cpDisplayLayout.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CPDisplayLayout::getUuid),
+					"cpDisplayLayout.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CPDisplayLayout::getUuid),
 				new FinderColumn<>(
 					"cpDisplayLayout.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CPDisplayLayout::getCompanyId));
@@ -1523,7 +1438,7 @@ public class CPDisplayLayoutPersistenceImpl
 				_SQL_SELECT_CPDISPLAYLAYOUT_WHERE,
 				_SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 				CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"cpDisplayLayout.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, CPDisplayLayout::getGroupId));
@@ -1548,6 +1463,7 @@ public class CPDisplayLayoutPersistenceImpl
 				new String[] {"groupId", "classNameId"}, false),
 			_SQL_SELECT_CPDISPLAYLAYOUT_WHERE, _SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 			CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"cpDisplayLayout.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, CPDisplayLayout::getGroupId),
@@ -1580,7 +1496,7 @@ public class CPDisplayLayoutPersistenceImpl
 				_SQL_SELECT_CPDISPLAYLAYOUT_WHERE,
 				_SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 				CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"cpDisplayLayout.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, CPDisplayLayout::getGroupId),
@@ -1609,6 +1525,7 @@ public class CPDisplayLayoutPersistenceImpl
 				new String[] {"groupId", "layoutUuid"}, 0, 2, false, null),
 			_SQL_SELECT_CPDISPLAYLAYOUT_WHERE, _SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 			CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"cpDisplayLayout.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, CPDisplayLayout::getGroupId),
@@ -1636,6 +1553,7 @@ public class CPDisplayLayoutPersistenceImpl
 				new String[] {"classNameId", "classPK"}, false),
 			_SQL_SELECT_CPDISPLAYLAYOUT_WHERE, _SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 			CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"cpDisplayLayout.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, CPDisplayLayout::getClassNameId),
@@ -1668,6 +1586,7 @@ public class CPDisplayLayoutPersistenceImpl
 				_SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 				CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"cpDisplayLayout.layoutPageTemplateEntryUuid IS NOT NULL",
+				"cpDisplayLayout.layoutPageTemplateEntryUuid IS NOT NULL", null,
 				new FinderColumn<>(
 					"cpDisplayLayout.", "classNameId", FinderColumn.Type.LONG,
 					"=", true, true, CPDisplayLayout::getClassNameId),
@@ -1696,6 +1615,7 @@ public class CPDisplayLayoutPersistenceImpl
 			_SQL_SELECT_CPDISPLAYLAYOUT_WHERE, _SQL_COUNT_CPDISPLAYLAYOUT_WHERE,
 			CPDisplayLayoutModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 			"cpDisplayLayout.layoutUuid IS NOT NULL",
+			"cpDisplayLayout.layoutUuid IS NOT NULL", null,
 			new FinderColumn<>(
 				"cpDisplayLayout.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, CPDisplayLayout::getClassNameId),
@@ -1782,12 +1702,6 @@ public class CPDisplayLayoutPersistenceImpl
 	private static final String _SQL_COUNT_CPDISPLAYLAYOUT_WHERE =
 		"SELECT COUNT(cpDisplayLayout) FROM CPDisplayLayout cpDisplayLayout WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPDisplayLayout exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPDisplayLayoutPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1797,4 +1711,4 @@ public class CPDisplayLayoutPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-82893022
+// LIFERAY-SERVICE-BUILDER-HASH:536267536

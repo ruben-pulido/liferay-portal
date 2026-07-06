@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -76,8 +74,9 @@ public class CommerceAddressRestrictionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceAddressRestriction>
-		_collectionPersistenceFinderByCountryId;
+	private CollectionPersistenceFinder
+		<CommerceAddressRestriction, NoSuchAddressRestrictionException>
+			_collectionPersistenceFinderByCountryId;
 
 	/**
 	 * Returns an ordered range of all the commerce address restrictions where countryId = &#63;.
@@ -118,16 +117,8 @@ public class CommerceAddressRestrictionPersistenceImpl
 			OrderByComparator<CommerceAddressRestriction> orderByComparator)
 		throws NoSuchAddressRestrictionException {
 
-		CommerceAddressRestriction commerceAddressRestriction =
-			fetchByCountryId_First(countryId, orderByComparator);
-
-		if (commerceAddressRestriction != null) {
-			return commerceAddressRestriction;
-		}
-
-		throw new NoSuchAddressRestrictionException(
-			_collectionPersistenceFinderByCountryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {countryId}));
+		return _collectionPersistenceFinderByCountryId.findFirst(
+			finderCache, new Object[] {countryId}, orderByComparator);
 	}
 
 	/**
@@ -169,8 +160,9 @@ public class CommerceAddressRestrictionPersistenceImpl
 			finderCache, new Object[] {countryId});
 	}
 
-	private CollectionPersistenceFinder<CommerceAddressRestriction>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CommerceAddressRestriction, NoSuchAddressRestrictionException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the commerce address restrictions where classNameId = &#63; and classPK = &#63;.
@@ -213,16 +205,9 @@ public class CommerceAddressRestrictionPersistenceImpl
 			OrderByComparator<CommerceAddressRestriction> orderByComparator)
 		throws NoSuchAddressRestrictionException {
 
-		CommerceAddressRestriction commerceAddressRestriction =
-			fetchByC_C_First(classNameId, classPK, orderByComparator);
-
-		if (commerceAddressRestriction != null) {
-			return commerceAddressRestriction;
-		}
-
-		throw new NoSuchAddressRestrictionException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -268,8 +253,9 @@ public class CommerceAddressRestrictionPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<CommerceAddressRestriction>
-		_uniquePersistenceFinderByC_C_C;
+	private UniquePersistenceFinder
+		<CommerceAddressRestriction, NoSuchAddressRestrictionException>
+			_uniquePersistenceFinderByC_C_C;
 
 	/**
 	 * Returns the commerce address restriction where classNameId = &#63; and classPK = &#63; and countryId = &#63; or throws a <code>NoSuchAddressRestrictionException</code> if it could not be found.
@@ -285,23 +271,8 @@ public class CommerceAddressRestrictionPersistenceImpl
 			long classNameId, long classPK, long countryId)
 		throws NoSuchAddressRestrictionException {
 
-		CommerceAddressRestriction commerceAddressRestriction = fetchByC_C_C(
-			classNameId, classPK, countryId);
-
-		if (commerceAddressRestriction == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK, countryId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchAddressRestrictionException(message);
-		}
-
-		return commerceAddressRestriction;
+		return _uniquePersistenceFinderByC_C_C.find(
+			finderCache, new Object[] {classNameId, classPK, countryId});
 	}
 
 	/**
@@ -596,7 +567,7 @@ public class CommerceAddressRestrictionPersistenceImpl
 				_SQL_SELECT_COMMERCEADDRESSRESTRICTION_WHERE,
 				_SQL_COUNT_COMMERCEADDRESSRESTRICTION_WHERE,
 				CommerceAddressRestrictionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceAddressRestriction.", "countryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -623,7 +594,7 @@ public class CommerceAddressRestrictionPersistenceImpl
 			_SQL_SELECT_COMMERCEADDRESSRESTRICTION_WHERE,
 			_SQL_COUNT_COMMERCEADDRESSRESTRICTION_WHERE,
 			CommerceAddressRestrictionModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commerceAddressRestriction.", "classNameId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -713,16 +684,10 @@ public class CommerceAddressRestrictionPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEADDRESSRESTRICTION_WHERE =
 		"SELECT COUNT(commerceAddressRestriction) FROM CommerceAddressRestriction commerceAddressRestriction WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceAddressRestriction exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceAddressRestrictionPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:898928776
+// LIFERAY-SERVICE-BUILDER-HASH:-61174664

@@ -44,7 +44,7 @@ public class EnvironmentBuildPropertiesUtil {
 			EnvironmentBuildProperties environmentBuildProperties =
 				new EnvironmentBuildProperties(environment, urlString);
 
-			String masterHostname = System.getenv("MASTER_HOSTNAME");
+			String masterHostname = Environment.get("MASTER_HOSTNAME");
 
 			if (!JenkinsResultsParserUtil.isNullOrEmpty(masterHostname) &&
 				masterHostname.equals("test-5-1")) {
@@ -61,6 +61,18 @@ public class EnvironmentBuildPropertiesUtil {
 					"github.webhook.url[aws]",
 					environmentBuildProperties.getProperty(
 						"github.webhook.url[aws-staging]"));
+			}
+
+			if (environment != EnvironmentBuildProperties.Environment.LOCAL) {
+				for (String propertyName :
+						environmentBuildProperties.stringPropertyNames()) {
+
+					environmentBuildProperties.setProperty(
+						propertyName,
+						SecretsUtil.getSecret(
+							environmentBuildProperties.getProperty(
+								propertyName)));
+				}
 			}
 
 			environmentBuildProperties.store(environmentBuildPropertiesFile);

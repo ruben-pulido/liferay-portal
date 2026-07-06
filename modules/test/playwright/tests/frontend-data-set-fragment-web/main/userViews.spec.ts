@@ -14,6 +14,7 @@ import {createRecipientWithDataSetViewerRole} from '../../../helpers/DataSetMana
 import getRandomString from '../../../utils/getRandomString';
 import {performUserSwitch} from '../../../utils/performLogin';
 import {waitForAlert} from '../../../utils/waitForAlert';
+import {NotificationsPage} from '../../notifications-web/main/pages/NotificationsPage';
 import {dataSetFragmentPageTest} from './fixtures/dataSetFragmentPageTest';
 
 export const test = mergeTests(
@@ -136,7 +137,7 @@ test(
 
 test(
 	'Can create, edit and delete User Views',
-	{tag: '@LPD-10683'},
+	{tag: ['@LPD-10683', '@LPD-74823']},
 	async ({dataSetFragmentPage, dataSetManagerApiHelpers, layout, page}) => {
 		let userViewsActionsDropdown: Locator;
 		let userViewsDropdown: Locator;
@@ -307,6 +308,55 @@ test(
 			page.keyboard.press('Escape');
 		});
 
+		await test.step('Cannot save a view with a blank or duplicate name', async () => {
+			await dataSetFragmentPage.userViewsActionsButton.click();
+
+			await userViewsActionsDropdown
+				.filter({has: page.getByRole('menu')})
+				.waitFor();
+
+			await userViewsActionsDropdown
+				.getByRole('menuitem', {name: 'Save View As...'})
+				.click();
+
+			await expect(
+				dataSetFragmentPage.userViewsSaveModal
+			).toBeInViewport();
+
+			const nameInput =
+				dataSetFragmentPage.userViewsSaveModal.getByLabel(
+					'NameRequired'
+				);
+			const saveButton = dataSetFragmentPage.userViewsSaveModal.getByRole(
+				'button',
+				{name: 'Save'}
+			);
+
+			await nameInput.fill('   ');
+
+			await expect(saveButton).toBeDisabled();
+
+			await nameInput.fill(userView1Name.toUpperCase());
+
+			await expect(saveButton).toBeEnabled();
+
+			await saveButton.click();
+
+			await expect(
+				dataSetFragmentPage.userViewsSaveModal.getByText(
+					'A view with this name already exists.'
+				)
+			).toBeVisible();
+
+			await dataSetFragmentPage.userViewsSaveModal
+				.getByRole('button', {name: 'Cancel'})
+				.click();
+
+			await expect(
+				dataSetFragmentPage.userViewsSaveModal
+			).not.toBeInViewport();
+		});
+
 		await test.step('Confirm that changes in an user view does not affect Default View', async () => {
 			await expect(
 				dataSetFragmentPage.userViewsSelectorButton
@@ -389,6 +439,16 @@ test(
 
 			await expect(dataSetFragmentPage.cardsWrapper).toBeInViewport();
 
+			await dataSetFragmentPage.changeVisualizationMode('Table');
+
+			await dataSetFragmentPage.table.container.waitFor({
+				state: 'visible',
+			});
+
+			await expect(
+				dataSetFragmentPage.userViewsSelectorButton
+			).toHaveText(`${userView1Name}${userView1Name} Updated`);
+
 			await dataSetFragmentPage.userViewsActionsButton.click();
 
 			await userViewsActionsDropdown
@@ -417,10 +477,12 @@ test(
 				.click();
 
 			await waitForAlert(page, 'Success:View was renamed successfully.');
+		});
 
+		await test.step('Renaming a view keeps its unsaved changes mark', async () => {
 			await expect(
 				dataSetFragmentPage.userViewsSelectorButton
-			).toHaveText(userView2Name);
+			).toHaveText(`${userView2Name}${userView2Name} Updated`);
 		});
 
 		await test.step('Can delete a user view', async () => {
@@ -459,8 +521,202 @@ test(
 );
 
 test(
-	'User views shared with the current user appear under "Shared with Me"',
-	{tag: '@LPD-78095'},
+	'Share modal for User Views is configured for the FDS use case',
+	{tag: '@LPD-81808'},
+	async ({
+		apiHelpers,
+		dataSetFragmentPage,
+		dataSetManagerApiHelpers,
+		layout,
+		page,
+	}) => {
+		const snapshotName = `Snapshot ${getRandomString().slice(0, 8)}`;
+
+		let recipient: {alternateName: string; id: number | string};
+
+		await test.step('Enable User Views (snapshots)', async () => {
+			await dataSetManagerApiHelpers.updateDataSet({
+				erc: dataSetERC,
+				snapshotsEnabled: true,
+			});
+		});
+
+		await test.step('Configure Data Set fragment on the page', async () => {
+			await dataSetFragmentPage.configureDataSetFragment({
+				dataSetLabel,
+				layout,
+			});
+		});
+
+		await test.step('Create a recipient user', async () => {
+			recipient = await createRecipientWithDataSetViewerRole({
+				apiHelpers,
+				page,
+			});
+		});
+
+		await test.step('Create a snapshot to share', async () => {
+			await dataSetManagerApiHelpers.createDataSetSnapshot({
+				dataSetERC,
+				snapshotName,
+			});
+		});
+
+		await test.step('Reload and select the new snapshot', async () => {
+			await dataSetFragmentPage.goToPage({layout});
+
+			await page
+				.locator('.data-set-content-wrapper')
+				.waitFor({state: 'visible'});
+
+			await dataSetFragmentPage.userViewsSelectorButton.click();
+
+			const userViewsDropdownId =
+				await dataSetFragmentPage.userViewsSelectorButton.getAttribute(
+					'aria-controls'
+				);
+
+			await page
+				.locator(`#${userViewsDropdownId}`)
+				.getByRole('option', {name: snapshotName})
+				.click();
+		});
+
+		await test.step('Open the Share modal from the actions dropdown', async () => {
+			await dataSetFragmentPage.userViewsActionsButton.click();
+
+			const actionsDropdownId =
+				await dataSetFragmentPage.userViewsActionsButton.getAttribute(
+					'aria-controls'
+				);
+
+			await page
+				.locator(`#${actionsDropdownId}`)
+				.getByRole('menuitem', {name: 'Share View'})
+				.click();
+		});
+
+		const shareModal = page
+			.locator('.liferay-modal')
+			.filter({hasText: `Share "${snapshotName}"`});
+
+		await expect(shareModal).toBeVisible();
+
+		await test.step('FDS-specific labels and section title are visible', async () => {
+			await expect(
+				shareModal.getByText('Add People', {exact: true})
+			).toBeVisible();
+
+			const helpIcon = shareModal.locator(
+				'svg.lexicon-icon-question-circle-full'
+			);
+
+			await expect(helpIcon).toBeVisible();
+			await expect(helpIcon).toHaveAttribute(
+				'data-title',
+				/Sharing recipients can use the view/
+			);
+
+			await expect(
+				shareModal.getByText(/Who Can Use This View/)
+			).toBeVisible();
+		});
+
+		await test.step('Add the recipient via the autocomplete', async () => {
+			await shareModal
+				.locator('#collaboratorAutocomplete')
+				.fill(recipient.alternateName);
+
+			await page
+				.getByRole('listbox')
+				.getByRole('option')
+				.filter({hasText: recipient.alternateName})
+				.first()
+				.click();
+		});
+
+		await test.step('The recipient appears in the collaborators list', async () => {
+			await expect(
+				shareModal
+					.locator('.list-group-item')
+					.filter({hasText: recipient.alternateName})
+			).toBeVisible();
+		});
+
+		await test.step('Permission, expiration date, and resharing controls are hidden on the collaborator row', async () => {
+			await expect(shareModal.getByLabel('Edit Permissions')).toHaveCount(
+				0
+			);
+
+			await expect(
+				shareModal.getByLabel('Set Expiration Date')
+			).toHaveCount(0);
+
+			await expect(shareModal.getByLabel('More Options')).toHaveCount(0);
+
+			await expect(
+				shareModal.getByRole('button', {name: 'Remove Access'})
+			).toBeVisible();
+		});
+
+		await test.step('Save the share and confirm a success toast appears', async () => {
+			await shareModal.getByRole('button', {name: 'Share'}).click();
+
+			await waitForAlert(page, 'was shared successfully');
+		});
+
+		await test.step('Reopen the Share modal', async () => {
+			await dataSetFragmentPage.userViewsActionsButton.click();
+
+			const actionsDropdownId =
+				await dataSetFragmentPage.userViewsActionsButton.getAttribute(
+					'aria-controls'
+				);
+
+			await page
+				.locator(`#${actionsDropdownId}`)
+				.getByRole('menuitem', {name: 'Share View'})
+				.click();
+
+			await expect(shareModal).toBeVisible();
+		});
+
+		await test.step('The recipient is still in the list with a Remove Access button', async () => {
+			const collaboratorRow = shareModal
+				.locator('.list-group-item')
+				.filter({hasText: recipient.alternateName});
+
+			await expect(collaboratorRow).toBeVisible();
+			await expect(
+				collaboratorRow.getByRole('button', {name: 'Remove Access'})
+			).toBeVisible();
+		});
+
+		await test.step('Clicking Remove Access removes the recipient from the list', async () => {
+			await shareModal
+				.locator('.list-group-item')
+				.filter({hasText: recipient.alternateName})
+				.getByRole('button', {name: 'Remove Access'})
+				.click();
+
+			await expect(
+				shareModal
+					.locator('.list-group-item')
+					.filter({hasText: recipient.alternateName})
+			).toHaveCount(0);
+		});
+
+		await test.step('Share the removal and confirm a success toast appears', async () => {
+			await shareModal.getByRole('button', {name: 'Share'}).click();
+
+			await waitForAlert(page, 'was updated successfully');
+		});
+	}
+);
+
+test(
+	'Shared user views appear under "Shared with Me" and are read-only for the recipient',
+	{tag: ['@LPD-78095', '@LPD-87016']},
 	async ({
 		apiHelpers,
 		dataSetFragmentPage,
@@ -552,6 +808,152 @@ test(
 					name: sharedSnapshotName,
 				})
 			).toBeVisible();
+		});
+
+		await test.step('Selecting the shared view makes it the active view', async () => {
+			await page.getByRole('option', {name: sharedSnapshotName}).click();
+
+			await expect(
+				dataSetFragmentPage.userViewsSelectorButton
+			).toHaveText(sharedSnapshotName);
+		});
+
+		await test.step('The shared view offers only "Save View As", not save, rename, share, or delete', async () => {
+			await dataSetFragmentPage.userViewsActionsButton.click();
+
+			const userViewsActionsDropdownId =
+				await dataSetFragmentPage.userViewsActionsButton.getAttribute(
+					'aria-controls'
+				);
+			const userViewsActionsDropdown = page.locator(
+				`#${userViewsActionsDropdownId}`
+			);
+
+			await userViewsActionsDropdown
+				.filter({has: page.getByRole('menu')})
+				.waitFor();
+
+			await expect(
+				userViewsActionsDropdown.getByRole('menuitem', {
+					name: 'Save View As...',
+				})
+			).toBeVisible();
+
+			await expect(
+				userViewsActionsDropdown.getByRole('menuitem', {
+					exact: true,
+					name: 'Save View',
+				})
+			).toHaveCount(0);
+
+			await expect(
+				userViewsActionsDropdown.getByRole('menuitem', {
+					name: 'Rename View',
+				})
+			).toHaveCount(0);
+
+			await expect(
+				userViewsActionsDropdown.getByRole('menuitem', {
+					name: 'Share View',
+				})
+			).toHaveCount(0);
+
+			await expect(
+				userViewsActionsDropdown.getByRole('menuitem', {
+					name: 'Delete View',
+				})
+			).toHaveCount(0);
+		});
+	}
+);
+
+test(
+	'Recipient receives a notification when a user view is shared with them',
+	{tag: '@LPD-87024'},
+	async ({
+		apiHelpers,
+		dataSetFragmentPage,
+		dataSetManagerApiHelpers,
+		layout,
+		page,
+	}) => {
+		const sharedSnapshotName = `Shared Snapshot ${getRandomString().slice(
+			0,
+			8
+		)}`;
+
+		let snapshotId: number;
+		let user: {
+			alternateName: string;
+			id: number | string;
+			name: string;
+		};
+
+		await test.step('Enable User Views (snapshots)', async () => {
+			await dataSetManagerApiHelpers.updateDataSet({
+				erc: dataSetERC,
+				snapshotsEnabled: true,
+			});
+		});
+
+		await test.step('Configure Data Set fragment on the page', async () => {
+			await dataSetFragmentPage.configureDataSetFragment({
+				dataSetLabel,
+				layout,
+			});
+		});
+
+		await test.step('Create a snapshot as the current user', async () => {
+			const snapshot =
+				(await dataSetManagerApiHelpers.createDataSetSnapshot({
+					dataSetERC,
+					snapshotName: sharedSnapshotName,
+				})) as {id: number};
+
+			snapshotId = snapshot.id;
+		});
+
+		await test.step('Create a recipient user with VIEW permission on Data Sets and snapshots', async () => {
+			user = await createRecipientWithDataSetViewerRole({
+				apiHelpers,
+				page,
+			});
+		});
+
+		await test.step('Share the snapshot with the recipient', async () => {
+			await apiHelpers.objectEntry.postObjectEntryCollaborators(
+				[
+					{
+						actionIds: ['VIEW'],
+						id: user.id,
+						share: false,
+						type: 'User',
+					},
+				],
+				'data-set-admin/snapshots',
+				snapshotId
+			);
+		});
+
+		await test.step('Switch to the recipient user', async () => {
+			await performUserSwitch(page, user.alternateName);
+		});
+
+		await test.step('Recipient sees the share notification', async () => {
+			const notificationsPage = new NotificationsPage(page);
+
+			await notificationsPage.goto(user.name);
+
+			await expect(
+				notificationsPage.sharingNotificationMessage(
+					'Test Test',
+					`'${sharedSnapshotName}'`
+				)
+			).toBeVisible();
+		});
+
+		await test.step('Switch back to the admin user so afterEach cleanup runs with delete permissions', async () => {
+			await performUserSwitch(page, 'test');
 		});
 	}
 );

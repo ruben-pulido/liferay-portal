@@ -114,11 +114,8 @@ public class MBSuspiciousActivityPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		MBSuspiciousActivity newMBSuspiciousActivity = _persistence.create(pk);
-
-		newMBSuspiciousActivity.setMvccVersion(RandomTestUtil.nextLong());
+		MBSuspiciousActivity newMBSuspiciousActivity =
+			addMBSuspiciousActivity();
 
 		newMBSuspiciousActivity.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -144,8 +141,9 @@ public class MBSuspiciousActivityPersistenceTest {
 
 		newMBSuspiciousActivity.setValidated(RandomTestUtil.randomBoolean());
 
-		_mbSuspiciousActivities.add(
-			_persistence.update(newMBSuspiciousActivity));
+		newMBSuspiciousActivity = _persistence.update(newMBSuspiciousActivity);
+
+		_mbSuspiciousActivities.add(newMBSuspiciousActivity);
 
 		MBSuspiciousActivity existingMBSuspiciousActivity =
 			_persistence.findByPrimaryKey(
@@ -621,8 +619,6 @@ public class MBSuspiciousActivityPersistenceTest {
 
 		MBSuspiciousActivity mbSuspiciousActivity = _persistence.create(pk);
 
-		mbSuspiciousActivity.setMvccVersion(RandomTestUtil.nextLong());
-
 		mbSuspiciousActivity.setCtCollectionId(RandomTestUtil.nextLong());
 
 		mbSuspiciousActivity.setUuid(RandomTestUtil.randomString());
@@ -658,4 +654,4 @@ public class MBSuspiciousActivityPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:373848649
+// LIFERAY-SERVICE-BUILDER-HASH:1038066977

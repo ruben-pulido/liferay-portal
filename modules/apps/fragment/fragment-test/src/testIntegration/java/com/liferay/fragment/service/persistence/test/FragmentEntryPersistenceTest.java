@@ -116,8 +116,6 @@ public class FragmentEntryPersistenceTest {
 
 		FragmentEntry newFragmentEntry = _persistence.create(pk);
 
-		newFragmentEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		newFragmentEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		newFragmentEntry.setUuid(RandomTestUtil.randomString());
@@ -177,7 +175,9 @@ public class FragmentEntryPersistenceTest {
 
 		newFragmentEntry.setStatusDate(RandomTestUtil.nextDate());
 
-		_fragmentEntries.add(_persistence.update(newFragmentEntry));
+		newFragmentEntry = _persistence.update(newFragmentEntry);
+
+		_fragmentEntries.add(newFragmentEntry);
 
 		FragmentEntry existingFragmentEntry = _persistence.findByPrimaryKey(
 			newFragmentEntry.getPrimaryKey());
@@ -273,7 +273,6 @@ public class FragmentEntryPersistenceTest {
 
 		FragmentEntry draftFragmentEntry = _persistence.create(pk);
 
-		draftFragmentEntry.setMvccVersion(fragmentEntry.getMvccVersion());
 		draftFragmentEntry.setCtCollectionId(fragmentEntry.getCtCollectionId());
 		draftFragmentEntry.setUuid(fragmentEntry.getUuid());
 		draftFragmentEntry.setExternalReferenceCode(
@@ -395,8 +394,6 @@ public class FragmentEntryPersistenceTest {
 		long pk = RandomTestUtil.nextLong();
 
 		FragmentEntry fragmentEntry2 = _persistence.create(pk);
-
-		fragmentEntry2.setMvccVersion(RandomTestUtil.nextLong());
 
 		fragmentEntry2.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -1104,8 +1101,6 @@ public class FragmentEntryPersistenceTest {
 
 		FragmentEntry fragmentEntry = _persistence.create(pk);
 
-		fragmentEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		fragmentEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		fragmentEntry.setUuid(RandomTestUtil.randomString());
@@ -1175,4 +1170,4 @@ public class FragmentEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-466545236
+// LIFERAY-SERVICE-BUILDER-HASH:-701265265

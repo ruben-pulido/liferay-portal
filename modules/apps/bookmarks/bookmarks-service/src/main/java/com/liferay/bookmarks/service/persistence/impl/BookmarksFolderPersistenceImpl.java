@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -88,7 +86,7 @@ public class BookmarksFolderPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<BookmarksFolder>
+	private CollectionPersistenceFinder<BookmarksFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -129,16 +127,8 @@ public class BookmarksFolderPersistenceImpl
 			String uuid, OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -179,7 +169,7 @@ public class BookmarksFolderPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<BookmarksFolder>
+	private UniquePersistenceFinder<BookmarksFolder, NoSuchFolderException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -194,21 +184,8 @@ public class BookmarksFolderPersistenceImpl
 	public BookmarksFolder findByUUID_G(String uuid, long groupId)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByUUID_G(uuid, groupId);
-
-		if (bookmarksFolder == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return bookmarksFolder;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -256,7 +233,7 @@ public class BookmarksFolderPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<BookmarksFolder>
+	private CollectionPersistenceFinder<BookmarksFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -300,16 +277,8 @@ public class BookmarksFolderPersistenceImpl
 			OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -354,8 +323,9 @@ public class BookmarksFolderPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<BookmarksFolder>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<BookmarksFolder, NoSuchFolderException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the bookmarks folders where groupId = &#63;.
@@ -395,16 +365,8 @@ public class BookmarksFolderPersistenceImpl
 			long groupId, OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -480,7 +442,7 @@ public class BookmarksFolderPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<BookmarksFolder>
+	private CollectionPersistenceFinder<BookmarksFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -522,16 +484,8 @@ public class BookmarksFolderPersistenceImpl
 			OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -572,8 +526,9 @@ public class BookmarksFolderPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<BookmarksFolder>
-		_collectionPersistenceFinderByG_P;
+	private FilterCollectionPersistenceFinder
+		<BookmarksFolder, NoSuchFolderException>
+			_collectionPersistenceFinderByG_P;
 
 	/**
 	 * Returns an ordered range of all the bookmarks folders where groupId = &#63; and parentFolderId = &#63;.
@@ -616,17 +571,9 @@ public class BookmarksFolderPersistenceImpl
 			OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByG_P_First(
-			groupId, parentFolderId, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByG_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, parentFolderId}));
+		return _collectionPersistenceFinderByG_P.findFirst(
+			finderCache, new Object[] {groupId, parentFolderId},
+			orderByComparator);
 	}
 
 	/**
@@ -709,7 +656,7 @@ public class BookmarksFolderPersistenceImpl
 			finderCache, new Object[] {groupId, parentFolderId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<BookmarksFolder>
+	private CollectionPersistenceFinder<BookmarksFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByC_NotS;
 
 	/**
@@ -809,16 +756,8 @@ public class BookmarksFolderPersistenceImpl
 			OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByC_NotS_First(
-			companyId, status, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByC_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, status}));
+		return _collectionPersistenceFinderByC_NotS.findFirst(
+			finderCache, new Object[] {companyId, status}, orderByComparator);
 	}
 
 	/**
@@ -863,8 +802,9 @@ public class BookmarksFolderPersistenceImpl
 			finderCache, new Object[] {companyId, status});
 	}
 
-	private FilterCollectionPersistenceFinder<BookmarksFolder>
-		_collectionPersistenceFinderByG_P_S;
+	private FilterCollectionPersistenceFinder
+		<BookmarksFolder, NoSuchFolderException>
+			_collectionPersistenceFinderByG_P_S;
 
 	/**
 	 * Returns an ordered range of all the bookmarks folders where groupId = &#63; and parentFolderId = &#63; and status = &#63;.
@@ -909,17 +849,9 @@ public class BookmarksFolderPersistenceImpl
 			OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByG_P_S_First(
-			groupId, parentFolderId, status, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByG_P_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, parentFolderId, status}));
+		return _collectionPersistenceFinderByG_P_S.findFirst(
+			finderCache, new Object[] {groupId, parentFolderId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1010,8 +942,9 @@ public class BookmarksFolderPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<BookmarksFolder>
-		_collectionPersistenceFinderByG_P_NotS;
+	private FilterCollectionPersistenceFinder
+		<BookmarksFolder, NoSuchFolderException>
+			_collectionPersistenceFinderByG_P_NotS;
 
 	/**
 	 * Returns all the bookmarks folders where groupId = &#63; and parentFolderId = &#63; and status &ne; &#63;.
@@ -1120,17 +1053,9 @@ public class BookmarksFolderPersistenceImpl
 			OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByG_P_NotS_First(
-			groupId, parentFolderId, status, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByG_P_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, parentFolderId, status}));
+		return _collectionPersistenceFinderByG_P_NotS.findFirst(
+			finderCache, new Object[] {groupId, parentFolderId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1262,7 +1187,7 @@ public class BookmarksFolderPersistenceImpl
 			groupId);
 	}
 
-	private CollectionPersistenceFinder<BookmarksFolder>
+	private CollectionPersistenceFinder<BookmarksFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByGtF_C_P_NotS;
 
 	/**
@@ -1381,17 +1306,10 @@ public class BookmarksFolderPersistenceImpl
 			OrderByComparator<BookmarksFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		BookmarksFolder bookmarksFolder = fetchByGtF_C_P_NotS_First(
-			folderId, companyId, parentFolderId, status, orderByComparator);
-
-		if (bookmarksFolder != null) {
-			return bookmarksFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByGtF_C_P_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {folderId, companyId, parentFolderId, status}));
+		return _collectionPersistenceFinderByGtF_C_P_NotS.findFirst(
+			finderCache,
+			new Object[] {folderId, companyId, parentFolderId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1772,9 +1690,10 @@ public class BookmarksFolderPersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_BOOKMARKSFOLDER_WHERE, _SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 			BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"bookmarksFolder.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, BookmarksFolder::getUuid));
+				"bookmarksFolder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, BookmarksFolder::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1786,8 +1705,8 @@ public class BookmarksFolderPersistenceImpl
 				BookmarksFolder::getGroupId),
 			_SQL_SELECT_BOOKMARKSFOLDER_WHERE, "",
 			new FinderColumn<>(
-				"bookmarksFolder.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, BookmarksFolder::getUuid),
+				"bookmarksFolder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, BookmarksFolder::getUuid),
 			new FinderColumn<>(
 				"bookmarksFolder.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, BookmarksFolder::getGroupId));
@@ -1814,10 +1733,11 @@ public class BookmarksFolderPersistenceImpl
 				_SQL_SELECT_BOOKMARKSFOLDER_WHERE,
 				_SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 				BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"bookmarksFolder.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, BookmarksFolder::getUuid),
+					"bookmarksFolder.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					BookmarksFolder::getUuid),
 				new FinderColumn<>(
 					"bookmarksFolder.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, BookmarksFolder::getCompanyId));
@@ -1844,17 +1764,7 @@ public class BookmarksFolderPersistenceImpl
 				_SQL_SELECT_BOOKMARKSFOLDER_WHERE,
 				_SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 				BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					BookmarksFolderImpl.class, BookmarksFolder.class,
-					"bookmarksFolder", "BookmarksFolder",
-					"bookmarksFolder.folderId",
-					"SELECT DISTINCT {bookmarksFolder.*} FROM BookmarksFolder bookmarksFolder WHERE ",
-					"SELECT {BookmarksFolder.*} FROM (SELECT DISTINCT bookmarksFolder.folderId FROM BookmarksFolder bookmarksFolder WHERE ",
-					") TEMP_TABLE INNER JOIN BookmarksFolder ON TEMP_TABLE.folderId = BookmarksFolder.folderId",
-					"SELECT COUNT(DISTINCT bookmarksFolder.folderId) AS COUNT_VALUE FROM BookmarksFolder bookmarksFolder WHERE ",
-					BookmarksFolderModelImpl.ORDER_BY_SQL,
-					BookmarksFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"bookmarksFolder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, BookmarksFolder::getGroupId));
@@ -1881,7 +1791,7 @@ public class BookmarksFolderPersistenceImpl
 				_SQL_SELECT_BOOKMARKSFOLDER_WHERE,
 				_SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 				BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"bookmarksFolder.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, BookmarksFolder::getCompanyId));
@@ -1908,17 +1818,7 @@ public class BookmarksFolderPersistenceImpl
 				_SQL_SELECT_BOOKMARKSFOLDER_WHERE,
 				_SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 				BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					BookmarksFolderImpl.class, BookmarksFolder.class,
-					"bookmarksFolder", "BookmarksFolder",
-					"bookmarksFolder.folderId",
-					"SELECT DISTINCT {bookmarksFolder.*} FROM BookmarksFolder bookmarksFolder WHERE ",
-					"SELECT {BookmarksFolder.*} FROM (SELECT DISTINCT bookmarksFolder.folderId FROM BookmarksFolder bookmarksFolder WHERE ",
-					") TEMP_TABLE INNER JOIN BookmarksFolder ON TEMP_TABLE.folderId = BookmarksFolder.folderId",
-					"SELECT COUNT(DISTINCT bookmarksFolder.folderId) AS COUNT_VALUE FROM BookmarksFolder bookmarksFolder WHERE ",
-					BookmarksFolderModelImpl.ORDER_BY_SQL,
-					BookmarksFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"bookmarksFolder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, BookmarksFolder::getGroupId),
@@ -1948,7 +1848,7 @@ public class BookmarksFolderPersistenceImpl
 				_SQL_SELECT_BOOKMARKSFOLDER_WHERE,
 				_SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 				BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"bookmarksFolder.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, BookmarksFolder::getCompanyId),
@@ -1986,17 +1886,7 @@ public class BookmarksFolderPersistenceImpl
 				_SQL_SELECT_BOOKMARKSFOLDER_WHERE,
 				_SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 				BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					BookmarksFolderImpl.class, BookmarksFolder.class,
-					"bookmarksFolder", "BookmarksFolder",
-					"bookmarksFolder.folderId",
-					"SELECT DISTINCT {bookmarksFolder.*} FROM BookmarksFolder bookmarksFolder WHERE ",
-					"SELECT {BookmarksFolder.*} FROM (SELECT DISTINCT bookmarksFolder.folderId FROM BookmarksFolder bookmarksFolder WHERE ",
-					") TEMP_TABLE INNER JOIN BookmarksFolder ON TEMP_TABLE.folderId = BookmarksFolder.folderId",
-					"SELECT COUNT(DISTINCT bookmarksFolder.folderId) AS COUNT_VALUE FROM BookmarksFolder bookmarksFolder WHERE ",
-					BookmarksFolderModelImpl.ORDER_BY_SQL,
-					BookmarksFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"bookmarksFolder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, BookmarksFolder::getGroupId),
@@ -2032,17 +1922,7 @@ public class BookmarksFolderPersistenceImpl
 				_SQL_SELECT_BOOKMARKSFOLDER_WHERE,
 				_SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 				BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					BookmarksFolderImpl.class, BookmarksFolder.class,
-					"bookmarksFolder", "BookmarksFolder",
-					"bookmarksFolder.folderId",
-					"SELECT DISTINCT {bookmarksFolder.*} FROM BookmarksFolder bookmarksFolder WHERE ",
-					"SELECT {BookmarksFolder.*} FROM (SELECT DISTINCT bookmarksFolder.folderId FROM BookmarksFolder bookmarksFolder WHERE ",
-					") TEMP_TABLE INNER JOIN BookmarksFolder ON TEMP_TABLE.folderId = BookmarksFolder.folderId",
-					"SELECT COUNT(DISTINCT bookmarksFolder.folderId) AS COUNT_VALUE FROM BookmarksFolder bookmarksFolder WHERE ",
-					BookmarksFolderModelImpl.ORDER_BY_SQL,
-					BookmarksFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"bookmarksFolder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, BookmarksFolder::getGroupId),
@@ -2085,7 +1965,7 @@ public class BookmarksFolderPersistenceImpl
 				_SQL_SELECT_BOOKMARKSFOLDER_WHERE,
 				_SQL_COUNT_BOOKMARKSFOLDER_WHERE,
 				BookmarksFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"bookmarksFolder.", "folderId", FinderColumn.Type.LONG, ">",
 					true, true, BookmarksFolder::getFolderId),
@@ -2157,12 +2037,6 @@ public class BookmarksFolderPersistenceImpl
 	private static final String _SQL_COUNT_BOOKMARKSFOLDER_WHERE =
 		"SELECT COUNT(bookmarksFolder) FROM BookmarksFolder bookmarksFolder WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No BookmarksFolder exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		BookmarksFolderPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -2172,4 +2046,4 @@ public class BookmarksFolderPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2028492235
+// LIFERAY-SERVICE-BUILDER-HASH:-391406583

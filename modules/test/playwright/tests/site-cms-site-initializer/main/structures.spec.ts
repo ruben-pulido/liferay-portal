@@ -4,12 +4,13 @@
  */
 
 import {ObjectDefinition} from '@liferay/object-admin-rest-client-js';
-import {Page, expect, mergeTests} from '@playwright/test';
+import {expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {addCMSAdministrator} from '../../../utils/addCMSAdministrator';
+import {applyFDSSelectionFilter} from '../../../utils/applyFDSSelectionFilter';
 import {clickAndExpectToBeHidden} from '../../../utils/clickAndExpectToBeHidden';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
@@ -86,6 +87,10 @@ test(
 			filter: structureName,
 		});
 
+		await expect(page.locator('.liferay-modal .modal-dialog')).toHaveClass(
+			/modal-dialog-centered/
+		);
+
 		await page
 			.getByPlaceholder('Confirm Content Structure Name')
 			.fill(structureName);
@@ -138,6 +143,10 @@ test(
 		await expect(
 			page.getByRole('heading', {name: 'Deletion Not Allowed'})
 		).toBeVisible();
+
+		await expect(page.locator('.liferay-modal .modal-dialog')).toHaveClass(
+			/modal-dialog-centered/
+		);
 
 		await clickAndExpectToBeHidden({
 			target: page.getByRole('button', {name: 'OK'}),
@@ -723,13 +732,13 @@ test(
 );
 
 test(
-	'Basic Web Content usages list includes assets that use the structure',
-	{tag: '@LPD-89302'},
+	'View Usages lists the assets using the structure and deletes them with the CMS confirmation modal',
+	{tag: ['@LPD-89302', '@LPD-89560']},
 	async ({apiHelpers, page, structuresPage}) => {
 		const applicationName = 'cms/basic-web-contents';
 		const title = `Content ${getRandomString()}`;
 
-		const objectEntry = await apiHelpers.objectEntry.postObjectEntry(
+		await apiHelpers.objectEntry.postObjectEntry(
 			{
 				objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
 				title,
@@ -738,24 +747,48 @@ test(
 			'Default'
 		);
 
-		try {
-			await structuresPage.goto();
+		// Open the usages list of the structure
 
-			await structuresPage.execItemAction({
-				action: 'View Usages',
-				filter: 'Basic Web Content',
-			});
+		await structuresPage.goto();
 
+		await structuresPage.execItemAction({
+			action: 'View Usages',
+			filter: 'Basic Web Content',
+		});
+
+		await test.step('Usages list includes the asset', async () => {
 			await page.locator('.fds').waitFor();
 
 			await expect(page.getByRole('row', {name: title})).toBeVisible();
-		}
-		finally {
-			await apiHelpers.objectEntry.deleteObjectEntry(
-				applicationName,
-				String(objectEntry.id)
-			);
-		}
+		});
+
+		await test.step('Delete shows the CMS confirmation modal', async () => {
+
+			// Open the delete action of the usage entry
+
+			await structuresPage.dataSetFragmentPage.execItemAction({
+				action: 'Delete',
+				filter: title,
+			});
+
+			// The CMS confirmation modal must appear instead of a native
+			// confirm dialog
+
+			await expect(
+				page.getByText('Are you sure you want to delete this entry?')
+			).toBeVisible();
+
+			// Confirm the deletion
+
+			await page
+				.locator('.liferay-modal')
+				.getByRole('button', {exact: true, name: 'Delete'})
+				.click();
+
+			await waitForAlert(page, `${title} was successfully deleted`, {
+				type: 'success',
+			});
+		});
 	}
 );
 
@@ -872,28 +905,9 @@ test(
 	}
 );
 
-async function applySpaceFilter(
-	page: Page,
-	{exclude = false, space}: {exclude?: boolean; space: string}
-) {
-	await page.getByRole('button', {exact: true, name: 'Filter'}).click();
-	await page.getByRole('menuitem', {exact: true, name: 'Space'}).click();
-	await page.getByRole('checkbox', {exact: true, name: space}).check();
-
-	if (exclude) {
-		await page.getByRole('switch', {exact: true, name: 'Exclude'}).click();
-	}
-
-	await page.getByRole('button', {exact: true, name: 'Add Filter'}).click();
-
-	const chipName = exclude ? `Space: (Exclude) ${space}` : `Space: ${space}`;
-
-	await expect(page.getByRole('button', {name: chipName})).toBeVisible();
-}
-
 test(
 	'Content Structures list can be filtered by space with include and exclude',
-	{tag: '@LPD-89342'},
+	{tag: ['@LPD-89342', '@LPD-91933']},
 	async ({apiHelpers, page, structureBuilderPage, structuresPage}) => {
 		const spaceName1 = `Space ${getRandomString()}`;
 		const spaceName2 = `Space ${getRandomString()}`;
@@ -918,19 +932,33 @@ test(
 		const row = structuresPage.getItem(structureLabel);
 
 		await structuresPage.goto();
-		await applySpaceFilter(page, {space: spaceName1});
+		await applyFDSSelectionFilter(page, {
+			filter: 'Space',
+			value: spaceName1,
+		});
 		await expect(row).toBeVisible();
 
 		await structuresPage.goto();
-		await applySpaceFilter(page, {space: spaceName2});
+		await applyFDSSelectionFilter(page, {
+			filter: 'Space',
+			value: spaceName2,
+		});
 		await expect(row).toBeHidden();
 
 		await structuresPage.goto();
-		await applySpaceFilter(page, {exclude: true, space: spaceName1});
+		await applyFDSSelectionFilter(page, {
+			exclude: true,
+			filter: 'Space',
+			value: spaceName1,
+		});
 		await expect(row).toBeHidden();
 
 		await structuresPage.goto();
-		await applySpaceFilter(page, {exclude: true, space: spaceName2});
+		await applyFDSSelectionFilter(page, {
+			exclude: true,
+			filter: 'Space',
+			value: spaceName2,
+		});
 		await expect(row).toBeVisible();
 	}
 );

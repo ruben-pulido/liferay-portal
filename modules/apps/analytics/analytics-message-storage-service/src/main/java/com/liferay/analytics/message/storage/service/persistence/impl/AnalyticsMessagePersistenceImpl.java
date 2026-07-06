@@ -79,8 +79,9 @@ public class AnalyticsMessagePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AnalyticsMessage>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<AnalyticsMessage, NoSuchMessageException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the analytics messages where companyId = &#63;.
@@ -121,16 +122,8 @@ public class AnalyticsMessagePersistenceImpl
 			OrderByComparator<AnalyticsMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		AnalyticsMessage analyticsMessage = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (analyticsMessage != null) {
-			return analyticsMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -299,11 +292,8 @@ public class AnalyticsMessagePersistenceImpl
 				session.save(analyticsMessage);
 			}
 			else {
-				session.evict(
-					AnalyticsMessageImpl.class,
-					analyticsMessage.getPrimaryKeyObj());
-
-				session.saveOrUpdate(analyticsMessage);
+				analyticsMessage = (AnalyticsMessage)session.merge(
+					analyticsMessage);
 			}
 
 			session.flush();
@@ -458,7 +448,7 @@ public class AnalyticsMessagePersistenceImpl
 				_SQL_SELECT_ANALYTICSMESSAGE_WHERE,
 				_SQL_COUNT_ANALYTICSMESSAGE_WHERE,
 				AnalyticsMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"analyticsMessage.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, AnalyticsMessage::getCompanyId));
@@ -520,13 +510,10 @@ public class AnalyticsMessagePersistenceImpl
 	private static final String _SQL_COUNT_ANALYTICSMESSAGE_WHERE =
 		"SELECT COUNT(analyticsMessage) FROM AnalyticsMessage analyticsMessage WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AnalyticsMessage exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1258172847
+// LIFERAY-SERVICE-BUILDER-HASH:1611696876

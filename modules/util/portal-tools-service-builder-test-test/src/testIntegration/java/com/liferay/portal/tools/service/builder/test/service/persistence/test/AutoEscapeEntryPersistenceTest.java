@@ -106,9 +106,7 @@ public class AutoEscapeEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		AutoEscapeEntry newAutoEscapeEntry = _persistence.create(pk);
+		AutoEscapeEntry newAutoEscapeEntry = addAutoEscapeEntry();
 
 		newAutoEscapeEntry.setAutoEscapeDisabledColumn(
 			RandomTestUtil.randomString());
@@ -116,7 +114,9 @@ public class AutoEscapeEntryPersistenceTest {
 		newAutoEscapeEntry.setAutoEscapeEnabledColumn(
 			RandomTestUtil.randomString());
 
-		_autoEscapeEntries.add(_persistence.update(newAutoEscapeEntry));
+		newAutoEscapeEntry = _persistence.update(newAutoEscapeEntry);
+
+		_autoEscapeEntries.add(newAutoEscapeEntry);
 
 		AutoEscapeEntry existingAutoEscapeEntry = _persistence.findByPrimaryKey(
 			newAutoEscapeEntry.getPrimaryKey());
@@ -374,4 +374,4 @@ public class AutoEscapeEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1529780548
+// LIFERAY-SERVICE-BUILDER-HASH:-1544286561

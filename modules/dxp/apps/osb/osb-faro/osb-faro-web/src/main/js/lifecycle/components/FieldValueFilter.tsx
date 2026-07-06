@@ -74,6 +74,11 @@ const FieldValueFilter = ({
 
 	return (
 		<Picker
+			aria-label={
+				sub(Liferay.Language.get('filter-by-x'), [
+					entityLabel
+				]) as string
+			}
 			as={TriggerButton}
 			buttonClassName={className}
 			className='ml-3'
@@ -90,6 +95,7 @@ const FieldValueFilter = ({
 			searchable
 			selectedKey={filters[filterKey] || ALL_VALUES_KEY}
 			triggerIcon='caret-bottom'
+			width={50}
 		>
 			<Option key={ALL_VALUES_KEY}>
 				{sub(Liferay.Language.get('all-x'), [entityLabel])}

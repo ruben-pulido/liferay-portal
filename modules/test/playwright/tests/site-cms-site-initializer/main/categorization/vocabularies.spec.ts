@@ -28,6 +28,33 @@ const test = mergeTests(
 	loginTest()
 );
 
+const createdVocabularyNames: string[] = [];
+
+test.afterEach(async ({vocabulariesPage}) => {
+	if (!createdVocabularyNames.length) {
+		return;
+	}
+
+	await vocabulariesPage.goto();
+
+	for (const name of createdVocabularyNames) {
+		await vocabulariesPage.deleteVocabulary(name);
+	}
+
+	createdVocabularyNames.length = 0;
+});
+
+const systemVocabularyTest = mergeTests(
+	categorizationPagesTest,
+	cmsPagesTest,
+	dataApiHelpersTest,
+	featureFlagsTest({
+		'LPD-17564': {enabled: true},
+		'LPD-86291': {enabled: true},
+	}),
+	loginTest()
+);
+
 const createScopedVocabularyAndContent = async ({
 	apiHelpers,
 	assetLibraries,
@@ -96,6 +123,10 @@ test(
 			page.getByRole('heading', {name: `Delete "${name}"`})
 		).toBeVisible();
 
+		await expect(page.locator('.liferay-modal .modal-dialog')).toHaveClass(
+			/modal-dialog-centered/
+		);
+
 		await clickAndExpectToBeVisible({
 			target: page.getByText(
 				'Success:Your request completed successfully.'
@@ -122,9 +153,11 @@ test(
 	'Assert can edit vocabulary from dropdown actions',
 	{tag: '@LPD-32750'},
 	async ({editVocabularyPage, page, vocabulariesPage}) => {
-		await editVocabularyPage.goto();
-
 		const name = `Vocabulary${getRandomInt()}`;
+
+		createdVocabularyNames.push(name);
+
+		await editVocabularyPage.goto();
 
 		await editVocabularyPage.changeGeneralInfo({
 			description: getRandomString(),
@@ -151,9 +184,11 @@ test(
 	'Assert can edit vocabulary permissions from dropdown actions',
 	{tag: '@LPD-32750'},
 	async ({editVocabularyPage, page, vocabulariesPage}) => {
-		editVocabularyPage.goto();
-
 		const name = `Vocabulary${getRandomInt()}`;
+
+		createdVocabularyNames.push(name);
+
+		editVocabularyPage.goto();
 
 		await editVocabularyPage.changeGeneralInfo({
 			description: getRandomString(),
@@ -233,9 +268,11 @@ test(
 	'Can create and update vocabulary',
 	{tag: ['@LPD-32750', '@LPD-66358']},
 	async ({editVocabularyPage, page, vocabulariesPage}) => {
-		editVocabularyPage.goto();
+		let name = `Vocabulary${getRandomInt()}`;
 
-		const name = `Vocabulary${getRandomInt()}`;
+		createdVocabularyNames.push(name);
+
+		editVocabularyPage.goto();
 
 		await editVocabularyPage.changeGeneralInfo({
 			description: getRandomString(),
@@ -289,7 +326,7 @@ test(
 
 		await checkAccessibility({
 			page: editVocabularyPage.page,
-			selectors: ['.categorization-section'],
+			selectors: ['.cms-section'],
 			selectorsToExclude: ['.control-menu-container'],
 		});
 
@@ -303,15 +340,17 @@ test(
 			'Private'
 		);
 
-		const spacesInputLocator = page.locator('#multiSelect');
+		const spacesInputLocator = page.getByLabel('Space Selector', {
+			exact: true,
+		});
 
 		await expect(spacesInputLocator).toHaveAttribute('value', 'All Spaces');
 
-		const newName = `Vocabulary${getRandomInt()}`;
+		name = `Vocabulary${getRandomInt()}`;
 
 		await editVocabularyPage.changeGeneralInfo({
 			description: getRandomString(),
-			name: newName,
+			name,
 		});
 
 		await editVocabularyPage.assetTypesButton.click();
@@ -323,13 +362,13 @@ test(
 		await expect(editVocabularyPage.assetTypeToggle).toBeChecked();
 
 		await clickAndExpectToBeVisible({
-			target: page.getByText(
-				`Success:${newName} was updated successfully.`
-			),
+			target: page.getByText(`Success:${name} was updated successfully.`),
 			trigger: editVocabularyPage.saveButton,
 		});
 
-		await expect(vocabulariesPage.getItem(newName)).toBeVisible();
+		createdVocabularyNames[createdVocabularyNames.length - 1] = name;
+
+		await expect(vocabulariesPage.getItem(name)).toBeVisible();
 	}
 );
 
@@ -337,9 +376,11 @@ test(
 	'Validate change asset types when saving',
 	{tag: '@LPD-52591'},
 	async ({editVocabularyPage, page, vocabulariesPage}) => {
-		editVocabularyPage.goto();
-
 		const name = `Vocabulary${getRandomInt()}`;
+
+		createdVocabularyNames.push(name);
+
+		editVocabularyPage.goto();
 
 		await editVocabularyPage.changeGeneralInfo({
 			description: getRandomString(),
@@ -393,9 +434,11 @@ test(
 	'Validate change spaces when saving',
 	{tag: '@LPD-52592'},
 	async ({editVocabularyPage, page, vocabulariesPage}) => {
-		editVocabularyPage.goto();
-
 		const name = `Vocabulary${getRandomInt()}`;
+
+		createdVocabularyNames.push(name);
+
+		editVocabularyPage.goto();
 
 		await editVocabularyPage.changeGeneralInfo({
 			description: getRandomString(),
@@ -669,6 +712,8 @@ test(
 		const externalReferenceCode = `ERC${getRandomInt()}`;
 		const name = `Vocabulary${getRandomInt()}`;
 
+		createdVocabularyNames.push(name);
+
 		await editVocabularyPage.goto();
 
 		await editVocabularyPage.changeGeneralInfo({
@@ -721,3 +766,133 @@ test(
 		});
 	}
 );
+
+systemVocabularyTest.describe('System vocabulary tests', () => {
+	let systemVocabularyId: number | undefined;
+	let systemVocabularyName: string;
+
+	systemVocabularyTest.beforeEach(
+		'Create a system vocabulary via API',
+		async ({apiHelpers}) => {
+			systemVocabularyName = getRandomString();
+
+			const siteId = await apiHelpers.headlessAdminUser
+				.getSiteByFriendlyUrlPath('cms')
+				.then((response) => response.id);
+
+			systemVocabularyId = await apiHelpers.headlessAdminTaxonomy
+				.postSiteTaxonomyVocabulary({
+					assetLibraries: [{id: -1}],
+					assetTypes: [
+						{
+							required: true,
+							subtype: 'AllAssetSubtypes',
+							type: 'AllAssetTypes',
+						},
+					],
+					name: systemVocabularyName,
+					siteId,
+					system: true,
+					visibilityType: 'PUBLIC',
+				})
+				.then((response) => response.id);
+		}
+	);
+
+	systemVocabularyTest.afterEach(async ({apiHelpers}) => {
+		if (systemVocabularyId === undefined) {
+			return;
+		}
+
+		// A system vocabulary cannot be deleted while LPD-86291 is enabled, so
+		// disable it before cleaning up.
+
+		await apiHelpers.featureFlag.updateFeatureFlag('LPD-86291', false);
+
+		await apiHelpers.headlessAdminTaxonomy.deleteTaxonomyVocabulary(
+			systemVocabularyId
+		);
+
+		systemVocabularyId = undefined;
+	});
+
+	systemVocabularyTest(
+		'Hide the delete action for a system vocabulary',
+		{tag: '@LPD-93225'},
+		async ({vocabulariesPage}) => {
+			await vocabulariesPage.goto();
+
+			// The delete action is not offered for a system vocabulary
+
+			await vocabulariesPage.expectItemActionHidden({
+				action: 'Delete',
+				filter: systemVocabularyName,
+			});
+		}
+	);
+
+	systemVocabularyTest(
+		'Lock the protected fields and hide the asset types tab when editing a system vocabulary',
+		{tag: '@LPD-93225'},
+		async ({editVocabularyPage, page, vocabulariesPage}) => {
+			await vocabulariesPage.goto();
+
+			// Open the system vocabulary edit page
+
+			await page.getByRole('link', {name: systemVocabularyName}).click();
+
+			await expect(
+				page.getByText(`Edit ${systemVocabularyName}`)
+			).toBeVisible();
+
+			// Name, external reference code and description cannot be edited
+
+			await expect(editVocabularyPage.nameInput).toBeDisabled();
+			await expect(
+				editVocabularyPage.externalReferenceCodeInput
+			).toBeDisabled();
+			await expect(editVocabularyPage.descriptionInput).toBeDisabled();
+
+			// The spaces the vocabulary is available in cannot be changed
+
+			await expect(editVocabularyPage.spaceCheckbox).toBeDisabled();
+
+			// Allowing multiple categories remains editable
+
+			await expect(editVocabularyPage.multiSelectToggle).toBeEnabled();
+
+			// The associated asset types tab is not available
+
+			await expect(editVocabularyPage.assetTypesButton).toBeHidden();
+		}
+	);
+
+	systemVocabularyTest(
+		'Add a category to a system vocabulary',
+		{tag: '@LPD-93225'},
+		async ({categoriesPage, editCategoryPage, page, vocabulariesPage}) => {
+			await vocabulariesPage.goto();
+
+			// Categories can still be added to a system vocabulary
+
+			await vocabulariesPage.execItemAction({
+				action: 'Add Category',
+				filter: systemVocabularyName,
+			});
+
+			await expect(page.getByText('Basic Info')).toBeVisible();
+
+			const categoryName = getRandomString();
+
+			await editCategoryPage.fillName(categoryName);
+			await editCategoryPage.clickSave();
+
+			await categoriesPage.assertBreadcrumbItemText(
+				1,
+				systemVocabularyName
+			);
+
+			await expect(categoriesPage.getItem(categoryName)).toBeVisible();
+		}
+	);
+});

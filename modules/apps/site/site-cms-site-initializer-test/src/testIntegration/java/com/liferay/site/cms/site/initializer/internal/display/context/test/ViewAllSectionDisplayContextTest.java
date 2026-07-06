@@ -11,6 +11,7 @@ import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.data.set.test.util.FrontendDataSetTestUtil;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFolderConstants;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -106,7 +107,7 @@ public class ViewAllSectionDisplayContextTest
 			getBulkActionDropdownItems();
 
 		Assert.assertEquals(
-			bulkActionDropdownItems.toString(), 14,
+			bulkActionDropdownItems.toString(), 15,
 			bulkActionDropdownItems.size());
 
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
@@ -117,39 +118,42 @@ public class ViewAllSectionDisplayContextTest
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
 			"copy", "copy-to", "Copy To", null, bulkActionDropdownItems.get(2));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
-			"time", "expire", "Expire", null, bulkActionDropdownItems.get(3));
+			"copy", "duplicate", "Duplicate", null,
+			bulkActionDropdownItems.get(3));
+		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
+			"time", "expire", "Expire", null, bulkActionDropdownItems.get(4));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
 			"upload", "export-for-translation", "Export for Translation", null,
-			bulkActionDropdownItems.get(4));
-		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
-			"download", "download", "Download", null,
 			bulkActionDropdownItems.get(5));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
-			"pencil", "edit-categories", "Edit Categories", "post",
+			"download", "download", "Download", null,
 			bulkActionDropdownItems.get(6));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
-			"pencil", "edit-tags", "Edit Tags", "post",
+			"pencil", "edit-categories", "Edit Categories", "post",
 			bulkActionDropdownItems.get(7));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
-			"semantic-search", "find-and-replace", "Find and Replace", null,
+			"pencil", "edit-tags", "Edit Tags", "post",
 			bulkActionDropdownItems.get(8));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
-			"password-policies", "permissions", "Permissions", null,
+			"semantic-search", "find-and-replace", "Find and Replace", null,
 			bulkActionDropdownItems.get(9));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
+			"password-policies", "permissions", "Permissions", null,
+			bulkActionDropdownItems.get(10));
+		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
 			"password-policies", "default-permissions", "Default Permissions",
-			null, bulkActionDropdownItems.get(10));
+			null, bulkActionDropdownItems.get(11));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
 			"password-policies", "edit-default-permissions-by-role",
 			"Edit Default Permissions by Role", null,
-			bulkActionDropdownItems.get(11));
+			bulkActionDropdownItems.get(12));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
 			"password-policies", "edit-permissions-by-role",
-			"Edit Permissions by Role", null, bulkActionDropdownItems.get(12));
+			"Edit Permissions by Role", null, bulkActionDropdownItems.get(13));
 		FrontendDataSetTestUtil.assertFDSActionDropdownItem(
 			"password-policies", "reset-to-default-permissions",
 			"Reset to Default Permissions", null,
-			bulkActionDropdownItems.get(13));
+			bulkActionDropdownItems.get(14));
 	}
 
 	@Override
@@ -190,8 +194,12 @@ public class ViewAllSectionDisplayContextTest
 
 	@Override
 	protected String getFilterString() {
-		return "cmsKind eq 'object' and (cmsSection eq 'contents' or " +
-			"cmsSection eq 'files')";
+		return StringBundler.concat(
+			"(cmsSection eq 'contents' or cmsSection eq 'files') and ",
+			"objectDefinitionExternalReferenceCode ne '",
+			ObjectEntryFolderConstants.
+				EXTERNAL_REFERENCE_CODE_OBJECT_ENTRY_FOLDER,
+			"' and rootDescendantNode eq false");
 	}
 
 	@Override

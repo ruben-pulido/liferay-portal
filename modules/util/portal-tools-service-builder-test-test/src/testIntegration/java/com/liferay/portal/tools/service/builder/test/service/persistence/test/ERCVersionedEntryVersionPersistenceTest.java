@@ -131,8 +131,10 @@ public class ERCVersionedEntryVersionPersistenceTest {
 
 		newERCVersionedEntryVersion.setCompanyId(RandomTestUtil.nextLong());
 
-		_ercVersionedEntryVersions.add(
-			_persistence.update(newERCVersionedEntryVersion));
+		newERCVersionedEntryVersion = _persistence.update(
+			newERCVersionedEntryVersion);
+
+		_ercVersionedEntryVersions.add(newERCVersionedEntryVersion);
 
 		ERCVersionedEntryVersion existingERCVersionedEntryVersion =
 			_persistence.findByPrimaryKey(
@@ -596,4 +598,4 @@ public class ERCVersionedEntryVersionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-46805671
+// LIFERAY-SERVICE-BUILDER-HASH:935414981

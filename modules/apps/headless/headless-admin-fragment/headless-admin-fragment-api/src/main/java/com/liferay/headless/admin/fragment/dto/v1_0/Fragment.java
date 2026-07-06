@@ -10,8 +10,11 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import com.liferay.headless.admin.site.dto.v1_0.ThumbnailURLReference;
 import com.liferay.headless.admin.user.dto.v1_0.Creator;
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringBundler;
@@ -44,9 +47,20 @@ import java.util.function.Supplier;
  */
 @Generated("")
 @GraphQLName(description = "A fragment entry.", value = "Fragment")
+@io.swagger.v3.oas.annotations.media.Schema(description = "A fragment entry.")
 @JsonFilter("Liferay.Vulcan")
+@JsonSubTypes(
+	{
+		@JsonSubTypes.Type(name = "BasicFragment", value = BasicFragment.class),
+		@JsonSubTypes.Type(name = "FormFragment", value = FormFragment.class)
+	}
+)
+@JsonTypeInfo(
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type",
+	use = JsonTypeInfo.Id.NAME, visible = true
+)
 @XmlRootElement(name = "Fragment")
-public class Fragment implements Serializable {
+public abstract class Fragment implements Serializable {
 
 	public static Fragment toDTO(String json) {
 		return ObjectMapperUtil.readValue(Fragment.class, json);
@@ -579,6 +593,55 @@ public class Fragment implements Serializable {
 	private Supplier<Boolean> _readOnlySupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The fragment's thumbnail. On read, returned only when `nestedFields=thumbnailURLReference` is requested. On POST or PUT, omitting `thumbnailURLReference` clears any previously bound preview."
+	)
+	@Valid
+	public ThumbnailURLReference getThumbnailURLReference() {
+		if (_thumbnailURLReferenceSupplier != null) {
+			thumbnailURLReference = _thumbnailURLReferenceSupplier.get();
+
+			_thumbnailURLReferenceSupplier = null;
+		}
+
+		return thumbnailURLReference;
+	}
+
+	public void setThumbnailURLReference(
+		ThumbnailURLReference thumbnailURLReference) {
+
+		this.thumbnailURLReference = thumbnailURLReference;
+
+		_thumbnailURLReferenceSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setThumbnailURLReference(
+		UnsafeSupplier<ThumbnailURLReference, Exception>
+			thumbnailURLReferenceUnsafeSupplier) {
+
+		_thumbnailURLReferenceSupplier = () -> {
+			try {
+				return thumbnailURLReferenceUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "The fragment's thumbnail. On read, returned only when `nestedFields=thumbnailURLReference` is requested. On POST or PUT, omitting `thumbnailURLReference` clears any previously bound preview."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected ThumbnailURLReference thumbnailURLReference;
+
+	@JsonIgnore
+	private Supplier<ThumbnailURLReference> _thumbnailURLReferenceSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The fragment's type."
 	)
 	@JsonGetter("type")
@@ -840,6 +903,19 @@ public class Fragment implements Serializable {
 			sb.append(readOnly);
 		}
 
+		ThumbnailURLReference thumbnailURLReference =
+			getThumbnailURLReference();
+
+		if (thumbnailURLReference != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"thumbnailURLReference\": ");
+
+			sb.append(thumbnailURLReference);
+		}
+
 		Type type = getType();
 
 		if (type != null) {
@@ -869,7 +945,7 @@ public class Fragment implements Serializable {
 	@GraphQLName("Type")
 	public static enum Type {
 
-		COMPONENT("Component");
+		BASIC_FRAGMENT("BasicFragment"), FORM_FRAGMENT("FormFragment");
 
 		@JsonCreator
 		public static Type create(String value) {
@@ -993,4 +1069,4 @@ public class Fragment implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:1029568033
+// LIFERAY-REST-BUILDER-HASH:-1466352401

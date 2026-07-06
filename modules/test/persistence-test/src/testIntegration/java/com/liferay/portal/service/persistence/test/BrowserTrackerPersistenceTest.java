@@ -109,11 +109,7 @@ public class BrowserTrackerPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		BrowserTracker newBrowserTracker = _persistence.create(pk);
-
-		newBrowserTracker.setMvccVersion(RandomTestUtil.nextLong());
+		BrowserTracker newBrowserTracker = addBrowserTracker();
 
 		newBrowserTracker.setCompanyId(RandomTestUtil.nextLong());
 
@@ -121,7 +117,9 @@ public class BrowserTrackerPersistenceTest {
 
 		newBrowserTracker.setBrowserKey(RandomTestUtil.nextLong());
 
-		_browserTrackers.add(_persistence.update(newBrowserTracker));
+		newBrowserTracker = _persistence.update(newBrowserTracker);
+
+		_browserTrackers.add(newBrowserTracker);
 
 		BrowserTracker existingBrowserTracker = _persistence.findByPrimaryKey(
 			newBrowserTracker.getPrimaryKey());
@@ -455,8 +453,6 @@ public class BrowserTrackerPersistenceTest {
 
 		BrowserTracker browserTracker = _persistence.create(pk);
 
-		browserTracker.setMvccVersion(RandomTestUtil.nextLong());
-
 		browserTracker.setCompanyId(RandomTestUtil.nextLong());
 
 		browserTracker.setUserId(RandomTestUtil.nextLong());
@@ -474,4 +470,4 @@ public class BrowserTrackerPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1700104601
+// LIFERAY-SERVICE-BUILDER-HASH:-2093663700

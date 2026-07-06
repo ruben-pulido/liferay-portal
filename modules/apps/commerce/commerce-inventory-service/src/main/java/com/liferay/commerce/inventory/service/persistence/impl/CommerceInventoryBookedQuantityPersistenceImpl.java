@@ -78,8 +78,10 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceInventoryBookedQuantity>
-		_collectionPersistenceFinderByLtExpirationDate;
+	private CollectionPersistenceFinder
+		<CommerceInventoryBookedQuantity,
+		 NoSuchInventoryBookedQuantityException>
+			_collectionPersistenceFinderByLtExpirationDate;
 
 	/**
 	 * Returns all the commerce inventory booked quantities where expirationDate &lt; &#63;.
@@ -176,17 +178,8 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 				orderByComparator)
 		throws NoSuchInventoryBookedQuantityException {
 
-		CommerceInventoryBookedQuantity commerceInventoryBookedQuantity =
-			fetchByLtExpirationDate_First(expirationDate, orderByComparator);
-
-		if (commerceInventoryBookedQuantity != null) {
-			return commerceInventoryBookedQuantity;
-		}
-
-		throw new NoSuchInventoryBookedQuantityException(
-			_collectionPersistenceFinderByLtExpirationDate.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {expirationDate}));
+		return _collectionPersistenceFinderByLtExpirationDate.findFirst(
+			finderCache, new Object[] {expirationDate}, orderByComparator);
 	}
 
 	/**
@@ -228,8 +221,10 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 			finderCache, new Object[] {expirationDate});
 	}
 
-	private CollectionPersistenceFinder<CommerceInventoryBookedQuantity>
-		_collectionPersistenceFinderBySku;
+	private CollectionPersistenceFinder
+		<CommerceInventoryBookedQuantity,
+		 NoSuchInventoryBookedQuantityException>
+			_collectionPersistenceFinderBySku;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory booked quantities where sku = &#63;.
@@ -271,16 +266,8 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 				orderByComparator)
 		throws NoSuchInventoryBookedQuantityException {
 
-		CommerceInventoryBookedQuantity commerceInventoryBookedQuantity =
-			fetchBySku_First(sku, orderByComparator);
-
-		if (commerceInventoryBookedQuantity != null) {
-			return commerceInventoryBookedQuantity;
-		}
-
-		throw new NoSuchInventoryBookedQuantityException(
-			_collectionPersistenceFinderBySku.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {sku}));
+		return _collectionPersistenceFinderBySku.findFirst(
+			finderCache, new Object[] {sku}, orderByComparator);
 	}
 
 	/**
@@ -322,8 +309,10 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 			finderCache, new Object[] {sku});
 	}
 
-	private CollectionPersistenceFinder<CommerceInventoryBookedQuantity>
-		_collectionPersistenceFinderByC_S_U;
+	private CollectionPersistenceFinder
+		<CommerceInventoryBookedQuantity,
+		 NoSuchInventoryBookedQuantityException>
+			_collectionPersistenceFinderByC_S_U;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory booked quantities where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
@@ -369,18 +358,9 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 				orderByComparator)
 		throws NoSuchInventoryBookedQuantityException {
 
-		CommerceInventoryBookedQuantity commerceInventoryBookedQuantity =
-			fetchByC_S_U_First(
-				companyId, sku, unitOfMeasureKey, orderByComparator);
-
-		if (commerceInventoryBookedQuantity != null) {
-			return commerceInventoryBookedQuantity;
-		}
-
-		throw new NoSuchInventoryBookedQuantityException(
-			_collectionPersistenceFinderByC_S_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, sku, unitOfMeasureKey}));
+		return _collectionPersistenceFinderByC_S_U.findFirst(
+			finderCache, new Object[] {companyId, sku, unitOfMeasureKey},
+			orderByComparator);
 	}
 
 	/**
@@ -658,6 +638,11 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceInventoryBookedQuantityId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCEINVENTORYBOOKEDQUANTITY;
 	}
@@ -693,7 +678,7 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 				_SQL_SELECT_COMMERCEINVENTORYBOOKEDQUANTITY_WHERE,
 				_SQL_COUNT_COMMERCEINVENTORYBOOKEDQUANTITY_WHERE,
 				CommerceInventoryBookedQuantityModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceInventoryBookedQuantity.", "expirationDate",
 					FinderColumn.Type.DATE, "<", true, true,
@@ -719,7 +704,7 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 			_SQL_SELECT_COMMERCEINVENTORYBOOKEDQUANTITY_WHERE,
 			_SQL_COUNT_COMMERCEINVENTORYBOOKEDQUANTITY_WHERE,
 			CommerceInventoryBookedQuantityModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commerceInventoryBookedQuantity.", "sku",
 				FinderColumn.Type.STRING, "=", true, true,
@@ -754,7 +739,7 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 			_SQL_SELECT_COMMERCEINVENTORYBOOKEDQUANTITY_WHERE,
 			_SQL_COUNT_COMMERCEINVENTORYBOOKEDQUANTITY_WHERE,
 			CommerceInventoryBookedQuantityModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commerceInventoryBookedQuantity.", "companyId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -825,9 +810,6 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 		_SQL_COUNT_COMMERCEINVENTORYBOOKEDQUANTITY_WHERE =
 			"SELECT COUNT(commerceInventoryBookedQuantity) FROM CommerceInventoryBookedQuantity commerceInventoryBookedQuantity WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceInventoryBookedQuantity exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"commerceInventoryBookedQuantityId"});
 
@@ -837,4 +819,4 @@ public class CommerceInventoryBookedQuantityPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1569036168
+// LIFERAY-SERVICE-BUILDER-HASH:1610959874

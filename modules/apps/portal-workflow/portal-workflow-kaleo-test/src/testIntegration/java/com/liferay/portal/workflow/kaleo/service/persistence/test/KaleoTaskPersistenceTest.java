@@ -112,11 +112,7 @@ public class KaleoTaskPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		KaleoTask newKaleoTask = _persistence.create(pk);
-
-		newKaleoTask.setMvccVersion(RandomTestUtil.nextLong());
+		KaleoTask newKaleoTask = addKaleoTask();
 
 		newKaleoTask.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -142,7 +138,9 @@ public class KaleoTaskPersistenceTest {
 
 		newKaleoTask.setDescription(RandomTestUtil.randomString());
 
-		_kaleoTasks.add(_persistence.update(newKaleoTask));
+		newKaleoTask = _persistence.update(newKaleoTask);
+
+		_kaleoTasks.add(newKaleoTask);
 
 		KaleoTask existingKaleoTask = _persistence.findByPrimaryKey(
 			newKaleoTask.getPrimaryKey());
@@ -507,8 +505,6 @@ public class KaleoTaskPersistenceTest {
 
 		KaleoTask kaleoTask = _persistence.create(pk);
 
-		kaleoTask.setMvccVersion(RandomTestUtil.nextLong());
-
 		kaleoTask.setCtCollectionId(RandomTestUtil.nextLong());
 
 		kaleoTask.setGroupId(RandomTestUtil.nextLong());
@@ -543,4 +539,4 @@ public class KaleoTaskPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1065866244
+// LIFERAY-SERVICE-BUILDER-HASH:1589705424

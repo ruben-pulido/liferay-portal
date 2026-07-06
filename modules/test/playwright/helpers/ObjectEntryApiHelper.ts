@@ -29,6 +29,16 @@ export class ObjectEntryApiHelper {
 		);
 	}
 
+	async expireObjectEntryByExternalReferenceCode(
+		applicationName: string,
+		scopeKey: string,
+		externalReferenceCode: string
+	) {
+		return this.apiHelpers.post(
+			`${this.apiHelpers.baseUrl}${applicationName}/scopes/${scopeKey}/by-external-reference-code/${externalReferenceCode}/expire`
+		);
+	}
+
 	async getObjectDefinitionObjectEntries(
 		applicationName: string,
 		searchParams?: URLSearchParams
@@ -154,6 +164,17 @@ export class ObjectEntryApiHelper {
 		);
 	}
 
+	async getObjectEntryCollaboratorsPage(
+		applicationName: string,
+		objectEntryId: number
+	) {
+		const response = await this.apiHelpers.get(
+			`${this.apiHelpers.baseUrl}${applicationName}/${objectEntryId}/collaborators`
+		);
+
+		return response?.items;
+	}
+
 	async postObjectEntryCollaborators(
 		data: DataObject[],
 		applicationName: string,
@@ -189,6 +210,17 @@ export class ObjectEntryApiHelper {
 		return this.apiHelpers.put(
 			`${this.apiHelpers.baseUrl}${applicationName}/${objectEntryId}`,
 			{data}
+		);
+	}
+
+	async putObjectEntryPermissions(
+		applicationName: string,
+		objectEntryId: number,
+		permissions: Array<{actionIds: string[]; roleName: string}>
+	) {
+		return this.apiHelpers.put(
+			`${this.apiHelpers.baseUrl}${applicationName}/${objectEntryId}/permissions`,
+			{data: permissions}
 		);
 	}
 }

@@ -108,11 +108,7 @@ public class ContactPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Contact newContact = _persistence.create(pk);
-
-		newContact.setMvccVersion(RandomTestUtil.nextLong());
+		Contact newContact = addContact();
 
 		newContact.setCompanyId(RandomTestUtil.nextLong());
 
@@ -166,7 +162,9 @@ public class ContactPersistenceTest {
 
 		newContact.setHoursOfOperation(RandomTestUtil.randomString());
 
-		_contacts.add(_persistence.update(newContact));
+		newContact = _persistence.update(newContact);
+
+		_contacts.add(newContact);
 
 		Contact existingContact = _persistence.findByPrimaryKey(
 			newContact.getPrimaryKey());
@@ -510,8 +508,6 @@ public class ContactPersistenceTest {
 
 		Contact contact = _persistence.create(pk);
 
-		contact.setMvccVersion(RandomTestUtil.nextLong());
-
 		contact.setCompanyId(RandomTestUtil.nextLong());
 
 		contact.setUserId(RandomTestUtil.nextLong());
@@ -574,4 +570,4 @@ public class ContactPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1784686000
+// LIFERAY-SERVICE-BUILDER-HASH:-660844007

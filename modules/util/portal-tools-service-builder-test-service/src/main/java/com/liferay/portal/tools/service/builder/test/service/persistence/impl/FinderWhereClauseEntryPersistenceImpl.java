@@ -59,8 +59,9 @@ public class FinderWhereClauseEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<FinderWhereClauseEntry>
-		_collectionPersistenceFinderByName_Nickname;
+	private CollectionPersistenceFinder
+		<FinderWhereClauseEntry, NoSuchFinderWhereClauseEntryException>
+			_collectionPersistenceFinderByName_Nickname;
 
 	/**
 	 * Returns an ordered range of all the finder where clause entries where name = &#63;.
@@ -101,16 +102,8 @@ public class FinderWhereClauseEntryPersistenceImpl
 			OrderByComparator<FinderWhereClauseEntry> orderByComparator)
 		throws NoSuchFinderWhereClauseEntryException {
 
-		FinderWhereClauseEntry finderWhereClauseEntry =
-			fetchByName_Nickname_First(name, orderByComparator);
-
-		if (finderWhereClauseEntry != null) {
-			return finderWhereClauseEntry;
-		}
-
-		throw new NoSuchFinderWhereClauseEntryException(
-			_collectionPersistenceFinderByName_Nickname.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name}));
+		return _collectionPersistenceFinderByName_Nickname.findFirst(
+			finderCache, new Object[] {name}, orderByComparator);
 	}
 
 	/**
@@ -363,6 +356,7 @@ public class FinderWhereClauseEntryPersistenceImpl
 				FinderWhereClauseEntryModelImpl.ORDER_BY_JPQL,
 				_ENTITY_ALIAS_PREFIX,
 				"finderWhereClauseEntry.nickname IS NOT NULL",
+				"finderWhereClauseEntry.nickname IS NOT NULL", null,
 				new FinderColumn<>(
 					"finderWhereClauseEntry.", "name", FinderColumn.Type.STRING,
 					"=", true, true, FinderWhereClauseEntry::getName));
@@ -394,13 +388,10 @@ public class FinderWhereClauseEntryPersistenceImpl
 	private static final String _SQL_COUNT_FINDERWHERECLAUSEENTRY_WHERE =
 		"SELECT COUNT(finderWhereClauseEntry) FROM FinderWhereClauseEntry finderWhereClauseEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FinderWhereClauseEntry exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1519084935
+// LIFERAY-SERVICE-BUILDER-HASH:1452006307

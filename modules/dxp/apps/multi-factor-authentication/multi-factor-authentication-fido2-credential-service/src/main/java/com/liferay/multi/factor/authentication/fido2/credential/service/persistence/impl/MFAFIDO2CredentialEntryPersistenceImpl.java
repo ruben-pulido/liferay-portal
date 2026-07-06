@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -76,8 +74,9 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<MFAFIDO2CredentialEntry>
-		_collectionPersistenceFinderByUserId;
+	private CollectionPersistenceFinder
+		<MFAFIDO2CredentialEntry, NoSuchMFAFIDO2CredentialEntryException>
+			_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns an ordered range of all the mfafido2 credential entries where userId = &#63;.
@@ -118,16 +117,8 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 			OrderByComparator<MFAFIDO2CredentialEntry> orderByComparator)
 		throws NoSuchMFAFIDO2CredentialEntryException {
 
-		MFAFIDO2CredentialEntry mfaFIDO2CredentialEntry = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (mfaFIDO2CredentialEntry != null) {
-			return mfaFIDO2CredentialEntry;
-		}
-
-		throw new NoSuchMFAFIDO2CredentialEntryException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -169,8 +160,9 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<MFAFIDO2CredentialEntry>
-		_collectionPersistenceFinderByCredentialKeyHash;
+	private CollectionPersistenceFinder
+		<MFAFIDO2CredentialEntry, NoSuchMFAFIDO2CredentialEntryException>
+			_collectionPersistenceFinderByCredentialKeyHash;
 
 	/**
 	 * Returns an ordered range of all the mfafido2 credential entries where credentialKeyHash = &#63;.
@@ -211,19 +203,8 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 			OrderByComparator<MFAFIDO2CredentialEntry> orderByComparator)
 		throws NoSuchMFAFIDO2CredentialEntryException {
 
-		MFAFIDO2CredentialEntry mfaFIDO2CredentialEntry =
-			fetchByCredentialKeyHash_First(
-				credentialKeyHash, orderByComparator);
-
-		if (mfaFIDO2CredentialEntry != null) {
-			return mfaFIDO2CredentialEntry;
-		}
-
-		throw new NoSuchMFAFIDO2CredentialEntryException(
-			_collectionPersistenceFinderByCredentialKeyHash.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {credentialKeyHash}));
+		return _collectionPersistenceFinderByCredentialKeyHash.findFirst(
+			finderCache, new Object[] {credentialKeyHash}, orderByComparator);
 	}
 
 	/**
@@ -265,8 +246,9 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 			finderCache, new Object[] {credentialKeyHash});
 	}
 
-	private UniquePersistenceFinder<MFAFIDO2CredentialEntry>
-		_uniquePersistenceFinderByU_C;
+	private UniquePersistenceFinder
+		<MFAFIDO2CredentialEntry, NoSuchMFAFIDO2CredentialEntryException>
+			_uniquePersistenceFinderByU_C;
 
 	/**
 	 * Returns the mfafido2 credential entry where userId = &#63; and credentialKeyHash = &#63; or throws a <code>NoSuchMFAFIDO2CredentialEntryException</code> if it could not be found.
@@ -281,23 +263,8 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 			long userId, long credentialKeyHash)
 		throws NoSuchMFAFIDO2CredentialEntryException {
 
-		MFAFIDO2CredentialEntry mfaFIDO2CredentialEntry = fetchByU_C(
-			userId, credentialKeyHash);
-
-		if (mfaFIDO2CredentialEntry == null) {
-			String message =
-				_uniquePersistenceFinderByU_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {userId, credentialKeyHash});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMFAFIDO2CredentialEntryException(message);
-		}
-
-		return mfaFIDO2CredentialEntry;
+		return _uniquePersistenceFinderByU_C.find(
+			finderCache, new Object[] {userId, credentialKeyHash});
 	}
 
 	/**
@@ -583,7 +550,7 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 				_SQL_SELECT_MFAFIDO2CREDENTIALENTRY_WHERE,
 				_SQL_COUNT_MFAFIDO2CREDENTIALENTRY_WHERE,
 				MFAFIDO2CredentialEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"mfafido2CredentialEntry.", "userId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -614,7 +581,7 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 				_SQL_SELECT_MFAFIDO2CREDENTIALENTRY_WHERE,
 				_SQL_COUNT_MFAFIDO2CREDENTIALENTRY_WHERE,
 				MFAFIDO2CredentialEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"mfafido2CredentialEntry.", "credentialKeyHash",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -691,16 +658,10 @@ public class MFAFIDO2CredentialEntryPersistenceImpl
 	private static final String _SQL_COUNT_MFAFIDO2CREDENTIALENTRY_WHERE =
 		"SELECT COUNT(mfafido2CredentialEntry) FROM MFAFIDO2CredentialEntry mfafido2CredentialEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No MFAFIDO2CredentialEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		MFAFIDO2CredentialEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1519743187
+// LIFERAY-SERVICE-BUILDER-HASH:1612585230

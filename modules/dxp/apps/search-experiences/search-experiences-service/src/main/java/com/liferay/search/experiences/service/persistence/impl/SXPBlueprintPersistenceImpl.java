@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -89,8 +87,9 @@ public class SXPBlueprintPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<SXPBlueprint>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<SXPBlueprint, NoSuchSXPBlueprintException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the sxp blueprints where uuid = &#63;.
@@ -130,15 +129,8 @@ public class SXPBlueprintPersistenceImpl
 			String uuid, OrderByComparator<SXPBlueprint> orderByComparator)
 		throws NoSuchSXPBlueprintException {
 
-		SXPBlueprint sxpBlueprint = fetchByUuid_First(uuid, orderByComparator);
-
-		if (sxpBlueprint != null) {
-			return sxpBlueprint;
-		}
-
-		throw new NoSuchSXPBlueprintException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -213,8 +205,9 @@ public class SXPBlueprintPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<SXPBlueprint>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<SXPBlueprint, NoSuchSXPBlueprintException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the sxp blueprints where uuid = &#63; and companyId = &#63;.
@@ -257,16 +250,8 @@ public class SXPBlueprintPersistenceImpl
 			OrderByComparator<SXPBlueprint> orderByComparator)
 		throws NoSuchSXPBlueprintException {
 
-		SXPBlueprint sxpBlueprint = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (sxpBlueprint != null) {
-			return sxpBlueprint;
-		}
-
-		throw new NoSuchSXPBlueprintException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -348,8 +333,9 @@ public class SXPBlueprintPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<SXPBlueprint>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<SXPBlueprint, NoSuchSXPBlueprintException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the sxp blueprints where companyId = &#63;.
@@ -389,16 +375,8 @@ public class SXPBlueprintPersistenceImpl
 			long companyId, OrderByComparator<SXPBlueprint> orderByComparator)
 		throws NoSuchSXPBlueprintException {
 
-		SXPBlueprint sxpBlueprint = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (sxpBlueprint != null) {
-			return sxpBlueprint;
-		}
-
-		throw new NoSuchSXPBlueprintException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -474,7 +452,7 @@ public class SXPBlueprintPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<SXPBlueprint>
+	private UniquePersistenceFinder<SXPBlueprint, NoSuchSXPBlueprintException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -490,23 +468,8 @@ public class SXPBlueprintPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchSXPBlueprintException {
 
-		SXPBlueprint sxpBlueprint = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (sxpBlueprint == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSXPBlueprintException(message);
-		}
-
-		return sxpBlueprint;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -886,18 +849,10 @@ public class SXPBlueprintPersistenceImpl
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_SXPBLUEPRINT_WHERE, _SQL_COUNT_SXPBLUEPRINT_WHERE,
 				SXPBlueprintModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPBlueprintImpl.class, SXPBlueprint.class, "sxpBlueprint",
-					"SXPBlueprint", "sxpBlueprint.sxpBlueprintId",
-					"SELECT DISTINCT {sxpBlueprint.*} FROM SXPBlueprint sxpBlueprint WHERE ",
-					"SELECT {SXPBlueprint.*} FROM (SELECT DISTINCT sxpBlueprint.sxpBlueprintId FROM SXPBlueprint sxpBlueprint WHERE ",
-					") TEMP_TABLE INNER JOIN SXPBlueprint ON TEMP_TABLE.sxpBlueprintId = SXPBlueprint.sxpBlueprintId",
-					"SELECT COUNT(DISTINCT sxpBlueprint.sxpBlueprintId) AS COUNT_VALUE FROM SXPBlueprint sxpBlueprint WHERE ",
-					SXPBlueprintModelImpl.ORDER_BY_SQL,
-					SXPBlueprintModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"sxpBlueprint.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, SXPBlueprint::getUuid));
+					"sxpBlueprint.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, SXPBlueprint::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -920,18 +875,10 @@ public class SXPBlueprintPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_SXPBLUEPRINT_WHERE, _SQL_COUNT_SXPBLUEPRINT_WHERE,
 				SXPBlueprintModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPBlueprintImpl.class, SXPBlueprint.class, "sxpBlueprint",
-					"SXPBlueprint", "sxpBlueprint.sxpBlueprintId",
-					"SELECT DISTINCT {sxpBlueprint.*} FROM SXPBlueprint sxpBlueprint WHERE ",
-					"SELECT {SXPBlueprint.*} FROM (SELECT DISTINCT sxpBlueprint.sxpBlueprintId FROM SXPBlueprint sxpBlueprint WHERE ",
-					") TEMP_TABLE INNER JOIN SXPBlueprint ON TEMP_TABLE.sxpBlueprintId = SXPBlueprint.sxpBlueprintId",
-					"SELECT COUNT(DISTINCT sxpBlueprint.sxpBlueprintId) AS COUNT_VALUE FROM SXPBlueprint sxpBlueprint WHERE ",
-					SXPBlueprintModelImpl.ORDER_BY_SQL,
-					SXPBlueprintModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"sxpBlueprint.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, SXPBlueprint::getUuid),
+					"sxpBlueprint.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, SXPBlueprint::getUuid),
 				new FinderColumn<>(
 					"sxpBlueprint.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SXPBlueprint::getCompanyId));
@@ -957,15 +904,7 @@ public class SXPBlueprintPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_SXPBLUEPRINT_WHERE, _SQL_COUNT_SXPBLUEPRINT_WHERE,
 				SXPBlueprintModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SXPBlueprintImpl.class, SXPBlueprint.class, "sxpBlueprint",
-					"SXPBlueprint", "sxpBlueprint.sxpBlueprintId",
-					"SELECT DISTINCT {sxpBlueprint.*} FROM SXPBlueprint sxpBlueprint WHERE ",
-					"SELECT {SXPBlueprint.*} FROM (SELECT DISTINCT sxpBlueprint.sxpBlueprintId FROM SXPBlueprint sxpBlueprint WHERE ",
-					") TEMP_TABLE INNER JOIN SXPBlueprint ON TEMP_TABLE.sxpBlueprintId = SXPBlueprint.sxpBlueprintId",
-					"SELECT COUNT(DISTINCT sxpBlueprint.sxpBlueprintId) AS COUNT_VALUE FROM SXPBlueprint sxpBlueprint WHERE ",
-					SXPBlueprintModelImpl.ORDER_BY_SQL,
-					SXPBlueprintModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"sxpBlueprint.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SXPBlueprint::getCompanyId));
@@ -1042,12 +981,6 @@ public class SXPBlueprintPersistenceImpl
 	private static final String _SQL_COUNT_SXPBLUEPRINT_WHERE =
 		"SELECT COUNT(sxpBlueprint) FROM SXPBlueprint sxpBlueprint WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SXPBlueprint exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SXPBlueprintPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1057,4 +990,4 @@ public class SXPBlueprintPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1294925113
+// LIFERAY-SERVICE-BUILDER-HASH:-871230631

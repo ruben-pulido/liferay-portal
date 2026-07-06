@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -95,8 +93,9 @@ public class CPTaxCategoryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<CPTaxCategory>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<CPTaxCategory, NoSuchCPTaxCategoryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp tax categories where uuid = &#63;.
@@ -136,16 +135,8 @@ public class CPTaxCategoryPersistenceImpl
 			String uuid, OrderByComparator<CPTaxCategory> orderByComparator)
 		throws NoSuchCPTaxCategoryException {
 
-		CPTaxCategory cpTaxCategory = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (cpTaxCategory != null) {
-			return cpTaxCategory;
-		}
-
-		throw new NoSuchCPTaxCategoryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -220,8 +211,9 @@ public class CPTaxCategoryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<CPTaxCategory>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<CPTaxCategory, NoSuchCPTaxCategoryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp tax categories where uuid = &#63; and companyId = &#63;.
@@ -264,16 +256,8 @@ public class CPTaxCategoryPersistenceImpl
 			OrderByComparator<CPTaxCategory> orderByComparator)
 		throws NoSuchCPTaxCategoryException {
 
-		CPTaxCategory cpTaxCategory = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cpTaxCategory != null) {
-			return cpTaxCategory;
-		}
-
-		throw new NoSuchCPTaxCategoryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -355,8 +339,9 @@ public class CPTaxCategoryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CPTaxCategory>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<CPTaxCategory, NoSuchCPTaxCategoryException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the cp tax categories where companyId = &#63;.
@@ -396,16 +381,8 @@ public class CPTaxCategoryPersistenceImpl
 			long companyId, OrderByComparator<CPTaxCategory> orderByComparator)
 		throws NoSuchCPTaxCategoryException {
 
-		CPTaxCategory cpTaxCategory = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (cpTaxCategory != null) {
-			return cpTaxCategory;
-		}
-
-		throw new NoSuchCPTaxCategoryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -481,7 +458,7 @@ public class CPTaxCategoryPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<CPTaxCategory>
+	private UniquePersistenceFinder<CPTaxCategory, NoSuchCPTaxCategoryException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -497,23 +474,8 @@ public class CPTaxCategoryPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCPTaxCategoryException {
 
-		CPTaxCategory cpTaxCategory = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (cpTaxCategory == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPTaxCategoryException(message);
-		}
-
-		return cpTaxCategory;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -945,19 +907,10 @@ public class CPTaxCategoryPersistenceImpl
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_CPTAXCATEGORY_WHERE, _SQL_COUNT_CPTAXCATEGORY_WHERE,
 				CPTaxCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CPTaxCategoryImpl.class, CPTaxCategory.class,
-					"cpTaxCategory", "CPTaxCategory",
-					"cpTaxCategory.CPTaxCategoryId",
-					"SELECT DISTINCT {cpTaxCategory.*} FROM CPTaxCategory cpTaxCategory WHERE ",
-					"SELECT {CPTaxCategory.*} FROM (SELECT DISTINCT cpTaxCategory.CPTaxCategoryId FROM CPTaxCategory cpTaxCategory WHERE ",
-					") TEMP_TABLE INNER JOIN CPTaxCategory ON TEMP_TABLE.CPTaxCategoryId = CPTaxCategory.CPTaxCategoryId",
-					"SELECT COUNT(DISTINCT cpTaxCategory.CPTaxCategoryId) AS COUNT_VALUE FROM CPTaxCategory cpTaxCategory WHERE ",
-					CPTaxCategoryModelImpl.ORDER_BY_SQL,
-					CPTaxCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"cpTaxCategory.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CPTaxCategory::getUuid));
+					"cpTaxCategory.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, CPTaxCategory::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -980,19 +933,10 @@ public class CPTaxCategoryPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_CPTAXCATEGORY_WHERE, _SQL_COUNT_CPTAXCATEGORY_WHERE,
 				CPTaxCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CPTaxCategoryImpl.class, CPTaxCategory.class,
-					"cpTaxCategory", "CPTaxCategory",
-					"cpTaxCategory.CPTaxCategoryId",
-					"SELECT DISTINCT {cpTaxCategory.*} FROM CPTaxCategory cpTaxCategory WHERE ",
-					"SELECT {CPTaxCategory.*} FROM (SELECT DISTINCT cpTaxCategory.CPTaxCategoryId FROM CPTaxCategory cpTaxCategory WHERE ",
-					") TEMP_TABLE INNER JOIN CPTaxCategory ON TEMP_TABLE.CPTaxCategoryId = CPTaxCategory.CPTaxCategoryId",
-					"SELECT COUNT(DISTINCT cpTaxCategory.CPTaxCategoryId) AS COUNT_VALUE FROM CPTaxCategory cpTaxCategory WHERE ",
-					CPTaxCategoryModelImpl.ORDER_BY_SQL,
-					CPTaxCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"cpTaxCategory.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CPTaxCategory::getUuid),
+					"cpTaxCategory.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, CPTaxCategory::getUuid),
 				new FinderColumn<>(
 					"cpTaxCategory.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CPTaxCategory::getCompanyId));
@@ -1018,16 +962,7 @@ public class CPTaxCategoryPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_CPTAXCATEGORY_WHERE, _SQL_COUNT_CPTAXCATEGORY_WHERE,
 				CPTaxCategoryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CPTaxCategoryImpl.class, CPTaxCategory.class,
-					"cpTaxCategory", "CPTaxCategory",
-					"cpTaxCategory.CPTaxCategoryId",
-					"SELECT DISTINCT {cpTaxCategory.*} FROM CPTaxCategory cpTaxCategory WHERE ",
-					"SELECT {CPTaxCategory.*} FROM (SELECT DISTINCT cpTaxCategory.CPTaxCategoryId FROM CPTaxCategory cpTaxCategory WHERE ",
-					") TEMP_TABLE INNER JOIN CPTaxCategory ON TEMP_TABLE.CPTaxCategoryId = CPTaxCategory.CPTaxCategoryId",
-					"SELECT COUNT(DISTINCT cpTaxCategory.CPTaxCategoryId) AS COUNT_VALUE FROM CPTaxCategory cpTaxCategory WHERE ",
-					CPTaxCategoryModelImpl.ORDER_BY_SQL,
-					CPTaxCategoryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"cpTaxCategory.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CPTaxCategory::getCompanyId));
@@ -1107,12 +1042,6 @@ public class CPTaxCategoryPersistenceImpl
 	private static final String _SQL_COUNT_CPTAXCATEGORY_WHERE =
 		"SELECT COUNT(cpTaxCategory) FROM CPTaxCategory cpTaxCategory WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPTaxCategory exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPTaxCategoryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1122,4 +1051,4 @@ public class CPTaxCategoryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-122491162
+// LIFERAY-SERVICE-BUILDER-HASH:511635616

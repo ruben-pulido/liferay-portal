@@ -76,7 +76,7 @@ public class CTSChildPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTSChild>
+	private CollectionPersistenceFinder<CTSChild, NoSuchCTSChildException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -116,16 +116,8 @@ public class CTSChildPersistenceImpl
 			long companyId, OrderByComparator<CTSChild> orderByComparator)
 		throws NoSuchCTSChildException {
 
-		CTSChild ctsChild = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (ctsChild != null) {
-			return ctsChild;
-		}
-
-		throw new NoSuchCTSChildException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -166,7 +158,7 @@ public class CTSChildPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<CTSChild>
+	private CollectionPersistenceFinder<CTSChild, NoSuchCTSChildException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -209,17 +201,9 @@ public class CTSChildPersistenceImpl
 			OrderByComparator<CTSChild> orderByComparator)
 		throws NoSuchCTSChildException {
 
-		CTSChild ctsChild = fetchByC_C_First(
-			companyId, ctsGrandParentId, orderByComparator);
-
-		if (ctsChild != null) {
-			return ctsChild;
-		}
-
-		throw new NoSuchCTSChildException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, ctsGrandParentId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {companyId, ctsGrandParentId},
+			orderByComparator);
 	}
 
 	/**
@@ -265,7 +249,7 @@ public class CTSChildPersistenceImpl
 			finderCache, new Object[] {companyId, ctsGrandParentId});
 	}
 
-	private CollectionPersistenceFinder<CTSChild>
+	private CollectionPersistenceFinder<CTSChild, NoSuchCTSChildException>
 		_collectionPersistenceFinderByC_P;
 
 	/**
@@ -308,17 +292,9 @@ public class CTSChildPersistenceImpl
 			OrderByComparator<CTSChild> orderByComparator)
 		throws NoSuchCTSChildException {
 
-		CTSChild ctsChild = fetchByC_P_First(
-			companyId, parentCTSChildId, orderByComparator);
-
-		if (ctsChild != null) {
-			return ctsChild;
-		}
-
-		throw new NoSuchCTSChildException(
-			_collectionPersistenceFinderByC_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, parentCTSChildId}));
+		return _collectionPersistenceFinderByC_P.findFirst(
+			finderCache, new Object[] {companyId, parentCTSChildId},
+			orderByComparator);
 	}
 
 	/**
@@ -618,7 +594,8 @@ public class CTSChildPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_CTSCHILD_WHERE, _SQL_COUNT_CTSCHILD_WHERE,
-				CTSChildModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CTSChildModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ctsChild.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, CTSChild::getCompanyId));
@@ -642,7 +619,7 @@ public class CTSChildPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "ctsGrandParentId"}, false),
 			_SQL_SELECT_CTSCHILD_WHERE, _SQL_COUNT_CTSCHILD_WHERE,
-			CTSChildModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			CTSChildModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"ctsChild.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, CTSChild::getCompanyId),
@@ -669,7 +646,7 @@ public class CTSChildPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "parentCTSChildId"}, false),
 			_SQL_SELECT_CTSCHILD_WHERE, _SQL_COUNT_CTSCHILD_WHERE,
-			CTSChildModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			CTSChildModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"ctsChild.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, CTSChild::getCompanyId),
@@ -734,13 +711,10 @@ public class CTSChildPersistenceImpl
 	private static final String _SQL_COUNT_CTSCHILD_WHERE =
 		"SELECT COUNT(ctsChild) FROM CTSChild ctsChild WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTSChild exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1916066800
+// LIFERAY-SERVICE-BUILDER-HASH:-1622477492

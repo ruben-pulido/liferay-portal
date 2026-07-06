@@ -108,11 +108,7 @@ public class PasswordTrackerPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		PasswordTracker newPasswordTracker = _persistence.create(pk);
-
-		newPasswordTracker.setMvccVersion(RandomTestUtil.nextLong());
+		PasswordTracker newPasswordTracker = addPasswordTracker();
 
 		newPasswordTracker.setCompanyId(RandomTestUtil.nextLong());
 
@@ -122,7 +118,9 @@ public class PasswordTrackerPersistenceTest {
 
 		newPasswordTracker.setPassword(RandomTestUtil.randomString());
 
-		_passwordTrackers.add(_persistence.update(newPasswordTracker));
+		newPasswordTracker = _persistence.update(newPasswordTracker);
+
+		_passwordTrackers.add(newPasswordTracker);
 
 		PasswordTracker existingPasswordTracker = _persistence.findByPrimaryKey(
 			newPasswordTracker.getPrimaryKey());
@@ -404,8 +402,6 @@ public class PasswordTrackerPersistenceTest {
 
 		PasswordTracker passwordTracker = _persistence.create(pk);
 
-		passwordTracker.setMvccVersion(RandomTestUtil.nextLong());
-
 		passwordTracker.setCompanyId(RandomTestUtil.nextLong());
 
 		passwordTracker.setUserId(RandomTestUtil.nextLong());
@@ -425,4 +421,4 @@ public class PasswordTrackerPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-531767094
+// LIFERAY-SERVICE-BUILDER-HASH:999081530

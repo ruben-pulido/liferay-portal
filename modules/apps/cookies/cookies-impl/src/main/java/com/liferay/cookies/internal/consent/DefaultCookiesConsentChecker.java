@@ -1,0 +1,90 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2026 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.cookies.internal.consent;
+
+import com.liferay.cookies.configuration.CookiesPreferenceHandlingConfiguration;
+import com.liferay.cookies.consent.CookiesConsentChecker;
+import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.cookies.CookiesManagerUtil;
+import com.liferay.portal.kernel.cookies.constants.CookiesConstants;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+/**
+ * @author Christian Moura
+ */
+public class DefaultCookiesConsentChecker implements CookiesConsentChecker {
+
+	public DefaultCookiesConsentChecker(
+		ConfigurationProvider configurationProvider, Portal portal) {
+
+		_configurationProvider = configurationProvider;
+		_portal = portal;
+	}
+
+	@Override
+	public boolean hasConsent(
+		int consentType, HttpServletRequest httpServletRequest) {
+
+		if (consentType == CookiesConstants.CONSENT_TYPE_NECESSARY) {
+			return true;
+		}
+
+		try {
+			CookiesPreferenceHandlingConfiguration
+				cookiesPreferenceHandlingConfiguration = null;
+
+			if (httpServletRequest != null) {
+				long groupId = _portal.getScopeGroupId(httpServletRequest);
+
+				if (groupId > 0) {
+					cookiesPreferenceHandlingConfiguration =
+						_configurationProvider.getGroupConfiguration(
+							CookiesPreferenceHandlingConfiguration.class,
+							_portal.getCompanyId(httpServletRequest), groupId);
+				}
+				else {
+					cookiesPreferenceHandlingConfiguration =
+						_configurationProvider.getCompanyConfiguration(
+							CookiesPreferenceHandlingConfiguration.class,
+							_portal.getCompanyId(httpServletRequest));
+				}
+			}
+			else {
+				cookiesPreferenceHandlingConfiguration =
+					_configurationProvider.getSystemConfiguration(
+						CookiesPreferenceHandlingConfiguration.class);
+			}
+
+			if (!cookiesPreferenceHandlingConfiguration.enabled()) {
+				return true;
+			}
+
+			String consentCookieValue = CookiesManagerUtil.getCookieValue(
+				CookiesConstants.getConsentTypeName(consentType),
+				httpServletRequest);
+
+			if (Validator.isNotNull(consentCookieValue)) {
+				return GetterUtil.getBoolean(consentCookieValue);
+			}
+
+			return !cookiesPreferenceHandlingConfiguration.
+				explicitConsentMode();
+		}
+		catch (PortalException portalException) {
+			return ReflectionUtil.throwException(portalException);
+		}
+	}
+
+	private final ConfigurationProvider _configurationProvider;
+	private final Portal _portal;
+
+}

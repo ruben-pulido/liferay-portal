@@ -130,6 +130,7 @@ const additionalAPIURLParametersTransformer = (
 export interface IBreadcrumbProps {
 	breadcrumbItems: IBreadcrumbItem[];
 	displayType: string;
+	hideSpace?: boolean;
 	size: string;
 }
 
@@ -275,6 +276,9 @@ export default function AssetsFDSPropsTransformer({
 									});
 								}}
 								options={options}
+								systemIconLabel={Liferay.Language.get(
+									'system-default-structure'
+								)}
 								trailingIcon={
 									itemData?.embedded?.systemProperties
 										?.collaboratorBrief && (

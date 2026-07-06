@@ -9,8 +9,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -63,8 +61,9 @@ public class LVEntryLocalizationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LVEntryLocalization>
-		_collectionPersistenceFinderByLvEntryId;
+	private CollectionPersistenceFinder
+		<LVEntryLocalization, NoSuchLVEntryLocalizationException>
+			_collectionPersistenceFinderByLvEntryId;
 
 	/**
 	 * Returns an ordered range of all the lv entry localizations where lvEntryId = &#63;.
@@ -105,16 +104,8 @@ public class LVEntryLocalizationPersistenceImpl
 			OrderByComparator<LVEntryLocalization> orderByComparator)
 		throws NoSuchLVEntryLocalizationException {
 
-		LVEntryLocalization lvEntryLocalization = fetchByLvEntryId_First(
-			lvEntryId, orderByComparator);
-
-		if (lvEntryLocalization != null) {
-			return lvEntryLocalization;
-		}
-
-		throw new NoSuchLVEntryLocalizationException(
-			_collectionPersistenceFinderByLvEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {lvEntryId}));
+		return _collectionPersistenceFinderByLvEntryId.findFirst(
+			finderCache, new Object[] {lvEntryId}, orderByComparator);
 	}
 
 	/**
@@ -156,8 +147,9 @@ public class LVEntryLocalizationPersistenceImpl
 			finderCache, new Object[] {lvEntryId});
 	}
 
-	private UniquePersistenceFinder<LVEntryLocalization>
-		_uniquePersistenceFinderByLvEntryId_LanguageId;
+	private UniquePersistenceFinder
+		<LVEntryLocalization, NoSuchLVEntryLocalizationException>
+			_uniquePersistenceFinderByLvEntryId_LanguageId;
 
 	/**
 	 * Returns the lv entry localization where lvEntryId = &#63; and languageId = &#63; or throws a <code>NoSuchLVEntryLocalizationException</code> if it could not be found.
@@ -172,24 +164,8 @@ public class LVEntryLocalizationPersistenceImpl
 			long lvEntryId, String languageId)
 		throws NoSuchLVEntryLocalizationException {
 
-		LVEntryLocalization lvEntryLocalization = fetchByLvEntryId_LanguageId(
-			lvEntryId, languageId);
-
-		if (lvEntryLocalization == null) {
-			String message =
-				_uniquePersistenceFinderByLvEntryId_LanguageId.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {lvEntryId, languageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLVEntryLocalizationException(message);
-		}
-
-		return lvEntryLocalization;
+		return _uniquePersistenceFinderByLvEntryId_LanguageId.find(
+			finderCache, new Object[] {lvEntryId, languageId});
 	}
 
 	/**
@@ -239,8 +215,9 @@ public class LVEntryLocalizationPersistenceImpl
 			finderCache, new Object[] {lvEntryId, languageId});
 	}
 
-	private UniquePersistenceFinder<LVEntryLocalization>
-		_uniquePersistenceFinderByHeadId;
+	private UniquePersistenceFinder
+		<LVEntryLocalization, NoSuchLVEntryLocalizationException>
+			_uniquePersistenceFinderByHeadId;
 
 	/**
 	 * Returns the lv entry localization where headId = &#63; or throws a <code>NoSuchLVEntryLocalizationException</code> if it could not be found.
@@ -253,21 +230,8 @@ public class LVEntryLocalizationPersistenceImpl
 	public LVEntryLocalization findByHeadId(long headId)
 		throws NoSuchLVEntryLocalizationException {
 
-		LVEntryLocalization lvEntryLocalization = fetchByHeadId(headId);
-
-		if (lvEntryLocalization == null) {
-			String message =
-				_uniquePersistenceFinderByHeadId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {headId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLVEntryLocalizationException(message);
-		}
-
-		return lvEntryLocalization;
+		return _uniquePersistenceFinderByHeadId.find(
+			finderCache, new Object[] {headId});
 	}
 
 	/**
@@ -514,7 +478,7 @@ public class LVEntryLocalizationPersistenceImpl
 				_SQL_SELECT_LVENTRYLOCALIZATION_WHERE,
 				_SQL_COUNT_LVENTRYLOCALIZATION_WHERE,
 				LVEntryLocalizationModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"lvEntryLocalization.", "lvEntryId", FinderColumn.Type.LONG,
 					"=", true, true, LVEntryLocalization::getLvEntryId));
@@ -575,16 +539,10 @@ public class LVEntryLocalizationPersistenceImpl
 	private static final String _SQL_COUNT_LVENTRYLOCALIZATION_WHERE =
 		"SELECT COUNT(lvEntryLocalization) FROM LVEntryLocalization lvEntryLocalization WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LVEntryLocalization exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LVEntryLocalizationPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1522979169
+// LIFERAY-SERVICE-BUILDER-HASH:-1608208881

@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -80,8 +78,10 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceDiscountCommerceAccountGroupRel>
-		_collectionPersistenceFinderByCommerceDiscountId;
+	private CollectionPersistenceFinder
+		<CommerceDiscountCommerceAccountGroupRel,
+		 NoSuchDiscountCommerceAccountGroupRelException>
+			_collectionPersistenceFinderByCommerceDiscountId;
 
 	/**
 	 * Returns an ordered range of all the commerce discount commerce account group rels where commerceDiscountId = &#63;.
@@ -126,20 +126,8 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 					orderByComparator)
 		throws NoSuchDiscountCommerceAccountGroupRelException {
 
-		CommerceDiscountCommerceAccountGroupRel
-			commerceDiscountCommerceAccountGroupRel =
-				fetchByCommerceDiscountId_First(
-					commerceDiscountId, orderByComparator);
-
-		if (commerceDiscountCommerceAccountGroupRel != null) {
-			return commerceDiscountCommerceAccountGroupRel;
-		}
-
-		throw new NoSuchDiscountCommerceAccountGroupRelException(
-			_collectionPersistenceFinderByCommerceDiscountId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceDiscountId}));
+		return _collectionPersistenceFinderByCommerceDiscountId.findFirst(
+			finderCache, new Object[] {commerceDiscountId}, orderByComparator);
 	}
 
 	/**
@@ -183,8 +171,10 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 			finderCache, new Object[] {commerceDiscountId});
 	}
 
-	private CollectionPersistenceFinder<CommerceDiscountCommerceAccountGroupRel>
-		_collectionPersistenceFinderByCommerceAccountGroupId;
+	private CollectionPersistenceFinder
+		<CommerceDiscountCommerceAccountGroupRel,
+		 NoSuchDiscountCommerceAccountGroupRelException>
+			_collectionPersistenceFinderByCommerceAccountGroupId;
 
 	/**
 	 * Returns an ordered range of all the commerce discount commerce account group rels where commerceAccountGroupId = &#63;.
@@ -229,20 +219,9 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 					orderByComparator)
 		throws NoSuchDiscountCommerceAccountGroupRelException {
 
-		CommerceDiscountCommerceAccountGroupRel
-			commerceDiscountCommerceAccountGroupRel =
-				fetchByCommerceAccountGroupId_First(
-					commerceAccountGroupId, orderByComparator);
-
-		if (commerceDiscountCommerceAccountGroupRel != null) {
-			return commerceDiscountCommerceAccountGroupRel;
-		}
-
-		throw new NoSuchDiscountCommerceAccountGroupRelException(
-			_collectionPersistenceFinderByCommerceAccountGroupId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceAccountGroupId}));
+		return _collectionPersistenceFinderByCommerceAccountGroupId.findFirst(
+			finderCache, new Object[] {commerceAccountGroupId},
+			orderByComparator);
 	}
 
 	/**
@@ -287,8 +266,10 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 			finderCache, new Object[] {commerceAccountGroupId});
 	}
 
-	private UniquePersistenceFinder<CommerceDiscountCommerceAccountGroupRel>
-		_uniquePersistenceFinderByCDI_CAGI;
+	private UniquePersistenceFinder
+		<CommerceDiscountCommerceAccountGroupRel,
+		 NoSuchDiscountCommerceAccountGroupRelException>
+			_uniquePersistenceFinderByCDI_CAGI;
 
 	/**
 	 * Returns the commerce discount commerce account group rel where commerceDiscountId = &#63; and commerceAccountGroupId = &#63; or throws a <code>NoSuchDiscountCommerceAccountGroupRelException</code> if it could not be found.
@@ -303,24 +284,9 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 			long commerceDiscountId, long commerceAccountGroupId)
 		throws NoSuchDiscountCommerceAccountGroupRelException {
 
-		CommerceDiscountCommerceAccountGroupRel
-			commerceDiscountCommerceAccountGroupRel = fetchByCDI_CAGI(
-				commerceDiscountId, commerceAccountGroupId);
-
-		if (commerceDiscountCommerceAccountGroupRel == null) {
-			String message =
-				_uniquePersistenceFinderByCDI_CAGI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceDiscountId, commerceAccountGroupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDiscountCommerceAccountGroupRelException(message);
-		}
-
-		return commerceDiscountCommerceAccountGroupRel;
+		return _uniquePersistenceFinderByCDI_CAGI.find(
+			finderCache,
+			new Object[] {commerceDiscountId, commerceAccountGroupId});
 	}
 
 	/**
@@ -610,6 +576,11 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceDiscountCommerceAccountGroupRelId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCEDISCOUNTCOMMERCEACCOUNTGROUPREL;
 	}
@@ -650,7 +621,7 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNTCOMMERCEACCOUNTGROUPREL_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNTCOMMERCEACCOUNTGROUPREL_WHERE,
 				CommerceDiscountCommerceAccountGroupRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceDiscountCommerceAccountGroupRel.",
 					"commerceDiscountId", FinderColumn.Type.LONG, "=", true,
@@ -683,7 +654,7 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNTCOMMERCEACCOUNTGROUPREL_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNTCOMMERCEACCOUNTGROUPREL_WHERE,
 				CommerceDiscountCommerceAccountGroupRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceDiscountCommerceAccountGroupRel.",
 					"commerceAccountGroupId", FinderColumn.Type.LONG, "=", true,
@@ -771,12 +742,6 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 		_SQL_COUNT_COMMERCEDISCOUNTCOMMERCEACCOUNTGROUPREL_WHERE =
 			"SELECT COUNT(commerceDiscountCommerceAccountGroupRel) FROM CommerceDiscountCommerceAccountGroupRel commerceDiscountCommerceAccountGroupRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceDiscountCommerceAccountGroupRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceDiscountCommerceAccountGroupRelPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"commerceDiscountCommerceAccountGroupRelId"});
 
@@ -786,4 +751,4 @@ public class CommerceDiscountCommerceAccountGroupRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-77264116
+// LIFERAY-SERVICE-BUILDER-HASH:-1835424909

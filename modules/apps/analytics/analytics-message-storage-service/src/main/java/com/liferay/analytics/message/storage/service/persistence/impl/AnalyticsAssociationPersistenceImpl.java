@@ -81,8 +81,9 @@ public class AnalyticsAssociationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AnalyticsAssociation>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<AnalyticsAssociation, NoSuchAssociationException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the analytics associations where companyId = &#63;.
@@ -123,16 +124,8 @@ public class AnalyticsAssociationPersistenceImpl
 			OrderByComparator<AnalyticsAssociation> orderByComparator)
 		throws NoSuchAssociationException {
 
-		AnalyticsAssociation analyticsAssociation = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (analyticsAssociation != null) {
-			return analyticsAssociation;
-		}
-
-		throw new NoSuchAssociationException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -174,8 +167,9 @@ public class AnalyticsAssociationPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<AnalyticsAssociation>
-		_collectionPersistenceFinderByC_LtM;
+	private CollectionPersistenceFinder
+		<AnalyticsAssociation, NoSuchAssociationException>
+			_collectionPersistenceFinderByC_LtM;
 
 	/**
 	 * Returns all the analytics associations where companyId = &#63; and modifiedDate &lt; &#63;.
@@ -277,17 +271,9 @@ public class AnalyticsAssociationPersistenceImpl
 			OrderByComparator<AnalyticsAssociation> orderByComparator)
 		throws NoSuchAssociationException {
 
-		AnalyticsAssociation analyticsAssociation = fetchByC_LtM_First(
-			companyId, modifiedDate, orderByComparator);
-
-		if (analyticsAssociation != null) {
-			return analyticsAssociation;
-		}
-
-		throw new NoSuchAssociationException(
-			_collectionPersistenceFinderByC_LtM.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, modifiedDate}));
+		return _collectionPersistenceFinderByC_LtM.findFirst(
+			finderCache, new Object[] {companyId, modifiedDate},
+			orderByComparator);
 	}
 
 	/**
@@ -333,8 +319,9 @@ public class AnalyticsAssociationPersistenceImpl
 			finderCache, new Object[] {companyId, modifiedDate});
 	}
 
-	private CollectionPersistenceFinder<AnalyticsAssociation>
-		_collectionPersistenceFinderByC_A;
+	private CollectionPersistenceFinder
+		<AnalyticsAssociation, NoSuchAssociationException>
+			_collectionPersistenceFinderByC_A;
 
 	/**
 	 * Returns an ordered range of all the analytics associations where companyId = &#63; and associationClassName = &#63;.
@@ -377,17 +364,9 @@ public class AnalyticsAssociationPersistenceImpl
 			OrderByComparator<AnalyticsAssociation> orderByComparator)
 		throws NoSuchAssociationException {
 
-		AnalyticsAssociation analyticsAssociation = fetchByC_A_First(
-			companyId, associationClassName, orderByComparator);
-
-		if (analyticsAssociation != null) {
-			return analyticsAssociation;
-		}
-
-		throw new NoSuchAssociationException(
-			_collectionPersistenceFinderByC_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, associationClassName}));
+		return _collectionPersistenceFinderByC_A.findFirst(
+			finderCache, new Object[] {companyId, associationClassName},
+			orderByComparator);
 	}
 
 	/**
@@ -433,8 +412,9 @@ public class AnalyticsAssociationPersistenceImpl
 			finderCache, new Object[] {companyId, associationClassName});
 	}
 
-	private CollectionPersistenceFinder<AnalyticsAssociation>
-		_collectionPersistenceFinderByC_GtM_A;
+	private CollectionPersistenceFinder
+		<AnalyticsAssociation, NoSuchAssociationException>
+			_collectionPersistenceFinderByC_GtM_A;
 
 	/**
 	 * Returns all the analytics associations where companyId = &#63; and modifiedDate &gt; &#63; and associationClassName = &#63;.
@@ -547,17 +527,10 @@ public class AnalyticsAssociationPersistenceImpl
 			OrderByComparator<AnalyticsAssociation> orderByComparator)
 		throws NoSuchAssociationException {
 
-		AnalyticsAssociation analyticsAssociation = fetchByC_GtM_A_First(
-			companyId, modifiedDate, associationClassName, orderByComparator);
-
-		if (analyticsAssociation != null) {
-			return analyticsAssociation;
-		}
-
-		throw new NoSuchAssociationException(
-			_collectionPersistenceFinderByC_GtM_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, modifiedDate, associationClassName}));
+		return _collectionPersistenceFinderByC_GtM_A.findFirst(
+			finderCache,
+			new Object[] {companyId, modifiedDate, associationClassName},
+			orderByComparator);
 	}
 
 	/**
@@ -613,8 +586,9 @@ public class AnalyticsAssociationPersistenceImpl
 			new Object[] {companyId, modifiedDate, associationClassName});
 	}
 
-	private CollectionPersistenceFinder<AnalyticsAssociation>
-		_collectionPersistenceFinderByC_A_A;
+	private CollectionPersistenceFinder
+		<AnalyticsAssociation, NoSuchAssociationException>
+			_collectionPersistenceFinderByC_A_A;
 
 	/**
 	 * Returns an ordered range of all the analytics associations where companyId = &#63; and associationClassName = &#63; and associationClassPK = &#63;.
@@ -662,20 +636,10 @@ public class AnalyticsAssociationPersistenceImpl
 			OrderByComparator<AnalyticsAssociation> orderByComparator)
 		throws NoSuchAssociationException {
 
-		AnalyticsAssociation analyticsAssociation = fetchByC_A_A_First(
-			companyId, associationClassName, associationClassPK,
+		return _collectionPersistenceFinderByC_A_A.findFirst(
+			finderCache,
+			new Object[] {companyId, associationClassName, associationClassPK},
 			orderByComparator);
-
-		if (analyticsAssociation != null) {
-			return analyticsAssociation;
-		}
-
-		throw new NoSuchAssociationException(
-			_collectionPersistenceFinderByC_A_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					companyId, associationClassName, associationClassPK
-				}));
 	}
 
 	/**
@@ -1033,7 +997,7 @@ public class AnalyticsAssociationPersistenceImpl
 				_SQL_SELECT_ANALYTICSASSOCIATION_WHERE,
 				_SQL_COUNT_ANALYTICSASSOCIATION_WHERE,
 				AnalyticsAssociationModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"analyticsAssociation.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1057,7 +1021,7 @@ public class AnalyticsAssociationPersistenceImpl
 			_SQL_SELECT_ANALYTICSASSOCIATION_WHERE,
 			_SQL_COUNT_ANALYTICSASSOCIATION_WHERE,
 			AnalyticsAssociationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"analyticsAssociation.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, AnalyticsAssociation::getCompanyId),
@@ -1088,7 +1052,7 @@ public class AnalyticsAssociationPersistenceImpl
 			_SQL_SELECT_ANALYTICSASSOCIATION_WHERE,
 			_SQL_COUNT_ANALYTICSASSOCIATION_WHERE,
 			AnalyticsAssociationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"analyticsAssociation.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, AnalyticsAssociation::getCompanyId),
@@ -1126,7 +1090,7 @@ public class AnalyticsAssociationPersistenceImpl
 				_SQL_SELECT_ANALYTICSASSOCIATION_WHERE,
 				_SQL_COUNT_ANALYTICSASSOCIATION_WHERE,
 				AnalyticsAssociationModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"analyticsAssociation.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1176,7 +1140,7 @@ public class AnalyticsAssociationPersistenceImpl
 			_SQL_SELECT_ANALYTICSASSOCIATION_WHERE,
 			_SQL_COUNT_ANALYTICSASSOCIATION_WHERE,
 			AnalyticsAssociationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"analyticsAssociation.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, AnalyticsAssociation::getCompanyId),
@@ -1246,13 +1210,10 @@ public class AnalyticsAssociationPersistenceImpl
 	private static final String _SQL_COUNT_ANALYTICSASSOCIATION_WHERE =
 		"SELECT COUNT(analyticsAssociation) FROM AnalyticsAssociation analyticsAssociation WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AnalyticsAssociation exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:861174273
+// LIFERAY-SERVICE-BUILDER-HASH:253779308

@@ -314,17 +314,20 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
-	public Account getAccount(FaroProject faroProject, String id)
+	public Account getAccount(
+			FaroProject faroProject, String id, Long channelId)
 		throws FaroEngineClientException {
 
-		return contactsEngineClient.getAccount(faroProject, id);
+		return contactsEngineClient.getAccount(faroProject, id, channelId);
 	}
 
 	@Override
-	public AccountDetails getAccountDetails(FaroProject faroProject, String id)
+	public AccountDetails getAccountDetails(
+			FaroProject faroProject, String id, Long channelId)
 		throws FaroEngineClientException {
 
-		return contactsEngineClient.getAccountDetails(faroProject, id);
+		return contactsEngineClient.getAccountDetails(
+			faroProject, id, channelId);
 	}
 
 	@Override
@@ -357,14 +360,12 @@ public abstract class BaseMockContactsEngineClientImpl
 
 	@Override
 	public Results<Account> getAccountLifecycleAccounts(
-			FaroProject faroProject, String country, String id, String industry,
-			String query, String stageType, int cur, int delta,
-			String sortString)
+			FaroProject faroProject, String filterString, String id,
+			String query, int cur, int delta, String sortString)
 		throws FaroEngineClientException {
 
 		return contactsEngineClient.getAccountLifecycleAccounts(
-			faroProject, country, id, industry, query, stageType, cur, delta,
-			sortString);
+			faroProject, filterString, id, query, cur, delta, sortString);
 	}
 
 	@Override
@@ -416,6 +417,17 @@ public abstract class BaseMockContactsEngineClientImpl
 		return contactsEngineClient.getAccounts(
 			faroProject, channelId, filterString, query, cur, delta,
 			sortString);
+	}
+
+	@Override
+	public Results<Account> getAccounts(
+		FaroProject faroProject, String channelId, String filterString,
+		String query, String rangeEnd, Integer rangeKey, String rangeStart,
+		int cur, int delta, String sortString) {
+
+		return contactsEngineClient.getAccounts(
+			faroProject, channelId, filterString, query, rangeEnd, rangeKey,
+			rangeStart, cur, delta, sortString);
 	}
 
 	@Override
@@ -506,12 +518,13 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	public Results<AssetSummary> getAssetSummaries(
-		FaroProject faroProject, long channelId, String filterString,
-		String keywords, int rangeKey, int cur, int delta, String sortString) {
+		FaroProject faroProject, String accountId, long channelId,
+		String filterString, String keywords, String objectType, int rangeKey,
+		String selectedMetric, int cur, int delta, String sortString) {
 
 		return contactsEngineClient.getAssetSummaries(
-			faroProject, channelId, filterString, keywords, rangeKey, cur,
-			delta, sortString);
+			faroProject, accountId, channelId, filterString, keywords,
+			objectType, rangeKey, selectedMetric, cur, delta, sortString);
 	}
 
 	@Override
@@ -703,6 +716,30 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public long getDataSourceMetricsAccountsCount(
+		FaroProject faroProject, String dataSourceId) {
+
+		return contactsEngineClient.getDataSourceMetricsAccountsCount(
+			faroProject, dataSourceId);
+	}
+
+	@Override
+	public long getDataSourceMetricsEventsCount(
+		FaroProject faroProject, String dataSourceId) {
+
+		return contactsEngineClient.getDataSourceMetricsEventsCount(
+			faroProject, dataSourceId);
+	}
+
+	@Override
+	public long getDataSourceMetricsUsersCount(
+		FaroProject faroProject, String dataSourceId) {
+
+		return contactsEngineClient.getDataSourceMetricsUsersCount(
+			faroProject, dataSourceId);
+	}
+
+	@Override
 	public Map<String, DataSourceProgress> getDataSourceProgressMap(
 		FaroProject faroProject, String id) {
 
@@ -733,14 +770,6 @@ public abstract class BaseMockContactsEngineClientImpl
 		return contactsEngineClient.getDataSources(
 			faroProject, faroEntityId, query, name, providerType, states, cur,
 			delta, orderByFields);
-	}
-
-	@Override
-	public long getDemandbaseAccountsCount(
-		String dataSourceId, FaroProject faroProject) {
-
-		return contactsEngineClient.getDemandbaseAccountsCount(
-			dataSourceId, faroProject);
 	}
 
 	@Override
@@ -916,18 +945,19 @@ public abstract class BaseMockContactsEngineClientImpl
 
 	@Override
 	public Results<Individual> getIndividuals(
-		FaroProject faroProject, String accountId, String channelId,
-		String dataSourceId, String individualSegmentId,
-		String notIndividualSegmentId, String interestName, String filterString,
-		List<String> profileTypes, String query, List<String> fields,
-		boolean includeAnonymousUsers, int cur, int delta,
-		List<OrderByField> orderByFields) {
+		FaroProject faroProject, String accountId, String activityStatus,
+		String channelId, String dataSourceId, List<String> fields,
+		String filterString, boolean includeAnonymousUsers,
+		String individualSegmentId, String interestName,
+		String notIndividualSegmentId, List<String> profileTypes, String query,
+		String rangeEnd, Integer rangeKey, String rangeStart, int cur,
+		int delta, List<OrderByField> orderByFields) {
 
 		return contactsEngineClient.getIndividuals(
-			faroProject, accountId, channelId, dataSourceId,
-			individualSegmentId, notIndividualSegmentId, interestName,
-			filterString, profileTypes, query, fields, includeAnonymousUsers,
-			cur, delta, orderByFields);
+			faroProject, accountId, activityStatus, channelId, dataSourceId,
+			fields, filterString, includeAnonymousUsers, individualSegmentId,
+			interestName, notIndividualSegmentId, profileTypes, query, rangeEnd,
+			rangeKey, rangeStart, cur, delta, orderByFields);
 	}
 
 	@Override
@@ -1117,22 +1147,6 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
-	public long getSalesforceAccountsCount(
-		String dataSourceId, FaroProject faroProject) {
-
-		return contactsEngineClient.getSalesforceAccountsCount(
-			dataSourceId, faroProject);
-	}
-
-	@Override
-	public long getSalesforceUsersCount(
-		String dataSourceId, FaroProject faroProject) {
-
-		return contactsEngineClient.getSalesforceUsersCount(
-			dataSourceId, faroProject);
-	}
-
-	@Override
 	public Results<String> getSessionValues(
 		FaroProject faroProject, String channelId, String fieldName,
 		String filterString, String query, int cur, int delta) {
@@ -1196,12 +1210,12 @@ public abstract class BaseMockContactsEngineClientImpl
 	@Override
 	public DataSource patchDataSource(
 		FaroProject faroProject, String id, Credentials credentials,
-		long userId, String name, String url, Provider provider, Event event,
-		String status) {
+		Event event, String name, Provider provider, String status, String url,
+		long userId) {
 
 		return contactsEngineClient.patchDataSource(
-			faroProject, id, credentials, userId, name, url, provider, event,
-			status);
+			faroProject, id, credentials, event, name, provider, status, url,
+			userId);
 	}
 
 	@Override
@@ -1232,6 +1246,17 @@ public abstract class BaseMockContactsEngineClientImpl
 		return contactsEngineClient.post(
 			faroProject, headers, path, queryParameters, requestBody,
 			returnType);
+	}
+
+	@Override
+	public DataSource reconnectDataSource(
+		FaroProject faroProject, String id, Credentials credentials,
+		Event event, String name, Provider provider, String status, String url,
+		long userId) {
+
+		return contactsEngineClient.reconnectDataSource(
+			faroProject, id, credentials, event, name, provider, status, url,
+			userId);
 	}
 
 	@Override
@@ -1267,12 +1292,12 @@ public abstract class BaseMockContactsEngineClientImpl
 	@Override
 	public DataSource updateDataSource(
 		FaroProject faroProject, String id, Credentials credentials,
-		long userId, String name, String url, Provider provider, Event event,
-		String status) {
+		Event event, String name, Provider provider, String status, String url,
+		long userId) {
 
 		return contactsEngineClient.updateDataSource(
-			faroProject, id, credentials, userId, name, url, provider, event,
-			status);
+			faroProject, id, credentials, event, name, provider, status, url,
+			userId);
 	}
 
 	@Override

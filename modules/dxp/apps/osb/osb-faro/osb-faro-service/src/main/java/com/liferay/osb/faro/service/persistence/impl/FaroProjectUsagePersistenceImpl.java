@@ -18,8 +18,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.FinderColumn;
@@ -69,8 +67,9 @@ public class FaroProjectUsagePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<FaroProjectUsage>
-		_uniquePersistenceFinderByF_U;
+	private UniquePersistenceFinder
+		<FaroProjectUsage, NoSuchFaroProjectUsageException>
+			_uniquePersistenceFinderByF_U;
 
 	/**
 	 * Returns the faro project usage where faroProjectId = &#63; and usageTime = &#63; or throws a <code>NoSuchFaroProjectUsageException</code> if it could not be found.
@@ -84,23 +83,8 @@ public class FaroProjectUsagePersistenceImpl
 	public FaroProjectUsage findByF_U(long faroProjectId, long usageTime)
 		throws NoSuchFaroProjectUsageException {
 
-		FaroProjectUsage faroProjectUsage = fetchByF_U(
-			faroProjectId, usageTime);
-
-		if (faroProjectUsage == null) {
-			String message =
-				_uniquePersistenceFinderByF_U.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {faroProjectId, usageTime});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFaroProjectUsageException(message);
-		}
-
-		return faroProjectUsage;
+		return _uniquePersistenceFinderByF_U.find(
+			finderCache, new Object[] {faroProjectId, usageTime});
 	}
 
 	/**
@@ -390,16 +374,10 @@ public class FaroProjectUsagePersistenceImpl
 	private static final String _SQL_SELECT_FAROPROJECTUSAGE_WHERE =
 		"SELECT faroProjectUsage FROM FaroProjectUsage faroProjectUsage WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FaroProjectUsage exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FaroProjectUsagePersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1044934954
+// LIFERAY-SERVICE-BUILDER-HASH:-231454780

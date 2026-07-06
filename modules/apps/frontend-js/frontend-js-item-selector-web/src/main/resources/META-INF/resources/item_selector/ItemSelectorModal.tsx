@@ -29,26 +29,28 @@ type IItemSelectorModalFDSProps = Omit<
 	| 'style'
 >;
 
-export type FilesUploaderComponent = React.ComponentType<{
-	allowedExtensions?: string;
+export type FilesUploaderComponent<T extends object = {}> = React.ComponentType<
+	{
+		allowedExtensions?: string;
 
-	/**
-	 * List of files that will represent the initial state of files to upload.
-	 */
-	files: FileData[];
+		/**
+		 * List of files that will represent the initial state of files to upload.
+		 */
+		files: FileData[];
 
-	/**
-	 * Site/Space where to upload items
-	 */
-	groupId?: number;
+		/**
+		 * Site/Space where to upload items
+		 */
+		groupId?: number;
 
-	maxFileSize?: number;
+		maxFileSize?: number;
 
-	/**
-	 * Callback for when upload is done in both cases: by success, or user cancelation.
-	 */
-	onCloseUploadView: () => void;
-}>;
+		/**
+		 * Callback for when upload is done in both cases: by success, or user cancelation.
+		 */
+		onCloseUploadView: () => void;
+	} & T
+>;
 
 export interface IItemSelectorModalProps<T> {
 
@@ -74,6 +76,11 @@ export interface IItemSelectorModalProps<T> {
 	 * If the @clayui/breadcrumb items label should be visible or not
 	 */
 	breadcrumbsLabel?: boolean;
+
+	/**
+	 * Label for the footer confirmation button. Defaults to "Select".
+	 */
+	confirmButtonLabel?: string;
 
 	/**
 	 * Label shown in the footer as "{label} Selected" when
@@ -151,6 +158,12 @@ export interface IItemSelectorModalProps<T> {
 	open: boolean;
 
 	/**
+	 * Modal size. Defaults to "full-screen" to preserve the file-picker
+	 * layout; pass a smaller value (e.g. "lg") for compact list pickers.
+	 */
+	size?: React.ComponentProps<typeof ClayModal>['size'];
+
+	/**
 	 * Represents the title of a modal. takes precedence over itemTypeLabel.
 	 */
 	title?: string;
@@ -162,6 +175,7 @@ function ItemSelectorModal<T extends Record<string, any>>({
 	apiURL,
 	breadcrumbs,
 	breadcrumbsLabel = true,
+	confirmButtonLabel,
 	emptySelectionLabel,
 	fdsProps,
 	filesUploaderComponent: FilesUploaderComponent,
@@ -180,6 +194,7 @@ function ItemSelectorModal<T extends Record<string, any>>({
 	onItemsChange,
 	onOpenChange,
 	open,
+	size = 'full-screen',
 	title,
 }: IItemSelectorModalProps<T>) {
 	const [selectedItems, setSelectedItems] = useState(externalItems);
@@ -230,7 +245,7 @@ function ItemSelectorModal<T extends Record<string, any>>({
 	}
 
 	return (
-		<ClayModal observer={observer} size="full-screen">
+		<ClayModal observer={observer} size={size}>
 			<ClayModal.Header
 				closeButtonAriaLabel={Liferay.Language.get('close')}
 			>
@@ -247,7 +262,10 @@ function ItemSelectorModal<T extends Record<string, any>>({
 					fluid
 				>
 					{breadcrumbs && (
-						<ClayLayout.Container fluid>
+						<ClayLayout.Container
+							className="item-selector-modal-breadcrumb-wrapper"
+							fluid
+						>
 							{breadcrumbsLabel && (
 								<h2 className="mb-0 mt-2">
 									{breadcrumbs[breadcrumbs.length - 1].label}
@@ -379,7 +397,8 @@ function ItemSelectorModal<T extends Record<string, any>>({
 									onOpenChange(false);
 								}}
 							>
-								{Liferay.Language.get('select')}
+								{confirmButtonLabel ??
+									Liferay.Language.get('select')}
 							</ClayButton>
 						</ClayButton.Group>
 					}

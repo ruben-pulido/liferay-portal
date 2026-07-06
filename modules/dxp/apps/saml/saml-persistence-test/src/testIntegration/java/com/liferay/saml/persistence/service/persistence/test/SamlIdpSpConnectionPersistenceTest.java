@@ -113,9 +113,7 @@ public class SamlIdpSpConnectionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SamlIdpSpConnection newSamlIdpSpConnection = _persistence.create(pk);
+		SamlIdpSpConnection newSamlIdpSpConnection = addSamlIdpSpConnection();
 
 		newSamlIdpSpConnection.setCompanyId(RandomTestUtil.nextLong());
 
@@ -158,7 +156,9 @@ public class SamlIdpSpConnectionPersistenceTest {
 
 		newSamlIdpSpConnection.setNameIdFormat(RandomTestUtil.randomString());
 
-		_samlIdpSpConnections.add(_persistence.update(newSamlIdpSpConnection));
+		newSamlIdpSpConnection = _persistence.update(newSamlIdpSpConnection);
+
+		_samlIdpSpConnections.add(newSamlIdpSpConnection);
 
 		SamlIdpSpConnection existingSamlIdpSpConnection =
 			_persistence.findByPrimaryKey(
@@ -625,4 +625,4 @@ public class SamlIdpSpConnectionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1629749311
+// LIFERAY-SERVICE-BUILDER-HASH:-2127855473

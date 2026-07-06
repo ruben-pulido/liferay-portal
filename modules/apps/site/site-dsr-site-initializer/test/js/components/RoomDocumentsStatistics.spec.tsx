@@ -9,6 +9,8 @@ import React from 'react';
 
 import DocumentsStatistics from '../../../src/main/resources/META-INF/resources/js/main_view/analytics/components/RoomDocumentsStatistics';
 
+let originalLiferay: any;
+
 const mockLiferayLanguageGet = jest.fn((key: string) => {
 	if (key === '1-hour') {
 		return '1 hour';
@@ -33,14 +35,6 @@ const mockLiferayLanguageGet = jest.fn((key: string) => {
 	return key;
 });
 
-(global as any).Liferay = {
-	...(global as any).Liferay,
-	Language: {
-		...(global as any).Liferay.Language,
-		get: mockLiferayLanguageGet,
-	},
-};
-
 jest.mock('frontend-js-web', () => ({
 	...(jest.requireActual('frontend-js-web') as any),
 	sub: (str: string, ...args: any[]) => {
@@ -64,14 +58,14 @@ jest.mock(
 	'../../../src/main/resources/META-INF/resources/js/common/hooks/useAnalyticsQuery',
 	() => {
 		const {
-			roomDocumentsStatisticsDevEnvData,
-		} = require('../fixtures/analyticsDevEnvData');
+			roomDocumentsStatisticsFixture,
+		} = require('../fixtures/RoomDocumentsStatisticsFixture');
 
 		return {
 			__esModule: true,
 			default: jest.fn(() => ({
 				isLoading: false,
-				response: roomDocumentsStatisticsDevEnvData,
+				response: roomDocumentsStatisticsFixture,
 				sendRequest: jest.fn(),
 			})),
 		};
@@ -79,6 +73,22 @@ jest.mock(
 );
 
 describe('RoomDocumentsStatistics', () => {
+	beforeAll(() => {
+		originalLiferay = (global as any).Liferay;
+
+		(global as any).Liferay = {
+			...originalLiferay,
+			Language: {
+				...originalLiferay?.Language,
+				get: mockLiferayLanguageGet,
+			},
+		};
+	});
+
+	afterAll(() => {
+		(global as any).Liferay = originalLiferay;
+	});
+
 	beforeEach(() => {
 		jest.fn();
 	});
@@ -90,7 +100,10 @@ describe('RoomDocumentsStatistics', () => {
 
 	it('renders the component with provided data', () => {
 		const {baseElement} = render(
-			<DocumentsStatistics namespace="test-namespace" />
+			<DocumentsStatistics
+				isAnalyticsEnabled={true}
+				namespace="test-namespace"
+			/>
 		);
 
 		expect(baseElement).toMatchSnapshot();
@@ -101,10 +114,28 @@ describe('RoomDocumentsStatistics', () => {
 	});
 
 	it('renders the user involved count from userInvolvedMetric', () => {
-		render(<DocumentsStatistics namespace="test-namespace" />);
+		render(
+			<DocumentsStatistics
+				isAnalyticsEnabled={true}
+				namespace="test-namespace"
+			/>
+		);
 
 		expect(screen.getAllByText('4').length).toBe(3);
 		expect(screen.getAllByText('3').length).toBe(2);
 		expect(screen.getByText('2')).toBeInTheDocument();
+	});
+
+	it('renders the not-configured message when analytics cloud is not configured', () => {
+		render(
+			<DocumentsStatistics
+				isAnalyticsEnabled={false}
+				namespace="test-namespace"
+			/>
+		);
+
+		expect(
+			screen.getByText('analytics-cloud-is-not-configured')
+		).toBeInTheDocument();
 	});
 });

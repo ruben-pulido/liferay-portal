@@ -14,7 +14,6 @@ import com.liferay.layout.utility.page.model.impl.LayoutUtilityPageEntryModelImp
 import com.liferay.layout.utility.page.service.persistence.LayoutUtilityPageEntryPersistence;
 import com.liferay.layout.utility.page.service.persistence.LayoutUtilityPageEntryUtil;
 import com.liferay.layout.utility.page.service.persistence.impl.constants.LayoutUtilityPagePersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -24,8 +23,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -101,8 +98,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LayoutUtilityPageEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the layout utility page entries where uuid = &#63;.
@@ -143,16 +141,8 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			OrderByComparator<LayoutUtilityPageEntry> orderByComparator)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (layoutUtilityPageEntry != null) {
-			return layoutUtilityPageEntry;
-		}
-
-		throw new NoSuchLayoutUtilityPageEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -194,8 +184,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<LayoutUtilityPageEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the layout utility page entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchLayoutUtilityPageEntryException</code> if it could not be found.
@@ -209,22 +200,8 @@ public class LayoutUtilityPageEntryPersistenceImpl
 	public LayoutUtilityPageEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByUUID_G(
-			uuid, groupId);
-
-		if (layoutUtilityPageEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLayoutUtilityPageEntryException(message);
-		}
-
-		return layoutUtilityPageEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -273,8 +250,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<LayoutUtilityPageEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the layout utility page entries where uuid = &#63; and companyId = &#63;.
@@ -317,16 +295,8 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			OrderByComparator<LayoutUtilityPageEntry> orderByComparator)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (layoutUtilityPageEntry != null) {
-			return layoutUtilityPageEntry;
-		}
-
-		throw new NoSuchLayoutUtilityPageEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -371,8 +341,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<LayoutUtilityPageEntry>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the layout utility page entries where groupId = &#63;.
@@ -413,16 +384,8 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			OrderByComparator<LayoutUtilityPageEntry> orderByComparator)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (layoutUtilityPageEntry != null) {
-			return layoutUtilityPageEntry;
-		}
-
-		throw new NoSuchLayoutUtilityPageEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -499,8 +462,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private UniquePersistenceFinder<LayoutUtilityPageEntry>
-		_uniquePersistenceFinderByPlid;
+	private UniquePersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_uniquePersistenceFinderByPlid;
 
 	/**
 	 * Returns the layout utility page entry where plid = &#63; or throws a <code>NoSuchLayoutUtilityPageEntryException</code> if it could not be found.
@@ -513,21 +477,8 @@ public class LayoutUtilityPageEntryPersistenceImpl
 	public LayoutUtilityPageEntry findByPlid(long plid)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByPlid(plid);
-
-		if (layoutUtilityPageEntry == null) {
-			String message =
-				_uniquePersistenceFinderByPlid.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLayoutUtilityPageEntryException(message);
-		}
-
-		return layoutUtilityPageEntry;
+		return _uniquePersistenceFinderByPlid.find(
+			finderCache, new Object[] {plid});
 	}
 
 	/**
@@ -572,8 +523,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			finderCache, new Object[] {plid});
 	}
 
-	private FilterCollectionPersistenceFinder<LayoutUtilityPageEntry>
-		_collectionPersistenceFinderByG_T;
+	private FilterCollectionPersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_collectionPersistenceFinderByG_T;
 
 	/**
 	 * Returns an ordered range of all the layout utility page entries where groupId = &#63; and type = &#63;.
@@ -616,26 +568,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			OrderByComparator<LayoutUtilityPageEntry> orderByComparator)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByG_T_First(
-			groupId, type, orderByComparator);
-
-		if (layoutUtilityPageEntry != null) {
-			return layoutUtilityPageEntry;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutUtilityPageEntryException(sb.toString());
+		return _collectionPersistenceFinderByG_T.findFirst(
+			finderCache, new Object[] {groupId, new String[] {type}},
+			orderByComparator);
 	}
 
 	/**
@@ -795,8 +730,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<LayoutUtilityPageEntry>
-		_collectionPersistenceFinderByG_D_T;
+	private FilterCollectionPersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_collectionPersistenceFinderByG_D_T;
 
 	/**
 	 * Returns an ordered range of all the layout utility page entries where groupId = &#63; and defaultLayoutUtilityPageEntry = &#63; and type = &#63;.
@@ -843,17 +779,10 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			OrderByComparator<LayoutUtilityPageEntry> orderByComparator)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByG_D_T_First(
-			groupId, defaultLayoutUtilityPageEntry, type, orderByComparator);
-
-		if (layoutUtilityPageEntry != null) {
-			return layoutUtilityPageEntry;
-		}
-
-		throw new NoSuchLayoutUtilityPageEntryException(
-			_collectionPersistenceFinderByG_D_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, defaultLayoutUtilityPageEntry, type}));
+		return _collectionPersistenceFinderByG_D_T.findFirst(
+			finderCache,
+			new Object[] {groupId, defaultLayoutUtilityPageEntry, type},
+			orderByComparator);
 	}
 
 	/**
@@ -954,8 +883,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			groupId);
 	}
 
-	private UniquePersistenceFinder<LayoutUtilityPageEntry>
-		_uniquePersistenceFinderByG_N_T;
+	private UniquePersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_uniquePersistenceFinderByG_N_T;
 
 	/**
 	 * Returns the layout utility page entry where groupId = &#63; and name = &#63; and type = &#63; or throws a <code>NoSuchLayoutUtilityPageEntryException</code> if it could not be found.
@@ -971,23 +901,8 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			long groupId, String name, String type)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByG_N_T(
-			groupId, name, type);
-
-		if (layoutUtilityPageEntry == null) {
-			String message =
-				_uniquePersistenceFinderByG_N_T.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, name, type});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLayoutUtilityPageEntryException(message);
-		}
-
-		return layoutUtilityPageEntry;
+		return _uniquePersistenceFinderByG_N_T.find(
+			finderCache, new Object[] {groupId, name, type});
 	}
 
 	/**
@@ -1040,8 +955,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			finderCache, new Object[] {groupId, name, type});
 	}
 
-	private FilterCollectionPersistenceFinder<LayoutUtilityPageEntry>
-		_collectionPersistenceFinderByG_LikeN_T;
+	private FilterCollectionPersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_collectionPersistenceFinderByG_LikeN_T;
 
 	/**
 	 * Returns all the layout utility page entries where groupId = &#63; and name LIKE &#63; and type = &#63;.
@@ -1147,29 +1063,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			OrderByComparator<LayoutUtilityPageEntry> orderByComparator)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByG_LikeN_T_First(
-			groupId, name, type, orderByComparator);
-
-		if (layoutUtilityPageEntry != null) {
-			return layoutUtilityPageEntry;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", nameLIKE");
-		sb.append(name);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchLayoutUtilityPageEntryException(sb.toString());
+		return _collectionPersistenceFinderByG_LikeN_T.findFirst(
+			finderCache, new Object[] {groupId, name, new String[] {type}},
+			orderByComparator);
 	}
 
 	/**
@@ -1484,8 +1380,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			groupId);
 	}
 
-	private UniquePersistenceFinder<LayoutUtilityPageEntry>
-		_uniquePersistenceFinderByERC_G;
+	private UniquePersistenceFinder
+		<LayoutUtilityPageEntry, NoSuchLayoutUtilityPageEntryException>
+			_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the layout utility page entry where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchLayoutUtilityPageEntryException</code> if it could not be found.
@@ -1500,23 +1397,8 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			String externalReferenceCode, long groupId)
 		throws NoSuchLayoutUtilityPageEntryException {
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (layoutUtilityPageEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLayoutUtilityPageEntryException(message);
-		}
-
-		return layoutUtilityPageEntry;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1979,10 +1861,11 @@ public class LayoutUtilityPageEntryPersistenceImpl
 			_SQL_SELECT_LAYOUTUTILITYPAGEENTRY_WHERE,
 			_SQL_COUNT_LAYOUTUTILITYPAGEENTRY_WHERE,
 			LayoutUtilityPageEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
-				"layoutUtilityPageEntry.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, LayoutUtilityPageEntry::getUuid));
+				"layoutUtilityPageEntry.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				LayoutUtilityPageEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1994,8 +1877,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 				LayoutUtilityPageEntry::getGroupId),
 			_SQL_SELECT_LAYOUTUTILITYPAGEENTRY_WHERE, "",
 			new FinderColumn<>(
-				"layoutUtilityPageEntry.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, LayoutUtilityPageEntry::getUuid),
+				"layoutUtilityPageEntry.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				LayoutUtilityPageEntry::getUuid),
 			new FinderColumn<>(
 				"layoutUtilityPageEntry.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, LayoutUtilityPageEntry::getGroupId));
@@ -2022,10 +1906,11 @@ public class LayoutUtilityPageEntryPersistenceImpl
 				_SQL_SELECT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				_SQL_COUNT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				LayoutUtilityPageEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"layoutUtilityPageEntry.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, LayoutUtilityPageEntry::getUuid),
+					"layoutUtilityPageEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					LayoutUtilityPageEntry::getUuid),
 				new FinderColumn<>(
 					"layoutUtilityPageEntry.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2053,19 +1938,7 @@ public class LayoutUtilityPageEntryPersistenceImpl
 				_SQL_SELECT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				_SQL_COUNT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				LayoutUtilityPageEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					LayoutUtilityPageEntryImpl.class,
-					LayoutUtilityPageEntry.class, "layoutUtilityPageEntry",
-					"LayoutUtilityPageEntry",
-					"layoutUtilityPageEntry.LayoutUtilityPageEntryId",
-					"SELECT DISTINCT {layoutUtilityPageEntry.*} FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					"SELECT {LayoutUtilityPageEntry.*} FROM (SELECT DISTINCT layoutUtilityPageEntry.LayoutUtilityPageEntryId FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					") TEMP_TABLE INNER JOIN LayoutUtilityPageEntry ON TEMP_TABLE.LayoutUtilityPageEntryId = LayoutUtilityPageEntry.LayoutUtilityPageEntryId",
-					"SELECT COUNT(DISTINCT layoutUtilityPageEntry.LayoutUtilityPageEntryId) AS COUNT_VALUE FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					LayoutUtilityPageEntryModelImpl.ORDER_BY_SQL,
-					LayoutUtilityPageEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"layoutUtilityPageEntry.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2104,26 +1977,15 @@ public class LayoutUtilityPageEntryPersistenceImpl
 				_SQL_SELECT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				_SQL_COUNT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				LayoutUtilityPageEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					LayoutUtilityPageEntryImpl.class,
-					LayoutUtilityPageEntry.class, "layoutUtilityPageEntry",
-					"LayoutUtilityPageEntry",
-					"layoutUtilityPageEntry.LayoutUtilityPageEntryId",
-					"SELECT DISTINCT {layoutUtilityPageEntry.*} FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					"SELECT {LayoutUtilityPageEntry.*} FROM (SELECT DISTINCT layoutUtilityPageEntry.LayoutUtilityPageEntryId FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					") TEMP_TABLE INNER JOIN LayoutUtilityPageEntry ON TEMP_TABLE.LayoutUtilityPageEntryId = LayoutUtilityPageEntry.LayoutUtilityPageEntryId",
-					"SELECT COUNT(DISTINCT layoutUtilityPageEntry.LayoutUtilityPageEntryId) AS COUNT_VALUE FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					LayoutUtilityPageEntryModelImpl.ORDER_BY_SQL,
-					LayoutUtilityPageEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"layoutUtilityPageEntry.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
 					LayoutUtilityPageEntry::getGroupId),
 				new ArrayableFinderColumn<>(
-					"layoutUtilityPageEntry.", "type", FinderColumn.Type.STRING,
-					"=", false, true, true, LayoutUtilityPageEntry::getType));
+					"layoutUtilityPageEntry.", "type", "type_",
+					FinderColumn.Type.STRING, "=", false, true, true,
+					LayoutUtilityPageEntry::getType));
 
 		_collectionPersistenceFinderByG_D_T =
 			new FilterCollectionPersistenceFinder<>(
@@ -2163,19 +2025,7 @@ public class LayoutUtilityPageEntryPersistenceImpl
 				_SQL_SELECT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				_SQL_COUNT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				LayoutUtilityPageEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					LayoutUtilityPageEntryImpl.class,
-					LayoutUtilityPageEntry.class, "layoutUtilityPageEntry",
-					"LayoutUtilityPageEntry",
-					"layoutUtilityPageEntry.LayoutUtilityPageEntryId",
-					"SELECT DISTINCT {layoutUtilityPageEntry.*} FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					"SELECT {LayoutUtilityPageEntry.*} FROM (SELECT DISTINCT layoutUtilityPageEntry.LayoutUtilityPageEntryId FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					") TEMP_TABLE INNER JOIN LayoutUtilityPageEntry ON TEMP_TABLE.LayoutUtilityPageEntryId = LayoutUtilityPageEntry.LayoutUtilityPageEntryId",
-					"SELECT COUNT(DISTINCT layoutUtilityPageEntry.LayoutUtilityPageEntryId) AS COUNT_VALUE FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					LayoutUtilityPageEntryModelImpl.ORDER_BY_SQL,
-					LayoutUtilityPageEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"layoutUtilityPageEntry.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2185,8 +2035,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 					FinderColumn.Type.BOOLEAN, "=", true, true,
 					LayoutUtilityPageEntry::isDefaultLayoutUtilityPageEntry),
 				new FinderColumn<>(
-					"layoutUtilityPageEntry.", "type", FinderColumn.Type.STRING,
-					"=", true, true, LayoutUtilityPageEntry::getType));
+					"layoutUtilityPageEntry.", "type", "type_",
+					FinderColumn.Type.STRING, "=", true, true,
+					LayoutUtilityPageEntry::getType));
 
 		_uniquePersistenceFinderByG_N_T = new UniquePersistenceFinder<>(
 			this,
@@ -2208,8 +2059,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 				"layoutUtilityPageEntry.", "name", FinderColumn.Type.STRING,
 				"=", true, true, LayoutUtilityPageEntry::getName),
 			new FinderColumn<>(
-				"layoutUtilityPageEntry.", "type", FinderColumn.Type.STRING,
-				"=", true, true, LayoutUtilityPageEntry::getType));
+				"layoutUtilityPageEntry.", "type", "type_",
+				FinderColumn.Type.STRING, "=", true, true,
+				LayoutUtilityPageEntry::getType));
 
 		_collectionPersistenceFinderByG_LikeN_T =
 			new FilterCollectionPersistenceFinder<>(
@@ -2234,19 +2086,7 @@ public class LayoutUtilityPageEntryPersistenceImpl
 				_SQL_SELECT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				_SQL_COUNT_LAYOUTUTILITYPAGEENTRY_WHERE,
 				LayoutUtilityPageEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					LayoutUtilityPageEntryImpl.class,
-					LayoutUtilityPageEntry.class, "layoutUtilityPageEntry",
-					"LayoutUtilityPageEntry",
-					"layoutUtilityPageEntry.LayoutUtilityPageEntryId",
-					"SELECT DISTINCT {layoutUtilityPageEntry.*} FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					"SELECT {LayoutUtilityPageEntry.*} FROM (SELECT DISTINCT layoutUtilityPageEntry.LayoutUtilityPageEntryId FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					") TEMP_TABLE INNER JOIN LayoutUtilityPageEntry ON TEMP_TABLE.LayoutUtilityPageEntryId = LayoutUtilityPageEntry.LayoutUtilityPageEntryId",
-					"SELECT COUNT(DISTINCT layoutUtilityPageEntry.LayoutUtilityPageEntryId) AS COUNT_VALUE FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ",
-					LayoutUtilityPageEntryModelImpl.ORDER_BY_SQL,
-					LayoutUtilityPageEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"layoutUtilityPageEntry.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2255,8 +2095,9 @@ public class LayoutUtilityPageEntryPersistenceImpl
 					"layoutUtilityPageEntry.", "name", FinderColumn.Type.STRING,
 					"LIKE", true, true, LayoutUtilityPageEntry::getName),
 				new ArrayableFinderColumn<>(
-					"layoutUtilityPageEntry.", "type", FinderColumn.Type.STRING,
-					"=", false, true, true, LayoutUtilityPageEntry::getType));
+					"layoutUtilityPageEntry.", "type", "type_",
+					FinderColumn.Type.STRING, "=", false, true, true,
+					LayoutUtilityPageEntry::getType));
 
 		_uniquePersistenceFinderByERC_G = new UniquePersistenceFinder<>(
 			this,
@@ -2333,12 +2174,6 @@ public class LayoutUtilityPageEntryPersistenceImpl
 	private static final String _SQL_COUNT_LAYOUTUTILITYPAGEENTRY_WHERE =
 		"SELECT COUNT(layoutUtilityPageEntry) FROM LayoutUtilityPageEntry layoutUtilityPageEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LayoutUtilityPageEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LayoutUtilityPageEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -2348,4 +2183,4 @@ public class LayoutUtilityPageEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:780315862
+// LIFERAY-SERVICE-BUILDER-HASH:464485241

@@ -14,7 +14,6 @@ import com.liferay.commerce.pricing.model.impl.CommercePriceModifierModelImpl;
 import com.liferay.commerce.pricing.service.persistence.CommercePriceModifierPersistence;
 import com.liferay.commerce.pricing.service.persistence.CommercePriceModifierUtil;
 import com.liferay.commerce.pricing.service.persistence.impl.constants.CommercePersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -24,8 +23,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -100,8 +97,9 @@ public class CommercePriceModifierPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifiers where uuid = &#63;.
@@ -142,16 +140,8 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		throw new NoSuchPriceModifierException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -193,8 +183,9 @@ public class CommercePriceModifierPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CommercePriceModifier>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the commerce price modifier where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchPriceModifierException</code> if it could not be found.
@@ -208,22 +199,8 @@ public class CommercePriceModifierPersistenceImpl
 	public CommercePriceModifier findByUUID_G(String uuid, long groupId)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByUUID_G(
-			uuid, groupId);
-
-		if (commercePriceModifier == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPriceModifierException(message);
-		}
-
-		return commercePriceModifier;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -272,8 +249,9 @@ public class CommercePriceModifierPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifiers where uuid = &#63; and companyId = &#63;.
@@ -316,16 +294,8 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		throw new NoSuchPriceModifierException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -370,8 +340,9 @@ public class CommercePriceModifierPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifiers where companyId = &#63;.
@@ -412,16 +383,8 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		throw new NoSuchPriceModifierException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -463,8 +426,9 @@ public class CommercePriceModifierPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByCommercePriceListId;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByCommercePriceListId;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifiers where commercePriceListId = &#63;.
@@ -505,19 +469,8 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier =
-			fetchByCommercePriceListId_First(
-				commercePriceListId, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		throw new NoSuchPriceModifierException(
-			_collectionPersistenceFinderByCommercePriceListId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commercePriceListId}));
+		return _collectionPersistenceFinderByCommercePriceListId.findFirst(
+			finderCache, new Object[] {commercePriceListId}, orderByComparator);
 	}
 
 	/**
@@ -559,8 +512,9 @@ public class CommercePriceModifierPersistenceImpl
 			finderCache, new Object[] {commercePriceListId});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByC_T;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByC_T;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifiers where companyId = &#63; and target = &#63;.
@@ -603,16 +557,8 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByC_T_First(
-			companyId, target, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		throw new NoSuchPriceModifierException(
-			_collectionPersistenceFinderByC_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, target}));
+		return _collectionPersistenceFinderByC_T.findFirst(
+			finderCache, new Object[] {companyId, target}, orderByComparator);
 	}
 
 	/**
@@ -657,8 +603,9 @@ public class CommercePriceModifierPersistenceImpl
 			finderCache, new Object[] {companyId, target});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByLtD_S;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByLtD_S;
 
 	/**
 	 * Returns all the commerce price modifiers where displayDate &lt; &#63; and status = &#63;.
@@ -759,16 +706,8 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByLtD_S_First(
-			displayDate, status, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		throw new NoSuchPriceModifierException(
-			_collectionPersistenceFinderByLtD_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {displayDate, status}));
+		return _collectionPersistenceFinderByLtD_S.findFirst(
+			finderCache, new Object[] {displayDate, status}, orderByComparator);
 	}
 
 	/**
@@ -813,8 +752,9 @@ public class CommercePriceModifierPersistenceImpl
 			finderCache, new Object[] {displayDate, status});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByLtE_S;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByLtE_S;
 
 	/**
 	 * Returns all the commerce price modifiers where expirationDate &lt; &#63; and status = &#63;.
@@ -915,17 +855,9 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByLtE_S_First(
-			expirationDate, status, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		throw new NoSuchPriceModifierException(
-			_collectionPersistenceFinderByLtE_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {expirationDate, status}));
+		return _collectionPersistenceFinderByLtE_S.findFirst(
+			finderCache, new Object[] {expirationDate, status},
+			orderByComparator);
 	}
 
 	/**
@@ -971,8 +903,9 @@ public class CommercePriceModifierPersistenceImpl
 			finderCache, new Object[] {expirationDate, status});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByG_C_S;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByG_C_S;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifiers where groupId = &#63; and companyId = &#63; and status = &#63;.
@@ -1017,29 +950,9 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByG_C_S_First(
-			groupId, companyId, status, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchPriceModifierException(sb.toString());
+		return _collectionPersistenceFinderByG_C_S.findFirst(
+			finderCache, new Object[] {new long[] {groupId}, companyId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1133,8 +1046,9 @@ public class CommercePriceModifierPersistenceImpl
 			new Object[] {ArrayUtil.sortedUnique(groupIds), companyId, status});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifier>
-		_collectionPersistenceFinderByG_C_NotS;
+	private CollectionPersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_collectionPersistenceFinderByG_C_NotS;
 
 	/**
 	 * Returns all the commerce price modifiers where groupId = &#63; and companyId = &#63; and status &ne; &#63;.
@@ -1241,29 +1155,9 @@ public class CommercePriceModifierPersistenceImpl
 			OrderByComparator<CommercePriceModifier> orderByComparator)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByG_C_NotS_First(
-			groupId, companyId, status, orderByComparator);
-
-		if (commercePriceModifier != null) {
-			return commercePriceModifier;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", companyId=");
-		sb.append(companyId);
-
-		sb.append(", status!=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchPriceModifierException(sb.toString());
+		return _collectionPersistenceFinderByG_C_NotS.findFirst(
+			finderCache, new Object[] {new long[] {groupId}, companyId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1423,8 +1317,9 @@ public class CommercePriceModifierPersistenceImpl
 			new Object[] {ArrayUtil.sortedUnique(groupIds), companyId, status});
 	}
 
-	private UniquePersistenceFinder<CommercePriceModifier>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<CommercePriceModifier, NoSuchPriceModifierException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the commerce price modifier where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchPriceModifierException</code> if it could not be found.
@@ -1439,23 +1334,8 @@ public class CommercePriceModifierPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchPriceModifierException {
 
-		CommercePriceModifier commercePriceModifier = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (commercePriceModifier == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPriceModifierException(message);
-		}
-
-		return commercePriceModifier;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1921,10 +1801,11 @@ public class CommercePriceModifierPersistenceImpl
 			_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 			_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 			CommercePriceModifierModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
-				"commercePriceModifier.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CommercePriceModifier::getUuid));
+				"commercePriceModifier.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CommercePriceModifier::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1936,8 +1817,9 @@ public class CommercePriceModifierPersistenceImpl
 				CommercePriceModifier::getGroupId),
 			_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE, "",
 			new FinderColumn<>(
-				"commercePriceModifier.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CommercePriceModifier::getUuid),
+				"commercePriceModifier.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CommercePriceModifier::getUuid),
 			new FinderColumn<>(
 				"commercePriceModifier.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, CommercePriceModifier::getGroupId));
@@ -1964,10 +1846,11 @@ public class CommercePriceModifierPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 				_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 				CommercePriceModifierModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"commercePriceModifier.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, CommercePriceModifier::getUuid),
+					"commercePriceModifier.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommercePriceModifier::getUuid),
 				new FinderColumn<>(
 					"commercePriceModifier.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1995,7 +1878,7 @@ public class CommercePriceModifierPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 				_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 				CommercePriceModifierModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commercePriceModifier.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2026,7 +1909,7 @@ public class CommercePriceModifierPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 				_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 				CommercePriceModifierModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commercePriceModifier.", "commercePriceListId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2053,7 +1936,7 @@ public class CommercePriceModifierPersistenceImpl
 			_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 			_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 			CommercePriceModifierModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"commercePriceModifier.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, CommercePriceModifier::getCompanyId),
@@ -2079,7 +1962,7 @@ public class CommercePriceModifierPersistenceImpl
 			_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 			_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 			CommercePriceModifierModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"commercePriceModifier.", "displayDate", FinderColumn.Type.DATE,
 				"<", true, true, CommercePriceModifier::getDisplayDate),
@@ -2105,7 +1988,7 @@ public class CommercePriceModifierPersistenceImpl
 			_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 			_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 			CommercePriceModifierModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"commercePriceModifier.", "expirationDate",
 				FinderColumn.Type.DATE, "<", true, true,
@@ -2141,7 +2024,7 @@ public class CommercePriceModifierPersistenceImpl
 			_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 			_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 			CommercePriceModifierModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new ArrayableFinderColumn<>(
 				"commercePriceModifier.", "groupId", FinderColumn.Type.LONG,
 				"=", false, true, true, CommercePriceModifier::getGroupId),
@@ -2175,7 +2058,7 @@ public class CommercePriceModifierPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICEMODIFIER_WHERE,
 				_SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE,
 				CommercePriceModifierModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new ArrayableFinderColumn<>(
 					"commercePriceModifier.", "groupId", FinderColumn.Type.LONG,
 					"=", false, true, true, CommercePriceModifier::getGroupId),
@@ -2264,12 +2147,6 @@ public class CommercePriceModifierPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEPRICEMODIFIER_WHERE =
 		"SELECT COUNT(commercePriceModifier) FROM CommercePriceModifier commercePriceModifier WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommercePriceModifier exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommercePriceModifierPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "active"});
 
@@ -2279,4 +2156,4 @@ public class CommercePriceModifierPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:347187101
+// LIFERAY-SERVICE-BUILDER-HASH:-530150168

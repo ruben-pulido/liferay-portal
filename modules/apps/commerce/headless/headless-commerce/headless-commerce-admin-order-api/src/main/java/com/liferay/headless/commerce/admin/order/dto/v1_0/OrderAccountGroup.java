@@ -35,7 +35,13 @@ import java.util.function.Supplier;
  * @generated
  */
 @Generated("")
-@GraphQLName("OrderAccountGroup")
+@GraphQLName(
+	description = "Binding between an order rule and an account group. Identifies an account group the rule applies to.",
+	value = "OrderAccountGroup"
+)
+@io.swagger.v3.oas.annotations.media.Schema(
+	description = "Binding between an order rule and an account group. Identifies an account group the rule applies to."
+)
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "OrderAccountGroup")
 public class OrderAccountGroup implements Serializable {
@@ -49,7 +55,10 @@ public class OrderAccountGroup implements Serializable {
 	}
 
 	@DecimalMin("0")
-	@io.swagger.v3.oas.annotations.media.Schema(example = "30130")
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Reference to the account group (FK identifier).",
+		example = "30130"
+	)
 	public Long getId() {
 		if (_idSupplier != null) {
 			id = _idSupplier.get();
@@ -81,7 +90,9 @@ public class OrderAccountGroup implements Serializable {
 		};
 	}
 
-	@GraphQLField
+	@GraphQLField(
+		description = "Reference to the account group (FK identifier)."
+	)
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long id;
 
@@ -89,7 +100,8 @@ public class OrderAccountGroup implements Serializable {
 	private Supplier<Long> _idSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		example = "OrderAccountGroup Name"
+		description = "Display name of the linked account group. Read-only.",
+		example = "Wholesale Buyers"
 	)
 	public String getName() {
 		if (_nameSupplier != null) {
@@ -122,8 +134,10 @@ public class OrderAccountGroup implements Serializable {
 		};
 	}
 
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	@GraphQLField(
+		description = "Display name of the linked account group. Read-only."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected String name;
 
 	@JsonIgnore
@@ -285,4 +299,4 @@ public class OrderAccountGroup implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:575864962
+// LIFERAY-REST-BUILDER-HASH:-1050088871

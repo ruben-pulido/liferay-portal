@@ -5,6 +5,7 @@
 
 package com.liferay.jenkins.results.parser;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -16,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +26,12 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ErrorCollector;
+
+import org.mockito.Mockito;
 
 /**
  * @author Peter Yoo
@@ -36,6 +41,17 @@ public class Test {
 	@Before
 	public void setUp() throws Exception {
 		JenkinsResultsParserUtil.clearCache();
+	}
+
+	@After
+	public void tearDown() {
+		BuildDatabaseUtil.clearBuildDatabases();
+
+		Environment.setInstance(new Environment());
+
+		Shell.setInstance(new Shell());
+
+		UrlReader.setInstance(new UrlReader());
 	}
 
 	@Rule
@@ -288,6 +304,61 @@ public class Test {
 		return _simpleClassNames;
 	}
 
+	protected Environment mockEnvironment(
+		Map<String, String> environmentValues) {
+
+		Environment environment = Mockito.mock(Environment.class);
+
+		Mockito.doAnswer(
+			invocation -> environmentValues.get(invocation.getArgument(0))
+		).when(
+			environment
+		).doGet(
+			Mockito.anyString()
+		);
+
+		Mockito.doReturn(
+			environmentValues
+		).when(
+			environment
+		).doGetAll();
+
+		Environment.setInstance(environment);
+
+		return environment;
+	}
+
+	protected Shell mockShell() {
+		Shell shell = Mockito.mock(
+			Shell.class,
+			invocation -> {
+				Shell.ExecutionRequest executionRequest =
+					invocation.getArgument(0);
+
+				throw new AssertionError(
+					"No output set for shell command: " +
+						Arrays.toString(executionRequest.getCommands()));
+			});
+
+		Shell.setInstance(shell);
+
+		return shell;
+	}
+
+	protected UrlReader mockUrlReader() {
+		UrlReader urlReader = Mockito.mock(
+			UrlReader.class,
+			invocation -> {
+				String url = invocation.getArgument(7);
+
+				throw new AssertionError("No output set for URL: " + url);
+			});
+
+		UrlReader.setInstance(urlReader);
+
+		return urlReader;
+	}
+
 	protected String read(File file) throws IOException {
 		return new String(Files.readAllBytes(Paths.get(file.toURI())));
 	}
@@ -302,6 +373,36 @@ public class Test {
 		}
 
 		return string.replace("${" + token + "}", value);
+	}
+
+	protected void setShellCommandOutput(
+			String command, Shell shell, String standardOut)
+		throws Exception {
+
+		Mockito.doReturn(
+			new Shell.ExecutionResult(0, "", standardOut)
+		).when(
+			shell
+		).doExecute(
+			Mockito.argThat(
+				executionRequest -> _hasCommand(command, executionRequest))
+		);
+	}
+
+	protected void setUrlReaderOutput(
+			String standardOut, String url, UrlReader urlReader)
+		throws Exception {
+
+		Mockito.doAnswer(
+			invocation -> new ByteArrayInputStream(standardOut.getBytes())
+		).when(
+			urlReader
+		).doRead(
+			Mockito.anyBoolean(), Mockito.any(), Mockito.any(),
+			Mockito.anyInt(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt(),
+			Mockito.argThat(
+				readURL -> (readURL != null) && readURL.contains(url))
+		);
 	}
 
 	protected void testEquals(String expected, String actual) {
@@ -348,6 +449,18 @@ public class Test {
 		getSimpleClassNames());
 	protected ExpectedMessageGenerator expectedMessageGenerator;
 	protected Map<String, TestSample> testSamples = new HashMap<>();
+
+	private boolean _hasCommand(
+		String command, Shell.ExecutionRequest executionRequest) {
+
+		if (executionRequest == null) {
+			return false;
+		}
+
+		String[] commands = executionRequest.getCommands();
+
+		return commands[0].contains(command);
+	}
 
 	private static final String[][] _XML_REPLACEMENTS = {
 		{"<pre>", "<pre><![CDATA["}, {"</pre>", "]]></pre>"},

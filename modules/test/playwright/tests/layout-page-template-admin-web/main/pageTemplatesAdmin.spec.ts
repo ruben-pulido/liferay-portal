@@ -24,6 +24,7 @@ import getWidgetDefinition from '../../layout-content-page-editor-web/main/utils
 export const test = mergeTests(
 	apiHelpersTest,
 	featureFlagsTest({
+		'LPD-76864': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	isolatedSiteTest,
@@ -501,7 +502,7 @@ test.describe('Import page templates', () => {
 				autoClick: true,
 				target: page
 					.locator('.dropdown-menu')
-					.getByRole('menuitem', {name: 'Import'}),
+					.getByRole('menuitem', {exact: true, name: 'Import'}),
 				trigger: page
 					.locator('.control-menu-nav-item')
 					.getByLabel('Options', {exact: true}),

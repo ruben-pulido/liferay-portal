@@ -9,7 +9,6 @@ import com.liferay.asset.categories.admin.web.constants.AssetCategoriesAdminPort
 import com.liferay.asset.categories.admin.web.internal.configuration.AssetCategoriesAdminWebConfiguration;
 import com.liferay.asset.categories.admin.web.internal.constants.AssetCategoriesAdminDisplayStyleKeys;
 import com.liferay.asset.categories.admin.web.internal.constants.AssetCategoriesAdminWebKeys;
-import com.liferay.asset.categories.admin.web.internal.item.selector.AssetVocabularyItemSelectorCriterion;
 import com.liferay.asset.categories.admin.web.internal.util.AssetCategoryTreePathComparator;
 import com.liferay.asset.categories.configuration.AssetCategoriesCompanyConfiguration;
 import com.liferay.asset.entry.rel.service.AssetEntryAssetCategoryRelLocalServiceUtil;
@@ -39,7 +38,6 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItemListBuilder
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.VerticalNavItemList;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.InfoItemItemSelectorReturnType;
-import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.item.selector.criteria.info.item.criterion.InfoItemItemSelectorCriterion;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -49,6 +47,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -637,6 +636,11 @@ public class AssetCategoriesDisplayContext {
 									"for-internal-use-only")));
 					}
 
+					if (isSystemVocabulary(vocabulary)) {
+						verticalNavItem.addIcon(
+							IconItem.of("lock", StringPool.BLANK));
+					}
+
 					if (vocabulary.getVisibilityType() ==
 							AssetVocabularyConstants.VISIBILITY_TYPE_EMPTY) {
 
@@ -687,7 +691,9 @@ public class AssetCategoriesDisplayContext {
 		return _assetVocabularies;
 	}
 
-	public List<DropdownItem> getVocabulariesDropdownItems() {
+	public List<DropdownItem> getVocabulariesDropdownItems()
+		throws PortalException {
+
 		LiferayPortletURL deleteVocabulariesURL =
 			(LiferayPortletURL)_renderResponse.createResourceURL();
 
@@ -695,31 +701,16 @@ public class AssetCategoriesDisplayContext {
 		deleteVocabulariesURL.setResourceID(
 			"/asset_categories_admin/delete_asset_vocabularies");
 
-		ItemSelector itemSelector =
-			(ItemSelector)_httpServletRequest.getAttribute(
-				ItemSelector.class.getName());
-
-		AssetVocabularyItemSelectorCriterion
-			assetVocabularyItemSelectorCriterion =
-				new AssetVocabularyItemSelectorCriterion();
-
-		assetVocabularyItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
-			new UUIDItemSelectorReturnType());
+		long scopeGroupId = _themeDisplay.getScopeGroupId();
 
 		return DropdownItemListBuilder.add(
 			dropdownItem -> {
 				dropdownItem.putData("action", "deleteVocabularies");
 				dropdownItem.putData(
+					"currentSiteId", String.valueOf(scopeGroupId));
+				dropdownItem.putData(
 					"deleteVocabulariesURL", deleteVocabulariesURL.toString());
 				dropdownItem.putData("redirectURL", getDefaultRedirect());
-				dropdownItem.putData(
-					"viewVocabulariesURL",
-					String.valueOf(
-						itemSelector.getItemSelectorURL(
-							RequestBackedPortletURLFactoryUtil.create(
-								_httpServletRequest),
-							_renderResponse.getNamespace() + "selectVocabulary",
-							assetVocabularyItemSelectorCriterion)));
 				dropdownItem.setIcon("trash");
 				dropdownItem.setLabel(
 					LanguageUtil.get(_httpServletRequest, "delete"));
@@ -980,15 +971,30 @@ public class AssetCategoriesDisplayContext {
 		return _showSelectAssetDisplayPage;
 	}
 
-	public boolean isVisibilityTypeDisabled(AssetVocabulary vocabulary) {
-		if ((vocabulary == null) ||
-			(vocabulary.getVisibilityType() ==
-				AssetVocabularyConstants.VISIBILITY_TYPE_EMPTY)) {
+	public boolean isSystemVocabulary(AssetVocabulary vocabulary) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				_themeDisplay.getCompanyId(), "LPD-86291") ||
+			(vocabulary == null)) {
 
 			return false;
 		}
 
-		return true;
+		return vocabulary.isSystem();
+	}
+
+	public boolean isVisibilityTypeDisabled(AssetVocabulary vocabulary) {
+		if (vocabulary == null) {
+			return false;
+		}
+
+		if ((vocabulary.getVisibilityType() !=
+				AssetVocabularyConstants.VISIBILITY_TYPE_EMPTY) ||
+			isSystemVocabulary(vocabulary)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean isVisibilityTypeInternalChecked(AssetVocabulary vocabulary) {

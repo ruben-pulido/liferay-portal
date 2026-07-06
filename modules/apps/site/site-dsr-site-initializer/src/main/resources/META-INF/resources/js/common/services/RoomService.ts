@@ -5,6 +5,7 @@
 
 import {ApiHelper} from '@liferay/site-cms-site-initializer';
 
+import {ROOM_STATUS} from '../utils/roomStatus';
 import {
 	IAccount,
 	IInvitedMember,
@@ -44,11 +45,31 @@ async function addRoom({
 
 async function addRoomUserAccount(
 	roomId: number,
-	userAccount: {emailAddress: string; roleKey?: string}
+	userAccount: {
+		emailAddress: string;
+		membershipExpirationDate?: string;
+		roleKey?: string;
+	}
 ): Promise<IUserAccount> {
 	const {data, error} = await ApiHelper.post<IUserAccount>(
 		`${DSR_PATH}/${roomId}/user-accounts`,
 		userAccount
+	);
+
+	if (data) {
+		return data;
+	}
+
+	throw new Error(error);
+}
+
+async function archiveRoom(roomId: number): Promise<IRoomObjectEntry> {
+	const {data, error} = await ApiHelper.patch<IRoomObjectEntry>(
+		{
+			archiveDate: new Date().toISOString().slice(0, 10),
+			roomStatus: ROOM_STATUS.INACTIVE,
+		},
+		`${BASE_PATH}/${roomId}`
 	);
 
 	if (data) {
@@ -98,6 +119,25 @@ async function deleteRoomUserAccount(
 	}
 }
 
+async function duplicateRoom(
+	roomId: number,
+	{fileEntryIds, name}: {fileEntryIds: number[]; name: string}
+): Promise<IRoomObjectEntry> {
+	const {data, error} = await ApiHelper.post<IRoomObjectEntry>(
+		`${DSR_PATH}/${roomId}/duplicate`,
+		{
+			fileEntryIds,
+			name,
+		}
+	);
+
+	if (data) {
+		return data;
+	}
+
+	throw new Error(error);
+}
+
 async function getAccounts(
 	accountName?: string
 ): Promise<{items: Array<IAccount>}> {
@@ -111,6 +151,22 @@ async function getAccounts(
 
 	if (data) {
 		return data || {items: []};
+	}
+
+	throw new Error(error);
+}
+
+async function getDocumentsFolderId(
+	siteId: number,
+	folderExternalReferenceCode: string
+): Promise<number> {
+	const {data, error} = await ApiHelper.get<{id: number}>(
+		`/o/headless-delivery/v1.0/sites/${siteId}` +
+			`/documents-folder/by-external-reference-code/${folderExternalReferenceCode}`
+	);
+
+	if (data) {
+		return data.id;
 	}
 
 	throw new Error(error);
@@ -166,6 +222,22 @@ async function getRooms(): Promise<{items: IRoomObjectEntry[]}> {
 	throw new Error(error);
 }
 
+async function restoreRoom(roomId: number): Promise<IRoomObjectEntry> {
+	const {data, error} = await ApiHelper.patch<IRoomObjectEntry>(
+		{
+			archiveDate: null,
+			roomStatus: ROOM_STATUS.ACTIVE,
+		},
+		`${BASE_PATH}/${roomId}`
+	);
+
+	if (data) {
+		return data;
+	}
+
+	throw new Error(error);
+}
+
 async function updateRoom(
 	roomId: number,
 	{
@@ -191,7 +263,7 @@ async function updateRoom(
 async function updateRoomInvitedMember(
 	roomId: number,
 	invitedMemberId: number,
-	invitedMember: {roleKey?: string}
+	invitedMember: {membershipExpirationDate?: string; roleKey?: string}
 ): Promise<IInvitedMember> {
 	const {data, error} = await ApiHelper.patch<IInvitedMember>(
 		invitedMember,
@@ -208,7 +280,7 @@ async function updateRoomInvitedMember(
 async function updateRoomUserAccount(
 	roomId: number,
 	userId: number,
-	userAccount: {roleKey?: string}
+	userAccount: {membershipExpirationDate?: string; roleKey?: string}
 ): Promise<IUserAccount> {
 	const {data, error} = await ApiHelper.patch<IUserAccount>(
 		userAccount,
@@ -225,14 +297,18 @@ async function updateRoomUserAccount(
 export default {
 	addRoom,
 	addRoomUserAccount,
+	archiveRoom,
 	checkSitePages,
 	deleteRoomInvitedMember,
 	deleteRoomUserAccount,
+	duplicateRoom,
 	getAccounts,
+	getDocumentsFolderId,
 	getRoom,
 	getRoomInvitedMembers,
 	getRoomUserAccounts,
 	getRooms,
+	restoreRoom,
 	updateRoom,
 	updateRoomInvitedMember,
 	updateRoomUserAccount,

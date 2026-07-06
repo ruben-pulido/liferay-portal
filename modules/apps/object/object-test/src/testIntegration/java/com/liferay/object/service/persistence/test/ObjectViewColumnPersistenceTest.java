@@ -106,11 +106,7 @@ public class ObjectViewColumnPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ObjectViewColumn newObjectViewColumn = _persistence.create(pk);
-
-		newObjectViewColumn.setMvccVersion(RandomTestUtil.nextLong());
+		ObjectViewColumn newObjectViewColumn = addObjectViewColumn();
 
 		newObjectViewColumn.setUuid(RandomTestUtil.randomString());
 
@@ -132,7 +128,9 @@ public class ObjectViewColumnPersistenceTest {
 
 		newObjectViewColumn.setPriority(RandomTestUtil.nextInt());
 
-		_objectViewColumns.add(_persistence.update(newObjectViewColumn));
+		newObjectViewColumn = _persistence.update(newObjectViewColumn);
+
+		_objectViewColumns.add(newObjectViewColumn);
 
 		ObjectViewColumn existingObjectViewColumn =
 			_persistence.findByPrimaryKey(newObjectViewColumn.getPrimaryKey());
@@ -438,8 +436,6 @@ public class ObjectViewColumnPersistenceTest {
 
 		ObjectViewColumn objectViewColumn = _persistence.create(pk);
 
-		objectViewColumn.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectViewColumn.setUuid(RandomTestUtil.randomString());
 
 		objectViewColumn.setCompanyId(RandomTestUtil.nextLong());
@@ -471,4 +467,4 @@ public class ObjectViewColumnPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1892644887
+// LIFERAY-SERVICE-BUILDER-HASH:-1578875894

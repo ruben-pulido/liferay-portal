@@ -111,11 +111,7 @@ public class LayoutSEOSitePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		LayoutSEOSite newLayoutSEOSite = _persistence.create(pk);
-
-		newLayoutSEOSite.setMvccVersion(RandomTestUtil.nextLong());
+		LayoutSEOSite newLayoutSEOSite = addLayoutSEOSite();
 
 		newLayoutSEOSite.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -140,7 +136,9 @@ public class LayoutSEOSitePersistenceTest {
 		newLayoutSEOSite.setOpenGraphImageFileEntryId(
 			RandomTestUtil.nextLong());
 
-		_layoutSEOSites.add(_persistence.update(newLayoutSEOSite));
+		newLayoutSEOSite = _persistence.update(newLayoutSEOSite);
+
+		_layoutSEOSites.add(newLayoutSEOSite);
 
 		LayoutSEOSite existingLayoutSEOSite = _persistence.findByPrimaryKey(
 			newLayoutSEOSite.getPrimaryKey());
@@ -536,8 +534,6 @@ public class LayoutSEOSitePersistenceTest {
 
 		LayoutSEOSite layoutSEOSite = _persistence.create(pk);
 
-		layoutSEOSite.setMvccVersion(RandomTestUtil.nextLong());
-
 		layoutSEOSite.setCtCollectionId(RandomTestUtil.nextLong());
 
 		layoutSEOSite.setUuid(RandomTestUtil.randomString());
@@ -571,4 +567,4 @@ public class LayoutSEOSitePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1892112252
+// LIFERAY-SERVICE-BUILDER-HASH:-1294938591

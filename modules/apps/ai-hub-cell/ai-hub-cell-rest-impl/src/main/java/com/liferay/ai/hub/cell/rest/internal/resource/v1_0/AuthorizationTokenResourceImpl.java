@@ -7,10 +7,14 @@ package com.liferay.ai.hub.cell.rest.internal.resource.v1_0;
 
 import com.liferay.ai.hub.cell.configuration.AIHubCellConfiguration;
 import com.liferay.ai.hub.cell.rest.dto.v1_0.AuthorizationToken;
-import com.liferay.ai.hub.cell.rest.internal.security.JWTTokenUtil;
 import com.liferay.ai.hub.cell.rest.internal.web.cache.AIHubCellAccessTokenWebCacheItem;
+import com.liferay.ai.hub.cell.rest.internal.web.cache.AIHubCellUserTokenWebCacheItem;
 import com.liferay.ai.hub.cell.rest.resource.v1_0.AuthorizationTokenResource;
+import com.liferay.oauth.client.LocalOAuthClient;
+import com.liferay.oauth2.provider.model.OAuth2Application;
+import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 
@@ -43,17 +47,38 @@ public class AuthorizationTokenResourceImpl
 		JSONObject jsonObject = AIHubCellAccessTokenWebCacheItem.get(
 			aiHubCellConfiguration, contextCompany.getCompanyId());
 
+		if (jsonObject == null) {
+			throw new PortalException("Unable to get an access token");
+		}
+
 		return new AuthorizationToken() {
 			{
 				setAccessToken(() -> jsonObject.getString("access_token"));
 				setScope(() -> jsonObject.getString("scope"));
 				setServiceURL(aiHubCellConfiguration::serviceURL);
-				setUserToken(JWTTokenUtil::generateToken);
+				setUserToken(
+					() -> {
+						OAuth2Application oAuth2Application =
+							_oAuth2ApplicationLocalService.
+								getOAuth2ApplicationByExternalReferenceCode(
+									"AI-HUB-CELL",
+									contextCompany.getCompanyId());
+
+						return AIHubCellUserTokenWebCacheItem.get(
+							_localOAuthClient, oAuth2Application,
+							contextUser.getUserId());
+					});
 			}
 		};
 	}
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;
+
+	@Reference
+	private LocalOAuthClient _localOAuthClient;
+
+	@Reference
+	private OAuth2ApplicationLocalService _oAuth2ApplicationLocalService;
 
 }

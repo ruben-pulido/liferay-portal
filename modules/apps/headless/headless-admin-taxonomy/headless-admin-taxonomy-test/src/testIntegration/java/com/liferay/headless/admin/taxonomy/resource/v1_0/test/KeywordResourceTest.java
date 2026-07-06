@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -49,8 +50,10 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.site.cms.site.initializer.test.util.CMSTestUtil;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -388,6 +391,7 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 	@FeatureFlag("LPD-17564")
 	@Override
 	@Test
+	@TestInfo("LPD-90751")
 	public void testGetSiteKeywordsPage() throws Exception {
 		super.testGetSiteKeywordsPage();
 
@@ -404,6 +408,8 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 
 		irrelevantGroup = originalIrrelevantGroup;
 		testGroup = originalTestGroup;
+
+		_testGetSiteKeywordsPageWithSpaceDepotEntry();
 
 		_cmsAdministratorUser = UserTestUtil.addCompanyUser(
 			testCompany, RoleConstants.CMS_ADMINISTRATOR);
@@ -435,7 +441,8 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 
 		testGroup = CMSTestUtil.getOrAddGroup(KeywordResourceTest.class);
 
-		Keyword keyword = _postKeywordWithAssetLibraries(_randomAssetLibrary());
+		Keyword keyword = _postKeywordWithAssetLibraries(
+			_randomSpaceAssetLibrary());
 
 		List<AssetTagGroupRel> assetTagGroupRels =
 			_assetTagGroupRelLocalService.getAssetTagGroupRelsByTagId(
@@ -445,7 +452,7 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 			assetTagGroupRels.toString(), 1, assetTagGroupRels.size());
 
 		Keyword patchKeyword = _patchKeywordWithAssetLibraries(
-			keyword, _randomAssetLibrary(), _randomAssetLibrary());
+			keyword, _randomSpaceAssetLibrary(), _randomSpaceAssetLibrary());
 
 		assertEquals(keyword, patchKeyword);
 
@@ -492,6 +499,19 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 
 		assertEquals(randomKeyword, postKeyword);
 		assertValid(postKeyword);
+
+		List<AssetTagGroupRel> assetTagGroupRels =
+			_assetTagGroupRelLocalService.getAssetTagGroupRelsByTagId(
+				postKeyword.getId());
+
+		Assert.assertEquals(
+			assetTagGroupRels.toString(), 1, assetTagGroupRels.size());
+
+		AssetTagGroupRel assetTagGroupRel = assetTagGroupRels.get(0);
+
+		Assert.assertEquals(
+			assetTagGroupRels.toString(), GroupConstants.ANY_PARENT_GROUP_ID,
+			assetTagGroupRel.getGroupId());
 
 		testGroup = originalTestGroup;
 	}
@@ -592,12 +612,13 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 
 		super.testPutKeyword();
 
-		Keyword keyword = _postKeywordWithAssetLibraries(_randomAssetLibrary());
+		Keyword keyword = _postKeywordWithAssetLibraries(
+			_randomSpaceAssetLibrary());
 
 		Keyword randomKeyword = randomKeyword();
 
 		randomKeyword.setAssetLibraries(
-			new AssetLibrary[] {_randomAssetLibrary()});
+			new AssetLibrary[] {_randomSpaceAssetLibrary()});
 
 		Keyword putKeyword = keywordResource.putKeyword(
 			keyword.getId(), randomKeyword);
@@ -616,19 +637,19 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 		testGroup = CMSTestUtil.getOrAddGroup(KeywordResourceTest.class);
 
 		Keyword keyword1 = _postKeywordWithAssetLibraries(
-			_randomAssetLibrary());
+			_randomSpaceAssetLibrary());
 		Keyword keyword2 = _postKeywordWithAssetLibraries(
-			_randomAssetLibrary());
+			_randomSpaceAssetLibrary());
 		Keyword keyword3 = _postKeywordWithAssetLibraries(
-			_randomAssetLibrary());
+			_randomSpaceAssetLibrary());
 
 		keywordResource.putKeywordMerge(
 			keyword1.getId(), new Long[] {keyword2.getId(), keyword3.getId()});
 
 		Keyword keyword4 = _postKeywordWithAssetLibraries(
-			_randomAssetLibrary());
+			_randomSpaceAssetLibrary());
 		Keyword keyword5 = _postKeywordWithAssetLibraries(
-			_randomAssetLibrary());
+			_randomSpaceAssetLibrary());
 
 		HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
 
@@ -780,10 +801,10 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 		return keywordResource.postSiteKeyword(testGroup.getGroupId(), keyword);
 	}
 
-	private AssetLibrary _randomAssetLibrary() throws Exception {
+	private AssetLibrary _randomSpaceAssetLibrary() throws Exception {
 		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
 			RandomTestUtil.randomLocaleStringMap(), null,
-			DepotConstants.TYPE_ASSET_LIBRARY,
+			DepotConstants.TYPE_SPACE,
 			ServiceContextTestUtil.getServiceContext());
 
 		Group depotEntryGroup = depotEntry.getGroup();
@@ -794,6 +815,47 @@ public class KeywordResourceTest extends BaseKeywordResourceTestCase {
 				scopeKey = depotEntryGroup.getGroupKey();
 			}
 		};
+	}
+
+	private void _testGetSiteKeywordsPageWithSpaceDepotEntry()
+		throws Exception {
+
+		Group originalTestGroup = testGroup;
+
+		testGroup = CMSTestUtil.getOrAddGroup(KeywordResourceTest.class);
+
+		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
+			RandomTestUtil.randomLocaleStringMap(), null,
+			DepotConstants.TYPE_SPACE,
+			ServiceContextTestUtil.getServiceContext(testGroup.getGroupId()));
+
+		Group depotEntryGroup = depotEntry.getGroup();
+
+		Keyword keyword1 = _postKeywordWithAssetLibraries();
+		Keyword keyword2 = _postKeywordWithAssetLibraries(
+			new AssetLibrary() {
+				{
+					id = depotEntryGroup.getGroupId();
+					scopeKey = depotEntryGroup.getGroupKey();
+				}
+			});
+
+		Page<Keyword> page = keywordResource.getSiteKeywordsPage(
+			depotEntryGroup.getGroupId(), null, null, null,
+			Pagination.of(1, 100), null);
+
+		Set<String> keywordNames = new HashSet<>();
+
+		for (Keyword keyword : page.getItems()) {
+			keywordNames.add(keyword.getName());
+		}
+
+		Assert.assertTrue(
+			keywordNames.toString(), keywordNames.contains(keyword1.getName()));
+		Assert.assertTrue(
+			keywordNames.toString(), keywordNames.contains(keyword2.getName()));
+
+		testGroup = originalTestGroup;
 	}
 
 	private void _testGetSiteKeywordsPageWithUser(User user) throws Exception {

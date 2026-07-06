@@ -5,7 +5,6 @@
 
 package com.liferay.portal.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -16,8 +15,6 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.DuplicateAddressExternalReferenceCodeException;
 import com.liferay.portal.kernel.exception.NoSuchAddressException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.AddressTable;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
@@ -90,7 +87,7 @@ public class AddressPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -130,15 +127,9 @@ public class AddressPersistenceImpl
 			String uuid, OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByUuid_First(uuid, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -180,7 +171,7 @@ public class AddressPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -223,16 +214,9 @@ public class AddressPersistenceImpl
 			OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -278,7 +262,7 @@ public class AddressPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -318,15 +302,9 @@ public class AddressPersistenceImpl
 			long companyId, OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByCompanyId_First(companyId, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -368,7 +346,7 @@ public class AddressPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -408,15 +386,9 @@ public class AddressPersistenceImpl
 			long userId, OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByUserId_First(userId, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId},
+			orderByComparator);
 	}
 
 	/**
@@ -458,7 +430,7 @@ public class AddressPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByCountryId;
 
 	/**
@@ -498,15 +470,9 @@ public class AddressPersistenceImpl
 			long countryId, OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByCountryId_First(countryId, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByCountryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {countryId}));
+		return _collectionPersistenceFinderByCountryId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {countryId},
+			orderByComparator);
 	}
 
 	/**
@@ -548,7 +514,7 @@ public class AddressPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {countryId});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByRegionId;
 
 	/**
@@ -588,15 +554,9 @@ public class AddressPersistenceImpl
 			long regionId, OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByRegionId_First(regionId, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByRegionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {regionId}));
+		return _collectionPersistenceFinderByRegionId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {regionId},
+			orderByComparator);
 	}
 
 	/**
@@ -638,7 +598,7 @@ public class AddressPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {regionId});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -682,17 +642,9 @@ public class AddressPersistenceImpl
 			OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByC_C_First(
-			companyId, classNameId, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId}, orderByComparator);
 	}
 
 	/**
@@ -740,7 +692,7 @@ public class AddressPersistenceImpl
 			new Object[] {companyId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByCN_CPK;
 
 	/**
@@ -784,16 +736,9 @@ public class AddressPersistenceImpl
 			OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByCN_CPK_First(
-			classNameId, classPK, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByCN_CPK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByCN_CPK.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {classNameId, classPK}, orderByComparator);
 	}
 
 	/**
@@ -841,7 +786,7 @@ public class AddressPersistenceImpl
 			new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByC_C_C;
 
 	/**
@@ -887,17 +832,9 @@ public class AddressPersistenceImpl
 			OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByC_C_C_First(
-			companyId, classNameId, classPK, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, classPK}, orderByComparator);
 	}
 
 	/**
@@ -948,7 +885,7 @@ public class AddressPersistenceImpl
 			new Object[] {companyId, classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByC_C_C_L;
 
 	/**
@@ -999,32 +936,12 @@ public class AddressPersistenceImpl
 			OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByC_C_C_L_First(
-			companyId, classNameId, classPK, listTypeId, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		StringBundler sb = new StringBundler(10);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append(", classPK=");
-		sb.append(classPK);
-
-		sb.append(", listTypeId=");
-		sb.append(listTypeId);
-
-		sb.append("}");
-
-		throw new NoSuchAddressException(sb.toString());
+		return _collectionPersistenceFinderByC_C_C_L.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {
+				companyId, classNameId, classPK, new long[] {listTypeId}
+			},
+			orderByComparator);
 	}
 
 	/**
@@ -1142,7 +1059,7 @@ public class AddressPersistenceImpl
 			});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByC_C_C_M;
 
 	/**
@@ -1191,17 +1108,10 @@ public class AddressPersistenceImpl
 			OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByC_C_C_M_First(
-			companyId, classNameId, classPK, mailing, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByC_C_C_M.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId, classPK, mailing}));
+		return _collectionPersistenceFinderByC_C_C_M.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, classPK, mailing},
+			orderByComparator);
 	}
 
 	/**
@@ -1260,7 +1170,7 @@ public class AddressPersistenceImpl
 			new Object[] {companyId, classNameId, classPK, mailing});
 	}
 
-	private CollectionPersistenceFinder<Address>
+	private CollectionPersistenceFinder<Address, NoSuchAddressException>
 		_collectionPersistenceFinderByC_C_C_P;
 
 	/**
@@ -1309,17 +1219,10 @@ public class AddressPersistenceImpl
 			OrderByComparator<Address> orderByComparator)
 		throws NoSuchAddressException {
 
-		Address address = fetchByC_C_C_P_First(
-			companyId, classNameId, classPK, primary, orderByComparator);
-
-		if (address != null) {
-			return address;
-		}
-
-		throw new NoSuchAddressException(
-			_collectionPersistenceFinderByC_C_C_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId, classPK, primary}));
+		return _collectionPersistenceFinderByC_C_C_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, classPK, primary},
+			orderByComparator);
 	}
 
 	/**
@@ -1378,7 +1281,8 @@ public class AddressPersistenceImpl
 			new Object[] {companyId, classNameId, classPK, primary});
 	}
 
-	private UniquePersistenceFinder<Address> _uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder<Address, NoSuchAddressException>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the address where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchAddressException</code> if it could not be found.
@@ -1392,22 +1296,9 @@ public class AddressPersistenceImpl
 	public Address findByERC_C(String externalReferenceCode, long companyId)
 		throws NoSuchAddressException {
 
-		Address address = fetchByERC_C(externalReferenceCode, companyId);
-
-		if (address == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchAddressException(message);
-		}
-
-		return address;
+		return _uniquePersistenceFinderByERC_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1843,10 +1734,10 @@ public class AddressPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-			AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"address.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				Address::getUuid));
+				"address.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, Address::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1868,10 +1759,11 @@ public class AddressPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"address.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, Address::getUuid),
+					"address.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, Address::getUuid),
 				new FinderColumn<>(
 					"address.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Address::getCompanyId));
@@ -1896,7 +1788,8 @@ public class AddressPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"address.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Address::getCompanyId));
@@ -1921,7 +1814,8 @@ public class AddressPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"userId"}, false),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"address.", "userId", FinderColumn.Type.LONG, "=", true,
 					true, Address::getUserId));
@@ -1946,7 +1840,8 @@ public class AddressPersistenceImpl
 					"countByCountryId", new String[] {Long.class.getName()},
 					new String[] {"countryId"}, false),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"address.", "countryId", FinderColumn.Type.LONG, "=", true,
 					true, Address::getCountryId));
@@ -1971,7 +1866,8 @@ public class AddressPersistenceImpl
 					"countByRegionId", new String[] {Long.class.getName()},
 					new String[] {"regionId"}, false),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"address.", "regionId", FinderColumn.Type.LONG, "=", true,
 					true, Address::getRegionId));
@@ -1995,7 +1891,7 @@ public class AddressPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "classNameId"}, false),
 			_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-			AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"address.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, Address::getCompanyId),
@@ -2023,7 +1919,8 @@ public class AddressPersistenceImpl
 					new String[] {Long.class.getName(), Long.class.getName()},
 					new String[] {"classNameId", "classPK"}, false),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"address.", "classNameId", FinderColumn.Type.LONG, "=",
 					true, true, Address::getClassNameId),
@@ -2056,7 +1953,7 @@ public class AddressPersistenceImpl
 				},
 				new String[] {"companyId", "classNameId", "classPK"}, false),
 			_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-			AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"address.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, Address::getCompanyId),
@@ -2103,7 +2000,8 @@ public class AddressPersistenceImpl
 					},
 					false),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"address.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Address::getCompanyId),
@@ -2153,7 +2051,8 @@ public class AddressPersistenceImpl
 					},
 					false),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"address.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Address::getCompanyId),
@@ -2203,7 +2102,8 @@ public class AddressPersistenceImpl
 					},
 					false),
 				_SQL_SELECT_ADDRESS_WHERE, _SQL_COUNT_ADDRESS_WHERE,
-				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AddressModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"address.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Address::getCompanyId),
@@ -2214,8 +2114,9 @@ public class AddressPersistenceImpl
 					"address.", "classPK", FinderColumn.Type.LONG, "=", true,
 					true, Address::getClassPK),
 				new FinderColumn<>(
-					"address.", "primary", FinderColumn.Type.BOOLEAN, "=", true,
-					true, Address::isPrimary));
+					"address.", "primary", "primary_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					Address::isPrimary));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -2254,12 +2155,6 @@ public class AddressPersistenceImpl
 	private static final String _SQL_COUNT_ADDRESS_WHERE =
 		"SELECT COUNT(address) FROM Address address WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Address exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AddressPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "primary"});
 
@@ -2269,4 +2164,4 @@ public class AddressPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1224217947
+// LIFERAY-SERVICE-BUILDER-HASH:-358065422

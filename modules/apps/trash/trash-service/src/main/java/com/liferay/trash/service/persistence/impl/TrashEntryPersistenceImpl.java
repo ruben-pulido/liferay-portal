@@ -13,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -83,7 +81,7 @@ public class TrashEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<TrashEntry>
+	private CollectionPersistenceFinder<TrashEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -124,16 +122,8 @@ public class TrashEntryPersistenceImpl
 			long groupId, OrderByComparator<TrashEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		TrashEntry trashEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (trashEntry != null) {
-			return trashEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -174,7 +164,7 @@ public class TrashEntryPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<TrashEntry>
+	private CollectionPersistenceFinder<TrashEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -215,16 +205,8 @@ public class TrashEntryPersistenceImpl
 			long companyId, OrderByComparator<TrashEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		TrashEntry trashEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (trashEntry != null) {
-			return trashEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -265,7 +247,7 @@ public class TrashEntryPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<TrashEntry>
+	private CollectionPersistenceFinder<TrashEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByG_LtCD;
 
 	/**
@@ -365,16 +347,8 @@ public class TrashEntryPersistenceImpl
 			OrderByComparator<TrashEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		TrashEntry trashEntry = fetchByG_LtCD_First(
-			groupId, createDate, orderByComparator);
-
-		if (trashEntry != null) {
-			return trashEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByG_LtCD.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, createDate}));
+		return _collectionPersistenceFinderByG_LtCD.findFirst(
+			finderCache, new Object[] {groupId, createDate}, orderByComparator);
 	}
 
 	/**
@@ -419,7 +393,7 @@ public class TrashEntryPersistenceImpl
 			finderCache, new Object[] {groupId, createDate});
 	}
 
-	private CollectionPersistenceFinder<TrashEntry>
+	private CollectionPersistenceFinder<TrashEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByG_CN;
 
 	/**
@@ -463,16 +437,9 @@ public class TrashEntryPersistenceImpl
 			OrderByComparator<TrashEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		TrashEntry trashEntry = fetchByG_CN_First(
-			groupId, classNameId, orderByComparator);
-
-		if (trashEntry != null) {
-			return trashEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByG_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, classNameId}));
+		return _collectionPersistenceFinderByG_CN.findFirst(
+			finderCache, new Object[] {groupId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -518,7 +485,7 @@ public class TrashEntryPersistenceImpl
 			finderCache, new Object[] {groupId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<TrashEntry>
+	private CollectionPersistenceFinder<TrashEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByC_CN;
 
 	/**
@@ -562,17 +529,9 @@ public class TrashEntryPersistenceImpl
 			OrderByComparator<TrashEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		TrashEntry trashEntry = fetchByC_CN_First(
-			companyId, classNameId, orderByComparator);
-
-		if (trashEntry != null) {
-			return trashEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByC_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId}));
+		return _collectionPersistenceFinderByC_CN.findFirst(
+			finderCache, new Object[] {companyId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -618,7 +577,7 @@ public class TrashEntryPersistenceImpl
 			finderCache, new Object[] {companyId, classNameId});
 	}
 
-	private UniquePersistenceFinder<TrashEntry>
+	private UniquePersistenceFinder<TrashEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByCN_CPK;
 
 	/**
@@ -633,22 +592,8 @@ public class TrashEntryPersistenceImpl
 	public TrashEntry findByCN_CPK(long classNameId, long classPK)
 		throws NoSuchEntryException {
 
-		TrashEntry trashEntry = fetchByCN_CPK(classNameId, classPK);
-
-		if (trashEntry == null) {
-			String message =
-				_uniquePersistenceFinderByCN_CPK.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return trashEntry;
+		return _uniquePersistenceFinderByCN_CPK.find(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -974,7 +919,8 @@ public class TrashEntryPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_TRASHENTRY_WHERE, _SQL_COUNT_TRASHENTRY_WHERE,
-				TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"trashEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, TrashEntry::getGroupId));
@@ -999,7 +945,8 @@ public class TrashEntryPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_TRASHENTRY_WHERE, _SQL_COUNT_TRASHENTRY_WHERE,
-				TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"trashEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, TrashEntry::getCompanyId));
@@ -1021,7 +968,8 @@ public class TrashEntryPersistenceImpl
 					new String[] {Long.class.getName(), Date.class.getName()},
 					new String[] {"groupId", "createDate"}, false),
 				_SQL_SELECT_TRASHENTRY_WHERE, _SQL_COUNT_TRASHENTRY_WHERE,
-				TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"trashEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, TrashEntry::getGroupId),
@@ -1048,7 +996,8 @@ public class TrashEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"groupId", "classNameId"}, false),
 			_SQL_SELECT_TRASHENTRY_WHERE, _SQL_COUNT_TRASHENTRY_WHERE,
-			TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"trashEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, TrashEntry::getGroupId),
@@ -1075,7 +1024,8 @@ public class TrashEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "classNameId"}, false),
 			_SQL_SELECT_TRASHENTRY_WHERE, _SQL_COUNT_TRASHENTRY_WHERE,
-			TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			TrashEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"trashEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, TrashEntry::getCompanyId),
@@ -1155,16 +1105,10 @@ public class TrashEntryPersistenceImpl
 	private static final String _SQL_COUNT_TRASHENTRY_WHERE =
 		"SELECT COUNT(trashEntry) FROM TrashEntry trashEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No TrashEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		TrashEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-724118085
+// LIFERAY-SERVICE-BUILDER-HASH:-232823830

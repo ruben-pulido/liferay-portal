@@ -5,19 +5,17 @@
 
 package com.liferay.ai.hub.internal.workflow.kaleo.runtime.node.util;
 
+import com.liferay.ai.hub.quota.QuotaManager;
 import com.liferay.ai.hub.rest.resource.v1_0.util.SseUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.workflow.kaleo.runtime.constants.WorkflowInstanceDestinationNames;
 
-import dev.langchain4j.model.chat.response.ChatResponse;
-import dev.langchain4j.model.output.TokenUsage;
-
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -26,21 +24,23 @@ import java.util.Map;
 public class QuotaUtil {
 
 	public static boolean hasExceededQuota(
-			long companyId, String nodeName, String text,
-			Map<String, Serializable> workflowContext, long workflowInstanceId,
-			long userId)
+			long companyId, String nodeName, QuotaManager quotaManager,
+			long userId, Map<String, Serializable> workflowContext,
+			long workflowInstanceId)
 		throws PortalException {
 
 		try {
-			com.liferay.ai.hub.internal.quota.QuotaUtil.checkUsage(
-				companyId, text, userId);
+			quotaManager.checkTokensUsage(companyId, userId);
 
 			return false;
 		}
 		catch (UnsupportedOperationException unsupportedOperationException) {
 			Message message = new Message();
 
+			message.put("companyId", companyId);
+			message.put("createDate", new Date());
 			message.put("exception", unsupportedOperationException);
+			message.put("userId", userId);
 			message.put("workflowInstanceId", workflowInstanceId);
 
 			MessageBusUtil.sendMessage(
@@ -54,21 +54,6 @@ public class QuotaUtil {
 		}
 
 		return true;
-	}
-
-	public static void updateUsage(
-		ChatResponse chatResponse, ServiceContext serviceContext) {
-
-		try {
-			TokenUsage tokenUsage = chatResponse.tokenUsage();
-
-			com.liferay.ai.hub.internal.quota.QuotaUtil.updateUsage(
-				serviceContext.getCompanyId(), tokenUsage.outputTokenCount(),
-				serviceContext.getUserId());
-		}
-		catch (PortalException portalException) {
-			throw new RuntimeException(portalException);
-		}
 	}
 
 }

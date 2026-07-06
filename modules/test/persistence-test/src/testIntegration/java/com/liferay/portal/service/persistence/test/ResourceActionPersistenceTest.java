@@ -109,11 +109,7 @@ public class ResourceActionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ResourceAction newResourceAction = _persistence.create(pk);
-
-		newResourceAction.setMvccVersion(RandomTestUtil.nextLong());
+		ResourceAction newResourceAction = addResourceAction();
 
 		newResourceAction.setName(RandomTestUtil.randomString());
 
@@ -121,7 +117,9 @@ public class ResourceActionPersistenceTest {
 
 		newResourceAction.setBitwiseValue(RandomTestUtil.nextLong());
 
-		_resourceActions.add(_persistence.update(newResourceAction));
+		newResourceAction = _persistence.update(newResourceAction);
+
+		_resourceActions.add(newResourceAction);
 
 		ResourceAction existingResourceAction = _persistence.findByPrimaryKey(
 			newResourceAction.getPrimaryKey());
@@ -471,8 +469,6 @@ public class ResourceActionPersistenceTest {
 
 		ResourceAction resourceAction = _persistence.create(pk);
 
-		resourceAction.setMvccVersion(RandomTestUtil.nextLong());
-
 		resourceAction.setName(RandomTestUtil.randomString());
 
 		resourceAction.setActionId(RandomTestUtil.randomString());
@@ -490,4 +486,4 @@ public class ResourceActionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-702371119
+// LIFERAY-SERVICE-BUILDER-HASH:224705682
